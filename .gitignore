@@ -150,4 +150,4 @@ gradle-app.setting
 
 # Local History for Visual Studio Code
 .history/
-
+.idea
