@@ -62,3 +62,38 @@ fun main() {
 |--> Fittest:  [ 11111111|11111111|11111111 ] 
 |--> Best fitness: 24.0
 ```
+
+### Word Guessing Problem
+
+The _Word Guessing_ problem is a problem where the goal is to guess a word of known length by just
+being able to ask "how many characters are in the correct position?".
+
+#### Implementation
+
+```kotlin
+fun fitnessFn(genotype: Genotype<Char>): Double {
+    val target = "Sopaipilla"
+    var fitness = 0.0
+    genotype.chromosomes.forEach { chromosome ->
+        chromosome.genes.forEachIndexed { idx, gene ->
+            if (gene.dna == target[idx]) {
+                fitness++
+            }
+        }
+    }
+    return fitness
+}
+
+fun main() {
+    val engine = engine(::fitnessFn) {
+        genotype = genotype {
+            chromosomes = listOf(CharChromosome.Builder(10))
+        }
+        populationSize = 1000
+        alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
+        limits = listOf(SteadyGenerations(10))
+    }
+    engine.evolve()
+    println(engine.statistics)
+}
+```
