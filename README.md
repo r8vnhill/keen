@@ -94,7 +94,9 @@ fun main() {
         limits = listOf(SteadyGenerations(10))
     }
     engine.evolve()
-    println(engine.statistics)
+    engine.statistics.forEach {
+        println(it)
+    }
 }
 ```
 
@@ -121,7 +123,7 @@ fun main() {
     }
     engine.evolve()
     engine.statistics.forEach {
-    println(it)
+        println(it)
     }
 }
 ```
