@@ -5,12 +5,17 @@
 This work is licensed under a
 [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
-_Keen_ is a Kotlin framework for genetic algorithms heavily inspired by 
+_Keen_ is a Kotlin genetic algorithms' framework heavily inspired by 
 [_Jenetics_](https://jenetics.io).
 
 ## Examples
 
-### MaxOne (Ones Counting) Problem
+### One Max (Ones Counting) Problem
+
+The _One Max_ problem is a well known problem widely used to exemplify the genetic algorithms'
+capabilities. 
+The problem consists of maximizing the number of ones in a bit string. 
+The following example shows how to solve the _One Max_ problem with _Keen_.
 
 #### Implementation
 
