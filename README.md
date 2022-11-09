@@ -97,3 +97,31 @@ fun main() {
     println(engine.statistics)
 }
 ```
+
+### Function Optimization Problem
+
+Here we want to find the minimum of the function ``f(x) = cos(1 / 2 + sin(x)) * cos(x)``.
+
+
+```kotlin
+fun fitnessFunction(x: Genotype<Double>): Double {
+    val value = x.chromosomes.first().genes.first().dna
+    return cos(0.5 + sin(value)) * cos(value)
+}
+
+fun main() {
+    val engine = engine(::fitnessFunction) {
+        genotype = genotype {
+            chromosomes = listOf(DoubleChromosome.Builder(1, 0.0..(2 * Math.PI)))
+        }
+        populationSize = 500
+        optimizer = Minimizer()
+        survivors = (populationSize * 0.2).toInt()
+        alterers = listOf(Mutator(0.03), MeanCrossover(0.6))
+    }
+    engine.evolve()
+    engine.statistics.forEach {
+    println(it)
+    }
+}
+```
