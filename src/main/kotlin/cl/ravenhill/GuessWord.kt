@@ -15,6 +15,8 @@ import cl.ravenhill.keen.core.chromosomes.CharChromosome
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
+import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPrinter
 
 
 /**
@@ -38,10 +40,11 @@ fun main() {
         genotype = genotype {
             chromosomes = listOf(CharChromosome.Builder(10))
         }
-        populationSize = 1000
+        populationSize = 500
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(10))
+        statistics = listOf(StatisticPrinter(10), StatisticCollector())
     }
     engine.evolve()
-    println(engine.statistics)
+    engine.statistics.forEach { println(it) }
 }

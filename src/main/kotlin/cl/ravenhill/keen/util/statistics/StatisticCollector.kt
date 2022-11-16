@@ -12,16 +12,7 @@ import cl.ravenhill.keen.core.Genotype
 import org.jetbrains.kotlinx.dataframe.math.mean
 
 
-class StatisticCollector<DNA> {
-    var evolutionTime: Long = Long.MAX_VALUE
-    var generationTimes: MutableList<Long> = mutableListOf()
-    val alterTime: MutableList<Long> = mutableListOf()
-    var selectionTime: MutableList<Long> = mutableListOf()
-    lateinit var fittest: Genotype<DNA>
-    var bestFitness = Double.NaN
-    var steadyGenerations: Int = 0
-    var generation: Int = 0
-
+class StatisticCollector<DNA> : AbstractStatistic<DNA>() {
     override fun toString() = """
         -------- Statistics Collector ---------
         ---------- Selection Times ------------

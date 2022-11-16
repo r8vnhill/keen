@@ -17,6 +17,7 @@ import cl.ravenhill.keen.signals.EngineConfigurationException
 import cl.ravenhill.keen.util.Maximizer
 import cl.ravenhill.keen.util.Optimizer
 import cl.ravenhill.keen.util.parallelMap
+import cl.ravenhill.keen.util.statistics.Statistic
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
@@ -46,7 +47,7 @@ class Engine<DNA> private constructor(
     val survivorSelector: Selector<DNA>,
     private val survivors: Int,
     private val optimizer: Optimizer,
-    val statistics: List<StatisticCollector<DNA>>
+    val statistics: List<Statistic<DNA>>
 ) {
 
     init {
@@ -179,7 +180,7 @@ class Engine<DNA> private constructor(
 
         lateinit var genotype: Genotype.Builder<DNA>
 
-        var statistics = listOf(StatisticCollector<DNA>())
+        var statistics: List<Statistic<DNA>> = listOf(StatisticCollector())
         // endregion    ----------------------------------------------------------------------------
 
         fun build() = Engine(
