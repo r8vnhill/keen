@@ -8,7 +8,6 @@
 
 package cl.ravenhill.keen.util.statistics
 
-import cl.ravenhill.keen.core.Genotype
 import org.jetbrains.kotlinx.dataframe.math.mean
 
 

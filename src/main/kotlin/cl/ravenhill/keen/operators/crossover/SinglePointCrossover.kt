@@ -8,19 +8,19 @@
 
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.keen.core.KeenCore
-import cl.ravenhill.keen.core.chromosomes.Chromosome
-import cl.ravenhill.keen.core.genes.Gene
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 
 
 /**
  * Performs a crossover between two genotypes using a random single-point crossover.
  */
-class SinglePointCrossover<DNA>(probability: Double) : AbstractCrossover<DNA>(probability) {
+class SinglePointCrossover<DNA>(probability: Double) : MultiPointCrossover<DNA>(probability, 1) {
 
     override fun crossover(mates: Pair<Chromosome<DNA>, Chromosome<DNA>>): Chromosome<DNA> {
         val genes = mutableListOf<Gene<DNA>>()
-        val cut = KeenCore.generator.nextInt(mates.first.genes.size)
+        val cut = Core.generator.nextInt(mates.first.genes.size)
         genes.addAll(mates.first.genes.take(cut))
         genes.addAll(mates.second.genes.drop(cut))
         return mates.first.copy(genes)

@@ -8,7 +8,7 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.core.Engine
+import cl.ravenhill.keen.evolution.Engine
 
 
 open class Match(private val predicate: Engine<*>.() -> Boolean) : Limit {

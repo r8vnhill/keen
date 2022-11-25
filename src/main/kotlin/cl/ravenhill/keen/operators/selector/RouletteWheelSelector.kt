@@ -8,7 +8,7 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.core.Genotype
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.util.parallelMap
 import kotlinx.coroutines.runBlocking
 

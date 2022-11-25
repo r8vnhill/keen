@@ -6,11 +6,11 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core.chromosomes
+package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.core.KeenCore
-import cl.ravenhill.keen.core.genes.DoubleGene
-import cl.ravenhill.keen.core.genes.Gene
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.genes.DoubleGene
+import cl.ravenhill.keen.genetic.genes.Gene
 import kotlin.random.asKotlinRandom
 
 
@@ -28,16 +28,16 @@ class DoubleChromosome private constructor(
     private constructor(size: Int, range: ClosedFloatingPointRange<Double>) : this(
         (0 until size).map {
             DoubleGene(
-                KeenCore.generator.asKotlinRandom().nextDouble(range.start, range.endInclusive),
+                Core.generator.asKotlinRandom().nextDouble(range.start, range.endInclusive),
                 range
             )
         }
     )
 
     class Builder(private val size: Int, private val range: ClosedFloatingPointRange<Double>) :
-        Chromosome.Builder<Double> {
+            Chromosome.Factory<Double> {
 
-        override fun build() = DoubleChromosome(size, range)
+        override fun make() = DoubleChromosome(size, range)
 
         override fun toString(): String {
             return "DoubleChromosome.Builder { " +

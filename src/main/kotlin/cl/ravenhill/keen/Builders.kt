@@ -8,9 +8,8 @@
 
 package cl.ravenhill.keen
 
-import cl.ravenhill.keen.core.Engine
-import cl.ravenhill.keen.core.Genotype
-import kotlin.reflect.KFunction
+import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.genetic.Genotype
 
 /**
  * Builder methods for Keen core classes.
@@ -22,12 +21,13 @@ object Builders {
      */
     fun <DNA> engine(
         fitnessFunction: (Genotype<DNA>) -> Double,
+        genotype: Genotype.Factory<DNA>,
         init: Engine.Builder<DNA>.() -> Unit
-    ) = Engine.Builder(fitnessFunction).apply(init).build()
+    ) = Engine.Builder(fitnessFunction, genotype).apply(init).build()
 
     /**
      * Creates a new [Genotype] with the given ``init`` block.
      */
-    fun <DNA> genotype(init: Genotype.Builder<DNA>.() -> Unit) =
-        Genotype.Builder<DNA>().apply(init)
+    fun <DNA> genotype(init: Genotype.Factory<DNA>.() -> Unit) =
+        Genotype.Factory<DNA>().apply(init)
 }

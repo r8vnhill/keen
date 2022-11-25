@@ -6,10 +6,10 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core.chromosomes
+package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.core.genes.CharGene
-import cl.ravenhill.keen.core.genes.Gene
+import cl.ravenhill.keen.genetic.genes.CharGene
+import cl.ravenhill.keen.genetic.genes.Gene
 
 
 class CharChromosome(override val genes: List<Gene<Char>>) : Chromosome<Char> {
@@ -21,8 +21,8 @@ class CharChromosome(override val genes: List<Gene<Char>>) : Chromosome<Char> {
         return genes.joinToString("")
     }
 
-    class Builder(private val size: Int) : Chromosome.Builder<Char> {
-        override fun build() = CharChromosome(size)
+    class Builder(private val size: Int) : Chromosome.Factory<Char> {
+        override fun make() = CharChromosome(size)
 
         override fun toString() = "CharChromosome.Builder { size: $size }"
     }

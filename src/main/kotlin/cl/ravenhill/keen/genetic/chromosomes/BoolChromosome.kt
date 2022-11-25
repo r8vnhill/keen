@@ -6,11 +6,13 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core.chromosomes
+package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.core.KeenCore
-import cl.ravenhill.keen.core.genes.BoolGene
-import cl.ravenhill.keen.core.genes.Gene
+import cl.ravenhill.keen.genetic.genes.BoolGene
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.math.BitArray
+import cl.ravenhill.keen.util.math.bitArrayOf
+import cl.ravenhill.keen.util.math.roundUpToMultipleOf
 import java.util.Objects
 
 /**
@@ -20,21 +22,14 @@ import java.util.Objects
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-class BoolChromosome private constructor(genes: List<BoolGene>) :
-        AbstractChromosome<Boolean>(genes) {
+class BoolChromosome private constructor(
+    genes: List<BoolGene>,
+    private val truesProbability: Double
+) : AbstractChromosome<Boolean>(genes) {
 
-    /**
-     * Creates a new chromosome of a given ``size`` with random genes following the given
-     * ``truesProbability`` (how often a gene is true).
-     */
-    constructor(size: Int, truesProbability: Double) : this(
-        List(size) {
-            if (KeenCore.generator.nextDouble() < truesProbability) {
-                BoolGene.True
-            } else {
-                BoolGene.False
-            }
-        }
+    constructor(genes: BitArray, truesProbability: Double) : this(
+        genes.toBitGeneList(),
+        truesProbability
     )
 
     /// {@inheritDoc}
@@ -48,7 +43,7 @@ class BoolChromosome private constructor(genes: List<BoolGene>) :
     /// {@inheritDoc}
     @Suppress("UNCHECKED_CAST")
     override fun copy(genes: List<Gene<Boolean>>) =
-        BoolChromosome(genes as List<BoolGene>)
+        BoolChromosome(genes as List<BoolGene>, truesProbability)
 
     /// {@inheritDoc}
     override fun equals(other: Any?) = when {
@@ -63,9 +58,12 @@ class BoolChromosome private constructor(genes: List<BoolGene>) :
     override fun hashCode() = Objects.hash(BoolChromosome::class, genes)
 
     /// {@inheritDoc}
-    override fun toString() =
-        genes.map { if (it == BoolGene.True) "1" else "0" }.chunked(8)
-            .joinToString("|") { it.joinToString("") }
+    override fun toString(): String {
+        var str = ""
+        genes.forEach { str += if (it == BoolGene.True) "1" else "0" }
+        return str.chunked(4).joinToString("|")
+            .padStart(genes.size.roundUpToMultipleOf(4), '0')
+    }
 
     /**
      * Builder for [BoolChromosome]s.
@@ -75,11 +73,11 @@ class BoolChromosome private constructor(genes: List<BoolGene>) :
      *
      * @constructor Creates a new builder for [BoolChromosome]s.
      */
-    class Builder(private val size: Int, private val truesProbability: Double) :
-        Chromosome.Builder<Boolean> {
+    class Factory(private val size: Int, private val truesProbability: Double) :
+            Chromosome.Factory<Boolean> {
 
         /// {@inheritDoc}
-        override fun build() = BoolChromosome(size, truesProbability)
+        override fun make() = BoolChromosome(bitArrayOf(size, truesProbability), truesProbability)
 
         /// {@inheritDoc}
         override fun toString() =

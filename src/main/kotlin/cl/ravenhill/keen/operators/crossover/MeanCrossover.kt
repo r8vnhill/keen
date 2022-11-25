@@ -8,9 +8,9 @@
 
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.keen.core.KeenCore
-import cl.ravenhill.keen.core.chromosomes.Chromosome
-import cl.ravenhill.keen.core.genes.Gene
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 
 
 /**
@@ -34,8 +34,8 @@ class MeanCrossover<DNA : Number>(probability: Double) : AbstractCrossover<DNA>(
 
     private fun crossover(genes: Pair<Gene<DNA>, Gene<DNA>>): Gene<DNA> {
         @Suppress("UNCHECKED_CAST")
-        return genes.first.copy(
-            if (KeenCore.generator.nextDouble() < probability) {
+        return genes.first.new(
+            if (Core.generator.nextDouble() < probability) {
                 (genes.first.dna.toDouble() + genes.second.dna.toDouble()) / 2
             } else {
                 genes.first.dna

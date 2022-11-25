@@ -6,10 +6,8 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core
+package cl.ravenhill.keen.genetic
 
-import java.util.Random
+import cl.ravenhill.keen.Verifiable
 
-object KeenCore {
-    var generator: Random = Random()
-}
+interface GeneticMaterial : Verifiable

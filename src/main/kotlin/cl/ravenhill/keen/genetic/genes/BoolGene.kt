@@ -6,9 +6,9 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core.genes
+package cl.ravenhill.keen.genetic.genes
 
-import cl.ravenhill.keen.core.KeenCore
+import cl.ravenhill.keen.Core
 
 /**
  * A boolean gene.
@@ -27,13 +27,13 @@ sealed class BoolGene : Gene<Boolean> {
 
     override fun toString() = "$dna"
 
-    override fun mutate() = if (KeenCore.generator.nextBoolean()) {
+    override fun mutate() = if (Core.generator.nextBoolean()) {
         True
     } else {
         False
     }
 
-    override fun copy(dna: Boolean) = if (dna) {
+    override fun new(dna: Boolean) = if (dna) {
         True
     } else {
         False

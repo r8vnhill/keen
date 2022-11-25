@@ -8,11 +8,17 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.core.Genotype
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.util.Optimizer
 
 
 abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) : Selector<DNA> {
+    private val reverter = if (sorted) {
+        { it: List<Double> -> it.reversed() }
+    } else {
+        { it: List<Double> -> it.sorted().reversed() }
+    }
+
     abstract fun probabilities(population: List<Genotype<DNA>>, count: Int): List<Double>
 
     override fun invoke(

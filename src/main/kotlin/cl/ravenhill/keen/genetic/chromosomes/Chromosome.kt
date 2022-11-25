@@ -6,10 +6,10 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core.chromosomes
+package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.core.GeneticMaterial
-import cl.ravenhill.keen.core.genes.Gene
+import cl.ravenhill.keen.genetic.GeneticMaterial
+import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
  * Sequence of genes.
@@ -46,11 +46,11 @@ interface Chromosome<DNA> : GeneticMaterial {
      *
      * @param DNA   The type of the genes' values.
      */
-    interface Builder<DNA> {
+    interface Factory<DNA> {
 
         /**
          * Builds a new chromosome.
          */
-        fun build(): Chromosome<DNA>
+        fun make(): Chromosome<DNA>
     }
 }

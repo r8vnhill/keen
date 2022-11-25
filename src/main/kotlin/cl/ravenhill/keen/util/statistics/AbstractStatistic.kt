@@ -8,16 +8,16 @@
 
 package cl.ravenhill.keen.util.statistics
 
-import cl.ravenhill.keen.core.Genotype
+import cl.ravenhill.keen.genetic.Genotype
 
 
-abstract class AbstractStatistic<DNA> {
-    var evolutionTime: Long = Long.MAX_VALUE
-    var generationTimes: MutableList<Long> = mutableListOf()
-    val alterTime: MutableList<Long> = mutableListOf()
-    var selectionTime: MutableList<Long> = mutableListOf()
-    lateinit var fittest: Genotype<DNA>
-    var bestFitness = Double.NaN
-    var steadyGenerations: Int = 0
-    var generation: Int = 0
+abstract class AbstractStatistic<DNA> : Statistic<DNA> {
+    override var evolutionTime: Long = Long.MAX_VALUE
+    override var generationTimes: MutableList<Long> = mutableListOf()
+    override val alterTime: MutableList<Long> = mutableListOf()
+    override var selectionTime: MutableList<Long> = mutableListOf()
+    override lateinit var fittest: Genotype<DNA>
+    override var bestFitness = Double.NaN
+    override var steadyGenerations: Int = 0
+    override var generation: Int = 0
 }

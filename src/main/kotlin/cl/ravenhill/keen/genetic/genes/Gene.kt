@@ -14,9 +14,9 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core.genes
+package cl.ravenhill.keen.genetic.genes
 
-import cl.ravenhill.keen.core.GeneticMaterial
+import cl.ravenhill.keen.genetic.GeneticMaterial
 
 /**
  * Atomic unit of a chromosome.
@@ -36,5 +36,5 @@ interface Gene<DNA> : GeneticMaterial {
     /**
      * Creates a new gene with the given value.
      */
-    fun copy(dna: DNA): Gene<DNA>
+    fun new(dna: DNA): Gene<DNA>
 }

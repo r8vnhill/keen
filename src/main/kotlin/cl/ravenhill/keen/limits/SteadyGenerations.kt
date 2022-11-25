@@ -8,7 +8,7 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.signals.LimitConfigurationException
+import cl.ravenhill.keen.LimitConfigurationException
 
 
 class SteadyGenerations(private val n: Int) : Match({ steadyGenerations >= n }) {

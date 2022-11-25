@@ -6,14 +6,17 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core
+package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.EngineConfigurationException
+import cl.ravenhill.keen.constraints.Constraint
+import cl.ravenhill.keen.constraints.RetryConstraint
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.operators.Alterer
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
-import cl.ravenhill.keen.signals.EngineConfigurationException
 import cl.ravenhill.keen.util.Maximizer
 import cl.ravenhill.keen.util.Optimizer
 import cl.ravenhill.keen.util.parallelMap
@@ -21,6 +24,7 @@ import cl.ravenhill.keen.util.statistics.Statistic
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
+import java.util.concurrent.ForkJoinPool.commonPool
 import kotlin.properties.Delegates
 
 /**
@@ -38,17 +42,19 @@ import kotlin.properties.Delegates
  * @property fittest            The fittest individual of the current population
  */
 class Engine<DNA> private constructor(
-    fitnessFunction: (Genotype<DNA>) -> Double,
-    private val genotype: Genotype.Builder<DNA>,
-    val populationSize: Int,
+    private val fitnessFunction: (Genotype<DNA>) -> Double,
+    private val genotype: Genotype.Factory<DNA>,
+    private val populationSize: Int,
     val selector: Selector<DNA>,
-    val alterers: List<Alterer<DNA>>,
+    private val alterers: List<Alterer<DNA>>,
     private val limits: List<Limit>,
     val survivorSelector: Selector<DNA>,
     private val survivors: Int,
     private val optimizer: Optimizer,
-    val statistics: List<Statistic<DNA>>
-) {
+    val statistics: List<Statistic<DNA>>,
+    val evaluator: Evaluator<DNA>,
+    val interceptor: EvolutionInterceptor<DNA>
+) : Evolver {
 
     init {
         // We need to set the genotype's fitness function to evolve the population
@@ -139,7 +145,7 @@ class Engine<DNA> private constructor(
         population = newPopulation + selector(population, n - survivors, optimizer)
         statistics.stream().parallel()
             .forEach { it.selectionTime.add(clock.millis() - initialTime) }
-        return population.shuffled().take(n)
+        return population
     }
 
 
@@ -156,7 +162,10 @@ class Engine<DNA> private constructor(
      * @property alterers       The alterers that will be used to alter the population.
      *                          Default value is an empty list.
      */
-    class Builder<DNA>(private val fitnessFunction: (Genotype<DNA>) -> Double) {
+    class Builder<DNA>(
+        private val fitnessFunction: (Genotype<DNA>) -> Double,
+        private val genotype: Genotype.Factory<DNA>
+    ) {
 
         // region : PROPERTIES  --------------------------------------------------------------------
         var limits: List<Limit> = listOf(GenerationCount(100))
@@ -178,9 +187,13 @@ class Engine<DNA> private constructor(
 
         var optimizer: Optimizer = Maximizer()
 
-        lateinit var genotype: Genotype.Builder<DNA>
-
         var statistics: List<Statistic<DNA>> = listOf(StatisticCollector())
+
+        var evaluator: Evaluator<DNA> = ConcurrentEvaluator(fitnessFunction, commonPool())
+
+        var constraint: Constraint<DNA> = RetryConstraint(genotype)
+
+        private val interceptor = EvolutionInterceptor.identity<DNA>()
         // endregion    ----------------------------------------------------------------------------
 
         fun build() = Engine(
@@ -193,7 +206,9 @@ class Engine<DNA> private constructor(
             survivorSelector,
             survivors,
             optimizer,
-            statistics
+            statistics,
+            evaluator,
+            interceptor
         )
     }
 
@@ -207,4 +222,13 @@ class Engine<DNA> private constructor(
                 "survivors: $survivors, " +
                 "survivorSelector: $survivorSelector " +
                 "}"
+
+    fun stream() = stream { EvolutionStart.empty() }
+
+    private fun stream(start: () -> EvolutionStart<DNA>) =
+        EvolutionStream.ofEvolver(this) { evolutionStart(start()) }
+
+    private fun evolutionStart(start: EvolutionStart<DNA>): EvolutionStart<DNA> {
+        TODO()
+    }
 }

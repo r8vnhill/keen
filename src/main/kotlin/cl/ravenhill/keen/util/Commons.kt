@@ -15,12 +15,6 @@ import org.apache.commons.lang3.RandomStringUtils
 import java.util.Random
 
 
-/**
- * Documentation
- */
-fun Random.nextChar() =
-    RandomStringUtils.random(1, 0, 0, true, true, null, this).first()
-
 suspend fun <A, B> Iterable<A>.parallelMap(f: suspend (A) -> B): List<B> = coroutineScope {
     map { async { f(it) } }.awaitAll()
 }

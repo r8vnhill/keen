@@ -8,7 +8,8 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.signals.LimitConfigurationException
+import cl.ravenhill.keen.LimitConfigurationException
+
 
 class GenerationCount(private val i: Int) : Match({ generation >= i }) {
     init {

@@ -8,7 +8,7 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.core.Genotype
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.util.Optimizer
 
 interface Selector<DNA> {

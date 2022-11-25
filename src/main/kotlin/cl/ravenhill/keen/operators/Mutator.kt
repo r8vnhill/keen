@@ -8,10 +8,10 @@
 
 package cl.ravenhill.keen.operators
 
-import cl.ravenhill.keen.core.Genotype
-import cl.ravenhill.keen.core.KeenCore
-import cl.ravenhill.keen.core.chromosomes.Chromosome
-import cl.ravenhill.keen.core.genes.Gene
+import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 
 
 class Mutator<DNA>(override val probability: Double) : Alterer<DNA> {
@@ -22,7 +22,7 @@ class Mutator<DNA>(override val probability: Double) : Alterer<DNA> {
                 val genes = mutableListOf<Gene<DNA>>()
                 chromosome.genes.forEach { gene ->
                     genes.add(
-                        if (KeenCore.generator.nextDouble() < probability) {
+                        if (Core.generator.nextDouble() < probability) {
                             gene.mutate()
                         } else {
                             gene

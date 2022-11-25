@@ -6,9 +6,9 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core.chromosomes
+package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.core.genes.Gene
+import cl.ravenhill.keen.genetic.genes.Gene
 
 
 /**

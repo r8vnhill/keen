@@ -8,8 +8,8 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.core.Genotype
-import cl.ravenhill.keen.core.KeenCore
+import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.Optimizer
 import kotlin.random.asKotlinRandom
 
@@ -21,9 +21,9 @@ class TournamentSelector<DNA>(private val i: Int) : Selector<DNA> {
     ): List<Genotype<DNA>> {
         val selection = mutableListOf<Genotype<DNA>>()
         for (i in 0 until count) {
-            var fittest = population.random(KeenCore.generator.asKotlinRandom())
+            var fittest = population.random(Core.generator.asKotlinRandom())
             for (j in 0 until i) {
-                val challenger = population.random(KeenCore.generator.asKotlinRandom())
+                val challenger = population.random(Core.generator.asKotlinRandom())
                 if (optimizer(challenger.fitness, fittest.fitness)) {
                     fittest = challenger
                 }

@@ -8,9 +8,9 @@
 
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.keen.core.Genotype
-import cl.ravenhill.keen.core.KeenCore
-import cl.ravenhill.keen.core.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.operators.Alterer
 import kotlin.random.asKotlinRandom
 
@@ -27,7 +27,7 @@ abstract class AbstractCrossover<DNA>(override val probability: Double) : Altere
 
     override fun invoke(population: List<Genotype<DNA>>): List<Genotype<DNA>> {
         return population.map {
-            val mate = population.random(KeenCore.generator.asKotlinRandom())
+            val mate = population.random(Core.generator.asKotlinRandom())
             crossover(it to mate)
         }
     }

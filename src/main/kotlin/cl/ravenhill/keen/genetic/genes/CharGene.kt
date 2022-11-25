@@ -6,9 +6,9 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core.genes
+package cl.ravenhill.keen.genetic.genes
 
-import cl.ravenhill.keen.core.KeenCore
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.nextChar
 
 
@@ -18,9 +18,9 @@ class CharGene private constructor(override val dna: Char) : Gene<Char> {
 
     override fun mutate() = create()
 
-    override fun copy(dna: Char) = CharGene(dna)
+    override fun new(dna: Char) = CharGene(dna)
 
     companion object {
-        fun create() = CharGene(KeenCore.generator.nextChar())
+        fun create() = CharGene(Core.generator.nextChar())
     }
 }

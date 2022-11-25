@@ -6,8 +6,10 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.signals
+package cl.ravenhill.keen
 
+import java.util.Random
 
-class LimitConfigurationException(lazyMessage: () -> String) :
-        KeenException("Genotype configuration error:", lazyMessage)
+object Core {
+    var generator: Random = Random()
+}

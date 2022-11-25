@@ -1,6 +1,7 @@
-package cl.ravenhill.keen.core
+package cl.ravenhill.keen.core.genes
 
-import cl.ravenhill.keen.core.genes.BoolGene
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.genes.BoolGene
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
@@ -11,7 +12,6 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.element
 import io.kotest.property.checkAll
 import java.util.Random
-import kotlin.random.asKotlinRandom
 
 
 class BoolGeneSpec : WordSpec({
@@ -40,10 +40,10 @@ class BoolGeneSpec : WordSpec({
         "return a random gene with a given seed" {
             checkAll<Long> { seed ->
                 val gene = BoolGene.True
-                KeenCore.generator = Random(seed).asKotlinRandom()
+                Core.generator = Random(seed)
                 val mutated = gene.mutate()
-                KeenCore.generator = Random(seed).asKotlinRandom()
-                mutated.toBool() shouldBe KeenCore.generator.nextBoolean()
+                Core.generator = Random(seed)
+                mutated.toBool() shouldBe Core.generator.nextBoolean()
             }
         }
     }

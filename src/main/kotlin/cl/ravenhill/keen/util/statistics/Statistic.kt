@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.util.statistics
 
-import cl.ravenhill.keen.core.Genotype
+import cl.ravenhill.keen.genetic.Genotype
 
 
 interface Statistic<T> {

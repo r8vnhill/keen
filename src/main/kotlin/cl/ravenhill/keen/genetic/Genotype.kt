@@ -6,10 +6,10 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.core
+package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.keen.core.chromosomes.Chromosome
-import cl.ravenhill.keen.signals.GenotypeConfigurationException
+import cl.ravenhill.keen.GenotypeConfigurationException
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 
 
 /**
@@ -41,17 +41,17 @@ class Genotype<DNA> private constructor(
      */
     fun copy(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes, fitnessFunction)
 
-    class Builder<DNA> {
+    class Factory<DNA> {
 
         lateinit var fitnessFunction: (Genotype<DNA>) -> Double
-        lateinit var chromosomes: List<Chromosome.Builder<DNA>>
+        lateinit var chromosomes: List<Chromosome.Factory<DNA>>
 
         fun build() = if (!this::chromosomes.isInitialized) {
             throw GenotypeConfigurationException { "Chromosomes must be initialized." }
         } else if (chromosomes.isEmpty()) {
             throw GenotypeConfigurationException { "Chromosomes must not be empty." }
         } else {
-            Genotype(chromosomes.map { it.build() }, fitnessFunction)
+            Genotype(chromosomes.map { it.make() }, fitnessFunction)
         }
 
         override fun toString() = "GenotypeBuilder { chromosomes: $chromosomes }"
