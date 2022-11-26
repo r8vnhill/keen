@@ -6,7 +6,7 @@ import java.util.function.Consumer
 
 class EvolutionSpliterator<DNA>(
     private val start: () -> EvolutionStart<DNA>,
-    private val evolver: Evolver,
+    private val evolver: Evolver<DNA>,
     estimate: Long = Long.MAX_VALUE
 ) : Spliterator<EvolutionResult<DNA>> {
 

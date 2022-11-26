@@ -15,7 +15,11 @@ class EvolutionInterceptor<DNA>(
     }
 }
 
-class EvolutionStart<T>(val population: List<Phenotype<T>>, val generation: Int) {
+class EvolutionStart<T>(
+    val population: List<Phenotype<T>>,
+    val generation: Int,
+    val isDirty: Boolean = false
+) {
 
     init {
         generation.validateAtLeast(0) { "Generation must be non-negative" }
@@ -39,10 +43,10 @@ class EvolutionStart<T>(val population: List<Phenotype<T>>, val generation: Int)
 //    companion object {
 ////        fun <DNA> toBestPhenotype(): Collector<EvolutionResult<DNA>, *, Phenotype<DNA>> {
 ////            return Collector.of(
-////                MinMax<EvolutionResult<DNA>>::of,
-////                MinMax<EvolutionResult<DNA>>::accept,
-////                MinMax<EvolutionResult<DNA>>::combine,
-////                Function<MinMax<EvolutionResult<DNA>>, Phenotype<DNA>?> { mm: MinMax<EvolutionResult<DNA>> ->
+////                cl.ravenhill.keen.util.math.MinMax<EvolutionResult<DNA>>::of,
+////                cl.ravenhill.keen.util.math.MinMax<EvolutionResult<DNA>>::accept,
+////                cl.ravenhill.keen.util.math.MinMax<EvolutionResult<DNA>>::combine,
+////                Function<cl.ravenhill.keen.util.math.MinMax<EvolutionResult<DNA>>, Phenotype<DNA>?> { mm: cl.ravenhill.keen.util.math.MinMax<EvolutionResult<DNA>> ->
 ////                    mm.max().bestPhenotype()
 ////                }
 ////            )

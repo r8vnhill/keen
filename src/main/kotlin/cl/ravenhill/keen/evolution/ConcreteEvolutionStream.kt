@@ -26,7 +26,7 @@ class ConcreteEvolutionStream<DNA>(
 ) : AbstractStreamProxy<EvolutionResult<DNA>>(StreamSupport.stream(spliterator, isParallel)),
         EvolutionStream<DNA> {
 
-    constructor(start: () -> EvolutionStart<DNA>, evolver: Evolver) : this(
+    constructor(start: () -> EvolutionStart<DNA>, evolver: Evolver<DNA>) : this(
         EvolutionSpliterator(
             start,
             evolver

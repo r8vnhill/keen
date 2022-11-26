@@ -56,8 +56,8 @@ class Engine<DNA> private constructor(
     private val optimizer: Optimizer,
     val statistics: List<Statistic<DNA>>,
     val evaluator: Evaluator<DNA>,
-    val interceptor: EvolutionInterceptor<DNA>
-) : Evolver {
+    private val interceptor: EvolutionInterceptor<DNA>
+) : Evolver<DNA> {
 
     init {
         // We need to set the genotype's fitness function to evolve the population
@@ -151,7 +151,23 @@ class Engine<DNA> private constructor(
         return population
     }
 
-    override fun <DNA> evolve(next: EvolutionStart<DNA>): EvolutionResult<DNA> {
+    override fun evolve(next: EvolutionStart<DNA>): EvolutionResult<DNA> {
+        val interceptedStart = interceptor.before(next)
+        val evolution = if (interceptedStart.population.isEmpty()) {
+            evolutionStart(interceptedStart)
+        } else {
+            interceptedStart
+        }
+        val evaluatedPopulation = if (evolution.isDirty) {
+            evaluate(evolution.population)
+        } else {
+            evolution.population
+        }
+        TODO("Not yet implemented")
+    }
+
+    private fun evaluate(population: List<Phenotype<DNA>>): List<Phenotype<DNA>> {
+        val evaluated = evaluator.invoke(population)
         TODO("Not yet implemented")
     }
 
