@@ -18,7 +18,7 @@ class EvolutionInterceptor<DNA>(
 class EvolutionStart<T>(
     val population: List<Phenotype<T>>,
     val generation: Int,
-    val isDirty: Boolean = false
+    val isDirty: Boolean = true
 ) {
 
     init {

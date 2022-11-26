@@ -2,6 +2,7 @@ package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.util.concurrent.Concurrency
 import java.util.concurrent.Executor
 import java.util.stream.Collectors
 
@@ -30,19 +31,36 @@ class ConcurrentEvaluator<DNA>(
     private val function: (Genotype<DNA>) -> Double,
     private val executor: Executor
 ) : Evaluator<DNA> {
-    override fun invoke(population: List<Phenotype<DNA>>): List<Phenotype<DNA>> {
-        val evaluate = population.stream()
+    override fun invoke(population: List<Phenotype<DNA>>): List<Phenotype<DNA>> =
+        population.stream()
             .filter { it.isNotEvaluated() }
             .map { PhenotypeFitness(it, function) }
             .collect(Collectors.toList())
-        TODO("Not yet implemented")
-    }
+            .let { notEvaluated ->
+                if (notEvaluated.isNotEmpty()) {
+                    Concurrency.with(executor).use { c -> c.execute(notEvaluated) }
+                    if (notEvaluated.size == population.size) {
+                        notEvaluated.map { it.phenotype }
+                    } else {
+                        population.stream()
+                            .filter { it.isEvaluated() }
+                            .collect(Collectors.toList()).apply {
+                                addAll(notEvaluated.map { it.phenotype })
+                            }
+                    }
+                } else {
+                    population
+                }
+            }
 
     private class PhenotypeFitness<DNA>(
-        private val phenotype: Phenotype<DNA>,
+        phenotype: Phenotype<DNA>,
         private val function: (Genotype<DNA>) -> Double
     ) : Runnable {
         private var fitness = Double.NaN
+        val backingPhenotype = phenotype
+        val phenotype: Phenotype<DNA>
+            get() = backingPhenotype.withFitness(fitness)
 
         override fun run() {
             fitness = function(phenotype.genotype)

@@ -31,6 +31,7 @@ fun main() {
     }) {
         populationSize = 500
         survivors = (populationSize * 0.2).toInt()
+        selector = RouletteWheelSelector()
         survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))

@@ -39,6 +39,7 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
                 }
             }
         }
+        // TODO: I should use the optimizer here :thinking:
         return if (sorted) selected.sortedByDescending { it.fitness } else selected
     }
 }

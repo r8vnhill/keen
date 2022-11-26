@@ -23,8 +23,10 @@ import cl.ravenhill.keen.util.optimizer.Optimizer
 import cl.ravenhill.keen.util.parallelMap
 import cl.ravenhill.keen.util.statistics.Statistic
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.validatePredicate
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
+import java.util.concurrent.CompletableFuture.supplyAsync
 import java.util.concurrent.ForkJoinPool.commonPool
 import java.util.stream.Collectors
 import java.util.stream.Stream
@@ -48,7 +50,9 @@ class Engine<DNA> private constructor(
     private val fitnessFunction: (Genotype<DNA>) -> Double,
     private val genotype: Genotype.Factory<DNA>,
     private val populationSize: Int,
+    private val offspringFraction: Double,
     val selector: Selector<DNA>,
+    private val offspringSelector: Selector<DNA>,
     private val alterers: List<Alterer<DNA>>,
     private val limits: List<Limit>,
     val survivorSelector: Selector<DNA>,
@@ -153,23 +157,44 @@ class Engine<DNA> private constructor(
 
     override fun evolve(next: EvolutionStart<DNA>): EvolutionResult<DNA> {
         val interceptedStart = interceptor.before(next)
+
         val evolution = if (interceptedStart.population.isEmpty()) {
             evolutionStart(interceptedStart)
         } else {
             interceptedStart
         }
+
         val evaluatedPopulation = if (evolution.isDirty) {
             evaluate(evolution.population)
         } else {
             evolution.population
         }
+
+        val offspring = supplyAsync {
+            selectOffspring(population)
+        }
         TODO("Not yet implemented")
     }
 
-    private fun evaluate(population: List<Phenotype<DNA>>): List<Phenotype<DNA>> {
-        val evaluated = evaluator.invoke(population)
-        TODO("Not yet implemented")
-    }
+    private fun selectOffspring(population: List<Genotype<DNA>>) =
+        (offspringFraction * populationSize).toInt().let {
+            if (it > 0) {
+                offspringSelector(population, it, optimizer)
+            } else {
+                emptyList()
+            }
+        }
+
+    private fun evaluate(population: List<Phenotype<DNA>>) =
+        evaluator(population).also {
+            validatePredicate({ populationSize == it.size }) {
+                "Evaluated population size [${it.size}] doesn't match expected population " +
+                        "size [$populationSize]"
+            }
+            validatePredicate({ it.all { phenotype -> phenotype.isEvaluated() } }) {
+                "There are unevaluated phenotypes"
+            }
+        }
 
     fun stream() = stream { EvolutionStart.empty() }
 
@@ -227,8 +252,14 @@ class Engine<DNA> private constructor(
         var alterers: List<Alterer<DNA>> = emptyList()
 
         var selector: Selector<DNA> = TournamentSelector(3)
+            set(value) {
+                offspringSelector = value
+                field = value
+            }
 
         var survivorSelector: Selector<DNA> = selector
+
+        var offspringSelector = selector
 
         var survivors: Int = 20
 
@@ -238,6 +269,8 @@ class Engine<DNA> private constructor(
             } else {
                 throw EngineConfigurationException { "Population size must be positive" }
             }
+
+        var offspringFraction = 0.6
 
         var optimizer: Optimizer = Maximizer()
 
@@ -251,18 +284,20 @@ class Engine<DNA> private constructor(
         // endregion    ----------------------------------------------------------------------------
 
         fun build() = Engine(
-            fitnessFunction,
-            genotype,
-            populationSize,
-            selector,
-            alterers,
-            limits,
-            survivorSelector,
-            survivors,
-            optimizer,
-            statistics,
-            evaluator,
-            interceptor
+            fitnessFunction = fitnessFunction,
+            genotype = genotype,
+            populationSize = populationSize,
+            offspringFraction = offspringFraction,
+            selector = selector,
+            alterers = alterers,
+            limits = limits,
+            survivorSelector = survivorSelector,
+            survivors = survivors,
+            optimizer = optimizer,
+            statistics = statistics,
+            evaluator = evaluator,
+            interceptor = interceptor,
+            offspringSelector = offspringSelector
         )
     }
 

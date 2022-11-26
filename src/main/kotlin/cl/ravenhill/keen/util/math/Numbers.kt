@@ -7,3 +7,5 @@ fun Int.roundUpToMultipleOf(i: Int): Int {
     if (remainder == 0) return this
     return this + i - remainder
 }
+
+fun Double.isNotNan() = !this.isNaN()
