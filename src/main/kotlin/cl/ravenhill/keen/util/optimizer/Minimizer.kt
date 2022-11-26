@@ -6,8 +6,15 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.genetic
+package cl.ravenhill.keen.util.optimizer
 
-import cl.ravenhill.keen.internals.Verifiable
 
-interface GeneticMaterial : Verifiable
+/**
+ * [Optimizer] that prioritizes the minimum of two values.
+ */
+class Minimizer : Optimizer {
+
+    override fun invoke(a: Double, b: Double) = a < b
+
+    override fun toString() = "Minimizer"
+}

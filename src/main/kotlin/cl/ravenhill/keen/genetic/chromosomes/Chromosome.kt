@@ -52,5 +52,6 @@ interface Chromosome<DNA> : GeneticMaterial {
          * Builds a new chromosome.
          */
         fun make(): Chromosome<DNA>
+
     }
 }

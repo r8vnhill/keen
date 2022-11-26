@@ -1,11 +1,3 @@
-/*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
 package cl.ravenhill
 
 import cl.ravenhill.keen.Builders.engine
@@ -14,7 +6,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.DoubleChromosome
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.MeanCrossover
-import cl.ravenhill.keen.util.Minimizer
+import cl.ravenhill.keen.util.optimizer.Minimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.cos

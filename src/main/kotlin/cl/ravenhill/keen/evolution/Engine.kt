@@ -12,19 +12,22 @@ import cl.ravenhill.keen.EngineConfigurationException
 import cl.ravenhill.keen.constraints.Constraint
 import cl.ravenhill.keen.constraints.RetryConstraint
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.operators.Alterer
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
-import cl.ravenhill.keen.util.Maximizer
-import cl.ravenhill.keen.util.Optimizer
+import cl.ravenhill.keen.util.optimizer.Maximizer
+import cl.ravenhill.keen.util.optimizer.Optimizer
 import cl.ravenhill.keen.util.parallelMap
 import cl.ravenhill.keen.util.statistics.Statistic
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
 import java.util.concurrent.ForkJoinPool.commonPool
+import java.util.stream.Collectors
+import java.util.stream.Stream
 import kotlin.properties.Delegates
 
 /**
@@ -134,7 +137,7 @@ class Engine<DNA> private constructor(
     internal fun createPopulation() {
         runBlocking {
             population =
-                (0 until populationSize).parallelMap { genotype.build() }
+                (0 until populationSize).parallelMap { genotype.make() }
         }
         bestFitness = fittest.fitness
     }
@@ -148,6 +151,41 @@ class Engine<DNA> private constructor(
         return population
     }
 
+    override fun <DNA> evolve(next: EvolutionStart<DNA>): EvolutionResult<DNA> {
+        TODO("Not yet implemented")
+    }
+
+    fun stream() = stream { EvolutionStart.empty() }
+
+    private fun stream(start: () -> EvolutionStart<DNA>) =
+        EvolutionStream.ofEvolver(this) { evolutionStart(start()) }
+
+    private fun evolutionStart(start: EvolutionStart<DNA>): EvolutionStart<DNA> {
+        val population = start.population
+        val generation = start.generation
+
+        val stream = Stream.concat(
+            population.stream(),
+            Stream.generate { genotype.make() }
+                .map { Phenotype(it, generation) })
+
+        return EvolutionStart(
+            stream.limit(populationSize.toLong())
+                .collect(Collectors.toList()),
+            generation
+        )
+    }
+
+    override fun toString() =
+        "Engine { " +
+                "populationSize: $populationSize, " +
+                "genotype: $genotype, " +
+                "selector: $selector, " +
+                "alterers: $alterers, " +
+                "optimizer: $optimizer, " +
+                "survivors: $survivors, " +
+                "survivorSelector: $survivorSelector " +
+                "}"
 
     /**
      * Engine builder.
@@ -212,23 +250,4 @@ class Engine<DNA> private constructor(
         )
     }
 
-    override fun toString() =
-        "Engine { " +
-                "populationSize: $populationSize, " +
-                "genotype: $genotype, " +
-                "selector: $selector, " +
-                "alterers: $alterers, " +
-                "optimizer: $optimizer, " +
-                "survivors: $survivors, " +
-                "survivorSelector: $survivorSelector " +
-                "}"
-
-    fun stream() = stream { EvolutionStart.empty() }
-
-    private fun stream(start: () -> EvolutionStart<DNA>) =
-        EvolutionStream.ofEvolver(this) { evolutionStart(start()) }
-
-    private fun evolutionStart(start: EvolutionStart<DNA>): EvolutionStart<DNA> {
-        TODO()
-    }
 }

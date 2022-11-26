@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.util.Optimizer
+import cl.ravenhill.keen.util.optimizer.Optimizer
 
 interface Selector<DNA> {
     operator fun invoke(

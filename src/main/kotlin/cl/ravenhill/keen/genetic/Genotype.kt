@@ -46,7 +46,7 @@ class Genotype<DNA> private constructor(
         lateinit var fitnessFunction: (Genotype<DNA>) -> Double
         lateinit var chromosomes: List<Chromosome.Factory<DNA>>
 
-        fun build() = if (!this::chromosomes.isInitialized) {
+        fun make() = if (!this::chromosomes.isInitialized) {
             throw GenotypeConfigurationException { "Chromosomes must be initialized." }
         } else if (chromosomes.isEmpty()) {
             throw GenotypeConfigurationException { "Chromosomes must not be empty." }

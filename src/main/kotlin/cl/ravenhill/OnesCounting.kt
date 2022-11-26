@@ -36,7 +36,9 @@ fun main() {
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
         statistics = listOf(StatisticPrinter(10), StatisticCollector())
     }
-    val stream = engine.stream().limit(100).collect(EvolutionResult.toBestPhenotype())
+    val stream = engine.stream()
+        .limit(100)
+        .collect(EvolutionResult.toBestPhenotype())
     engine.evolve()
     engine.statistics.forEach {
         println(it)

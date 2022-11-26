@@ -6,8 +6,8 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.genetic
+package cl.ravenhill.keen.exceptions
 
-import cl.ravenhill.keen.internals.Verifiable
 
-interface GeneticMaterial : Verifiable
+open class KeenException(prefix: String, lazyMessage: () -> String) :
+        Exception("$prefix ${lazyMessage()}")

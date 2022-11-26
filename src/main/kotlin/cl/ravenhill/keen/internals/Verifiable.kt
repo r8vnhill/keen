@@ -6,15 +6,15 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.util
-
+package cl.ravenhill.keen.internals
 
 /**
- * [Optimizer] that prioritizes the minimum of two values.
+ * A verifiable object.
  */
-class Minimizer : Optimizer {
+interface Verifiable {
 
-    override fun invoke(a: Double, b: Double) = a < b
-
-    override fun toString() = "Minimizer"
+    /**
+     * Verifies the object's integrity (validity).
+     */
+    fun verify() = true
 }

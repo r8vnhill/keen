@@ -6,8 +6,10 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.genetic
+package cl.ravenhill.keen.exceptions.config
 
-import cl.ravenhill.keen.internals.Verifiable
+import cl.ravenhill.keen.exceptions.KeenException
 
-interface GeneticMaterial : Verifiable
+
+class LimitConfigurationException(lazyMessage: () -> String) :
+        KeenException("Genotype configuration error:", lazyMessage)

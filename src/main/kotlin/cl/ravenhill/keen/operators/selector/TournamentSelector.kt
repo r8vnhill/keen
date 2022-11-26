@@ -10,7 +10,7 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.util.Optimizer
+import cl.ravenhill.keen.util.optimizer.Optimizer
 import kotlin.random.asKotlinRandom
 
 class TournamentSelector<DNA>(private val i: Int) : Selector<DNA> {

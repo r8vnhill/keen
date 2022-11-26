@@ -6,7 +6,7 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.util
+package cl.ravenhill.keen.util.optimizer
 
 /**
  * Generic optimization strategy to determine which of two values is better.

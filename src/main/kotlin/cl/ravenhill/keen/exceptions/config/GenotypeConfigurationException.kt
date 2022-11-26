@@ -6,15 +6,10 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen
+package cl.ravenhill.keen.exceptions.config
 
-/**
- * A verifiable object.
- */
-interface Verifiable {
+import cl.ravenhill.keen.exceptions.KeenException
 
-    /**
-     * Verifies the object's integrity (validity).
-     */
-    fun verify() = true
-}
+
+class GenotypeConfigurationException(lazyMessage: () -> String) :
+        KeenException("Genotype configuration error: ", lazyMessage)
