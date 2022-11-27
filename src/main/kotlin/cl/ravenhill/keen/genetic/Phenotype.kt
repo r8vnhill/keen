@@ -6,7 +6,7 @@ import cl.ravenhill.keen.util.math.isNotNan
 class Phenotype<DNA>(
     val genotype: Genotype<DNA>,
     private val generation: Int,
-    private val fitness: Double = Double.NaN
+    val fitness: Double = Double.NaN
 ) : GeneticMaterial {
 
     override fun verify(): Boolean = TODO()

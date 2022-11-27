@@ -8,20 +8,18 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.util.parallelMap
-import kotlinx.coroutines.runBlocking
+import cl.ravenhill.keen.genetic.Phenotype
+
+private val <DNA> List<Phenotype<DNA>>.fitness: List<Double>
+    get() = this.map { it.fitness }
 
 class RouletteWheelSelector<DNA>(
     sorted: Boolean = false
 ) : AbstractProbabilitySelector<DNA>(sorted) {
 
-    override fun probabilities(population: List<Genotype<DNA>>, count: Int): List<Double> {
-        var fitness: List<Double>
-        runBlocking {
-            val rawFitness = population.parallelMap { it.fitness }
-            fitness = rawFitness.parallelMap { (it - rawFitness.min()) / rawFitness.sum() }
-        }
+    override fun probabilities(population: List<Phenotype<DNA>>, count: Int): List<Double> {
+        val fitness = population.fitness
+        TODO("Complete implementation")
         return fitness
     }
 

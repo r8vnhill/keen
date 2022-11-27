@@ -8,13 +8,13 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.Optimizer
 
 interface Selector<DNA> {
     operator fun invoke(
-        population: List<Genotype<DNA>>,
+        population: List<Phenotype<DNA>>,
         count: Int,
         optimizer: Optimizer
-    ): List<Genotype<DNA>>
+    ): List<Phenotype<DNA>>
 }

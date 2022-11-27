@@ -27,6 +27,7 @@ import cl.ravenhill.keen.util.validatePredicate
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
 import java.util.concurrent.CompletableFuture.supplyAsync
+import java.util.concurrent.Executor
 import java.util.concurrent.ForkJoinPool.commonPool
 import java.util.stream.Collectors
 import java.util.stream.Stream
@@ -56,9 +57,10 @@ class Engine<DNA> private constructor(
     private val alterers: List<Alterer<DNA>>,
     private val limits: List<Limit>,
     val survivorSelector: Selector<DNA>,
-    private val survivors: Int,
+    private val numberOfSurvivors: Int,
     private val optimizer: Optimizer,
     val statistics: List<Statistic<DNA>>,
+    private val executor: Executor,
     val evaluator: Evaluator<DNA>,
     private val interceptor: EvolutionInterceptor<DNA>
 ) : Evolver<DNA> {
@@ -108,34 +110,35 @@ class Engine<DNA> private constructor(
     // endregion    --------------------------------------------------------------------------------
 
     fun evolve() {
-        val evolutionStartTime = clock.millis()
-        createPopulation()
-        while (limits.none { it(this) }) { // While none of the limits are met
-            val initialTime = clock.millis()
-            population = select(populationSize)     // Select the population
-            population = alter(population)          // Alter the population
-            generation++                            // Increment the generation
-            bestFitness = fittest.fitness           // Update the best fitness
-            statistics.stream().parallel().forEach {
-                it.generationTimes.add(clock.millis() - initialTime)
-            }
-        }
-        statistics.stream().parallel()
-            .forEach { it.evolutionTime = clock.millis() - evolutionStartTime }
+//        val evolutionStartTime = clock.millis()
+//        createPopulation()
+//        while (limits.none { it(this) }) { // While none of the limits are met
+//            val initialTime = clock.millis()
+//            population = select(populationSize)     // Select the population
+//            population = alter(population)          // Alter the population
+//            generation++                            // Increment the generation
+//            bestFitness = fittest.fitness           // Update the best fitness
+//            statistics.stream().parallel().forEach {
+//                it.generationTimes.add(clock.millis() - initialTime)
+//            }
+//        }
+//        statistics.stream().parallel()
+//            .forEach { it.evolutionTime = clock.millis() - evolutionStartTime }
     }
 
-    private fun alter(population: List<Genotype<DNA>>): List<Genotype<DNA>> {
-        val initialTime = clock.millis()
-        var alteredPopulation = population.toMutableList()
-        alterers.forEach { alterer ->
-            alteredPopulation = alterer(alteredPopulation).filter { it.verify() }.toMutableList()
-        }
-        if (alteredPopulation.size != populationSize) {
-            alteredPopulation.addAll(population.take(populationSize - alteredPopulation.size))
-        }
-        statistics.stream().parallel()
-            .forEach { it.alterTime.add(clock.millis() - initialTime) }
-        return alteredPopulation
+    private fun alter(population: List<Phenotype<DNA>>): List<Genotype<DNA>> {
+        TODO()
+//        val initialTime = clock.millis()
+//        var alteredPopulation = population.toMutableList()
+//        alterers.forEach { alterer ->
+//            alteredPopulation = alterer(alteredPopulation).filter { it.verify() }.toMutableList()
+//        }
+//        if (alteredPopulation.size != populationSize) {
+//            alteredPopulation.addAll(population.take(populationSize - alteredPopulation.size))
+//        }
+//        statistics.stream().parallel()
+//            .forEach { it.alterTime.add(clock.millis() - initialTime) }
+//        return alteredPopulation
     }
 
     internal fun createPopulation() {
@@ -147,12 +150,13 @@ class Engine<DNA> private constructor(
     }
 
     internal fun select(n: Int): List<Genotype<DNA>> {
-        val initialTime = clock.millis()
-        val newPopulation = survivorSelector(population, survivors, optimizer)
-        population = newPopulation + selector(population, n - survivors, optimizer)
-        statistics.stream().parallel()
-            .forEach { it.selectionTime.add(clock.millis() - initialTime) }
-        return population
+//        val initialTime = clock.millis()
+//        val newPopulation = survivorSelector(population, numberOfSurvivors, optimizer)
+//        population = newPopulation + selector(population, n - numberOfSurvivors, optimizer)
+//        statistics.stream().parallel()
+//            .forEach { it.selectionTime.add(clock.millis() - initialTime) }
+//        return population
+        TODO("Remove")
     }
 
     override fun evolve(next: EvolutionStart<DNA>): EvolutionResult<DNA> {
@@ -170,13 +174,30 @@ class Engine<DNA> private constructor(
             evolution.population
         }
 
-        val offspring = supplyAsync {
-            selectOffspring(population)
-        }
-        TODO("Not yet implemented")
+        val offspring = supplyAsync({
+            selectOffspring(evaluatedPopulation)
+        }, executor)
+
+
+        val survivors = supplyAsync({
+            selectSurvivors(evaluatedPopulation)
+        }, executor)
+
+        val alteredOffspring = offspring.thenApplyAsync({
+            alter(it)
+        }, executor)
+        // TODO: Filter population
+
+        val nextPopulation = survivors.thenCombineAsync(
+            offspring,
+            { s, o -> s + o },
+            executor
+        )
+        val pop = nextPopulation.join()
+        TODO("Select survivors")
     }
 
-    private fun selectOffspring(population: List<Genotype<DNA>>) =
+    private fun selectOffspring(population: List<Phenotype<DNA>>) =
         (offspringFraction * populationSize).toInt().let {
             if (it > 0) {
                 offspringSelector(population, it, optimizer)
@@ -184,6 +205,9 @@ class Engine<DNA> private constructor(
                 emptyList()
             }
         }
+
+    private fun selectSurvivors(population: List<Phenotype<DNA>>) =
+        survivorSelector(population, numberOfSurvivors, optimizer)
 
     private fun evaluate(population: List<Phenotype<DNA>>) =
         evaluator(population).also {
@@ -224,7 +248,7 @@ class Engine<DNA> private constructor(
                 "selector: $selector, " +
                 "alterers: $alterers, " +
                 "optimizer: $optimizer, " +
-                "survivors: $survivors, " +
+                "survivors: $numberOfSurvivors, " +
                 "survivorSelector: $survivorSelector " +
                 "}"
 
@@ -276,7 +300,9 @@ class Engine<DNA> private constructor(
 
         var statistics: List<Statistic<DNA>> = listOf(StatisticCollector())
 
-        var evaluator: Evaluator<DNA> = ConcurrentEvaluator(fitnessFunction, commonPool())
+        var executor: Executor = commonPool()
+
+        var evaluator: Evaluator<DNA> = ConcurrentEvaluator(fitnessFunction, executor)
 
         var constraint: Constraint<DNA> = RetryConstraint(genotype)
 
@@ -292,12 +318,13 @@ class Engine<DNA> private constructor(
             alterers = alterers,
             limits = limits,
             survivorSelector = survivorSelector,
-            survivors = survivors,
+            numberOfSurvivors = survivors,
             optimizer = optimizer,
             statistics = statistics,
             evaluator = evaluator,
             interceptor = interceptor,
-            offspringSelector = offspringSelector
+            offspringSelector = offspringSelector,
+            executor = executor
         )
     }
 
