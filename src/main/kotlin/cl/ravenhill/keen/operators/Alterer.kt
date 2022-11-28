@@ -8,13 +8,14 @@
 
 package cl.ravenhill.keen.operators
 
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.util.validateProbability
 
 interface Alterer<DNA> {
     val probability: Double
 
-    operator fun invoke(population: List<Genotype<DNA>>): List<Genotype<DNA>>
+    operator fun invoke(population: Population<DNA>): Population<DNA>
 }
 
 abstract class AbstractAlterer<DNA>(final override val probability: Double) : Alterer<DNA> {

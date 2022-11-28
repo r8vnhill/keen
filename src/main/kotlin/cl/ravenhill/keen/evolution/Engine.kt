@@ -9,6 +9,7 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.EngineConfigurationException
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.constraints.Constraint
 import cl.ravenhill.keen.constraints.RetryConstraint
 import cl.ravenhill.keen.genetic.Genotype
@@ -16,6 +17,7 @@ import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.operators.Alterer
+import cl.ravenhill.keen.operators.CompositeAlterer
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
@@ -24,6 +26,7 @@ import cl.ravenhill.keen.util.statistics.Statistic
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.validatePredicate
 import java.time.Clock
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.supplyAsync
 import java.util.concurrent.Executor
 import java.util.concurrent.ForkJoinPool.commonPool
@@ -31,7 +34,6 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 import kotlin.properties.Delegates
 
-typealias Population<DNA> = List<Phenotype<DNA>>
 
 /**
  * Fundamental class of the library. It is the engine that will run the evolution process.
@@ -42,7 +44,6 @@ typealias Population<DNA> = List<Phenotype<DNA>>
  * @property selector           The selector that will be used to select the individuals
  * @property alterers           The alterers that will be used to alter the population
  * @property generation         The current generation
- * @property population         The current population
  * @property limits             The limits that will be used to stop the evolution
  * @property steadyGenerations  The number of generations that the fitness has not changed
  * @property fittest            The fittest individual of the current population
@@ -54,7 +55,7 @@ class Engine<DNA> private constructor(
     private val offspringFraction: Double,
     val selector: Selector<DNA>,
     private val offspringSelector: Selector<DNA>,
-    private val alterers: List<Alterer<DNA>>,
+    private val alterer: Alterer<DNA>,
     private val limits: List<Limit>,
     val survivorSelector: Selector<DNA>,
     private val numberOfSurvivors: Int,
@@ -79,9 +80,6 @@ class Engine<DNA> private constructor(
     var steadyGenerations by Delegates.observable(0) { _, _, new ->
         statistics.stream().parallel().forEach { it.steadyGenerations = new }
     }
-        private set
-
-    var population: List<Genotype<DNA>> = emptyList()
         private set
 
 //    val fittest: Genotype<DNA>
@@ -164,14 +162,8 @@ class Engine<DNA> private constructor(
         val evolution = evolutionStart(interceptedStart)
         val evaluatedPopulation = evaluate(evolution)
         val offspring = selectOffspring(evaluatedPopulation)
-
-        val survivors = supplyAsync({
-            selectSurvivors(evaluatedPopulation)
-        }, executor)
-
-        val alteredOffspring = offspring.thenApplyAsync({
-            alter(it)
-        }, executor)
+        val survivors = selectSurvivors(evaluatedPopulation)
+        val alteredOffspring = alter(offspring, evolution)
         // TODO: Filter population
 
         val nextPopulation = survivors.thenCombineAsync(
@@ -182,9 +174,6 @@ class Engine<DNA> private constructor(
         val pop = nextPopulation.join()
         TODO("Select survivors")
     }
-
-    private fun selectSurvivors(population: List<Phenotype<DNA>>) =
-        survivorSelector(population, ((1 - offspringFraction) * populationSize).toInt(), optimizer)
 
     private fun evolutionStart(start: EvolutionStart<DNA>) = if (start.population.isEmpty()) {
         val generation = start.generation
@@ -224,10 +213,25 @@ class Engine<DNA> private constructor(
             )
         }
 
+    private fun selectSurvivors(population: List<Phenotype<DNA>>) =
+        asyncSelect {
+            survivorSelector(
+                population,
+                ((1 - offspringFraction) * populationSize).toInt(),
+                optimizer
+            )
+        }
+
     private fun asyncSelect(select: () -> Population<DNA>) = supplyAsync({
         select()
     }, executor)
 
+    private fun alter(
+        population: CompletableFuture<Population<DNA>>,
+        evolution: EvolutionStart<DNA>
+    ) = population.thenApplyAsync({
+        alterer(it)
+    }, executor)
 
     fun stream() = stream { EvolutionStart.empty() }
 
@@ -239,7 +243,7 @@ class Engine<DNA> private constructor(
                 "populationSize: $populationSize, " +
                 "genotype: $genotype, " +
                 "selector: $selector, " +
-                "alterers: $alterers, " +
+                "alterer: $alterer, " +
                 "optimizer: $optimizer, " +
                 "survivors: $numberOfSurvivors, " +
                 "survivorSelector: $survivorSelector " +
@@ -267,6 +271,9 @@ class Engine<DNA> private constructor(
         var limits: List<Limit> = listOf(GenerationCount(100))
 
         var alterers: List<Alterer<DNA>> = emptyList()
+
+        private val alterer: Alterer<DNA>
+            get() = CompositeAlterer(alterers)
 
         var selector: Selector<DNA> = TournamentSelector(3)
             set(value) {
@@ -308,7 +315,7 @@ class Engine<DNA> private constructor(
             populationSize = populationSize,
             offspringFraction = offspringFraction,
             selector = selector,
-            alterers = alterers,
+            alterer = alterer,
             limits = limits,
             survivorSelector = survivorSelector,
             numberOfSurvivors = survivors,

@@ -10,29 +10,14 @@ package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
 
 class Mutator<DNA>(override val probability: Double) : Alterer<DNA> {
-    override fun invoke(population: List<Genotype<DNA>>): List<Genotype<DNA>> {
-        return population.map { genotype ->
-            val chromosomes = mutableListOf<Chromosome<DNA>>()
-            genotype.chromosomes.forEach { chromosome ->
-                val genes = mutableListOf<Gene<DNA>>()
-                chromosome.genes.forEach { gene ->
-                    genes.add(
-                        if (Core.rng.nextDouble() < probability) {
-                            gene.mutate()
-                        } else {
-                            gene
-                        }
-                    )
-                }
-                chromosomes.add(chromosome.copy(genes))
-            }
-            genotype.copy(chromosomes)
-        }
+    override fun invoke(population: Population<DNA>): Population<DNA> {
+        TODO("Not yet implemented")
     }
 
     override fun toString() = "Mutator { " +

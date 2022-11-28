@@ -10,6 +10,7 @@ package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.operators.Alterer
 import kotlin.random.asKotlinRandom
@@ -25,11 +26,8 @@ import kotlin.random.asKotlinRandom
  */
 abstract class AbstractCrossover<DNA>(override val probability: Double) : Alterer<DNA> {
 
-    override fun invoke(population: List<Genotype<DNA>>): List<Genotype<DNA>> {
-        return population.map {
-            val mate = population.random(Core.rng.asKotlinRandom())
-            crossover(it to mate)
-        }
+    override fun invoke(population: Population<DNA>): Population<DNA> {
+        TODO("Not yet implemented")
     }
 
     /**
@@ -54,4 +52,5 @@ abstract class AbstractCrossover<DNA>(override val probability: Double) : Altere
      * @param mates The pair of chromosomes to crossover
      */
     protected abstract fun crossover(mates: Pair<Chromosome<DNA>, Chromosome<DNA>>): Chromosome<DNA>
+
 }

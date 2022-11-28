@@ -8,8 +8,11 @@
 
 package cl.ravenhill.keen
 
+import cl.ravenhill.keen.genetic.Phenotype
 import java.util.Random
 
 object Core {
     var rng: Random = Random()
 }
+
+typealias Population<DNA> = List<Phenotype<DNA>>
