@@ -29,7 +29,7 @@ class MeanCrossover<DNA : Number>(probability: Double) : AbstractCrossover<DNA>(
         for (i in mates.first.genes.indices) {
             crossover(mates.first.genes[i] to mates.second.genes[i]).let { genes.add(it) }
         }
-        return mates.first.copy(genes)
+        return mates.first.new(genes)
     }
 
     private fun crossover(genes: Pair<Gene<DNA>, Gene<DNA>>): Gene<DNA> {

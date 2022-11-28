@@ -37,6 +37,15 @@ fun Int.validateSize(
     }
 }
 
+fun Int.validateSize(
+    lazyMessage: () -> String,
+    strictlyPositive: Boolean = true
+) = if (strictlyPositive) {
+    validateAtLeast(1) { "Size must be strictly positive" }
+} else {
+    validateAtLeast(0) { "Size must be at least 0" }
+}
+
 fun <T : Comparable<T>> T.validateAtLeast(
     min: T,
     lazyMessage: () -> String = { "Value [$this] must be at least $min" }

@@ -13,7 +13,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 
 
 class CharChromosome(override val genes: List<Gene<Char>>) : Chromosome<Char> {
-    override fun copy(genes: List<Gene<Char>>) = CharChromosome(genes)
+    override fun new(genes: List<Gene<Char>>) = CharChromosome(genes)
 
     constructor(genes: Int) : this(List(genes) { CharGene.create() })
 

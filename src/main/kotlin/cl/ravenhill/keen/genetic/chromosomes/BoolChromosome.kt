@@ -42,7 +42,7 @@ class BoolChromosome private constructor(
 
     /// {@inheritDoc}
     @Suppress("UNCHECKED_CAST")
-    override fun copy(genes: List<Gene<Boolean>>) =
+    override fun new(genes: List<Gene<Boolean>>) =
         BoolChromosome(genes as List<BoolGene>, truesProbability)
 
     /// {@inheritDoc}

@@ -9,11 +9,10 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.operators.Alterer
-import kotlin.random.asKotlinRandom
+import cl.ravenhill.keen.operators.AltererResult
 
 
 /**
@@ -26,7 +25,7 @@ import kotlin.random.asKotlinRandom
  */
 abstract class AbstractCrossover<DNA>(override val probability: Double) : Alterer<DNA> {
 
-    override fun invoke(population: Population<DNA>): Population<DNA> {
+    override fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA> {
         TODO("Not yet implemented")
     }
 
@@ -43,7 +42,7 @@ abstract class AbstractCrossover<DNA>(override val probability: Double) : Altere
                 offspring.add(it)
             }
         }
-        return mates.first.copy(offspring)
+        return mates.first.new(offspring)
     }
 
     /**

@@ -167,7 +167,7 @@ class Engine<DNA> private constructor(
         // TODO: Filter population
 
         val nextPopulation = survivors.thenCombineAsync(
-            offspring,
+            alteredOffspring,
             { s, o -> s + o },
             executor
         )
@@ -230,7 +230,7 @@ class Engine<DNA> private constructor(
         population: CompletableFuture<Population<DNA>>,
         evolution: EvolutionStart<DNA>
     ) = population.thenApplyAsync({
-        alterer(it)
+        alterer(it, evolution.generation)
     }, executor)
 
     fun stream() = stream { EvolutionStart.empty() }

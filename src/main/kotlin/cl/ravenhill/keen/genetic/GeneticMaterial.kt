@@ -10,4 +10,6 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.internals.Verifiable
 
-interface GeneticMaterial : Verifiable
+interface GeneticMaterial : Verifiable {
+
+}

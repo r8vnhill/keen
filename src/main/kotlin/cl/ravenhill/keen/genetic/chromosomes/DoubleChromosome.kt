@@ -49,6 +49,6 @@ class DoubleChromosome private constructor(
     override fun verify() = genes.first().verify()
 
     @Suppress("UNCHECKED_CAST")
-    override fun copy(genes: List<Gene<Double>>) =
+    override fun new(genes: List<Gene<Double>>) =
         DoubleChromosome(genes as List<DoubleGene>)
 }

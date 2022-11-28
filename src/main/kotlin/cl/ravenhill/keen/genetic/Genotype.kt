@@ -39,7 +39,9 @@ class Genotype<DNA> private constructor(
     /**
      * Returns a new genotype with the given ``chromosomes``.
      */
-    fun copy(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes, fitnessFunction)
+    fun new(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes, fitnessFunction)
+
+    fun sequence() = chromosomes.asSequence()
 
     class Factory<DNA> {
 
