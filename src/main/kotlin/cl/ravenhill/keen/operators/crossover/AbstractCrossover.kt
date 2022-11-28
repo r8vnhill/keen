@@ -27,7 +27,7 @@ abstract class AbstractCrossover<DNA>(override val probability: Double) : Altere
 
     override fun invoke(population: List<Genotype<DNA>>): List<Genotype<DNA>> {
         return population.map {
-            val mate = population.random(Core.generator.asKotlinRandom())
+            val mate = population.random(Core.rng.asKotlinRandom())
             crossover(it to mate)
         }
     }

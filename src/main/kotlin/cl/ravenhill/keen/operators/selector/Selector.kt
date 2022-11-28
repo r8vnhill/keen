@@ -9,12 +9,32 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.util.optimizer.Optimizer
+import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.validateSize
 
 interface Selector<DNA> {
+
     operator fun invoke(
         population: List<Phenotype<DNA>>,
         count: Int,
-        optimizer: Optimizer
+        optimizer: PhenotypeOptimizer
     ): List<Phenotype<DNA>>
+}
+
+abstract class AbstractSelector<DNA> : Selector<DNA> {
+    final override operator fun invoke(
+        population: List<Phenotype<DNA>>,
+        count: Int,
+        optimizer: PhenotypeOptimizer
+    ): List<Phenotype<DNA>> {
+        count.validateSize(true to { "Selection count [$count] must be at least 0" })
+        return select(population, count, optimizer)
+    }
+
+    protected abstract fun select(
+        population: List<Phenotype<DNA>>,
+        count: Int,
+        optimizer: PhenotypeOptimizer
+    ): List<Phenotype<DNA>>
+
 }

@@ -8,13 +8,15 @@
 
 package cl.ravenhill.keen.util.optimizer
 
-/**
- * Generic optimization strategy to determine which of two values is better.
- */
-interface Optimizer {
+import cl.ravenhill.keen.genetic.Phenotype
 
-    /**
-     * Returns true if the first value is better than the second one.
-     */
-    operator fun invoke(a: Double, b: Double): Boolean
+
+/**
+ * [PhenotypeOptimizer] that prioritizes the maximum of two values.
+ */
+class FitnessMaximizer : PhenotypeOptimizer {
+
+    override fun compare(p1: Phenotype<*>, p2: Phenotype<*>) = p1.fitness compareTo p2.fitness
+
+    override fun toString() = "FitnessMaximizer"
 }

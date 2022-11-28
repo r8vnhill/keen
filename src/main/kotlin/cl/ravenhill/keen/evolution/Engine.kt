@@ -18,13 +18,11 @@ import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.operators.Alterer
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
-import cl.ravenhill.keen.util.optimizer.Maximizer
-import cl.ravenhill.keen.util.optimizer.Optimizer
-import cl.ravenhill.keen.util.parallelMap
+import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
+import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.statistics.Statistic
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.validatePredicate
-import kotlinx.coroutines.runBlocking
 import java.time.Clock
 import java.util.concurrent.CompletableFuture.supplyAsync
 import java.util.concurrent.Executor
@@ -32,6 +30,8 @@ import java.util.concurrent.ForkJoinPool.commonPool
 import java.util.stream.Collectors
 import java.util.stream.Stream
 import kotlin.properties.Delegates
+
+typealias Population<DNA> = List<Phenotype<DNA>>
 
 /**
  * Fundamental class of the library. It is the engine that will run the evolution process.
@@ -58,7 +58,7 @@ class Engine<DNA> private constructor(
     private val limits: List<Limit>,
     val survivorSelector: Selector<DNA>,
     private val numberOfSurvivors: Int,
-    private val optimizer: Optimizer,
+    private val optimizer: PhenotypeOptimizer,
     val statistics: List<Statistic<DNA>>,
     private val executor: Executor,
     val evaluator: Evaluator<DNA>,
@@ -84,18 +84,18 @@ class Engine<DNA> private constructor(
     var population: List<Genotype<DNA>> = emptyList()
         private set
 
-    val fittest: Genotype<DNA>
-        get() {
-            val fittest = population.reduce { acc, genotype ->
-                if (optimizer(
-                        genotype.fitness,
-                        acc.fitness
-                    )
-                ) genotype else acc
-            }
-            statistics.stream().parallel().forEach { it.fittest = fittest }
-            return fittest
-        }
+//    val fittest: Genotype<DNA>
+//        get() {
+//            val fittest = population.reduce { acc, genotype ->
+//                if (optimizer(
+//                        genotype.fitness,
+//                        acc.fitness
+//                    )
+//                ) genotype else acc
+//            }
+//            statistics.stream().parallel().forEach { it.fittest = fittest }
+//            return fittest
+//        }
 
     var bestFitness: Double by Delegates.observable(0.0) { _, old, new ->
         if (old == new) {
@@ -142,11 +142,11 @@ class Engine<DNA> private constructor(
     }
 
     internal fun createPopulation() {
-        runBlocking {
-            population =
-                (0 until populationSize).parallelMap { genotype.make() }
-        }
-        bestFitness = fittest.fitness
+//        runBlocking {
+//            population =
+//                (0 until populationSize).parallelMap { genotype.make() }
+//        }
+//        bestFitness = fittest.fitness
     }
 
     internal fun select(n: Int): List<Genotype<DNA>> {
@@ -161,23 +161,9 @@ class Engine<DNA> private constructor(
 
     override fun evolve(next: EvolutionStart<DNA>): EvolutionResult<DNA> {
         val interceptedStart = interceptor.before(next)
-
-        val evolution = if (interceptedStart.population.isEmpty()) {
-            evolutionStart(interceptedStart)
-        } else {
-            interceptedStart
-        }
-
-        val evaluatedPopulation = if (evolution.isDirty) {
-            evaluate(evolution.population)
-        } else {
-            evolution.population
-        }
-
-        val offspring = supplyAsync({
-            selectOffspring(evaluatedPopulation)
-        }, executor)
-
+        val evolution = evolutionStart(interceptedStart)
+        val evaluatedPopulation = evaluate(evolution)
+        val offspring = selectOffspring(evaluatedPopulation)
 
         val survivors = supplyAsync({
             selectSurvivors(evaluatedPopulation)
@@ -197,20 +183,26 @@ class Engine<DNA> private constructor(
         TODO("Select survivors")
     }
 
-    private fun selectOffspring(population: List<Phenotype<DNA>>) =
-        (offspringFraction * populationSize).toInt().let {
-            if (it > 0) {
-                offspringSelector(population, it, optimizer)
-            } else {
-                emptyList()
-            }
-        }
-
     private fun selectSurvivors(population: List<Phenotype<DNA>>) =
-        survivorSelector(population, numberOfSurvivors, optimizer)
+        survivorSelector(population, ((1 - offspringFraction) * populationSize).toInt(), optimizer)
 
-    private fun evaluate(population: List<Phenotype<DNA>>) =
-        evaluator(population).also {
+    private fun evolutionStart(start: EvolutionStart<DNA>) = if (start.population.isEmpty()) {
+        val generation = start.generation
+        val stream = Stream.concat(
+            start.population.stream(),
+            Stream.generate { genotype.make() }
+                .map { Phenotype(it, generation) })
+        EvolutionStart(
+            stream.limit(populationSize.toLong())
+                .collect(Collectors.toList()),
+            generation
+        )
+    } else {
+        start
+    }
+
+    private fun evaluate(evolution: EvolutionStart<DNA>) = if (evolution.isDirty) {
+        evaluator(evolution.population).also {
             validatePredicate({ populationSize == it.size }) {
                 "Evaluated population size [${it.size}] doesn't match expected population " +
                         "size [$populationSize]"
@@ -219,27 +211,28 @@ class Engine<DNA> private constructor(
                 "There are unevaluated phenotypes"
             }
         }
+    } else {
+        evolution.population
+    }
+
+    private fun selectOffspring(population: Population<DNA>) =
+        asyncSelect {
+            offspringSelector(
+                population,
+                (offspringFraction * populationSize).toInt(),
+                optimizer
+            )
+        }
+
+    private fun asyncSelect(select: () -> Population<DNA>) = supplyAsync({
+        select()
+    }, executor)
+
 
     fun stream() = stream { EvolutionStart.empty() }
 
     private fun stream(start: () -> EvolutionStart<DNA>) =
         EvolutionStream.ofEvolver(this) { evolutionStart(start()) }
-
-    private fun evolutionStart(start: EvolutionStart<DNA>): EvolutionStart<DNA> {
-        val population = start.population
-        val generation = start.generation
-
-        val stream = Stream.concat(
-            population.stream(),
-            Stream.generate { genotype.make() }
-                .map { Phenotype(it, generation) })
-
-        return EvolutionStart(
-            stream.limit(populationSize.toLong())
-                .collect(Collectors.toList()),
-            generation
-        )
-    }
 
     override fun toString() =
         "Engine { " +
@@ -296,7 +289,7 @@ class Engine<DNA> private constructor(
 
         var offspringFraction = 0.6
 
-        var optimizer: Optimizer = Maximizer()
+        var optimizer: PhenotypeOptimizer = FitnessMaximizer()
 
         var statistics: List<Statistic<DNA>> = listOf(StatisticCollector())
 

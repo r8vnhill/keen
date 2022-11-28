@@ -6,7 +6,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.DoubleChromosome
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.MeanCrossover
-import cl.ravenhill.keen.util.optimizer.Minimizer
+import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.cos
@@ -32,7 +32,7 @@ fun main() {
         chromosomes = listOf(DoubleChromosome.Builder(1, 0.0..(2 * Math.PI)))
     }) {
         populationSize = 500
-        optimizer = Minimizer()
+        optimizer = FitnessMinimizer()
         survivors = (populationSize * 0.2).toInt()
         alterers = listOf(Mutator(0.03), MeanCrossover(0.6))
         statistics = listOf(StatisticPrinter(20), StatisticCollector())

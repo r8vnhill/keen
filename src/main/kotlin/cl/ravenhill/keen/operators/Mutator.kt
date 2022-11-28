@@ -22,7 +22,7 @@ class Mutator<DNA>(override val probability: Double) : Alterer<DNA> {
                 val genes = mutableListOf<Gene<DNA>>()
                 chromosome.genes.forEach { gene ->
                     genes.add(
-                        if (Core.generator.nextDouble() < probability) {
+                        if (Core.rng.nextDouble() < probability) {
                             gene.mutate()
                         } else {
                             gene

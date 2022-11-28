@@ -40,10 +40,10 @@ class BoolGeneSpec : WordSpec({
         "return a random gene with a given seed" {
             checkAll<Long> { seed ->
                 val gene = BoolGene.True
-                Core.generator = Random(seed)
+                Core.rng = Random(seed)
                 val mutated = gene.mutate()
-                Core.generator = Random(seed)
-                mutated.toBool() shouldBe Core.generator.nextBoolean()
+                Core.rng = Random(seed)
+                mutated.toBool() shouldBe Core.rng.nextBoolean()
             }
         }
     }

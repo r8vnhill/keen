@@ -17,7 +17,6 @@ import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
-import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 
@@ -31,8 +30,8 @@ fun main() {
     }) {
         populationSize = 500
         survivors = (populationSize * 0.2).toInt()
-        selector = RouletteWheelSelector()
-        survivorSelector = RouletteWheelSelector()
+//        selector = RouletteWheelSelector()
+//        survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
         statistics = listOf(StatisticPrinter(10), StatisticCollector())

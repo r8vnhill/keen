@@ -8,13 +8,15 @@
 
 package cl.ravenhill.keen.util.optimizer
 
+import cl.ravenhill.keen.genetic.Phenotype
+
 
 /**
- * [Optimizer] that prioritizes the maximum of two values.
+ * [PhenotypeOptimizer] that prioritizes the minimum of two values.
  */
-class Maximizer : Optimizer {
+class FitnessMinimizer : PhenotypeOptimizer {
 
-    override fun invoke(a: Double, b: Double) = a > b
+    override fun compare(p1: Phenotype<*>, p2: Phenotype<*>) = p2.fitness compareTo p1.fitness
 
-    override fun toString() = "Maximizer"
+    override fun toString() = "FitnessMinimizer"
 }

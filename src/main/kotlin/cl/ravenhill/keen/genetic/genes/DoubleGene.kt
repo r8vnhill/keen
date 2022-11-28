@@ -17,7 +17,7 @@ class DoubleGene(override val dna: Double, private val range: ClosedFloatingPoin
     override fun mutate(): DoubleGene {
         val max = range.endInclusive
         val min = range.start
-        return DoubleGene(dna + (Core.generator.nextDouble() * (max - min) + min), range)
+        return DoubleGene(dna + (Core.rng.nextDouble() * (max - min) + min), range)
     }
 
     override fun new(dna: Double) = DoubleGene(dna, range)

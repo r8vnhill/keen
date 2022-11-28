@@ -27,7 +27,7 @@ sealed class BoolGene : Gene<Boolean> {
 
     override fun toString() = "$dna"
 
-    override fun mutate() = if (Core.generator.nextBoolean()) {
+    override fun mutate() = if (Core.rng.nextBoolean()) {
         True
     } else {
         False

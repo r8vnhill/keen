@@ -28,7 +28,7 @@ fun Int.toByteLength() = when {
  */
 fun byteArrayOf(size: Int, onesProbability: Double = 0.5) =
     ByteArray(size.toByteLength()).apply {
-        Core.generator.indexes(onesProbability, size).forEach {
+        Core.rng.indexes(onesProbability, size).forEach {
             this[it ushr 3] = this[it ushr 3] or ((1 shl (it and 7)).toByte())
         }
     }

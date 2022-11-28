@@ -21,6 +21,6 @@ class CharGene private constructor(override val dna: Char) : Gene<Char> {
     override fun new(dna: Char) = CharGene(dna)
 
     companion object {
-        fun create() = CharGene(Core.generator.nextChar())
+        fun create() = CharGene(Core.rng.nextChar())
     }
 }

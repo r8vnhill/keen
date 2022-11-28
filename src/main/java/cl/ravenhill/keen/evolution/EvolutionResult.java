@@ -2,8 +2,7 @@ package cl.ravenhill.keen.evolution;
 
 import cl.ravenhill.keen.genetic.Phenotype;
 import cl.ravenhill.keen.util.math.MinMax;
-import cl.ravenhill.keen.util.optimizer.Optimizer;
-import jdk.jshell.spi.ExecutionControl;
+import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.stream.Collector;
 
 public final class EvolutionResult<DNA> implements Comparable<EvolutionResult<DNA>> {
 
-  private Optimizer _optimize;
+  private PhenotypeOptimizer _optimize;
   private List<Phenotype<DNA>> population;
 
   public EvolutionStart<DNA> next() {

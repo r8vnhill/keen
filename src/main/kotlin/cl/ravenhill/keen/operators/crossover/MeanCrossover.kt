@@ -35,7 +35,7 @@ class MeanCrossover<DNA : Number>(probability: Double) : AbstractCrossover<DNA>(
     private fun crossover(genes: Pair<Gene<DNA>, Gene<DNA>>): Gene<DNA> {
         @Suppress("UNCHECKED_CAST")
         return genes.first.new(
-            if (Core.generator.nextDouble() < probability) {
+            if (Core.rng.nextDouble() < probability) {
                 (genes.first.dna.toDouble() + genes.second.dna.toDouble()) / 2
             } else {
                 genes.first.dna

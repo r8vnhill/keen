@@ -20,7 +20,7 @@ class SinglePointCrossover<DNA>(probability: Double) : MultiPointCrossover<DNA>(
 
     override fun crossover(mates: Pair<Chromosome<DNA>, Chromosome<DNA>>): Chromosome<DNA> {
         val genes = mutableListOf<Gene<DNA>>()
-        val cut = Core.generator.nextInt(mates.first.genes.size)
+        val cut = Core.rng.nextInt(mates.first.genes.size)
         genes.addAll(mates.first.genes.take(cut))
         genes.addAll(mates.second.genes.drop(cut))
         return mates.first.copy(genes)

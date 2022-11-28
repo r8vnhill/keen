@@ -11,5 +11,5 @@ package cl.ravenhill.keen
 import java.util.Random
 
 object Core {
-    var generator: Random = Random()
+    var rng: Random = Random()
 }

@@ -28,7 +28,7 @@ class DoubleChromosome private constructor(
     private constructor(size: Int, range: ClosedFloatingPointRange<Double>) : this(
         (0 until size).map {
             DoubleGene(
-                Core.generator.asKotlinRandom().nextDouble(range.start, range.endInclusive),
+                Core.rng.asKotlinRandom().nextDouble(range.start, range.endInclusive),
                 range
             )
         }

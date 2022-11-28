@@ -17,3 +17,6 @@ class GenotypeConfigurationException(lazyMessage: () -> String) :
 
 class LimitConfigurationException(lazyMessage: () -> String) :
         KeenException("Genotype configuration error:", lazyMessage)
+
+class SelectorException(lazyMessage: () -> String) :
+        KeenException("Selector operation exception:", lazyMessage)

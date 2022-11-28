@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.util.optimizer.Optimizer
+import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.validateSize
 
 
@@ -22,14 +22,15 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
 
     abstract fun probabilities(population: List<Phenotype<DNA>>, count: Int): List<Double>
 
-    override fun invoke(
+    override operator fun invoke(
         population: List<Phenotype<DNA>>,
         count: Int,
-        optimizer: Optimizer
+        optimizer: PhenotypeOptimizer
     ): List<Phenotype<DNA>> {
         count.validateSize(true to { "Selection count [$count] must be at least 0" })
         val selection = mutableListOf<Phenotype<DNA>>()
         val probabilities = probabilities(population, count)
-        return selection
+        TODO("The invocation of the probability selector is not yet implemented")
+//        return selection
     }
 }
