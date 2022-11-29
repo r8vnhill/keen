@@ -42,7 +42,13 @@ class MinMax<C> private constructor(private val comparator: Comparator<in C>) : 
 
     companion object {
         fun <T> min(comp: Comparator<in T>, a: T?, b: T?): T? {
-            return if (a != null) if (b != null) if (comp.compare(a, b) <= 0) a else b else a else b
+            return if (a != null) {
+                if (b != null) {
+                    if (comp.compare(a, b) <= 0) {
+                        a
+                    } else b
+                } else a
+            } else b
         }
 
         fun <T> max(comp: Comparator<in T>, a: T?, b: T?): T? {

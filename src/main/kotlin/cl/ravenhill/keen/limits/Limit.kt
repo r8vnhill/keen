@@ -9,8 +9,12 @@
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.EvolutionResult
+import cl.ravenhill.keen.evolution.streams.EvolutionStream
+import java.util.stream.Stream
 
 interface Limit {
 
     operator fun invoke(engine: Engine<*>): Boolean
+    fun <DNA> applyTo(stream: EvolutionStream<DNA>): Stream<EvolutionResult<DNA>>
 }

@@ -10,7 +10,6 @@ package cl.ravenhill
 
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
-import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.limits.GenerationCount
@@ -19,6 +18,7 @@ import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
+import java.util.stream.Collectors
 
 
 fun count(genotype: Genotype<Boolean>): Double =
@@ -33,14 +33,9 @@ fun main() {
 //        selector = RouletteWheelSelector()
 //        survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
-        limits = listOf(SteadyGenerations(20), GenerationCount(100))
+        limits = listOf(GenerationCount(100))
         statistics = listOf(StatisticPrinter(10), StatisticCollector())
     }
-    val stream = engine.stream()
-        .limit(1000)
-        .collect(EvolutionResult.toBestPhenotype())
-    engine.evolve()
-    engine.statistics.forEach {
-        println(it)
-    }
+    val evolvedPopulation = engine.run()
+    println(evolvedPopulation.maxBy { it.best.fitness }.best)
 }

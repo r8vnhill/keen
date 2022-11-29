@@ -18,7 +18,35 @@ import cl.ravenhill.keen.util.math.toIntProbability
 import kotlin.math.pow
 
 
+/**
+ * The mutator operator is responsible for mutating the [Genotype] of the [Individual]s in the
+ * [Population].
+ * There are two distinct roles for the mutator:
+ *
+ * - Exploring the search space. This exploration is often slow compared to the crossover,
+ * but in problems where crossover is disruptive this can be an important way to explore the
+ * landscape.
+ *
+ * - Maintaining diversity. Mutation prevents the population from correlating.
+ * Even if most of the search is done by crossover, mutation is still important to provide the
+ * diversity the crossover needs to work.
+ *
+ * The mutation probability is the value that must be optimized.
+ * The optimal value depends on the role mutation plays.
+ * If the mutation is the main exploration mechanism, then the mutation probability should be high.
+ *
+ * @param DNA The type of the DNA
+ * @constructor Creates a new [Mutator] with the given [probability]
+ */
 class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
+
+    /**
+     * Mutates a population.
+     *
+     * @param population The population to mutate
+     * @param generation The current generation
+     * @return The mutated population
+     */
     override fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA> {
         val p = probability.pow(1 / 3.0)
         val widenedProbability = p.toIntProbability()

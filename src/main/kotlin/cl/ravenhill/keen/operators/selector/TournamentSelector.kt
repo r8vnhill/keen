@@ -50,14 +50,19 @@ class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DN
     private fun selectOneFrom(
         population: List<Phenotype<DNA>>,
         optimizer: PhenotypeOptimizer
-    ) = Stream.generate { population[Core.rng.nextInt(population.size)] }
-        .limit(sampleSize.toLong())
-        .max(optimizer.comparator)
-        .orElseThrow {
-            SelectorException {
-                "An error occurred while trying to select an individual by tournament selection"
+    ): Phenotype<DNA> {
+        val participants = Stream.generate { population[Core.rng.nextInt(population.size)] }
+            .limit(sampleSize.toLong())
+        val max = participants.max(optimizer.comparator)
+        return Stream.generate { population[Core.rng.nextInt(population.size)] }
+            .limit(sampleSize.toLong())
+            .max(optimizer.comparator)
+            .orElseThrow {
+                SelectorException {
+                    "An error occurred while trying to select an individual by tournament selection"
+                }
             }
-        }
+}
 
     override fun equals(other: Any?) = when {
         other === this -> true

@@ -8,8 +8,8 @@ class CompositeAlterer<DNA>(private val alterers: List<Alterer<DNA>>) : Abstract
         var result = AltererResult(population)
         for (alterer in alterers) {
             val altererResult = alterer(result.population, generation)
-            result = AltererResult(altererResult.population)
+            result = AltererResult(altererResult.population, result.alterations + altererResult.alterations)
         }
         return result
-}
+    }
 }

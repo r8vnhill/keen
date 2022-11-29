@@ -9,8 +9,14 @@
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.EvolutionResult
+import cl.ravenhill.keen.evolution.streams.EvolutionStream
+import java.util.stream.Stream
 
 
 open class Match(private val predicate: Engine<*>.() -> Boolean) : Limit {
     override fun invoke(engine: Engine<*>) = predicate(engine)
+    override fun <DNA> applyTo(stream: EvolutionStream<DNA>): Stream<EvolutionResult<DNA>> {
+        TODO("Not yet implemented")
+    }
 }

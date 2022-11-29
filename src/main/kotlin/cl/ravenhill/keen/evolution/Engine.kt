@@ -9,6 +9,7 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.evolution.streams.ConcreteEvolutionStream
 import cl.ravenhill.keen.evolution.streams.EvolutionStream
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -111,6 +112,14 @@ class Engine<DNA> private constructor(
 //            .forEach { it.evolutionTime = clock.millis() - evolutionStartTime }
     }
 
+    fun run(): List<EvolutionResult<DNA>> {
+        var evolutionStream = stream()
+        for (limit in limits) {
+            evolutionStream = evolutionStream.limit(limit) as ConcreteEvolutionStream<DNA>
+        }
+        return evolutionStream.collect(Collectors.toList())
+    }
+
     /**
      * The main method of the ``Engine``.
      *
@@ -134,9 +143,13 @@ class Engine<DNA> private constructor(
         val interceptedStart = interceptor.before(start)
         // (2) The population is created from the starting state
         val evolution = evolutionStart(interceptedStart)
+        // (3) The population's fitness is evaluated
         val evaluatedPopulation = evaluate(evolution)
+        // (4) The offspring is selected from the evaluated population
         val offspring = selectOffspring(evaluatedPopulation)
+        // (5) The survivors are selected from the evaluated population
         val survivors = selectSurvivors(evaluatedPopulation)
+        // (6) The offspring is altered
         val alteredOffspring = alter(offspring, evolution)
         // TODO: Filter population
 
@@ -146,8 +159,8 @@ class Engine<DNA> private constructor(
             executor
         )
         val pop = nextPopulation.join()
-        val evPop = evaluate(EvolutionStart(pop, generation++))
-        val result = EvolutionResult(optimizer, pop, generation)
+        val evPop = evaluate(EvolutionStart(pop, generation++), true)
+        val result = EvolutionResult(optimizer, evPop, generation)
         return interceptor.after(result)
     }
 

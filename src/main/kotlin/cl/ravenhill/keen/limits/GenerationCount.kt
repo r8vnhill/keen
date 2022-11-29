@@ -9,6 +9,9 @@
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.LimitConfigurationException
+import cl.ravenhill.keen.evolution.EvolutionResult
+import cl.ravenhill.keen.evolution.streams.EvolutionStream
+import java.util.stream.Stream
 
 
 class GenerationCount(private val i: Int) : Match({ generation >= i }) {
@@ -18,5 +21,9 @@ class GenerationCount(private val i: Int) : Match({ generation >= i }) {
                 "Generation count must not be negative, but was $i"
             }
         }
+    }
+
+    override fun <DNA> applyTo(stream: EvolutionStream<DNA>): Stream<EvolutionResult<DNA>> {
+        return stream.limit(i.toLong())
     }
 }

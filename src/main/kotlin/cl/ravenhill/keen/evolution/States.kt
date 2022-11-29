@@ -20,16 +20,16 @@ class EvolutionResult<DNA>(
         return EvolutionStart(population, generation + 1, true)
     }
 
-    private val _best: Phenotype<DNA>
+    val best: Phenotype<DNA>
 
     init {
         this.population = population
         this.generation = generation
-        _best = population.stream().max(optimizer.comparator).orElse(null)
+        best = population.stream().max(optimizer.comparator).orElse(null)
     }
 
     fun bestPhenotype(): Phenotype<DNA> {
-        return _best
+        return best
     }
 
     override fun compareTo(other: EvolutionResult<DNA>): Int {
