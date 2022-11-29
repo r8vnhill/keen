@@ -8,11 +8,13 @@
 
 package cl.ravenhill.keen.operators.crossover
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.operators.Alterer
-import cl.ravenhill.keen.operators.AltererResult
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.AbstractRecombinatorAlterer
+import kotlin.math.min
 
 
 /**
@@ -23,11 +25,8 @@ import cl.ravenhill.keen.operators.AltererResult
  *
  * @constructor Creates a new crossover operator
  */
-abstract class AbstractCrossover<DNA>(override val probability: Double) : Alterer<DNA> {
-
-    override fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA> {
-        TODO("Not yet implemented")
-    }
+abstract class AbstractCrossover<DNA>(probability: Double) :
+        AbstractRecombinatorAlterer<DNA>(probability, 2) {
 
     /**
      * Performs the crossover operation
@@ -42,7 +41,7 @@ abstract class AbstractCrossover<DNA>(override val probability: Double) : Altere
                 offspring.add(it)
             }
         }
-        return mates.first.new(offspring)
+        return mates.first.duplicate(offspring)
     }
 
     /**
@@ -52,4 +51,27 @@ abstract class AbstractCrossover<DNA>(override val probability: Double) : Altere
      */
     protected abstract fun crossover(mates: Pair<Chromosome<DNA>, Chromosome<DNA>>): Chromosome<DNA>
 
+    override fun recombine(
+        population: MutableList<Phenotype<DNA>>,
+        individuals: IntArray,
+        generation: Int
+    ): Int {
+        val phenotype1 = population[individuals[0]]
+        val phenotype2 = population[individuals[1]]
+        val genotype1 = phenotype1.genotype
+        val genotype2 = phenotype2.genotype
+        val chromosomeIndex = Core.rng.nextInt(min(genotype1.size, genotype2.size))
+        val chromosomes1 = genotype1.chromosomes.toMutableList()
+        val chromosomes2 = genotype2.chromosomes.toMutableList()
+        val genes1 = chromosomes1[chromosomeIndex].genes.toMutableList()
+        val genes2 = chromosomes2[chromosomeIndex].genes.toMutableList()
+        crossover(genes1, genes2)
+        chromosomes1[chromosomeIndex] = chromosomes1[chromosomeIndex].duplicate(genes1)
+        chromosomes2[chromosomeIndex] = chromosomes2[chromosomeIndex].duplicate(genes2)
+        population[individuals[0]] = Phenotype(genotype1.duplicate(chromosomes1), generation)
+        population[individuals[1]] = Phenotype(genotype1.duplicate(chromosomes2), generation)
+        return order
+    }
+
+    abstract fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int
 }

@@ -39,7 +39,7 @@ interface Chromosome<DNA> : GeneticMaterial {
     /**
      * Returns a new chromosome with the given ``genes``.
      */
-    fun new(genes: List<Gene<DNA>>): Chromosome<DNA>
+    fun duplicate(genes: List<Gene<DNA>>): Chromosome<DNA>
     fun sequence() = genes.asSequence()
 
     /**

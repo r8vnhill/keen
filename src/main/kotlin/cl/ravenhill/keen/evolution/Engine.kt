@@ -12,6 +12,7 @@ import cl.ravenhill.keen.EngineConfigurationException
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.constraints.Constraint
 import cl.ravenhill.keen.constraints.RetryConstraint
+import cl.ravenhill.keen.evolution.streams.EvolutionStream
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.limits.GenerationCount
@@ -73,7 +74,7 @@ class Engine<DNA> private constructor(
 
     // region : PROPERTIES  ------------------------------------------------------------------------
     var generation: Int by Delegates.observable(0) { _, _, new ->
-        statistics.stream().parallel().forEach { it.generation = new }
+//        statistics.stream().parallel().forEach { it.generation = new }
     }
         private set
 
@@ -82,26 +83,13 @@ class Engine<DNA> private constructor(
     }
         private set
 
-//    val fittest: Genotype<DNA>
-//        get() {
-//            val fittest = population.reduce { acc, genotype ->
-//                if (optimizer(
-//                        genotype.fitness,
-//                        acc.fitness
-//                    )
-//                ) genotype else acc
-//            }
-//            statistics.stream().parallel().forEach { it.fittest = fittest }
-//            return fittest
-//        }
-
     var bestFitness: Double by Delegates.observable(0.0) { _, old, new ->
         if (old == new) {
             steadyGenerations++
         } else {
             steadyGenerations = 0
         }
-        statistics.stream().parallel().forEach { it.bestFitness = new }
+//        statistics.stream().parallel().forEach { it.bestFitness = new }
     }
 
     private val clock = Clock.systemDefaultZone()
@@ -124,41 +112,27 @@ class Engine<DNA> private constructor(
 //            .forEach { it.evolutionTime = clock.millis() - evolutionStartTime }
     }
 
-    private fun alter(population: List<Phenotype<DNA>>): List<Genotype<DNA>> {
-        TODO()
-//        val initialTime = clock.millis()
-//        var alteredPopulation = population.toMutableList()
-//        alterers.forEach { alterer ->
-//            alteredPopulation = alterer(alteredPopulation).filter { it.verify() }.toMutableList()
-//        }
-//        if (alteredPopulation.size != populationSize) {
-//            alteredPopulation.addAll(population.take(populationSize - alteredPopulation.size))
-//        }
-//        statistics.stream().parallel()
-//            .forEach { it.alterTime.add(clock.millis() - initialTime) }
-//        return alteredPopulation
-    }
-
-    internal fun createPopulation() {
-//        runBlocking {
-//            population =
-//                (0 until populationSize).parallelMap { genotype.make() }
-//        }
-//        bestFitness = fittest.fitness
-    }
-
-    internal fun select(n: Int): List<Genotype<DNA>> {
-//        val initialTime = clock.millis()
-//        val newPopulation = survivorSelector(population, numberOfSurvivors, optimizer)
-//        population = newPopulation + selector(population, n - numberOfSurvivors, optimizer)
-//        statistics.stream().parallel()
-//            .forEach { it.selectionTime.add(clock.millis() - initialTime) }
-//        return population
-        TODO("Remove")
-    }
-
-    override fun evolve(next: EvolutionStart<DNA>): EvolutionResult<DNA> {
-        val interceptedStart = interceptor.before(next)
+    /**
+     * The main method of the ``Engine``.
+     *
+     * This is the classical flow of a Genetic Algorithm (GA), the user is assumed to know the
+     * basics of evolutionary programming to use this method, so no further explanation is provided
+     * (but take note of the comments placed on the body of the method).
+     *
+     * This method implements a single step of the GA so the process of evolution can be tweaked and
+     * monitored by external entities, such as the [EvolutionSpliterator] used to process the
+     * evolution as a [Stream].
+     *
+     * @param start the starting state of the evolution at this generation.
+     * @return  the result of advancing the population by one generation.
+     *
+     * @see EvolutionInterceptor.identity
+     * @see EvolutionSpliterator.tryAdvance
+     */
+    override fun evolve(start: EvolutionStart<DNA>): EvolutionResult<DNA> {
+        // (1) The starting state of the evolution is pre-processed (if no method is hooked to
+        // pre-process, it defaults to the identity function (EvolutionStart)
+        val interceptedStart = interceptor.before(start)
         val evolution = evolutionStart(interceptedStart)
         val evaluatedPopulation = evaluate(evolution)
         val offspring = selectOffspring(evaluatedPopulation)
@@ -168,11 +142,13 @@ class Engine<DNA> private constructor(
 
         val nextPopulation = survivors.thenCombineAsync(
             alteredOffspring,
-            { s, o -> s + o },
+            { s, o -> s + o.population },
             executor
         )
         val pop = nextPopulation.join()
-        TODO("Select survivors")
+        val evPop = evaluate(EvolutionStart(pop, generation++))
+        val result = EvolutionResult(optimizer, pop, generation)
+        return interceptor.after(result)
     }
 
     private fun evolutionStart(start: EvolutionStart<DNA>) = if (start.population.isEmpty()) {
@@ -190,19 +166,20 @@ class Engine<DNA> private constructor(
         start
     }
 
-    private fun evaluate(evolution: EvolutionStart<DNA>) = if (evolution.isDirty) {
-        evaluator(evolution.population).also {
-            validatePredicate({ populationSize == it.size }) {
-                "Evaluated population size [${it.size}] doesn't match expected population " +
-                        "size [$populationSize]"
+    private fun evaluate(evolution: EvolutionStart<DNA>, force: Boolean = false) =
+        if (force || evolution.isDirty) {
+            evaluator(evolution.population).also {
+                validatePredicate({ populationSize == it.size }) {
+                    "Evaluated population size [${it.size}] doesn't match expected population " +
+                            "size [$populationSize]"
+                }
+                validatePredicate({ it.all { phenotype -> phenotype.isEvaluated() } }) {
+                    "There are unevaluated phenotypes"
+                }
             }
-            validatePredicate({ it.all { phenotype -> phenotype.isEvaluated() } }) {
-                "There are unevaluated phenotypes"
-            }
+        } else {
+            evolution.population
         }
-    } else {
-        evolution.population
-    }
 
     private fun selectOffspring(population: Population<DNA>) =
         asyncSelect {

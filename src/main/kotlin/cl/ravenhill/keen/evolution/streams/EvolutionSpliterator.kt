@@ -1,13 +1,15 @@
-package cl.ravenhill.keen.evolution
+package cl.ravenhill.keen.evolution.streams
 
+import cl.ravenhill.keen.evolution.EvolutionResult
+import cl.ravenhill.keen.evolution.EvolutionStart
+import cl.ravenhill.keen.evolution.Evolver
 import java.util.Spliterator
 import java.util.function.Consumer
 
 
 class EvolutionSpliterator<DNA>(
     private val start: () -> EvolutionStart<DNA>,
-    private val evolver: Evolver<DNA>,
-    estimate: Long = Long.MAX_VALUE
+    private val evolver: Evolver<DNA>
 ) : Spliterator<EvolutionResult<DNA>> {
 
     private lateinit var next: EvolutionStart<DNA>

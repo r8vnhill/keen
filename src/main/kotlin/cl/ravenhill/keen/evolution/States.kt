@@ -1,42 +1,69 @@
-package cl.ravenhill.keen.evolution;
+package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.keen.genetic.Phenotype;
-import cl.ravenhill.keen.util.math.MinMax;
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer;
-import org.jetbrains.annotations.NotNull;
+import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.util.math.MinMax
+import cl.ravenhill.keen.util.math.MinMax.Companion.of
+import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.validateAtLeast
+import org.jetbrains.annotations.Contract
+import java.util.stream.Collector
 
-import java.util.List;
-import java.util.stream.Collector;
+class EvolutionResult<DNA>(
+    private val optimizer: PhenotypeOptimizer, population: List<Phenotype<DNA>>,
+    generation: Int
+) : Comparable<EvolutionResult<DNA>> {
+    private val population: List<Phenotype<DNA>>
+    private val generation: Int
 
-public final class EvolutionResult<DNA> implements Comparable<EvolutionResult<DNA>> {
+    @Contract(pure = true)
+    operator fun next(): EvolutionStart<DNA> {
+        return EvolutionStart(population, generation + 1, true)
+    }
 
-  private PhenotypeOptimizer _optimize;
-  private List<Phenotype<DNA>> population;
+    private val _best: Phenotype<DNA>
 
-  public EvolutionStart<DNA> next() {
-    return null;
-  }
+    init {
+        this.population = population
+        this.generation = generation
+        _best = population.stream().max(optimizer.comparator).orElse(null)
+    }
 
-  private Phenotype<DNA> _best;
+    fun bestPhenotype(): Phenotype<DNA> {
+        return _best
+    }
 
-  public Phenotype<DNA> bestPhenotype() {
-    return _best;
-  }
+    override fun compareTo(other: EvolutionResult<DNA>): Int {
+        return 0
+    }
 
-  @Override
-  public int compareTo(@NotNull final EvolutionResult<DNA> other) {
-    return 0;
-  }
+    companion object {
+        fun <G> toBestPhenotype(): Collector<EvolutionResult<G>, *, Phenotype<G>> = Collector.of(
+            ::of,
+            MinMax<EvolutionResult<G>>::accept,
+            MinMax<EvolutionResult<G>>::combine,
+            { mm: MinMax<EvolutionResult<G>> ->
+                if (mm.max() != null) mm.max()!!.bestPhenotype() else null
+            }
+        )
+    }
+}
 
+class EvolutionStart<T>(
+    val population: List<Phenotype<T>>,
+    val generation: Int,
+    val isDirty: Boolean = true
+) {
 
-  public static <G> Collector<EvolutionResult<G>, ?, Phenotype<G>> toBestPhenotype() {
-    return Collector.of(
-        MinMax::of,
-        MinMax::accept,
-        MinMax::combine,
-        (MinMax<EvolutionResult<G>> mm) -> mm.max() != null
-                                           ? mm.max().bestPhenotype()
-                                           : null
-    );
-  }
+    init {
+        generation.validateAtLeast(0) { "Generation must be non-negative" }
+    }
+
+    override fun toString() = "EvolutionStart { " +
+            "population: $population, " +
+            "generation: $generation, " +
+            " }"
+
+    companion object {
+        fun <T> empty(): EvolutionStart<T> = EvolutionStart(listOf(), 1)
+    }
 }

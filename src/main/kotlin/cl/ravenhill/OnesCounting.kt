@@ -26,10 +26,10 @@ fun count(genotype: Genotype<Boolean>): Double =
 
 fun main() {
     val engine = engine(::count, genotype {
-        chromosomes = listOf(BoolChromosome.Factory(24, 0.15))
+        chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
     }) {
         populationSize = 500
-        survivors = (populationSize * 0.2).toInt()
+//        survivors = (populationSize * 0.2).toInt()
 //        selector = RouletteWheelSelector()
 //        survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
@@ -37,7 +37,7 @@ fun main() {
         statistics = listOf(StatisticPrinter(10), StatisticCollector())
     }
     val stream = engine.stream()
-        .limit(100)
+        .limit(1000)
         .collect(EvolutionResult.toBestPhenotype())
     engine.evolve()
     engine.statistics.forEach {

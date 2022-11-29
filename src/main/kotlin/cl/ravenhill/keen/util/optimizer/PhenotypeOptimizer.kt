@@ -22,5 +22,5 @@ interface PhenotypeOptimizer {
     fun compare(p1: Phenotype<*>, p2: Phenotype<*>): Int
 
     fun sort(population: List<Phenotype<*>>) =
-        population.sortedWith { p1, p2 -> compare(p2, p1) }
+        population.sortedWith(comparator.reversed())
 }

@@ -10,8 +10,8 @@ class MinMax<C> private constructor(private val comparator: Comparator<in C>) : 
     private var _count = 0L
 
     override fun accept(`object`: C) {
-        _min = min(comparator, _min!!, `object`)
-        _max = max(comparator, _max!!, `object`)
+        _min = min(comparator, _min, `object`)
+        _max = max(comparator, _max, `object`)
         ++_count
     }
 
@@ -32,15 +32,20 @@ class MinMax<C> private constructor(private val comparator: Comparator<in C>) : 
     }
 
     override fun toString(): String {
-        return String.format("cl.ravenhill.keen.util.math.MinMax[count=%d, min=%s, max=%s]", _count, _min, _max)
+        return String.format(
+            "cl.ravenhill.keen.util.math.MinMax[count=%d, min=%s, max=%s]",
+            _count,
+            _min,
+            _max
+        )
     }
 
     companion object {
-        fun <T> min(comp: Comparator<in T>, a: T, b: T): T {
+        fun <T> min(comp: Comparator<in T>, a: T?, b: T?): T? {
             return if (a != null) if (b != null) if (comp.compare(a, b) <= 0) a else b else a else b
         }
 
-        fun <T> max(comp: Comparator<in T>, a: T, b: T): T {
+        fun <T> max(comp: Comparator<in T>, a: T?, b: T?): T? {
             return if (a != null) if (b != null) if (comp.compare(a, b) >= 0) a else b else a else b
         }
 

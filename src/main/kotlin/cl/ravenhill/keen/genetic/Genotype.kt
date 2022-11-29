@@ -39,13 +39,13 @@ class Genotype<DNA> private constructor(
     /**
      * Returns a new genotype with the given ``chromosomes``.
      */
-    fun new(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes, fitnessFunction)
+    fun duplicate(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes, fitnessFunction)
 
     fun sequence() = chromosomes.asSequence()
 
     class Factory<DNA> {
 
-        lateinit var fitnessFunction: (Genotype<DNA>) -> Double
+        var fitnessFunction: (Genotype<DNA>) -> Double = { Double.NaN }
         lateinit var chromosomes: List<Chromosome.Factory<DNA>>
 
         fun make() = if (!this::chromosomes.isInitialized) {

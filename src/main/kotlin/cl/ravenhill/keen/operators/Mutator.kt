@@ -39,10 +39,8 @@ class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
         phenotype: Phenotype<DNA>,
         prob: Double,
         generation: Int
-    ): MutatorResult<Phenotype<DNA>> {
-        return mutateGenotype(phenotype.genotype, prob).map {
-            Phenotype(it, generation)
-        }
+    ) = mutateGenotype(phenotype.genotype, prob).map {
+        Phenotype(it, generation)
     }
 
     private fun mutateGenotype(
@@ -58,7 +56,7 @@ class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
             }
         }.toList()
         return MutatorResult(
-            genotype.new(result.map { it.result }),
+            genotype.duplicate(result.map { it.result }),
             result.stream()
                 .mapToInt { it.mutations }
                 .sum()
@@ -72,13 +70,13 @@ class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
         val widenedProbability = prob.toIntProbability()
         val result = chromosome.sequence().map {
             if (Core.rng.nextInt() < widenedProbability) {
-                MutatorResult(mutateGene(it))
+                MutatorResult(mutateGene(it), 1)
             } else {
-                MutatorResult(it, 0)
+                MutatorResult(it)
             }
         }.toList()
         return MutatorResult(
-            chromosome.new(result.map { it.result }),
+            chromosome.duplicate(result.map { it.result }),
             result.sumOf { it.mutations }
         )
     }
@@ -90,7 +88,5 @@ class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
 }
 
 data class MutatorResult<T>(val result: T, val mutations: Int = 0) {
-    fun <B> map(block: (T) -> B): MutatorResult<B> {
-        TODO("Not yet implemented")
-    }
+    fun <B> map(block: (T) -> B) = MutatorResult(block(result), mutations)
 }

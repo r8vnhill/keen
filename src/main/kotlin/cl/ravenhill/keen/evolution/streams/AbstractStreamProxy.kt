@@ -1,4 +1,4 @@
-package cl.ravenhill.keen.evolution
+package cl.ravenhill.keen.evolution.streams
 
 import java.util.stream.Stream
 
