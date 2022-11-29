@@ -9,8 +9,6 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.constraints.Constraint
-import cl.ravenhill.keen.constraints.RetryConstraint
 import cl.ravenhill.keen.evolution.streams.EvolutionStream
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -36,7 +34,7 @@ import java.util.concurrent.ForkJoinPool.commonPool
 import java.util.stream.Collectors
 import java.util.stream.Stream
 import kotlin.properties.Delegates
-
+import cl.ravenhill.keen.evolution.streams.EvolutionSpliterator
 
 /**
  * Fundamental class of the library. It is the engine that will run the evolution process.
@@ -128,12 +126,13 @@ class Engine<DNA> private constructor(
      * @return  the result of advancing the population by one generation.
      *
      * @see EvolutionInterceptor.identity
-     * @see Evolu
+     * @see EvolutionSpliterator.tryAdvance
      */
     override fun evolve(start: EvolutionStart<DNA>): EvolutionResult<DNA> {
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
         val interceptedStart = interceptor.before(start)
+        // (2) The population is created from the starting state
         val evolution = evolutionStart(interceptedStart)
         val evaluatedPopulation = evaluate(evolution)
         val offspring = selectOffspring(evaluatedPopulation)
