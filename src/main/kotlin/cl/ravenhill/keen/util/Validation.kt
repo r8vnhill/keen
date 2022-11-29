@@ -77,3 +77,4 @@ fun Int.validateSafeMultiplication(n: Int, lazyMessage: () -> String) = validate
 fun <E> List<E>.validateNotEmpty(lazyMessage: () -> String) = this.also {
     validatePredicate({ this.isNotEmpty() }, lazyMessage)
 }
+

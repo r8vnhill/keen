@@ -12,15 +12,28 @@ import cl.ravenhill.keen.genetic.Phenotype
 
 /**
  * Generic optimization strategy to determine which of two phenotypes is better.
+ *
+ * @property comparator The comparator to use to determine which of two phenotypes is better.
  */
 interface PhenotypeOptimizer {
     val comparator
         get() = Comparator { p1: Phenotype<*>, p2: Phenotype<*> -> compare(p1, p2) }
 
+    /**
+     * Compares two phenotypes and returns a negative integer, zero, or a positive integer as the
+     * first phenotype is less than, equal to, or greater than the second.
+     */
     operator fun invoke(a: Phenotype<*>, b: Phenotype<*>): Int = compare(a, b)
 
+    /**
+     * Compares two phenotypes and returns a negative integer, zero, or a positive integer as the
+     * first phenotype is less than, equal to, or greater than the second.
+     */
     fun compare(p1: Phenotype<*>, p2: Phenotype<*>): Int
 
+    /**
+     * Sorts the given list of phenotypes using this optimizer.
+     */
     fun sort(population: List<Phenotype<*>>) =
         population.sortedWith(comparator.reversed())
 }

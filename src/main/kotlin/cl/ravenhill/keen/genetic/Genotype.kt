@@ -10,6 +10,8 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.GenotypeConfigurationException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.util.validateNotEmpty
+import cl.ravenhill.keen.util.validatePredicate
 
 
 /**
@@ -43,19 +45,29 @@ class Genotype<DNA> private constructor(
 
     fun sequence() = chromosomes.asSequence()
 
-    class Factory<DNA> {
+    /**
+     * Factory for [Genotype]s.
+     *
+     * @param DNA  The type of the DNA of the Genotype
+     *
+     * @property fitnessFunction The fitness function of the Genotype
+     * @property chromosomes Factories for the chromosomes of the Genotype
+     */
+    class Factory<DNA>(var fitnessFunction: (Genotype<DNA>) -> Double = { Double.NaN }) {
 
-        var fitnessFunction: (Genotype<DNA>) -> Double = { Double.NaN }
         lateinit var chromosomes: List<Chromosome.Factory<DNA>>
 
-        fun make() = if (!this::chromosomes.isInitialized) {
-            throw GenotypeConfigurationException { "Chromosomes must be initialized." }
-        } else if (chromosomes.isEmpty()) {
-            throw GenotypeConfigurationException { "Chromosomes must not be empty." }
-        } else {
-            Genotype(chromosomes.map { it.make() }, fitnessFunction)
+        /**
+         * Creates a new [Genotype] with the given ``chromosomes``.
+         */
+        fun make(): Genotype<DNA> {
+            validatePredicate({ this::chromosomes.isInitialized }) { "Chromosomes must be initialized" }
+            chromosomes.validateNotEmpty { "Chromosomes must not be empty" }
+            return Genotype(chromosomes.map { it.make() }, fitnessFunction)
         }
 
-        override fun toString() = "GenotypeBuilder { chromosomes: $chromosomes }"
+        override fun toString() = "GenotypeBuilder { " +
+                "fitnessFunction: $fitnessFunction" +
+                "chromosomes: $chromosomes }"
     }
 }
