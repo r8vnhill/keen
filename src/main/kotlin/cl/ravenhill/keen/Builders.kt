@@ -17,7 +17,18 @@ import cl.ravenhill.keen.genetic.Genotype
 object Builders {
 
     /**
-     * Creates a new [Engine] with the given ``fitnessFunction`` and ``init`` block.
+     * Creates a new [Engine] with the given ``fitnessFunction``, ``genotype`` and ``init`` block.
+     *
+     * __Usage:__
+     * ```
+     *  val engine = engine(::fitnessFn, genotype {
+     *      chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+     *  }) {
+     *      populationSize = 500
+     *      alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
+     *      limits = listOf(SteadyGenerations(20), GenerationCount(100))
+     *  }
+     * ```
      */
     fun <DNA> engine(
         fitnessFunction: (Genotype<DNA>) -> Double,
@@ -27,6 +38,13 @@ object Builders {
 
     /**
      * Creates a new [Genotype] with the given ``init`` block.
+     *
+     * __Usage:__
+     * ```
+     *  genotype {
+     *      chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+     *  }
+     * ```
      */
     fun <DNA> genotype(init: Genotype.Factory<DNA>.() -> Unit) =
         Genotype.Factory<DNA>().apply(init)

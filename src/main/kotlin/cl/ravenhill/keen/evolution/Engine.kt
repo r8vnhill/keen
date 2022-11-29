@@ -8,7 +8,6 @@
 
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.keen.EngineConfigurationException
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.constraints.Constraint
 import cl.ravenhill.keen.constraints.RetryConstraint
@@ -25,7 +24,10 @@ import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.statistics.Statistic
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.validateAtLeast
+import cl.ravenhill.keen.util.validateNotEmpty
 import cl.ravenhill.keen.util.validatePredicate
+import cl.ravenhill.keen.util.validateRange
 import java.time.Clock
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.supplyAsync
@@ -59,7 +61,6 @@ class Engine<DNA> private constructor(
     private val alterer: Alterer<DNA>,
     private val limits: List<Limit>,
     val survivorSelector: Selector<DNA>,
-    private val numberOfSurvivors: Int,
     private val optimizer: PhenotypeOptimizer,
     val statistics: List<Statistic<DNA>>,
     private val executor: Executor,
@@ -127,7 +128,7 @@ class Engine<DNA> private constructor(
      * @return  the result of advancing the population by one generation.
      *
      * @see EvolutionInterceptor.identity
-     * @see EvolutionSpliterator.tryAdvance
+     * @see Evolu
      */
     override fun evolve(start: EvolutionStart<DNA>): EvolutionResult<DNA> {
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
@@ -222,69 +223,94 @@ class Engine<DNA> private constructor(
                 "selector: $selector, " +
                 "alterer: $alterer, " +
                 "optimizer: $optimizer, " +
-                "survivors: $numberOfSurvivors, " +
                 "survivorSelector: $survivorSelector " +
                 "}"
 
     /**
-     * Engine builder.
+     * Builder for the [Engine] class.
      *
-     * @param DNA   The type of the DNA of the Genotype.
+     * @param DNA The type of the DNA of the Genotype.
+     *
+     * @property fitnessFunction the fitness function used to evaluate the fitness of the
+     *      population.
+     * @property genotype the genotype factory used to create the initial population.
      *
      * @property populationSize The size of the population.
-     *                          It must be greater than 0.
-     *                          Default value is 50.
-     * @property selector       The selector that will be used to select the individuals.
-     *                          Default value is ``TournamentSelector(3)``.
-     * @property alterers       The alterers that will be used to alter the population.
-     *                          Default value is an empty list.
+     *      It must be greater than 0.
+     *      Default value is 50.
+     * @property limits The limits that will be used to stop the evolution.
+     *      Default value is ``listOf(GenerationCount(100))``.
+     * @property optimizer The optimization strategy used to compare the fitness of the population.
+     * @property executor The executor used to run the evolution.
+     *     Default value is ``ForkJoinPool.commonPool()``.
+     * @property evaluator The evaluator used to evaluate the fitness of the population.
+     *      Default value is ``ConcurrentEvaluator(fitnessFunction, executor)``.
+     * @property interceptor The interceptor used to intercept the evolution process.
+     *     Default value is ``EvolutionInterceptor.identity()``.
+     *
+     * @property selector The selector that will be used to select the individuals.
+     *      Default value is ``TournamentSelector(3)``.
+     * @property offspringSelector The selector that will be used to select the offspring.
+     *      Default value is the same as the ``selector``.
+     * @property survivorSelector The selector that will be used to select the survivors.
+     *      Default value is the same as the ``selector``.
+     * @property offspringFraction The fraction of the population that will be used to create
+     *     the offspring.
+     *     Default value is 0.6.
+     *
+     * @property alterers The alterers that will be used to alter the population.
+     *      Default value is an empty list.
+     *
+     * @property statistics The statistics collectors used to collect data during the evolution.
      */
     class Builder<DNA>(
         private val fitnessFunction: (Genotype<DNA>) -> Double,
-        private val genotype: Genotype.Factory<DNA>
+        private val genotype: Genotype.Factory<DNA>,
     ) {
+        // region : Evolution parameters -----------------------------------------------------------
+        var populationSize = 50
+            set(value) = value.validateAtLeast(1, "Population size").let { field = it }
 
-        // region : PROPERTIES  --------------------------------------------------------------------
         var limits: List<Limit> = listOf(GenerationCount(100))
+            set(value) = value.validateNotEmpty { "Limits must be a non-empty list" }
+                .let { field = it }
 
+        var optimizer: PhenotypeOptimizer = FitnessMaximizer()
+
+        var executor: Executor = commonPool()
+
+        var evaluator: Evaluator<DNA> = ConcurrentEvaluator(fitnessFunction, executor)
+
+        val interceptor = EvolutionInterceptor.identity<DNA>()
+        // endregion    ----------------------------------------------------------------------------
+
+        // region : Alterers -----------------------------------------------------------------------
         var alterers: List<Alterer<DNA>> = emptyList()
 
+        /**
+         * The "main" alterer, by default it is a [CompositeAlterer] that contains all the alterers
+         * added to the builder.
+         */
         private val alterer: Alterer<DNA>
             get() = CompositeAlterer(alterers)
+        // endregion    ----------------------------------------------------------------------------
 
+        // region : Selection ----------------------------------------------------------------------
         var selector: Selector<DNA> = TournamentSelector(3)
             set(value) {
                 offspringSelector = value
                 field = value
             }
 
-        var survivorSelector: Selector<DNA> = selector
+        var survivorSelector = selector
 
         var offspringSelector = selector
 
-        var survivors: Int = 20
-
-        var populationSize: Int = 50
-            set(value) = if (value > 0) {
-                field = value
-            } else {
-                throw EngineConfigurationException { "Population size must be positive" }
-            }
-
         var offspringFraction = 0.6
-
-        var optimizer: PhenotypeOptimizer = FitnessMaximizer()
+            set(value) = value.validateRange(0.0..1.0, "Offspring fraction").let { field = it }
+        // endregion    ----------------------------------------------------------------------------
 
         var statistics: List<Statistic<DNA>> = listOf(StatisticCollector())
-
-        var executor: Executor = commonPool()
-
-        var evaluator: Evaluator<DNA> = ConcurrentEvaluator(fitnessFunction, executor)
-
-        var constraint: Constraint<DNA> = RetryConstraint(genotype)
-
-        private val interceptor = EvolutionInterceptor.identity<DNA>()
-        // endregion    ----------------------------------------------------------------------------
 
         fun build() = Engine(
             fitnessFunction = fitnessFunction,
@@ -292,17 +318,15 @@ class Engine<DNA> private constructor(
             populationSize = populationSize,
             offspringFraction = offspringFraction,
             selector = selector,
+            offspringSelector = offspringSelector,
             alterer = alterer,
             limits = limits,
             survivorSelector = survivorSelector,
-            numberOfSurvivors = survivors,
             optimizer = optimizer,
             statistics = statistics,
+            executor = executor,
             evaluator = evaluator,
-            interceptor = interceptor,
-            offspringSelector = offspringSelector,
-            executor = executor
+            interceptor = interceptor
         )
     }
-
 }

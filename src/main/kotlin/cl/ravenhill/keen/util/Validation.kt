@@ -20,7 +20,15 @@ fun Double.validateProbability() =
 fun <T : Comparable<T>> T.validateRange(
     range: ClosedRange<T>,
     lazyMessage: () -> String = { "Value [$this] must be in range $range" }
-) = validatePredicate({ this in range }, lazyMessage)
+) = this.also { validatePredicate({ this in range }, lazyMessage) }
+
+/**
+ * Validates that the receiver is in the given range.
+ */
+fun <T : Comparable<T>> T.validateRange(
+    range: ClosedRange<T>,
+    propertyName: String
+) = this.validateRange(range) { "$propertyName [$this] must be in range $range" }
 
 fun Int.validateSize(
     vararg lazyMessages: Pair<Boolean, () -> String>,
@@ -37,19 +45,16 @@ fun Int.validateSize(
     }
 }
 
-fun Int.validateSize(
-    lazyMessage: () -> String,
-    strictlyPositive: Boolean = true
-) = if (strictlyPositive) {
-    validateAtLeast(1) { "Size must be strictly positive" }
-} else {
-    validateAtLeast(0) { "Size must be at least 0" }
-}
-
+/**
+ * Validates if the receiver is at least a given minimum.
+ *
+ * @return the receiver if it is at least the minimum.
+ * @throws InvalidArgumentException if the receiver is less than the minimum.
+ */
 fun <T : Comparable<T>> T.validateAtLeast(
     min: T,
     lazyMessage: () -> String = { "Value [$this] must be at least $min" }
-) = validatePredicate({ this >= min }, lazyMessage)
+) = this.also { validatePredicate({ this >= min }, lazyMessage) }
 
 fun <T : Comparable<T>> T.validateAtLeast(
     min: T,
@@ -62,3 +67,13 @@ fun Int.validateSafeMultiplication(n: Int, lazyMessage: () -> String) = validate
         m.toInt().toLong() == m
     }, lazyMessage
 )
+
+/**
+ * Validates if the receiving list is not empty.
+ *
+ * @return the list itself.
+ * @throws InvalidArgumentException if the list is empty.
+ */
+fun <E> List<E>.validateNotEmpty(lazyMessage: () -> String) = this.also {
+    validatePredicate({ this.isNotEmpty() }, lazyMessage)
+}

@@ -33,7 +33,6 @@ fun main() {
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()
-        survivors = (populationSize * 0.2).toInt()
         alterers = listOf(Mutator(0.03), MeanCrossover(0.6))
         statistics = listOf(StatisticPrinter(20), StatisticCollector())
     }
