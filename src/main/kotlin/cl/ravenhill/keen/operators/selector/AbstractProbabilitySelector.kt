@@ -11,7 +11,7 @@ package cl.ravenhill.keen.operators.selector
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import cl.ravenhill.keen.util.validateSize
+import cl.ravenhill.keen.util.validateAtLeast
 
 private const val SERIAL_INDEX_THRESHOLD = 35
 
@@ -28,7 +28,7 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
         count: Int,
         optimizer: PhenotypeOptimizer<DNA>
     ): List<Phenotype<DNA>> {
-        count.validateSize(true to { "Selection count [$count] must be at least 0" })
+        count.validateAtLeast(0) { "Selection count [$count] must be at least 0" }
         val pop = if (sorted) {
             optimizer.sort(population)
         } else {

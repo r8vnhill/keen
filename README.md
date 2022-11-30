@@ -24,43 +24,45 @@ fun count(genotype: Genotype<Boolean>): Double =
     genotype.chromosomes[0].genes.count { it.dna }.toDouble()
 
 fun main() {
-    val engine = engine(::count) {
-        genotype = genotype {
-            chromosomes = listOf(BoolChromosome.Builder(24, 0.15))
-        }
+    val engine = engine(::count, genotype {
+        chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+    }) {
         populationSize = 500
-        survivors = (populationSize * 0.2).toInt()
-        survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
-        limits = listOf(SteadyGenerations(20), GenerationCount(100))
+        limits = listOf(GenerationCount(100), TargetFitness(20.0))
+        statistics = listOf(StatisticCollector())
     }
-    engine.evolve()
-    engine.statistics.forEach {
-        println(it)
-    }
+    engine.run()
+    println(engine.statistics[0])
 }
 ```
 
 #### Output
 
 ```text
----------- Selection Times ------------
-|--> Average: 77.34375 ms
-|--> Max: 254 ms
-|--> Min: 26 ms
------------ Alteration Times ----------
-|--> Average: 5.65625 ms
-|--> Max: 45 ms
+------------ Statistics Collector -------------
+-------------- Selection Times ----------------
+|--> Offspring Selection
+|   |--> Average: 1.5 ms
+|   |--> Max: 16 ms
+|   |--> Min: 0 ms
+|--> Survivor Selection
+|   |--> Average: 1.5 ms
+|   |--> Max: 16 ms
+|   |--> Min: 0 ms
+--------------- Alteration Times --------------
+|--> Average: 3.5625 ms
+|--> Max: 42 ms
 |--> Min: 0 ms
----------- Evolution Results ----------
-|--> Total time: 3182 ms
-|--> Average generation time: 84.21875 ms
-|--> Max generation time: 261 ms
-|--> Min generation time: 28 ms
+-------------- Evolution Results --------------
+|--> Total time: 632 ms
+|--> Average generation time: 19.375 ms
+|--> Max generation time: 190 ms
+|--> Min generation time: 3 ms
 |--> Generation: 32
-|--> Steady generations: 20
-|--> Fittest:  [ 11111111|11111111|11111111 ] 
-|--> Best fitness: 24.0
+|--> Steady generations: 0
+|--> Fittest: {  [ 1111|1111|1111|1111|1111 ]  -> 20.0 }
+|--> Best fitness: 20.0
 ```
 
 ### Word Guessing Problem
@@ -71,59 +73,73 @@ being able to ask "how many characters are in the correct position?".
 #### Implementation
 
 ```kotlin
-fun fitnessFn(genotype: Genotype<Char>): Double {
-    val target = "Sopaipilla"
-    var fitness = 0.0
-    genotype.chromosomes.forEach { chromosome ->
-        chromosome.genes.forEachIndexed { idx, gene ->
-            if (gene.dna == target[idx]) {
-                fitness++
-            }
-        }
-    }
-    return fitness
-}
+private const val target = "Sopaipilla"
+
+private fun matches(genotype: Genotype<Char>) = genotype.chromosomes.first().genes
+    .filterIndexed { index, gene -> gene.dna == target[index] }
+    .size.toDouble()
 
 fun main() {
-    val engine = engine(::fitnessFn) {
-        genotype = genotype {
-            chromosomes = listOf(CharChromosome.Builder(10))
-        }
-        populationSize = 1000
-        alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
-        limits = listOf(SteadyGenerations(10))
-    }
-    engine.evolve()
-    engine.statistics.forEach {
-        println(it)
-    }
-}
-```
-
-### Function Optimization Problem
-
-Here we want to find the minimum of the function ``f(x) = cos(1 / 2 + sin(x)) * cos(x)``.
-
-
-```kotlin
-fun fitnessFunction(x: Genotype<Double>): Double {
-    val value = x.chromosomes.first().genes.first().dna
-    return cos(0.5 + sin(value)) * cos(value)
-}
-
-fun main() {
-    val engine = engine(::fitnessFunction) {
-        genotype = genotype {
-            chromosomes = listOf(DoubleChromosome.Builder(1, 0.0..(2 * Math.PI)))
-        }
+    val engine = engine(::matches, genotype {
+        chromosomes = listOf(CharChromosome.Builder(10))
+    }) {
         populationSize = 500
-        optimizer = Minimizer()
-        survivors = (populationSize * 0.2).toInt()
-        alterers = listOf(Mutator(0.03), MeanCrossover(0.6))
+        alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
+        limits = listOf(TargetFitness(target.length.toDouble()))
+        statistics = listOf(StatisticPrinter(10), StatisticCollector())
     }
-    engine.evolve()
-    engine.statistics.forEach {
-        println(it)
-    }
+    val evolvedPopulation = engine.run()
+    println(evolvedPopulation.generation)
+    println(evolvedPopulation.best)
 }
 ```
+
+[//]: # (### Function Optimization Problem)
+
+[//]: # ()
+[//]: # (Here we want to find the minimum of the function ``f&#40;x&#41; = cos&#40;1 / 2 + sin&#40;x&#41;&#41; * cos&#40;x&#41;``.)
+
+[//]: # ()
+[//]: # ()
+[//]: # (```kotlin)
+
+[//]: # (fun fitnessFunction&#40;x: Genotype<Double>&#41;: Double {)
+
+[//]: # (    val value = x.chromosomes.first&#40;&#41;.genes.first&#40;&#41;.dna)
+
+[//]: # (    return cos&#40;0.5 + sin&#40;value&#41;&#41; * cos&#40;value&#41;)
+
+[//]: # (})
+
+[//]: # ()
+[//]: # (fun main&#40;&#41; {)
+
+[//]: # (    val engine = engine&#40;::fitnessFunction&#41; {)
+
+[//]: # (        genotype = genotype {)
+
+[//]: # (            chromosomes = listOf&#40;DoubleChromosome.Builder&#40;1, 0.0..&#40;2 * Math.PI&#41;&#41;&#41;)
+
+[//]: # (        })
+
+[//]: # (        populationSize = 500)
+
+[//]: # (        optimizer = Minimizer&#40;&#41;)
+
+[//]: # (        survivors = &#40;populationSize * 0.2&#41;.toInt&#40;&#41;)
+
+[//]: # (        alterers = listOf&#40;Mutator&#40;0.03&#41;, MeanCrossover&#40;0.6&#41;&#41;)
+
+[//]: # (    })
+
+[//]: # (    engine.evolve&#40;&#41;)
+
+[//]: # (    engine.statistics.forEach {)
+
+[//]: # (        println&#40;it&#41;)
+
+[//]: # (    })
+
+[//]: # (})
+
+[//]: # (```)
