@@ -15,7 +15,7 @@ import cl.ravenhill.keen.genetic.Phenotype
  *
  * @property comparator The comparator to use to determine which of two phenotypes is better.
  */
-interface PhenotypeOptimizer {
+interface PhenotypeOptimizer<DNA> {
     val comparator
         get() = Comparator { p1: Phenotype<*>, p2: Phenotype<*> -> compare(p1, p2) }
 
@@ -34,6 +34,6 @@ interface PhenotypeOptimizer {
     /**
      * Sorts the given list of phenotypes using this optimizer.
      */
-    fun sort(population: List<Phenotype<*>>) =
+    fun sort(population: List<Phenotype<DNA>>) =
         population.sortedWith(comparator.reversed())
 }

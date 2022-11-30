@@ -119,6 +119,9 @@ object Subset {
     }
 }
 
+
+infix fun List<Double>.sub(min: Double) = this.map { it - min }
+
 fun <E> MutableList<E>.swap(start: Int, end: Int, other: MutableList<E>, otherStart: Int) {
     this.checkIndex(start, end, otherStart, other.size)
     var i = end - start

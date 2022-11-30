@@ -9,20 +9,38 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.util.math.eq
+import cl.ravenhill.keen.util.math.sub
+import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import java.lang.Math.pow
+import kotlin.math.abs
+import kotlin.math.min
+import kotlin.math.pow
 
-private val <DNA> List<Phenotype<DNA>>.fitness: List<Double>
-    get() = this.map { it.fitness }
 
 class RouletteWheelSelector<DNA>(
     sorted: Boolean = false
 ) : AbstractProbabilitySelector<DNA>(sorted) {
 
-    override fun probabilities(population: List<Phenotype<DNA>>, count: Int): List<Double> {
-        val fitness = population.fitness
-        TODO("Complete implementation")
-        return fitness
+    override fun probabilities(
+        population: List<Phenotype<DNA>>,
+        count: Int,
+        optimizer: PhenotypeOptimizer<DNA>
+    ): List<Double> {
+        val fitness = population.fitness.let {
+            it sub min(it.min(), 0.0)
+        }
+        val cums = fitness.reduce { acc, d -> acc + d }
+        return if (cums eq 0.0) {
+            List(population.size) { 1.0 / population.size }
+        } else {
+            fitness.map { it / cums }
+        }
     }
 
     override fun toString() = "RouletteWheelSelector { " +
             "sorted: $sorted }"
 }
+
+private val <DNA> List<Phenotype<DNA>>.fitness: List<Double>
+    get() = this.map { it.fitness }

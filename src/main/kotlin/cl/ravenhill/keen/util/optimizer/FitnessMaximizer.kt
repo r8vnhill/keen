@@ -14,7 +14,7 @@ import cl.ravenhill.keen.genetic.Phenotype
 /**
  * [PhenotypeOptimizer] that prioritizes the maximum of two values.
  */
-class FitnessMaximizer : PhenotypeOptimizer {
+class FitnessMaximizer<DNA> : PhenotypeOptimizer<DNA> {
 
     override fun compare(p1: Phenotype<*>, p2: Phenotype<*>) = p1.fitness compareTo p2.fitness
 

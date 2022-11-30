@@ -20,17 +20,38 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
         { it: List<Double> -> it.sorted().reversed() }
     }
 
-    abstract fun probabilities(population: List<Phenotype<DNA>>, count: Int): List<Double>
+    abstract fun probabilities(
+        population: List<Phenotype<DNA>>,
+        count: Int,
+        optimizer: PhenotypeOptimizer<DNA>
+    ): List<Double>
 
     override operator fun invoke(
         population: List<Phenotype<DNA>>,
         count: Int,
-        optimizer: PhenotypeOptimizer
+        optimizer: PhenotypeOptimizer<DNA>
     ): List<Phenotype<DNA>> {
         count.validateSize(true to { "Selection count [$count] must be at least 0" })
-        val selection = mutableListOf<Phenotype<DNA>>()
-        val probabilities = probabilities(population, count)
-        TODO("The invocation of the probability selector is not yet implemented")
-//        return selection
+        val pop = if (sorted) {
+            optimizer.sort(population)
+        } else {
+            population
+        }
+        val probabilities = probabilities(population, count, optimizer)
+        checkAnCorrect(probabilities)
+        incremental(probabilities)
+        return List(count) { pop[indexOf(probabilities)] }
+    }
+
+    private fun incremental(probabilities: List<Double>) {
+        TODO("Not yet implemented")
+    }
+
+    private fun checkAnCorrect(probabilities: List<Double>) {
+        TODO("Not yet implemented")
+    }
+
+    private fun indexOf(probabilities: List<Double>): Int {
+        TODO("Not yet implemented")
     }
 }
