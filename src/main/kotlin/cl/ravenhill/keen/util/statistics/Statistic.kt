@@ -1,15 +1,16 @@
 package cl.ravenhill.keen.util.statistics
 
-import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.Phenotype
 
 
 interface Statistic<T> {
-    val selectionTime: MutableList<Long>
+    val survivorSelectionTime: MutableList<Long>
+    val offspringSelectionTime: MutableList<Long>
     val alterTime: MutableList<Long>
     var evolutionTime: Long
     val generationTimes: MutableList<Long>
     var bestFitness: Double
-    var fittest: Genotype<T>
+    var fittest: Phenotype<T>?
     var steadyGenerations: Int
     var generation: Int
 }

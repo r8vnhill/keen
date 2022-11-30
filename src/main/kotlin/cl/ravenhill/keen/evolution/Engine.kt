@@ -9,8 +9,6 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.evolution.streams.EvolutionSpliterator
-import cl.ravenhill.keen.evolution.streams.EvolutionStream
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.limits.GenerationCount
@@ -43,7 +41,6 @@ import kotlin.properties.Delegates
  * @property genotype           The genotype that will be used to create the population
  * @property populationSize     The size of the population
  * @property selector           The selector that will be used to select the individuals
- * @property alterers           The alterers that will be used to alter the population
  * @property generation         The current generation
  * @property limits             The limits that will be used to stop the evolution
  * @property steadyGenerations  The number of generations that the fitness has not changed
@@ -66,14 +63,9 @@ class Engine<DNA> private constructor(
     private val interceptor: EvolutionInterceptor<DNA>
 ) : Evolver<DNA> {
 
-    init {
-        // We need to set the genotype's fitness function to evolve the population
-        genotype.fitnessFunction = fitnessFunction
-    }
-
     // region : PROPERTIES  ------------------------------------------------------------------------
     var generation: Int by Delegates.observable(0) { _, _, new ->
-//        statistics.stream().parallel().forEach { it.generation = new }
+        statistics.stream().parallel().forEach { it.generation = new }
     }
         private set
 
@@ -88,31 +80,20 @@ class Engine<DNA> private constructor(
         } else {
             steadyGenerations = 0
         }
-//        statistics.stream().parallel().forEach { it.bestFitness = new }
+        statistics.stream().parallel().forEach { it.bestFitness = new }
+    }
+        private set
+
+    var fittest: Phenotype<DNA>? by Delegates.observable(null) { _, _, new ->
+        statistics.stream().parallel().forEach { it.fittest = new }
     }
         private set
 
     private val clock = Clock.systemDefaultZone()
     // endregion    --------------------------------------------------------------------------------
 
-    fun evolve() {
-//        val evolutionStartTime = clock.millis()
-//        createPopulation()
-//        while (limits.none { it(this) }) { // While none of the limits are met
-//            val initialTime = clock.millis()
-//            population = select(populationSize)     // Select the population
-//            population = alter(population)          // Alter the population
-//            generation++                            // Increment the generation
-//            bestFitness = fittest.fitness           // Update the best fitness
-//            statistics.stream().parallel().forEach {
-//                it.generationTimes.add(clock.millis() - initialTime)
-//            }
-//        }
-//        statistics.stream().parallel()
-//            .forEach { it.evolutionTime = clock.millis() - evolutionStartTime }
-    }
-
     fun run(): EvolutionResult<DNA> {
+        val initTime = clock.millis()
         var evolution = EvolutionStart.empty<DNA>()
         var result = EvolutionResult(optimizer, evolution.population, generation)
         while (limits.none { it(this) }) { // While none of the limits are met
@@ -120,6 +101,7 @@ class Engine<DNA> private constructor(
             bestFitness = result.best?.fitness ?: Double.NaN
             evolution = result.next()
         }
+        statistics.stream().parallel().forEach { it.evolutionTime = clock.millis() - initTime }
         return result
     }
 
@@ -130,17 +112,13 @@ class Engine<DNA> private constructor(
      * basics of evolutionary programming to use this method, so no further explanation is provided
      * (but take note of the comments placed on the body of the method).
      *
-     * This method implements a single step of the GA so the process of evolution can be tweaked and
-     * monitored by external entities, such as the [EvolutionSpliterator] used to process the
-     * evolution as a [Stream].
-     *
      * @param start the starting state of the evolution at this generation.
      * @return  the result of advancing the population by one generation.
      *
      * @see EvolutionInterceptor.identity
-     * @see EvolutionSpliterator.tryAdvance
      */
     override fun evolve(start: EvolutionStart<DNA>): EvolutionResult<DNA> {
+        val initTime = clock.millis()
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
         val interceptedStart = interceptor.before(start)
@@ -164,8 +142,11 @@ class Engine<DNA> private constructor(
         // (8) The next population is evaluated
         val pop = evaluate(EvolutionStart(nextPopulation.join(), generation++), true)
         val result = EvolutionResult(optimizer, pop, generation)
+        fittest = result.best
         // (9) The result of the evolution is post-processed
-        return interceptor.after(result)
+        val afterResult = interceptor.after(result)
+        statistics.stream().parallel().forEach { it.generationTimes.add(clock.millis() - initTime) }
+        return afterResult
     }
 
     private fun evolutionStart(start: EvolutionStart<DNA>) = if (start.population.isEmpty()) {
@@ -202,20 +183,28 @@ class Engine<DNA> private constructor(
 
     private fun selectOffspring(population: Population<DNA>) =
         asyncSelect {
+            val initTime = clock.millis()
             offspringSelector(
                 population,
                 (offspringFraction * populationSize).toInt(),
                 optimizer
-            )
+            ).also {
+                statistics.stream().parallel()
+                    .forEach { it.offspringSelectionTime.add(clock.millis() - initTime) }
+            }
         }
 
     private fun selectSurvivors(population: List<Phenotype<DNA>>) =
         asyncSelect {
+            val initTime = clock.millis()
             survivorSelector(
                 population,
                 ((1 - offspringFraction) * populationSize).toInt(),
                 optimizer
-            )
+            ).also {
+                statistics.stream().parallel()
+                    .forEach { it.survivorSelectionTime.add(clock.millis() - initTime) }
+            }
         }
 
     private fun asyncSelect(select: () -> Population<DNA>) = supplyAsync({
@@ -226,13 +215,13 @@ class Engine<DNA> private constructor(
         population: CompletableFuture<Population<DNA>>,
         evolution: EvolutionStart<DNA>
     ) = population.thenApplyAsync({
+        val initTime = clock.millis()
         alterer(it, evolution.generation)
+            .also {
+                statistics.stream().parallel()
+                    .forEach { stat -> stat.alterTime.add(clock.millis() - initTime) }
+            }
     }, executor)
-
-    fun stream() = stream { EvolutionStart.empty() }
-
-    private fun stream(start: () -> EvolutionStart<DNA>) =
-        EvolutionStream.ofEvolver(this) { evolutionStart(start()) }
 
     override fun toString() =
         "Engine { " +

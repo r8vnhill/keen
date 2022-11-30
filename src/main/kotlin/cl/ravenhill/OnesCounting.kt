@@ -35,9 +35,8 @@ fun main() {
 //        survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
         limits = listOf(GenerationCount(100), TargetFitness(20.0))
-        statistics = listOf(StatisticPrinter(10), StatisticCollector())
+        statistics = listOf(StatisticCollector())
     }
-    val evolvedPopulation = engine.run()
-    println(evolvedPopulation.generation)
-    println(evolvedPopulation.best)
+    engine.run()
+    println(engine.statistics[0])
 }

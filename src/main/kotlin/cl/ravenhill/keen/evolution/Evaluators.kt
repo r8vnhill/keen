@@ -57,8 +57,11 @@ class ConcurrentEvaluator<DNA>(
         phenotype: Phenotype<DNA>,
         private val function: (Genotype<DNA>) -> Double
     ) : Runnable {
+
         private var fitness = Double.NaN
+
         val backingPhenotype = phenotype
+
         val phenotype: Phenotype<DNA>
             get() = backingPhenotype.withFitness(fitness)
 

@@ -10,10 +10,11 @@ class Phenotype<DNA>(
 ) : GeneticMaterial {
 
     override fun verify(): Boolean = TODO()
-    override fun toString() = "{ $genotype -> ${genotype.fitness} }"
+    override fun toString() = "{ $genotype -> $fitness }"
 
     fun isEvaluated() = fitness.isNotNan()
 
     fun isNotEvaluated() = !isEvaluated()
+
     fun withFitness(fitness: Double) = Phenotype(genotype, generation, fitness)
 }

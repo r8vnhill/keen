@@ -13,16 +13,21 @@ import org.jetbrains.kotlinx.dataframe.math.mean
 
 class StatisticCollector<DNA> : AbstractStatistic<DNA>() {
     override fun toString() = """
-        -------- Statistics Collector ---------
-        ---------- Selection Times ------------
-        |--> Average: ${selectionTime.mean()} ms
-        |--> Max: ${selectionTime.maxOrNull()} ms
-        |--> Min: ${selectionTime.minOrNull()} ms
-        ----------- Alteration Times ----------
+        ------------ Statistics Collector -------------
+        -------------- Selection Times ----------------
+        |--> Offspring Selection
+        |   |--> Average: ${offspringSelectionTime.mean()} ms
+        |   |--> Max: ${offspringSelectionTime.maxOrNull()} ms
+        |   |--> Min: ${offspringSelectionTime.minOrNull()} ms
+        |--> Survivor Selection
+        |   |--> Average: ${survivorSelectionTime.mean()} ms
+        |   |--> Max: ${survivorSelectionTime.maxOrNull()} ms
+        |   |--> Min: ${survivorSelectionTime.minOrNull()} ms
+        --------------- Alteration Times --------------
         |--> Average: ${alterTime.mean()} ms
         |--> Max: ${alterTime.maxOrNull()} ms
         |--> Min: ${alterTime.minOrNull()} ms
-        ---------- Evolution Results ----------
+        -------------- Evolution Results --------------
         |--> Total time: $evolutionTime ms
         |--> Average generation time: ${generationTimes.mean()} ms
         |--> Max generation time: ${generationTimes.maxOrNull()} ms
