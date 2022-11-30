@@ -56,7 +56,7 @@ class Engine<DNA> private constructor(
     private val alterer: Alterer<DNA>,
     private val limits: List<Limit>,
     val survivorSelector: Selector<DNA>,
-    private val optimizer: PhenotypeOptimizer,
+    private val optimizer: PhenotypeOptimizer<DNA>,
     val statistics: List<Statistic<DNA>>,
     private val executor: Executor,
     val evaluator: Evaluator<DNA>,
@@ -282,7 +282,7 @@ class Engine<DNA> private constructor(
             set(value) = value.validateNotEmpty { "Limits must be a non-empty list" }
                 .let { field = it }
 
-        var optimizer: PhenotypeOptimizer = FitnessMaximizer()
+        var optimizer: PhenotypeOptimizer<DNA> = FitnessMaximizer()
 
         var executor: Executor = commonPool()
 

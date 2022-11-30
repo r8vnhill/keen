@@ -17,7 +17,7 @@ interface Selector<DNA> {
     operator fun invoke(
         population: List<Phenotype<DNA>>,
         count: Int,
-        optimizer: PhenotypeOptimizer
+        optimizer: PhenotypeOptimizer<DNA>
     ): List<Phenotype<DNA>>
 }
 
@@ -25,7 +25,7 @@ abstract class AbstractSelector<DNA> : Selector<DNA> {
     final override operator fun invoke(
         population: List<Phenotype<DNA>>,
         count: Int,
-        optimizer: PhenotypeOptimizer
+        optimizer: PhenotypeOptimizer<DNA>
     ): List<Phenotype<DNA>> {
         count.validateSize(true to { "Selection count [$count] must be at least 0" })
         return select(population, count, optimizer)
@@ -34,7 +34,7 @@ abstract class AbstractSelector<DNA> : Selector<DNA> {
     protected abstract fun select(
         population: List<Phenotype<DNA>>,
         count: Int,
-        optimizer: PhenotypeOptimizer
+        optimizer: PhenotypeOptimizer<DNA>
     ): List<Phenotype<DNA>>
 
 }

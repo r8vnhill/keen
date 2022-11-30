@@ -26,7 +26,7 @@ class RouletteWheelSelector<DNA>(
         population: List<Phenotype<DNA>>,
         count: Int,
         optimizer: PhenotypeOptimizer<DNA>
-    ): List<Double> {
+    ): DoubleArray {
         val fitness = population.fitness.let {
             it sub min(it.min(), 0.0)
         }
@@ -35,7 +35,7 @@ class RouletteWheelSelector<DNA>(
             List(population.size) { 1.0 / population.size }
         } else {
             fitness.map { it / cums }
-        }
+        }.toDoubleArray()
     }
 
     override fun toString() = "RouletteWheelSelector { " +

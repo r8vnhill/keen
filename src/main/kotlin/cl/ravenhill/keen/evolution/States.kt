@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Contract
 import java.util.stream.Collector
 
 class EvolutionResult<DNA>(
-    private val optimizer: PhenotypeOptimizer, population: List<Phenotype<DNA>>,
+    private val optimizer: PhenotypeOptimizer<DNA>, population: List<Phenotype<DNA>>,
     generation: Int
 ) : Comparable<EvolutionResult<DNA>> {
     private val population: List<Phenotype<DNA>>

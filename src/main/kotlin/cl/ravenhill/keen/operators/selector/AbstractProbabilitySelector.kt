@@ -8,10 +8,12 @@
 
 package cl.ravenhill.keen.operators.selector
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.validateSize
 
+private const val SERIAL_INDEX_THRESHOLD = 35
 
 abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) : Selector<DNA> {
     private val reverter = if (sorted) {
@@ -24,7 +26,7 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
         population: List<Phenotype<DNA>>,
         count: Int,
         optimizer: PhenotypeOptimizer<DNA>
-    ): List<Double>
+    ): DoubleArray
 
     override operator fun invoke(
         population: List<Phenotype<DNA>>,
@@ -43,15 +45,55 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
         return List(count) { pop[indexOf(probabilities)] }
     }
 
-    private fun incremental(probabilities: List<Double>) {
-        TODO("Not yet implemented")
+    private fun incremental(probabilities: DoubleArray): DoubleArray {
+        for (i in 1 until probabilities.size) {
+            probabilities[i] += probabilities[i - 1]
+        }
+        return probabilities
     }
 
-    private fun checkAnCorrect(probabilities: List<Double>) {
-        TODO("Not yet implemented")
+    /**
+     * Checks if the given probability values are finite. If not, all values are
+     * set to the same probability.
+     */
+    private fun checkAnCorrect(probabilities: DoubleArray) {
+        var ok = true
+        var i = probabilities.size
+        while (ok && --i >= 0) {
+            ok = probabilities[i].isFinite()
+        }
+        if (!ok) {
+            probabilities.fill(1.0 / probabilities.size)
+        }
     }
 
-    private fun indexOf(probabilities: List<Double>): Int {
+    private fun indexOf(incr: DoubleArray): Int {
+        return if (incr.size <= SERIAL_INDEX_THRESHOLD) {
+            serialIndexOf(incr)
+        } else {
+            binaryIndexOf(incr)
+        }
+    }
+
+    private fun binaryIndexOf(incr: DoubleArray): Int {
+        var imin = 0
+        var imax = incr.size
+        var index = -1
+        val v = Core.rng.nextDouble()
+        while (imin < imax && index == -1) {
+            val imid = (imin + imax) ushr 1
+            if (imid == 0 || (incr[imid] >= v && incr[imid - 1] < v)) {
+                index = imid
+            } else if (incr[imid] < v) {
+                imin = imid + 1
+            } else {
+                imax = imid
+            }
+        }
+        return index
+    }
+
+    private fun serialIndexOf(incr: DoubleArray): Int {
         TODO("Not yet implemented")
     }
 }

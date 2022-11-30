@@ -31,7 +31,6 @@ fun main() {
         chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
     }) {
         populationSize = 500
-        selector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
         limits = listOf(GenerationCount(100), TargetFitness(20.0))
         statistics = listOf(StatisticCollector())
