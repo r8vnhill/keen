@@ -17,28 +17,6 @@ import java.util.stream.Stream
 
 class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DNA>() {
 
-//    override fun invoke(
-//        population: List<Phenotype<DNA>>,
-//        count: Int,
-//        optimizer: Optimizer
-//    ): List<Phenotype<DNA>> {
-//
-//        TODO()
-////        val selection = mutableListOf<Genotype<DNA>>()
-////        for (i in 0 until count) {
-////            var fittest = population.random(Core.generator.asKotlinRandom())
-////            for (j in 0 until i) {
-////                val challenger = population.random(Core.generator.asKotlinRandom())
-////                if (optimizer(challenger.fitness, fittest.fitness)) {
-////                    fittest = challenger
-////                }
-////            }
-////            selection.add(fittest)
-////        }
-////        return selection
-//    }
-
-
     override fun select(
         population: List<Phenotype<DNA>>,
         count: Int,

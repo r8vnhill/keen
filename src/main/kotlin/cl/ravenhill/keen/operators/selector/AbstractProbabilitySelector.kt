@@ -16,11 +16,6 @@ import cl.ravenhill.keen.util.validateSize
 private const val SERIAL_INDEX_THRESHOLD = 35
 
 abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) : Selector<DNA> {
-    private val reverter = if (sorted) {
-        { it: List<Double> -> it.reversed() }
-    } else {
-        { it: List<Double> -> it.sorted().reversed() }
-    }
 
     abstract fun probabilities(
         population: List<Phenotype<DNA>>,
