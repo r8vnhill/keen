@@ -14,6 +14,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
+import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.util.statistics.StatisticCollector
@@ -33,9 +34,10 @@ fun main() {
 //        selector = RouletteWheelSelector()
 //        survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
-        limits = listOf(GenerationCount(100))
+        limits = listOf(GenerationCount(100), TargetFitness(20.0))
         statistics = listOf(StatisticPrinter(10), StatisticCollector())
     }
     val evolvedPopulation = engine.run()
-    println(evolvedPopulation.maxBy { it.best.fitness }.best)
+    println(evolvedPopulation.generation)
+    println(evolvedPopulation.best)
 }

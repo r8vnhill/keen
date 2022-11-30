@@ -36,8 +36,7 @@ fun main() {
         alterers = listOf(Mutator(0.03), MeanCrossover(0.6))
         statistics = listOf(StatisticPrinter(20), StatisticCollector())
     }
-    engine.evolve()
-    engine.statistics.forEach {
-        println(it)
-    }
+    val evolvedPopulation = engine.run()
+    println(evolvedPopulation.generation)
+    println(evolvedPopulation.best)
 }

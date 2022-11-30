@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.evolution.streams.ConcreteEvolutionStream
+import cl.ravenhill.keen.evolution.streams.EvolutionSpliterator
 import cl.ravenhill.keen.evolution.streams.EvolutionStream
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -35,7 +35,6 @@ import java.util.concurrent.ForkJoinPool.commonPool
 import java.util.stream.Collectors
 import java.util.stream.Stream
 import kotlin.properties.Delegates
-import cl.ravenhill.keen.evolution.streams.EvolutionSpliterator
 
 /**
  * Fundamental class of the library. It is the engine that will run the evolution process.
@@ -91,6 +90,7 @@ class Engine<DNA> private constructor(
         }
 //        statistics.stream().parallel().forEach { it.bestFitness = new }
     }
+        private set
 
     private val clock = Clock.systemDefaultZone()
     // endregion    --------------------------------------------------------------------------------
@@ -112,12 +112,15 @@ class Engine<DNA> private constructor(
 //            .forEach { it.evolutionTime = clock.millis() - evolutionStartTime }
     }
 
-    fun run(): List<EvolutionResult<DNA>> {
-        var evolutionStream = stream()
-        for (limit in limits) {
-            evolutionStream = evolutionStream.limit(limit) as ConcreteEvolutionStream<DNA>
+    fun run(): EvolutionResult<DNA> {
+        var evolution = EvolutionStart.empty<DNA>()
+        var result = EvolutionResult(optimizer, evolution.population, generation)
+        while (limits.none { it(this) }) { // While none of the limits are met
+            result = evolve(evolution)
+            bestFitness = result.best?.fitness ?: Double.NaN
+            evolution = result.next()
         }
-        return evolutionStream.collect(Collectors.toList())
+        return result
     }
 
     /**
@@ -152,24 +155,27 @@ class Engine<DNA> private constructor(
         // (6) The offspring is altered
         val alteredOffspring = alter(offspring, evolution)
         // TODO: Filter population
-
+        // (7) The altered offspring is merged with the survivors
         val nextPopulation = survivors.thenCombineAsync(
             alteredOffspring,
             { s, o -> s + o.population },
             executor
         )
-        val pop = nextPopulation.join()
-        val evPop = evaluate(EvolutionStart(pop, generation++), true)
-        val result = EvolutionResult(optimizer, evPop, generation)
+        // (8) The next population is evaluated
+        val pop = evaluate(EvolutionStart(nextPopulation.join(), generation++), true)
+        val result = EvolutionResult(optimizer, pop, generation)
+        // (9) The result of the evolution is post-processed
         return interceptor.after(result)
     }
 
     private fun evolutionStart(start: EvolutionStart<DNA>) = if (start.population.isEmpty()) {
         val generation = start.generation
-        val stream = Stream.concat(
-            start.population.stream(),
-            Stream.generate { genotype.make() }
-                .map { Phenotype(it, generation) })
+        val stream =
+            Stream.concat(
+                start.population.stream(),
+                Stream.generate { genotype.make() }
+                    .map { Phenotype(it, generation) }
+            )
         EvolutionStart(
             stream.limit(populationSize.toLong())
                 .collect(Collectors.toList()),

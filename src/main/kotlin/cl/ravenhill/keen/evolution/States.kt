@@ -13,14 +13,14 @@ class EvolutionResult<DNA>(
     generation: Int
 ) : Comparable<EvolutionResult<DNA>> {
     private val population: List<Phenotype<DNA>>
-    private val generation: Int
+    val generation: Int
 
     @Contract(pure = true)
     operator fun next(): EvolutionStart<DNA> {
         return EvolutionStart(population, generation + 1, true)
     }
 
-    val best: Phenotype<DNA>
+    val best: Phenotype<DNA>?
 
     init {
         this.population = population
@@ -28,23 +28,8 @@ class EvolutionResult<DNA>(
         best = population.stream().max(optimizer.comparator).orElse(null)
     }
 
-    fun bestPhenotype(): Phenotype<DNA> {
-        return best
-    }
-
     override fun compareTo(other: EvolutionResult<DNA>): Int {
         return 0
-    }
-
-    companion object {
-        fun <G> toBestPhenotype(): Collector<EvolutionResult<G>, *, Phenotype<G>> = Collector.of(
-            ::of,
-            MinMax<EvolutionResult<G>>::accept,
-            MinMax<EvolutionResult<G>>::combine,
-            { mm: MinMax<EvolutionResult<G>> ->
-                if (mm.max() != null) mm.max()!!.bestPhenotype() else null
-            }
-        )
     }
 }
 

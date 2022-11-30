@@ -62,7 +62,7 @@ class BoolChromosome private constructor(
         var str = ""
         genes.forEach { str += if (it == BoolGene.True) "1" else "0" }
         return str.chunked(4).joinToString("|")
-            .padStart(genes.size.roundUpToMultipleOf(4), '0')
+            .padStart(genes.size.roundUpToMultipleOf(8), '0')
     }
 
     /**
