@@ -10,6 +10,9 @@ _Keen_ is a Kotlin genetic algorithms' framework heavily inspired by
 
 ## Examples
 
+The following examples only have the explanation of what's the problem to solve.
+You can find the explanations of the code in the [wiki](https://github.com/r8vnhill/keen/wiki).
+
 ### One Max (Ones Counting) Problem
 
 The _One Max_ problem is a well known problem widely used to exemplify the genetic algorithms'
