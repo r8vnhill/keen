@@ -14,8 +14,10 @@ import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.DoubleChromosome
+import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.MeanCrossover
+import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
@@ -38,6 +40,7 @@ fun main() {
         populationSize = 1000
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.1), MeanCrossover(0.6))
+        limits = listOf(SteadyGenerations(20))
         statistics = listOf(StatisticCollector())
     }
     engine.run()

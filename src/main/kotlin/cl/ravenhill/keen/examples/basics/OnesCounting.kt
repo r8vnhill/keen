@@ -18,6 +18,7 @@ import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
+import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import java.util.stream.Collectors
@@ -31,7 +32,8 @@ fun main() {
         chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
     }) {
         populationSize = 500
-        alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
+        selector = TournamentSelector(sampleSize = 2)
+        alterers = listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.06))
         limits = listOf(GenerationCount(100), TargetFitness(20.0))
         statistics = listOf(StatisticCollector())
     }
