@@ -33,7 +33,7 @@ sealed class BoolGene : Gene<Boolean> {
         False
     }
 
-    override fun new(dna: Boolean) = if (dna) {
+    override fun duplicate(dna: Boolean) = if (dna) {
         True
     } else {
         False

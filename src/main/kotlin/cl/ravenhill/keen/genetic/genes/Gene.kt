@@ -36,5 +36,5 @@ interface Gene<DNA> : GeneticMaterial {
     /**
      * Creates a new gene with the given value.
      */
-    fun new(dna: DNA): Gene<DNA>
+    fun duplicate(dna: DNA): Gene<DNA>
 }

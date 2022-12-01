@@ -197,7 +197,7 @@ class Engine<DNA> private constructor(
     private fun selectSurvivors(population: List<Phenotype<DNA>>) =
         asyncSelect {
             val initTime = clock.millis()
-            survivorSelector(
+            survivorSelector    (
                 population,
                 ((1 - offspringFraction) * populationSize).toInt(),
                 optimizer

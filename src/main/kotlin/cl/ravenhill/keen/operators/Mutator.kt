@@ -19,7 +19,7 @@ import kotlin.math.pow
 
 
 /**
- * The mutator operator is responsible for mutating the [Genotype] of the [Individual]s in the
+ * The mutator operator is responsible for mutating the [Genotype] of the [Phenotype]s in the
  * [Population].
  * There are two distinct roles for the mutator:
  *

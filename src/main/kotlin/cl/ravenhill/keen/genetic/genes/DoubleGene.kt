@@ -12,7 +12,10 @@ import cl.ravenhill.keen.Core
 
 
 class DoubleGene(override val dna: Double, private val range: ClosedFloatingPointRange<Double>) :
-        Gene<Double> {
+        NumberGene<Double> {
+
+    override fun mean(gene: NumberGene<Double>) =
+        duplicate((dna - dna / 2) + (gene.dna - gene.dna / 2))
 
     override fun mutate(): DoubleGene {
         val max = range.endInclusive
@@ -20,7 +23,7 @@ class DoubleGene(override val dna: Double, private val range: ClosedFloatingPoin
         return DoubleGene(dna + (Core.rng.nextDouble() * (max - min) + min), range)
     }
 
-    override fun new(dna: Double) = DoubleGene(dna, range)
+    override fun duplicate(dna: Double) = DoubleGene(dna, range)
 
     override fun verify() = dna in range
 

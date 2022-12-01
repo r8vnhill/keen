@@ -2,6 +2,7 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.util.math.isNotNan
 
+typealias Individual<DNA> = Phenotype<DNA>
 
 class Phenotype<DNA>(
     val genotype: Genotype<DNA>,

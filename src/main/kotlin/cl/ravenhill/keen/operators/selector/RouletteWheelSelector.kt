@@ -12,10 +12,7 @@ import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.math.sub
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import java.lang.Math.pow
-import kotlin.math.abs
 import kotlin.math.min
-import kotlin.math.pow
 
 
 class RouletteWheelSelector<DNA>(
