@@ -17,12 +17,10 @@ of _Natural Selection_.
 EA is a _Stochastic_ algorithm, which means that it uses _Randomness_ to find a solution to a given
 optimization problem.
 
-The EA is composed of a _Population_ of _Individuals_, each individual is a possible solution to the
-problem, and each individual is composed of _Genes_.
-These algorithms often perform well in approximating solutions to a wide range of problems because
-they do not make any assumptions about the problem (which make them a kind of _Unsupervised
-Learning_ algorithm), and they are able to find solutions to problems that are not easily solved by
-other approaches.
+The EA is composed of a _Population_ of _candidate solutions_ to the problem, usually called 
+_Individuals_, and a fitness function that determines the quality of the solutions.
+Evolution of the population then takes place after the repeated application of operators inspired by
+biological evolution, such as _Reproduction_, _Recombination_ and _Mutation_.
 
 # Genetic Algorithms
 
