@@ -1,21 +1,13 @@
-/*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
-package cl.ravenhill
+package cl.ravenhill.keen.examples.basics
 
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
-import cl.ravenhill.keen.limits.Match
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 
@@ -30,6 +22,7 @@ fun main() {
         chromosomes = listOf(CharChromosome.Builder(10))
     }) {
         populationSize = 500
+        survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(TargetFitness(target.length.toDouble()))
         statistics = listOf(StatisticPrinter(10), StatisticCollector())

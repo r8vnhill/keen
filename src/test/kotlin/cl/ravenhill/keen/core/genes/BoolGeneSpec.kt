@@ -117,6 +117,6 @@ class BoolGeneSpec : WordSpec({
 
 suspend fun checkNewGenes(dna: Boolean, gene: BoolGene) =
     checkAll(Arb.element(BoolGene.True, BoolGene.False)) { g ->
-        val newGene = g.new(dna)
+        val newGene = g.duplicate(dna)
         newGene shouldBe gene
     }

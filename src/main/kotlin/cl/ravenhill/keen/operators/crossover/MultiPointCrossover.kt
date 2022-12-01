@@ -1,9 +1,7 @@
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.AbstractRecombinatorAlterer
 import cl.ravenhill.keen.util.validateAtLeast
 
 

@@ -12,6 +12,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.validateAtLeast
+import cl.ravenhill.keen.util.validateSum
 
 private const val SERIAL_INDEX_THRESHOLD = 35
 
@@ -35,6 +36,7 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
             population
         }
         val probabilities = probabilities(population, count, optimizer)
+        probabilities.validateSum(1.0) { "Probabilities sum must be 1.0" }
         checkAnCorrect(probabilities)
         incremental(probabilities)
         return List(count) { pop[indexOf(probabilities)] }
@@ -89,6 +91,15 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
     }
 
     private fun serialIndexOf(incr: DoubleArray): Int {
-        TODO("Not yet implemented")
+        var index = -1
+        var i = 0
+        while (i < incr.size && index == -1) {
+            if (incr[i] >= Core.rng.nextDouble()) {
+                index = i
+            }
+            ++i
+        }
+
+        return index
     }
 }

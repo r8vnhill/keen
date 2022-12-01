@@ -8,9 +8,9 @@
 
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.NumberGene
+import cl.ravenhill.keen.operators.CombineAlterer
 
 
 /**
@@ -22,30 +22,11 @@ import cl.ravenhill.keen.genetic.genes.Gene
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-class MeanCrossover<DNA : Number>(probability: Double) : AbstractCrossover<DNA>(probability) {
-
-    override fun crossover(mates: Pair<Chromosome<DNA>, Chromosome<DNA>>): Chromosome<DNA> {
-        val genes = mutableListOf<Gene<DNA>>()
-        for (i in mates.first.genes.indices) {
-            crossover(mates.first.genes[i] to mates.second.genes[i]).let { genes.add(it) }
-        }
-        return mates.first.duplicate(genes)
-    }
-
-    private fun crossover(genes: Pair<Gene<DNA>, Gene<DNA>>): Gene<DNA> {
-        @Suppress("UNCHECKED_CAST")
-        return genes.first.new(
-            if (Core.rng.nextDouble() < probability) {
-                (genes.first.dna.toDouble() + genes.second.dna.toDouble()) / 2
-            } else {
-                genes.first.dna
-            } as DNA
-        )
-    }
-
-    override fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int {
-        TODO("Not yet implemented")
-    }
-
+class MeanCrossover<DNA : Number>(probability: Double) :
+        CombineAlterer<DNA>(
+            // This cast should be safe
+            { g1: Gene<DNA>, g2: Gene<DNA> -> (g1 as NumberGene<DNA>).mean(g2 as NumberGene<DNA>) },
+            probability
+        ) {
     override fun toString() = "MeanCrossover { probability: $probability }"
 }

@@ -1,12 +1,9 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.util.math.MinMax
-import cl.ravenhill.keen.util.math.MinMax.Companion.of
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.validateAtLeast
 import org.jetbrains.annotations.Contract
-import java.util.stream.Collector
 
 class EvolutionResult<DNA>(
     private val optimizer: PhenotypeOptimizer<DNA>, population: List<Phenotype<DNA>>,

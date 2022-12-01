@@ -32,6 +32,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.ForkJoinPool.commonPool
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 /**
@@ -186,7 +187,7 @@ class Engine<DNA> private constructor(
             val initTime = clock.millis()
             offspringSelector(
                 population,
-                (offspringFraction * populationSize).toInt(),
+                (offspringFraction * populationSize).roundToInt(),
                 optimizer
             ).also {
                 statistics.stream().parallel()
@@ -199,7 +200,7 @@ class Engine<DNA> private constructor(
             val initTime = clock.millis()
             survivorSelector(
                 population,
-                ((1 - offspringFraction) * populationSize).toInt(),
+                ((1 - offspringFraction) * populationSize).roundToInt(),
                 optimizer
             ).also {
                 statistics.stream().parallel()
