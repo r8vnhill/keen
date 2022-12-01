@@ -16,7 +16,7 @@ import kotlin.math.sin
 /**
  * The function to minimize.
  */
-fun fitnessFunction(x: Genotype<Double>): Double {
+private fun fitnessFunction(x: Genotype<Double>): Double {
     val value = x.chromosomes.first().genes.first().dna
     return cos(0.5 + sin(value)) * cos(value)
 }

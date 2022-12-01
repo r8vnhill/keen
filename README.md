@@ -94,52 +94,27 @@ fun main() {
 }
 ```
 
-[//]: # (### Function Optimization Problem)
+### Function Optimization Problem
 
-[//]: # ()
-[//]: # (Here we want to find the minimum of the function ``f&#40;x&#41; = cos&#40;1 / 2 + sin&#40;x&#41;&#41; * cos&#40;x&#41;``.)
+Here we want to find the minimum of the function ``f(x) = cos(1 / 2 + sin(x)) * cos(x)``.
 
-[//]: # ()
-[//]: # ()
-[//]: # (```kotlin)
+```kotlin
+private fun fitnessFunction(x: Genotype<Double>): Double {
+    val value = x.chromosomes.first().genes.first().dna
+    return cos(0.5 + sin(value)) * cos(value)
+}
 
-[//]: # (fun fitnessFunction&#40;x: Genotype<Double>&#41;: Double {)
-
-[//]: # (    val value = x.chromosomes.first&#40;&#41;.genes.first&#40;&#41;.dna)
-
-[//]: # (    return cos&#40;0.5 + sin&#40;value&#41;&#41; * cos&#40;value&#41;)
-
-[//]: # (})
-
-[//]: # ()
-[//]: # (fun main&#40;&#41; {)
-
-[//]: # (    val engine = engine&#40;::fitnessFunction&#41; {)
-
-[//]: # (        genotype = genotype {)
-
-[//]: # (            chromosomes = listOf&#40;DoubleChromosome.Builder&#40;1, 0.0..&#40;2 * Math.PI&#41;&#41;&#41;)
-
-[//]: # (        })
-
-[//]: # (        populationSize = 500)
-
-[//]: # (        optimizer = Minimizer&#40;&#41;)
-
-[//]: # (        survivors = &#40;populationSize * 0.2&#41;.toInt&#40;&#41;)
-
-[//]: # (        alterers = listOf&#40;Mutator&#40;0.03&#41;, MeanCrossover&#40;0.6&#41;&#41;)
-
-[//]: # (    })
-
-[//]: # (    engine.evolve&#40;&#41;)
-
-[//]: # (    engine.statistics.forEach {)
-
-[//]: # (        println&#40;it&#41;)
-
-[//]: # (    })
-
-[//]: # (})
-
-[//]: # (```)
+fun main() {
+    val engine = engine(::fitnessFunction, genotype {
+        chromosomes = listOf(DoubleChromosome.Builder(1, 0.0..(2 * Math.PI)))
+    }) {
+        populationSize = 500
+        optimizer = FitnessMinimizer()
+        alterers = listOf(Mutator(0.03), MeanCrossover(0.6))
+        statistics = listOf(StatisticPrinter(20), StatisticCollector())
+    }
+    val evolvedPopulation = engine.run()
+    println(evolvedPopulation.generation)
+    println(evolvedPopulation.best)
+}
+```
