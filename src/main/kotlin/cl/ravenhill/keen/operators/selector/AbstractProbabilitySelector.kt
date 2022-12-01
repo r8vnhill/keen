@@ -91,6 +91,15 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
     }
 
     private fun serialIndexOf(incr: DoubleArray): Int {
-        TODO("Not yet implemented")
+        var index = -1
+        var i = 0
+        while (i < incr.size && index == -1) {
+            if (incr[i] >= Core.rng.nextDouble()) {
+                index = i
+            }
+            ++i
+        }
+
+        return index
     }
 }
