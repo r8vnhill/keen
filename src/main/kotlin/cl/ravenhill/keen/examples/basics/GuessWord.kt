@@ -11,10 +11,10 @@ import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 
-private const val target = "Sopaipilla"
+private const val TARGET = "Sopaipilla"
 
 private fun matches(genotype: Genotype<Char>) = genotype.chromosomes.first().genes
-    .filterIndexed { index, gene -> gene.dna == target[index] }
+    .filterIndexed { index, gene -> gene.dna == TARGET[index] }
     .size.toDouble()
 
 fun main() {
@@ -24,10 +24,11 @@ fun main() {
         populationSize = 500
         survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
-        limits = listOf(TargetFitness(target.length.toDouble()))
+        limits = listOf(TargetFitness(TARGET.length.toDouble()))
         statistics = listOf(StatisticPrinter(10), StatisticCollector())
     }
     val evolvedPopulation = engine.run()
-    println(evolvedPopulation.generation)
-    println(evolvedPopulation.best)
+    println("Solution found in ${evolvedPopulation.generation} generations")
+    println("Solution: ${evolvedPopulation.best?.genotype}")
+    println("With fitness: ${evolvedPopulation.best?.fitness}")
 }

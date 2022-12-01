@@ -64,7 +64,7 @@ highest number of ones.
 The fitness function is very simple, it receives an individual and returns the number of ones in
 the individual.
 
-![](one_max_fitness.png)
+![](https://raw.githubusercontent.com/r8vnhill/keen/master/doc/one_max_fitness.png)
 
 ### Initialization
 
