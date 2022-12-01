@@ -6,22 +6,18 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill
+package cl.ravenhill.keen.examples.basics
 
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.limits.GenerationCount
-import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
-import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.statistics.StatisticCollector
-import cl.ravenhill.keen.util.statistics.StatisticPrinter
-import java.util.stream.Collectors
 
 
 fun count(genotype: Genotype<Boolean>): Double =
