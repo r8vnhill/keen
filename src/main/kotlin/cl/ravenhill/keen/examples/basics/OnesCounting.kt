@@ -23,6 +23,9 @@ import cl.ravenhill.keen.util.statistics.StatisticCollector
 fun count(genotype: Genotype<Boolean>): Double =
     genotype.chromosomes[0].genes.count { it.dna }.toDouble()
 
+/**
+ * See the wiki for more information about this example.
+ */
 fun main() {
     val engine = engine(::count, genotype {
         chromosomes = listOf(BoolChromosome.Factory(20, 0.15))

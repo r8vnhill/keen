@@ -15,8 +15,11 @@ We can define a reference to the fitness function using the ``::`` operator, whi
 "individual" of the population), and returns a ``Double`` value (the fitness of the genotype).
 
 ```kotlin
-val engine = engine(::count) {
-    // We will fill this block later
+fun count(genotype: Genotype<Boolean>): Double =
+    genotype.chromosomes[0].genes.count { it.dna }.toDouble()
+
+val engine = engine(::count, /*...*/) {
+    // We will fill this block later      
 }
 ```
 
@@ -27,14 +30,14 @@ The genotype is composed of chromosomes, and each chromosome is composed of gene
 The genotype is defined by the ``genotype`` function, which receives a configuration block.
 
 ```kotlin
-val engine = engine(::count) {
-    genotype = genotype {
-        chromosomes = listOf(BoolChromosome.Builder(size = 24, truesProbability = 0.15))
-    }    
+val engine = engine(::count, genotype {
+    chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+}) {
+    // We will fill this block later          
 }
 ```
 
-Here, we defined a new ``Genotype`` composed of boolean chromosomes, each with 24 genes, and a 
+Here, we defined a new ``Genotype`` composed of boolean chromosomes, each with 20 genes, and a 
 trues-to-false ratio of 15% (i.e., 15% of the genes are true, and 85% are false).
 
 The next thing we need to do is to define the population size, which is the number of individuals in
@@ -42,35 +45,38 @@ the population.
 The population size is defined by the ``populationSize`` property.
 
 ```kotlin
-val engine = engine(::count) {
-    genotype = genotype { ... }
+val engine = engine(::count, genotype {
+    chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+}) {
     populationSize = 500
 }
 ```
 
-Next, we can define the number of survivors, which is the number of individuals that will remain in
-the population after each generation. Then, we can define the survivor selector, which is the 
-strategy used to select the survivors from the population. The survivor selector is defined by the
-``survivorSelector`` property.
+Next, we can define the algorithm that will select the offspring and the survivors.
+Here we use a Tournament Selection, which is a selection algorithm that creates a "Tournament" of
+random individuals and selects the best one of the participants.
+If no ``selector`` is specified, a Tournament Selection with 3 participants is used by default, 
+generally more than 3 participants is not necessary, and it can even be detrimental to the evolution
+process.
+In this example we will use a Tournament Selection with 2 participants since the problem to solve is
+very simple.
 
 ```kotlin
-val engine = engine(::count) {
-    ...
-    survivors = (populationSize * 0.2).toInt()
-    survivorSelector = RouletteWheelSelector()
+val engine = engine(::count, genotype {
+    chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+}) {
+    populationSize = 500
+    selector = TournamentSelector(2)
 }
 ```
 
-Here, we defined the number of survivors to be 20% of the population size, and we defined the
-survivor selector to be the ``RouletteWheelSelector``, which is a simple survivor selector that
-selects the survivors assigning a probability to each individual proportional to its fitness.
-
 The next step is to define the alterers, which are the strategies used to alter the population in
-each generation. The alterers are defined by the ``alterers`` property.
+each generation. 
+The alterers are defined by the ``alterers`` property.
 
 ```kotlin
-val engine = engine(::count) {
-    ...
+val engine = engine(::count, genotype { /* ... */ }) {
+    /* ... */
     alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
 }
 ```
@@ -80,18 +86,18 @@ The ``Mutator`` is a simple alterer that mutates the genes of the individuals in
 and the ``SinglePointCrossover`` is an alterer that performs a single point crossover between the
 individuals in the population.
 
-Lastly, we need to tell the engine under which conditions the evolution process should stop. This is
-done by the ``limits`` property.
+Lastly, we need to tell the engine under which conditions the evolution process should stop. 
+This is done by the ``limits`` property.
 
 ```kotlin
-val engine = engine(::count) {
-    ...
-    limits = listOf(SteadyGenerations(20), GenerationCount(100))
+val engine = engine(::count, genotype { /* ... */ }) {
+    /* ... */
+    limits = listOf(GenerationCount(100), TargetFitness(20.0))
 }
 ```
 
-Here, we defined two limits: a ``SteadyGenerations`` limit, which stops the evolution process when
-the fitness of the population does not change for 20 generations, and a ``GenerationCount`` limit,
+Here, we defined two limits: a ``TargetFitness`` limit, which stops the evolution process when
+the fitness of the population reaches a certain value, and a ``GenerationCount`` limit,
 which stops the evolution process after 100 generations.
 
 
@@ -113,14 +119,24 @@ fun evolve() {
 
 This allows us to easily perform the evolution process by just calling:
 ```kotlin
-engine.evolve()
+engine.run()
 ```
 
 # Collecting the results
 
 _Keen_ provides a collector for the statistics of the evolution process, which can be used to
 get a summary of the results of the evolution.
-Again, this is easily done by just calling:
+We can add a collector to the engine by using the ``statistics`` property.
+
+```kotlin
+val engine = engine(::count, genotype { /* ... */ }) {
+    /* ... */
+    statistics = listOf(StatisticCollector())
+}
+```
+
+And then we can get the statistics by simply calling:
+
 ```kotlin
 engine.statistics.forEach {
     println(it)
@@ -130,23 +146,29 @@ engine.statistics.forEach {
 This will print a result similar to the following:
 
 ```text
----------- Selection Times ------------
-|--> Average: 77.34375 ms
-|--> Max: 254 ms
-|--> Min: 26 ms
------------ Alteration Times ----------
-|--> Average: 5.65625 ms
-|--> Max: 45 ms
-|--> Min: 0 ms
----------- Evolution Results ----------
-|--> Total time: 3182 ms
-|--> Average generation time: 84.21875 ms
-|--> Max generation time: 261 ms
-|--> Min generation time: 28 ms
-|--> Generation: 32
-|--> Steady generations: 20
-|--> Fittest:  [ 11111111|11111111|11111111 ] 
-|--> Best fitness: 24.0
+------------ Statistics Collector -------------
+-------------- Selection Times ----------------
+|--> Offspring Selection
+|   |--> Average: 4.260869565217392 ms
+|   |--> Max: 26 ms
+|   |--> Min: 1 ms
+|--> Survivor Selection
+|   |--> Average: 3.869565217391304 ms
+|   |--> Max: 24 ms
+|   |--> Min: 1 ms
+--------------- Alteration Times --------------
+|--> Average: 4.6521739130434785 ms
+|--> Max: 41 ms
+|--> Min: 1 ms
+-------------- Evolution Results --------------
+|--> Total time: 492 ms
+|--> Average generation time: 20.695652173913043 ms
+|--> Max generation time: 271 ms
+|--> Min generation time: 3 ms
+|--> Generation: 23
+|--> Steady generations: 0
+|--> Fittest: {  [ 1111|1111|1111|1111|1111 ]  -> 20.0 }
+|--> Best fitness: 20.0
 ```
 
 ## Full code
@@ -156,19 +178,16 @@ fun count(genotype: Genotype<Boolean>): Double =
     genotype.chromosomes[0].genes.count { it.dna }.toDouble()
 
 fun main() {
-    val engine = engine(::count) {
-        genotype = genotype {
-            chromosomes = listOf(BoolChromosome.Builder(24, 0.15))
-        }
+    val engine = engine(::count, genotype {
+        chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+    }) {
         populationSize = 500
-        survivors = (populationSize * 0.2).toInt()
-        survivorSelector = RouletteWheelSelector()
-        alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
-        limits = listOf(SteadyGenerations(20), GenerationCount(100))
+        selector = TournamentSelector(sampleSize = 2)
+        alterers = listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.06))
+        limits = listOf(GenerationCount(100), TargetFitness(20.0))
+        statistics = listOf(StatisticCollector())
     }
-    engine.evolve()
-    engine.statistics.forEach {
-        println(it)
-    }
+    engine.run()
+    println(engine.statistics[0])
 }
 ```
