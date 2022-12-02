@@ -1,19 +1,22 @@
-/*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
-package cl.ravenhill.keen.genetic.genes
+package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 
-
+/**
+ * [NumberGene] which holds a 64 bit floating point number.
+ *
+ * @property dna The value of the gene.
+ * @property range The range of the gene.
+ *
+ * @see DoubleChromosome
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ */
 class DoubleGene(override val dna: Double, private val range: ClosedFloatingPointRange<Double>) :
         NumberGene<Double> {
 
+    // https://hal.archives-ouvertes.fr/hal-00576641v1/document
     override fun mean(gene: NumberGene<Double>) =
         duplicate((dna - dna / 2) + (gene.dna - gene.dna / 2))
 

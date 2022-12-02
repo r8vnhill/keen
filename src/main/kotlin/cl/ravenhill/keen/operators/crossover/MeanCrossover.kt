@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.genetic.genes.NumberGene
+import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
 import cl.ravenhill.keen.operators.CombineAlterer
 
 

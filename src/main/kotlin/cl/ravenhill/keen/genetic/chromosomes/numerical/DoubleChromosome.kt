@@ -1,15 +1,17 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
  * Creative Commons Attribution 4.0 International License.
  * You should have received a copy of the license along with this
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.genetic.chromosomes
+package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.genes.DoubleGene
+import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.genetic.genes.Gene
 import kotlin.random.asKotlinRandom
 

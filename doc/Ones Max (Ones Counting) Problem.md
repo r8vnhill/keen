@@ -9,9 +9,9 @@ To solve the problem, we will be using the evolution ``Engine``; this is the cen
 library. The ``Engine`` is responsible for the evolution process, and it is configured by the
 ``engine`` function.
 
-The ``engine`` function receives a fitness function and a configuration block. 
+The ``engine`` function receives a fitness function and a configuration block.
 We can define a reference to the fitness function using the ``::`` operator, which is called the
-"function reference" operator. The fitness function is a function that receives a ``Genotype`` (an 
+"function reference" operator. The fitness function is a function that receives a ``Genotype`` (an
 "individual" of the population), and returns a ``Double`` value (the fitness of the genotype).
 
 ```kotlin
@@ -23,7 +23,7 @@ val engine = engine(::count, /*...*/) {
 }
 ```
 
-The next thing we need is to define the genotype. 
+The next thing we need is to define the genotype.
 The genotype is the representation of the individual in the population, i.e., a possible solution to
 the problem.
 The genotype is composed of chromosomes, and each chromosome is composed of genes.
@@ -37,7 +37,7 @@ val engine = engine(::count, genotype {
 }
 ```
 
-Here, we defined a new ``Genotype`` composed of boolean chromosomes, each with 20 genes, and a 
+Here, we defined a new ``Genotype`` composed of boolean chromosomes, each with 20 genes, and a
 trues-to-false ratio of 15% (i.e., 15% of the genes are true, and 85% are false).
 
 The next thing we need to do is to define the population size, which is the number of individuals in
@@ -55,7 +55,7 @@ val engine = engine(::count, genotype {
 Next, we can define the algorithm that will select the offspring and the survivors.
 Here we use a Tournament Selection, which is a selection algorithm that creates a "Tournament" of
 random individuals and selects the best one of the participants.
-If no ``selector`` is specified, a Tournament Selection with 3 participants is used by default, 
+If no ``selector`` is specified, a Tournament Selection with 3 participants is used by default,
 generally more than 3 participants is not necessary, and it can even be detrimental to the evolution
 process.
 In this example we will use a Tournament Selection with 2 participants since the problem to solve is
@@ -71,7 +71,7 @@ val engine = engine(::count, genotype {
 ```
 
 The next step is to define the alterers, which are the strategies used to alter the population in
-each generation. 
+each generation.
 The alterers are defined by the ``alterers`` property.
 
 ```kotlin
@@ -81,12 +81,12 @@ val engine = engine(::count, genotype { /* ... */ }) {
 }
 ```
 
-Here, we defined two alterers: a ``Mutator`` and a ``SinglePointCrossover``. 
+Here, we defined two alterers: a ``Mutator`` and a ``SinglePointCrossover``.
 The ``Mutator`` is a simple alterer that mutates the genes of the individuals in the population,
 and the ``SinglePointCrossover`` is an alterer that performs a single point crossover between the
 individuals in the population.
 
-Lastly, we need to tell the engine under which conditions the evolution process should stop. 
+Lastly, we need to tell the engine under which conditions the evolution process should stop.
 This is done by the ``limits`` property.
 
 ```kotlin
@@ -100,12 +100,12 @@ Here, we defined two limits: a ``TargetFitness`` limit, which stops the evolutio
 the fitness of the population reaches a certain value, and a ``GenerationCount`` limit,
 which stops the evolution process after 100 generations.
 
-
 # Running the engine
 
 Now that we have defined the engine, we can run it, we will call this "evolution".
 
 The evolution works as follows:
+
 ```kotlin
 // Not the actual implementation!
 fun evolve() {
@@ -118,6 +118,7 @@ fun evolve() {
 ```
 
 This allows us to easily perform the evolution process by just calling:
+
 ```kotlin
 engine.run()
 ```
@@ -191,3 +192,8 @@ fun main() {
     println(engine.statistics[0])
 }
 ```
+
+# References
+
+- “One Max Problem — DEAP 1.3.3 Documentation.” Accessed December 1, 2022. 
+  https://deap.readthedocs.io/en/master/examples/ga_onemax.html.
