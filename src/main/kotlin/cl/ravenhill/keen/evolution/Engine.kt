@@ -127,7 +127,12 @@ class Engine<DNA> private constructor(
      * @param start the starting state of the evolution at this generation.
      * @return  the result of advancing the population by one generation.
      *
-     * @see EvolutionInterceptor.identity
+     * @see evolutionStart
+     * @see evaluate
+     * @see selectOffspring
+     * @see selectSurvivors
+     * @see alter
+     * @see EvolutionResult
      */
     override fun evolve(start: EvolutionStart<DNA>): EvolutionResult<DNA> {
         val initTime = clock.millis()
@@ -161,6 +166,12 @@ class Engine<DNA> private constructor(
         return afterResult
     }
 
+    /**
+     * Creates the initial population of the evolution.
+     *
+     * @param start the starting state of the evolution at this generation.
+     * @return the initial population of the evolution.
+     */
     private fun evolutionStart(start: EvolutionStart<DNA>) = if (start.population.isEmpty()) {
         val generation = start.generation
         val stream =
@@ -178,6 +189,13 @@ class Engine<DNA> private constructor(
         start
     }
 
+    /**
+     * Evaluates the fitness of the population.
+     *
+     * @param evolution the current state of the evolution.
+     * @param force if true, the fitness will be evaluated even if it has already been evaluated.
+     * @return the evaluated population.
+     */
     private fun evaluate(evolution: EvolutionStart<DNA>, force: Boolean = false) =
         if (force || evolution.isDirty) {
             evaluator(evolution.population).also {
@@ -193,6 +211,12 @@ class Engine<DNA> private constructor(
             evolution.population
         }
 
+    /**
+     * Selects (asynchronously) the offspring from the evaluated population.
+     *
+     * @param population the evaluated population.
+     * @return the offspring.
+     */
     private fun selectOffspring(population: Population<DNA>) =
         asyncSelect {
             val initTime = clock.millis()
@@ -206,6 +230,12 @@ class Engine<DNA> private constructor(
             }
         }
 
+    /**
+     * Selects (asynchronously) the survivors from the evaluated population.
+     *
+     * @param population the evaluated population.
+     * @return the survivors.
+     */
     private fun selectSurvivors(population: List<Phenotype<DNA>>) =
         asyncSelect {
             val initTime = clock.millis()
@@ -219,10 +249,27 @@ class Engine<DNA> private constructor(
             }
         }
 
+    /**
+     * Selects individuals from the population asynchronously.
+     *
+     * @param select the function that selects the individuals.
+     * @return the selected individuals.
+     *
+     * @see supplyAsync
+     */
     private fun asyncSelect(select: () -> Population<DNA>) = supplyAsync({
         select()
     }, executor)
 
+    /**
+     * Alters a population of individuals.
+     *
+     * @param population the population to alter.
+     * @param evolution the current state of the evolution.
+     * @return the altered population.
+     *
+     * @see CompletableFuture.thenApplyAsync
+     */
     private fun alter(
         population: CompletableFuture<Population<DNA>>,
         evolution: EvolutionStart<DNA>
