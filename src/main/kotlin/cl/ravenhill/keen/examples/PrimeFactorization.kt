@@ -3,10 +3,12 @@ package cl.ravenhill.keen.examples
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
+import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.abs
@@ -19,8 +21,8 @@ private const val TARGET = 345
  */
 fun absDiff(genotype: Genotype<Int>) =
     genotype.chromosomes.first().genes
-        .map { it.dna }
-        .let { factors -> abs(TARGET - factors.reduce { acc, i -> acc * i }) }
+        .map { it.dna.toLong() }
+        .let { factors -> abs(TARGET.toLong() - factors.fold(1L) { acc, i -> acc * i }) }
         .toDouble()
 
 /**
@@ -30,12 +32,13 @@ fun absDiff(genotype: Genotype<Int>) =
  */
 fun main() {
     val engine = engine(::absDiff, genotype {
-        chromosomes = listOf(IntChromosome.Factory(20, 1..200) { it in candidateFactors })
+        chromosomes = listOf(IntChromosome.Factory(10, 1..200) { it in candidateFactors })
     }) {
-        populationSize = 500
-        alterers = listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.06))
-        limits = listOf(GenerationCount(100), TargetFitness(0.0))
-        statistics = listOf(StatisticCollector(), StatisticPrinter(10))
+        populationSize = 10000
+        alterers = listOf(SinglePointCrossover(0.6), Mutator(0.2))
+        optimizer = FitnessMinimizer()
+        limits = listOf(TargetFitness(0.0), GenerationCount(1000))
+        statistics = listOf(StatisticCollector(), StatisticPrinter(2))
     }
     engine.run()
     println(engine.statistics[0])

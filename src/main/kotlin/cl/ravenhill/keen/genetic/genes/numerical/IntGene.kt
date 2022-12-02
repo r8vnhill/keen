@@ -9,7 +9,7 @@
 
 package cl.ravenhill.keen.genetic.genes.numerical
 
-import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.rng
 import kotlin.random.asKotlinRandom
 
 /**
@@ -34,7 +34,11 @@ class IntGene(
         duplicate((gene.dna and dna) + ((gene.dna xor dna) shr 1))
 
     override fun mutate() =
-        duplicate(range.filter { filter(it) }.random(Core.rng.asKotlinRandom()))
+        duplicate(range.filter { filter(it) }.random(rng.asKotlinRandom()))
 
     override fun duplicate(dna: Int) = IntGene(dna, range, filter)
+
+    override fun verify() = dna in range && filter(dna)
+
+    override fun toString() = "$dna"
 }
