@@ -45,7 +45,7 @@ sealed interface Concurrency : Executor, AutoCloseable {
                     task.get()
                 }
             } catch (e: ExecutionException) {
-                TODO()
+                throw e
             } catch (e: CancellationException) {
                 TODO()
             } catch (e: InterruptedException) {
