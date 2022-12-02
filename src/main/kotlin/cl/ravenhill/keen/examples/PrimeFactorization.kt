@@ -13,7 +13,7 @@ import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.abs
 
-private const val TARGET = 345
+private const val TARGET = 420
 
 /**
  * Calculates the absolute difference between the target and the multiplication of the prime factors
@@ -35,13 +35,18 @@ fun main() {
         chromosomes = listOf(IntChromosome.Factory(10, 1..200) { it in candidateFactors })
     }) {
         populationSize = 10000
-        alterers = listOf(SinglePointCrossover(0.6), Mutator(0.2))
+        alterers = listOf(SinglePointCrossover(0.3), Mutator(0.3))
         optimizer = FitnessMinimizer()
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
-        statistics = listOf(StatisticCollector(), StatisticPrinter(2))
+        statistics = listOf(StatisticCollector(), StatisticPrinter(4))
     }
-    engine.run()
-    println(engine.statistics[0])
+    val result = engine.run()
+    println(engine.statistics.first())
+    println(buildString {
+        append("$TARGET = ")
+        append(result.best?.genotype?.toDNA()?.first()?.filter { it > 1 }
+            ?.joinToString(" * "))
+    })
 }
 
 private val candidateFactors = listOf(

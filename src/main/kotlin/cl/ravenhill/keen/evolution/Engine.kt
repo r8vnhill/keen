@@ -45,7 +45,6 @@ import kotlin.properties.Delegates
  * @property generation         The current generation
  * @property limits             The limits that will be used to stop the evolution
  * @property steadyGenerations  The number of generations that the fitness has not changed
- * @property fittest            The fittest individual of the current population
  */
 class Engine<DNA> private constructor(
     private val fitnessFunction: (Genotype<DNA>) -> Double,
@@ -86,14 +85,25 @@ class Engine<DNA> private constructor(
     }
         private set
 
-    var fittest: Phenotype<DNA>? by Delegates.observable(null) { _, _, new ->
+    /**
+     * The fittest individual of the current generation.
+     */
+    private var fittest: Phenotype<DNA>? by Delegates.observable(null) { _, _, new ->
         statistics.stream().parallel().forEach { it.fittest = new }
     }
-        private set
 
+    /**
+     * The clock that will be used to measure the time of the evolution.
+     */
     private val clock = Clock.systemDefaultZone()
     // endregion    --------------------------------------------------------------------------------
 
+    /**
+     * The entry point of the evolution process.
+     *
+     * @return an [EvolutionResult] containing the last generation of the evolution process.
+     * @see [evolve]
+     */
     fun run(): EvolutionResult<DNA> {
         val initTime = clock.millis()
         var evolution = EvolutionStart.empty<DNA>()

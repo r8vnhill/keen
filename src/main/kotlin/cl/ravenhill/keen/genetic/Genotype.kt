@@ -31,6 +31,11 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
         Genotype(transform(chromosomes))
 
     /**
+     * Converts the Genotype to a List of DNA.
+     */
+    fun toDNA() = chromosomes.map { it.toDNA() }
+
+    /**
      * Returns a new genotype with the given ``chromosomes``.
      */
     fun duplicate(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes)

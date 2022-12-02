@@ -42,6 +42,8 @@ interface Chromosome<DNA> : GeneticMaterial {
     fun duplicate(genes: List<Gene<DNA>>): Chromosome<DNA>
     fun sequence() = genes.asSequence()
 
+    fun toDNA() = genes.map { it.dna }
+
     /**
      * Builder for [Chromosome]s.
      *
