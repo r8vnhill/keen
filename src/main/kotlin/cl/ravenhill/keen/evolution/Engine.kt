@@ -75,7 +75,7 @@ class Engine<DNA> private constructor(
     }
         private set
 
-    var bestFitness: Double by Delegates.observable(0.0) { _, old, new ->
+    var bestFitness: Double by Delegates.observable(Double.NaN) { _, old, new ->
         if (old == new) {
             steadyGenerations++
         } else {
