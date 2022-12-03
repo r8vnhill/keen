@@ -35,6 +35,8 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
      */
     fun toDNA() = chromosomes.map { it.toDNA() }
 
+    fun flatten() = toDNA().flatten()
+
     /**
      * Returns a new genotype with the given ``chromosomes``.
      */
