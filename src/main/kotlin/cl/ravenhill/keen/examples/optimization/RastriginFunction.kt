@@ -25,10 +25,8 @@ private const val A = 10.0
 private const val R = 5.12
 private const val N = 2
 
-private fun fitness(x: Genotype<Double>): Double {
-    return A * N + x.chromosomes.first().genes.fold(0.0) { acc, gene ->
-        acc + gene.dna * gene.dna - A * cos(2 * Math.PI * gene.dna)
-    }
+private fun fitness(x: Genotype<Double>) = A * N + x.flatten().fold(0.0) { acc, gene ->
+    acc + gene * gene - A * cos(2 * Math.PI * gene)
 }
 
 fun main() {
