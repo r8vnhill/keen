@@ -8,6 +8,24 @@ This work is licensed under a
 _Keen_ is a Kotlin genetic algorithms' framework heavily inspired by 
 [_Jenetics_](https://jenetics.io).
 
+## Installation
+
+### Gradle Kotlin DSL
+
+```kotlin
+repositories {
+    maven {
+        url = uri("https://jitpack.io")
+    }
+    /* ... */
+}
+
+dependencies {
+    implementation("com.github.r8vnhill:keen:1.0.0")
+    /* ... */
+}
+```
+
 ## Examples
 
 The following examples only have the explanation of what's the problem to solve.
@@ -23,8 +41,7 @@ The following example shows how to solve the _One Max_ problem with _Keen_.
 #### Implementation
 
 ```kotlin
-fun count(genotype: Genotype<Boolean>): Double =
-    genotype.chromosomes[0].genes.count { it.dna }.toDouble()
+fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDouble()
 
 fun main() {
     val engine = engine(::count, genotype {
