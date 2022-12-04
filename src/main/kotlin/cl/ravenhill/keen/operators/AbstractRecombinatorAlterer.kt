@@ -17,9 +17,7 @@ abstract class AbstractRecombinatorAlterer<DNA>(probability: Double, protected v
     }
 
     override fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA> {
-        lateinit var result: AltererResult<DNA>
         val pop = population.toMutableList()
-        val pop2 = population.toMutableList()
         return if (pop.size >= 2) {
             val minOrder = min(order, pop.size)
             val count = Core.rng.indexes(probability, pop.size)

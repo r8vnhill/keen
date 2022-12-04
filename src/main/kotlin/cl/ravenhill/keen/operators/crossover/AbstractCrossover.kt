@@ -64,7 +64,6 @@ abstract class AbstractCrossover<DNA>(probability: Double) :
         val chromosomes1 = genotype1.chromosomes.toMutableList()
         val chromosomes2 = genotype2.chromosomes.toMutableList()
         val genes1 = chromosomes1[chromosomeIndex].genes.toMutableList()
-        val genesa = chromosomes1[chromosomeIndex].genes.toMutableList()
         val genes2 = chromosomes2[chromosomeIndex].genes.toMutableList()
         crossover(genes1, genes2)
         chromosomes1[chromosomeIndex] = chromosomes1[chromosomeIndex].duplicate(genes1)
