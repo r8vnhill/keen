@@ -19,6 +19,7 @@ import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.abs
 import kotlin.random.asKotlinRandom
 
@@ -42,13 +43,12 @@ private val items = listOf(4 to 12, 2 to 1, 2 to 2, 1 to 1, 10 to 4, 0 to 0)
  * @return The fitness of the genotype.
  */
 private fun fitnessFn(genotype: Genotype<Pair<Int, Int>>): Double {
-    val chromosome = genotype.chromosomes.first()
-    val items = chromosome.genes.map { it.dna }
+    val items = genotype.flatten()
     val value = items.sumOf { it.first }
     val weight = items.sumOf { it.second }
-    return value - (if (MAX_WEIGHT < weight) {
+    return value - if (!genotype.verify()) {
         abs(MAX_WEIGHT - weight).toDouble() * 50
-    } else 0.0)
+    } else 0.0
 }
 
 /**
@@ -101,12 +101,12 @@ fun main() {
         chromosomes =
             listOf(KnapsackChromosome.Factory(15) { KnapsackGene(items.random(rng.asKotlinRandom())) })
     }) {
-        populationSize = 20000
+        populationSize = 5000
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
-        statistics = listOf(/*StatisticPrinter(1),*/ StatisticCollector())
+        statistics = listOf(StatisticPrinter(1), StatisticCollector())
     }
     val result = engine.run()
     println(engine.statistics.last())
-    println(result.best?.genotype?.toDNA()?.first()?.filter { it.first != 0 })
+    println(result.best?.flatten()?.filter { it.first != 0 })
 }
