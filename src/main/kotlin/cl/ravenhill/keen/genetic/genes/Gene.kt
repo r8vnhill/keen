@@ -24,7 +24,7 @@ import cl.ravenhill.keen.genetic.GeneticMaterial
  * @param DNA   The type of the gene's value.
  * @property dna        The gene's value.
  */
-interface Gene<DNA> : GeneticMaterial {
+interface Gene<DNA> : GeneticMaterial<DNA> {
 
     val dna: DNA
 
@@ -37,4 +37,6 @@ interface Gene<DNA> : GeneticMaterial {
      * Creates a new gene with the given value.
      */
     fun duplicate(dna: DNA): Gene<DNA>
+
+    override fun flatten() = listOf(dna)
 }

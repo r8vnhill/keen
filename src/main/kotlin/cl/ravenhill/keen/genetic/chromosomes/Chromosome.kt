@@ -21,7 +21,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  *
  * @author <a href="https://github.com/r8vnhill">R8V</a>
  */
-interface Chromosome<DNA> : GeneticMaterial {
+interface Chromosome<DNA> : GeneticMaterial<DNA> {
 
     val genes: List<Gene<DNA>>
 
@@ -40,9 +40,14 @@ interface Chromosome<DNA> : GeneticMaterial {
      * Returns a new chromosome with the given ``genes``.
      */
     fun duplicate(genes: List<Gene<DNA>>): Chromosome<DNA>
+
     fun sequence() = genes.asSequence()
 
     fun toDNA() = genes.map { it.dna }
+
+    override fun flatten(): List<DNA> = genes.fold(mutableListOf()) { acc, gene ->
+        acc.apply { addAll(gene.flatten()) }
+    }
 
     /**
      * Builder for [Chromosome]s.

@@ -10,6 +10,6 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.internals.Verifiable
 
-interface GeneticMaterial : Verifiable {
-
+interface GeneticMaterial<DNA> : Verifiable {
+    fun flatten(): List<DNA>
 }

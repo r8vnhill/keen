@@ -20,7 +20,7 @@ import cl.ravenhill.keen.util.validatePredicate
  * @property chromosomes        The chromosomes of the Genotype
  * @property size               The size of the Genotype (number of chromosomes)
  */
-class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial {
+class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DNA> {
 
     override fun verify() = chromosomes.isNotEmpty() && chromosomes.all { it.verify() }
 
@@ -35,7 +35,10 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
      */
     fun toDNA() = chromosomes.map { it.toDNA() }
 
-    fun flatten() = toDNA().flatten()
+    override fun flatten() =
+        chromosomes.fold(mutableListOf<DNA>()) { acc, chromosome ->
+            acc.apply { addAll(chromosome.flatten()) }
+        }
 
     /**
      * Returns a new genotype with the given ``chromosomes``.

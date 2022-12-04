@@ -2,20 +2,20 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.util.math.isNotNan
 
-typealias Individual<DNA> = Phenotype<DNA>
-
-class Phenotype<DNA>(
-    val genotype: Genotype<DNA>,
+open class Phenotype<DNA>(
+    open val genotype: Genotype<DNA>,
     private val generation: Int,
-    val fitness: Double = Double.NaN
-) : GeneticMaterial {
+    open val fitness: Double = Double.NaN
+) : GeneticMaterial<DNA> {
 
     override fun verify(): Boolean = TODO()
     override fun toString() = "{ $genotype -> $fitness }"
 
-    fun isEvaluated() = fitness.isNotNan()
+    open fun isEvaluated() = fitness.isNotNan()
 
-    fun isNotEvaluated() = !isEvaluated()
+    open fun isNotEvaluated() = !isEvaluated()
 
-    fun withFitness(fitness: Double) = Phenotype(genotype, generation, fitness)
+    open fun withFitness(fitness: Double) = Phenotype(genotype, generation, fitness)
+
+    override fun flatten() = genotype.flatten()
 }
