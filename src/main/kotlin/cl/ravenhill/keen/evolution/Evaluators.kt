@@ -14,6 +14,10 @@ import java.util.stream.Collectors
  * problem.
  */
 interface Evaluator<DNA> {
+
+    /**
+     * Evaluates the fitness function of a given population.
+     */
     operator fun invoke(population: List<Phenotype<DNA>>): List<Phenotype<DNA>>
 }
 
@@ -53,6 +57,11 @@ class ConcurrentEvaluator<DNA>(
                 }
             }
 
+    /**
+     * The fitness function to evaluate.
+     *
+     * @param phenotype
+     */
     private class PhenotypeFitness<DNA>(
         phenotype: Phenotype<DNA>,
         private val function: (Genotype<DNA>) -> Double

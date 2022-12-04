@@ -1,7 +1,6 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -39,7 +38,7 @@ open class CombineAlterer<DNA>(
         val chromosome2 = genotype2.chromosomes
         val mean = combine(chromosome1[chromosomeIdx], chromosome2[chromosomeIdx])
         chromosome1[chromosomeIdx] = chromosome1[chromosomeIdx].duplicate(mean)
-        population[individuals[0]] = Individual(genotype1.duplicate(chromosome1), generation)
+        population[individuals[0]] = Phenotype(genotype1.duplicate(chromosome1), generation)
         return 1
     }
 

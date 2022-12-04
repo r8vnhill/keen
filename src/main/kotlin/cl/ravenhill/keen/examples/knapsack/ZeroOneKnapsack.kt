@@ -55,7 +55,7 @@ fun main() {
     val engine = engine(::fitnessFn, genotype {
         chromosomes = listOf(BoolChromosome.Factory(items.size, 0.5))
     }) {
-        populationSize = 10000
+        populationSize = 500
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(10))
         statistics = listOf(StatisticCollector(), StatisticPrinter(1))

@@ -5,10 +5,13 @@ val junitVersion: String by project
 plugins {
     kotlin("jvm") version "1.7.20"
     id("com.diffplug.spotless") version "6.10.0"
+    `maven-publish`
+    `java-library`
+    id("org.jetbrains.dokka") version "1.7.20"
 }
 
 group = "cl.ravenhill"
-version = "0.10-rc.1"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -24,6 +27,7 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
     testImplementation("io.kotest:kotest-property:5.5.4")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.4")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
 }
 
 tasks.test {
@@ -32,4 +36,27 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "13"
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            pom {
+                name.set("Keen")
+                description.set("A genetic algorithm framework for Kotlin")
+                url.set("https://github.com/r8vnhill/keen")
+                licenses {
+                    license {
+                        name.set("Attribution 4.0 International (CC BY 4.0)")
+                        url.set("https://creativecommons.org/licenses/by/4.0/legalcode")
+                    }
+                }
+            }
+            groupId = "cl.ravenhill"
+            artifactId = "keen"
+            version = "1.0"
+            from(components["java"])
+        }
+    }
+    repositories {}
 }
