@@ -37,10 +37,8 @@ private const val N = 2
  * The function is usually evaluated on the square xi ∈ [-5.12, 5.12], for all i = 1, …, n.
  * The global minimum is located at x* = (0, …, 0) where f(x*) = 0.
  */
-private fun fitness(x: Genotype<Double>): Double {
-    return A * N + x.chromosomes.first().genes.fold(0.0) { acc, gene ->
-        acc + gene.dna * gene.dna - A * cos(2 * Math.PI * gene.dna)
-    }
+private fun fitness(x: Genotype<Double>) = A * N + x.flatten().fold(0.0) { acc, gene ->
+    acc + gene * gene - A * cos(2 * Math.PI * gene)
 }
 
 /**

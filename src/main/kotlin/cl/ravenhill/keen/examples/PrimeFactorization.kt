@@ -20,8 +20,8 @@ private const val TARGET = 420
  * of the genotype.
  */
 fun absDiff(genotype: Genotype<Int>) =
-    genotype.chromosomes.first().genes
-        .map { it.dna.toLong() }
+    genotype.flatten()
+        .map { it.toLong() }
         .let { factors -> abs(TARGET.toLong() - factors.fold(1L) { acc, i -> acc * i }) }
         .toDouble()
 
@@ -38,13 +38,13 @@ fun main() {
         alterers = listOf(SinglePointCrossover(0.3), Mutator(0.3))
         optimizer = FitnessMinimizer()
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
-        statistics = listOf(StatisticCollector(), StatisticPrinter(4))
+        statistics = listOf(StatisticCollector())
     }
     val result = engine.run()
     println(engine.statistics.first())
     println(buildString {
         append("$TARGET = ")
-        append(result.best?.genotype?.toDNA()?.first()?.filter { it > 1 }
+        append(result.best?.genotype?.flatten()?.filter { it > 1 }
             ?.joinToString(" * "))
     })
 }
