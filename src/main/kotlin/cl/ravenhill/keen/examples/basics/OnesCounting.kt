@@ -20,8 +20,7 @@ import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 
 
-fun count(genotype: Genotype<Boolean>): Double =
-    genotype.chromosomes[0].genes.count { it.dna }.toDouble()
+fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDouble()
 
 /**
  * See the wiki for more information about this example.

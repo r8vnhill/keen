@@ -62,11 +62,9 @@ class IntChromosome private constructor(
 
         override fun make() = IntChromosome(size, range, filter)
 
-        override fun toString(): String {
-            return "IntChromosome.Builder { " +
+        override fun toString() = "IntChromosome.Builder { " +
                     "size: $size, " +
                     "range: $range," +
                     "filter: $filter }"
-        }
     }
 }
