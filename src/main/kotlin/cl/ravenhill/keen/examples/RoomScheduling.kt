@@ -24,9 +24,29 @@ data class Meeting(val start: Int, val end: Int)
  * The meetings to schedule.
  */
 private val meetings =
-    listOf(Meeting(1, 3), Meeting(2, 3), Meeting(5, 6), Meeting(7, 9), Meeting(4, 7))
+    listOf(
+        Meeting(1, 3),
+        Meeting(2, 3),
+        Meeting(5, 6),
+        Meeting(7, 9),
+        Meeting(4, 7),
+        Meeting(8, 10),
+        Meeting(2, 7),
+        Meeting(3, 4),
+        Meeting(1, 5),
+        Meeting(3, 6),
+        Meeting(4, 5)
+    )
 
+/**
+ * The fitness function for the room scheduling problem.
+ * It is calculated as the number of rooms needed to schedule all the meetings plus the number of
+ * meetings that overlap.
+ */
 private fun fitnessFn(genotype: Genotype<Int>): Double {
+    // We create a list to represent the rooms.
+    // The size of the list is the number meetings, since the worst case scenario is that each
+    // meeting is in a different room.
     val rooms = MutableList(genotype.size) { mutableListOf<Meeting>() }
     meetings.forEachIndexed { index, meeting ->
         val room = genotype.chromosomes[index].genes[0].dna
@@ -45,17 +65,22 @@ private fun fitnessFn(genotype: Genotype<Int>): Double {
     return rooms.filter { it.isNotEmpty() }.size.toDouble() + conflicts
 }
 
+/**
+ * The meeting room scheduling problem is a combinatorial optimization problem that consists of
+ * scheduling meetings in a set of rooms so that no meetings overlap.
+ * This example uses a genetic algorithm to find the optimal solution.
+ */
 fun main() {
     val engine = engine(::fitnessFn, genotype {
         chromosomes = List(meetings.size) {
             IntChromosome.Factory(1, meetings.indices)
         }
     }) {
-        populationSize = 20000
+        populationSize = 100
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.1))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
-        statistics = listOf(StatisticPrinter(1), StatisticCollector())
+        statistics = listOf(StatisticCollector())
     }
     val result = engine.run()
     println(engine.statistics.last())
