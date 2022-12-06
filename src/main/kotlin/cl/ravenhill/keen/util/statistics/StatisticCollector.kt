@@ -34,7 +34,7 @@ class StatisticCollector<DNA> : AbstractStatistic<DNA>() {
         |--> Min generation time: ${generationTimes.minOrNull()} ms
         |--> Generation: $generation
         |--> Steady generations: $steadyGenerations
-        |--> Fittest: $fittest
-        |--> Best fitness: $bestFitness
+        |--> Fittest: ${population.first()}
+        |--> Best fitness: ${bestFitness.last()}
         """.trimIndent()
 }

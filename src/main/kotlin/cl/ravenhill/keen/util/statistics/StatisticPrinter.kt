@@ -12,21 +12,22 @@ import org.jetbrains.kotlinx.dataframe.math.mean
 
 
 class StatisticPrinter<DNA>(private val every: Int) : AbstractStatistic<DNA>() {
-    override var generation: Int = 0
-        set(value) {
-            field = value
-            if (value % every == 0) {
-                println(toString())
-            }
+
+    override fun onResultUpdated() {
+        super.onResultUpdated()
+        if (evolutionResult.generation % every == 0) {
+            println(toString())
         }
+    }
+
     override fun toString(): String {
         return """ === Generation $generation ===
         |--> Average generation time: ${generationTimes.mean()} ms
         |--> Max generation time: ${generationTimes.maxOrNull()} ms
         |--> Min generation time: ${generationTimes.minOrNull()} ms
         |--> Steady generations: $steadyGenerations
-        |--> Fittest: $fittest
-        |--> Best fitness: $bestFitness
+        |--> Fittest: ${population.firstOrNull()}
+        |--> Best fitness: ${bestFitness.lastOrNull()}
         |<<<>>>""".trimMargin()
     }
 }
