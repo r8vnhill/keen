@@ -10,6 +10,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core.rng
+import cl.ravenhill.keen.genetic.genes.ComparableGene
 import kotlin.random.asKotlinRandom
 
 /**
@@ -27,7 +28,7 @@ class IntGene(
     override val dna: Int,
     private val range: IntRange,
     private val filter: (Int) -> Boolean
-) : NumberGene<Int> {
+) : NumberGene<Int>, ComparableGene<Int> {
 
     // http://aggregate.org/MAGIC/#Average%20of%20Integers
     override fun mean(gene: NumberGene<Int>) =

@@ -12,7 +12,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.nextChar
 
 
-class CharGene private constructor(override val dna: Char) : Gene<Char> {
+class CharGene private constructor(override val dna: Char) : ComparableGene<Char> {
 
     override fun toString() = "$dna"
 

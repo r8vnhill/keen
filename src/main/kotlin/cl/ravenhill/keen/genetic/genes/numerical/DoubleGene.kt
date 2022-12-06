@@ -2,6 +2,7 @@ package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
+import cl.ravenhill.keen.genetic.genes.ComparableGene
 
 /**
  * [NumberGene] which holds a 64 bit floating point number.
@@ -14,7 +15,7 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
 class DoubleGene(override val dna: Double, private val range: ClosedFloatingPointRange<Double>) :
-        NumberGene<Double> {
+        NumberGene<Double>, ComparableGene<Double> {
 
     // https://hal.archives-ouvertes.fr/hal-00576641v1/document
     override fun mean(gene: NumberGene<Double>) =
