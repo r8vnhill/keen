@@ -8,7 +8,6 @@
 
 package cl.ravenhill.keen.util.statistics
 
-import org.jetbrains.kotlinx.dataframe.math.mean
 
 
 class StatisticCollector<DNA> : AbstractStatistic<DNA>() {
@@ -16,20 +15,20 @@ class StatisticCollector<DNA> : AbstractStatistic<DNA>() {
         ------------ Statistics Collector -------------
         -------------- Selection Times ----------------
         |--> Offspring Selection
-        |   |--> Average: ${offspringSelectionTime.mean()} ms
+        |   |--> Average: ${offspringSelectionTime.average()} ms
         |   |--> Max: ${offspringSelectionTime.maxOrNull()} ms
         |   |--> Min: ${offspringSelectionTime.minOrNull()} ms
         |--> Survivor Selection
-        |   |--> Average: ${survivorSelectionTime.mean()} ms
+        |   |--> Average: ${survivorSelectionTime.average()} ms
         |   |--> Max: ${survivorSelectionTime.maxOrNull()} ms
         |   |--> Min: ${survivorSelectionTime.minOrNull()} ms
         --------------- Alteration Times --------------
-        |--> Average: ${alterTime.mean()} ms
+        |--> Average: ${alterTime.average()} ms
         |--> Max: ${alterTime.maxOrNull()} ms
         |--> Min: ${alterTime.minOrNull()} ms
         -------------- Evolution Results --------------
         |--> Total time: $evolutionTime ms
-        |--> Average generation time: ${generationTimes.mean()} ms
+        |--> Average generation time: ${generationTimes.average()} ms
         |--> Max generation time: ${generationTimes.maxOrNull()} ms
         |--> Min generation time: ${generationTimes.minOrNull()} ms
         |--> Generation: $generation

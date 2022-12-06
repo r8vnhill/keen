@@ -18,6 +18,7 @@ import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 
 
@@ -34,8 +35,9 @@ fun main() {
         selector = TournamentSelector(sampleSize = 2)
         alterers = listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.2))
         limits = listOf(GenerationCount(100), TargetFitness(20.0))
-        statistics = listOf(StatisticCollector(), StatisticPrinter(1))
+        statistics = listOf(StatisticCollector(), StatisticPrinter(1), StatisticPlotter())
     }
     engine.run()
     println(engine.statistics[0])
+    (engine.statistics[2] as StatisticPlotter).displayFitness()
 }

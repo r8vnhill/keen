@@ -8,7 +8,6 @@
 
 package cl.ravenhill.keen.util.statistics
 
-import org.jetbrains.kotlinx.dataframe.math.mean
 
 
 class StatisticPrinter<DNA>(private val every: Int) : AbstractStatistic<DNA>() {
@@ -22,7 +21,7 @@ class StatisticPrinter<DNA>(private val every: Int) : AbstractStatistic<DNA>() {
 
     override fun toString(): String {
         return """ === Generation $generation ===
-        |--> Average generation time: ${generationTimes.mean()} ms
+        |--> Average generation time: ${generationTimes.average()} ms
         |--> Max generation time: ${generationTimes.maxOrNull()} ms
         |--> Min generation time: ${generationTimes.minOrNull()} ms
         |--> Steady generations: $steadyGenerations

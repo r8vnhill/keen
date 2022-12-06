@@ -1,3 +1,4 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitVersion: String by project
@@ -18,15 +19,23 @@ repositories {
 }
 
 dependencies {
-    implementation("io.kotest:kotest-framework-datatest:5.5.4")
-    implementation("io.kotest:kotest-assertions-core:5.5.4")
-    implementation("org.jetbrains.kotlinx:dataframe:0.8.1")
+    // Kotlin / Kotlinx
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    // Lang3
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    // Tablesaw
+    implementation("tech.tablesaw:tablesaw-core:0.43.1")
+    implementation("tech.tablesaw:tablesaw-jsplot:0.43.1")
+    // SLF4J
+    implementation("org.slf4j:slf4j-simple:2.0.5")
+    // Kotest
+    implementation("io.kotest:kotest-framework-datatest:5.5.4")
+    implementation("io.kotest:kotest-assertions-core:5.5.4")
     testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
     testImplementation("io.kotest:kotest-property:5.5.4")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.4")
+    // Dokka
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
 }
 
@@ -59,3 +68,16 @@ publishing {
         }
     }
 }
+
+fun getJavaFXPlatform() =
+    DefaultNativePlatform.getCurrentOperatingSystem().let { currentOS ->
+        if (currentOS.isWindows) {
+            "win"
+        } else if (currentOS.isLinux) {
+            "linux"
+        } else if (currentOS.isMacOsX) {
+            "mac"
+        } else {
+            throw IllegalStateException("Unexpected OS: ${currentOS.name}")
+        }
+    }
