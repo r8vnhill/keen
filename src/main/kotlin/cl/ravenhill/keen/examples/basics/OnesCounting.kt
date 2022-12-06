@@ -14,7 +14,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
-import cl.ravenhill.keen.operators.Mutator
+import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.statistics.StatisticCollector

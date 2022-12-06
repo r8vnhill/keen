@@ -14,10 +14,9 @@ import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.Mutator
+import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.util.statistics.StatisticCollector
-import cl.ravenhill.keen.util.statistics.StatisticPrinter
 
 /**
  * The maximum weight that the knapsack can hold.

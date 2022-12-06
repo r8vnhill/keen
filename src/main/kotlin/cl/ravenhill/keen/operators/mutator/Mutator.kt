@@ -6,7 +6,7 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.operators
+package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
@@ -14,6 +14,8 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.AbstractAlterer
+import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.util.math.toIntProbability
 import kotlin.math.pow
 
