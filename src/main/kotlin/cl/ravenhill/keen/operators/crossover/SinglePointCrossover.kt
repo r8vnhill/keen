@@ -18,16 +18,13 @@ import kotlin.math.min
 
 /**
  * Performs a crossover between two genotypes using a random single-point crossover.
+ *
+ * @param DNA The type of the gene's value.
+ * @property probability The probability of crossover.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
 class SinglePointCrossover<DNA>(probability: Double) : MultiPointCrossover<DNA>(probability, 1) {
-
-    override fun crossover(mates: Pair<Chromosome<DNA>, Chromosome<DNA>>): Chromosome<DNA> {
-        val genes = mutableListOf<Gene<DNA>>()
-        val cut = Core.rng.nextInt(mates.first.genes.size)
-        genes.addAll(mates.first.genes.take(cut))
-        genes.addAll(mates.second.genes.drop(cut))
-        return mates.first.duplicate(genes)
-    }
 
     override fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int {
         val index = Core.rng.nextInt(min(genes1.size, genes2.size))

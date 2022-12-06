@@ -119,9 +119,21 @@ object Subset {
     }
 }
 
-
 infix fun List<Double>.sub(min: Double) = this.map { it - min }
 
+/**
+ * Swaps the elements at the given indices in the receiver.
+ */
+fun <E> MutableList<E>.swap(i: Int, j: Int) {
+    val tmp = this[i]
+    this[i] = this[j]
+    this[j] = tmp
+}
+
+/**
+ * Swaps the elements in the range [start, end) from this list with the elements in the range
+ * [otherStart, otherStart + (end - start)) from the other list.
+ */
 fun <E> MutableList<E>.swap(start: Int, end: Int, other: MutableList<E>, otherStart: Int) {
     this.checkIndex(start, end, otherStart, other.size)
     var i = end - start

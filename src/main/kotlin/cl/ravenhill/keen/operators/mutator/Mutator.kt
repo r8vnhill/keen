@@ -40,7 +40,7 @@ import kotlin.math.pow
  * @param DNA The type of the DNA
  * @constructor Creates a new [Mutator] with the given [probability]
  */
-class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
+open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
 
     /**
      * Mutates a population.
@@ -93,7 +93,11 @@ class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
         )
     }
 
-    private fun mutateChromosome(
+    /**
+     * Mutates a chromosome and returns a [MutatorResult] with the mutated chromosome and the
+     * number of mutations.
+     */
+    protected open fun mutateChromosome(
         chromosome: Chromosome<DNA>,
         prob: Double
     ): MutatorResult<Chromosome<DNA>> {
