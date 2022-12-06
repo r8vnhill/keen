@@ -35,9 +35,8 @@ fun main() {
         selector = TournamentSelector(sampleSize = 2)
         alterers = listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.2))
         limits = listOf(GenerationCount(100), TargetFitness(20.0))
-        statistics = listOf(StatisticCollector(), StatisticPrinter(1), StatisticPlotter())
+        statistics = listOf(StatisticCollector())
     }
     engine.run()
     println(engine.statistics[0])
-    (engine.statistics[2] as StatisticPlotter).displayFitness()
 }
