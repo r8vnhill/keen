@@ -8,8 +8,8 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
 interface Statistic<DNA> {
     var evolutionResult: EvolutionResult<DNA>
-
     var population: Population<DNA>
+
     var optimizer: PhenotypeOptimizer<DNA>
     val survivorSelectionTime: MutableList<Long>
     val offspringSelectionTime: MutableList<Long>
@@ -17,6 +17,8 @@ interface Statistic<DNA> {
     var evolutionTime: Long
     val generationTimes: MutableList<Long>
     var bestFitness: MutableList<Double>
+    var worstFitness: MutableList<Double>
+    var averageFitness: MutableList<Double>
     val fittest: Phenotype<DNA>?
     var steadyGenerations: Int
     var generation: Int

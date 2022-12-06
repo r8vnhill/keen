@@ -26,8 +26,10 @@ class StatisticPrinter<DNA>(private val every: Int) : AbstractStatistic<DNA>() {
         |--> Max generation time: ${generationTimes.maxOrNull()} ms
         |--> Min generation time: ${generationTimes.minOrNull()} ms
         |--> Steady generations: $steadyGenerations
-        |--> Fittest: ${population.firstOrNull()}
         |--> Best fitness: ${bestFitness.lastOrNull()}
+        |--> Worst fitness: ${worstFitness.lastOrNull()}
+        |--> Average fitness: ${averageFitness.lastOrNull()}
+        |--> Fittest: ${population.firstOrNull()}
         |<<<>>>""".trimMargin()
     }
 }

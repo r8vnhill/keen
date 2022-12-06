@@ -46,9 +46,11 @@ abstract class AbstractStatistic<DNA> : Statistic<DNA> {
     override val alterTime: MutableList<Long> = mutableListOf()
     override var offspringSelectionTime: MutableList<Long> = mutableListOf()
     override val survivorSelectionTime: MutableList<Long> = mutableListOf()
+    override var bestFitness: MutableList<Double> = mutableListOf()
+    override var worstFitness: MutableList<Double> = mutableListOf()
+    override var averageFitness: MutableList<Double> = mutableListOf()
     override val fittest: Phenotype<DNA>?
         get() = _fittest
-    override var bestFitness: MutableList<Double> = mutableListOf()
     override var steadyGenerations: Int = 0
     override var generation: Int = 0
 
@@ -56,6 +58,8 @@ abstract class AbstractStatistic<DNA> : Statistic<DNA> {
         optimizer = evolutionResult.optimizer
         population = optimizer.sort(evolutionResult.population)
         bestFitness += population.first().fitness
+        worstFitness += population.last().fitness
+        averageFitness += population.map { it.fitness }.average()
         _fittest = population.first()
         generation = evolutionResult.generation
     }
