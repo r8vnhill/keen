@@ -3,6 +3,8 @@ package cl.ravenhill.keen.operators.crossover.permutation
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
+import cl.ravenhill.keen.util.validateAtLeast
+import cl.ravenhill.keen.util.validatePredicate
 import kotlin.math.min
 
 
@@ -20,6 +22,8 @@ import kotlin.math.min
 class OrderedCrossover<DNA>(probability: Double) : AbstractCrossover<DNA>(probability) {
 
     override fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int {
+        validatePredicate({ genes1.distinct().size == genes1.size }) { "Ordered crossover can't have duplicated genes: $genes1" }
+        validatePredicate({ genes2.distinct().size == genes2.size }) { "Ordered crossover can't have duplicated genes: $genes2" }
         val size = min(genes1.size, genes2.size)
         val r1 = Core.rng.nextInt(size)
         val r2 = Core.rng.nextInt(size)
@@ -45,7 +49,7 @@ class OrderedCrossover<DNA>(probability: Double) : AbstractCrossover<DNA>(probab
         size: Int
     ): MutableList<Gene<DNA>> {
         // Takes a sublist of genes from the first parent to be inserted into the second parent.
-        val sublist = genes.first.subList(start, end)
+        val sublist = genes.first.subList(start, end + 1)
         // Creates a new list to hold the offspring.
         val offspring = mutableListOf<Gene<DNA>>()
         // Creates a new list to hold the genes from the second parent that are not in the sublist.
@@ -54,10 +58,12 @@ class OrderedCrossover<DNA>(probability: Double) : AbstractCrossover<DNA>(probab
         // the new offspring in the same order they appear in the second parent (until the start
         // index).
         offspring.addAll(uniqueGenes.take(start))
+        val remaining = uniqueGenes.size - offspring.size
         // Adds the sublist to the new offspring.
         offspring.addAll(sublist)
         // Adds the remaining genes from the second parent to the new offspring.
-        offspring.addAll(uniqueGenes.takeLast( - end))
+        offspring.addAll(uniqueGenes.takeLast(remaining))
+        offspring.size.validateAtLeast(size)
         return offspring
     }
 }
