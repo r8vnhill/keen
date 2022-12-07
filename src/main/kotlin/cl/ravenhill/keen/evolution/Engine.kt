@@ -64,9 +64,15 @@ class Engine<DNA> private constructor(
 ) : Evolver<DNA> {
 
     // region : PROPERTIES  ------------------------------------------------------------------------
-    var generation: Int by Delegates.observable(0) { _, _, new ->
-        statistics.stream().parallel().forEach { it.generation = new }
+    var population: Population<DNA> by Delegates.observable(listOf()) { _, _, _ ->
+        statistics.stream().parallel().forEach { it.population = population }
     }
+    private var evolutionResult: EvolutionResult<DNA>
+            by Delegates.observable(EvolutionResult(optimizer, listOf(), 0)) { _, _, new ->
+                statistics.stream().parallel().forEach { it.evolutionResult = new }
+            }
+
+    var generation: Int = 0
         private set
 
     var steadyGenerations by Delegates.observable(0) { _, _, new ->
@@ -81,15 +87,13 @@ class Engine<DNA> private constructor(
         } else {
             steadyGenerations = 0
         }
-        statistics.stream().parallel().forEach { it.bestFitness = new }
     }
         private set
 
     /**
      * The fittest individual of the current generation.
      */
-    private var fittest: Phenotype<DNA>? by Delegates.observable(null) { _, _, new ->
-        statistics.stream().parallel().forEach { it.fittest = new }
+    private var fittest: Phenotype<DNA>? by Delegates.observable(null) { _, _, _ ->
     }
 
     /**
@@ -157,11 +161,11 @@ class Engine<DNA> private constructor(
             executor
         )
         // (8) The next population is evaluated
-        val pop = evaluate(EvolutionStart(nextPopulation.join(), generation++), true)
-        val result = EvolutionResult(optimizer, pop, generation)
-        fittest = result.best
+        val pop = evaluate(EvolutionStart(nextPopulation.join(), generation), true)
+        evolutionResult = EvolutionResult(optimizer, pop, generation++)
+        fittest = evolutionResult.best
         // (9) The result of the evolution is post-processed
-        val afterResult = interceptor.after(result)
+        val afterResult = interceptor.after(evolutionResult)
         statistics.stream().parallel().forEach { it.generationTimes.add(clock.millis() - initTime) }
         return afterResult
     }

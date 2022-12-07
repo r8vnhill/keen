@@ -10,10 +10,13 @@ import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.SwapMutator
+import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.abs
+import kotlin.math.ln
 
 private const val TARGET = 420
 
@@ -40,7 +43,7 @@ fun main() {
         alterers = listOf(SwapMutator(0.3), SinglePointCrossover(0.3))
         optimizer = FitnessMinimizer()
         limits = listOf(SteadyGenerations(10), GenerationCount(1000))
-        statistics = listOf(StatisticCollector(), StatisticPrinter(1))
+        statistics = listOf(StatisticCollector(), StatisticPrinter(1), StatisticPlotter())
     }
     val result = engine.run()
     println(engine.statistics.first())
@@ -49,6 +52,7 @@ fun main() {
         append(result.best?.genotype?.flatten()?.filter { it > 1 }
             ?.joinToString(" * "))
     })
+    (engine.statistics[2] as StatisticPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
 }
 
 private val candidateFactors = listOf(

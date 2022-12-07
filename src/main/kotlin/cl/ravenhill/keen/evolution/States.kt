@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Contract
  * @constructor Creates a new [EvolutionResult].
  */
 class EvolutionResult<DNA>(
-    private val optimizer: PhenotypeOptimizer<DNA>,
-    private val population: List<Phenotype<DNA>>,
+    val optimizer: PhenotypeOptimizer<DNA>,
+    val population: List<Phenotype<DNA>>,
     val generation: Int
 ) : Comparable<EvolutionResult<DNA>> {
 
@@ -28,8 +28,12 @@ class EvolutionResult<DNA>(
      */
     operator fun next() = EvolutionStart(population, generation + 1, true)
 
-    override fun compareTo(other: EvolutionResult<DNA>): Int {
-        return 0
+    override fun compareTo(other: EvolutionResult<DNA>): Int = when {
+        this.best != null && other.best != null ->
+            optimizer.comparator.compare(this.best, other.best)
+        this.best != null -> 1
+        other.best != null -> -1
+        else -> 0
     }
 
     override fun toString() = "EvolutionResult { generation: $generation, best: $best }"

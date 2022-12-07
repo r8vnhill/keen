@@ -8,16 +8,15 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.LimitConfigurationException
+import cl.ravenhill.keen.util.validateAtLeast
 
-
+/**
+ * Limits the number of generations the evolution will run.
+ *
+ * @param i The number of generations to run.
+ */
 class GenerationCount(private val i: Int) : Match({ generation >= i }) {
     init {
-        if (i < 0) {
-            throw LimitConfigurationException {
-                "Generation count must not be negative, but was $i"
-            }
-        }
+        i.validateAtLeast(1) { "Generation count [$i] must be at least 1" }
     }
-
 }
