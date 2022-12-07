@@ -6,6 +6,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
+import cl.ravenhill.keen.operators.crossover.PartiallyMatchedCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
@@ -77,7 +78,7 @@ fun main() {
     }) {
         populationSize = 100
         optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.03), SinglePointCrossover(0.1))
+        alterers = listOf(Mutator(0.03), PartiallyMatchedCrossover(0.1))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
         statistics = listOf(StatisticCollector())
     }

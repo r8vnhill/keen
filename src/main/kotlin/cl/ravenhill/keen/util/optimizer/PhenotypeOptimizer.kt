@@ -34,7 +34,7 @@ interface PhenotypeOptimizer<DNA> {
     /**
      * Sorts the given list of phenotypes using this optimizer.
      */
-    fun sort(population: List<Phenotype<DNA>>) = quicksort(population).reversed()
+    fun sort(population: List<Phenotype<DNA>>) = population.sortedWith(comparator.reversed())
 
     private fun quicksort(list: List<Phenotype<DNA>>): List<Phenotype<DNA>> = if (list.size < 2) {
         list

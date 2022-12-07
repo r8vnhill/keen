@@ -50,5 +50,9 @@ abstract class AbstractCrossover<DNA>(probability: Double) :
         return order
     }
 
+    /**
+     * Performs the crossover operation.
+     * @return Int
+     */
     abstract fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int
 }

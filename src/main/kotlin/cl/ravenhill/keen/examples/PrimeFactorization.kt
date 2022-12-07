@@ -24,7 +24,7 @@ private const val TARGET = 420
  * Calculates the absolute difference between the target and the multiplication of the prime factors
  * of the genotype.
  */
-fun absDiff(genotype: Genotype<Int>) =
+private fun absDiff(genotype: Genotype<Int>) =
     genotype.flatten()
         .map { it.toLong() }
         .let { factors -> abs(TARGET.toLong() - factors.fold(1L) { acc, i -> acc * i }) }
@@ -43,7 +43,7 @@ fun main() {
         alterers = listOf(SwapMutator(0.3), SinglePointCrossover(0.3))
         optimizer = FitnessMinimizer()
         limits = listOf(SteadyGenerations(10), GenerationCount(1000))
-        statistics = listOf(StatisticCollector(), StatisticPrinter(1), StatisticPlotter())
+        statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
     val result = engine.run()
     println(engine.statistics.first())
@@ -52,7 +52,7 @@ fun main() {
         append(result.best?.genotype?.flatten()?.filter { it > 1 }
             ?.joinToString(" * "))
     })
-    (engine.statistics[2] as StatisticPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
+    (engine.statistics[1] as StatisticPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
 }
 
 private val candidateFactors = listOf(

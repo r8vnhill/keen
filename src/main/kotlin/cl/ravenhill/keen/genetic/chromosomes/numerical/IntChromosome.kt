@@ -9,10 +9,12 @@
 
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import kotlin.random.asKotlinRandom
 
 /**
  * A chromosome that contains a list of [IntGene]s.
@@ -34,13 +36,12 @@ class IntChromosome private constructor(
      */
     private constructor(size: Int, range: IntRange, filter: (Int) -> Boolean) : this(
         (0 until size).map {
-            IntGene(range.random(), range, filter)
+            IntGene(range.filter { filter(it) }.random(Core.rng.asKotlinRandom()), range, filter)
         }
     )
 
     @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<Int>>) =
-        IntChromosome(genes as List<IntGene>)
+    override fun duplicate(genes: List<Gene<Int>>) = IntChromosome(genes as List<IntGene>)
 
 
     override fun toString() = "${genes.map { it.dna }}"
@@ -63,8 +64,8 @@ class IntChromosome private constructor(
         override fun make() = IntChromosome(size, range, filter)
 
         override fun toString() = "IntChromosome.Builder { " +
-                    "size: $size, " +
-                    "range: $range," +
-                    "filter: $filter }"
+                "size: $size, " +
+                "range: $range," +
+                "filter: $filter }"
     }
 }

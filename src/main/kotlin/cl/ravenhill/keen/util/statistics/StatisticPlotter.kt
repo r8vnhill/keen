@@ -3,6 +3,7 @@ package cl.ravenhill.keen.util.statistics
 import tech.tablesaw.api.DoubleColumn
 import tech.tablesaw.plotly.Plot
 import tech.tablesaw.plotly.components.Figure
+import tech.tablesaw.plotly.components.Layout
 import tech.tablesaw.plotly.traces.ScatterTrace
 
 
@@ -12,6 +13,7 @@ class StatisticPlotter<DNA> : AbstractStatistic<DNA>() {
         Plot.show(
             Figure.builder()
                 .addTraces(best, worst, average)
+                .layout(Layout.builder("Evolution fitness").build())
                 .build()
         )
     }

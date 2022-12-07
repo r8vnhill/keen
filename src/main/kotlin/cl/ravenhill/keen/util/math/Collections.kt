@@ -3,6 +3,8 @@ package cl.ravenhill.keen.util.math
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.validateAtLeast
 import cl.ravenhill.keen.util.validateSafeMultiplication
+import java.util.Objects
+import java.util.Objects.checkIndex
 
 object Subset {
     fun next(n: Int, k: Int): IntArray {
@@ -163,3 +165,23 @@ private fun <E> MutableList<E>.checkIndex(start: Int, end: Int) {
     size.validateAtLeast(end) { "End index [$end] should be at least the length [$size] of the list" }
     end.validateAtLeast(start)
 }
+
+
+fun <E> List<E>.indexOf(element: E, start: Int, end: Int) = if (element != null) {
+    indexWhere(element::equals, start, end)
+} else {
+    indexWhere(Objects::isNull, start, end)
+}
+
+fun <T> List<T>.indexWhere(predicate: (T) -> Boolean, start: Int, end: Int): Int {
+    checkIndex(start, end)
+    var index = -1
+    var i = start
+    while (i < end && index == -1) {
+        if (predicate(this[++i])) {
+            index = i
+        }
+    }
+    return index
+}
+
