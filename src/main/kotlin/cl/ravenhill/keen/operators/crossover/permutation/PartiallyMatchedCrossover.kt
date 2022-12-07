@@ -1,11 +1,15 @@
-package cl.ravenhill.keen.operators.crossover
+package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.util.math.indexOf
 import cl.ravenhill.keen.util.math.swap
 import kotlin.math.min
 
+/**
+ * Alias for [PartiallyMatchedCrossover].
+ */
 typealias PMX<DNA> = PartiallyMatchedCrossover<DNA>
 
 /**
@@ -83,5 +87,3 @@ class PartiallyMatchedCrossover<DNA>(probability: Double) : AbstractCrossover<DN
         }
     }
 }
-
-

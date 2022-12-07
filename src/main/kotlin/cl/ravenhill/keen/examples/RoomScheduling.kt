@@ -6,9 +6,8 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.crossover.PartiallyMatchedCrossover
+import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMatchedCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 
