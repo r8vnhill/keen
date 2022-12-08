@@ -36,7 +36,7 @@ class IntChromosome private constructor(
      */
     private constructor(size: Int, range: IntRange, filter: (Int) -> Boolean) : this(
         (0 until size).map {
-            IntGene(range.filter { filter(it) }.random(Core.rng.asKotlinRandom()), range, filter)
+            IntGene(range.filter { filter(it) }.random(Core.rng), range, filter)
         }
     )
 

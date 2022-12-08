@@ -3,7 +3,7 @@ package cl.ravenhill.keen.operators.mutator
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.util.indexes
-import cl.ravenhill.keen.util.math.swap
+import cl.ravenhill.keen.util.swap
 
 
 /**

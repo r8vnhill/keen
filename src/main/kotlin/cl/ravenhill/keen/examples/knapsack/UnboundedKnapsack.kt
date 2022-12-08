@@ -56,7 +56,7 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>>): Double {
  * [Gene] that holds a pair (value, weight) of an item.
  */
 class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
-    override fun mutate() = KnapsackGene(items.random(rng.asKotlinRandom()))
+    override fun mutate() = KnapsackGene(items.random(rng))
 
     override fun duplicate(dna: Pair<Int, Int>) = KnapsackGene(dna)
 
@@ -100,7 +100,7 @@ class KnapsackChromosome(override val genes: List<KnapsackGene>) : Chromosome<Pa
 fun main() {
     val engine = engine(::fitnessFn, genotype {
         chromosomes =
-            listOf(KnapsackChromosome.Factory(15) { KnapsackGene(items.random(rng.asKotlinRandom())) })
+            listOf(KnapsackChromosome.Factory(15) { KnapsackGene(items.random(rng)) })
     }) {
         populationSize = 5000
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))

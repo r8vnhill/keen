@@ -10,6 +10,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core.rng
+import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import kotlin.random.asKotlinRandom
 
@@ -34,8 +35,13 @@ class IntGene(
     override fun mean(gene: NumberGene<Int>) =
         duplicate((gene.dna and dna) + ((gene.dna xor dna) shr 1))
 
+    override fun toDouble() = dna.toDouble()
+    override fun toInt(): Int {
+        TODO("Not yet implemented")
+    }
+
     override fun mutate() =
-        duplicate(range.filter { filter(it) }.random(rng.asKotlinRandom()))
+        duplicate(range.filter { filter(it) }.random(rng))
 
     override fun duplicate(dna: Int) = IntGene(dna, range, filter)
 
