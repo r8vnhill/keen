@@ -14,14 +14,15 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
-import cl.ravenhill.keen.operators.Mutator
+import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPlotter
+import cl.ravenhill.keen.util.statistics.StatisticPrinter
 
 
-fun count(genotype: Genotype<Boolean>): Double =
-    genotype.chromosomes[0].genes.count { it.dna }.toDouble()
+fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDouble()
 
 /**
  * See the wiki for more information about this example.
@@ -32,7 +33,7 @@ fun main() {
     }) {
         populationSize = 500
         selector = TournamentSelector(sampleSize = 2)
-        alterers = listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.06))
+        alterers = listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.2))
         limits = listOf(GenerationCount(100), TargetFitness(20.0))
         statistics = listOf(StatisticCollector())
     }

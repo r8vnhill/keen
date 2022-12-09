@@ -28,29 +28,6 @@ import kotlin.math.min
 abstract class AbstractCrossover<DNA>(probability: Double) :
         AbstractRecombinatorAlterer<DNA>(probability, 2) {
 
-    /**
-     * Performs the crossover operation
-     *
-     * @param mates The pair of Genotypes to crossover
-     * @return  The new Genotype
-     */
-    open fun crossover(mates: Pair<Genotype<DNA>, Genotype<DNA>>): Genotype<DNA> {
-        val offspring = mutableListOf<Chromosome<DNA>>()
-        for (i in mates.first.chromosomes.indices) {
-            crossover(mates.first.chromosomes[i] to mates.second.chromosomes[i]).let {
-                offspring.add(it)
-            }
-        }
-        return mates.first.duplicate(offspring)
-    }
-
-    /**
-     * Performs a crossover between two chromosomes and returns the new chromosome.
-     *
-     * @param mates The pair of chromosomes to crossover
-     */
-    protected abstract fun crossover(mates: Pair<Chromosome<DNA>, Chromosome<DNA>>): Chromosome<DNA>
-
     override fun recombine(
         population: MutableList<Phenotype<DNA>>,
         individuals: IntArray,
@@ -73,5 +50,9 @@ abstract class AbstractCrossover<DNA>(probability: Double) :
         return order
     }
 
+    /**
+     * Performs the crossover operation.
+     * @return Int
+     */
     abstract fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int
 }

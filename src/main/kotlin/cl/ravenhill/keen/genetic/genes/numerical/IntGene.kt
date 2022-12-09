@@ -9,8 +9,12 @@
 
 package cl.ravenhill.keen.genetic.genes.numerical
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.rng
-import kotlin.random.asKotlinRandom
+import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
+import cl.ravenhill.keen.genetic.genes.ComparableGene
+import java.util.Objects
+import kotlin.properties.Delegates
 
 /**
  * [NumberGene] which holds a 32-bit integer number.
@@ -26,19 +30,48 @@ import kotlin.random.asKotlinRandom
 class IntGene(
     override val dna: Int,
     private val range: IntRange,
-    private val filter: (Int) -> Boolean
-) : NumberGene<Int> {
+    private val filter: (Int) -> Boolean = { true }
+) : NumberGene<Int>, ComparableGene<Int> {
 
-    // http://aggregate.org/MAGIC/#Average%20of%20Integers
+    /**
+     * Calculates the mean of this gene and the given one.
+     *
+     * This uses the fact that ``(x + y) = ((x & y) + (x | y)) = ((x ^ y) + 2 * (x & y))``.
+     * This operation is _overflow-safe_.
+     *
+     * __References:__
+     * - http://aggregate.org/MAGIC/#Average%20of%20Integers
+     *
+     * @param gene NumberGene<Int>
+     * @return IntGene
+     */
     override fun mean(gene: NumberGene<Int>) =
         duplicate((gene.dna and dna) + ((gene.dna xor dna) shr 1))
 
-    override fun mutate() =
-        duplicate(range.filter { filter(it) }.random(rng.asKotlinRandom()))
+    override fun toDouble() = dna.toDouble()
+
+    override fun toInt() = dna
+
+    override fun mutate(): IntGene {
+        var newDna by Delegates.notNull<Int>()
+        do {
+            newDna = range.random(Core.rng)
+        } while (!filter(dna))
+        return duplicate(newDna)
+    }
 
     override fun duplicate(dna: Int) = IntGene(dna, range, filter)
 
     override fun verify() = dna in range && filter(dna)
 
     override fun toString() = "$dna"
+
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is IntGene -> false
+        other::class != IntGene::class -> false
+        else -> dna == other.dna
+    }
+
+    override fun hashCode() = Objects.hash(IntGene::class, dna)
 }

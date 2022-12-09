@@ -8,25 +8,27 @@
 
 package cl.ravenhill.keen.util.statistics
 
-import org.jetbrains.kotlinx.dataframe.math.mean
 
 
 class StatisticPrinter<DNA>(private val every: Int) : AbstractStatistic<DNA>() {
-    override var generation: Int = 0
-        set(value) {
-            field = value
-            if (value % every == 0) {
-                println(toString())
-            }
+
+    override fun onResultUpdated() {
+        super.onResultUpdated()
+        if (evolutionResult.generation % every == 0) {
+            println(toString())
         }
+    }
+
     override fun toString(): String {
         return """ === Generation $generation ===
-        |--> Average generation time: ${generationTimes.mean()} ms
+        |--> Average generation time: ${generationTimes.average()} ms
         |--> Max generation time: ${generationTimes.maxOrNull()} ms
         |--> Min generation time: ${generationTimes.minOrNull()} ms
         |--> Steady generations: $steadyGenerations
-        |--> Fittest: $fittest
-        |--> Best fitness: $bestFitness
+        |--> Best fitness: ${bestFitness.lastOrNull()}
+        |--> Worst fitness: ${worstFitness.lastOrNull()}
+        |--> Average fitness: ${averageFitness.lastOrNull()}
+        |--> Fittest: ${population.firstOrNull()}
         |<<<>>>""".trimMargin()
     }
 }

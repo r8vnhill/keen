@@ -4,13 +4,11 @@ import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
-import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.Mutator
+import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.MeanCrossover
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
-import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.cos
 import kotlin.math.ln
 import kotlin.math.sin

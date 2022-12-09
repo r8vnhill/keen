@@ -9,10 +9,10 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.keen.genetic.Phenotype
-import java.util.Random
+import kotlin.random.Random
 
 object Core {
-    var rng: Random = Random()
+    var rng: Random = Random.Default
 }
 
 typealias Population<DNA> = List<Phenotype<DNA>>

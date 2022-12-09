@@ -58,7 +58,7 @@ class BitArray(private val bytes: ByteArray, private val end: Int, private val s
         end.validateRange(start..bytes.size * Byte.SIZE_BITS) { "End index [$end] must be in range [$start, ${bytes.size * Byte.SIZE_BITS}]. " }
     }
 
-    fun toBitGeneList(): List<BoolGene> {
+    fun toBoolGeneList(): List<BoolGene> {
         val genes = MutableList<BoolGene>(size) { BoolGene.False }
         for (i in genes.indices) {
             genes[genes.size - 1 - i] = if (get(i)) BoolGene.True else BoolGene.False

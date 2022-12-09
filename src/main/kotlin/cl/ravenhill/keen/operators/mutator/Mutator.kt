@@ -6,7 +6,7 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.operators
+package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
@@ -14,6 +14,8 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.AbstractAlterer
+import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.util.math.toIntProbability
 import kotlin.math.pow
 
@@ -38,7 +40,7 @@ import kotlin.math.pow
  * @param DNA The type of the DNA
  * @constructor Creates a new [Mutator] with the given [probability]
  */
-class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
+open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
 
     /**
      * Mutates a population.
@@ -91,7 +93,11 @@ class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
         )
     }
 
-    private fun mutateChromosome(
+    /**
+     * Mutates a chromosome and returns a [MutatorResult] with the mutated chromosome and the
+     * number of mutations.
+     */
+    protected open fun mutateChromosome(
         chromosome: Chromosome<DNA>,
         prob: Double
     ): MutatorResult<Chromosome<DNA>> {

@@ -16,9 +16,10 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.Mutator
+import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.abs
 import kotlin.random.asKotlinRandom
@@ -55,7 +56,7 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>>): Double {
  * [Gene] that holds a pair (value, weight) of an item.
  */
 class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
-    override fun mutate() = KnapsackGene(items.random(rng.asKotlinRandom()))
+    override fun mutate() = KnapsackGene(items.random(rng))
 
     override fun duplicate(dna: Pair<Int, Int>) = KnapsackGene(dna)
 
@@ -99,14 +100,15 @@ class KnapsackChromosome(override val genes: List<KnapsackGene>) : Chromosome<Pa
 fun main() {
     val engine = engine(::fitnessFn, genotype {
         chromosomes =
-            listOf(KnapsackChromosome.Factory(15) { KnapsackGene(items.random(rng.asKotlinRandom())) })
+            listOf(KnapsackChromosome.Factory(15) { KnapsackGene(items.random(rng)) })
     }) {
         populationSize = 5000
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
-        statistics = listOf(StatisticPrinter(1), StatisticCollector())
+        statistics = listOf(StatisticPrinter(1), StatisticPlotter(), StatisticCollector())
     }
     val result = engine.run()
     println(engine.statistics.last())
     println(result.best?.flatten()?.filter { it.first != 0 })
+    (engine.statistics[1] as StatisticPlotter).displayFitness()
 }

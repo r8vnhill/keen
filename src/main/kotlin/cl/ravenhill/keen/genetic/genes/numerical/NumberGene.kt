@@ -23,4 +23,14 @@ interface NumberGene<DNA: Number> : Gene<DNA> {
      * Returns the mean of this gene and the given one.
      */
     fun mean(gene: NumberGene<DNA>): NumberGene<DNA>
+
+    /**
+     * Converts this gene to a [Double].
+     */
+    fun toDouble(): Double
+
+    /**
+     * Converts this gene to a [Int].
+     */
+    fun toInt(): Int
 }

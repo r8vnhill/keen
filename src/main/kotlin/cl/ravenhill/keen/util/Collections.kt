@@ -1,8 +1,10 @@
-package cl.ravenhill.keen.util.math
+package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.util.validateAtLeast
-import cl.ravenhill.keen.util.validateSafeMultiplication
+import java.util.Objects
+import java.util.Objects.checkIndex
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 object Subset {
     fun next(n: Int, k: Int): IntArray {
@@ -119,9 +121,21 @@ object Subset {
     }
 }
 
-
 infix fun List<Double>.sub(min: Double) = this.map { it - min }
 
+/**
+ * Swaps the elements at the given indices in the receiver.
+ */
+fun <E> MutableList<E>.swap(i: Int, j: Int) {
+    val tmp = this[i]
+    this[i] = this[j]
+    this[j] = tmp
+}
+
+/**
+ * Swaps the elements in the range [start, end) from this list with the elements in the range
+ * [otherStart, otherStart + (end - start)) from the other list.
+ */
 fun <E> MutableList<E>.swap(start: Int, end: Int, other: MutableList<E>, otherStart: Int) {
     this.checkIndex(start, end, otherStart, other.size)
     var i = end - start
@@ -150,4 +164,55 @@ private fun <E> MutableList<E>.checkIndex(start: Int, end: Int) {
     start.validateAtLeast(0) { "Start index [$start] should be positive" }
     size.validateAtLeast(end) { "End index [$end] should be at least the length [$size] of the list" }
     end.validateAtLeast(start)
+}
+
+
+fun <E> List<E>.indexOf(element: E, start: Int, end: Int) = if (element != null) {
+    indexWhere(element::equals, start, end)
+} else {
+    indexWhere(Objects::isNull, start, end)
+}
+
+fun <T> List<T>.indexWhere(predicate: (T) -> Boolean, start: Int, end: Int): Int {
+    checkIndex(start, end)
+    var index = -1
+    var i = start
+    while (i < end && index == -1) {
+        if (predicate(this[++i])) {
+            index = i
+        }
+    }
+    return index
+}
+
+/**
+ * Returns a random value in the given range.
+ */
+fun ClosedFloatingPointRange<Double>.random(rng: Random) =
+    this.start + (this.endInclusive - this.start) * rng.nextDouble()
+
+/**
+ * Returns a random value in the given range.
+ */
+fun ClosedFloatingPointRange<Double>.random() = this.random(Core.rng)
+
+fun IntRange.randomMemorySafe(random: Random): Int {
+    val size = endInclusive - start + 1
+    val bits = size.bitLength()
+    val mask = (1 shl bits) - 1
+    var value = random.nextInt() and mask
+    while (value >= size) {
+        value = random.nextInt() and mask
+    }
+    return value + start
+}
+
+private fun Int.bitLength(): Int {
+    var i = 0
+    var x = this
+    while (x != 0) {
+        x = x ushr 1
+        i++
+    }
+    return i
 }
