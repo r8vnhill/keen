@@ -8,6 +8,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.permutation.OrderedCrossover
+import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
 import cl.ravenhill.keen.operators.mutator.SwapMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
@@ -19,9 +20,9 @@ import tech.tablesaw.plotly.components.Layout
 import tech.tablesaw.plotly.components.Marker
 import tech.tablesaw.plotly.traces.ScatterTrace
 import java.util.Objects
+import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.sqrt
-import kotlin.random.asKotlinRandom
 
 private fun fitnessFn(genotype: Genotype<Pair<Int, Int>>): Double {
     val routePoints = genotype.flatten()
@@ -53,7 +54,7 @@ class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) : Chromoso
 
     class Factory : Chromosome.Factory<Pair<Int, Int>> {
         override fun make() =
-            RouteChromosome(points.shuffled(Core.rng.asKotlinRandom()).map { RoutePointGene(it) })
+            RouteChromosome(points.shuffled(Core.rng).map { RoutePointGene(it) })
     }
 }
 
@@ -65,7 +66,7 @@ fun main() {
         limits = listOf(GenerationCount(200))
         alterers = listOf(SwapMutator(0.2), OrderedCrossover(0.6))
         optimizer = FitnessMinimizer()
-        statistics = listOf(StatisticPrinter(20), StatisticPlotter())
+        statistics = listOf(StatisticPrinter(30), StatisticPlotter())
     }
     val result = engine.run()
     println(result)
