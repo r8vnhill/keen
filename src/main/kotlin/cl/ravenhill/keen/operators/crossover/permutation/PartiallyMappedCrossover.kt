@@ -1,12 +1,15 @@
-package cl.ravenhill.keen.operators.crossover
+package cl.ravenhill.keen.operators.crossover.permutation
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.crossover.AbstractCrossover
+import cl.ravenhill.keen.util.Subset
 import cl.ravenhill.keen.util.indexOf
-import cl.ravenhill.keen.util.swap
-import kotlin.math.min
+import cl.ravenhill.keen.util.validatePredicate
 
-typealias PMX<DNA> = PartiallyMatchedCrossover<DNA>
+/**
+ * Alias for [PartiallyMappedCrossover].
+ */
+typealias PMX<DNA> = PartiallyMappedCrossover<DNA>
 
 /**
  * The ``PartiallyMatchedCrossover`` (PMX) guarantees that all [Gene]s are found exactly once in
@@ -41,16 +44,31 @@ typealias PMX<DNA> = PartiallyMatchedCrossover<DNA>
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-class PartiallyMatchedCrossover<DNA>(probability: Double) : AbstractCrossover<DNA>(probability) {
+class PartiallyMappedCrossover<DNA>(probability: Double) : AbstractCrossover<DNA>(probability) {
     override fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int {
-        val size = min(genes1.size, genes2.size)
-        val r1 = Core.rng.nextInt(size)
-        val r2 = Core.rng.nextInt(size)
-        if (size >= 2) {
-            val (start, end) = if (r1 < r2) r1 to r2 else r2 to r1
-            genes1.swap(start = start, end = end, other = genes2, otherStart = start)
-            repair(genes1 to genes2, start, end)
-            repair(genes2 to genes1, start, end)
+        validatePredicate({ genes1.distinct().size == genes1.size }) { "Partially mapped crossover can't have duplicated genes: $genes1" }
+        validatePredicate({ genes2.distinct().size == genes2.size }) { "Partially mapped crossover can't have duplicated genes: $genes2" }
+        val size = minOf(genes1.size, genes2.size)
+        // Select two random indexes
+        val (lo, hi) = Subset.next(size, 2)
+        // Create the crossing region
+        val crossSection1 = genes1.subList(lo, hi)
+        val crossSection2 = genes2.subList(lo, hi)
+        // The offspring are created
+        for (i in 0 until size) {
+            if (i in lo until hi) continue
+            val gene1 = genes1[i]
+            val gene2 = genes2[i]
+            // If the gene is already in the crossing region, we don't need to do anything
+            if (gene1 in crossSection1 || gene2 in crossSection2) continue
+            // If the gene is not in the crossing region, we need to find the gene that is in the
+            // crossing region and replace it with the gene that is not in the crossing region
+            val gene1Index = genes1.indexOf(gene1)
+            val gene2Index = genes2.indexOf(gene2)
+            val gene1InCrossingRegion = genes1[gene2Index]
+            val gene2InCrossingRegion = genes2[gene1Index]
+            genes1[gene1Index] = gene1InCrossingRegion
+            genes2[gene2Index] = gene2InCrossingRegion
         }
         return 1
     }
@@ -83,5 +101,3 @@ class PartiallyMatchedCrossover<DNA>(probability: Double) : AbstractCrossover<DN
         }
     }
 }
-
-

@@ -25,8 +25,9 @@ dependencies {
     // Lang3
     implementation("org.apache.commons:commons-lang3:3.12.0")
     // Tablesaw
-    implementation("tech.tablesaw:tablesaw-core:0.43.1")
-    implementation("tech.tablesaw:tablesaw-jsplot:0.43.1")
+    api("tech.tablesaw:tablesaw-core:0.43.1")
+    @Suppress("VulnerableLibrariesLocal")
+    api("tech.tablesaw:tablesaw-jsplot:0.43.1")
     // SLF4J
     implementation("org.slf4j:slf4j-simple:2.0.5")
     // Kotest
