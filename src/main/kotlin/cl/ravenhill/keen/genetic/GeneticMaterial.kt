@@ -10,6 +10,15 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.internals.Verifiable
 
+/**
+ * Any unit of genetic material used by the [cl.ravenhill.keen.evolution.Evolver].
+ *
+ * @param DNA  The type of the genetic material's value.
+ */
 interface GeneticMaterial<DNA> : Verifiable {
+
+    /**
+     * Flattens the genetic material into a list of values.
+     */
     fun flatten(): List<DNA>
 }

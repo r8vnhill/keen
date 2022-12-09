@@ -4,7 +4,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.indexes
-import cl.ravenhill.keen.util.math.Subset
+import cl.ravenhill.keen.util.Subset
 import cl.ravenhill.keen.util.validateAtLeast
 import kotlin.math.min
 

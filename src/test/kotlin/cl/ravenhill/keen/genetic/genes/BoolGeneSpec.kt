@@ -1,7 +1,6 @@
-package cl.ravenhill.keen.core.genes
+package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.genes.BoolGene
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
@@ -11,7 +10,7 @@ import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.element
 import io.kotest.property.checkAll
-import java.util.Random
+import kotlin.random.Random
 
 
 class BoolGeneSpec : WordSpec({
@@ -33,6 +32,13 @@ class BoolGeneSpec : WordSpec({
 
         "return 0 if the gene is False" {
             BoolGene.False.toInt() shouldBe 0
+        }
+    }
+
+    "Flattening" should {
+        "return a list with the gene's value" {
+            BoolGene.True.flatten() shouldBe listOf(true)
+            BoolGene.False.flatten() shouldBe listOf(false)
         }
     }
 

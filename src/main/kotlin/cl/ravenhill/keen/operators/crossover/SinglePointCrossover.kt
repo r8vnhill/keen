@@ -11,7 +11,7 @@ package cl.ravenhill.keen.operators.crossover
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.math.swap
+import cl.ravenhill.keen.util.swap
 import cl.ravenhill.keen.util.validateRange
 import kotlin.math.min
 

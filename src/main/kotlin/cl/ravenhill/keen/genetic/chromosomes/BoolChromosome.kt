@@ -28,7 +28,7 @@ class BoolChromosome private constructor(
 ) : AbstractChromosome<Boolean>(genes) {
 
     constructor(genes: BitArray, truesProbability: Double) : this(
-        genes.toBitGeneList(),
+        genes.toBoolGeneList(),
         truesProbability
     )
 

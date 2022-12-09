@@ -1,10 +1,10 @@
-package cl.ravenhill.keen.util.math
+package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.util.validateAtLeast
-import cl.ravenhill.keen.util.validateSafeMultiplication
 import java.util.Objects
 import java.util.Objects.checkIndex
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
 
 object Subset {
     fun next(n: Int, k: Int): IntArray {
@@ -185,3 +185,34 @@ fun <T> List<T>.indexWhere(predicate: (T) -> Boolean, start: Int, end: Int): Int
     return index
 }
 
+/**
+ * Returns a random value in the given range.
+ */
+fun ClosedFloatingPointRange<Double>.random(rng: Random) =
+    this.start + (this.endInclusive - this.start) * rng.nextDouble()
+
+/**
+ * Returns a random value in the given range.
+ */
+fun ClosedFloatingPointRange<Double>.random() = this.random(Core.rng)
+
+fun IntRange.randomMemorySafe(random: Random): Int {
+    val size = endInclusive - start + 1
+    val bits = size.bitLength()
+    val mask = (1 shl bits) - 1
+    var value = random.nextInt() and mask
+    while (value >= size) {
+        value = random.nextInt() and mask
+    }
+    return value + start
+}
+
+private fun Int.bitLength(): Int {
+    var i = 0
+    var x = this
+    while (x != 0) {
+        x = x ushr 1
+        i++
+    }
+    return i
+}
