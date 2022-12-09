@@ -31,3 +31,14 @@ fun Random.indexes(pickProbability: Double, end: Int, start: Int = 0): Sequence<
         else -> (start until end).asSequence().filter { nextInt() <= widenedProbability }
     }
 }
+
+/**
+ * Returns a random integer outside the given range.
+ */
+fun Random.nextIntOutsideOf(range: IntRange) =
+    if (range.first == Int.MIN_VALUE && range.last == Int.MAX_VALUE) {
+        Int.MIN_VALUE
+    } else {
+        val size = range.last - range.first
+        if (nextBoolean()) range.first - size else range.last + size
+    }

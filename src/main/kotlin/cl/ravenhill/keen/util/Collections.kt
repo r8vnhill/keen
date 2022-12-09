@@ -195,3 +195,24 @@ fun ClosedFloatingPointRange<Double>.random(rng: Random) =
  * Returns a random value in the given range.
  */
 fun ClosedFloatingPointRange<Double>.random() = this.random(Core.rng)
+
+fun IntRange.randomMemorySafe(random: Random): Int {
+    val size = endInclusive - start + 1
+    val bits = size.bitLength()
+    val mask = (1 shl bits) - 1
+    var value = random.nextInt() and mask
+    while (value >= size) {
+        value = random.nextInt() and mask
+    }
+    return value + start
+}
+
+private fun Int.bitLength(): Int {
+    var i = 0
+    var x = this
+    while (x != 0) {
+        x = x ushr 1
+        i++
+    }
+    return i
+}
