@@ -1,10 +1,7 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.InvalidArgumentException
-import cl.ravenhill.keen.util.math.MAX_ULP_DISTANCE
 import cl.ravenhill.keen.util.math.eq
-import cl.ravenhill.keen.util.math.ulpDistance
-import kotlin.math.abs
 
 /**
  * Validates if a given predicate is true, otherwise throws an [InvalidArgumentException].
@@ -62,7 +59,7 @@ fun Int.validateSafeMultiplication(n: Int, lazyMessage: () -> String) = validate
         val m = this.toLong() * n.toLong()
         m.toInt().toLong() == m
     }, lazyMessage
-)
+).let { this * n }
 
 fun DoubleArray.validateSum(d: Double, lazyMessage: () -> String) = validatePredicate(
     { this.sum() eq d }, lazyMessage

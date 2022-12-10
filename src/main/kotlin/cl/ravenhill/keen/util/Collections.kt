@@ -4,9 +4,17 @@ import cl.ravenhill.keen.Core
 import java.util.Objects
 import java.util.Objects.checkIndex
 import kotlin.random.Random
-import kotlin.random.asKotlinRandom
 
+/**
+ * Subset permutation.
+ */
 object Subset {
+    /**
+     * Returns a random permutation of the given size.
+     *
+     * @param n the size of the permutation.
+     * @return a random permutation of the given size.
+     */
     fun next(n: Int, k: Int): IntArray {
         val subset = IntArray(k)
         next(n, subset)
@@ -195,17 +203,6 @@ fun ClosedFloatingPointRange<Double>.random(rng: Random) =
  * Returns a random value in the given range.
  */
 fun ClosedFloatingPointRange<Double>.random() = this.random(Core.rng)
-
-fun IntRange.randomMemorySafe(random: Random): Int {
-    val size = endInclusive - start + 1
-    val bits = size.bitLength()
-    val mask = (1 shl bits) - 1
-    var value = random.nextInt() and mask
-    while (value >= size) {
-        value = random.nextInt() and mask
-    }
-    return value + start
-}
 
 private fun Int.bitLength(): Int {
     var i = 0
