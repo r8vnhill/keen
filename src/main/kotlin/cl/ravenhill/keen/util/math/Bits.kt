@@ -1,12 +1,11 @@
 package cl.ravenhill.keen.util.math
 
-import cl.ravenhill.keen.InvalidReceiverException
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.InvalidReceiverException
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.util.indexes
 import cl.ravenhill.keen.util.validateAtLeast
 import cl.ravenhill.keen.util.validateRange
-import cl.ravenhill.keen.util.validateSize
 import kotlin.experimental.or
 
 /**
@@ -53,7 +52,7 @@ class BitArray(private val bytes: ByteArray, private val end: Int, private val s
     private val size: Int = end - start
 
     init {
-        bytes.size.validateSize(true to { "Byte array must have at least one element. " })
+        bytes.size.validateAtLeast(1) { "Byte array must have at least one element. " }
         end.validateAtLeast(0) { "End index [$end] must be at least 0. " }
         end.validateRange(start..bytes.size * Byte.SIZE_BITS) { "End index [$end] must be in range [$start, ${bytes.size * Byte.SIZE_BITS}]. " }
     }

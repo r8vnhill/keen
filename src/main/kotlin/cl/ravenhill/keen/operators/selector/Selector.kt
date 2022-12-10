@@ -10,7 +10,7 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import cl.ravenhill.keen.util.validateSize
+import cl.ravenhill.keen.util.validateAtLeast
 
 interface Selector<DNA> {
 
@@ -27,7 +27,7 @@ abstract class AbstractSelector<DNA> : Selector<DNA> {
         count: Int,
         optimizer: PhenotypeOptimizer<DNA>
     ): List<Phenotype<DNA>> {
-        count.validateSize(true to { "Selection count [$count] must be at least 0" })
+        count.validateAtLeast(0) { "Selection count [$count] must be at least 0" }
         return select(population, count, optimizer)
     }
 

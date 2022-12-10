@@ -34,21 +34,6 @@ fun <T : Comparable<T>> T.validateRange(
     propertyName: String
 ) = this.validateRange(range) { "$propertyName [$this] must be in range $range" }
 
-fun Int.validateSize(
-    vararg lazyMessages: Pair<Boolean, () -> String>,
-    strictlyPositive: Boolean = true
-) = mapOf(*lazyMessages).let {
-    if (strictlyPositive) {
-        validatePredicate(
-            { this > 0 },
-            it.getOrDefault(true) { "Size must be strictly positive" })
-    } else {
-        validatePredicate(
-            { this >= 0 },
-            it.getOrDefault(false) { "Size must be strictly positive" })
-    }
-}
-
 /**
  * Validates if the receiver is at least a given minimum.
  *
@@ -60,10 +45,17 @@ fun <T : Comparable<T>> T.validateAtLeast(
     lazyMessage: () -> String = { "Value [$this] must be at least $min" }
 ) = this.also { validatePredicate({ this >= min }, lazyMessage) }
 
+/**
+ * Validates if the receiver is at least a given minimum.
+ *
+ * @return the receiver if it is at least the minimum.
+ * @throws InvalidArgumentException if the receiver is less than the minimum.
+ */
 fun <T : Comparable<T>> T.validateAtLeast(
     min: T,
     propertyName: String
 ) = this.validateAtLeast(min) { "$propertyName [$this] must be at least $min" }
+
 
 fun Int.validateSafeMultiplication(n: Int, lazyMessage: () -> String) = validatePredicate(
     {

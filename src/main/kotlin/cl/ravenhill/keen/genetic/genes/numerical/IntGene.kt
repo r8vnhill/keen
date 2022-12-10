@@ -53,11 +53,7 @@ class IntGene(
     override fun toInt() = dna
 
     override fun mutate(): IntGene {
-        var newDna by Delegates.notNull<Int>()
-        do {
-            newDna = range.random(Core.rng)
-        } while (!filter(dna))
-        return duplicate(newDna)
+        return duplicate(range.filter(filter).random())
     }
 
     override fun duplicate(dna: Int) = IntGene(dna, range, filter)
