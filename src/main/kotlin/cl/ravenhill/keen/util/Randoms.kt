@@ -21,14 +21,21 @@ fun Random.nextChar() =
  */
 fun Random.indexes(pickProbability: Double, end: Int, start: Int = 0): Sequence<Int> {
     pickProbability.validateProbability()
-    val widenedProbability = round(Int.MAX_VALUE * pickProbability + Int.MIN_VALUE).toInt()
+    val widenedProbability =
+        round(Int.MAX_VALUE * pickProbability + Int.MIN_VALUE).toInt()
     return when {
         // If the probability is too low, then no indexes will be picked.
         pickProbability <= 1e-20 -> emptySequence()
         // If the probability is too high, then all indexes will be picked.
-        pickProbability >= 1 - 1e-20 -> (start until end).asSequence()
+        pickProbability >= 1 - 1e-20 -> {
+            var i = start
+            generateSequence { if (i < end) i++ else null }
+        }
         // Otherwise, pick indexes randomly.
-        else -> (start until end).asSequence().filter { nextInt() <= widenedProbability }
+        else -> generateSequence {
+            val index = nextInt(start, end)
+            if (nextInt() <= widenedProbability) index else null
+        }
     }
 }
 
@@ -37,7 +44,9 @@ fun Random.indexes(pickProbability: Double, end: Int, start: Int = 0): Sequence<
  */
 fun Random.nextIntOutsideOf(range: IntRange) =
     when {
-        nextBoolean() && range.first > Int.MIN_VALUE -> (Int.MIN_VALUE until range.first).random(this)
+        nextBoolean() && range.first > Int.MIN_VALUE -> {
+            (Int.MIN_VALUE until range.first).random(this)
+        }
         range.last < Int.MAX_VALUE -> (range.last + 1..Int.MAX_VALUE).random(this)
         else -> (Int.MIN_VALUE until range.first).random(this)
     }

@@ -10,11 +10,9 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.rng
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import java.util.Objects
-import kotlin.properties.Delegates
+import java.util.*
 
 /**
  * [NumberGene] which holds a 32-bit integer number.
@@ -52,9 +50,7 @@ class IntGene(
 
     override fun toInt() = dna
 
-    override fun mutate(): IntGene {
-        return duplicate(range.filter(filter).random())
-    }
+    override fun mutate() = duplicate(range.filter(filter).random(Core.rng))
 
     override fun duplicate(dna: Int) = IntGene(dna, range, filter)
 
