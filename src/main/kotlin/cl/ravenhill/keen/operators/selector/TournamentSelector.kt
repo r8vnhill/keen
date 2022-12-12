@@ -29,8 +29,6 @@ class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DN
         population: List<Phenotype<DNA>>,
         optimizer: PhenotypeOptimizer<DNA>
     ): Phenotype<DNA> {
-        val participants = Stream.generate { population[Core.rng.nextInt(population.size)] }
-            .limit(sampleSize.toLong())
         return Stream.generate { population[Core.rng.nextInt(population.size)] }
             .limit(sampleSize.toLong())
             .max(optimizer.comparator)
