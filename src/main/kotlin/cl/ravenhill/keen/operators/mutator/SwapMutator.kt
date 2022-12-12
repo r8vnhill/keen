@@ -2,7 +2,7 @@ package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.util.indexes
+import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.swap
 
 
@@ -27,7 +27,7 @@ class SwapMutator<DNA>(probability: Double = 0.2) : Mutator<DNA>(probability) {
         prob: Double
     ) = if (chromosome.size > 1) {
         val genes = chromosome.genes.toMutableList()
-        val mutations = Core.rng.indexes(prob, genes.size)
+        val mutations = Core.rng.indices(prob, genes.size)
             .map { genes.swap(it, Core.rng.nextInt(genes.size)) }
             .count()
         MutatorResult(chromosome.duplicate(genes), mutations)

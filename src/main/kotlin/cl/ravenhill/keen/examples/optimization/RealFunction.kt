@@ -9,6 +9,7 @@ import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.MeanCrossover
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import kotlin.math.cos
 import kotlin.math.ln
 import kotlin.math.sin
@@ -34,10 +35,11 @@ fun main() {
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.05), MeanCrossover(0.06))
+        alterers = listOf(Mutator(0.1), MeanCrossover(0.15))
         limits = listOf(SteadyGenerations(20))
-        statistics = listOf(StatisticCollector())
+        statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
     engine.run()
-    println(engine.statistics.last())
+    println(engine.statistics.first())
+    (engine.statistics.last() as StatisticPlotter).displayFitness()
 }

@@ -3,7 +3,7 @@ package cl.ravenhill.keen.operators
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.util.indexes
+import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.Subset
 import cl.ravenhill.keen.util.validateAtLeast
 import kotlin.math.min
@@ -20,7 +20,7 @@ abstract class AbstractRecombinatorAlterer<DNA>(probability: Double, protected v
         val pop = population.toMutableList()
         return if (pop.size >= 2) {
             val minOrder = min(order, pop.size)
-            val count = Core.rng.indexes(probability, pop.size)
+            val count = Core.rng.indices(probability, pop.size)
                 .map { individuals(it, pop.size, minOrder) }
                 .sumOf { recombine(pop, it, generation) }
             AltererResult(pop, count)

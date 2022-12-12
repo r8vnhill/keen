@@ -19,23 +19,18 @@ fun Random.nextChar() =
  * @param end the end of the range.
  * @param start the start of the range. Defaults to 0.
  */
-fun Random.indexes(pickProbability: Double, end: Int, start: Int = 0): Sequence<Int> {
+fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int> {
     pickProbability.validateProbability()
     val widenedProbability =
         round(Int.MAX_VALUE * pickProbability + Int.MIN_VALUE).toInt()
     return when {
         // If the probability is too low, then no indexes will be picked.
-        pickProbability <= 1e-20 -> emptySequence()
+        pickProbability <= 1e-20 -> emptyList()
         // If the probability is too high, then all indexes will be picked.
-        pickProbability >= 1 - 1e-20 -> {
-            var i = start
-            generateSequence { if (i < end) i++ else null }
-        }
+        pickProbability >= 1 - 1e-20 -> List(end - start) { it + start }
         // Otherwise, pick indexes randomly.
-        else -> generateSequence {
-            val index = nextInt(start, end)
-            if (nextInt() <= widenedProbability) index else null
-        }
+        else -> List(end - start) { start + it }
+            .filter { this.nextInt() <= widenedProbability }
     }
 }
 

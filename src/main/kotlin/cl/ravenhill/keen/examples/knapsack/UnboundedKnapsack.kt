@@ -102,8 +102,8 @@ fun main() {
         chromosomes =
             listOf(KnapsackChromosome.Factory(15) { KnapsackGene(items.random(rng)) })
     }) {
-        populationSize = 5000
-        alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
+        populationSize = 10
+        alterers = listOf(Mutator(0.01), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
         statistics = listOf(StatisticPrinter(1), StatisticPlotter(), StatisticCollector())
     }

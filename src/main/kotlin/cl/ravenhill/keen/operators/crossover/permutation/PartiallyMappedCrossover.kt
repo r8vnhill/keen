@@ -1,7 +1,6 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.util.Subset
 import cl.ravenhill.keen.util.indexOf
 import cl.ravenhill.keen.util.validatePredicate
@@ -44,11 +43,14 @@ typealias PMX<DNA> = PartiallyMappedCrossover<DNA>
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-class PartiallyMappedCrossover<DNA>(probability: Double) : AbstractCrossover<DNA>(probability) {
-    override fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int {
-        validatePredicate({ genes1.distinct().size == genes1.size }) { "Partially mapped crossover can't have duplicated genes: $genes1" }
-        validatePredicate({ genes2.distinct().size == genes2.size }) { "Partially mapped crossover can't have duplicated genes: $genes2" }
-        val size = minOf(genes1.size, genes2.size)
+class PartiallyMappedCrossover<DNA>(probability: Double) :
+    AbstractPermutationCrossover<DNA>(probability) {
+
+    override fun doCrossover(
+        genes1: MutableList<Gene<DNA>>,
+        genes2: MutableList<Gene<DNA>>,
+        size: Int
+    ): Int {
         // Select two random indexes
         val (lo, hi) = Subset.next(size, 2)
         // Create the crossing region
@@ -71,33 +73,5 @@ class PartiallyMappedCrossover<DNA>(probability: Double) : AbstractCrossover<DNA
             genes2[gene2Index] = gene2InCrossingRegion
         }
         return 1
-    }
-
-    /**
-     * Performs the chromosome reparations.
-     *
-     * @param genes The genes to repair.
-     * @param start The start index.
-     * @param end The end index.
-     */
-    private fun repair(
-        genes: Pair<MutableList<Gene<DNA>>, MutableList<Gene<DNA>>>,
-        start: Int,
-        end: Int
-    ) {
-        for (i in 0 until start) {
-            var index: Int = genes.first.indexOf(genes.first[i], start, end)
-            while (index != -1) {
-                genes.first[i] = genes.second[index]
-                index = genes.first.indexOf(genes.first[i], start, end)
-            }
-        }
-        for (i in end until genes.first.size) {
-            var index: Int = genes.first.indexOf(genes.first[i], start, end)
-            while (index != -1) {
-                genes.first[i] = genes.second[index]
-                index = genes.first.indexOf(genes.first[i], start, end)
-            }
-        }
     }
 }

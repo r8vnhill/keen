@@ -2,10 +2,9 @@ package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.util.validateAtLeast
-import cl.ravenhill.keen.util.validatePredicate
-import kotlin.math.min
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 /**
@@ -19,22 +18,30 @@ import kotlin.math.min
  * @param probability The probability of applying the crossover operator.
  *
  */
-class OrderedCrossover<DNA>(probability: Double) : AbstractCrossover<DNA>(probability) {
+class OrderedCrossover<DNA>(probability: Double) :
+        AbstractPermutationCrossover<DNA>(probability) {
 
-    override fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int {
-        validatePredicate({ genes1.distinct().size == genes1.size }) { "Ordered crossover can't have duplicated genes: $genes1" }
-        validatePredicate({ genes2.distinct().size == genes2.size }) { "Ordered crossover can't have duplicated genes: $genes2" }
-        val size = min(genes1.size, genes2.size)
+    override fun doCrossover(
+        genes1: MutableList<Gene<DNA>>,
+        genes2: MutableList<Gene<DNA>>,
+        size: Int
+    ): Int {
         val r1 = Core.rng.nextInt(size)
         val r2 = Core.rng.nextInt(size)
         if (size >= 2) {
             val (start, end) = if (r1 < r2) r1 to r2 else r2 to r1
-            val offspring1 = doCrossover(genes1 to genes2, start, end, size)
-            val offspring2 = doCrossover(genes2 to genes1, start, end, size)
-            genes1.clear()
-            genes1.addAll(offspring1)
-            genes2.clear()
-            genes2.addAll(offspring2)
+            runBlocking {
+                launch {
+                    val offspring1 = doCrossover(genes1 to genes2, start, end, size)
+                    genes1.clear()
+                    genes1.addAll(offspring1)
+                }
+                launch {
+                    val offspring2 = doCrossover(genes2 to genes1, start, end, size)
+                    genes2.clear()
+                    genes2.addAll(offspring2)
+                }
+            }
         }
         return 1
     }

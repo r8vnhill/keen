@@ -6,10 +6,13 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
+import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.SwapMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPlotter
 
 /**
  * Information of a meeting.
@@ -77,12 +80,12 @@ fun main() {
     }) {
         populationSize = 100
         optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.03), PartiallyMappedCrossover(0.1))
+        alterers = listOf(Mutator(0.06), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
-        statistics = listOf(StatisticCollector())
+        statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
     val result = engine.run()
-    println(engine.statistics.last())
+    println(engine.statistics.first())
     val schedule = MutableList(result.best!!.genotype.size) { mutableListOf<Meeting>() }
     meetings.forEachIndexed { index, meeting ->
         val room = result.best.genotype.chromosomes[index].genes[0].dna
@@ -91,4 +94,5 @@ fun main() {
     schedule.forEachIndexed { index, room ->
         println("Room $index: $room")
     }
+    (engine.statistics.last() as StatisticPlotter).displayFitness()
 }

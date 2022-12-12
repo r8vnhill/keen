@@ -40,7 +40,7 @@ class RandomsSpec : WordSpec({
                 assume(i1 != i2)
                 Core.rng = Random(seed)
                 val (lo, hi) = if (i1 < i2) i1 to i2 else i2 to i1
-                Core.rng.indexes(pickProbability, hi, lo) shouldBe emptySequence()
+                Core.rng.indices(pickProbability, hi, lo) shouldBe emptySequence()
             }
         }
         "return a sequence of all indices if the pick probability is too high" {
@@ -52,7 +52,7 @@ class RandomsSpec : WordSpec({
                 val pickProbability = 1 - 1e-20
                 Core.rng = Random(seed)
                 val (lo, hi) = if (i1 < i2) i1 to i2 else i2 to i1
-                Core.rng.indexes(pickProbability, hi, lo)
+                Core.rng.indices(pickProbability, hi, lo)
                     .toList() shouldBe (lo until hi).toList()
             }
         }
@@ -71,7 +71,7 @@ class RandomsSpec : WordSpec({
                 assume(i1 != i2)
                 Core.rng = Random(seed)
                 val (lo, hi) = if (i1 < i2) i1 to i2 else i2 to i1
-                val indices = Core.rng.indexes(pickProbability, hi, lo).toList()
+                val indices = Core.rng.indices(pickProbability, hi, lo).toList()
                 indices.forEach { it shouldBeInRange lo..hi }
             }
         }

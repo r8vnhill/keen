@@ -3,7 +3,7 @@ package cl.ravenhill.keen.util.math
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.InvalidReceiverException
 import cl.ravenhill.keen.genetic.genes.BoolGene
-import cl.ravenhill.keen.util.indexes
+import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.validateAtLeast
 import cl.ravenhill.keen.util.validateRange
 import kotlin.experimental.or
@@ -27,7 +27,7 @@ fun Int.toByteLength() = when {
  */
 fun byteArrayOf(size: Int, onesProbability: Double = 0.5) =
     ByteArray(size.toByteLength()).apply {
-        Core.rng.indexes(onesProbability, size).forEach {
+        Core.rng.indices(onesProbability, size).forEach {
             this[it ushr 3] = this[it ushr 3] or ((1 shl (it and 7)).toByte())
         }
     }
