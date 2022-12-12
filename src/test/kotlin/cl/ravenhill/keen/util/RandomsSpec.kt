@@ -40,7 +40,7 @@ class RandomsSpec : WordSpec({
                 assume(i1 != i2)
                 Core.rng = Random(seed)
                 val (lo, hi) = if (i1 < i2) i1 to i2 else i2 to i1
-                Core.rng.indices(pickProbability, hi, lo) shouldBe emptySequence()
+                Core.rng.indices(pickProbability, hi, lo).toList() shouldBe emptyList()
             }
         }
         "return a sequence of all indices if the pick probability is too high" {

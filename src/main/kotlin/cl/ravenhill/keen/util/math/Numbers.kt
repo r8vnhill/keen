@@ -3,8 +3,10 @@ package cl.ravenhill.keen.util.math
 import kotlin.math.abs
 import kotlin.math.pow
 
-const val MAX_ULP_DISTANCE = 1e10
 
+/**
+ * Rounds up this integer to the next multiple of the given integer.
+ */
 fun Int.roundUpToMultipleOf(i: Int): Int {
     if (i == 0) return this
     val remainder = this % i

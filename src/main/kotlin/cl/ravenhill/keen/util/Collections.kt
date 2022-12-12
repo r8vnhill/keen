@@ -1,6 +1,9 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import java.util.Objects
 import java.util.Objects.checkIndex
 import kotlin.random.Random
@@ -129,7 +132,10 @@ object Subset {
     }
 }
 
-infix fun List<Double>.sub(min: Double) = this.map { it - min }
+/**
+ * Returns a new list with the subtrahend subtracted from each element.
+ */
+infix fun List<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
 
 /**
  * Swaps the elements at the given indices in the receiver.
