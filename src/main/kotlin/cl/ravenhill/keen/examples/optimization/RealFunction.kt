@@ -31,7 +31,7 @@ private fun fitnessFunction(genotype: Genotype<Double>) = genotype.flatten().fir
  */
 fun main() {
     val engine = engine(::fitnessFunction, genotype {
-        chromosomes = listOf(DoubleChromosome.Builder(1, (-2.0 * Math.PI)..(2 * Math.PI)))
+        chromosomes = listOf(DoubleChromosome.Builder(1, (-2.0 * Math.PI) to (2 * Math.PI)))
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()

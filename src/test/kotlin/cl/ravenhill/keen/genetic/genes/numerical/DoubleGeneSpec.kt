@@ -2,7 +2,7 @@ package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.math.isNotNan
-import cl.ravenhill.keen.util.random
+import cl.ravenhill.keen.util.nextDoubleOutsideOf
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
@@ -17,25 +17,25 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-data class DoubleGeneData(val dna: Double, val range: ClosedFloatingPointRange<Double>)
+data class DoubleGeneData(val dna: Double, val range: Pair<Double, Double>)
 
-private val Arb.Companion.doubleRange: Arb<ClosedFloatingPointRange<Double>>
+private val Arb.Companion.doubleRange: Arb<Pair<Double, Double>>
     get() = arbitrary { rs ->
         val min = rs.random.nextDouble()
         val max = rs.random.nextDouble()
-        if (min < max) min..max else max..min
+        if (min < max) min to max else max to min
     }
 val arbRange = arbitrary { rs ->
     val min = rs.random.nextDouble()
     val max = rs.random.nextDouble()
-    if (min < max) min..max else max..min
+    if (min < max) min to max else max to min
 }
 
 val doubleGeneArb = arbitrary { rs ->
     val min = rs.random.nextDouble()
     val max = rs.random.nextDouble()
-    val range = if (min < max) min..max else max..min
-    val dna = range.random(rs.random)
+    val range = if (min < max) min to max else max to min
+    val dna = rs.random.nextDouble(range.first, range.second)
     DoubleGeneData(dna, range)
 }
 
@@ -45,7 +45,10 @@ class DoubleGeneSpec : WordSpec({
             checkAll(doubleGeneArb, doubleGeneArb) { gData1, gData2 ->
                 val gene1 = DoubleGene(gData1.dna, gData1.range)
                 val gene2 = DoubleGene(gData2.dna, gData2.range)
-                gene1.mean(gene2) shouldBe DoubleGene((gData1.dna + gData2.dna) / 2, gData1.range)
+                gene1.mean(gene2) shouldBe DoubleGene(
+                    (gData1.dna + gData2.dna) / 2,
+                    gData1.range
+                )
             }
         }
     }
@@ -58,13 +61,23 @@ class DoubleGeneSpec : WordSpec({
 
         "return a negative number if the first gene is less than the second" {
             checkComparison { dna1, dna2, range ->
-                DoubleGene(dna1, range).compareTo(DoubleGene(dna2, range)) shouldBeLessThan 0
+                DoubleGene(dna1, range).compareTo(
+                    DoubleGene(
+                        dna2,
+                        range
+                    )
+                ) shouldBeLessThan 0
             }
         }
 
         "return a positive number if the first gene is greater than the second" {
             checkComparison { dna1, dna2, range ->
-                DoubleGene(dna2, range).compareTo(DoubleGene(dna1, range)) shouldBeGreaterThan 0
+                DoubleGene(dna2, range).compareTo(
+                    DoubleGene(
+                        dna1,
+                        range
+                    )
+                ) shouldBeGreaterThan 0
             }
         }
     }
@@ -94,7 +107,8 @@ class DoubleGeneSpec : WordSpec({
             "return a new gene with the same dna and range" {
                 checkAll(doubleGeneArb, Arb.long()) { gData, seed ->
                     Core.rng = Random(seed)
-                    val expected = gData.range.random(Random(seed))
+                    val expected =
+                        Random(seed).nextDouble(gData.range.first, gData.range.second)
                     DoubleGene(gData.dna, gData.range).duplicate(expected) shouldBe
                             DoubleGene(expected, gData.range)
                 }
@@ -105,7 +119,7 @@ class DoubleGeneSpec : WordSpec({
                 checkAll(doubleGeneArb, Arb.long()) { gData, seed ->
                     val rng = Random(seed)
                     Core.rng = Random(seed)
-                    val expected = gData.range.random(rng)
+                    val expected = rng.nextDouble(gData.range.first, gData.range.second)
                     DoubleGene(gData.dna, gData.range).mutate() shouldBe
                             DoubleGene(expected, gData.range)
                 }
@@ -156,7 +170,7 @@ class DoubleGeneSpec : WordSpec({
         "return false if the gene is outside the range" {
             checkAll(Arb.doubleRange, Arb.long()) { range, seed ->
                 val rng = Random(seed)
-                val gene = DoubleGene(range.randomOutside(rng), range)
+                val gene = DoubleGene(rng.nextDoubleOutsideOf(range), range)
                 gene.verify() shouldBe false
             }
         }
@@ -176,7 +190,7 @@ private fun ClosedFloatingPointRange<Double>.randomOutside(rng: Random): Double 
 }
 
 private suspend fun checkComparison(
-    comparison: (Double, Double, ClosedFloatingPointRange<Double>) -> Unit
+    comparison: (Double, Double, Pair<Double, Double>) -> Unit
 ) {
     checkAll(Arb.double(), Arb.double(), arbRange) { dna1, dna2, range ->
         assume(dna1 != dna2)
@@ -187,11 +201,11 @@ private suspend fun checkComparison(
 }
 
 private suspend fun checkConversion(
-    conversion: (Double, ClosedFloatingPointRange<Double>) -> Unit
+    conversion: (Double, Pair<Double, Double>) -> Unit
 ) {
     checkAll<Double, Double, Double> { dna, d1, d2 ->
         assume(d2 != d1)
-        val range = if (d1 > d2) d2..d1 else d1..d2
+        val range = if (d1 > d2) d2 to d1 else d1 to d2
         conversion(dna, range)
     }
 }

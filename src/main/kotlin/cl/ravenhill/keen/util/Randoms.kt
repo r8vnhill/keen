@@ -42,6 +42,20 @@ fun Random.nextIntOutsideOf(range: Pair<Int, Int>) =
         nextBoolean() && range.first > Int.MIN_VALUE -> {
             (Int.MIN_VALUE until range.first).random(this)
         }
+
         range.second < Int.MAX_VALUE -> (range.second + 1..Int.MAX_VALUE).random(this)
         else -> (Int.MIN_VALUE until range.first).random(this)
     }
+
+
+fun Random.nextDoubleOutsideOf(range: Pair<Double, Double>): Double {
+    val (min, max) = range
+    return when {
+        nextBoolean() && min > Double.MIN_VALUE -> {
+            this.nextDouble(Double.MIN_VALUE, min)
+        }
+
+        max < Double.MAX_VALUE -> this.nextDouble(max, Double.MAX_VALUE)
+        else -> this.nextDouble(Double.MIN_VALUE, min)
+    }
+}
