@@ -2,8 +2,6 @@ package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.Subset
-import cl.ravenhill.keen.util.indexOf
-import cl.ravenhill.keen.util.validatePredicate
 
 /**
  * Alias for [PartiallyMappedCrossover].

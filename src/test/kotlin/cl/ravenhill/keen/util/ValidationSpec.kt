@@ -80,6 +80,7 @@ class ValidationSpec : WordSpec({
         }
         "throw an exception if it is not at least the minimum" {
             checkAll<Int, Int> { i1, i2 ->
+                assume(i1 != i2)
                 val (min, value) = if (i1 < i2) i1 to i2 else i2 to i1
                 shouldThrow<InvalidArgumentException> {
                     min.validateAtLeast(value, "Test")

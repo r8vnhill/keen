@@ -7,6 +7,9 @@ import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.ForkJoinTask
 import java.util.concurrent.Future
 
+/**
+ *
+ */
 sealed interface Concurrency : Executor, AutoCloseable {
     fun execute(runnables: List<Runnable>)
 

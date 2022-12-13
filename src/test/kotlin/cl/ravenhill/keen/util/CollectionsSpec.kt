@@ -43,15 +43,30 @@ class CollectionsSpec : WordSpec({
         }
     }
 
-    "Swapping two elements in a list" should {
-        "swap the elements" {
-            checkAll(Arb.list(Arb.double(), 2..10_000), Arb.long()) { list, seed ->
-                Core.rng = Random(seed)
-                val (i, j) = Subset.next(list.size, 2)
-                val copy = list.toMutableList()
-                copy.swap(i, j)
-                copy[i] shouldBe list[j]
-                copy[j] shouldBe list[i]
+    "Swap" When {
+        "Swapping two elements in a list" should {
+            "swap the elements if they are different" {
+                checkAll(Arb.list(Arb.double(), 2..10_000), Arb.long()) { list, seed ->
+                    Core.rng = Random(seed)
+                    val (i, j) = if (list.size == 2) {
+                        0 to 1
+                    } else {
+                        Core.rng.nextInt(0, list.size - 1) to Core.rng.nextInt(0, list.size - 1)
+                    }
+                    val copy = list.toMutableList()
+                    copy.swap(i, j)
+                    copy[i] shouldBe list[j]
+                    copy[j] shouldBe list[i]
+                }
+            }
+            "not change the list if the elements are the same" {
+                checkAll(Arb.list(Arb.double(), 2..10_000), Arb.long()) { list, seed ->
+                    Core.rng = Random(seed)
+                    val i = Subset.next(list.size, 1).first()
+                    val copy = list.toMutableList()
+                    copy.swap(i, i)
+                    copy shouldBe list
+                }
             }
         }
     }
