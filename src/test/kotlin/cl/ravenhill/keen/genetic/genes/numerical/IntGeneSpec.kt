@@ -105,7 +105,7 @@ class IntGeneSpec : WordSpec({
         }
         "Mutation" should {
             "return a gene with a random value" {
-                checkAll(Arb.intGene(-100_000, 100_000), Arb.long()) { gData, seed ->
+                checkAll(Arb.intGene(-1_000_000, 1_000_000), Arb.long()) { gData, seed ->
                     Core.rng = Random(seed)
                     val rng = Random(seed)
                     val expected = rng.nextInt(gData.range.first, gData.range.second)

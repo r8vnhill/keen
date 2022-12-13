@@ -34,7 +34,7 @@ class SinglePointCrossover<DNA>(probability: Double) : MultiPointCrossover<DNA>(
 
     private fun crossoverAt(index: Int, mates: Pair<MutableList<Gene<DNA>>, MutableList<Gene<DNA>>>) {
         val hi = min(mates.first.size, mates.second.size)
-        index.validateRange(0 until hi)
+        index.validateRange(0 to hi)
         mates.first.swap(index, hi, mates.second, index)
     }
 

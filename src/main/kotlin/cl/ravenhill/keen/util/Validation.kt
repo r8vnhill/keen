@@ -19,15 +19,20 @@ fun Double.validateProbability() =
     validatePredicate({ this in 0.0..1.0 }) { "Probability [$this] must be between 0 and 1" }
 
 fun <T : Comparable<T>> T.validateRange(
-    range: ClosedRange<T>,
+    range: Pair<T, T>,
     lazyMessage: () -> String = { "Value [$this] must be in range $range" }
-) = this.also { validatePredicate({ this in range }, lazyMessage) }
+) = this.also {
+    validatePredicate(
+        { this < range.second && range.first <= this },
+        lazyMessage
+    )
+}
 
 /**
  * Validates that the receiver is in the given range.
  */
 fun <T : Comparable<T>> T.validateRange(
-    range: ClosedRange<T>,
+    range: Pair<T, T>,
     propertyName: String
 ) = this.validateRange(range) { "$propertyName [$this] must be in range $range" }
 

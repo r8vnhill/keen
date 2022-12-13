@@ -54,8 +54,8 @@ class ValidationSpec : WordSpec({
         "return the value if it is in the range" {
             checkAll<Int, Int, Long> { i1, i2, seed ->
                 assume(i1 != i2)
-                val range = if (i1 < i2) i1..i2 else i2..i1
-                val value = range.random(Random(seed))
+                val range = if (i1 < i2) i1 to i2 else i2 to i1
+                val value = Random(seed).nextInt(range.first, range.second)
                 value.validateRange(range, "Test") shouldBe value
             }
         }

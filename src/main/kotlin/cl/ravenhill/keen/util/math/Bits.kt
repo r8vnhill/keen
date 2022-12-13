@@ -54,7 +54,7 @@ class BitArray(private val bytes: ByteArray, private val end: Int, private val s
     init {
         bytes.size.validateAtLeast(1) { "Byte array must have at least one element. " }
         end.validateAtLeast(0) { "End index [$end] must be at least 0. " }
-        end.validateRange(start..bytes.size * Byte.SIZE_BITS) { "End index [$end] must be in range [$start, ${bytes.size * Byte.SIZE_BITS}]. " }
+        end.validateRange(start to bytes.size * Byte.SIZE_BITS) { "End index [$end] must be in range [$start, ${bytes.size * Byte.SIZE_BITS}]. " }
     }
 
     fun toBoolGeneList(): List<BoolGene> {
