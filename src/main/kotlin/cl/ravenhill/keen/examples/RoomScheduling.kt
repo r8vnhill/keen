@@ -75,7 +75,7 @@ private fun fitnessFn(genotype: Genotype<Int>): Double {
 fun main() {
     val engine = engine(::fitnessFn, genotype {
         chromosomes = List(meetings.size) {
-            IntChromosome.Factory(1, meetings.indices)
+            IntChromosome.Factory(1, meetings.indices.first to meetings.indices.last)
         }
     }) {
         populationSize = 100

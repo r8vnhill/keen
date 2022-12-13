@@ -86,7 +86,7 @@ class RandomsSpec : WordSpec({
                 assume(i1 != i2)
                 Core.rng = Random(seed)
                 val (lo, hi) = if (i1 < i2) i1 to i2 else i2 to i1
-                val outside = Core.rng.nextIntOutsideOf(lo..hi)
+                val outside = Core.rng.nextIntOutsideOf(lo to hi)
                 ((outside in (Int.MIN_VALUE until lo))
                         || (outside in (hi + 1..Int.MAX_VALUE))) shouldBe true
             }

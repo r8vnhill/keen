@@ -37,11 +37,11 @@ fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int>
 /**
  * Returns a random integer outside the given range.
  */
-fun Random.nextIntOutsideOf(range: IntRange) =
+fun Random.nextIntOutsideOf(range: Pair<Int, Int>) =
     when {
         nextBoolean() && range.first > Int.MIN_VALUE -> {
             (Int.MIN_VALUE until range.first).random(this)
         }
-        range.last < Int.MAX_VALUE -> (range.last + 1..Int.MAX_VALUE).random(this)
+        range.second < Int.MAX_VALUE -> (range.second + 1..Int.MAX_VALUE).random(this)
         else -> (Int.MIN_VALUE until range.first).random(this)
     }

@@ -31,7 +31,7 @@ class CollectionsSpec : WordSpec({
     }
     "Subtracting a list by an integer" should {
         "return a list with each element subtracted by the integer" {
-            checkAll(Arb.list(Arb.double(), 0..100_000), Arb.double()) { list, d ->
+            checkAll(Arb.list(Arb.double(), 0..10_000), Arb.double()) { list, d ->
                 (list sub d).forEachIndexed { i, e ->
                     e shouldBe list[i] - d
                 }

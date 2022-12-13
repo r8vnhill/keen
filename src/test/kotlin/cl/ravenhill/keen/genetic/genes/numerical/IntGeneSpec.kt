@@ -16,14 +16,14 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-data class IntGeneData(val value: Int, val range: IntRange)
+data class IntGeneData(val value: Int, val range: Pair<Int, Int>)
 
 private fun Arb.Companion.intGene(lo: Int = Int.MIN_VALUE, hi: Int = Int.MAX_VALUE) =
     arbitrary { rs ->
         val r1 = rs.random.nextInt(lo, hi)
         val r2 = rs.random.nextInt(lo, hi)
-        val range = if (r1 < r2) r1..r2 else r2..r1
-        val value = range.random(rs.random)
+        val range = if (r1 < r2) r1 to r2 else r2 to r1
+        val value = rs.random.nextInt(range.first, range.second)
         IntGeneData(value, range)
     }
 
@@ -31,7 +31,7 @@ private val Arb.Companion.intRange
     get() = arbitrary { rs ->
         val r1 = rs.random.nextInt(-1_000_000, 1_000_000)
         val r2 = rs.random.nextInt(-1_000_000, 1_000_000)
-        if (r1 < r2) r1..r2 else r2..r1
+        if (r1 < r2) r1 to r2 else r2 to r1
     }
 
 class IntGeneSpec : WordSpec({
@@ -97,7 +97,7 @@ class IntGeneSpec : WordSpec({
         "Duplicating" should {
             "return a new gene with the given dna" {
                 checkAll(Arb.intGene(-1_000_000, 1_000_000), Arb.long()) { gData, seed ->
-                    val expected = gData.range.random(Random(seed))
+                    val expected = Random(seed).nextInt(gData.range.first, gData.range.second)
                     IntGene(gData.value, gData.range).duplicate(expected) shouldBe
                             IntGene(expected, gData.range)
                 }
@@ -105,10 +105,10 @@ class IntGeneSpec : WordSpec({
         }
         "Mutation" should {
             "return a gene with a random value" {
-                checkAll(Arb.intGene(-1_000_000, 1_000_000), Arb.long()) { gData, seed ->
+                checkAll(Arb.intGene(-100_000, 100_000), Arb.long()) { gData, seed ->
                     Core.rng = Random(seed)
                     val rng = Random(seed)
-                    val expected = gData.range.random(rng)
+                    val expected = rng.nextInt(gData.range.first, gData.range.second)
                     IntGene(gData.value, gData.range).mutate() shouldBe
                             IntGene(expected, gData.range)
                 }
@@ -181,7 +181,7 @@ class IntGeneSpec : WordSpec({
     }
 })
 
-private suspend fun checkComparison(comparison: (Int, Int, IntRange) -> Unit) {
+private suspend fun checkComparison(comparison: (Int, Int, Pair<Int, Int>) -> Unit) {
     checkAll(Arb.int(), Arb.int(), Arb.intRange) { dna1, dna2, range ->
         assume(dna1 != dna2)
         val (lo, hi) = if (dna1 < dna2) dna1 to dna2 else dna2 to dna1

@@ -63,7 +63,7 @@ class ValidationSpec : WordSpec({
             checkAll<Int, Int, Long> { i1, i2, seed ->
                 assume(i1 != i2)
                 assume(i1 != Int.MIN_VALUE || i2 != Int.MAX_VALUE)
-                val range = if (i1 < i2) i1..i2 else i2..i1
+                val range = if (i1 < i2) i1 to i2 else i2 to i1
                 val value = Random(seed).nextIntOutsideOf(range)
                 shouldThrow<InvalidArgumentException> {
                     value.validateRange(range, "Test")

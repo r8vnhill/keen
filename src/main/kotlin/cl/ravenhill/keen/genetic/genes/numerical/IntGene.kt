@@ -13,6 +13,9 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import java.util.*
+import java.util.stream.IntStream
+import java.util.stream.Stream
+import kotlin.streams.toList
 
 /**
  * [NumberGene] which holds a 32-bit integer number.
@@ -27,10 +30,12 @@ import java.util.*
  */
 class IntGene(
     override val dna: Int,
-    private val range: IntRange,
+    range: Pair<Int, Int>,
     private val filter: (Int) -> Boolean = { true }
 ) : NumberGene<Int>, ComparableGene<Int> {
-
+    private val start = range.first
+    private val end = range.second
+    private val range = IntStream.range(start, end).boxed()
     /**
      * Calculates the mean of this gene and the given one.
      *
@@ -50,11 +55,12 @@ class IntGene(
 
     override fun toInt() = dna
 
-    override fun mutate() = duplicate(range.filter(filter).random(Core.rng))
+    override fun mutate() = duplicate(range.filter(filter).toList().random(Core.rng))
 
-    override fun duplicate(dna: Int) = IntGene(dna, range, filter)
+    override fun duplicate(dna: Int) = IntGene(dna, start to end, filter)
 
-    override fun verify() = dna in range && filter(dna)
+    @Suppress("ConvertTwoComparisonsToRangeCheck")
+    override fun verify() = dna >= start && dna < end && filter(dna)
 
     override fun toString() = "$dna"
 
