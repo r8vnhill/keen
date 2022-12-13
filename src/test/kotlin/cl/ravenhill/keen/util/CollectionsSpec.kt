@@ -10,13 +10,17 @@
 
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.keen.Core
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.long
 import io.kotest.property.checkAll
+import kotlin.random.Random
 
 
 class CollectionsSpec : WordSpec({
@@ -35,6 +39,19 @@ class CollectionsSpec : WordSpec({
                 (list sub d).forEachIndexed { i, e ->
                     e shouldBe list[i] - d
                 }
+            }
+        }
+    }
+
+    "Swapping two elements in a list" should {
+        "swap the elements" {
+            checkAll(Arb.list(Arb.double(), 2..10_000), Arb.long()) { list, seed ->
+                Core.rng = Random(seed)
+                val (i, j) = Subset.next(list.size, 2)
+                val copy = list.toMutableList()
+                copy.swap(i, j)
+                copy[i] shouldBe list[j]
+                copy[j] shouldBe list[i]
             }
         }
     }
