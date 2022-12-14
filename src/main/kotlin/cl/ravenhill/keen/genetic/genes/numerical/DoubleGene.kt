@@ -3,7 +3,7 @@ package cl.ravenhill.keen.genetic.genes.numerical
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import java.util.*
+import java.util.Objects
 
 /**
  * [NumberGene] which holds a 64 bit floating point number.
@@ -15,18 +15,24 @@ import java.util.*
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-class DoubleGene(override val dna: Double, private val range: Pair<Double, Double>) :
-    NumberGene<Double>, ComparableGene<Double> {
+class DoubleGene(
+    override val dna: Double,
+    private val range: Pair<Double, Double>,
+    override val filter: (Double) -> Boolean = { true }
+) : NumberGene<Double>, ComparableGene<Double> {
 
     // https://hal.archives-ouvertes.fr/hal-00576641v1/document
     override fun mean(gene: NumberGene<Double>) =
         duplicate((dna - dna / 2) + (gene.dna - gene.dna / 2))
 
+    private val start = range.first
+    private val end = range.second
+
     override fun toDouble() = dna
+
     override fun toInt() = dna.toInt()
 
-    override fun mutate() =
-        DoubleGene(Core.rng.nextDouble(range.first, range.second), range)
+    override fun generator() = Core.rng.nextDouble() * (end - start) + start
 
     override fun duplicate(dna: Double) = DoubleGene(dna, range)
 

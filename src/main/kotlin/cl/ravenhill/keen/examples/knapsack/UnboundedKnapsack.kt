@@ -56,7 +56,7 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>>): Double {
  * [Gene] that holds a pair (value, weight) of an item.
  */
 class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
-    override fun mutate() = KnapsackGene(items.random(rng))
+    override fun generator() = items.random(rng)
 
     override fun duplicate(dna: Pair<Int, Int>) = KnapsackGene(dna)
 
@@ -102,8 +102,8 @@ fun main() {
         chromosomes =
             listOf(KnapsackChromosome.Factory(15) { KnapsackGene(items.random(rng)) })
     }) {
-        populationSize = 10
-        alterers = listOf(Mutator(0.01), SinglePointCrossover(0.06))
+        populationSize = 100
+        alterers = listOf(Mutator(0.03), SinglePointCrossover(0.2))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
         statistics = listOf(StatisticPrinter(1), StatisticPlotter(), StatisticCollector())
     }

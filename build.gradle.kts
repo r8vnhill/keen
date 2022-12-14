@@ -69,16 +69,3 @@ publishing {
         }
     }
 }
-
-fun getJavaFXPlatform() =
-    DefaultNativePlatform.getCurrentOperatingSystem().let { currentOS ->
-        if (currentOS.isWindows) {
-            "win"
-        } else if (currentOS.isLinux) {
-            "linux"
-        } else if (currentOS.isMacOsX) {
-            "mac"
-        } else {
-            throw IllegalStateException("Unexpected OS: ${currentOS.name}")
-        }
-    }

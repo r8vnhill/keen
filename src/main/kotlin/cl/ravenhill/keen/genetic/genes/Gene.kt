@@ -1,4 +1,3 @@
-
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.genetic.GeneticMaterial
@@ -16,7 +15,10 @@ interface Gene<DNA> : GeneticMaterial<DNA> {
     /**
      * Creates a new gene with a mutated value.
      */
-    fun mutate(): Gene<DNA>
+    fun mutate(): Gene<DNA> =
+        duplicate(generateSequence { generator() }.first())
+
+    fun generator(): DNA
 
     /**
      * Creates a new gene with the given value.

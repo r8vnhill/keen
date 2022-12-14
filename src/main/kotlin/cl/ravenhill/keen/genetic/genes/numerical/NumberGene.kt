@@ -17,7 +17,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  *
  * @param DNA The type of the value.
  */
-interface NumberGene<DNA: Number> : Gene<DNA> {
+interface NumberGene<DNA : Number> : Gene<DNA> {
 
     /**
      * Returns the mean of this gene and the given one.
@@ -33,4 +33,12 @@ interface NumberGene<DNA: Number> : Gene<DNA> {
      * Converts this gene to a [Int].
      */
     fun toInt(): Int
+
+    override fun mutate() =
+        duplicate(
+            generateSequence { generator() }
+                .filter { filter(it) }
+                .first())
+
+    val filter: (DNA) -> Boolean
 }

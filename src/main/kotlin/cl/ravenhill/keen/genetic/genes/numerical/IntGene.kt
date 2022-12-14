@@ -14,8 +14,6 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import java.util.*
 import java.util.stream.IntStream
-import java.util.stream.Stream
-import kotlin.streams.toList
 
 /**
  * [NumberGene] which holds a 32-bit integer number.
@@ -31,11 +29,12 @@ import kotlin.streams.toList
 class IntGene(
     override val dna: Int,
     range: Pair<Int, Int>,
-    private val filter: (Int) -> Boolean = { true }
+    override val filter: (Int) -> Boolean = { true }
 ) : NumberGene<Int>, ComparableGene<Int> {
     private val start = range.first
     private val end = range.second
     private val range = IntStream.range(start, end).boxed()
+
     /**
      * Calculates the mean of this gene and the given one.
      *
@@ -55,7 +54,7 @@ class IntGene(
 
     override fun toInt() = dna
 
-    override fun mutate() = duplicate(range.filter(filter).toList().random(Core.rng))
+    override fun generator() = Core.rng.nextInt(start, end)
 
     override fun duplicate(dna: Int) = IntGene(dna, start to end, filter)
 
