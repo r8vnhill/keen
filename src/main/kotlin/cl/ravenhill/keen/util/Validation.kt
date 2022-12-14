@@ -23,7 +23,7 @@ fun <T : Comparable<T>> T.validateRange(
     lazyMessage: () -> String = { "Value [$this] must be in range $range" }
 ) = this.also {
     validatePredicate(
-        { this < range.second && range.first <= this },
+        { this <= range.second && range.first <= this },
         lazyMessage
     )
 }
