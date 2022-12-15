@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "cl.ravenhill"
-version = "1.2"
+version = "1.2.1"
 
 repositories {
     mavenCentral()
@@ -45,7 +45,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "13"
+    kotlinOptions.jvmTarget = "18"
 }
 
 publishing {
@@ -64,7 +64,7 @@ publishing {
             }
             groupId = "cl.ravenhill"
             artifactId = "keen"
-            version = "1.2"
+            version = "1.2.1"
             from(components["java"])
         }
     }
