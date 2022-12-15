@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "cl.ravenhill"
-version = "1.1"
+version = "1.2"
 
 repositories {
     mavenCentral()
@@ -64,7 +64,7 @@ publishing {
             }
             groupId = "cl.ravenhill"
             artifactId = "keen"
-            version = "1.0"
+            version = "1.2"
             from(components["java"])
         }
     }
