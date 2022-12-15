@@ -14,8 +14,8 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import java.util.stream.Collectors
 import java.util.stream.IntStream
-import kotlin.random.asKotlinRandom
 
 /**
  * A chromosome that contains a list of [IntGene]s.
@@ -38,7 +38,11 @@ class IntChromosome private constructor(
     private constructor(size: Int, range: Pair<Int, Int>, filter: (Int) -> Boolean) : this(
         (0 until size).map {
             val rangeStream = IntStream.range(range.first, range.second).boxed()
-            IntGene(rangeStream.filter { filter(it) }.toList().random(Core.rng), range, filter)
+            IntGene(
+                rangeStream.filter { filter(it) }.collect(Collectors.toList()).random(Core.rng),
+                range,
+                filter
+            )
         }
     )
 
