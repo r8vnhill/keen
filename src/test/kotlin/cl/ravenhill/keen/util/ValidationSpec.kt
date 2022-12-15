@@ -7,6 +7,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.double
 import io.kotest.property.assume
 import io.kotest.property.checkAll
@@ -63,6 +64,7 @@ class ValidationSpec : WordSpec({
             checkAll<Int, Int, Long> { i1, i2, seed ->
                 assume(i1 != i2)
                 assume(i1 != Int.MIN_VALUE || i2 != Int.MAX_VALUE)
+                assume(i1 != Int.MAX_VALUE || i2 != Int.MIN_VALUE)
                 val range = if (i1 < i2) i1 to i2 else i2 to i1
                 val value = Random(seed).nextIntOutsideOf(range)
                 shouldThrow<InvalidArgumentException> {

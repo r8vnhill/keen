@@ -1,11 +1,13 @@
 # Keen | Kotlin Genetic Algorithm Framework
 
+[![](https://jitpack.io/v/r8vnhill/keen.svg)](https://jitpack.io/#r8vnhill/keen)
+
 ![http://creativecommons.org/licenses/by/4.0/](https://i.creativecommons.org/l/by/4.0/88x31.png)
 
 This work is licensed under a
 [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
-_Keen_ is a Kotlin genetic algorithms' framework heavily inspired by 
+**_Keen_** is a Kotlin genetic algorithms' framework heavily inspired by 
 [_Jenetics_](https://jenetics.io).
 
 ## Installation
@@ -21,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.r8vnhill:keen:1.0.0")
+    implementation("com.github.r8vnhill:keen:1.2")
     /* ... */
 }
 ```
