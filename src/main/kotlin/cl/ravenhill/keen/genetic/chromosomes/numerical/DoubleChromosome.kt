@@ -27,16 +27,16 @@ class DoubleChromosome private constructor(
     genes: List<DoubleGene>
 ) : AbstractChromosome<Double>(genes) {
 
-    private constructor(size: Int, range: ClosedFloatingPointRange<Double>) : this(
+    private constructor(size: Int, range: Pair<Double, Double>) : this(
         (0 until size).map {
             DoubleGene(
-                Core.rng.nextDouble(range.start, range.endInclusive),
+                Core.rng.nextDouble(range.first, range.second),
                 range
             )
         }
     )
 
-    class Builder(private val size: Int, private val range: ClosedFloatingPointRange<Double>) :
+    class Builder(private val size: Int, private val range: Pair<Double, Double>) :
             Chromosome.Factory<Double> {
 
         override fun make() = DoubleChromosome(size, range)

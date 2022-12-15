@@ -16,7 +16,7 @@ import kotlin.random.Random
 
 class CharGene(override val dna: Char) : ComparableGene<Char> {
 
-    override fun mutate() = create()
+    override fun generator() = Core.rng.nextChar()
 
     override fun duplicate(dna: Char) = CharGene(dna)
 

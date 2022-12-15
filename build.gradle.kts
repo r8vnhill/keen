@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "cl.ravenhill"
-version = "1.1"
+version = "1.2"
 
 repositories {
     mavenCentral()
@@ -25,8 +25,9 @@ dependencies {
     // Lang3
     implementation("org.apache.commons:commons-lang3:3.12.0")
     // Tablesaw
-    implementation("tech.tablesaw:tablesaw-core:0.43.1")
-    implementation("tech.tablesaw:tablesaw-jsplot:0.43.1")
+    api("tech.tablesaw:tablesaw-core:0.43.1")
+    @Suppress("VulnerableLibrariesLocal")
+    api("tech.tablesaw:tablesaw-jsplot:0.43.1")
     // SLF4J
     implementation("org.slf4j:slf4j-simple:2.0.5")
     // Kotest
@@ -63,21 +64,8 @@ publishing {
             }
             groupId = "cl.ravenhill"
             artifactId = "keen"
-            version = "1.0"
+            version = "1.2"
             from(components["java"])
         }
     }
 }
-
-fun getJavaFXPlatform() =
-    DefaultNativePlatform.getCurrentOperatingSystem().let { currentOS ->
-        if (currentOS.isWindows) {
-            "win"
-        } else if (currentOS.isLinux) {
-            "linux"
-        } else if (currentOS.isMacOsX) {
-            "mac"
-        } else {
-            throw IllegalStateException("Unexpected OS: ${currentOS.name}")
-        }
-    }

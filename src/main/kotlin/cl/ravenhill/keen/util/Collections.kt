@@ -1,12 +1,20 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
-import java.util.Objects
+import java.util.*
 import java.util.Objects.checkIndex
 import kotlin.random.Random
-import kotlin.random.asKotlinRandom
 
+/**
+ * Subset permutation.
+ */
 object Subset {
+    /**
+     * Returns a random permutation of the given size.
+     *
+     * @param n the size of the permutation.
+     * @return a random permutation of the given size.
+     */
     fun next(n: Int, k: Int): IntArray {
         val subset = IntArray(k)
         next(n, subset)
@@ -31,8 +39,38 @@ object Subset {
         }
     }
 
+    /**
+	 * "Inverts" the given subset array `a`. The first n - k elements represents
+	 * the set, which must not be part of the "inverted" subset. This is done by
+	 * filling the array from the back, starting with the highest possible element,
+	 * which is not part of the "forbidden" subset elements. The result is a
+	 * subset array, filled with elements, which where not part of the original
+	 * "forbidden" subset.
+	 */
     private fun invert(n: Int, k: Int, a: IntArray) {
-        TODO("Not yet implemented")
+        var v = n - 1
+        var j = n - k - 1
+        var vi: Int
+
+        val ac: IntArray = a.copyOfRange(0, n - k)
+        for (i in k downTo 0) {
+            while (indexOf(ac, j, v).also { vi = it } != -1) {
+                --v
+                j = vi
+            }
+            a[i] = v--
+        }
+    }
+
+    private fun indexOf(a: IntArray, start: Int, value: Int): Int {
+        for (i in start downTo 0) {
+            if (a[i] < value) {
+                return -1
+            } else if (a[i] == value) {
+                return i
+            }
+        }
+        return -1
     }
 
     private fun subset0(n: Int, k: Int, a: IntArray) {
@@ -121,12 +159,16 @@ object Subset {
     }
 }
 
-infix fun List<Double>.sub(min: Double) = this.map { it - min }
+/**
+ * Returns a new list with the subtrahend subtracted from each element.
+ */
+infix fun List<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
 
 /**
  * Swaps the elements at the given indices in the receiver.
  */
 fun <E> MutableList<E>.swap(i: Int, j: Int) {
+    if (i == j) return
     val tmp = this[i]
     this[i] = this[j]
     this[j] = tmp
@@ -136,7 +178,12 @@ fun <E> MutableList<E>.swap(i: Int, j: Int) {
  * Swaps the elements in the range [start, end) from this list with the elements in the range
  * [otherStart, otherStart + (end - start)) from the other list.
  */
-fun <E> MutableList<E>.swap(start: Int, end: Int, other: MutableList<E>, otherStart: Int) {
+fun <E> MutableList<E>.swap(
+    start: Int,
+    end: Int,
+    other: MutableList<E>,
+    otherStart: Int
+) {
     this.checkIndex(start, end, otherStart, other.size)
     var i = end - start
     while (--i >= 0) {
@@ -164,55 +211,4 @@ private fun <E> MutableList<E>.checkIndex(start: Int, end: Int) {
     start.validateAtLeast(0) { "Start index [$start] should be positive" }
     size.validateAtLeast(end) { "End index [$end] should be at least the length [$size] of the list" }
     end.validateAtLeast(start)
-}
-
-
-fun <E> List<E>.indexOf(element: E, start: Int, end: Int) = if (element != null) {
-    indexWhere(element::equals, start, end)
-} else {
-    indexWhere(Objects::isNull, start, end)
-}
-
-fun <T> List<T>.indexWhere(predicate: (T) -> Boolean, start: Int, end: Int): Int {
-    checkIndex(start, end)
-    var index = -1
-    var i = start
-    while (i < end && index == -1) {
-        if (predicate(this[++i])) {
-            index = i
-        }
-    }
-    return index
-}
-
-/**
- * Returns a random value in the given range.
- */
-fun ClosedFloatingPointRange<Double>.random(rng: Random) =
-    this.start + (this.endInclusive - this.start) * rng.nextDouble()
-
-/**
- * Returns a random value in the given range.
- */
-fun ClosedFloatingPointRange<Double>.random() = this.random(Core.rng)
-
-fun IntRange.randomMemorySafe(random: Random): Int {
-    val size = endInclusive - start + 1
-    val bits = size.bitLength()
-    val mask = (1 shl bits) - 1
-    var value = random.nextInt() and mask
-    while (value >= size) {
-        value = random.nextInt() and mask
-    }
-    return value + start
-}
-
-private fun Int.bitLength(): Int {
-    var i = 0
-    var x = this
-    while (x != 0) {
-        x = x ushr 1
-        i++
-    }
-    return i
 }

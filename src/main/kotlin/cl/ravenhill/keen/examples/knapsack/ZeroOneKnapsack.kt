@@ -17,16 +17,17 @@ import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPlotter
 
 /**
  * The maximum weight that the knapsack can hold.
  */
-private const val MAX_WEIGHT = 15
+private const val MAX_WEIGHT = 30
 
 /**
  * The possible items that can be put in the knapsack.
  */
-private val items = listOf(4 to 12, 2 to 1, 2 to 2, 1 to 1, 10 to 4, 0 to 0)
+private val items = listOf(4 to 12, 2 to 1, 2 to 2, 1 to 1, 10 to 4, 2 to 2, 1 to 2, 2 to 1, 5 to 15, 5 to 10)
 
 /**
  * The fitness function for the knapsack problem.
@@ -54,10 +55,10 @@ fun main() {
     val engine = engine(::fitnessFn, genotype {
         chromosomes = listOf(BoolChromosome.Factory(items.size, 0.5))
     }) {
-        populationSize = 500
+        populationSize = 10
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(10))
-        statistics = listOf(StatisticCollector())
+        statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
     val result = engine.run()
     println(engine.statistics.first())
@@ -65,4 +66,5 @@ fun main() {
         ?.mapIndexed { index, b -> if (b) items[index] else null }
         ?.filterNotNull()
         .let { println("Items: $it") }
+    (engine.statistics.last() as StatisticPlotter).displayFitness()
 }

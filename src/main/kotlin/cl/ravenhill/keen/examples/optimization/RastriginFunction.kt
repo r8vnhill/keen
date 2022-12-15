@@ -19,6 +19,7 @@ import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.MeanCrossover
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import kotlin.math.cos
 
 private const val A = 10.0
@@ -50,14 +51,15 @@ private fun fitness(x: Genotype<Double>) = A * N + x.flatten().fold(0.0) { acc, 
  */
 fun main() {
     val engine = engine(::fitness, genotype {
-        chromosomes = listOf(DoubleChromosome.Builder(2, -R..R))
+        chromosomes = listOf(DoubleChromosome.Builder(2, -R to R))
     }) {
-        populationSize = 1000
+        populationSize = 500
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.1), MeanCrossover(0.6))
         limits = listOf(SteadyGenerations(20))
-        statistics = listOf(StatisticCollector())
+        statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
     engine.run()
     println(engine.statistics[0])
+    (engine.statistics[1] as StatisticPlotter).displayFitness()
 }

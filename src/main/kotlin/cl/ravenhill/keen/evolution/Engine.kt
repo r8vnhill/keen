@@ -377,7 +377,7 @@ class Engine<DNA> private constructor(
         var offspringSelector = selector
 
         var offspringFraction = 0.6
-            set(value) = value.validateRange(0.0..1.0, "Offspring fraction").let { field = it }
+            set(value) = value.validateRange(0.0 to 1.0, "Offspring fraction").let { field = it }
         // endregion    ----------------------------------------------------------------------------
 
         var statistics: List<Statistic<DNA>> = listOf(StatisticCollector())
