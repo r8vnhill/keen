@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.r8vnhill:keen:1.2")
+    implementation("com.github.r8vnhill:keen:master-SNAPSHOT")
     /* ... */
 }
 ```
