@@ -1,11 +1,14 @@
 package cl.ravenhill.keen.prog
 
+import cl.ravenhill.keen.util.math.isNotNan
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.haveSameHashCodeAs
 import io.kotest.matchers.types.shouldHaveSameHashCodeAs
+import io.kotest.property.assume
+import io.kotest.property.checkAll
 
 
 class ValueSpec : WordSpec({
@@ -34,97 +37,140 @@ class ValueSpec : WordSpec({
                 Value(false) shouldNot haveSameHashCodeAs(false)
             }
         }
+        "reducing" should {
+            "return the value" {
+                Value(true).reduce() shouldBe true
+                Value(false).reduce() shouldBe false
+            }
+        }
     }
     "An int value" When {
         "checking equality" should {
             "return true if the values are equal" {
-                // TODO: Change with property based testing
-                Value(1) shouldBe Value(1)
-                Value(2) shouldBe Value(2)
+                checkAll<Int> { value ->
+                    Value(value) shouldBe Value(value)
+                }
             }
             "return false if the values are not equal" {
-                // TODO: Change with property based testing
-                Value(1) shouldNotBe Value(2)
-                Value(2) shouldNotBe Value(1)
+                checkAll<Int, Int> { value1, value2 ->
+                    assume(value1 != value2)
+                    Value(value1) shouldNotBe Value(value2)
+                }
             }
         }
         "hashing" should {
             "return the same hash for equal values" {
-                // TODO: Change with property based testing
-                Value(1) shouldHaveSameHashCodeAs Value(1)
-                Value(2) shouldHaveSameHashCodeAs Value(2)
+                checkAll<Int> { value ->
+                    Value(value) shouldHaveSameHashCodeAs Value(value)
+                }
             }
             "return a different hash for different values" {
-                // TODO: Change with property based testing
-                Value(1) shouldNot haveSameHashCodeAs(Value(2))
-                Value(2) shouldNot haveSameHashCodeAs(Value(1))
+                checkAll<Int, Int> { value1, value2 ->
+                    assume(value1 != value2)
+                    Value(value1) shouldNot haveSameHashCodeAs(Value(value2))
+                }
             }
             "return a different hash from its underlying value" {
-                // TODO: Change with property based testing
-                Value(1) shouldNot haveSameHashCodeAs(1)
-                Value(2) shouldNot haveSameHashCodeAs(2)
+                checkAll<Int> { value ->
+                    Value(value) shouldNot haveSameHashCodeAs(value)
+                }
+            }
+        }
+        "reducing" should {
+            "return the value" {
+                checkAll<Int> { value ->
+                    Value(value).reduce() shouldBe value
+                }
             }
         }
     }
     "A double value" When {
         "checking equality" should {
             "return true if the values are equal" {
-                // TODO: Change with property based testing
-                Value(1.0) shouldBe Value(1.0)
-                Value(2.0) shouldBe Value(2.0)
+                checkAll<Double> { value ->
+                    assume(value.isFinite())
+                    assume(value.isNotNan())
+                    Value(value) shouldBe Value(value)
+                }
             }
             "return false if the values are not equal" {
-                // TODO: Change with property based testing
-                Value(1.0) shouldNotBe Value(2.0)
-                Value(2.0) shouldNotBe Value(1.0)
+                checkAll<Double, Double> { value1, value2 ->
+                    assume(value1 != value2)
+                    Value(value1) shouldNotBe Value(value2)
+                }
             }
         }
         "hashing" should {
             "return the same hash for equal values" {
-                // TODO: Change with property based testing
-                Value(1.0) shouldHaveSameHashCodeAs Value(1.0)
-                Value(2.0) shouldHaveSameHashCodeAs Value(2.0)
+                checkAll<Double> { value ->
+                    assume(value.isFinite())
+                    assume(value.isNotNan())
+                    Value(value) shouldHaveSameHashCodeAs Value(value)
+                }
             }
             "return a different hash for different values" {
-                // TODO: Change with property based testing
-                Value(1.0) shouldNot haveSameHashCodeAs(Value(2.0))
-                Value(2.0) shouldNot haveSameHashCodeAs(Value(1.0))
+                checkAll<Double, Double> { value1, value2 ->
+                    assume(value1 != value2)
+                    Value(value1) shouldNot haveSameHashCodeAs(Value(value2))
+                }
             }
             "return a different hash from its underlying value" {
-                // TODO: Change with property based testing
-                Value(1.0) shouldNot haveSameHashCodeAs(1.0)
-                Value(2.0) shouldNot haveSameHashCodeAs(2.0)
+                checkAll<Double> { value ->
+                    assume(value.isFinite())
+                    assume(value.isNotNan())
+                    Value(value) shouldNot haveSameHashCodeAs(value)
+                }
+            }
+        }
+        "reducing" should {
+            "return the value if it is finite and not NaN" {
+                checkAll<Double> { value ->
+                    assume(value.isNotNan())
+                    Value(value).reduce() shouldBe value
+                }
+            }
+            "return the value if it is NaN" {
+                Value(Double.NaN).reduce().isNaN() shouldBe true
             }
         }
     }
     "A string value" When {
         "checking equality" should {
             "return true if the values are equal" {
-                // TODO: Change with property based testing
-                Value("1") shouldBe Value("1")
-                Value("2") shouldBe Value("2")
+                checkAll<String> { value ->
+                    Value(value) shouldBe Value(value)
+                }
             }
             "return false if the values are not equal" {
-                // TODO: Change with property based testing
-                Value("1") shouldNotBe Value("2")
-                Value("2") shouldNotBe Value("1")
+                checkAll<String, String> { value1, value2 ->
+                    assume(value1 != value2)
+                    Value(value1) shouldNotBe Value(value2)
+                }
             }
         }
         "hashing" should {
             "return the same hash for equal values" {
-                // TODO: Change with property based testing
-                Value("1") shouldHaveSameHashCodeAs Value("1")
-                Value("2") shouldHaveSameHashCodeAs Value("2")
+                checkAll<String> { value ->
+                    Value(value) shouldHaveSameHashCodeAs Value(value)
+                }
             }
             "return a different hash for different values" {
-                // TODO: Change with property based testing
-                Value("1") shouldNot haveSameHashCodeAs(Value("2"))
-                Value("2") shouldNot haveSameHashCodeAs(Value("1"))
+                checkAll<String, String> { value1, value2 ->
+                    assume(value1 != value2)
+                    Value(value1) shouldNot haveSameHashCodeAs(Value(value2))
+                }
             }
             "return a different hash from its underlying value" {
-                // TODO: Change with property based testing
-                Value("1") shouldNot haveSameHashCodeAs("1")
-                Value("2") shouldNot haveSameHashCodeAs("2")
+                checkAll<String> { value ->
+                    Value(value) shouldNot haveSameHashCodeAs(value)
+                }
+            }
+        }
+        "reducing" should {
+            "return the value" {
+                checkAll<String> { value ->
+                    Value(value).reduce() shouldBe value
+                }
             }
         }
     }

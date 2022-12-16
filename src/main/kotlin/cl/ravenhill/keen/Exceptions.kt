@@ -1,5 +1,7 @@
 package cl.ravenhill.keen
 
+import cl.ravenhill.keen.prog.Variable
+
 /**
  * Base exception for all exceptions thrown by Keen.
  *
@@ -32,3 +34,17 @@ class LimitConfigurationException(lazyMessage: () -> String) :
  */
 class SelectorException(lazyMessage: () -> String) :
         KeenException("Selector operation exception:", lazyMessage)
+
+/**
+ * Exception thrown when a variable is not initialized.
+ *
+ * @param lazyName The name of the variable.
+ * @constructor Creates a new uninitialized variable exception.
+ * @see Variable
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+class UninitializedVariableException(lazyName: () -> String) :
+        KeenException("Uninitialized variable:", lazyName)
