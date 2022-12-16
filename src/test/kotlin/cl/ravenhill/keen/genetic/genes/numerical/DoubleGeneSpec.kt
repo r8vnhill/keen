@@ -2,6 +2,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.genes.doubleGene
 import cl.ravenhill.keen.util.math.isNotNan
 import cl.ravenhill.keen.util.nextDoubleOutsideOf
 import io.kotest.core.spec.style.WordSpec
@@ -18,7 +19,9 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-data class DoubleGeneData(val dna: Double, val range: Pair<Double, Double>)
+data class DoubleGeneData(val dna: Double, val range: Pair<Double, Double>) {
+    fun toDoubleGene() = DoubleGene(dna, range)
+}
 
 private val Arb.Companion.doubleRange: Arb<Pair<Double, Double>>
     get() = arbitrary { rs ->
@@ -32,18 +35,10 @@ val arbRange = arbitrary { rs ->
     if (min < max) min to max else max to min
 }
 
-val doubleGeneArb = arbitrary { rs ->
-    val min = rs.random.nextDouble()
-    val max = rs.random.nextDouble()
-    val range = if (min < max) min to max else max to min
-    val dna = rs.random.nextDouble(range.first, range.second)
-    DoubleGeneData(dna, range)
-}
-
 class DoubleGeneSpec : WordSpec({
     "Calculating its mean" should {
         "return the mean of the two genes" {
-            checkAll(doubleGeneArb, doubleGeneArb) { gData1, gData2 ->
+            checkAll(Arb.doubleGene(), Arb.doubleGene()) { gData1, gData2 ->
                 val gene1 = DoubleGene(gData1.dna, gData1.range)
                 val gene2 = DoubleGene(gData2.dna, gData2.range)
                 gene1.mean(gene2) shouldBe DoubleGene(
@@ -106,7 +101,7 @@ class DoubleGeneSpec : WordSpec({
     "Genetic operations" When {
         "duplicating" should {
             "return a new gene with the same dna and range" {
-                checkAll(doubleGeneArb, Arb.long()) { gData, seed ->
+                checkAll(Arb.doubleGene(), Arb.long()) { gData, seed ->
                     Core.rng = Random(seed)
                     val expected =
                         Random(seed).nextDouble(gData.range.first, gData.range.second)
@@ -117,7 +112,7 @@ class DoubleGeneSpec : WordSpec({
         }
         "mutating" should {
             "return a new gene with random dna" {
-                checkAll(doubleGeneArb, Arb.long()) { gData, seed ->
+                checkAll(Arb.doubleGene(), Arb.long()) { gData, seed ->
                     val rng = Random(seed)
                     Core.rng = Random(seed)
                     val expected = rng.nextDouble(gData.range.first, gData.range.second)
@@ -130,13 +125,13 @@ class DoubleGeneSpec : WordSpec({
     "Object identity" When {
         "checking for equality" should {
             "return true if the genes are the same object" {
-                checkAll(doubleGeneArb) { gData ->
+                checkAll(Arb.doubleGene()) { gData ->
                     val gene = DoubleGene(gData.dna, gData.range)
                     gene shouldBe gene
                 }
             }
             "return false if the genes are different objects" {
-                checkAll(doubleGeneArb, doubleGeneArb) { gData1, gData2 ->
+                checkAll(Arb.doubleGene(), Arb.doubleGene()) { gData1, gData2 ->
                     assume(gData1 != gData2)
                     val gene1 = DoubleGene(gData1.dna, gData1.range)
                     val gene2 = DoubleGene(gData2.dna, gData2.range)
@@ -146,14 +141,14 @@ class DoubleGeneSpec : WordSpec({
         }
         "checking hashing" should {
             "return the same hash code for equal genes" {
-                checkAll(doubleGeneArb) { gData1 ->
+                checkAll(Arb.doubleGene()) { gData1 ->
                     val gene1 = DoubleGene(gData1.dna, gData1.range)
                     val gene2 = DoubleGene(gData1.dna, gData1.range)
                     gene1 shouldHaveSameHashCodeAs gene2
                 }
             }
             "return different hash codes for different genes" {
-                checkAll(doubleGeneArb, doubleGeneArb) { gData1, gData2 ->
+                checkAll(Arb.doubleGene(), Arb.doubleGene()) { gData1, gData2 ->
                     assume(gData1 != gData2)
                     val gene1 = DoubleGene(gData1.dna, gData1.range)
                     val gene2 = DoubleGene(gData2.dna, gData2.range)
@@ -164,7 +159,7 @@ class DoubleGeneSpec : WordSpec({
     }
     "Verifying a gene" should {
         "return true if the gene is within the range" {
-            checkAll(doubleGeneArb) { gData ->
+            checkAll(Arb.doubleGene()) { gData ->
                 DoubleGene(gData.dna, gData.range).verify() shouldBe true
             }
         }

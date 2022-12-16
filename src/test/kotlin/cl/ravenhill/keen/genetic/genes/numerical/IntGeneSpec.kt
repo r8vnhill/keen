@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.genes.intGene
 import cl.ravenhill.keen.util.nextIntOutsideOf
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThan
@@ -15,17 +16,6 @@ import io.kotest.property.arbitrary.long
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
-
-data class IntGeneData(val value: Int, val range: Pair<Int, Int>)
-
-private fun Arb.Companion.intGene(lo: Int = Int.MIN_VALUE, hi: Int = Int.MAX_VALUE) =
-    arbitrary { rs ->
-        val r1 = rs.random.nextInt(lo, hi)
-        val r2 = rs.random.nextInt(lo, hi)
-        val range = if (r1 < r2) r1 to r2 else r2 to r1
-        val value = rs.random.nextInt(range.first, range.second)
-        IntGeneData(value, range)
-    }
 
 private val Arb.Companion.intRange
     get() = arbitrary { rs ->
