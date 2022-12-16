@@ -5,7 +5,8 @@ package cl.ravenhill.keen.prog
  *
  * @param T The type of the value.
  */
-interface Reduce<T> {
+interface Reduceable<T> {
+
     /**
      * Reduces the operation to a single value.
      */
