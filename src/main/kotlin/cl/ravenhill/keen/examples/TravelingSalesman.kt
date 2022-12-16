@@ -42,6 +42,7 @@ private infix fun Pair<Int, Int>.distanceTo(other: Pair<Int, Int>) = sqrt(
 
 class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
     override fun mutate() = TODO()
+
     override fun generator(): Pair<Int, Int> {
         TODO("Not yet implemented")
     }
