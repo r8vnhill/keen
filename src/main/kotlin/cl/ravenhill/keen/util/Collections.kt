@@ -1,9 +1,6 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
-import java.util.*
-import java.util.Objects.checkIndex
-import kotlin.random.Random
 
 /**
  * Subset permutation.

@@ -1,18 +1,18 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val junitVersion: String by project
+val projectVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.7.20"
-    id("com.diffplug.spotless") version "6.10.0"
     `maven-publish`
     `java-library`
+    signing
+    id("com.diffplug.spotless") version "6.10.0"
     id("org.jetbrains.dokka") version "1.7.20"
 }
 
 group = "cl.ravenhill"
-version = "1.2.1"
+version = projectVersion
 
 repositories {
     mavenCentral()
@@ -40,12 +40,23 @@ dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 tasks.test {
     useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "18"
+}
+
+val ossrhRepositoryUrl = if (version.toString().endsWith("SNAPSHOT")) {
+    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+} else {
+    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
 }
 
 publishing {
@@ -64,8 +75,24 @@ publishing {
             }
             groupId = "cl.ravenhill"
             artifactId = "keen"
-            version = "1.2.1"
+            version = projectVersion
             from(components["java"])
         }
+    }
+    repositories {
+        maven(ossrhRepositoryUrl) {
+            name = "ossrh"
+            credentials(PasswordCredentials::class)
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
+}
+
+tasks.javadoc {
+    if (JavaVersion.current().isJava9Compatible) {
+        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
     }
 }
