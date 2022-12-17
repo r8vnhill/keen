@@ -7,7 +7,6 @@ import cl.ravenhill.keen.UninitializedVariableException
  * A non-nullable variable.
  *
  * @param R The type of the reduced variable.
- * @param V The type of the variable.
  *
  * @property name The name of the variable.
  * @property value The value of the variable.
