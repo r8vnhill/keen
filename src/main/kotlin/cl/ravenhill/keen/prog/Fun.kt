@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.prog
 
 
-class Fun<T, R>(
+open class Fun<T, R>(
     private val name: String,
     private val function: (List<T>) -> R
 ) : Reduceable<R> {
