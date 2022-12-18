@@ -9,7 +9,6 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.swap
 import cl.ravenhill.keen.util.validateRange
@@ -27,7 +26,7 @@ import kotlin.math.min
 class SinglePointCrossover<DNA>(probability: Double) : MultiPointCrossover<DNA>(probability, 1) {
 
     override fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int {
-        val index = Core.rng.nextInt(min(genes1.size, genes2.size))
+        val index = Core.random.nextInt(min(genes1.size, genes2.size))
         crossoverAt(index, genes1 to genes2)
         return 2
     }

@@ -10,9 +10,9 @@ class CoreSpec : StringSpec({
     "Core should be able to generate random numbers" {
         checkAll<Long> { seed ->
             val r = Random(seed)
-            Core.rng = Random(seed)
+            Core.random = Random(seed)
             repeat(100) {
-                r.nextDouble() shouldBe Core.rng.nextDouble()
+                r.nextDouble() shouldBe Core.random.nextDouble()
             }
         }
     }

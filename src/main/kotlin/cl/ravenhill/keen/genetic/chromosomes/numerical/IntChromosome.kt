@@ -39,7 +39,7 @@ class IntChromosome private constructor(
         (0 until size).map {
             val rangeStream = IntStream.range(range.first, range.second).boxed()
             IntGene(
-                rangeStream.filter { filter(it) }.collect(Collectors.toList()).random(Core.rng),
+                rangeStream.filter { filter(it) }.collect(Collectors.toList()).random(Core.random),
                 range,
                 filter
             )

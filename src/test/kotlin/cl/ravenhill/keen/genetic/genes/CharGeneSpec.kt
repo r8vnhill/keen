@@ -74,7 +74,7 @@ class CharGeneSpec : WordSpec({
             "return a new gene with random dna" {
                 checkAll<Char, Long> { dna, seed ->
                     val rng = Random(seed)
-                    Core.rng = Random(seed)
+                    Core.random = Random(seed)
                     val expected = CharGene(rng.nextChar())
                     CharGene(dna).mutate() shouldBe expected
                 }

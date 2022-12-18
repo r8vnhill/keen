@@ -11,12 +11,11 @@ package cl.ravenhill.keen.genetic.genes
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.nextChar
 import java.util.Objects
-import kotlin.random.Random
 
 
 class CharGene(override val dna: Char) : ComparableGene<Char> {
 
-    override fun generator() = Core.rng.nextChar()
+    override fun generator() = Core.random.nextChar()
 
     override fun duplicate(dna: Char) = CharGene(dna)
 
@@ -44,6 +43,6 @@ class CharGene(override val dna: Char) : ComparableGene<Char> {
     override fun hashCode() = Objects.hash(CharGene::class, dna)
 
     companion object {
-        fun create() = CharGene(Core.rng.nextChar())
+        fun create() = CharGene(Core.random.nextChar())
     }
 }

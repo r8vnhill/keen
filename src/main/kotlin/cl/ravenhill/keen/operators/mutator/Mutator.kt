@@ -53,7 +53,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
         val p = probability.pow(1 / 3.0)
         val widenedProbability = p.toIntProbability()
         val result = population.map {
-            if (Core.rng.nextInt() < widenedProbability) {
+            if (Core.random.nextInt() < widenedProbability) {
                 mutatePhenotype(it, p, generation)
             } else {
                 MutatorResult(it)
@@ -79,7 +79,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
     ): MutatorResult<Genotype<DNA>> {
         val widenedProbability = prob.toIntProbability()
         val result = genotype.sequence().map {
-            if (Core.rng.nextInt() < widenedProbability) {
+            if (Core.random.nextInt() < widenedProbability) {
                 mutateChromosome(it, prob)
             } else {
                 MutatorResult(it, 0)
@@ -103,7 +103,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
     ): MutatorResult<Chromosome<DNA>> {
         val widenedProbability = prob.toIntProbability()
         val result = chromosome.sequence().map {
-            if (Core.rng.nextInt() < widenedProbability) {
+            if (Core.random.nextInt() < widenedProbability) {
                 MutatorResult(mutateGene(it), 1)
             } else {
                 MutatorResult(it)

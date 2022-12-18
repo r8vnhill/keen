@@ -27,8 +27,8 @@ class SwapMutator<DNA>(probability: Double = 0.2) : Mutator<DNA>(probability) {
         prob: Double
     ) = if (chromosome.size > 1) {
         val genes = chromosome.genes.toMutableList()
-        val mutations = Core.rng.indices(prob, genes.size)
-            .map { genes.swap(it, Core.rng.nextInt(genes.size)) }
+        val mutations = Core.random.indices(prob, genes.size)
+            .map { genes.swap(it, Core.random.nextInt(genes.size)) }
             .count()
         MutatorResult(chromosome.duplicate(genes), mutations)
     } else {

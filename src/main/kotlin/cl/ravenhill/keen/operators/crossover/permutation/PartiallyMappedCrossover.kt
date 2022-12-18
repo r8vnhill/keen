@@ -1,7 +1,8 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.Subset
+import cl.ravenhill.keen.util.subset
 
 /**
  * Alias for [PartiallyMappedCrossover].
@@ -42,7 +43,7 @@ typealias PMX<DNA> = PartiallyMappedCrossover<DNA>
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
 class PartiallyMappedCrossover<DNA>(probability: Double) :
-    AbstractPermutationCrossover<DNA>(probability) {
+        AbstractPermutationCrossover<DNA>(probability) {
 
     override fun doCrossover(
         genes1: MutableList<Gene<DNA>>,
@@ -50,7 +51,7 @@ class PartiallyMappedCrossover<DNA>(probability: Double) :
         size: Int
     ): Int {
         // Select two random indexes
-        val (lo, hi) = Subset.next(size, 2)
+        val (lo, hi) = Core.random.subset(pick = 2, from = size)
         // Create the crossing region
         val crossSection1 = genes1.subList(lo, hi)
         val crossSection2 = genes2.subList(lo, hi)

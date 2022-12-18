@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.util
 
 import org.apache.commons.lang3.RandomStringUtils
+import java.util.stream.IntStream
 import kotlin.math.round
 import kotlin.random.Random
 import kotlin.random.asJavaRandom
@@ -10,6 +11,33 @@ import kotlin.random.asJavaRandom
  */
 fun Random.nextChar() =
     RandomStringUtils.random(1, 0, 0, true, true, null, this.asJavaRandom()).first()
+
+
+/**
+ * Returns a stream of pseudorandom int values, each conforming to the given origin (inclusive) and
+ * bound (exclusive).
+ *
+ * @receiver the random instance.
+ * @param from the origin (inclusive) of each random value.
+ * @param until the bound (exclusive) of each random value.
+ * @return a stream of pseudorandom int values.
+ */
+fun Random.ints(from: Int = 0, until: Int = Int.MAX_VALUE) =
+    IntStream.generate { this.nextInt(from, until) }
+
+/**
+ * Returns an array with the indices of a subset of the given size.
+ *
+ * @receiver the random instance.
+ * @param from the size of the set.
+ * @param pick the number of elements to pick from the set.
+ * @return an array with the indices of a subset of the given size.
+ */
+fun Random.subset(pick: Int, from: Int): IntArray =
+    ints(0, from + 1)
+        .limit(pick.toLong())
+        .sorted()
+        .toArray()
 
 /**
  * Returns a sequence of random indexes.

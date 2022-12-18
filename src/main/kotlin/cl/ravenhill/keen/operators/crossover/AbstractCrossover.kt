@@ -9,9 +9,7 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractRecombinatorAlterer
 import kotlin.math.min
@@ -24,6 +22,9 @@ import kotlin.math.min
  * @property probability    The probability of crossover
  *
  * @constructor Creates a new crossover operator
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 1.3.0
  */
 abstract class AbstractCrossover<DNA>(probability: Double) :
         AbstractRecombinatorAlterer<DNA>(probability, 2) {
@@ -37,7 +38,7 @@ abstract class AbstractCrossover<DNA>(probability: Double) :
         val phenotype2 = population[individuals[1]]
         val genotype1 = phenotype1.genotype
         val genotype2 = phenotype2.genotype
-        val chromosomeIndex = Core.rng.nextInt(min(genotype1.size, genotype2.size))
+        val chromosomeIndex = Core.random.nextInt(min(genotype1.size, genotype2.size))
         val chromosomes1 = genotype1.chromosomes.toMutableList()
         val chromosomes2 = genotype2.chromosomes.toMutableList()
         val genes1 = chromosomes1[chromosomeIndex].genes.toMutableList()

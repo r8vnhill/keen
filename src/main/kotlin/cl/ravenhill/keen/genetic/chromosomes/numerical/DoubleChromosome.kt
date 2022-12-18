@@ -13,7 +13,6 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.genetic.genes.Gene
-import kotlin.random.asKotlinRandom
 
 
 /**
@@ -30,7 +29,7 @@ class DoubleChromosome private constructor(
     private constructor(size: Int, range: Pair<Double, Double>) : this(
         (0 until size).map {
             DoubleGene(
-                Core.rng.nextDouble(range.first, range.second),
+                Core.random.nextDouble(range.first, range.second),
                 range
             )
         }

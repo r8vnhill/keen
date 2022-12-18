@@ -21,7 +21,7 @@ sealed class BoolGene : Gene<Boolean> {
 
     override fun mutate() = super.mutate() as BoolGene
 
-    override fun generator() = Core.rng.nextBoolean()
+    override fun generator() = Core.random.nextBoolean()
 
     override fun duplicate(dna: Boolean) = if (dna) {
         True

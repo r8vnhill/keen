@@ -7,10 +7,9 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
-import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.crossover.permutation.OrderedCrossover
 import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
 import cl.ravenhill.keen.operators.crossover.permutation.PositionBasedCrossover
+import cl.ravenhill.keen.operators.mutator.InversionMutator
 import cl.ravenhill.keen.operators.mutator.SwapMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
@@ -62,7 +61,7 @@ class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) :
 
     class Factory : Chromosome.Factory<Pair<Int, Int>> {
         override fun make() =
-            RouteChromosome(points.shuffled(Core.rng).map { RoutePointGene(it) })
+            RouteChromosome(points.shuffled(Core.random).map { RoutePointGene(it) })
     }
 }
 
@@ -72,7 +71,7 @@ fun main() {
     }) {
         populationSize = 1000
         limits = listOf(GenerationCount(200))
-        alterers = listOf(SwapMutator(0.1), PositionBasedCrossover(0.3))
+        alterers = listOf(InversionMutator(0.1), PartiallyMappedCrossover(0.3))
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPrinter(30), StatisticPlotter())
     }
