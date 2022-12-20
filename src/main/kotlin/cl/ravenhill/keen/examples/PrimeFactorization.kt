@@ -37,7 +37,7 @@ private fun absDiff(genotype: Genotype<Int>) =
  */
 fun main() {
     val engine = engine(::absDiff, genotype {
-        chromosomes = listOf(IntChromosome.Factory(10, 1 to 200) { it in candidateFactors })
+        chromosomes = mutableListOf(IntChromosome.Factory(10, 1 to 200) { it in candidateFactors })
     }) {
         populationSize = 5000
         alterers = listOf(SwapMutator(0.3), SinglePointCrossover(0.3))

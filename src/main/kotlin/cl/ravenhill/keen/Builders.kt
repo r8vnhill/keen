@@ -10,6 +10,7 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 
 /**
  * Builder methods for Keen core classes.
@@ -48,4 +49,17 @@ object Builders {
      */
     fun <DNA> genotype(init: Genotype.Factory<DNA>.() -> Unit) =
         Genotype.Factory<DNA>().apply(init)
+
+    object Chromosomes {
+        /**
+         * Creates a new [BoolChromosome.Factory] with the given ``size`` and ``truesProbability``.
+         *
+         * __Usage:__
+         * ```
+         *  BoolChromosome.Factory(20, 0.15)
+         * ```
+         */
+        fun bool(size: Int, truesProbability: Double) =
+            BoolChromosome.Factory(size, truesProbability)
+    }
 }

@@ -67,7 +67,7 @@ class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) :
 
 fun main() {
     val engine = engine(::fitnessFn, genotype {
-        chromosomes = listOf(RouteChromosome.Factory())
+        chromosomes = mutableListOf(RouteChromosome.Factory())
     }) {
         populationSize = 1000
         limits = listOf(GenerationCount(200))

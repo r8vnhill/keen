@@ -19,7 +19,7 @@ private fun matches(genotype: Genotype<Char>) = genotype.flatten()
 
 fun main() {
     val engine = engine(::matches, genotype {
-        chromosomes = listOf(CharChromosome.Builder(10))
+        chromosomes = mutableListOf(CharChromosome.Builder(10))
     }) {
         populationSize = 500
         survivorSelector = RouletteWheelSelector()

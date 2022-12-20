@@ -9,6 +9,7 @@
 
 package cl.ravenhill.keen.examples.knapsack
 
+import cl.ravenhill.keen.Builders.Chromosomes.bool
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
@@ -53,7 +54,7 @@ private fun fitnessFn(genotype: Genotype<Boolean>) =
  */
 fun main() {
     val engine = engine(::fitnessFn, genotype {
-        chromosomes = listOf(BoolChromosome.Factory(items.size, 0.5))
+        chromosome { bool(items.size, 0.5) }
     }) {
         populationSize = 10
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
