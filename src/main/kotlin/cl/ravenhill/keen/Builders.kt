@@ -11,6 +11,9 @@ package cl.ravenhill.keen
 import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
+import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
+import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
+import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 
 /**
  * Builder methods for Keen core classes.
@@ -43,23 +46,75 @@ object Builders {
      * __Usage:__
      * ```
      *  genotype {
-     *      chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+     *      chromosome { booleans(20, 0.15) }
      *  }
      * ```
      */
     fun <DNA> genotype(init: Genotype.Factory<DNA>.() -> Unit) =
         Genotype.Factory<DNA>().apply(init)
 
+    /**
+     * Builder blocks for [Chromosome.Factory]s.
+     */
     object Chromosomes {
         /**
-         * Creates a new [BoolChromosome.Factory] with the given ``size`` and ``truesProbability``.
+         * Creates a new [BoolChromosome.Factory].
          *
          * __Usage:__
          * ```
-         *  BoolChromosome.Factory(20, 0.15)
+         *  chromosome {
+         *      booleans {
+         *          size = 20
+         *          truesProbability = 0.15
+         *      }
+         *  }
          * ```
          */
-        fun bool(size: Int, truesProbability: Double) =
-            BoolChromosome.Factory(size, truesProbability)
+        fun booleans(builder: BoolChromosome.Factory.() -> Unit) =
+            BoolChromosome.Factory().apply(builder)
+
+        /**
+         * Creates a new [CharChromosome.Factory].
+         *
+         * __Usage:__
+         * ```
+         * chromosome { chars { size = 20 } }
+         * ```
+         */
+        fun chars(builder: CharChromosome.Factory.() -> Unit) =
+            CharChromosome.Factory().apply(builder)
+
+        /**
+         * Creates a new [IntChromosome.Factory].
+         *
+         * __Usage:__
+         * ```
+         *  chromosome {
+         *      ints {
+         *          size = 20
+         *          range = 0 to 100
+         *          filter = { it % 2 == 0 }
+         *      }
+         *  }
+         */
+        fun ints(builder: IntChromosome.Factory.() -> Unit) =
+            IntChromosome.Factory().apply(builder)
+
+        /**
+         * Creates a new [DoubleChromosome.Factory].
+         *
+         * __Usage:__
+         * ```
+         *  chromosome {
+         *      doubles {
+         *          size = 20
+         *          range = 0.0 to 100.0
+         *          filter = { it % 2 == 0.0 }
+         *      }
+         *  }
+         *  ```
+         */
+        fun doubles(builder: DoubleChromosome.Factory.() -> Unit) =
+            DoubleChromosome.Factory().apply(builder)
     }
 }

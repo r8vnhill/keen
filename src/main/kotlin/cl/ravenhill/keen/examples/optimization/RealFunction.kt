@@ -1,12 +1,12 @@
 package cl.ravenhill.keen.examples.optimization
 
+import cl.ravenhill.keen.Builders.Chromosomes.doubles
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.MeanCrossover
+import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
@@ -31,7 +31,7 @@ private fun fitnessFunction(genotype: Genotype<Double>) = genotype.flatten().fir
  */
 fun main() {
     val engine = engine(::fitnessFunction, genotype {
-        chromosomes = mutableListOf(DoubleChromosome.Builder(1, (-2.0 * Math.PI) to (2 * Math.PI)))
+        chromosome { doubles { size = 1; range = (-2.0 * Math.PI) to (2 * Math.PI) } }
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()

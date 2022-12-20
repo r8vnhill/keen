@@ -21,7 +21,8 @@ class CharChromosome(override val genes: List<Gene<Char>>) : Chromosome<Char> {
         return genes.joinToString("")
     }
 
-    class Builder(private val size: Int) : Chromosome.Factory<Char> {
+    class Factory : Chromosome.Factory<Char> {
+        var size = 0
         override fun make() = CharChromosome(size)
 
         override fun toString() = "CharChromosome.Builder { size: $size }"

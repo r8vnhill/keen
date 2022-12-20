@@ -11,8 +11,9 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
+import kotlin.properties.Delegates
 
 
 /**
@@ -35,8 +36,10 @@ class DoubleChromosome private constructor(
         }
     )
 
-    class Builder(private val size: Int, private val range: Pair<Double, Double>) :
-            Chromosome.Factory<Double> {
+    class Factory : Chromosome.Factory<Double> {
+
+        lateinit var range: Pair<Double, Double>
+        var size by Delegates.notNull<Int>()
 
         override fun make() = DoubleChromosome(size, range)
 

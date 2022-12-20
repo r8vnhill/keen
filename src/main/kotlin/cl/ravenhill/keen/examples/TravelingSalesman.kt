@@ -8,9 +8,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
-import cl.ravenhill.keen.operators.crossover.permutation.PositionBasedCrossover
 import cl.ravenhill.keen.operators.mutator.InversionMutator
-import cl.ravenhill.keen.operators.mutator.SwapMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
@@ -21,7 +19,7 @@ import tech.tablesaw.plotly.components.Figure
 import tech.tablesaw.plotly.components.Layout
 import tech.tablesaw.plotly.components.Marker
 import tech.tablesaw.plotly.traces.ScatterTrace
-import java.util.*
+import java.util.Objects
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -52,7 +50,7 @@ class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
 }
 
 class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) :
-    Chromosome<Pair<Int, Int>> {
+        Chromosome<Pair<Int, Int>> {
 
     override fun duplicate(genes: List<Gene<Pair<Int, Int>>>) =
         RouteChromosome(genes.map { RoutePointGene(it.dna) })
@@ -67,7 +65,7 @@ class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) :
 
 fun main() {
     val engine = engine(::fitnessFn, genotype {
-        chromosomes = mutableListOf(RouteChromosome.Factory())
+        chromosome { RouteChromosome.Factory() }
     }) {
         populationSize = 1000
         limits = listOf(GenerationCount(200))

@@ -16,6 +16,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import java.util.stream.Collectors
 import java.util.stream.IntStream
+import kotlin.properties.Delegates
 
 /**
  * A chromosome that contains a list of [IntGene]s.
@@ -61,11 +62,11 @@ class IntChromosome private constructor(
      *
      * @constructor Creates a new [IntChromosome.Factory].
      */
-    class Factory(
-        private var size: Int,
-        private var range: Pair<Int, Int>,
-        private var filter: (Int) -> Boolean = { true }
-    ) : Chromosome.Factory<Int> {
+    class Factory : Chromosome.Factory<Int> {
+
+        var filter: (Int) -> Boolean = { true }
+        lateinit var range: Pair<Int, Int>
+        var size by Delegates.notNull<Int>()
 
         override fun make() = IntChromosome(size, range, filter)
 

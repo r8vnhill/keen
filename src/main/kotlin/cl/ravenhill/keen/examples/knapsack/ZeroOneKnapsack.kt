@@ -9,14 +9,13 @@
 
 package cl.ravenhill.keen.examples.knapsack
 
-import cl.ravenhill.keen.Builders.Chromosomes.bool
+import cl.ravenhill.keen.Builders.Chromosomes.booleans
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 
@@ -28,7 +27,8 @@ private const val MAX_WEIGHT = 30
 /**
  * The possible items that can be put in the knapsack.
  */
-private val items = listOf(4 to 12, 2 to 1, 2 to 2, 1 to 1, 10 to 4, 2 to 2, 1 to 2, 2 to 1, 5 to 15, 5 to 10)
+private val items =
+    listOf(4 to 12, 2 to 1, 2 to 2, 1 to 1, 10 to 4, 2 to 2, 1 to 2, 2 to 1, 5 to 15, 5 to 10)
 
 /**
  * The fitness function for the knapsack problem.
@@ -54,7 +54,7 @@ private fun fitnessFn(genotype: Genotype<Boolean>) =
  */
 fun main() {
     val engine = engine(::fitnessFn, genotype {
-        chromosome { bool(items.size, 0.5) }
+        chromosome { booleans { size = items.size; truesProbability = 0.5 } }
     }) {
         populationSize = 10
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
