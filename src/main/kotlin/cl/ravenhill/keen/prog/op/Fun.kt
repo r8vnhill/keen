@@ -11,17 +11,17 @@ package cl.ravenhill.keen.prog.op
 interface Fun<T> {
     val name: String
     val arity: Int
-
+    val function: (Array<out T>) -> T
     /**
      * Reduces the function to a single value.
      *
      * @param args The inputs to the function.
      * @return The reduced value.
      */
-    operator fun invoke(vararg args: T): T
+    operator fun invoke(vararg args: T): T = function(args)
 
     /**
      * Return this function, or a new instance from the same type.
      */
-    operator fun invoke(): Fun<T>
+    operator fun invoke() = this
 }
