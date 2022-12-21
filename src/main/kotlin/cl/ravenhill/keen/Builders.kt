@@ -109,7 +109,6 @@ object Builders {
          *      doubles {
          *          size = 20
          *          range = 0.0 to 100.0
-         *          filter = { it % 2 == 0.0 }
          *      }
          *  }
          *  ```
