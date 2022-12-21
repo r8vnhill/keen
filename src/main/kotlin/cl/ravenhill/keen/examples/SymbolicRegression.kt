@@ -5,21 +5,19 @@ import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.prog.Add
-import cl.ravenhill.keen.prog.Mul
-import cl.ravenhill.keen.prog.Reduceable
-import cl.ravenhill.keen.prog.Sub
-import cl.ravenhill.keen.prog.Value
-import cl.ravenhill.keen.prog.Variable
-import cl.ravenhill.keen.prog.op.MathOps
+import cl.ravenhill.keen.prog.op.Add
+import cl.ravenhill.keen.prog.op.Mul
+import cl.ravenhill.keen.prog.op.Sub
+import cl.ravenhill.keen.prog.op.Value
+import cl.ravenhill.keen.prog.op.Variable
 import cl.ravenhill.keen.util.Tree
 
 
-private var ops = listOf(MathOps.Add)
+private var ops = listOf(Add, Sub, Mul)
 
 private val terminals = listOf(
     Variable("x", 0),
-    Value { Core.rng.nextDouble() * 10 })
+    Value.EphemeralConstant { Math.random() * 10 })
 
 private fun fitness(genotype: Genotype<Tree<Reduceable<Double>>>): Double {
     TODO()
