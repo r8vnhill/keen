@@ -10,6 +10,7 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.genes.Gene
+import java.util.stream.IntStream
 
 /**
  * Sequence of genes.

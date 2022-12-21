@@ -7,11 +7,8 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
-import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.crossover.permutation.OrderedCrossover
 import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
-import cl.ravenhill.keen.operators.crossover.permutation.PositionBasedCrossover
-import cl.ravenhill.keen.operators.mutator.SwapMutator
+import cl.ravenhill.keen.operators.mutator.InversionMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
@@ -22,7 +19,7 @@ import tech.tablesaw.plotly.components.Figure
 import tech.tablesaw.plotly.components.Layout
 import tech.tablesaw.plotly.components.Marker
 import tech.tablesaw.plotly.traces.ScatterTrace
-import java.util.*
+import java.util.Objects
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -54,7 +51,7 @@ class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
 }
 
 class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) :
-    Chromosome<Pair<Int, Int>> {
+        Chromosome<Pair<Int, Int>> {
 
     override fun duplicate(genes: List<Gene<Pair<Int, Int>>>) =
         RouteChromosome(genes.map { RoutePointGene(it.dna) })
@@ -63,17 +60,17 @@ class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) :
 
     class Factory : Chromosome.Factory<Pair<Int, Int>> {
         override fun make() =
-            RouteChromosome(points.shuffled(Core.rng).map { RoutePointGene(it) })
+            RouteChromosome(points.shuffled(Core.random).map { RoutePointGene(it) })
     }
 }
 
 fun main() {
     val engine = engine(::fitnessFn, genotype {
-        chromosomes = listOf(RouteChromosome.Factory())
+        chromosome { RouteChromosome.Factory() }
     }) {
         populationSize = 1000
         limits = listOf(GenerationCount(200))
-        alterers = listOf(SwapMutator(0.1), PositionBasedCrossover(0.3))
+        alterers = listOf(InversionMutator(0.1), PartiallyMappedCrossover(0.3))
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPrinter(30), StatisticPlotter())
     }

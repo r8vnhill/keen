@@ -33,7 +33,7 @@ open class CombineAlterer<DNA>(
         val ind2 = population[individuals[1]]
         val genotype1 = ind1.genotype
         val genotype2 = ind2.genotype
-        val chromosomeIdx = Core.rng.nextInt(min(genotype1.size, genotype2.size))
+        val chromosomeIdx = Core.random.nextInt(min(genotype1.size, genotype2.size))
         val chromosome1 = genotype1.chromosomes.toMutableList()
         val chromosome2 = genotype2.chromosomes
         val mean = combine(chromosome1[chromosomeIdx], chromosome2[chromosomeIdx])

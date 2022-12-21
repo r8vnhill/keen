@@ -102,7 +102,7 @@ class DoubleGeneSpec : WordSpec({
         "duplicating" should {
             "return a new gene with the same dna and range" {
                 checkAll(Arb.doubleGene(), Arb.long()) { gData, seed ->
-                    Core.rng = Random(seed)
+                    Core.random = Random(seed)
                     val expected =
                         Random(seed).nextDouble(gData.range.first, gData.range.second)
                     DoubleGene(gData.dna, gData.range).duplicate(expected) shouldBe
@@ -114,7 +114,7 @@ class DoubleGeneSpec : WordSpec({
             "return a new gene with random dna" {
                 checkAll(Arb.doubleGene(), Arb.long()) { gData, seed ->
                     val rng = Random(seed)
-                    Core.rng = Random(seed)
+                    Core.random = Random(seed)
                     val expected = rng.nextDouble(gData.range.first, gData.range.second)
                     DoubleGene(gData.dna, gData.range).mutate() shouldBe
                             DoubleGene(expected, gData.range)

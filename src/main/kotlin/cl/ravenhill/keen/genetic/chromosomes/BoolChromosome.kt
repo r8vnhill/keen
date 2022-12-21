@@ -73,8 +73,11 @@ class BoolChromosome private constructor(
      *
      * @constructor Creates a new builder for [BoolChromosome]s.
      */
-    class Factory(private val size: Int, private val truesProbability: Double) :
-            Chromosome.Factory<Boolean> {
+    class Factory : Chromosome.Factory<Boolean> {
+
+        var truesProbability: Double = Double.NaN
+
+        var size : Int = 0
 
         /// {@inheritDoc}
         override fun make() = BoolChromosome(bitArrayOf(size, truesProbability), truesProbability)

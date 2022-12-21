@@ -18,8 +18,8 @@ class RandomsSpec : WordSpec({
     "Generating a random character" should {
         "return a character in the range of printable characters" {
             checkAll<Long> { seed ->
-                Core.rng = Random(seed)
-                Core.rng.nextChar() shouldBeInRange
+                Core.random = Random(seed)
+                Core.random.nextChar() shouldBeInRange
                         0.toChar()..Character.MAX_CODE_POINT.toChar()
             }
         }
@@ -38,9 +38,9 @@ class RandomsSpec : WordSpec({
                 )
                 assume(!pickProbability.isNaN())
                 assume(i1 != i2)
-                Core.rng = Random(seed)
+                Core.random = Random(seed)
                 val (lo, hi) = if (i1 < i2) i1 to i2 else i2 to i1
-                Core.rng.indices(pickProbability, hi, lo).toList() shouldBe emptyList()
+                Core.random.indices(pickProbability, hi, lo).toList() shouldBe emptyList()
             }
         }
         "return a sequence of all indices if the pick probability is too high" {
@@ -50,9 +50,9 @@ class RandomsSpec : WordSpec({
                 Arb.long()
             ) { i1, i2, seed ->
                 val pickProbability = 1 - 1e-20
-                Core.rng = Random(seed)
+                Core.random = Random(seed)
                 val (lo, hi) = if (i1 < i2) i1 to i2 else i2 to i1
-                Core.rng.indices(pickProbability, hi, lo)
+                Core.random.indices(pickProbability, hi, lo)
                     .toList() shouldBe (lo until hi).toList()
             }
         }
@@ -69,9 +69,9 @@ class RandomsSpec : WordSpec({
                 )
                 assume(!pickProbability.isNaN())
                 assume(i1 != i2)
-                Core.rng = Random(seed)
+                Core.random = Random(seed)
                 val (lo, hi) = if (i1 < i2) i1 to i2 else i2 to i1
-                val indices = Core.rng.indices(pickProbability, hi, lo).toList()
+                val indices = Core.random.indices(pickProbability, hi, lo).toList()
                 indices.forEach { it shouldBeInRange lo..hi }
             }
         }
@@ -84,9 +84,9 @@ class RandomsSpec : WordSpec({
                 Arb.long()
             ) { i1, i2, seed ->
                 assume(i1 != i2)
-                Core.rng = Random(seed)
+                Core.random = Random(seed)
                 val (lo, hi) = if (i1 < i2) i1 to i2 else i2 to i1
-                val outside = Core.rng.nextIntOutsideOf(lo to hi)
+                val outside = Core.random.nextIntOutsideOf(lo to hi)
                 ((outside in (Int.MIN_VALUE until lo))
                         || (outside in (hi + 1..Int.MAX_VALUE))) shouldBe true
             }

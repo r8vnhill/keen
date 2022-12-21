@@ -56,7 +56,17 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
      */
     class Factory<DNA> {
 
-        lateinit var chromosomes: List<Chromosome.Factory<DNA>>
+        lateinit var chromosomes: MutableList<Chromosome.Factory<DNA>>
+
+        /**
+         * Adds a chromosome to the Genotype.
+         *
+         * @param lazyFactory  A factory for the chromosome
+         */
+        fun chromosome(lazyFactory: () -> Chromosome.Factory<DNA>) {
+            if (!this::chromosomes.isInitialized) chromosomes = mutableListOf()
+            chromosomes.add(lazyFactory())
+        }
 
         /**
          * Creates a new [Genotype] with the given ``chromosomes``.

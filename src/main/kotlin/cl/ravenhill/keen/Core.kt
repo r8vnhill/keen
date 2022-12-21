@@ -12,7 +12,7 @@ import cl.ravenhill.keen.genetic.Phenotype
 import kotlin.random.Random
 
 object Core {
-    var rng: Random = Random.Default
+    var random: Random = Random.Default
 }
 
 typealias Population<DNA> = List<Phenotype<DNA>>

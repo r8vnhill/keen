@@ -54,7 +54,7 @@ class IntGene(
 
     override fun toInt() = dna
 
-    override fun generator() = Core.rng.nextInt(start, end)
+    override fun generator() = Core.random.nextInt(start, end)
 
     override fun duplicate(dna: Int) = IntGene(dna, start to end, filter)
 

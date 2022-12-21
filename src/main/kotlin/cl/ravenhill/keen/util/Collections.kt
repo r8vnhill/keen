@@ -12,8 +12,8 @@ object Subset {
      * @param n the size of the permutation.
      * @return a random permutation of the given size.
      */
-    fun next(n: Int, k: Int): IntArray {
-        val subset = IntArray(k)
+    fun next(n: Int, size: Int): IntArray {
+        val subset = IntArray(size)
         next(n, subset)
         return subset
     }
@@ -72,7 +72,7 @@ object Subset {
 
     private fun subset0(n: Int, k: Int, a: IntArray) {
         if (k == 0) {
-            a[0] = Core.rng.nextInt(n)
+            a[0] = Core.random.nextInt(n)
             return
         }
         // (A): Initialize a[i] to "zero" point for bin Ri.
@@ -85,7 +85,7 @@ object Subset {
         for (c in 0 until k) {
             do {
                 // Choose random x;
-                x = 1 + Core.rng.nextInt(n)
+                x = 1 + Core.random.nextInt(n)
                 // determine range Rl;
                 l = (x * k - 1) / n
             } while (a[l] >= x) // accept or reject.
@@ -128,7 +128,7 @@ object Subset {
             }
 
             // (F) Choose a random x.
-            x = m0 + Core.rng.nextInt(m)
+            x = m0 + Core.random.nextInt(m)
             var i = l + 1
 
             // (G) Check x against previously entered elements in bin;

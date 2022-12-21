@@ -16,7 +16,6 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.long
 import io.kotest.property.checkAll
@@ -47,11 +46,11 @@ class CollectionsSpec : WordSpec({
         "Swapping two elements in a list" should {
             "swap the elements if they are different" {
                 checkAll(Arb.list(Arb.double(), 2..10_000), Arb.long()) { list, seed ->
-                    Core.rng = Random(seed)
+                    Core.random = Random(seed)
                     val (i, j) = if (list.size == 2) {
                         0 to 1
                     } else {
-                        Core.rng.nextInt(0, list.size - 1) to Core.rng.nextInt(0, list.size - 1)
+                        Core.random.nextInt(0, list.size - 1) to Core.random.nextInt(0, list.size - 1)
                     }
                     val copy = list.toMutableList()
                     copy.swap(i, j)
@@ -61,7 +60,7 @@ class CollectionsSpec : WordSpec({
             }
             "not change the list if the elements are the same" {
                 checkAll(Arb.list(Arb.double(), 2..10_000), Arb.long()) { list, seed ->
-                    Core.rng = Random(seed)
+                    Core.random = Random(seed)
                     val i = Subset.next(list.size, 1).first()
                     val copy = list.toMutableList()
                     copy.swap(i, i)

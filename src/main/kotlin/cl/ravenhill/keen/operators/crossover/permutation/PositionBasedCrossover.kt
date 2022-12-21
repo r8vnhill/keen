@@ -47,8 +47,8 @@ class PositionBasedCrossover<DNA>(probability: Double) :
         size: Int
     ): MutableList<Gene<DNA>> {
         // We select random indices to insert the genes from the second parent into the first one.
-        val indices = Core.rng
-            .indices(1 / size.toDouble(), Core.rng.nextInt(size))
+        val indices = Core.random
+            .indices(1 / size.toDouble(), Core.random.nextInt(size))
             .toList()
         // We do the actual selection
         val selected = parents.second.mapIndexed { index, gene -> index to gene }

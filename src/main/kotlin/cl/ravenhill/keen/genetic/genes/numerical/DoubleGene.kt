@@ -32,7 +32,7 @@ class DoubleGene(
 
     override fun toInt() = dna.toInt()
 
-    override fun generator() = Core.rng.nextDouble() * (end - start) + start
+    override fun generator() = Core.random.nextDouble() * (end - start) + start
 
     override fun duplicate(dna: Double) = DoubleGene(dna, range)
 

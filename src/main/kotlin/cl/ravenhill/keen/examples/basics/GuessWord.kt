@@ -1,5 +1,7 @@
 package cl.ravenhill.keen.examples.basics
 
+import cl.ravenhill.keen.Builders
+import cl.ravenhill.keen.Builders.Chromosomes.chars
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
@@ -19,7 +21,7 @@ private fun matches(genotype: Genotype<Char>) = genotype.flatten()
 
 fun main() {
     val engine = engine(::matches, genotype {
-        chromosomes = listOf(CharChromosome.Builder(10))
+        chromosome { chars { size = TARGET.length } }
     }) {
         populationSize = 500
         survivorSelector = RouletteWheelSelector()

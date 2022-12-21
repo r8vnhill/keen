@@ -16,6 +16,16 @@ import cl.ravenhill.keen.util.validateSum
 
 private const val SERIAL_INDEX_THRESHOLD = 35
 
+/**
+ * Abstract class for probability-based selectors.
+ *
+ * @param DNA  The type of the DNA of the Genotype
+ * @property sorted Whether the population should be sorted before selection.
+ * @constructor Creates a new probability-based selector.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 1.3.0
+ */
 abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) : Selector<DNA> {
 
     abstract fun probabilities(
@@ -76,7 +86,7 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
         var imin = 0
         var imax = incr.size
         var index = -1
-        val v = Core.rng.nextDouble()
+        val v = Core.random.nextDouble()
         while (imin < imax && index == -1) {
             val imid = (imin + imax) ushr 1
             if (imid == 0 || (incr[imid] >= v && incr[imid - 1] < v)) {
@@ -94,7 +104,7 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
         var index = -1
         var i = 0
         while (i < incr.size && index == -1) {
-            if (incr[i] >= Core.rng.nextDouble()) {
+            if (incr[i] >= Core.random.nextDouble()) {
                 index = i
             }
             ++i

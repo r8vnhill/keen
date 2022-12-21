@@ -1,15 +1,13 @@
 package cl.ravenhill.keen.examples
 
+import cl.ravenhill.keen.Builders.Chromosomes.ints
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
-import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.operators.mutator.SwapMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
@@ -74,8 +72,10 @@ private fun fitnessFn(genotype: Genotype<Int>): Double {
  */
 fun main() {
     val engine = engine(::fitnessFn, genotype {
-        chromosomes = List(meetings.size) {
-            IntChromosome.Factory(1, meetings.indices.first to meetings.indices.last)
+        repeat(meetings.size) {
+            chromosome {
+                ints { size = 1; range = meetings.indices.first to meetings.indices.last }
+            }
         }
     }) {
         populationSize = 100

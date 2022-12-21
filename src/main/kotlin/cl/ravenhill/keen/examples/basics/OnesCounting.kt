@@ -1,9 +1,9 @@
 package cl.ravenhill.keen.examples.basics
 
+import cl.ravenhill.keen.Builders.Chromosomes.booleans
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
@@ -20,7 +20,7 @@ fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDoubl
  */
 fun main() {
     val engine = engine(::count, genotype {
-        chromosomes = listOf(BoolChromosome.Factory(size = 20, truesProbability = 0.15))
+        chromosome { booleans { size = 20; truesProbability = 0.15 } }
     }) {
         populationSize = 500
         selector = TournamentSelector(sampleSize = 2)

@@ -26,8 +26,8 @@ class OrderedCrossover<DNA>(probability: Double) :
         genes2: MutableList<Gene<DNA>>,
         size: Int
     ): Int {
-        val r1 = Core.rng.nextInt(size)
-        val r2 = Core.rng.nextInt(size)
+        val r1 = Core.random.nextInt(size)
+        val r2 = Core.random.nextInt(size)
         if (size >= 2) {
             val (start, end) = if (r1 < r2) r1 to r2 else r2 to r1
             runBlocking {

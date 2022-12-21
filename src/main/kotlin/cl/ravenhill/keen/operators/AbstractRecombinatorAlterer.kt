@@ -20,7 +20,7 @@ abstract class AbstractRecombinatorAlterer<DNA>(probability: Double, protected v
         val pop = population.toMutableList()
         return if (pop.size >= 2) {
             val minOrder = min(order, pop.size)
-            val count = Core.rng.indices(probability, pop.size)
+            val count = Core.random.indices(probability, pop.size)
                 .map { individuals(it, pop.size, minOrder) }
                 .sumOf { recombine(pop, it, generation) }
             AltererResult(pop, count)
