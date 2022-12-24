@@ -3,12 +3,11 @@ package cl.ravenhill.keen.prog
 /**
  * A reduce-able operation.
  *
- * @param T The type of the value.
+ * @param I The type of the value.
  */
 interface Reduceable<T> {
 
-    /**
-     * Reduces the operation to a single value.
-     */
-    fun reduce(): T
+    val arity: Int
+
+    operator fun invoke(vararg args: T): T
 }

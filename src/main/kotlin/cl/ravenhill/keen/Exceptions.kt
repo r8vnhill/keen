@@ -1,7 +1,5 @@
 package cl.ravenhill.keen
 
-import cl.ravenhill.keen.prog.Variable
-
 /**
  * Base exception for all exceptions thrown by Keen.
  *
