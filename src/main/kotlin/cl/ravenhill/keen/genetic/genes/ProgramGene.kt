@@ -78,11 +78,9 @@ class ProgramGene<DNA> internal constructor(
                     op.addChild(child)
                 }
             }
-
             is Terminal<*> -> {
                 // Do nothing.
             }
-
             else -> throw InvalidStateException("type") { "The node is not a valid type." }
         }
         return op

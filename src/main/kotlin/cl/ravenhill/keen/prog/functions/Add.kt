@@ -3,8 +3,21 @@ package cl.ravenhill.keen.prog.functions
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 
+/**
+ * Creates a new [Add] operation.
+ */
 fun add() = Add(0)
 
+/**
+ * Addition operation.
+ *
+ * @property depth The depth of the operation in the tree.
+ * @property left The left child.
+ * @property right The right child.
+ * @property arity The number of arguments the operation takes.
+ * @property children The children of the operation.
+ * @constructor Creates a new [Add] operation.
+ */
 class Add(override val depth: Int) : Fun<Double> {
 
 
