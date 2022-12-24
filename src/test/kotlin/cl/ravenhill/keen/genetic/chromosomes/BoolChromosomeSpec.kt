@@ -31,7 +31,10 @@ class BoolChromosomeSpec : WordSpec({
                 ) { size, truesProbability ->
                     assume(truesProbability.isNotNan())
                     assume(truesProbability.isFinite())
-                    val chromosome = BoolChromosome.Factory(size, truesProbability).make()
+                    val chromosome = BoolChromosome.Factory().apply {
+                        this.size = size
+                        this.truesProbability = truesProbability
+                    }.make()
                     chromosome.size shouldBe size
                 }
             }
@@ -39,7 +42,10 @@ class BoolChromosomeSpec : WordSpec({
                 checkAll(
                     Arb.positiveInt(100_000)
                 ) { size ->
-                    val chromosome = BoolChromosome.Factory(size, 1.0).make()
+                    val chromosome = BoolChromosome.Factory().apply {
+                        this.size = size
+                        this.truesProbability = 1.0
+                    }.make()
                     chromosome.trues() shouldBe size
                 }
             }
@@ -47,7 +53,10 @@ class BoolChromosomeSpec : WordSpec({
                 checkAll(
                     Arb.positiveInt(100_000)
                 ) { size ->
-                    val chromosome = BoolChromosome.Factory(size, 0.0).make()
+                    val chromosome = BoolChromosome.Factory().apply {
+                        this.size = size
+                        this.truesProbability = 0.0
+                    }.make()
                     chromosome.trues() shouldBe 0
                 }
             }
@@ -76,7 +85,10 @@ suspend fun checkChromosome(check: suspend (BoolChromosome) -> Unit) {
     ) { data ->
         assume(data.truesProbability.isNotNan())
         assume(data.truesProbability.isFinite())
-        val chromosome = BoolChromosome.Factory(data.size, data.truesProbability).make()
+        val chromosome = BoolChromosome.Factory().apply {
+            this.size = data.size
+            this.truesProbability = data.truesProbability
+        }.make()
         check(chromosome)
     }
 }

@@ -1,8 +1,8 @@
 package cl.ravenhill.keen.genetic.genes
 
-import cl.ravenhill.keen.prog.Fun
+import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.Reduceable
-import cl.ravenhill.keen.prog.Terminal
+import cl.ravenhill.keen.prog.terminals.Terminal
 
 /**
  * A [Gene] that represents a program tree.
@@ -20,7 +20,13 @@ class ProgramGene<DNA> internal constructor(
     private val terminals: List<Terminal<DNA>>
 ) : AbstractTreeGene<Reduceable<DNA>>(program, childOffset, program.arity), Gene<Reduceable<DNA>> {
 
-    operator fun invoke(vararg args: DNA): DNA = dna(*args)
+    /**
+     * Reduces the program tree to a single value.
+     *
+     * @param args Array<out DNA>
+     * @return DNA
+     */
+    operator fun invoke(vararg args: DNA): DNA = dna(args)
 
     override fun generator(): Reduceable<DNA> {
         TODO("Not yet implemented")

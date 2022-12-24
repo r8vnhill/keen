@@ -9,5 +9,5 @@ interface Reduceable<T> {
 
     val arity: Int
 
-    operator fun invoke(vararg args: T): T
+    operator fun invoke(args: Array<out T>): T
 }
