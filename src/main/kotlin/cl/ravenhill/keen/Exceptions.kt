@@ -21,6 +21,9 @@ class InvalidReceiverException(lazyMessage: () -> String) :
 class InvalidArgumentException(lazyMessage: () -> String) :
         KeenException("Invalid argument: ", lazyMessage)
 
+class InvalidStateException(state: String, lazyMessage: () -> String) :
+        KeenException("Invalid state ($state): ", lazyMessage)
+
 /**
  * Exception thrown when a limit is not configured correctly.
  */

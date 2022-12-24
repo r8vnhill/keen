@@ -11,7 +11,17 @@ package cl.ravenhill.keen
 import cl.ravenhill.keen.genetic.Phenotype
 import kotlin.random.Random
 
+/**
+ * The `Core` object contains the functions and variables that are used by the rest of the library.
+ *
+ * @property maxProgramDepth The maximum depth of a program tree.
+ * @property random The random number generator.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ */
 object Core {
+    var maxProgramDepth = 30
     var random: Random = Random.Default
 }
 

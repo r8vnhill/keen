@@ -16,7 +16,7 @@ interface Gene<DNA> : GeneticMaterial<DNA> {
      * Creates a new gene with a mutated value.
      */
     fun mutate(): Gene<DNA> =
-        duplicate(generateSequence { generator() }.first())
+        duplicate(generator())
 
     fun generator(): DNA
 
