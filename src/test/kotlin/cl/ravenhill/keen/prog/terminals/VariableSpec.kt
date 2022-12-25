@@ -14,7 +14,6 @@ import io.kotest.property.checkAll
 import kotlin.random.Random
 
 
-
 class VariableSpec : WordSpec({
     "Reducing a variable" should {
         "return the value of the variable" {
@@ -24,14 +23,14 @@ class VariableSpec : WordSpec({
             ) { kwargs, seed ->
                 val rng = Random(seed)
                 val kv = kwargs.random(rng)
-                val variable = Variable<Double>(kv.first, kwargs.indexOf(kv), 0)
+                val variable = Variable<Double>(kv.first, kwargs.indexOf(kv))
                 variable(kwargs.map { it.second }.toTypedArray()) shouldBe kv.second
             }
         }
     }
     "Variable arity" should {
         "be 0" {
-            val variable = Variable<Double>("x", 0, 0)
+            val variable = Variable<Double>("x", 0)
             variable.arity shouldBe 0
         }
     }

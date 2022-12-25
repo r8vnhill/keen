@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.prog.functions
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Variable
 import io.kotest.core.spec.style.WordSpec
@@ -8,45 +9,44 @@ import io.kotest.property.checkAll
 
 
 class AddSpec : WordSpec({
+    afterAny {
+        Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
+    }
     "Reducing an add" should {
         "return the sum of two ephemeral constants" {
             checkAll<Double, Double> { a, b ->
-                val add = Add(0)
-                add.left = EphemeralConstant(1) { a }
-                add.right = EphemeralConstant(1) { b }
+                val add = add(EphemeralConstant { a }, EphemeralConstant { b })
                 add(arrayOf(b)) shouldBe a + b
             }
         }
         "return the sum of two variables" {
             checkAll<Double, Double> { a, b ->
-                val add = Add(0)
-                add.left = Variable("a", 0, 1)
-                add.right = Variable("b", 1, 1)
+                val add = add(Variable("a", 0), Variable("b", 1))
                 add(arrayOf(a, b)) shouldBe a + b
             }
         }
         "return the sum of an ephemeral constant and a variable" {
             checkAll<Double, Double> { a, b ->
-                val add = Add(0)
-                add.left = EphemeralConstant(1) { a }
-                add.right = Variable("b", 0, 1)
+                val add = add(EphemeralConstant { a }, Variable("b", 0))
                 add(arrayOf(b)) shouldBe a + b
             }
         }
     }
     "Add arity" should {
         "be 2" {
-            val add = Add(0)
+            val add = Add()
             add.arity shouldBe 2
         }
     }
     "Flattening an add" should {
         "return a list with the add and its children" {
-            val add = Add(0)
-            add.left = EphemeralConstant(1) { 1.0 }
-            add.right = Add(1)
-            (add.right as Add).left = EphemeralConstant(2) { 2.0 }
-            (add.right as Add).right = Variable("a", 0, 2)
+            val add = add(
+                EphemeralConstant { 1.0 },
+                add(
+                    EphemeralConstant { 2.0 },
+                    Variable("a", 0)
+                )
+            )
             add.flatten() shouldBe listOf(
                 add,
                 add.left,

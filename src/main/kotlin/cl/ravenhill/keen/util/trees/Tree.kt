@@ -7,4 +7,5 @@ package cl.ravenhill.keen.util.trees
  * @param T The type of the value stored in the tree.
  */
 interface Tree<T> {
+    val depth: Int
 }

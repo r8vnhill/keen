@@ -4,10 +4,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
-import cl.ravenhill.keen.prog.functions.add
-import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Terminal
-import cl.ravenhill.keen.prog.terminals.Variable
 
 /**
  * A [Gene] that represents a program tree.
@@ -28,10 +25,12 @@ class ProgramGene<DNA> internal constructor(
     private val nodes = functions + terminals
 
     override lateinit var children: List<Reduceable<DNA>>
+    override val depth: Int
+        get() = dna.depth
 
     init {
         if (program.depth > Core.maxProgramDepth) throw InvalidStateException("program") {
-            "The program's depth is greater than the maximum allowed depth (${Core.maxProgramDepth})."
+            "The program's depth (${program.depth}) is greater than the maximum allowed depth (${Core.maxProgramDepth})."
         }
         // Stores the program in a list (breadth-first).
         children = program.flatten()
@@ -68,20 +67,19 @@ class ProgramGene<DNA> internal constructor(
         ops: List<Reduceable<DNA>>
     ): Reduceable<DNA> {
         when (op) {
-            is Fun<*> -> {
-                op.children.clear()
+            is Fun<DNA> -> {
                 // For each child of the node
                 for (i in 0 until op.arity) {
                     // Creates a copy of a random node from the valid nodes.
-                    val child = ops.random(Core.random).copy(depth)
+                    val child = ops.random(Core.random).copy()
                     generateChildren(child, depth + 1, ops)
-                    op.addChild(child)
+                    op[i] = child
                 }
             }
             is Terminal<*> -> {
                 // Do nothing.
             }
-            else -> throw InvalidStateException("type") { "The node is not a valid type." }
+            else -> throw InvalidStateException("type") { "The node is not a valid type (${op::class})" }
         }
         return op
     }
@@ -90,18 +88,4 @@ class ProgramGene<DNA> internal constructor(
         ProgramGene(dna, functions, terminals)
 
     override fun toString() = dna.toString()
-}
-
-fun main() {
-    val add = add()
-    add.addChild(EphemeralConstant(1) { 1.0 })
-    add.addChild(EphemeralConstant(2) { 2.0 })
-    val gene = ProgramGene(
-        add,
-        listOf(add),
-        listOf(EphemeralConstant(0) { 1.0 }, Variable("x", 0, 0))
-    )
-    println(gene)
-    val gene2 = gene.mutate()
-    println(gene2)
 }

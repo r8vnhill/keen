@@ -1,7 +1,6 @@
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.InvalidStateException
-import cl.ravenhill.keen.util.trees.Tree
 
 /**
  * A reduce-able operation.
@@ -14,7 +13,7 @@ import cl.ravenhill.keen.util.trees.Tree
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Reduceable<T>: Tree<T> {
+interface Reduceable<T> {
     val depth: Int
     val arity: Int
 
@@ -36,7 +35,7 @@ interface Reduceable<T>: Tree<T> {
     /**
      * Creates a copy of the operation without children.
      */
-    fun copy(depth: Int): Reduceable<T>
+    fun copy(): Reduceable<T>
 
     /**
      * Flattens the operation into a list.
