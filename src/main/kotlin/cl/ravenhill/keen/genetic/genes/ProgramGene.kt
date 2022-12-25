@@ -3,7 +3,11 @@ package cl.ravenhill.keen.genetic.genes
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.prog.functions.Add
 import cl.ravenhill.keen.prog.functions.Fun
+import cl.ravenhill.keen.prog.functions.GreaterThan
+import cl.ravenhill.keen.prog.functions.If
+import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Terminal
 
 /**
@@ -73,9 +77,11 @@ class ProgramGene<DNA> internal constructor(
                     op[i] = child
                 }
             }
+
             is Terminal<*> -> {
                 // Do nothing.
             }
+
             else -> throw InvalidStateException("type") { "The node is not a valid type (${op::class})" }
         }
         return op
@@ -85,4 +91,14 @@ class ProgramGene<DNA> internal constructor(
         ProgramGene(dna, functions, terminals)
 
     override fun toString() = dna.toString()
+}
+
+fun main() {
+    val gene = ProgramGene(
+        Add(),
+        listOf(Add(), GreaterThan(), If()),
+        listOf(EphemeralConstant { Core.random.nextDouble() })
+    )
+    println(gene.mutate())
+
 }
