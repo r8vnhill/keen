@@ -60,6 +60,8 @@ class AddSpec : WordSpec({
                 flattened[0] shouldBe add
                 flattened[1] shouldBe add.children[0]
                 flattened[2] shouldBe add.children[1]
+                flattened[3] shouldBe (add.children[1] as Add).children[0]
+                flattened[4] shouldBe (add.children[1] as Add).children[1]
             }
         }
     }
