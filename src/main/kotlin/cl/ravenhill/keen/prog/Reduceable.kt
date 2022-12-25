@@ -26,13 +26,6 @@ interface Reduceable<T> {
     operator fun invoke(args: Array<out T>): T
 
     /**
-     * Adds a child to the operation.
-     *
-     * @throws InvalidStateException If the number of children is greater than the [arity].
-     */
-    fun addChild(child: Reduceable<T>): Unit
-
-    /**
      * Creates a copy of the operation without children.
      */
     fun copy(): Reduceable<T>

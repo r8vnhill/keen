@@ -19,7 +19,6 @@ class ProgramGene<DNA> internal constructor(
     program: Reduceable<DNA>,
     private val functions: List<Fun<DNA>>,
     private val terminals: List<Terminal<DNA>>,
-    private val filter: (Reduceable<DNA>) -> Boolean = { true }
 ) : AbstractTreeGene<Reduceable<DNA>>(program, program.arity), Gene<Reduceable<DNA>> {
 
     private val nodes = functions + terminals
@@ -45,10 +44,8 @@ class ProgramGene<DNA> internal constructor(
     operator fun invoke(vararg args: DNA): DNA = dna(args)
 
     override fun generator(): Reduceable<DNA> {
-        // Filter the valid nodes by the filter function.
-        val validOps = children.filter(filter)
         // Get a random node from the valid nodes.
-        val op = validOps.random(Core.random)
+        val op = children.random(Core.random)
         generateChildren(op, op.depth + 1, nodes)
         return op
     }

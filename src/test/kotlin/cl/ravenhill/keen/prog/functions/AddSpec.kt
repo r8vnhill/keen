@@ -5,12 +5,26 @@ import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Variable
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNot
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.haveSameHashCodeAs
+import io.kotest.matchers.types.shouldHaveSameHashCodeAs
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.checkAll
 
 
 class AddSpec : WordSpec({
     afterAny {
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
+    }
+    "Creating an addition without children" should {
+        "create an addition with ephemeral constants as children" {
+            val add = Add()
+            add.children.size shouldBe 2
+            add.children[0] shouldBe EphemeralConstant { 0.0 }
+            add.children[1] shouldBe EphemeralConstant { 0.0 }
+        }
     }
     "Reducing an add" should {
         "return the sum of two ephemeral constants" {
@@ -40,20 +54,85 @@ class AddSpec : WordSpec({
     }
     "Flattening an add" should {
         "return a list with the add and its children" {
-            val add = add(
-                EphemeralConstant { 1.0 },
-                add(
-                    EphemeralConstant { 2.0 },
-                    Variable("a", 0)
+            checkAll(Arb.addition()) { add ->
+                val flattened = add.flatten()
+                flattened.size shouldBe 5
+                flattened[0] shouldBe add
+                flattened[1] shouldBe add.children[0]
+                flattened[2] shouldBe add.children[1]
+            }
+        }
+    }
+    "Copying an add operation" should {
+        "return a new add operation with default ephemeral constants" {
+            checkAll(Arb.addition()) { add ->
+                val copy = add.copy()
+                copy shouldNotBe add
+                copy.children.size shouldBe 2
+                copy.children[0] shouldBe EphemeralConstant { 0.0 }
+                copy.children[1] shouldBe EphemeralConstant { 0.0 }
+            }
+        }
+    }
+    "Object identity" When {
+        "comparing equality" should {
+            "be true if the objects are the same" {
+                checkAll(Arb.addition()) { add ->
+                    add shouldBe add
+                }
+            }
+            "be true if the objects have the same children" {
+                checkAll(Arb.addition()) { add ->
+                    val other = Add()
+                    other[0] = add.children[0]
+                    other[1] = add.children[1]
+                    add shouldBe other
+                }
+            }
+            "be different if they have different children" {
+                val add = add(
+                    EphemeralConstant { 1.0 },
+                    add(
+                        EphemeralConstant { 2.0 },
+                        Variable("a", 0)
+                    )
                 )
-            )
-            add.flatten() shouldBe listOf(
-                add,
-                add.left,
-                add.right,
-                (add.right as Add).left,
-                (add.right as Add).right
-            )
+                val copy = add.copy()
+                add shouldNotBe copy
+            }
+        }
+        "hashing" should {
+            "be the same if they have the same children" {
+                checkAll(Arb.addition()) { add ->
+                    val other = Add()
+                    other[0] = add.children[0]
+                    other[1] = add.children[1]
+                    add shouldHaveSameHashCodeAs other
+                }
+            }
+            "be different if they have different children" {
+                val add = add(
+                    EphemeralConstant { 1.0 },
+                    add(
+                        EphemeralConstant { 2.0 },
+                        Variable("a", 0)
+                    )
+                )
+                val copy = add.copy()
+                add shouldNot haveSameHashCodeAs(copy)
+            }
         }
     }
 })
+
+data class AddData(val a: Double, val b: Double)
+
+private fun Arb.Companion.addition() =
+    arbitrary { rs ->
+        val aVal = rs.random.nextDouble()
+        val bVal = rs.random.nextDouble()
+        val a = EphemeralConstant { aVal }
+        val b = EphemeralConstant { bVal }
+        val x = Variable<Double>("x", 0)
+        add(a, add(b, x))
+    }
