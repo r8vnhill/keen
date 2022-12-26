@@ -33,7 +33,7 @@ class If : AbstractFun<Double>() {
     }
 
     override fun toString() =
-        "if (${_children[0]}) then ${_children[1]} else ${_children[2]}"
+        "(if (${_children[0]}) then ${_children[1]} else ${_children[2]})"
 }
 
 fun main() {

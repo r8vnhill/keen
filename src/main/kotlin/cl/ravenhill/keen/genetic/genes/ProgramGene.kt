@@ -7,8 +7,12 @@ import cl.ravenhill.keen.prog.functions.Add
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.functions.GreaterThan
 import cl.ravenhill.keen.prog.functions.If
+import cl.ravenhill.keen.prog.functions.add
+import cl.ravenhill.keen.prog.functions.greaterThan
+import cl.ravenhill.keen.prog.functions.ifTrue
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Terminal
+import cl.ravenhill.keen.prog.terminals.Variable
 
 /**
  * A [Gene] that represents a program tree.
@@ -72,7 +76,11 @@ class ProgramGene<DNA> internal constructor(
                 // For each child of the node
                 for (i in 0 until op.arity) {
                     // Creates a copy of a random node from the valid nodes.
-                    val child = ops.random(Core.random).copy()
+                    val child = if (depth < Core.maxProgramDepth) {
+                        ops.random(Core.random).copy()
+                    } else {
+                        terminals.random(Core.random).copy()
+                    }
                     generateChildren(child, depth + 1, ops)
                     op[i] = child
                 }
@@ -94,11 +102,21 @@ class ProgramGene<DNA> internal constructor(
 }
 
 fun main() {
+    Core.maxProgramDepth = 6
     val gene = ProgramGene(
-        Add(),
+        add(
+            EphemeralConstant { 1.0 },
+            add(EphemeralConstant { 2.0 },
+                ifTrue(
+                    greaterThan(
+                        Variable("x", 0),
+                        EphemeralConstant { 10.0 }),
+                    EphemeralConstant { 3.0 },
+                    EphemeralConstant { 4.0 })
+            )
+        ),
         listOf(Add(), GreaterThan(), If()),
         listOf(EphemeralConstant { Core.random.nextDouble() })
     )
     println(gene.mutate())
-
 }
