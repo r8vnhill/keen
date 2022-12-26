@@ -53,12 +53,6 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "18"
 }
 
-val ossrhRepositoryUrl = if (version.toString().endsWith("SNAPSHOT")) {
-    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-} else {
-    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-}
-
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
@@ -79,16 +73,6 @@ publishing {
             from(components["java"])
         }
     }
-    repositories {
-        maven(ossrhRepositoryUrl) {
-            name = "ossrh"
-            credentials(PasswordCredentials::class)
-        }
-    }
-}
-
-signing {
-    sign(publishing.publications["mavenJava"])
 }
 
 tasks.javadoc {
