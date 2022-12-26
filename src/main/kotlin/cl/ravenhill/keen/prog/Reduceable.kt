@@ -34,4 +34,5 @@ interface Reduceable<T> {
      * Flattens the operation into a list.
      */
     fun flatten(): List<Reduceable<T>>
+    fun deepCopy(): Reduceable<T>
 }

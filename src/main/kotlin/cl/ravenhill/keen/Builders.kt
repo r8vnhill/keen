@@ -12,6 +12,7 @@ import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
+import cl.ravenhill.keen.genetic.chromosomes.ProgramChromosome
 //import cl.ravenhill.keen.genetic.chromosomes.ProgramChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
@@ -117,7 +118,7 @@ object Builders {
         fun doubles(builder: DoubleChromosome.Factory.() -> Unit) =
             DoubleChromosome.Factory().apply(builder)
 
-//        fun <T> program(builder: ProgramChromosome.Factory<T>.() -> Unit) =
-//            ProgramChromosome.Factory<T>().apply(builder)
+        fun <T> program(builder: ProgramChromosome.Factory<T>.() -> Unit) =
+            ProgramChromosome.Factory<T>().apply(builder)
     }
 }

@@ -21,7 +21,7 @@ import kotlin.random.Random
  * @version 2.0.0
  */
 object Core {
-    const val DEFAULT_MAX_PROGRAM_DEPTH = 30
+    const val DEFAULT_MAX_PROGRAM_DEPTH = 7
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
     var random: Random = Random.Default
 }
