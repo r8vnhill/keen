@@ -7,7 +7,7 @@
 This work is licensed under a
 [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
-**_Keen_** is a Kotlin genetic algorithms' framework heavily inspired by 
+**_Keen_** is a Kotlin genetic algorithms' and genetic programming framework heavily inspired by 
 [_Jenetics_](https://jenetics.io).
 
 ## Installation
@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.r8vnhill:keen:master-SNAPSHOT")
+    implementation("com.github.r8vnhill:keen:2.0-ALPHA-1")
     /* ... */
 }
 ```
