@@ -46,29 +46,11 @@ class ProgramGeneSpec : WordSpec({
             }
         }
     }
-    "Genetic operations" When {
-        "duplicating" should {
-            checkAll(Arb.programGene(5)) { gene ->
-                val dna = gene.dna.deepCopy()
-                println(dna)
-            }
-        }
-    }
     "Getting the program's depth" should {
         "return the depth of the program" {
-            val add = add(
-                EphemeralConstant { 1.0 },
-                add(
-                    EphemeralConstant { 2.0 },
-                    add(
-                        EphemeralConstant { 3.0 },
-                        EphemeralConstant { 4.0 }
-                    )
-                )
-            )
-            val gene =
-                ProgramGene(add, listOf(Add()), listOf(EphemeralConstant { 0.0 }))
-            gene.depth shouldBe 4
+            checkAll(Arb.programGene(5)) {
+                it.depth shouldBe it.dna.depth
+            }
         }
         "return 0 if the program is a terminal" {
             val gene = ProgramGene(

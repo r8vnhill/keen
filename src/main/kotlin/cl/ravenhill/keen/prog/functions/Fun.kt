@@ -49,9 +49,11 @@ abstract class AbstractFun<T>: Fun<T> {
 
     override fun flatten() = listOf(this) + _children.flatMap { it.flatten() }
 
-    override fun deepCopy() = copy().apply {
+    override fun deepCopy() = copy().let {
+        it as Fun
         for (i in 0 until arity) {
-            set(i, _children[i].deepCopy())
+            it[i] = _children[i].deepCopy()
         }
+        it
     }
 }

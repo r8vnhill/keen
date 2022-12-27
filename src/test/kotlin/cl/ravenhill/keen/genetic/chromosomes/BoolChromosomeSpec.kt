@@ -3,6 +3,7 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.keen.util.math.isNotNan
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.double
@@ -74,6 +75,34 @@ class BoolChromosomeSpec : WordSpec({
             checkChromosome {
                 val duplicated = it.duplicate(it.genes)
                 duplicated shouldBe it
+            }
+        }
+    }
+    "Object identity" When {
+        "comparing equality" should {
+            "return true if the chromosomes are the same object" {
+                checkChromosome {
+                    it shouldBe it
+                }
+            }
+            "return true if the chromosomes have the same genes" {
+                checkChromosome {
+                    val other = it.duplicate(it.genes)
+                    it shouldBe other
+                }
+            }
+        }
+        "hashing" should {
+            "return the same hash if the chromosomes are the same object" {
+                checkChromosome {
+                    it shouldHaveSameHashCodeAs it
+                }
+            }
+            "return the same hash if the chromosomes have the same genes" {
+                checkChromosome {
+                    val other = it.duplicate(it.genes)
+                    it shouldHaveSameHashCodeAs other
+                }
             }
         }
     }
