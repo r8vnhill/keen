@@ -11,6 +11,7 @@ package cl.ravenhill.keen.genetic
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.util.validateNotEmpty
 import cl.ravenhill.keen.util.validatePredicate
+import cl.ravenhill.keen.util.validateRange
 
 
 /**
@@ -46,6 +47,10 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
     fun duplicate(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes)
 
     fun sequence() = chromosomes.asSequence()
+    operator fun get(index: Int): Chromosome<DNA> {
+        index.validateRange(0 to size)
+        return chromosomes[index]
+    }
 
     /**
      * Factory for [Genotype]s.

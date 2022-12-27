@@ -7,7 +7,7 @@
  */
 
 
-package cl.ravenhill.keen.examples.knapsack
+package cl.ravenhill.keen.examples.ga.knapsack
 
 import cl.ravenhill.keen.Builders.Chromosomes.booleans
 import cl.ravenhill.keen.Builders.engine

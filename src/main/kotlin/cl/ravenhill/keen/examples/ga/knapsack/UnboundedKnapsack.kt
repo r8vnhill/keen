@@ -6,7 +6,7 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.examples.knapsack
+package cl.ravenhill.keen.examples.ga.knapsack
 
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype

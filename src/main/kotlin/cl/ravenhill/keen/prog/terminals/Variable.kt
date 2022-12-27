@@ -10,6 +10,7 @@ class Variable<T>(private val name: String, val index: Int) : Terminal<T> {
     override val arity: Int = 0
 
     override fun copy(): Reduceable<T> = Variable(name, index)
+    override var children: List<Reduceable<T>> = emptyList()
 
 
     override fun invoke(args: Array<out T>) = args[index]

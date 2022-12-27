@@ -1,4 +1,4 @@
-//package cl.ravenhill.keen.examples
+package cl.ravenhill.keen.examples.ga//package cl.ravenhill.keen.examples
 //
 //import cl.ravenhill.keen.Builders.Chromosomes.program
 //import cl.ravenhill.keen.Builders.engine

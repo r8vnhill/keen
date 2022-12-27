@@ -1,4 +1,4 @@
-package cl.ravenhill.keen.examples.optimization
+package cl.ravenhill.keen.examples.ga.optimization
 
 import cl.ravenhill.keen.Builders.Chromosomes.doubles
 import cl.ravenhill.keen.Builders.engine

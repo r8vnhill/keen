@@ -16,7 +16,7 @@ import cl.ravenhill.keen.util.validateRange
  */
 interface Fun<T> : Reduceable<T> {
 
-    val children: List<Reduceable<T>>
+    override var children: List<Reduceable<T>>
     override val depth: Int
         get() = children.maxOf { it.depth } + 1
 
@@ -39,8 +39,12 @@ abstract class AbstractFun<T>: Fun<T> {
     @Suppress("PropertyName")
     protected abstract val _children: MutableList<Reduceable<T>>
 
-    override val children: List<Reduceable<T>>
+    override var children: List<Reduceable<T>>
         get() = _children.toList()
+        set(value) {
+            _children.clear()
+            _children.addAll(value)
+        }
 
     override fun set(index: Int, value: Reduceable<T>) {
         index.validateRange(0 to arity)

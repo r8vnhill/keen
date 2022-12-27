@@ -1,4 +1,4 @@
-package cl.ravenhill.keen.examples.basics
+package cl.ravenhill.keen.examples.ga.basics
 
 import cl.ravenhill.keen.Builders.Chromosomes.chars
 import cl.ravenhill.keen.Builders.engine

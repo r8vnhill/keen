@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.InvalidStateException
+import cl.ravenhill.keen.util.trees.ListTree
 
 /**
  * A reduce-able operation.
@@ -13,8 +14,7 @@ import cl.ravenhill.keen.InvalidStateException
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Reduceable<T> {
-    val depth: Int
+interface Reduceable<T>: ListTree<Reduceable<T>> {
     val arity: Int
 
     /**
