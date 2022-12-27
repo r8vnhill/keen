@@ -141,8 +141,6 @@ class AddSpec : WordSpec({
     }
 })
 
-data class AddData(val a: Double, val b: Double)
-
 private fun Arb.Companion.addition() =
     arbitrary { rs ->
         val aVal = rs.random.nextDouble()

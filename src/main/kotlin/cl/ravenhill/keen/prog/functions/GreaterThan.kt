@@ -29,9 +29,3 @@ class GreaterThan : AbstractFun<Double>() {
 
     override fun toString() = "(${_children[0]} > ${_children[1]})"
 }
-
-fun main() {
-    val a = greaterThan(EphemeralConstant { 1.0 }, EphemeralConstant { 2.0 })
-    println(a)
-    println(a(arrayOf()))
-}

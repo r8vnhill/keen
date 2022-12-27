@@ -35,17 +35,3 @@ class If : AbstractFun<Double>() {
     override fun toString() =
         "(if (${_children[0]}) then ${_children[1]} else ${_children[2]})"
 }
-
-fun main() {
-    val a = add(
-        EphemeralConstant { 1.0 },
-        add(EphemeralConstant { 2.0 },
-            ifTrue(
-                greaterThan(
-                    Variable("x", 0),
-                    EphemeralConstant { 10.0 }),
-                EphemeralConstant { 3.0 },
-                EphemeralConstant { 4.0 })))
-    println(a)
-    println(a(arrayOf(1.0)))
-}
