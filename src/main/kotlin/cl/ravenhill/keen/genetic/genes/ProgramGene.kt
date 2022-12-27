@@ -52,11 +52,10 @@ class ProgramGene<DNA> internal constructor(
     operator fun invoke(vararg args: DNA): DNA = dna(args)
 
     override fun generator(): Reduceable<DNA> {
-        // FIXME: Return a copy of the program.
-        // Get a random node from the valid nodes.
+        // Create a deep copy of a random node.
         val op = nodes.random(Core.random).deepCopy()
-        generateChildren(op, op.depth + 1, nodes)
-        return op
+        generateChildren(op, op.depth + 1, nodes) // Generate the children.
+        return op // Return the new node.
     }
 
     /**
@@ -100,23 +99,4 @@ class ProgramGene<DNA> internal constructor(
         ProgramGene(dna, functions, terminals)
 
     override fun toString() = children[0].toString()
-}
-
-fun main() {
-    val gene = ProgramGene(
-        add(
-            EphemeralConstant { 1.0 },
-            add(EphemeralConstant { 2.0 },
-                ifTrue(
-                    greaterThan(
-                        Variable("x", 0),
-                        EphemeralConstant { 10.0 }),
-                    EphemeralConstant { 3.0 },
-                    EphemeralConstant { 4.0 })
-            )
-        ),
-        listOf(Add(), GreaterThan(), If()),
-        listOf(EphemeralConstant { Core.random.nextDouble() })
-    )
-    println(gene.mutate())
 }

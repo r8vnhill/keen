@@ -62,6 +62,16 @@ class CharGeneSpec : WordSpec({
             }
         }
     }
+    "Creating a random gene" should {
+        "return a gene with a random dna" {
+            checkAll<Long> { seed ->
+                val random = Random(seed)
+                Core.random = Random(seed)
+                val gene = CharGene.create()
+                gene.dna shouldBe random.nextChar()
+            }
+        }
+    }
     "Genetic operations" When {
         "Duplicating" should {
             "return a new gene with the same dna" {
