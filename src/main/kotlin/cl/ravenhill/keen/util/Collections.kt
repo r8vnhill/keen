@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
+import kotlin.random.Random
 
 /**
  * Subset permutation.
@@ -209,3 +210,19 @@ private fun <E> MutableList<E>.checkIndex(start: Int, end: Int) {
     size.validateAtLeast(end) { "End index [$end] should be at least the length [$size] of the list" }
     end.validateAtLeast(start)
 }
+
+// region : List
+
+/**
+ * Returns a ``pick`` sized random subset of the receiver.
+ */
+fun <E> List<E>.subset(pick: Int) = subset(pick, Core.random)
+
+/**
+ * Returns a ``pick`` sized random subset of the receiver with the given [random] number
+ * generator.
+ */
+fun <E> List<E>.subset(pick: Int, random: Random) = random
+    .subset(pick, this.size)    // Get the indices of the elements to pick
+    .map { this[it] }           // Map the indices to the elements
+// endregion

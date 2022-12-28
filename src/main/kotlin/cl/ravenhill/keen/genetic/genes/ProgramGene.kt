@@ -3,16 +3,8 @@ package cl.ravenhill.keen.genetic.genes
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
-import cl.ravenhill.keen.prog.functions.Add
 import cl.ravenhill.keen.prog.functions.Fun
-import cl.ravenhill.keen.prog.functions.GreaterThan
-import cl.ravenhill.keen.prog.functions.If
-import cl.ravenhill.keen.prog.functions.add
-import cl.ravenhill.keen.prog.functions.greaterThan
-import cl.ravenhill.keen.prog.functions.ifTrue
-import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Terminal
-import cl.ravenhill.keen.prog.terminals.Variable
 
 /**
  * A [Gene] that represents a program tree.

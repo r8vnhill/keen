@@ -37,7 +37,7 @@ fun Random.ints(from: Int = 0, until: Int = Int.MAX_VALUE) =
  * @return an array with the indices of a subset of the given size.
  */
 fun Random.subset(pick: Int, from: Int): IntArray =
-    ints(0, from + 1)
+    ints(0, from)
         .limit(pick.toLong())
         .sorted()
         .toArray()

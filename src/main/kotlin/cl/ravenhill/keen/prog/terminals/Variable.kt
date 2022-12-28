@@ -1,6 +1,5 @@
 package cl.ravenhill.keen.prog.terminals
 
-import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 import java.util.*
 

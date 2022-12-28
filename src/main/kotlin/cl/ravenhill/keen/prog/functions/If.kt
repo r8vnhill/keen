@@ -2,9 +2,8 @@ package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
-import cl.ravenhill.keen.prog.terminals.Variable
 
-fun ifTrue(condition: Reduceable<Double>, left: Reduceable<Double>, right: Reduceable<Double>) =
+fun ifThenElse(condition: Reduceable<Double>, left: Reduceable<Double>, right: Reduceable<Double>) =
     If().apply {
         set(0, condition)
         set(1, left)
@@ -31,7 +30,17 @@ class If : AbstractFun<Double>() {
         val right = _children[2](args)
         return if (condition > 0.0) left else right
     }
+    // region : equals, hashCode, toString
+
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is If -> false
+        else -> _children == other._children
+    }
+
+    override fun hashCode() = _children.hashCode()
 
     override fun toString() =
         "(if (${_children[0]}) then ${_children[1]} else ${_children[2]})"
+    // endregion
 }
