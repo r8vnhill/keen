@@ -1,5 +1,8 @@
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.prog.functions.Fun
+import cl.ravenhill.keen.prog.terminals.Terminal
 import org.apache.commons.lang3.RandomStringUtils
 import java.util.stream.IntStream
 import kotlin.math.round
@@ -85,5 +88,30 @@ fun Random.nextDoubleOutsideOf(range: Pair<Double, Double>): Double {
 
         max < Double.MAX_VALUE -> this.nextDouble(max, Double.MAX_VALUE)
         else -> this.nextDouble(Double.MIN_VALUE, min)
+    }
+}
+
+/**
+ * Creates a random program of the given maximum depth, from the given terminals and
+ * functions.
+ */
+fun <T> Random.program(
+    maxDepth: Int,
+    functions: List<Fun<T>>,
+    terminals: List<Terminal<T>>
+): Reduceable<T> {
+    return when (maxDepth) {
+        1 -> terminals.random(this)
+        else -> (terminals + functions).random(this).let {
+            if (it is Terminal) {
+                it.deepCopy()
+            } else {
+                val f = it.deepCopy() as Fun<T>
+                for (i in 0 until it.arity) {
+                    f[i] = program(maxDepth - 1, functions, terminals)
+                }
+                f
+            }
+        }
     }
 }

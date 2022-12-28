@@ -84,6 +84,6 @@ class BoolChromosome private constructor(
 
         /// {@inheritDoc}
         override fun toString() =
-            "BoolChromosome.Builder { size: $size, truesProbability: $truesProbability }"
+            "BoolChromosome.Factory { size: $size, truesProbability: $truesProbability }"
     }
 }

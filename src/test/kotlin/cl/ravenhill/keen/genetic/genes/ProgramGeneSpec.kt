@@ -2,12 +2,17 @@ package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.InvalidStateException
-import cl.ravenhill.keen.prog.functions.Add
-import cl.ravenhill.keen.prog.functions.add
+import cl.ravenhill.keen.prog.functions.*
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
+import cl.ravenhill.keen.prog.terminals.Variable
+import cl.ravenhill.keen.util.nextChar
+import cl.ravenhill.keen.util.program
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.checkAll
 
 class ProgramGeneSpec : WordSpec({
     "Creating a program gene" should {
@@ -41,10 +46,25 @@ class ProgramGeneSpec : WordSpec({
             }
         }
     }
+    "Getting the program's depth" should {
+        "return the depth of the program" {
+            checkAll(Arb.programGene(5)) {
+                it.depth shouldBe it.dna.depth
+            }
+        }
+        "return 0 if the program is a terminal" {
+            val gene = ProgramGene(
+                EphemeralConstant { 0.0 },
+                listOf(Add()),
+                listOf(EphemeralConstant { 0.0 })
+            )
+            gene.depth shouldBe 1
+        }
+    }
     "Invoking as a function" should {
         "reduce the program tree to a single value" {
             val add = add(
-                EphemeralConstant{ 1.0 },
+                EphemeralConstant { 1.0 },
                 add(EphemeralConstant { 2.0 },
                     EphemeralConstant { 3.0 })
             )
@@ -54,3 +74,15 @@ class ProgramGeneSpec : WordSpec({
         }
     }
 })
+
+private fun Arb.Companion.programGene(
+    maxDepth: Int,
+) = arbitrary { rs ->
+    val functions = listOf(Add(), GreaterThan(), If())
+    val terminals = listOf(
+        EphemeralConstant { rs.random.nextDouble() },
+        Variable(rs.random.nextChar().toString(), 0)
+    )
+    val program = rs.random.program(maxDepth, functions, terminals)
+    ProgramGene(program, functions, terminals)
+}

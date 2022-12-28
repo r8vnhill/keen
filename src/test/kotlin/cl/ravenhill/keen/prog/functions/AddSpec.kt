@@ -9,6 +9,7 @@ import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.haveSameHashCodeAs
 import io.kotest.matchers.types.shouldHaveSameHashCodeAs
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.checkAll
@@ -17,6 +18,30 @@ import io.kotest.property.checkAll
 class AddSpec : WordSpec({
     afterAny {
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
+    }
+    "Copying" When {
+        "shallow copying" should {
+            "return a new add operation with default ephemeral constants" {
+                checkAll(Arb.addition()) { add ->
+                    val copy = add.copy()
+                    copy shouldNotBe add
+                    copy.children.size shouldBe 2
+                    copy.children[0] shouldBe EphemeralConstant { 0.0 }
+                    copy.children[1] shouldBe EphemeralConstant { 0.0 }
+                }
+            }
+        }
+        "deep copying" should {
+            "return a new add operation with the same children" {
+                checkAll(Arb.addition()) { add ->
+                    val copy = add.deepCopy() as Add
+                    copy shouldNotBeSameInstanceAs add
+                    copy.children.size shouldBe 2
+                    copy.children[0] shouldBe add.children[0]
+                    copy.children[1] shouldBe add.children[1]
+                }
+            }
+        }
     }
     "Creating an addition without children" should {
         "create an addition with ephemeral constants as children" {
@@ -62,17 +87,6 @@ class AddSpec : WordSpec({
                 flattened[2] shouldBe add.children[1]
                 flattened[3] shouldBe (add.children[1] as Add).children[0]
                 flattened[4] shouldBe (add.children[1] as Add).children[1]
-            }
-        }
-    }
-    "Copying an add operation" should {
-        "return a new add operation with default ephemeral constants" {
-            checkAll(Arb.addition()) { add ->
-                val copy = add.copy()
-                copy shouldNotBe add
-                copy.children.size shouldBe 2
-                copy.children[0] shouldBe EphemeralConstant { 0.0 }
-                copy.children[1] shouldBe EphemeralConstant { 0.0 }
             }
         }
     }
@@ -126,8 +140,6 @@ class AddSpec : WordSpec({
         }
     }
 })
-
-data class AddData(val a: Double, val b: Double)
 
 private fun Arb.Companion.addition() =
     arbitrary { rs ->

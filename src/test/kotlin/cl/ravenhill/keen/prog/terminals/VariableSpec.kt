@@ -13,8 +13,32 @@ import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
+private suspend fun checkCopy() {
+    checkAll(Arb.string()) { name ->
+        val variable = Variable<Double>(name, 0)
+        variable.copy() shouldBe Variable(name, 0)
+    }
+}
 
 class VariableSpec : WordSpec({
+    "Copying" When {
+        "shallow copying" should {
+            "create a copy with the same name" {
+                checkAll(Arb.string()) { name ->
+                    val variable = Variable<Double>(name, 0)
+                    variable.copy() shouldBe Variable(name, 0)
+                }
+            }
+        }
+        "deep copying" should {
+            "create a copy with the same name" {
+                checkAll(Arb.string()) { name ->
+                    val variable = Variable<Double>(name, 0)
+                    variable.deepCopy() shouldBe Variable(name, 0)
+                }
+            }
+        }
+    }
     "Reducing a variable" should {
         "return the value of the variable" {
             checkAll(
