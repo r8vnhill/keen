@@ -3,39 +3,27 @@ package cl.ravenhill.keen.prog.terminals
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.Codepoint
-import io.kotest.property.arbitrary.alphanumeric
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.long
-import io.kotest.property.arbitrary.string
+import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-private suspend fun checkCopy() {
-    checkAll(Arb.string()) { name ->
-        val variable = Variable<Double>(name, 0)
-        variable.copy() shouldBe Variable(name, 0)
-    }
-}
-
 class VariableSpec : WordSpec({
+    "Arity" should {
+        "be 0" {
+            checkAll(Arb.variable()) {
+                it.arity shouldBe 0
+            }
+        }
+    }
     "Copying" When {
         "shallow copying" should {
-            "create a copy with the same name" {
-                checkAll(Arb.string()) { name ->
-                    val variable = Variable<Double>(name, 0)
-                    variable.copy() shouldBe Variable(name, 0)
-                }
+            "create a copy with the same name and index" {
+                checkCopy(Arb.variable()) { it.copy() as Variable }
             }
         }
         "deep copying" should {
             "create a copy with the same name" {
-                checkAll(Arb.string()) { name ->
-                    val variable = Variable<Double>(name, 0)
-                    variable.deepCopy() shouldBe Variable(name, 0)
-                }
+                checkCopy(Arb.variable()) { it.deepCopy() as Variable }
             }
         }
     }
@@ -52,16 +40,19 @@ class VariableSpec : WordSpec({
             }
         }
     }
-    "Variable arity" should {
-        "be 0" {
-            val variable = Variable<Double>("x", 0)
-            variable.arity shouldBe 0
-        }
-    }
 })
 
 private fun Arb.Companion.keyval(): Arb<Pair<String, Double>> = arbitrary { rs ->
     val name = string(codepoints = Codepoint.alphanumeric(), range = 1..10).bind()
     val value = double().bind()
     Pair(name, value)
+}
+
+/**
+ * Constructs an arbitrary variable.
+ */
+fun Arb.Companion.variable() = arbitrary {
+    val sym = Arb.string(1).bind()
+    val i = Arb.nonNegativeInt().bind()
+    Variable<Double>(sym, i)
 }

@@ -4,15 +4,13 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.prog.functions.Add
 import cl.ravenhill.keen.prog.functions.GreaterThan
 import cl.ravenhill.keen.prog.functions.If
-import cl.ravenhill.keen.prog.terminals.Variable
 import cl.ravenhill.keen.prog.terminals.ephemeralConstant
+import cl.ravenhill.keen.prog.terminals.variable
 import cl.ravenhill.keen.util.program
 import cl.ravenhill.keen.util.subset
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.arbitrary.positiveInt
-import io.kotest.property.arbitrary.string
 
 
 /**
@@ -59,13 +57,4 @@ fun <T> Arb.Companion.subset(collection: List<T>) = arbitrary { rs ->
         // We pick a random subset of `it` elements
         collection.subset(it)
     }
-}
-
-/**
- * Constructs an arbitrary variable.
- */
-fun Arb.Companion.variable() = arbitrary {
-    val sym = Arb.string(1).bind()
-    val i = Arb.nonNegativeInt().bind()
-    Variable<Double>(sym, i)
 }

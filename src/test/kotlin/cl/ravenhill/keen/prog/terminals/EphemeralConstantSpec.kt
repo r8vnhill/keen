@@ -3,21 +3,12 @@ package cl.ravenhill.keen.prog.terminals
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.double
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
-
-private suspend fun checkCopy(copyFn: (EphemeralConstant<Double>) -> EphemeralConstant<Double>) {
-    checkAll(Arb.ephemeralConstant()) { ephemeralConstant ->
-        val copy = copyFn(ephemeralConstant)
-        copy shouldNotBeSameInstanceAs ephemeralConstant
-        copy shouldBe ephemeralConstant
-    }
-}
 
 class EphemeralConstantSpec : WordSpec({
     "Arity" should {
@@ -30,12 +21,16 @@ class EphemeralConstantSpec : WordSpec({
     "Copying" When {
         "shallow copying" should {
             "create a copy with the same generator function" {
-                checkCopy(EphemeralConstant<Double>::copy)
+                checkCopy(Arb.ephemeralConstant()) { ephemeralConstant ->
+                    ephemeralConstant.copy()
+                }
             }
         }
         "deep copying" should {
             "create a copy with the same generator function" {
-                checkCopy { it.deepCopy() as EphemeralConstant<Double> }
+                checkCopy(Arb.ephemeralConstant()) { ephemeralConstant ->
+                    ephemeralConstant.deepCopy() as EphemeralConstant
+                }
             }
         }
     }
