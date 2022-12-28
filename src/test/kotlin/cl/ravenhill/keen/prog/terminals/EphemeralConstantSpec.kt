@@ -2,17 +2,31 @@ package cl.ravenhill.keen.prog.terminals
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.double
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-private fun checkCopy(copyFn: (EphemeralConstant<Double>) -> EphemeralConstant<Double>) {
-    val r1 = Random(1)
-    val r2 = Random(1)
-    val constant = EphemeralConstant { r1.nextDouble() }
-    copyFn(constant) shouldBe EphemeralConstant { r2.nextDouble() }
+private suspend fun checkCopy(copyFn: (EphemeralConstant<Double>) -> EphemeralConstant<Double>) {
+    checkAll(Arb.ephemeralConstant()) { ephemeralConstant ->
+        val copy = copyFn(ephemeralConstant)
+        copy shouldNotBeSameInstanceAs ephemeralConstant
+        copy shouldBe ephemeralConstant
+    }
 }
 
 class EphemeralConstantSpec : WordSpec({
+    "Arity" should {
+        "be 0" {
+            checkAll(Arb.ephemeralConstant()) { ephemeralConstant ->
+                ephemeralConstant.arity shouldBe 0
+            }
+        }
+    }
     "Copying" When {
         "shallow copying" should {
             "create a copy with the same generator function" {
@@ -22,6 +36,30 @@ class EphemeralConstantSpec : WordSpec({
         "deep copying" should {
             "create a copy with the same generator function" {
                 checkCopy { it.deepCopy() as EphemeralConstant<Double> }
+            }
+        }
+    }
+    "Object identity" When {
+        "equality" should {
+            "be true for the same ephemeral constant" {
+                checkAll(Arb.ephemeralConstant()) { ephemeralConstant ->
+                    ephemeralConstant shouldBe ephemeralConstant
+                }
+            }
+            "be true for two ephemeral constants with the same value" {
+                checkAll(Arb.ephemeralConstant()) { ephemeralConstant ->
+                    val copy = ephemeralConstant.deepCopy()
+                    ephemeralConstant shouldBe copy
+                }
+            }
+            "be false for two ephemeral constants with different values" {
+                checkAll(
+                    Arb.ephemeralConstant(),
+                    Arb.ephemeralConstant()
+                ) { ephemeralConstant1, ephemeralConstant2 ->
+                    assume(ephemeralConstant1(arrayOf()) != ephemeralConstant2(arrayOf()))
+                    ephemeralConstant1 shouldNotBe ephemeralConstant2
+                }
             }
         }
     }
@@ -39,10 +77,12 @@ class EphemeralConstantSpec : WordSpec({
             }
         }
     }
-    "Ephemeral constant arity" should {
-        "be 0" {
-            val constant = EphemeralConstant { 1 }
-            constant.arity shouldBe 0
-        }
-    }
 })
+
+/**
+ * Constructs an arbitrary ephemeral constant.
+ */
+fun Arb.Companion.ephemeralConstant() = arbitrary {
+    val v = Arb.double().bind()
+    EphemeralConstant { v }
+}

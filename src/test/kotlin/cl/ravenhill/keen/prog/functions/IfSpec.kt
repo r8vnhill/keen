@@ -1,16 +1,13 @@
 package cl.ravenhill.keen.prog.functions
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.prog.program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Variable
-import cl.ravenhill.keen.util.program
-import cl.ravenhill.keen.util.subset
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.*
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.checkAll
 
 
@@ -20,12 +17,17 @@ class IfSpec : WordSpec({
             "return a new if operation with default ephemeral constants" {
                 checkAll(Arb.ifThenElse()) { ifExpr ->
                     val copy = ifExpr.copy()
-                    copy.children.size shouldBe 3
                     copy shouldBe If()
                 }
             }
         }
         "deep copying" should {
+            "return a new if operation with a greater than, a variable and an ephemeral constant" {
+                val ifExpr = ifThenElse(GreaterThan(), Variable("x", 0), EphemeralConstant { 1.0 })
+                val copy = ifExpr.deepCopy()
+                copy shouldNotBeSameInstanceAs ifExpr
+                copy shouldBe ifExpr
+            }
             "return a new if operation with the same children" {
                 checkAll(Arb.ifThenElse()) { ifExpr ->
                     val copy = ifExpr.deepCopy()
@@ -54,7 +56,7 @@ class IfSpec : WordSpec({
             "be true if both expressions have the same children" {
                 checkAll(Arb.ifThenElse()) { ifThenElse ->
                     val copy = ifThenElse.deepCopy()
-                    copy shouldBe ifThenElse
+                    copy.children shouldBe ifThenElse.children
                 }
             }
         }

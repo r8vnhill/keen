@@ -2,6 +2,7 @@ package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
+import java.util.*
 
 fun greaterThan(left: Reduceable<Double>, right: Reduceable<Double>) =
     GreaterThan().apply {
@@ -27,5 +28,15 @@ class GreaterThan : AbstractFun<Double>() {
         return if (left > right) 1.0 else 0.0
     }
 
+    // region : equals, hashCode, toString
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is GreaterThan -> false
+        else -> _children == other._children
+    }
+
+    override fun hashCode() = Objects.hash(GreaterThan::class, _children)
+
     override fun toString() = "(${_children[0]} > ${_children[1]})"
+    // endregion
 }
