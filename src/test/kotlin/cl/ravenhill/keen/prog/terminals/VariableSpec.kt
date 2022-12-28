@@ -27,6 +27,16 @@ class VariableSpec : WordSpec({
             }
         }
     }
+    "Flattening" should {
+        "return a list with itself" {
+            checkAll(Arb.variable()) {
+                it.flatten() shouldBe listOf(it)
+            }
+        }
+    }
+    "Object identity" When {
+        TODO()
+    }
     "Reducing a variable" should {
         "return the value of the variable" {
             checkAll(
