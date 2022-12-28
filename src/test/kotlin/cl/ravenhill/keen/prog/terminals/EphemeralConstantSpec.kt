@@ -1,29 +1,27 @@
 package cl.ravenhill.keen.prog.terminals
 
 import io.kotest.core.spec.style.WordSpec
-import io.kotest.core.spec.style.wordSpec
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-private fun checkCopy() {
+private fun checkCopy(copyFn: (EphemeralConstant<Double>) -> EphemeralConstant<Double>) {
     val r1 = Random(1)
     val r2 = Random(1)
     val constant = EphemeralConstant { r1.nextDouble() }
-    constant.copy() shouldBe EphemeralConstant { r2.nextDouble() }
+    copyFn(constant) shouldBe EphemeralConstant { r2.nextDouble() }
 }
 
 class EphemeralConstantSpec : WordSpec({
     "Copying" When {
         "shallow copying" should {
             "create a copy with the same generator function" {
-                checkCopy()
+                checkCopy(EphemeralConstant<Double>::copy)
             }
         }
         "deep copying" should {
             "create a copy with the same generator function" {
-                checkCopy()
+                checkCopy { it.deepCopy() as EphemeralConstant<Double> }
             }
         }
     }

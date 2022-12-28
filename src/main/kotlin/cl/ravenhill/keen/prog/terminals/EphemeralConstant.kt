@@ -15,7 +15,8 @@ class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
 
     override fun equals(other: Any?) = when {
         this === other -> true
-        else -> other !is EphemeralConstant<*>
+        other !is EphemeralConstant<*> -> false
+        else -> generator() == other.generator()
     }
 
     override fun hashCode() = Objects.hash(EphemeralConstant::class, generator)

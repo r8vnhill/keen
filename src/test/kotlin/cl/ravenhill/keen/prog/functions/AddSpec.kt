@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.prog.program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Variable
 import io.kotest.core.spec.style.WordSpec
@@ -25,20 +26,28 @@ class AddSpec : WordSpec({
                 checkAll(Arb.addition()) { add ->
                     val copy = add.copy()
                     copy shouldNotBe add
-                    copy.children.size shouldBe 2
-                    copy.children[0] shouldBe EphemeralConstant { 0.0 }
-                    copy.children[1] shouldBe EphemeralConstant { 0.0 }
+                    copy shouldBe Add()
                 }
             }
         }
         "deep copying" should {
+            "return a new add operation with the addition of two terminals" {
+                val add = add(EphemeralConstant { 1.0 }, Variable("x", 0))
+                val copy = add.deepCopy()
+                copy shouldNotBeSameInstanceAs add
+                copy shouldBe add
+            }
+            "return a new add operation with the addition of two functions" {
+                val add = add(Add(), Add())
+                val copy = add.deepCopy()
+                copy shouldNotBeSameInstanceAs add
+                copy shouldBe add
+            }
             "return a new add operation with the same children" {
                 checkAll(Arb.addition()) { add ->
                     val copy = add.deepCopy() as Add
                     copy shouldNotBeSameInstanceAs add
-                    copy.children.size shouldBe 2
-                    copy.children[0] shouldBe add.children[0]
-                    copy.children[1] shouldBe add.children[1]
+                    copy shouldBe add
                 }
             }
         }
@@ -73,21 +82,27 @@ class AddSpec : WordSpec({
     }
     "Add arity" should {
         "be 2" {
-            val add = Add()
-            add.arity shouldBe 2
+            checkAll(Arb.addition()) { add ->
+                add.arity shouldBe 2
+            }
         }
     }
     "Flattening an add" should {
         "return a list with the add and its children" {
-            checkAll(Arb.addition()) { add ->
-                val flattened = add.flatten()
-                flattened.size shouldBe 5
-                flattened[0] shouldBe add
-                flattened[1] shouldBe add.children[0]
-                flattened[2] shouldBe add.children[1]
-                flattened[3] shouldBe (add.children[1] as Add).children[0]
-                flattened[4] shouldBe (add.children[1] as Add).children[1]
-            }
+            val add = add(
+                EphemeralConstant { 1.0 },
+                add(
+                    EphemeralConstant { 2.0 },
+                    Variable("a", 0)
+                )
+            )
+            val flattened = add.flatten()
+            flattened.size shouldBe 5
+            flattened[0] shouldBe add
+            flattened[1] shouldBe add.children[0]
+            flattened[2] shouldBe add.children[1]
+            flattened[3] shouldBe (add.children[1] as Add).children[0]
+            flattened[4] shouldBe (add.children[1] as Add).children[1]
         }
     }
     "Object identity" When {
@@ -141,12 +156,6 @@ class AddSpec : WordSpec({
     }
 })
 
-private fun Arb.Companion.addition() =
-    arbitrary { rs ->
-        val aVal = rs.random.nextDouble()
-        val bVal = rs.random.nextDouble()
-        val a = EphemeralConstant { aVal }
-        val b = EphemeralConstant { bVal }
-        val x = Variable<Double>("x", 0)
-        add(a, add(b, x))
-    }
+private fun Arb.Companion.addition() = arbitrary {
+    add(Arb.program().bind(), Arb.program().bind())
+}
