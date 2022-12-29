@@ -5,6 +5,7 @@ import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.operators.AbstractRecombinatorAlterer
 import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.prog.terminals.Terminal
 import kotlin.math.min
 
 /**
@@ -46,7 +47,12 @@ class SingleNodeCrossover<DNA>(probability: Double) :
         tree1: Chromosome<Reduceable<DNA>>,
         tree2: Chromosome<Reduceable<DNA>>
     ) {
-        TODO("Not yet implemented")
+        when {
+            tree1 is Terminal<*> || tree2 is Terminal<*> -> return
+            else -> {
+
+            }
+        }
     }
 
 }
