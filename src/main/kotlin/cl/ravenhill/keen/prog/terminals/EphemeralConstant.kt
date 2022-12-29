@@ -19,5 +19,5 @@ class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
         else -> generator() == other.generator()
     }
 
-    override fun hashCode() = Objects.hash(EphemeralConstant::class, generator)
+    override fun hashCode() = Objects.hash(EphemeralConstant::class, generator())
 }
