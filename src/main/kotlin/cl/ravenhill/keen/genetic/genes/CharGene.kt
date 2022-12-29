@@ -43,6 +43,6 @@ class CharGene(override val dna: Char) : ComparableGene<Char> {
     override fun hashCode() = Objects.hash(CharGene::class, dna)
 
     companion object {
-        fun create() = CharGene(Core.random.nextChar())
+        fun create(filter: (Char) -> Boolean = { true }) = CharGene(Core.random.nextChar(filter))
     }
 }

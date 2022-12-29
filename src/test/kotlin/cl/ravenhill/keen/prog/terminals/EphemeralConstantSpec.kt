@@ -37,15 +37,14 @@ class EphemeralConstantSpec : WordSpec({
     "Object identity" When {
         "equality" should {
             "be true for the same ephemeral constant" {
-                checkAll(Arb.ephemeralConstant()) { ephemeralConstant ->
-                    ephemeralConstant shouldBe ephemeralConstant
-                }
+                `check that an object should always be equal to itself`(
+                    Arb.ephemeralConstant()
+                )
             }
             "be true for two ephemeral constants with the same value" {
-                checkAll(Arb.ephemeralConstant()) { ephemeralConstant ->
-                    val copy = ephemeralConstant.deepCopy()
-                    ephemeralConstant shouldBe copy
-                }
+               `check that an object should always be equal to a copy of itself`(
+                    Arb.ephemeralConstant()
+                )
             }
             "be false for two ephemeral constants with different values" {
                 checkAll(

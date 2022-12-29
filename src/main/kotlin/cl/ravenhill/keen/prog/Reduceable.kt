@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.InvalidStateException
+import cl.ravenhill.keen.util.Copyable
 import cl.ravenhill.keen.util.trees.ListTree
 
 /**
@@ -14,7 +15,7 @@ import cl.ravenhill.keen.util.trees.ListTree
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Reduceable<T>: ListTree<Reduceable<T>> {
+interface Reduceable<T>: ListTree<Reduceable<T>>, Copyable<Reduceable<T>> {
     val arity: Int
 
     /**
@@ -26,13 +27,7 @@ interface Reduceable<T>: ListTree<Reduceable<T>> {
     operator fun invoke(args: Array<out T>): T
 
     /**
-     * Creates a copy of the operation without children.
-     */
-    fun copy(): Reduceable<T>
-
-    /**
      * Flattens the operation into a list.
      */
     fun flatten(): List<Reduceable<T>>
-    fun deepCopy(): Reduceable<T>
 }

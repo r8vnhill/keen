@@ -5,6 +5,7 @@ import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
+import cl.ravenhill.keen.util.trees.Tree
 
 /**
  * A [Gene] that represents a program tree.
@@ -29,7 +30,8 @@ class ProgramGene<DNA> internal constructor(
 
     init {
         if (program.depth > Core.maxProgramDepth) throw InvalidStateException("program") {
-            "The program's depth (${program.depth}) is greater than the maximum allowed depth (${Core.maxProgramDepth})."
+            "The program's depth (${program.depth}) is greater than the maximum " +
+                    "allowed depth (${Core.maxProgramDepth})."
         }
         // Stores the program in a list (breadth-first).
         children = program.flatten()
@@ -38,8 +40,8 @@ class ProgramGene<DNA> internal constructor(
     /**
      * Reduces the program tree to a single value.
      *
-     * @param args Array<out DNA>
-     * @return DNA
+     * @param args The arguments to the program.
+     * @return The result of the program.
      */
     operator fun invoke(vararg args: DNA): DNA = dna(args)
 
@@ -82,7 +84,9 @@ class ProgramGene<DNA> internal constructor(
                 // Do nothing.
             }
 
-            else -> throw InvalidStateException("type") { "The node is not a valid type (${op::class})" }
+            else -> throw InvalidStateException("type") {
+                "The node is not a valid type (${op::class})"
+            }
         }
         return op
     }

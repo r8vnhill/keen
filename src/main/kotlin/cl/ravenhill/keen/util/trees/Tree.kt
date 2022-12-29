@@ -1,5 +1,7 @@
 package cl.ravenhill.keen.util.trees
 
+import cl.ravenhill.keen.util.Copyable
+
 
 /**
  * Generic tree data structure.

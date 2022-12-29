@@ -3,6 +3,7 @@ package cl.ravenhill.keen.genetic.genes
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.nextChar
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.char.shouldBeInRange
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.ints.shouldBeLessThan
 import io.kotest.matchers.shouldBe
@@ -33,6 +34,15 @@ class CharGeneSpec : WordSpec({
         "return a positive number if the first gene is greater than the second" {
             checkComparison { lo, hi ->
                 CharGene(hi).compareTo(CharGene(lo)) shouldBeGreaterThan 0
+            }
+        }
+    }
+
+    "Filtering" should {
+        "create a new gene that fulfills the predicate" {
+            checkAll<Char> {
+                val gene = CharGene.create { it in 'a'..'z' }
+                gene.dna shouldBeInRange 'a'..'z'
             }
         }
     }

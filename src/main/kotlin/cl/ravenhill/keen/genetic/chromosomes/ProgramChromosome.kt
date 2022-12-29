@@ -48,16 +48,3 @@ class ProgramChromosome<I> private constructor(
 
     override fun toString() = genes.map { it.dna }.joinToString("\n")
 }
-
-fun main() {
-    val chromosome = ProgramChromosome.Factory<Double>().apply {
-        function { Add() }
-        function { GreaterThan() }
-        function { If() }
-        terminal { EphemeralConstant { 1.0 } }
-        terminal { EphemeralConstant { 2.0 } }
-        terminal { Variable("x", 0) }
-    }.make()
-    println(chromosome)
-    println(chromosome[0].mutate())
-}

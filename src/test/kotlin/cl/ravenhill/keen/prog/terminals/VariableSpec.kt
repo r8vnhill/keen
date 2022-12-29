@@ -35,7 +35,19 @@ class VariableSpec : WordSpec({
         }
     }
     "Object identity" When {
-        TODO()
+        "equality" should {
+            "be true for the same instance" {
+                `check that an object should always be equal to itself`(Arb.variable())
+            }
+            "be true for two variables with the same name and index" {
+                val variable1 = Variable<Double>("x", 0)
+                val variable2 = Variable<Double>("x", 0)
+                variable1 shouldBe variable2
+            }
+            "be true when comparing a variable with a copy of itself" {
+
+            }
+        }
     }
     "Reducing a variable" should {
         "return the value of the variable" {
@@ -52,7 +64,7 @@ class VariableSpec : WordSpec({
     }
 })
 
-private fun Arb.Companion.keyval(): Arb<Pair<String, Double>> = arbitrary { rs ->
+private fun Arb.Companion.keyval(): Arb<Pair<String, Double>> = arbitrary {
     val name = string(codepoints = Codepoint.alphanumeric(), range = 1..10).bind()
     val value = double().bind()
     Pair(name, value)
