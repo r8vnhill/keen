@@ -2,7 +2,7 @@ package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.util.Copyable
-import cl.ravenhill.keen.util.trees.ListTree
+import cl.ravenhill.keen.util.ListTree
 
 /**
  * A reduce-able operation.

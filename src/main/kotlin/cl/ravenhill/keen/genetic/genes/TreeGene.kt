@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.genetic.genes
 
-import cl.ravenhill.keen.util.trees.ListTree
+import cl.ravenhill.keen.util.ListTree
 
 
 interface TreeGene<DNA : Any> : Gene<DNA>, ListTree<DNA> {

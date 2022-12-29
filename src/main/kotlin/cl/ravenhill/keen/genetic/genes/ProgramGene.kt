@@ -5,7 +5,6 @@ import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
-import cl.ravenhill.keen.util.trees.Tree
 
 /**
  * A [Gene] that represents a program tree.
