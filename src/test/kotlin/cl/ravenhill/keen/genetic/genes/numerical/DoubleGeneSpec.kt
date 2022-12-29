@@ -19,9 +19,7 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-data class DoubleGeneData(val dna: Double, val range: Pair<Double, Double>) {
-    fun toDoubleGene() = DoubleGene(dna, range)
-}
+data class DoubleGeneData(val dna: Double, val range: Pair<Double, Double>)
 
 private val Arb.Companion.doubleRange: Arb<Pair<Double, Double>>
     get() = arbitrary { rs ->
@@ -172,18 +170,6 @@ class DoubleGeneSpec : WordSpec({
         }
     }
 })
-
-private fun ClosedFloatingPointRange<Double>.randomOutside(rng: Random): Double {
-    return if (start == Double.NEGATIVE_INFINITY && endInclusive == Double.POSITIVE_INFINITY) {
-        Double.NaN
-    } else {
-        val min = this.start.toDouble()
-        val max = this.endInclusive.toDouble()
-        val range = max - min
-        val outside = if (rng.nextBoolean()) min - range else max + range
-        outside
-    }
-}
 
 private suspend fun checkComparison(
     comparison: (Double, Double, Pair<Double, Double>) -> Unit

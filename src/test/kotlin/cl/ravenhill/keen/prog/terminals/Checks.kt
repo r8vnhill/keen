@@ -53,3 +53,12 @@ suspend fun <T> `check that a terminal should always flatten to a list with itse
         it.flatten() shouldBe listOf(it)
     }
 }
+
+suspend fun <T : Terminal<*>>
+        `check that a terminal should always have an empty list of descendants`(
+    generator: Arb<T>
+) {
+    checkAll(generator) { terminal ->
+        terminal.descendants shouldBe emptyList()
+    }
+}

@@ -12,6 +12,42 @@ import io.kotest.property.checkAll
 
 
 class IfSpec : WordSpec({
+    "Arity" should {
+        "be 3" {
+            checkAll(Arb.ifThenElse()) { ifExpr ->
+                ifExpr.arity shouldBe 3
+            }
+        }
+    }
+    "Descendants" When {
+        "created without children" should {
+            "return three ephemeral constants" {
+                val ifExpr = If()
+                ifExpr.descendants shouldBe listOf(
+                    EphemeralConstant { 0.0 },
+                    EphemeralConstant { 0.0 },
+                    EphemeralConstant { 0.0 })
+            }
+        }
+        "created with children" should {
+            "return the children" {
+                val ifExpr = ifThenElse(
+                    EphemeralConstant { 0.0 },
+                    greaterThan(
+                        EphemeralConstant { 0.0 },
+                        EphemeralConstant { 0.0 }),
+                    EphemeralConstant { 0.0 })
+                ifExpr.descendants shouldBe listOf(
+                    EphemeralConstant { 0.0 },
+                    greaterThan(
+                        EphemeralConstant { 0.0 },
+                        EphemeralConstant { 0.0 }),
+                    EphemeralConstant { 0.0 },
+                    EphemeralConstant { 0.0 },
+                    EphemeralConstant { 0.0 })
+            }
+        }
+    }
     "Copying" When {
         "shallow copying" should {
             "return a new if operation with default ephemeral constants" {

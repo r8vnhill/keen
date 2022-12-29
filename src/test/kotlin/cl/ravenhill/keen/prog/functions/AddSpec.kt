@@ -30,14 +30,12 @@ class AddSpec : WordSpec({
         "return the children if it was created with children" {
             val add = add(
                 EphemeralConstant { 0.0 },
-                add(
-                    EphemeralConstant { 0.0 },
-                    EphemeralConstant { 0.0 }
-                ))
+                add(EphemeralConstant { 0.0 },
+                    EphemeralConstant { 0.0 })
+            )
             add.descendants shouldBe listOf(
                 EphemeralConstant { 0.0 },
-                add(
-                    EphemeralConstant { 0.0 },
+                add(EphemeralConstant { 0.0 },
                     EphemeralConstant { 0.0 }),
                 EphemeralConstant { 0.0 },
                 EphemeralConstant { 0.0 })

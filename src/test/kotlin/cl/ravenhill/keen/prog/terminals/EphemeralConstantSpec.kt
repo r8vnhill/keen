@@ -16,6 +16,15 @@ class EphemeralConstantSpec : WordSpec({
             `check that a terminal should always have arity 0`(Arb.ephemeralConstant())
         }
     }
+    "Descendants" When {
+        "created without children" should {
+            "return an empty list" {
+                `check that a terminal should always have an empty list of descendants`(
+                    Arb.ephemeralConstant()
+                )
+            }
+        }
+    }
     "Copying" When {
         "shallow copying" should {
             "create a copy with the same generator function" {

@@ -25,6 +25,15 @@ class VariableSpec : WordSpec({
             }
         }
     }
+    "Descendants" When {
+        "created without children" should {
+            "return an empty list" {
+                `check that a terminal should always have an empty list of descendants`(
+                    Arb.variable()
+                )
+            }
+        }
+    }
     "Flattening" should {
         "return a list with itself" {
             `check that a terminal should always flatten to a list with itself`(

@@ -22,6 +22,29 @@ class GreaterThanSpec : WordSpec({
             }
         }
     }
+    "Accessing the descendants" should {
+        "return two ephemeral constants if it was created without children" {
+            val greaterThan = GreaterThan()
+            greaterThan.descendants shouldBe listOf(
+                EphemeralConstant { 0.0 },
+                EphemeralConstant { 0.0 })
+        }
+        "return the children if it was created with children" {
+            val greaterThan = greaterThan(
+                EphemeralConstant { 0.0 },
+                greaterThan(
+                    EphemeralConstant { 0.0 },
+                    EphemeralConstant { 0.0 }
+                ))
+            greaterThan.descendants shouldBe listOf(
+                EphemeralConstant { 0.0 },
+                greaterThan(
+                    EphemeralConstant { 0.0 },
+                    EphemeralConstant { 0.0 }),
+                EphemeralConstant { 0.0 },
+                EphemeralConstant { 0.0 })
+        }
+    }
     "Copying" When {
         "shallow copying" should {
             "return a new greater than operation with default ephemeral constants" {
