@@ -97,6 +97,29 @@ class IfSpec : WordSpec({
             }
         }
     }
+    "Size" When {
+        "created with default ephemeral constants" should {
+            "return 4" {
+                val ifExpr = If()
+                ifExpr.size shouldBe 4
+            }
+        }
+        "created with children" should {
+            "return the sum of the children sizes plus one" {
+                val ifExpr1 = ifThenElse(
+                    EphemeralConstant { 0.0 },
+                    greaterThan(
+                        EphemeralConstant { 0.0 },
+                        EphemeralConstant { 0.0 }),
+                    EphemeralConstant { 0.0 })
+                ifExpr1.size shouldBe 6
+                // Consistency check
+                checkAll(Arb.ifThenElse()) { ifExpr ->
+                    ifExpr.size shouldBe ifExpr.children.sumOf { it.size } + 1
+                }
+            }
+        }
+    }
 })
 
 /**

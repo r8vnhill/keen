@@ -180,6 +180,15 @@ class GreaterThanSpec : WordSpec({
             }
         }
     }
+    "Size" When {
+        "accessing the size" should {
+            "return the number of nodes in the greater than operation" {
+                checkAll(Arb.greaterThan()) { greaterThan ->
+                    greaterThan.size shouldBe greaterThan.flatten().size
+                }
+            }
+        }
+    }
 })
 
 /**
