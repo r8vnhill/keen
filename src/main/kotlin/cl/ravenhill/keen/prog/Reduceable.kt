@@ -30,4 +30,10 @@ interface Reduceable<T>: ListTree<Reduceable<T>>, Copyable<Reduceable<T>> {
      * Flattens the operation into a list.
      */
     fun flatten(): List<Reduceable<T>>
+
+    val descendants: List<Reduceable<T>>
+        get() = flatten().drop(1)
+
+    override val size: Int
+        get() = descendants.size + 1
 }

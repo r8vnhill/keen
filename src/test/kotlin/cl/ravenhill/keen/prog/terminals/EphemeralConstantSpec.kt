@@ -13,9 +13,7 @@ import kotlin.random.Random
 class EphemeralConstantSpec : WordSpec({
     "Arity" should {
         "be 0" {
-            checkAll(Arb.ephemeralConstant()) { ephemeralConstant ->
-                ephemeralConstant.arity shouldBe 0
-            }
+            `check that a terminal should always have arity 0`(Arb.ephemeralConstant())
         }
     }
     "Copying" When {
@@ -34,6 +32,13 @@ class EphemeralConstantSpec : WordSpec({
             }
         }
     }
+    "Flattening" should {
+        "return a list with the terminal" {
+            `check that a terminal should always flatten to a list with itself`(
+                Arb.ephemeralConstant()
+            )
+        }
+    }
     "Object identity" When {
         "equality" should {
             "be true for the same ephemeral constant" {
@@ -42,7 +47,7 @@ class EphemeralConstantSpec : WordSpec({
                 )
             }
             "be true for two ephemeral constants with the same value" {
-               `check that an object should always be equal to a copy of itself`(
+                `check that an object should always be equal to a copy of itself`(
                     Arb.ephemeralConstant()
                 )
             }
@@ -68,6 +73,13 @@ class EphemeralConstantSpec : WordSpec({
             checkAll<Long> { seed ->
                 val constant = EphemeralConstant { Random(seed).nextInt() }
                 constant(arrayOf()) shouldBe Random(seed).nextInt()
+            }
+        }
+    }
+    "Size" should {
+        "be 1" {
+            checkAll(Arb.ephemeralConstant()) { ephemeralConstant ->
+                ephemeralConstant.size shouldBe 1
             }
         }
     }

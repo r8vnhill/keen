@@ -20,6 +20,29 @@ class AddSpec : WordSpec({
     afterAny {
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
     }
+    "Accessing the descendants" should {
+        "return two ephemeral constants if it was created without children" {
+            val add = Add()
+            add.descendants shouldBe listOf(
+                EphemeralConstant { 0.0 },
+                EphemeralConstant { 0.0 })
+        }
+        "return the children if it was created with children" {
+            val add = add(
+                EphemeralConstant { 0.0 },
+                add(
+                    EphemeralConstant { 0.0 },
+                    EphemeralConstant { 0.0 }
+                ))
+            add.descendants shouldBe listOf(
+                EphemeralConstant { 0.0 },
+                add(
+                    EphemeralConstant { 0.0 },
+                    EphemeralConstant { 0.0 }),
+                EphemeralConstant { 0.0 },
+                EphemeralConstant { 0.0 })
+        }
+    }
     "Copying" When {
         "shallow copying" should {
             "return a new add operation with default ephemeral constants" {
@@ -152,6 +175,22 @@ class AddSpec : WordSpec({
                 val copy = add.copy()
                 add shouldNot haveSameHashCodeAs(copy)
             }
+        }
+    }
+    "Size" should {
+        "be 3 if the add has ephemeral constants as children" {
+            val add = Add()
+            add.size shouldBe 3
+        }
+        "be 1 plus the size of the children" {
+            val add = add(
+                EphemeralConstant { 1.0 },
+                add(
+                    EphemeralConstant { 2.0 },
+                    Variable("a", 0)
+                )
+            )
+            add.size shouldBe 5
         }
     }
 })

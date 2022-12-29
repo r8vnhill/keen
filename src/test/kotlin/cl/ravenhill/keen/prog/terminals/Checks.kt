@@ -28,11 +28,28 @@ suspend fun <T> `check that an object should always be equal to itself`(
     }
 }
 
-suspend fun <T: Copyable<T>> `check that an object should always be equal to a copy of itself`(
+suspend fun <T> `check that an object should always be equal to a copy of itself`(
     generator: Arb<T>
-) {
+) where T: Copyable<T> {
     checkAll(generator) { generated ->
         val copy = generated.deepCopy()
         generated shouldBe copy
+    }
+}
+
+suspend fun <T : Terminal<*>> `check that a terminal should always have arity 0`(
+    generator: Arb<T>
+) {
+    checkAll(generator) { generated ->
+        generated.arity shouldBe 0
+    }
+}
+
+
+suspend fun <T> `check that a terminal should always flatten to a list with itself`(
+    generator: Arb<T>
+) where T : Terminal<*> {
+    checkAll(generator) {
+        it.flatten() shouldBe listOf(it)
     }
 }

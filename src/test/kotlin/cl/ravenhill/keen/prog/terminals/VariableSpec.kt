@@ -10,9 +10,7 @@ import kotlin.random.Random
 class VariableSpec : WordSpec({
     "Arity" should {
         "be 0" {
-            checkAll(Arb.variable()) {
-                it.arity shouldBe 0
-            }
+            `check that a terminal should always have arity 0`(Arb.variable())
         }
     }
     "Copying" When {
@@ -29,9 +27,9 @@ class VariableSpec : WordSpec({
     }
     "Flattening" should {
         "return a list with itself" {
-            checkAll(Arb.variable()) {
-                it.flatten() shouldBe listOf(it)
-            }
+            `check that a terminal should always flatten to a list with itself`(
+                Arb.variable()
+            )
         }
     }
     "Object identity" When {
@@ -45,7 +43,9 @@ class VariableSpec : WordSpec({
                 variable1 shouldBe variable2
             }
             "be true when comparing a variable with a copy of itself" {
-
+                `check that an object should always be equal to a copy of itself`(
+                    Arb.variable()
+                )
             }
         }
     }
@@ -62,7 +62,15 @@ class VariableSpec : WordSpec({
             }
         }
     }
+    "Size" should {
+        "be 1" {
+            checkAll(Arb.variable()) {
+                it.size shouldBe 1
+            }
+        }
+    }
 })
+
 
 private fun Arb.Companion.keyval(): Arb<Pair<String, Double>> = arbitrary {
     val name = string(codepoints = Codepoint.alphanumeric(), range = 1..10).bind()
