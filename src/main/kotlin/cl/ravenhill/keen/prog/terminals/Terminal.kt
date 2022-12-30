@@ -8,6 +8,9 @@ interface Terminal<T> : Reduceable<T> {
     override val arity: Int
         get() = 0
 
+    override val height: Int
+        get() = 1
+
     override fun flatten() = listOf(this)
 
     override fun deepCopy() = copy()

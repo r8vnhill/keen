@@ -36,11 +36,15 @@ class SingleNodeCrossover<DNA>(probability: Double) :
         reduceable2: Reduceable<DNA>
     ) {
         if (min(reduceable1.size, reduceable2.size) < 2) return
-        val node1 = Core.random.node(reduceable1)
-        val node2 = Core.random.node(reduceable2)
+        val node1 = Core.random.node(reduceable1).deepCopy()
+        val node2 = Core.random.node(reduceable2).deepCopy()
         val parent1 = node1.parent
         val parent2 = node2.parent
-        parent1?.replaceChild(node1, node2)
-        parent2?.replaceChild(node2, node1)
+        if ((parent1?.height ?: 0) + node2.height <= Core.maxProgramDepth) {
+            parent1?.replaceChild(node1, node2)
+        }
+        if ((parent2?.height ?: 0) + node1.height <= Core.maxProgramDepth) {
+            parent2?.replaceChild(node2, node1)
+        }
     }
 }

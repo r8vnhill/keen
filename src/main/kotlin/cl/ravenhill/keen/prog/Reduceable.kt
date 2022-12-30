@@ -16,6 +16,9 @@ import cl.ravenhill.keen.util.ListTree
  * @version 2.0.0
  */
 interface Reduceable<T>: ListTree<Reduceable<T>>, Copyable<Reduceable<T>> {
+    val height: Int
+        get() = children.maxOf { it.height } + 1
+
     var parent: Reduceable<T>?
 
     val arity: Int

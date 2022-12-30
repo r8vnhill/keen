@@ -76,7 +76,6 @@ class Engine<DNA> private constructor(
         private set
 
     var steadyGenerations by Delegates.observable(0) { _, _, new ->
-        // TODO:
         statistics.stream().parallel().forEach { it.steadyGenerations = new }
     }
         private set
