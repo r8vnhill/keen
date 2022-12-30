@@ -34,11 +34,15 @@ abstract class AbstractCrossover<DNA>(probability: Double) :
         individuals: IntArray,
         generation: Int
     ): Int {
+        // Get the parents
         val phenotype1 = population[individuals[0]]
         val phenotype2 = population[individuals[1]]
+        // Get the parents' genotype
         val genotype1 = phenotype1.genotype
         val genotype2 = phenotype2.genotype
+        // Selects the index of the crossover point
         val chromosomeIndex = Core.random.nextInt(min(genotype1.size, genotype2.size))
+        // Get the parents' chromosomes
         val chromosomes1 = genotype1.chromosomes.toMutableList()
         val chromosomes2 = genotype2.chromosomes.toMutableList()
         val genes1 = chromosomes1[chromosomeIndex].genes.toMutableList()

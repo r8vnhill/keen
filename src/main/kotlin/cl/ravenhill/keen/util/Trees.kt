@@ -15,7 +15,7 @@ package cl.ravenhill.keen.util
 interface Tree<T> {
     val depth: Int
     val size: Int
-    var children: List<T>
+    val children: List<T>
 }
 
 /**

@@ -29,9 +29,9 @@ fun main() {
             }
         }
     }) {
-        populationSize = 50
+        populationSize = 100
         limits = listOf(TargetFitness(0.0))
-        alterers = listOf(Mutator(0.5), SingleNodeCrossover(0.5))
+        alterers = listOf(Mutator(0.1), SingleNodeCrossover(0.4))
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }

@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.prog.`check that a reduceable should always be created without a parent`
 import cl.ravenhill.keen.prog.program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Variable
@@ -174,6 +175,14 @@ class AddSpec : WordSpec({
                 add shouldNot haveSameHashCodeAs(copy)
             }
         }
+    }
+    "Parent" should {
+        "not be set at the moment of creation" {
+            `check that a reduceable should always be created without a parent`(
+                Arb.addition()
+            )
+        }
+
     }
     "Size" should {
         "be 3 if the add has ephemeral constants as children" {

@@ -1,6 +1,5 @@
 package cl.ravenhill.keen.prog
 
-import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.util.Copyable
 import cl.ravenhill.keen.util.ListTree
 
@@ -33,10 +32,17 @@ interface Reduceable<T>: ListTree<Reduceable<T>>, Copyable<Reduceable<T>> {
      * Flattens the operation into a list.
      */
     fun flatten(): List<Reduceable<T>>
+    fun replaceChild(original: Reduceable<T>, new: Reduceable<T>)
 
+    /**
+     * List of all the descendants of the operation.
+     */
     val descendants: List<Reduceable<T>>
         get() = flatten().drop(1)
 
     override val size: Int
         get() = descendants.size + 1
+
+    override val depth: Int
+        get() = 1 + (parent?.depth ?: 0)
 }

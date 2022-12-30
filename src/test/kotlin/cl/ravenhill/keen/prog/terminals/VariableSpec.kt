@@ -71,9 +71,11 @@ class VariableSpec : WordSpec({
         }
         "the parent is set" should {
             "be the set parent" {
-                val parent = Add()
-                val variable = Variable<Double>("x", 0)
-                parent[0] = variable
+                checkAll(Arb.variable()) { variable ->
+                    val parent = Add()
+                    parent[0] = variable
+                    variable.parent shouldBe parent
+                }
             }
         }
     }

@@ -33,7 +33,7 @@ fun Arb.Companion.functions() = arbitrary {
 /**
  * Generates a list of terminals randomly picked.
  */
-fun Arb.Companion.terminals(lo: Int = 0, hi: Int = Int.MAX_VALUE) =
+fun Arb.Companion.terminals() =
     arbitrary {
         // We generate a set of constants
         val constants = List(Arb.positiveInt(20).bind()) {

@@ -1,5 +1,7 @@
 package cl.ravenhill.keen.prog.terminals
 
+import cl.ravenhill.keen.prog.`check that a reduceable should always be created without a parent`
+import cl.ravenhill.keen.prog.functions.Add
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -67,6 +69,26 @@ class EphemeralConstantSpec : WordSpec({
                 ) { ephemeralConstant1, ephemeralConstant2 ->
                     assume(ephemeralConstant1(arrayOf()) != ephemeralConstant2(arrayOf()))
                     ephemeralConstant1 shouldNotBe ephemeralConstant2
+                }
+            }
+        }
+    }
+    "Parent" When {
+        "creating a constant" should {
+            "not have a parent" {
+                `check that a reduceable should always be created without a parent`(
+                    Arb.ephemeralConstant()
+                )
+            }
+        }
+        "the parent is set" should {
+            "be the same as the one set" {
+                checkAll(
+                    Arb.ephemeralConstant()
+                ) { ephemeralConstant ->
+                    val add = Add()
+                    add[0] = ephemeralConstant
+                    ephemeralConstant.parent shouldBe add
                 }
             }
         }

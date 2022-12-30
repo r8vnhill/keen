@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.prog.functions
 
+import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.util.validateRange
 
@@ -20,9 +21,7 @@ import cl.ravenhill.keen.util.validateRange
  */
 interface Fun<T> : Reduceable<T> { // Fun
 
-    override var children: List<Reduceable<T>>
-    override val depth: Int
-        get() = children.maxOf { it.depth } + 1
+    override val children: List<Reduceable<T>>
 
     /**
      * Sets the child at the given index.
@@ -60,6 +59,16 @@ abstract class AbstractFun<T>: Fun<T> {
         index.validateRange(0 to arity)
         _children[index] = value
         value.parent = this
+    }
+
+    override fun replaceChild(original: Reduceable<T>, new: Reduceable<T>) {
+        val index = _children.indexOf(original)
+        if (index == -1) {
+            throw InvalidStateException("child") {
+                "The child $original is not a child of this node."
+            }
+        }
+        set(index, new)
     }
 
     override fun flatten() = listOf(this) + _children.flatMap { it.flatten() }

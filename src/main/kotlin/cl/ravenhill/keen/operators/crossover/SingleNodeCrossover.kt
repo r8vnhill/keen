@@ -1,11 +1,10 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.operators.AbstractRecombinatorAlterer
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.prog.Reduceable
-import cl.ravenhill.keen.prog.terminals.Terminal
+import cl.ravenhill.keen.util.node
+import cl.ravenhill.keen.util.validatePredicate
 import kotlin.math.min
 
 /**
@@ -15,44 +14,33 @@ import kotlin.math.min
  * @param DNA  The type of the genes' values.
  */
 class SingleNodeCrossover<DNA>(probability: Double) :
-        AbstractRecombinatorAlterer<Reduceable<DNA>>(probability, 2) {
-    override fun recombine(
-        population: MutableList<Phenotype<Reduceable<DNA>>>,
-        individuals: IntArray,
-        generation: Int
+    AbstractCrossover<Reduceable<DNA>>(probability) {
+
+    override fun crossover(
+        genes1: MutableList<Gene<Reduceable<DNA>>>,
+        genes2: MutableList<Gene<Reduceable<DNA>>>
     ): Int {
-        val genotype1 = population[individuals[0]].genotype
-        val genotype2 = population[individuals[1]].genotype
-        val size = min(genotype1.size, genotype2.size)
-        val chIndex = Core.random.nextInt(size)
-        val chromosomes1 = genotype1.chromosomes.toMutableList()
-        val chromosomes2 = genotype2.chromosomes.toMutableList()
-        crossoverAt(chIndex, chromosomes1 to chromosomes2)
-        population[individuals[0]] = Phenotype(genotype1.duplicate(chromosomes1), generation)
-        population[individuals[1]] = Phenotype(genotype2.duplicate(chromosomes2), generation)
-        return order
-    }
-
-    private fun crossoverAt(
-        chIndex: Int,
-        parents: Pair<MutableList<Chromosome<Reduceable<DNA>>>, MutableList<Chromosome<Reduceable<DNA>>>>
-    ) {
-        val tree1 = parents.first[chIndex]
-        val tree2 = parents.second[chIndex]
-        crossoverTrees(tree1, tree2)
-
+        validatePredicate({ genes1.size == genes2.size }) { "The parents must have the same size" }
+        (genes1 zip genes2).forEach { (g1, g2) ->
+            if (Core.random.nextDouble() < probability) {
+                val reduceable1 = g1.dna
+                val reduceable2 = g2.dna
+                crossoverTrees(reduceable1, reduceable2)
+            }
+        }
+        return 1
     }
 
     private fun crossoverTrees(
-        tree1: Chromosome<Reduceable<DNA>>,
-        tree2: Chromosome<Reduceable<DNA>>
+        reduceable1: Reduceable<DNA>,
+        reduceable2: Reduceable<DNA>
     ) {
-        when {
-            tree1 is Terminal<*> || tree2 is Terminal<*> -> return
-            else -> {
-
-            }
-        }
+        if (min(reduceable1.size, reduceable2.size) < 2) return
+        val node1 = Core.random.node(reduceable1)
+        val node2 = Core.random.node(reduceable2)
+        val parent1 = node1.parent
+        val parent2 = node2.parent
+        parent1?.replaceChild(node1, node2)
+        parent2?.replaceChild(node2, node1)
     }
-
 }
