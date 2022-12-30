@@ -9,6 +9,7 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -29,19 +30,55 @@ class DoubleChromosome private constructor(
 
     private constructor(size: Int, range: Pair<Double, Double>) : this(
         (0 until size).map {
-            DoubleGene(
-                Core.random.nextDouble(range.first, range.second),
-                range
-            )
+            DoubleGene(Core.random.nextDouble(range.first, range.second), range)
         }
     )
+
+
+    override fun verify() = genes.first().verify()
+
+    @Suppress("UNCHECKED_CAST")
+    override fun duplicate(genes: List<Gene<Double>>) =
+        DoubleChromosome(genes as List<DoubleGene>)
 
     class Factory : Chromosome.Factory<Double> {
 
         lateinit var range: Pair<Double, Double>
         var size by Delegates.notNull<Int>()
 
-        override fun make() = DoubleChromosome(size, range)
+        override fun make() = when {
+            size < 1 -> throw InvalidStateException("size") {
+                "The size of a chromosome ($size) must be greater than 0."
+            }
+
+            range.first.isNaN() || range.second.isNaN() -> DoubleChromosome((0 until size).map {
+                DoubleGene(Double.NaN, range)
+            })
+
+            (!range.first.isFinite())
+                    || (!range.second.isFinite()) -> {
+                throw InvalidStateException("range") {
+                    "The range of a chromosome ([${range.first}, ${range.second})) " +
+                            "must be finite."
+                }
+            }
+
+            range.first == range.second -> {
+                throw InvalidStateException("range") {
+                    "The range of a chromosome ([${range.first}, ${range.second})) " +
+                            "must not be empty."
+                }
+            }
+
+            range.first > range.second -> {
+                throw InvalidStateException("range") {
+                    "The range of a chromosome ([${range.first}, ${range.second})) " +
+                            "must be ordered."
+                }
+            }
+
+            else -> DoubleChromosome(size, range)
+        }
 
         override fun toString(): String {
             return "DoubleChromosome.Builder { " +
@@ -49,10 +86,4 @@ class DoubleChromosome private constructor(
                     "range: $range }"
         }
     }
-
-    override fun verify() = genes.first().verify()
-
-    @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<Double>>) =
-        DoubleChromosome(genes as List<DoubleGene>)
 }

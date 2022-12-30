@@ -108,7 +108,7 @@ class BoolChromosomeSpec : WordSpec({
     }
 })
 
-suspend fun checkChromosome(check: suspend (BoolChromosome) -> Unit) {
+private suspend fun checkChromosome(check: suspend (BoolChromosome) -> Unit) {
     checkAll(
         Arb.boolChromosome(100_000)
     ) { data ->
