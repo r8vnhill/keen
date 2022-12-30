@@ -24,7 +24,7 @@ class CharChromosomeSpec : WordSpec({
     "Chromosome factory" When {
         "Creating a chromosome with a given size" should {
             "Return a chromosome with the given size" {
-                checkAll(Arb.nonNegativeInt(100_000)) { size ->
+                checkAll(Arb.nonNegativeInt(1000)) { size ->
                     val chromosome = CharChromosome.Factory().apply {
                         this.size = size
                     }.make()

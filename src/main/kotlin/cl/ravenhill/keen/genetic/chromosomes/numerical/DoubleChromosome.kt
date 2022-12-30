@@ -14,6 +14,7 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
+import java.util.Objects
 import kotlin.properties.Delegates
 
 
@@ -36,7 +37,7 @@ class DoubleChromosome private constructor(
     )
 
 
-    override fun verify() = genes.first().verify()
+    override fun verify() = genes.all { it.verify() }
 
     @Suppress("UNCHECKED_CAST")
     override fun duplicate(genes: List<Gene<Double>>) =
@@ -47,6 +48,8 @@ class DoubleChromosome private constructor(
         other !is DoubleChromosome -> false
         else -> genes == other.genes
     }
+
+    override fun hashCode() = Objects.hash(DoubleChromosome::class, genes, range)
 
     class Factory : Chromosome.Factory<Double> {
 

@@ -2,12 +2,12 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.InvalidStateException
-import cl.ravenhill.keen.genetic.genes.doubleGene
 import cl.ravenhill.keen.util.math.isNotNan
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.*
 import io.kotest.property.assume
@@ -94,7 +94,11 @@ class DoubleChromosomeSpec : WordSpec({
             }
         }
         "return true if both chromosomes have the same genes and range" {
-            checkAll(Arb.positiveInt(1000), Arb.orderedDoublePair(), Arb.long()) { size, range, seed ->
+            checkAll(
+                Arb.positiveInt(1000),
+                Arb.orderedDoublePair(),
+                Arb.long()
+            ) { size, range, seed ->
                 Core.random = Random(seed)
                 val chromosome1 = makeChromosome(size, range)
                 Core.random = Random(seed)
@@ -103,13 +107,19 @@ class DoubleChromosomeSpec : WordSpec({
             }
         }
         "return false if both chromosomes have different genes" {
-            checkAll(Arb.doubleChromosome(), Arb.doubleChromosome()) { chromosome1, chromosome2 ->
+            checkAll(
+                Arb.doubleChromosome(),
+                Arb.doubleChromosome()
+            ) { chromosome1, chromosome2 ->
                 assume(chromosome1.genes != chromosome2.genes)
                 chromosome1 shouldNotBe chromosome2
             }
         }
         "return false if both chromosomes have different range" {
-            checkAll(Arb.doubleChromosome(), Arb.doubleChromosome()) { chromosome1, chromosome2 ->
+            checkAll(
+                Arb.doubleChromosome(),
+                Arb.doubleChromosome()
+            ) { chromosome1, chromosome2 ->
                 assume(chromosome1.range != chromosome2.range)
                 chromosome1 shouldNotBe chromosome2
             }
@@ -117,21 +127,40 @@ class DoubleChromosomeSpec : WordSpec({
     }
     "Hashing" should {
         "return the same hash code for the same chromosome" {
-            TODO()
+            checkAll(Arb.doubleChromosome()) { chromosome ->
+                chromosome shouldHaveSameHashCodeAs chromosome
+            }
         }
         "return the same hash code for two chromosomes with the same genes and range" {
-            TODO()
+            checkAll(
+                Arb.positiveInt(1000),
+                Arb.orderedDoublePair(),
+                Arb.long()
+            ) { size, range, seed ->
+                Core.random = Random(seed)
+                val chromosome1 = makeChromosome(size, range)
+                Core.random = Random(seed)
+                val chromosome2 = makeChromosome(size, range)
+                chromosome1 shouldHaveSameHashCodeAs chromosome2
+            }
         }
         "return different hash codes for two chromosomes with different genes" {
-            TODO()
+            checkAll(
+                Arb.doubleChromosome(),
+                Arb.doubleChromosome()
+            ) { chromosome1, chromosome2 ->
+                assume(chromosome1.genes != chromosome2.genes)
+                chromosome1 shouldNotBe chromosome2
+            }
         }
-    }
-    "Verifying" should {
-        "return true if the chromosome is valid" {
-            TODO()
-        }
-        "return false if the chromosome is not valid" {
-            TODO()
+        "return different hash codes for two chromosomes with different range" {
+            checkAll(
+                Arb.doubleChromosome(),
+                Arb.doubleChromosome()
+            ) { chromosome1, chromosome2 ->
+                assume(chromosome1.range != chromosome2.range)
+                chromosome1 shouldNotBe chromosome2
+            }
         }
     }
 })
