@@ -1,17 +1,24 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.InvalidStateException
+import cl.ravenhill.keen.genetic.genes.doubleGene
 import cl.ravenhill.keen.util.math.isNotNan
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.*
 import io.kotest.property.assume
 import io.kotest.property.checkAll
+import kotlin.random.Random
 
 
 class DoubleChromosomeSpec : WordSpec({
+    afterAny {
+        Core.random = Random.Default
+    }
     "Chromosome factory" When {
         "creating a chromosome with a given size and range" should {
             "return a chromosome with the given size" {
@@ -73,22 +80,39 @@ class DoubleChromosomeSpec : WordSpec({
         }
     }
     "Duplicating" should {
-        "return a new chromosome with the same genes" {
-            TODO()
+        "return a new chromosome with the given genes" {
+            checkAll(Arb.doubleChromosome()) { chromosome ->
+                val duplicated = chromosome.duplicate(chromosome.genes)
+                duplicated shouldBe chromosome
+            }
         }
     }
     "Equality" should {
         "return true if both chromosomes are the same object" {
-            TODO()
+            checkAll(Arb.doubleChromosome()) { chromosome ->
+                chromosome shouldBe chromosome
+            }
         }
         "return true if both chromosomes have the same genes and range" {
-            TODO()
+            checkAll(Arb.positiveInt(1000), Arb.orderedDoublePair(), Arb.long()) { size, range, seed ->
+                Core.random = Random(seed)
+                val chromosome1 = makeChromosome(size, range)
+                Core.random = Random(seed)
+                val chromosome2 = makeChromosome(size, range)
+                chromosome1 shouldBe chromosome2
+            }
         }
         "return false if both chromosomes have different genes" {
-            TODO()
+            checkAll(Arb.doubleChromosome(), Arb.doubleChromosome()) { chromosome1, chromosome2 ->
+                assume(chromosome1.genes != chromosome2.genes)
+                chromosome1 shouldNotBe chromosome2
+            }
         }
         "return false if both chromosomes have different range" {
-            TODO()
+            checkAll(Arb.doubleChromosome(), Arb.doubleChromosome()) { chromosome1, chromosome2 ->
+                assume(chromosome1.range != chromosome2.range)
+                chromosome1 shouldNotBe chromosome2
+            }
         }
     }
     "Hashing" should {
@@ -120,6 +144,12 @@ private fun Arb.Companion.orderedDoublePair() = arbitrary {
     } else {
         second to first
     }
+}
+
+private fun Arb.Companion.doubleChromosome() = arbitrary {
+    val size = Arb.int(1, 1000).bind()
+    val range = Arb.orderedDoublePair().bind()
+    makeChromosome(size, range)
 }
 
 private fun makeChromosome(size: Int, range: Pair<Double, Double>) =

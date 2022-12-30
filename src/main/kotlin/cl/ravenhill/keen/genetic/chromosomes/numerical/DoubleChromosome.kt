@@ -25,13 +25,14 @@ import kotlin.properties.Delegates
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
 class DoubleChromosome private constructor(
-    genes: List<DoubleGene>
+    genes: List<DoubleGene>,
+    val range: Pair<Double, Double>
 ) : AbstractChromosome<Double>(genes) {
 
     private constructor(size: Int, range: Pair<Double, Double>) : this(
         (0 until size).map {
             DoubleGene(Core.random.nextDouble(range.first, range.second), range)
-        }
+        }, range
     )
 
 
@@ -39,7 +40,13 @@ class DoubleChromosome private constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun duplicate(genes: List<Gene<Double>>) =
-        DoubleChromosome(genes as List<DoubleGene>)
+        DoubleChromosome(genes as List<DoubleGene>, range)
+
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is DoubleChromosome -> false
+        else -> genes == other.genes
+    }
 
     class Factory : Chromosome.Factory<Double> {
 
@@ -53,7 +60,7 @@ class DoubleChromosome private constructor(
 
             range.first.isNaN() || range.second.isNaN() -> DoubleChromosome((0 until size).map {
                 DoubleGene(Double.NaN, range)
-            })
+            }, range)
 
             (!range.first.isFinite())
                     || (!range.second.isFinite()) -> {
