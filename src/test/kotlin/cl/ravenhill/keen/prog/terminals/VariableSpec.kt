@@ -1,5 +1,8 @@
 package cl.ravenhill.keen.prog.terminals
 
+import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.prog.`check that a reduceable should always be created without a parent`
+import cl.ravenhill.keen.prog.functions.Add
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -58,6 +61,22 @@ class VariableSpec : WordSpec({
             }
         }
     }
+    "Parent" When {
+        "creating a variable" should {
+            "be null" {
+                `check that a reduceable should always be created without a parent`(
+                    Arb.variable()
+                )
+            }
+        }
+        "the parent is set" should {
+            "be the set parent" {
+                val parent = Add()
+                val variable = Variable<Double>("x", 0)
+                parent[0] = variable
+            }
+        }
+    }
     "Reducing a variable" should {
         "return the value of the variable" {
             checkAll(
@@ -79,6 +98,8 @@ class VariableSpec : WordSpec({
         }
     }
 })
+
+
 
 
 private fun Arb.Companion.keyval(): Arb<Pair<String, Double>> = arbitrary {

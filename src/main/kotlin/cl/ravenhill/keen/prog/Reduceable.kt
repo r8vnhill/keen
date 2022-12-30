@@ -10,12 +10,15 @@ import cl.ravenhill.keen.util.ListTree
  * @param T The type of the value.
  * @property arity The number of arguments the operation takes.
  * @property depth The depth of the operation in the tree.
+ * @property parent The parent of the operation (``null`` if it is the root).
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
  * @version 2.0.0
  */
 interface Reduceable<T>: ListTree<Reduceable<T>>, Copyable<Reduceable<T>> {
+    var parent: Reduceable<T>?
+
     val arity: Int
 
     /**

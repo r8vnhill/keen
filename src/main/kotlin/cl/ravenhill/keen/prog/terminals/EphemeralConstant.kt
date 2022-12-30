@@ -6,6 +6,9 @@ import java.util.*
 
 class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
     override val arity: Int = 0
+
+    override var parent: Reduceable<T>? = null
+
     override fun copy() = EphemeralConstant(generator)
     override var children: List<Reduceable<T>> = emptyList()
 

@@ -13,8 +13,12 @@ import cl.ravenhill.keen.util.validateRange
  * @param T The type of the value.
  * @property children The children of the operation.
  * @property depth The depth of the reduceable tree.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
  */
-interface Fun<T> : Reduceable<T> {
+interface Fun<T> : Reduceable<T> { // Fun
 
     override var children: List<Reduceable<T>>
     override val depth: Int
@@ -30,6 +34,10 @@ interface Fun<T> : Reduceable<T> {
  * Abstract class for all functions.
  * @param T The type of the value.
  * @property children The children of the operation.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
  */
 abstract class AbstractFun<T>: Fun<T> {
 
@@ -46,9 +54,12 @@ abstract class AbstractFun<T>: Fun<T> {
             _children.addAll(value)
         }
 
+    override var parent: Reduceable<T>? = null
+
     override fun set(index: Int, value: Reduceable<T>) {
         index.validateRange(0 to arity)
         _children[index] = value
+        value.parent = this
     }
 
     override fun flatten() = listOf(this) + _children.flatMap { it.flatten() }
