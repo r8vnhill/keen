@@ -28,7 +28,7 @@ class ProgramGene<DNA> internal constructor(
         get() = dna.depth
 
     init {
-        if (program.depth > Core.maxProgramDepth) throw InvalidStateException("program") {
+        if (program.height > Core.maxProgramDepth) throw InvalidStateException("program") {
             "The program's depth (${program.depth}) is greater than the maximum " +
                     "allowed depth (${Core.maxProgramDepth})."
         }

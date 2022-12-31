@@ -113,8 +113,8 @@ private fun Arb.Companion.keyval(): Arb<Pair<String, Double>> = arbitrary {
 /**
  * Constructs an arbitrary variable.
  */
-fun Arb.Companion.variable() = arbitrary {
+fun Arb.Companion.variable(index: Int = -1) = arbitrary {
     val sym = Arb.string(1).bind()
-    val i = Arb.nonNegativeInt().bind()
+    val i = if (index == -1) Arb.int().bind() else index
     Variable<Double>(sym, i)
 }

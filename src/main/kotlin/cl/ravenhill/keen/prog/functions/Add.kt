@@ -31,7 +31,7 @@ class Add : AbstractFun<Double>() {
         mutableListOf<Reduceable<Double>>(EphemeralConstant { 0.0 },
             EphemeralConstant { 0.0 })
 
-    override fun copy() = Add()
+    override fun copy() = Add().also { it.parent = parent }
 
     override fun invoke(args: Array<out Double>) = _children[0](args) + _children[1](args)
 

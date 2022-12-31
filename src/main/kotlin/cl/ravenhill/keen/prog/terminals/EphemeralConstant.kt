@@ -9,18 +9,24 @@ class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
 
     override var parent: Reduceable<T>? = null
 
+    val value: T = generator()
+
     override fun copy() = EphemeralConstant(generator)
+
+    override fun deepCopy() =
+        EphemeralConstant { value }.also { it.parent = parent }
+
     override var children: List<Reduceable<T>> = emptyList()
 
-    override fun invoke(args: Array<out T>) = generator()
+    override fun invoke(args: Array<out T>) = value
 
-    override fun toString() = "${generator()}"
+    override fun toString() = "$value"
 
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is EphemeralConstant<*> -> false
-        else -> generator() == other.generator()
+        else -> value == other.value
     }
 
-    override fun hashCode() = Objects.hash(EphemeralConstant::class, generator())
+    override fun hashCode() = Objects.hash(EphemeralConstant::class, value)
 }

@@ -44,7 +44,9 @@ interface Reduceable<T>: ListTree<Reduceable<T>>, Copyable<Reduceable<T>> {
         get() = flatten().drop(1)
 
     override val size: Int
-        get() = descendants.size + 1
+        get() {
+            return descendants.size + 1
+        }
 
     override val depth: Int
         get() = 1 + (parent?.depth ?: 0)
