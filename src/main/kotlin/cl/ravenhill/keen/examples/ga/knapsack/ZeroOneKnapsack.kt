@@ -58,7 +58,7 @@ fun main() {
     }) {
         populationSize = 10
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
-        limits = listOf(SteadyGenerations(10))
+        limits = listOf(SteadyGenerations(20))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
     val result = engine.run()

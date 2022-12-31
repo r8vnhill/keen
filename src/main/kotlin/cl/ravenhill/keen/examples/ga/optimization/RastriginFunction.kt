@@ -55,7 +55,7 @@ fun main() {
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.1), MeanCrossover(0.6))
+        alterers = listOf(Mutator(0.03), MeanCrossover(0.15))
         limits = listOf(SteadyGenerations(20))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
