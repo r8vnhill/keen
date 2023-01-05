@@ -8,6 +8,9 @@
 
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.Core.EvolutionLogger.debug
+import cl.ravenhill.keen.Core.EvolutionLogger.info
+import cl.ravenhill.keen.Core.EvolutionLogger.trace
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -47,7 +50,6 @@ import kotlin.properties.Delegates
  * @property steadyGenerations  The number of generations that the fitness has not changed
  */
 class Engine<DNA> private constructor(
-    private val fitnessFunction: (Genotype<DNA>) -> Double,
     private val genotype: Genotype.Factory<DNA>,
     private val populationSize: Int,
     private val offspringFraction: Double,
@@ -68,7 +70,13 @@ class Engine<DNA> private constructor(
         statistics.stream().parallel().forEach { it.population = population }
     }
     private var evolutionResult: EvolutionResult<DNA>
-            by Delegates.observable(EvolutionResult(optimizer, listOf(), 0)) { _, _, new ->
+            by Delegates.observable(
+                EvolutionResult(
+                    optimizer,
+                    listOf(),
+                    0
+                )
+            ) { _, _, new ->
                 statistics.stream().parallel().forEach { it.evolutionResult = new }
             }
 
@@ -109,14 +117,23 @@ class Engine<DNA> private constructor(
      */
     fun run(): EvolutionResult<DNA> {
         val initTime = clock.millis()
-        var evolution = EvolutionStart.empty<DNA>()
+        info { "Starting evolution process." }
+        var evolution =
+            EvolutionStart.empty<DNA>().apply { debug { "Started an empty evolution." } }
         var result = EvolutionResult(optimizer, evolution.population, generation)
+        debug { "Optimizer: ${result.optimizer}" }
+        debug { "Best: ${result.best}" }
         while (limits.none { it(this) }) { // While none of the limits are met
-            result = evolve(evolution)
+            result = evolve(evolution).apply {
+                debug { "Generation: $generation" }
+                debug { "Best: $best" }
+            }
             bestFitness = result.best?.fitness ?: Double.NaN
             evolution = result.next()
         }
-        statistics.stream().parallel().forEach { it.evolutionTime = clock.millis() - initTime }
+        statistics.stream().parallel()
+            .forEach { it.evolutionTime = clock.millis() - initTime }
+        info { "Evolution process finished" }
         return result
     }
 
@@ -141,31 +158,40 @@ class Engine<DNA> private constructor(
         val initTime = clock.millis()
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
+        trace { "Pre-processing evolution start." }
         val interceptedStart = interceptor.before(start)
         // (2) The population is created from the starting state
+        trace { "Creating population." }
         val evolution = evolutionStart(interceptedStart)
         // (3) The population's fitness is evaluated
+        trace { "Evaluating population." }
         val evaluatedPopulation = evaluate(evolution)
         // (4) The offspring is selected from the evaluated population
+        trace { "Selecting offspring." }
         val offspring = selectOffspring(evaluatedPopulation)
         // (5) The survivors are selected from the evaluated population
+        trace { "Selecting survivors." }
         val survivors = selectSurvivors(evaluatedPopulation)
         // (6) The offspring is altered
+        trace { "Altering offspring." }
         val alteredOffspring = alter(offspring, evolution)
-        // TODO: Filter population
         // (7) The altered offspring is merged with the survivors
+        trace { "Merging offspring and survivors." }
         val nextPopulation = survivors.thenCombineAsync(
             alteredOffspring,
             { s, o -> s + o.population },
             executor
         )
         // (8) The next population is evaluated
+        trace { "Evaluating next population." }
         val pop = evaluate(EvolutionStart(nextPopulation.join(), generation), true)
-        evolutionResult = EvolutionResult(optimizer, pop, generation++)
+        evolutionResult = EvolutionResult(optimizer, pop, ++generation)
         fittest = evolutionResult.best
         // (9) The result of the evolution is post-processed
+        trace { "Post-processing evolution result." }
         val afterResult = interceptor.after(evolutionResult)
-        statistics.stream().parallel().forEach { it.generationTimes.add(clock.millis() - initTime) }
+        statistics.stream().parallel()
+            .forEach { it.generationTimes.add(clock.millis() - initTime) }
         return afterResult
     }
 
@@ -175,22 +201,28 @@ class Engine<DNA> private constructor(
      * @param start the starting state of the evolution at this generation.
      * @return the initial population of the evolution.
      */
-    private fun evolutionStart(start: EvolutionStart<DNA>) = if (start.population.isEmpty()) {
-        val generation = start.generation
-        val stream =
-            Stream.concat(
-                start.population.stream(),
-                Stream.generate { genotype.make() }
-                    .map { Phenotype(it, generation) }
-            )
-        EvolutionStart(
-            stream.limit(populationSize.toLong())
-                .collect(Collectors.toList()),
-            generation
-        )
-    } else {
-        start
-    }
+    private fun evolutionStart(start: EvolutionStart<DNA>) =
+        if (start.population.isEmpty()) {
+            info { "Initial population is empty, creating a new one." }
+            val generation = start.generation
+            val stream =
+                Stream.concat(
+                    start.population.stream(),
+                    Stream.generate { genotype.make() }
+                        .map { Phenotype(it, generation) }
+                )
+            EvolutionStart(
+                stream.limit(populationSize.toLong())
+                    .collect(Collectors.toList()),
+                generation
+            ).also {
+                info { "Created a new population." }
+                debug { "Generation: ${it.generation}" }
+            }
+        } else {
+            debug { "Initial population is not empty, using it." }
+            start
+        }
 
     /**
      * Evaluates the fitness of the population.
@@ -200,7 +232,11 @@ class Engine<DNA> private constructor(
      * @return the evaluated population.
      */
     private fun evaluate(evolution: EvolutionStart<DNA>, force: Boolean = false) =
-        if (force || evolution.isDirty) {
+        if (force.also {
+                if (it) trace { "Forcing fitness evaluation." }
+            } || evolution.isDirty.also {
+                if (it) trace { "Population is dirty, evaluating fitness." }
+            }) {
             evaluator(evolution.population).also {
                 validatePredicate({ populationSize == it.size }) {
                     "Evaluated population size [${it.size}] doesn't match expected population " +
@@ -376,13 +412,13 @@ class Engine<DNA> private constructor(
         var offspringSelector = selector
 
         var offspringFraction = 0.6
-            set(value) = value.validateRange(0.0 to 1.0, "Offspring fraction").let { field = it }
+            set(value) = value.validateRange(0.0 to 1.0, "Offspring fraction")
+                .let { field = it }
         // endregion    ----------------------------------------------------------------------------
 
         var statistics: List<Statistic<DNA>> = listOf(StatisticCollector())
 
         fun build() = Engine(
-            fitnessFunction = fitnessFunction,
             genotype = genotype,
             populationSize = populationSize,
             offspringFraction = offspringFraction,

@@ -3,18 +3,20 @@ package cl.ravenhill.keen.examples.ga
 import cl.ravenhill.keen.Builders.Chromosomes.ints
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.operators.mutator.SwapMutator
-import cl.ravenhill.keen.util.math.eq
+import cl.ravenhill.keen.util.logging.Level
+import cl.ravenhill.keen.util.logging.fileChannel
+import cl.ravenhill.keen.util.logging.logger
+import cl.ravenhill.keen.util.logging.stdoutChannel
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import kotlin.math.abs
-import kotlin.math.ln
 
 private const val TARGET = 420
 
@@ -35,8 +37,17 @@ private fun absDiff(genotype: Genotype<Int>) =
  *
  */
 fun main() {
+    Core.EvolutionLogger.logger = logger("Evolution") {
+        level = Level.Trace()
+        stdoutChannel {}
+        fileChannel { filename = "evolution.log" }
+    }
     val engine = engine(::absDiff, genotype {
-        chromosome { ints { size = 10; range = 1 to 200; filter = { it in candidateFactors } } }
+        chromosome {
+            ints {
+                size = 10; range = 1 to 200; filter = { it in candidateFactors }
+            }
+        }
     }) {
         populationSize = 5000
         alterers = listOf(Mutator(0.3), SinglePointCrossover(0.3))
@@ -51,7 +62,7 @@ fun main() {
         append(result.best?.genotype?.flatten()?.filter { it > 1 }
             ?.joinToString(" * "))
     })
-    (engine.statistics[1] as StatisticPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
+//    (engine.statistics[1] as StatisticPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
 }
 
 private val candidateFactors = listOf(

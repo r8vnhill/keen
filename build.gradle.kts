@@ -15,6 +15,9 @@ group = "cl.ravenhill"
 version = projectVersion
 
 repositories {
+    maven("https://www.jitpack.io") {
+        name = "jitpack"
+    }
     mavenCentral()
 }
 
@@ -22,14 +25,15 @@ dependencies {
     // Kotlin / Kotlinx
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     // Lang3
     implementation("org.apache.commons:commons-lang3:3.12.0")
     // Tablesaw
     api("tech.tablesaw:tablesaw-core:0.43.1")
     @Suppress("VulnerableLibrariesLocal")
     api("tech.tablesaw:tablesaw-jsplot:0.43.1")
-    // SLF4J
-    implementation("org.slf4j:slf4j-simple:2.0.5")
+    // Logging
+    implementation("org.slf4j:slf4j-simple:2.0.5")  // SLF4J (Tablesaw)
     // Kotest
     implementation("io.kotest:kotest-framework-datatest:5.5.4")
     implementation("io.kotest:kotest-assertions-core:5.5.4")

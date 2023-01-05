@@ -8,13 +8,21 @@
 
 package cl.ravenhill.keen
 
+import cl.ravenhill.keen.Core.DEFAULT_MAX_PROGRAM_DEPTH
+import cl.ravenhill.keen.Core.maxProgramDepth
+import cl.ravenhill.keen.Core.random
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.util.logging.Level
+import cl.ravenhill.keen.util.logging.logger
+import cl.ravenhill.keen.util.logging.stdoutChannel
 import kotlin.random.Random
 
 /**
  * The `Core` object contains the functions and variables that are used by the rest of the library.
  *
+ * @property logger The logger used by the library.
  * @property maxProgramDepth The maximum depth of a program tree.
+ * @property DEFAULT_MAX_PROGRAM_DEPTH The default maximum depth of a program tree (7).
  * @property random The random number generator.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
@@ -25,6 +33,33 @@ object Core {
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
     var random: Random = Random.Default
 
+    object EvolutionLogger {
+        var level: Level = Level.Warn()
+            set(value) {
+                field = value
+                logger.level = value
+            }
+        var logger = logger("Evolution") {
+            level = Level.Warn()
+            stdoutChannel {
+            }
+        }
+
+        /**
+         * Logs a message at the Trace level.
+         */
+        fun trace(lazyMessage: () -> String) = logger.trace(lazyMessage)
+
+        /**
+         * Logs a message at the Debug level.
+         */
+        fun debug(lazyMessage: () -> String) = logger.debug(lazyMessage)
+
+        /**
+         * Logs a message at the Info level.
+         */
+        fun info(lazyMessage: () -> String) = logger.info(lazyMessage)
+    }
 }
 
 typealias Population<DNA> = List<Phenotype<DNA>>

@@ -8,7 +8,7 @@
 
 package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.keen.internals.Verifiable
+import cl.ravenhill.keen.util.Verifiable
 
 /**
  * Any unit of genetic material used by the [cl.ravenhill.keen.evolution.Evolver].
