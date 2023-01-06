@@ -247,6 +247,7 @@ class Engine<DNA> private constructor(
                 }
             }
         } else {
+            trace { "Population is not dirty, skipping fitness evaluation." }
             evolution.population
         }
 
@@ -258,6 +259,7 @@ class Engine<DNA> private constructor(
      */
     private fun selectOffspring(population: Population<DNA>) =
         asyncSelect {
+            debug { "Selecting offspring." }
             val initTime = clock.millis()
             offspringSelector(
                 population,
@@ -266,6 +268,7 @@ class Engine<DNA> private constructor(
             ).also {
                 statistics.stream().parallel()
                     .forEach { it.offspringSelectionTime.add(clock.millis() - initTime) }
+                debug { "Selected offspring." }
             }
         }
 
@@ -277,6 +280,7 @@ class Engine<DNA> private constructor(
      */
     private fun selectSurvivors(population: List<Phenotype<DNA>>) =
         asyncSelect {
+            debug { "Selecting survivors." }
             val initTime = clock.millis()
             survivorSelector(
                 population,
@@ -313,6 +317,7 @@ class Engine<DNA> private constructor(
         population: CompletableFuture<Population<DNA>>,
         evolution: EvolutionStart<DNA>
     ) = population.thenApplyAsync({
+        debug { "Altering offspring." }
         val initTime = clock.millis()
         alterer(it, evolution.generation)
             .also {

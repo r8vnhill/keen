@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.prog.terminals
 
+import cl.ravenhill.keen.util.Copyable
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.checkAll

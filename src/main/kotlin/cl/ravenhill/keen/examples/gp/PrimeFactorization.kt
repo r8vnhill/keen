@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.examples.gp
 
 import cl.ravenhill.keen.Builders
+import cl.ravenhill.keen.Builders.Chromosomes.program
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
@@ -24,7 +25,7 @@ fun main() {
     Core.maxProgramDepth = 3
     val engine = Builders.engine(fitness(6), Builders.genotype {
         chromosome {
-            Builders.Chromosomes.program {
+            program {
                 function { Mul() }
                 terminal { EphemeralConstant { 2.0 } }
                 terminal { EphemeralConstant { 3.0 } }
@@ -35,7 +36,7 @@ fun main() {
         limits = listOf(GenerationCount(100))
         alterers = listOf(Mutator(0.1), SingleNodeCrossover(0.4))
         optimizer = FitnessMinimizer()
-        statistics = listOf(StatisticCollector(), StatisticPlotter())
+        statistics = listOf(StatisticCollector()/*, StatisticPlotter()*/)
     }
     val result = engine.run()
     println(engine.statistics.first())

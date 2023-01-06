@@ -40,6 +40,8 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
     testImplementation("io.kotest:kotest-property:5.5.4")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.4")
+    // System Lambda
+    testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
     // Dokka
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
 }
