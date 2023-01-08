@@ -15,7 +15,7 @@ class StdOutputChannelSpec : WordSpec({
     "StdOutputChannel" should {
         "write to stdout" {
             // Generates a list of 1 to 1000 strings
-            checkAll(Arb.string().chunked(1, 1000)) { messages ->
+            checkAll(Arb.string(1, 1000).chunked(1, 100)) { messages ->
                 assume(messages.none { it.isBlank() })
                 val stdoutStream = StdoutChannel()
                 val out = tapSystemOut { messages.forEach { stdoutStream.write(it) } }

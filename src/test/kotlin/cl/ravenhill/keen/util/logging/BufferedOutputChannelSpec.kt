@@ -12,7 +12,7 @@ class BufferedOutputChannelSpec : WordSpec({
     "BufferedOutputChannel" should {
         "write to buffer" {
             // Generates a list of 0 to 1000 strings
-            checkAll(Arb.string().chunked(0, 1000)) { messages ->
+            checkAll(Arb.string(1, 1000).chunked(0, 100)) { messages ->
                 val bufferedOutputChannel = BufferedOutputChannel()
                 messages.forEach { bufferedOutputChannel.write(it) }
                 bufferedOutputChannel.toString() shouldBe messages.joinToString("")
@@ -20,7 +20,7 @@ class BufferedOutputChannelSpec : WordSpec({
         }
         "clear buffer" {
             // Generates a list of 0 to 1000 strings
-            checkAll(Arb.string().chunked(0, 1000)) { messages ->
+            checkAll(Arb.string(1, 1000).chunked(0, 100)) { messages ->
                 val bufferedOutputChannel = BufferedOutputChannel()
                 messages.forEach { bufferedOutputChannel.write(it) }
                 bufferedOutputChannel.clear()

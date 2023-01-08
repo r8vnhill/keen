@@ -14,8 +14,7 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import java.util.stream.Collectors
-import java.util.stream.IntStream
+import kotlinx.coroutines.runBlocking
 import kotlin.properties.Delegates
 
 /**
@@ -36,15 +35,34 @@ class IntChromosome private constructor(
      * @param range The range of the genes.
      * @param filter The filter to apply to the genes.
      */
-    private constructor(size: Int, range: Pair<Int, Int>, filter: (Int) -> Boolean) : this(
-        (0 until size).map {
-            val rangeStream = IntStream.range(range.first, range.second).boxed()
-            IntGene(
-                rangeStream.filter { filter(it) }.collect(Collectors.toList()).random(Core.random),
-                range,
-                filter
-            )
+    private constructor(
+        size: Int,
+        range: Pair<Int, Int>,
+        filter: (Int) -> Boolean
+    ) : this(
+        runBlocking {
+            List(size) {
+                IntGene(
+                    sequence {
+                        while (true) {
+                            yield(Core.random.nextInt(range.first, range.second))
+                        }
+                    }.filter(filter).first(),
+                    range,
+                    filter
+                )
+            }
         }
+//        IntStream.range(range.first, range.second)
+//            .boxed()
+//            .filter(filter)
+//            .collect(Collectors.toList())
+//            .let { list ->
+//                IntStream.range(0, size)
+//                    .mapToObj { list[Core.random.nextInt(list.size)] }
+//                    .map { IntGene(it, range, filter) }
+//                    .collect(Collectors.toList())
+//            }
     )
 
     @Suppress("UNCHECKED_CAST")

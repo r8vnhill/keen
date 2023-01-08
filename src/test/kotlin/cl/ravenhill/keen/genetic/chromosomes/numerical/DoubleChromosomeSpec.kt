@@ -23,12 +23,12 @@ class DoubleChromosomeSpec : WordSpec({
         "creating a chromosome with a given size and range" should {
             "return a chromosome with the given size" {
                 checkAll(Arb.int(1, 100_000), Arb.orderedDoublePair()) { size, range ->
-                    makeChromosome(size, range).size shouldBe size
+                    `create a new chromosome using it's factory`(size, range).size shouldBe size
                 }
             }
             "return a chromosome with genes in the given range" {
                 checkAll(Arb.int(1, 100_000), Arb.orderedDoublePair()) { size, range ->
-                    makeChromosome(size, range).genes.forEach { gene ->
+                    `create a new chromosome using it's factory`(size, range).genes.forEach { gene ->
                         (gene.dna < range.second) shouldBe true
                         (gene.dna >= range.first) shouldBe true
                     }
@@ -36,10 +36,10 @@ class DoubleChromosomeSpec : WordSpec({
             }
             "return a chromosome with NaN genes if the range is NaN" {
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, bound ->
-                    makeChromosome(size, Pair(Double.NaN, bound)).genes.forEach { gene ->
+                    `create a new chromosome using it's factory`(size, Pair(Double.NaN, bound)).genes.forEach { gene ->
                         gene.dna.isNaN() shouldBe true
                     }
-                    makeChromosome(size, Pair(bound, Double.NaN)).genes.forEach { gene ->
+                    `create a new chromosome using it's factory`(size, Pair(bound, Double.NaN)).genes.forEach { gene ->
                         gene.dna.isNaN() shouldBe true
                     }
                 }
@@ -47,7 +47,7 @@ class DoubleChromosomeSpec : WordSpec({
             "throw an exception if the size is less than 1" {
                 checkAll(Arb.nonPositiveInt(), Arb.orderedDoublePair()) { size, range ->
                     shouldThrow<InvalidStateException> {
-                        makeChromosome(size, range)
+                        `create a new chromosome using it's factory`(size, range)
                     }
                 }
             }
@@ -55,10 +55,10 @@ class DoubleChromosomeSpec : WordSpec({
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, bound ->
                     assume(bound.isNotNan())
                     shouldThrow<InvalidStateException> {
-                        makeChromosome(size, Pair(Double.NEGATIVE_INFINITY, bound))
+                        `create a new chromosome using it's factory`(size, Pair(Double.NEGATIVE_INFINITY, bound))
                     }
                     shouldThrow<InvalidStateException> {
-                        makeChromosome(size, Pair(bound, Double.POSITIVE_INFINITY))
+                        `create a new chromosome using it's factory`(size, Pair(bound, Double.POSITIVE_INFINITY))
                     }
                 }
             }
@@ -66,14 +66,14 @@ class DoubleChromosomeSpec : WordSpec({
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, bound ->
                     assume(bound.isNotNan())
                     shouldThrow<InvalidStateException> {
-                        makeChromosome(size, Pair(bound, bound))
+                        `create a new chromosome using it's factory`(size, Pair(bound, bound))
                     }
                 }
             }
             "throw an exception if the range is reversed" {
                 checkAll(Arb.int(1, 100_000), Arb.orderedDoublePair()) { size, range ->
                     shouldThrow<InvalidStateException> {
-                        makeChromosome(size, range.second to range.first)
+                        `create a new chromosome using it's factory`(size, range.second to range.first)
                     }
                 }
             }
@@ -100,9 +100,9 @@ class DoubleChromosomeSpec : WordSpec({
                 Arb.long()
             ) { size, range, seed ->
                 Core.random = Random(seed)
-                val chromosome1 = makeChromosome(size, range)
+                val chromosome1 = `create a new chromosome using it's factory`(size, range)
                 Core.random = Random(seed)
-                val chromosome2 = makeChromosome(size, range)
+                val chromosome2 = `create a new chromosome using it's factory`(size, range)
                 chromosome1 shouldBe chromosome2
             }
         }
@@ -138,9 +138,9 @@ class DoubleChromosomeSpec : WordSpec({
                 Arb.long()
             ) { size, range, seed ->
                 Core.random = Random(seed)
-                val chromosome1 = makeChromosome(size, range)
+                val chromosome1 = `create a new chromosome using it's factory`(size, range)
                 Core.random = Random(seed)
-                val chromosome2 = makeChromosome(size, range)
+                val chromosome2 = `create a new chromosome using it's factory`(size, range)
                 chromosome1 shouldHaveSameHashCodeAs chromosome2
             }
         }
@@ -178,10 +178,10 @@ private fun Arb.Companion.orderedDoublePair() = arbitrary {
 private fun Arb.Companion.doubleChromosome() = arbitrary {
     val size = Arb.int(1, 1000).bind()
     val range = Arb.orderedDoublePair().bind()
-    makeChromosome(size, range)
+    `create a new chromosome using it's factory`(size, range)
 }
 
-private fun makeChromosome(size: Int, range: Pair<Double, Double>) =
+private fun `create a new chromosome using it's factory`(size: Int, range: Pair<Double, Double>) =
     DoubleChromosome.Factory().apply {
         this.size = size
         this.range = range

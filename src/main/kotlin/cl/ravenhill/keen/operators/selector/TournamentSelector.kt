@@ -12,6 +12,9 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.SelectorException
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import java.util.Objects
 import java.util.stream.Stream
 

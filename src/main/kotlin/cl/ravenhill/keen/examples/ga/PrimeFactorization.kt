@@ -37,11 +37,6 @@ private fun absDiff(genotype: Genotype<Int>) =
  *
  */
 fun main() {
-    Core.EvolutionLogger.logger = logger("Evolution") {
-        level = Level.Trace()
-        stdoutChannel {}
-        fileChannel { filename = "evolution.log" }
-    }
     val engine = engine(::absDiff, genotype {
         chromosome {
             ints {
