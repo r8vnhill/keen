@@ -42,3 +42,17 @@ interface Clearable {
      */
     fun clear()
 }
+
+/**
+ * Mixin interface for objects that can be filtered.
+ *
+ * @param T The type of the object to filter.
+ * @property predicate The predicate to filter the object.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+interface Filterable<T> {
+    val predicate: (T) -> Boolean
+}

@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.InvalidArgumentException
 import cl.ravenhill.keen.InvalidStateException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
@@ -40,7 +41,7 @@ class IntChromosomeSpec : WordSpec({
             }
             "throw an exception if the size is less than 1" {
                 checkAll(Arb.nonPositiveInt(), Arb.orderedIntPair()) { size, range ->
-                    shouldThrow<InvalidStateException> {
+                    shouldThrow<InvalidArgumentException> {
                         `create a new chromosome using it's factory`(size, range)
                     }
                 }

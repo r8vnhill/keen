@@ -14,31 +14,40 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import cl.ravenhill.keen.util.Filterable
+import cl.ravenhill.keen.util.validateAtLeast
 import kotlinx.coroutines.runBlocking
 import kotlin.properties.Delegates
+
+typealias IntToInt = Pair<Int, Int>
 
 /**
  * A chromosome that contains a list of [IntGene]s.
  *
  * @param genes The list of genes that this chromosome will contain.
+ * @property range A pair of [Int]s that represents the range of the genes (``a to b``).
+ * @property predicate The filter to apply to the genes.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
  */
 class IntChromosome private constructor(
-    genes: List<IntGene>
-) : AbstractChromosome<Int>(genes) {
+    genes: List<IntGene>,
+    val range: IntToInt,
+    override val predicate: (Int) -> Boolean
+) : AbstractChromosome<Int>(genes), Filterable<Int> {
 
     /**
-     * Creates a new [IntChromosome] from a given [size], [range] and a [filter]
+     * Creates a new [IntChromosome] from a given [size], [range] and a [predicate]
      *
      * @param size The size of the chromosome.
      * @param range The range of the genes.
-     * @param filter The filter to apply to the genes.
+     * @param predicate The filter to apply to the genes.
      */
     private constructor(
         size: Int,
         range: Pair<Int, Int>,
-        filter: (Int) -> Boolean
+        predicate: (Int) -> Boolean
     ) : this(
         runBlocking {
             List(size) {
@@ -47,26 +56,17 @@ class IntChromosome private constructor(
                         while (true) {
                             yield(Core.random.nextInt(range.first, range.second))
                         }
-                    }.filter(filter).first(),
+                    }.filter(predicate).first(),
                     range,
-                    filter
+                    predicate
                 )
             }
-        }
-//        IntStream.range(range.first, range.second)
-//            .boxed()
-//            .filter(filter)
-//            .collect(Collectors.toList())
-//            .let { list ->
-//                IntStream.range(0, size)
-//                    .mapToObj { list[Core.random.nextInt(list.size)] }
-//                    .map { IntGene(it, range, filter) }
-//                    .collect(Collectors.toList())
-//            }
+        }, range, predicate
     )
 
     @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<Int>>) = IntChromosome(genes as List<IntGene>)
+    override fun duplicate(genes: List<Gene<Int>>) =
+        IntChromosome(genes as List<IntGene>, range, predicate)
 
 
     override fun toString() = "${genes.map { it.dna }}"
@@ -86,7 +86,7 @@ class IntChromosome private constructor(
         lateinit var range: Pair<Int, Int>
         var size by Delegates.notNull<Int>()
 
-        override fun make() = IntChromosome(size, range, filter)
+        override fun make() = IntChromosome(size.validateAtLeast(1), range, filter)
 
         override fun toString() = "IntChromosome.Builder { " +
                 "size: $size, " +

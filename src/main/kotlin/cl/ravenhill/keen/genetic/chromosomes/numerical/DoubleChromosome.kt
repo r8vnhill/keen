@@ -14,34 +14,56 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
-import java.util.Objects
+import cl.ravenhill.keen.util.Filterable
+import kotlinx.coroutines.runBlocking
+import java.util.*
 import kotlin.properties.Delegates
 
 
 /**
  * A chromosome that contains a list of [DoubleGene]s.
  *
+ * This class constructors are private, see the [Factory] class for examples on how to
+ * create a new instance of this class.
+ *
  * @param genes The list of genes that this chromosome will contain.
+ * @property range A pair of [Double]s that represents the range of the genes
+ *                  (``a to b``).
+ * @property predicate The filter to apply to the genes.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
  */
 class DoubleChromosome private constructor(
     genes: List<DoubleGene>,
-    val range: Pair<Double, Double>
-) : AbstractChromosome<Double>(genes) {
+    val range: Pair<Double, Double>,
+    override val predicate: (Double) -> Boolean
+) : AbstractChromosome<Double>(genes), Filterable<Double> {
 
-    private constructor(size: Int, range: Pair<Double, Double>) : this(
-        (0 until size).map {
-            DoubleGene(Core.random.nextDouble(range.first, range.second), range)
-        }, range
+    private constructor(
+        size: Int,
+        range: Pair<Double, Double>,
+        predicate: (Double) -> Boolean
+    ) : this(
+        runBlocking {
+            List(size) {
+                DoubleGene(
+                    sequence {
+                        while (true) {
+                            yield(Core.random.nextDouble(range.first, range.second))
+                        }
+                    }.filter(predicate).first(),
+                    range
+                )
+            }
+        }, range, predicate
     )
-
 
     override fun verify() = genes.all { it.verify() }
 
     @Suppress("UNCHECKED_CAST")
     override fun duplicate(genes: List<Gene<Double>>) =
-        DoubleChromosome(genes as List<DoubleGene>, range)
+        DoubleChromosome(genes as List<DoubleGene>, range, predicate)
 
     override fun equals(other: Any?) = when {
         this === other -> true
@@ -51,10 +73,21 @@ class DoubleChromosome private constructor(
 
     override fun hashCode() = Objects.hash(DoubleChromosome::class, genes, range)
 
+    /**
+     * Abstract Factory Pattern implementation for [DoubleChromosome]s.
+     *
+     * This class is used to create [DoubleChromosome]s more easily.
+     * It allows the creation of [Chromosome]s with a Kotlin-like syntax.
+     *
+     * @property range Pair<Double, Double>
+     * @property size Int
+     * @property filter Function1<Double, Boolean>
+     */
     class Factory : Chromosome.Factory<Double> {
 
         lateinit var range: Pair<Double, Double>
         var size by Delegates.notNull<Int>()
+        var filter: (Double) -> Boolean = { true }
 
         override fun make() = when {
             size < 1 -> throw InvalidStateException("size") {
@@ -63,7 +96,7 @@ class DoubleChromosome private constructor(
 
             range.first.isNaN() || range.second.isNaN() -> DoubleChromosome((0 until size).map {
                 DoubleGene(Double.NaN, range)
-            }, range)
+            }, range, filter)
 
             (!range.first.isFinite())
                     || (!range.second.isFinite()) -> {
@@ -87,7 +120,7 @@ class DoubleChromosome private constructor(
                 }
             }
 
-            else -> DoubleChromosome(size, range)
+            else -> DoubleChromosome(size, range, filter)
         }
 
         override fun toString(): String {
