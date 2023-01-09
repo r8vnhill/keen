@@ -7,32 +7,46 @@ package cl.ravenhill.keen
  * @param lazyMessage The message to be used in the exception.
  */
 open class KeenException(prefix: String, lazyMessage: () -> String) :
-        Exception("$prefix ${lazyMessage()}")
+    Exception("$prefix ${lazyMessage()}")
 
 /**
  * Exception thrown when the receiver of a function is not valid.
  */
 class InvalidReceiverException(lazyMessage: () -> String) :
-        KeenException("Invalid receiver: ", lazyMessage)
+    KeenException("Invalid receiver: ", lazyMessage)
 
 /**
  * Exception thrown when an argument is not valid.
  */
 class InvalidArgumentException(lazyMessage: () -> String) :
-        KeenException("Invalid argument: ", lazyMessage)
+    KeenException("Invalid argument: ", lazyMessage)
 
 class InvalidStateException(state: String, lazyMessage: () -> String) :
-        KeenException("Invalid state ($state): ", lazyMessage)
+    KeenException("Invalid state ($state): ", lazyMessage)
 
 /**
  * Exception thrown when a limit is not configured correctly.
  */
 class LimitConfigurationException(lazyMessage: () -> String) :
-        KeenException("Genotype configuration error:", lazyMessage)
+    KeenException("Genotype configuration error:", lazyMessage)
 
 /**
  * Exception thrown when a selection operation fails.
  */
 class SelectorException(lazyMessage: () -> String) :
-        KeenException("Selector operation exception:", lazyMessage)
+    KeenException("Selector operation exception:", lazyMessage)
+
+
+/**
+ * Exception thrown when a constraint is not fulfilled.
+ */
+open class UnfulfilledConstraintException(lazyMessage: () -> String) :
+    KeenException("Unfulfilled constraint: ", lazyMessage)
+
+class IntConstraintException(lazyMessage: () -> String) :
+    UnfulfilledConstraintException(lazyMessage)
+
+class UnfulfilledContractException(val violations: List<Throwable>) : KeenException(
+    "Unfulfilled contract: ",
+    { violations.joinToString(", ") { "${it::class.simpleName}" } })
 

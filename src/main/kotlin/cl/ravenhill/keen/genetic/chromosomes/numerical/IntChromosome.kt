@@ -10,12 +10,15 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.contract
+import cl.ravenhill.keen.IntConstraint.*
+import cl.ravenhill.keen.PairConstraint.*
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.Filterable
-import cl.ravenhill.keen.util.validateAtLeast
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.properties.Delegates
 
@@ -50,19 +53,23 @@ class IntChromosome private constructor(
         predicate: (Int) -> Boolean
     ) : this(
         runBlocking {
-            List(size) {
-                IntGene(
-                    sequence {
-                        while (true) {
-                            yield(Core.random.nextInt(range.first, range.second))
-                        }
-                    }.filter(predicate).first(),
-                    range,
-                    predicate
-                )
+            val genes = mutableListOf<IntGene>()
+            launch {
+                repeat(size) {
+                    genes.add(
+                        IntGene(
+                            sequence {
+                                while (true) {
+                                    yield(Core.random.nextInt(range.first, range.second))
+                                }
+                            }.filter(predicate).first(),
+                            range, predicate
+                        )
+                    )
+                }
             }
-        }, range, predicate
-    )
+            genes
+        }, range, predicate)
 
     @Suppress("UNCHECKED_CAST")
     override fun duplicate(genes: List<Gene<Int>>) =
@@ -86,7 +93,13 @@ class IntChromosome private constructor(
         lateinit var range: Pair<Int, Int>
         var size by Delegates.notNull<Int>()
 
-        override fun make() = IntChromosome(size.validateAtLeast(1), range, filter)
+        override fun make(): IntChromosome {
+            contract {
+                size shouldBe Positive
+                range shouldBe StrictlyOrdered
+            }
+            return IntChromosome(size, range, filter)
+        }
 
         override fun toString() = "IntChromosome.Builder { " +
                 "size: $size, " +

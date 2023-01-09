@@ -33,6 +33,27 @@ object Core {
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
     var random: Random = Random.Default
 
+    fun contract(builder: ContractContext.() -> Unit) {
+        ContractContext().apply(builder).errors.let { errors ->
+            if (errors.isNotEmpty()) {
+                throw UnfulfilledContractException(errors)
+            }
+        }
+    }
+
+    class ContractContext {
+        val results: MutableList<Result<Any>> = mutableListOf()
+
+        val errors: List<Throwable>
+            get() = results.filter { it.isFailure }.map { it.exceptionOrNull()!! }
+
+        infix fun Int.shouldBe(constraint: IntConstraint) =
+            results.add(constraint.validate(this))
+
+        infix fun <A, B> Pair<A, B>.shouldBe(constraint: PairConstraint<A, B>) =
+            results.add(constraint.validate(this))
+    }
+
     object EvolutionLogger {
         var level: Level = Level.Warn()
             set(value) {

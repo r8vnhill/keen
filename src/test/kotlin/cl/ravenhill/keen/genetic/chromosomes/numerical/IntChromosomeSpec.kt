@@ -1,10 +1,12 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.InvalidArgumentException
-import cl.ravenhill.keen.InvalidStateException
+import cl.ravenhill.keen.IntConstraintException
+import cl.ravenhill.keen.UnfulfilledContractException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
@@ -12,6 +14,7 @@ import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.checkAll
 import kotlin.random.Random
+import kotlin.reflect.KClass
 
 
 class IntChromosomeSpec : WordSpec({
@@ -41,14 +44,22 @@ class IntChromosomeSpec : WordSpec({
             }
             "throw an exception if the size is less than 1" {
                 checkAll(Arb.nonPositiveInt(), Arb.orderedIntPair()) { size, range ->
-                    shouldThrow<InvalidArgumentException> {
+                    shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(size, range)
-                    }
+                    }.violations.first() shouldBeOfClass IntConstraintException::class
                 }
             }
         }
     }
 })
+
+private infix fun Any.shouldBeOfClass(kClass: KClass<*>) = Matcher<Any> { value ->
+    MatcherResult(
+        value::class == kClass,
+        { "$value should be an instance of $kClass" },
+        { "$value should not be an instance of $kClass" }
+    )
+}
 
 /**
  * Creates a new chromosome using a chromosome factory.
