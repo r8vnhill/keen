@@ -1,7 +1,6 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
-import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.InvalidStateException
+import cl.ravenhill.keen.*
 import cl.ravenhill.keen.util.math.isNotNan
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
@@ -40,65 +39,65 @@ class DoubleChromosomeSpec : WordSpec({
                     }
                 }
             }
-            "return a chromosome with NaN genes if the range is NaN" {
+            "throw an exception if the range has NaN bounds" {
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, bound ->
-                    `create a new chromosome using it's factory`(
-                        size,
-                        Pair(Double.NaN, bound)
-                    ).genes.forEach { gene ->
-                        gene.dna.isNaN() shouldBe true
-                    }
-                    `create a new chromosome using it's factory`(
-                        size,
-                        Pair(bound, Double.NaN)
-                    ).genes.forEach { gene ->
-                        gene.dna.isNaN() shouldBe true
-                    }
+                    shouldThrow<UnfulfilledContractException> {
+                        `create a new chromosome using it's factory`(
+                            size,
+                            Pair(Double.NaN, bound)
+                        )
+                    }.violations.first() shouldBeOfClass PairConstraintException::class
+                    shouldThrow<UnfulfilledContractException> {
+                        `create a new chromosome using it's factory`(
+                            size,
+                            Pair(bound, Double.NaN)
+                        )
+                    }.violations.first() shouldBeOfClass PairConstraintException::class
                 }
             }
             "throw an exception if the size is less than 1" {
                 checkAll(Arb.nonPositiveInt(), Arb.orderedDoublePair()) { size, range ->
-                    shouldThrow<InvalidStateException> {
+                    shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(size, range)
-                    }
+                    }.violations.first() shouldBeOfClass IntConstraintException::class
                 }
             }
             "throw an exception if the range is infinite" {
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, bound ->
                     assume(bound.isNotNan())
-                    shouldThrow<InvalidStateException> {
+                    shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(Double.NEGATIVE_INFINITY, bound)
                         )
-                    }
-                    shouldThrow<InvalidStateException> {
+                    }.violations.first() shouldBeOfClass PairConstraintException::class
+                    shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(bound, Double.POSITIVE_INFINITY)
                         )
-                    }
+                    }.violations.first() shouldBeOfClass PairConstraintException::class
                 }
             }
             "throw an exception if the range is empty" {
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, bound ->
                     assume(bound.isNotNan())
-                    shouldThrow<InvalidStateException> {
+                    shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(bound, bound)
                         )
-                    }
+                    }.violations.first() shouldBeOfClass PairConstraintException::class
                 }
             }
             "throw an exception if the range is reversed" {
                 checkAll(Arb.int(1, 100_000), Arb.orderedDoublePair()) { size, range ->
-                    shouldThrow<InvalidStateException> {
+                    shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(
                             size,
                             range.second to range.first
                         )
-                    }
+                    }.violations.first() shouldBeOfClass PairConstraintException::class
                 }
             }
         }

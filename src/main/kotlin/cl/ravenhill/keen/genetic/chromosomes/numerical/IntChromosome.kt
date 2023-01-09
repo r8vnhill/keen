@@ -49,7 +49,7 @@ class IntChromosome private constructor(
      */
     private constructor(
         size: Int,
-        range: Pair<Int, Int>,
+        range: IntToInt,
         predicate: (Int) -> Boolean
     ) : this(
         runBlocking {
@@ -96,7 +96,7 @@ class IntChromosome private constructor(
         override fun make(): IntChromosome {
             contract {
                 size shouldBe Positive
-                range shouldBe StrictlyOrdered
+                range shouldBe StrictlyOrdered()
             }
             return IntChromosome(size, range, filter)
         }

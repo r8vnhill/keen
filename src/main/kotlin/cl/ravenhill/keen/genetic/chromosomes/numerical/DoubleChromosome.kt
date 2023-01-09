@@ -9,7 +9,12 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.contract
+import cl.ravenhill.keen.IntConstraint.Positive
 import cl.ravenhill.keen.InvalidStateException
+import cl.ravenhill.keen.PairConstraint
+import cl.ravenhill.keen.PairConstraint.Finite
+import cl.ravenhill.keen.PairConstraint.StrictlyOrdered
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -89,38 +94,19 @@ class DoubleChromosome private constructor(
         var size by Delegates.notNull<Int>()
         var filter: (Double) -> Boolean = { true }
 
-        override fun make() = when {
-            size < 1 -> throw InvalidStateException("size") {
-                "The size of a chromosome ($size) must be greater than 0."
+        override fun make(): DoubleChromosome {
+            contract {
+                size shouldBe Positive
+                range shouldBe StrictlyOrdered()
+                range shouldBe Finite
             }
+            return when {
+                range.first.isNaN() || range.second.isNaN() -> DoubleChromosome((0 until size).map {
+                    DoubleGene(Double.NaN, range)
+                }, range, filter)
 
-            range.first.isNaN() || range.second.isNaN() -> DoubleChromosome((0 until size).map {
-                DoubleGene(Double.NaN, range)
-            }, range, filter)
-
-            (!range.first.isFinite())
-                    || (!range.second.isFinite()) -> {
-                throw InvalidStateException("range") {
-                    "The range of a chromosome ([${range.first}, ${range.second})) " +
-                            "must be finite."
-                }
+                else -> DoubleChromosome(size, range, filter)
             }
-
-            range.first == range.second -> {
-                throw InvalidStateException("range") {
-                    "The range of a chromosome ([${range.first}, ${range.second})) " +
-                            "must not be empty."
-                }
-            }
-
-            range.first > range.second -> {
-                throw InvalidStateException("range") {
-                    "The range of a chromosome ([${range.first}, ${range.second})) " +
-                            "must be ordered."
-                }
-            }
-
-            else -> DoubleChromosome(size, range, filter)
         }
 
         override fun toString(): String {

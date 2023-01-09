@@ -46,7 +46,17 @@ open class UnfulfilledConstraintException(lazyMessage: () -> String) :
 class IntConstraintException(lazyMessage: () -> String) :
     UnfulfilledConstraintException(lazyMessage)
 
+/**
+ * Exception thrown when a pair constraint is not fulfilled.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+class PairConstraintException(lazyMessage: () -> String) :
+    UnfulfilledConstraintException(lazyMessage)
+
 class UnfulfilledContractException(val violations: List<Throwable>) : KeenException(
     "Unfulfilled contract: ",
-    { violations.joinToString(", ") { "${it::class.simpleName}" } })
+    { violations.joinToString(", ") { "{ ${it.message} }" } })
 

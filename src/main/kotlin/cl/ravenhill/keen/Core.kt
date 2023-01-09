@@ -33,6 +33,12 @@ object Core {
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
     var random: Random = Random.Default
 
+    /**
+     * Checks that a given contract is fulfilled.
+     *
+     * @param builder The contract builder.
+     * @throws UnfulfilledContractException If the contract is not fulfilled.
+     */
     fun contract(builder: ContractContext.() -> Unit) {
         ContractContext().apply(builder).errors.let { errors ->
             if (errors.isNotEmpty()) {
@@ -41,15 +47,31 @@ object Core {
         }
     }
 
+    /**
+     * A contract context that contains the results of evaluating the contract.
+     *
+     * @property errors The list of errors that occurred during the evaluation.
+     * @since 2.0.0
+     * @version 2.0.0
+     */
     class ContractContext {
-        val results: MutableList<Result<Any>> = mutableListOf()
+        /**
+         * The list of results of evaluating the contract.
+         */
+        private val results: MutableList<Result<*>> = mutableListOf()
 
         val errors: List<Throwable>
             get() = results.filter { it.isFailure }.map { it.exceptionOrNull()!! }
 
+        /**
+         * Extension function that checks an integer constraint.
+         */
         infix fun Int.shouldBe(constraint: IntConstraint) =
             results.add(constraint.validate(this))
 
+        /**
+         * Extension function that checks a pair constraint.
+         */
         infix fun <A, B> Pair<A, B>.shouldBe(constraint: PairConstraint<A, B>) =
             results.add(constraint.validate(this))
     }

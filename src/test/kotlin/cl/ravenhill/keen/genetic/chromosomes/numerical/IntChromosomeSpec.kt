@@ -1,8 +1,6 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
-import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.IntConstraintException
-import cl.ravenhill.keen.UnfulfilledContractException
+import cl.ravenhill.keen.*
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.Matcher
@@ -49,17 +47,16 @@ class IntChromosomeSpec : WordSpec({
                     }.violations.first() shouldBeOfClass IntConstraintException::class
                 }
             }
+            "throw an exception if the range is not ordered" {
+                checkAll(Arb.int(1, 100_000), Arb.reversedPair()) { size, range ->
+                    shouldThrow<UnfulfilledContractException> {
+                        `create a new chromosome using it's factory`(size, range)
+                    }.violations.first() shouldBeOfClass PairConstraintException::class
+                }
+            }
         }
     }
 })
-
-private infix fun Any.shouldBeOfClass(kClass: KClass<*>) = Matcher<Any> { value ->
-    MatcherResult(
-        value::class == kClass,
-        { "$value should be an instance of $kClass" },
-        { "$value should not be an instance of $kClass" }
-    )
-}
 
 /**
  * Creates a new chromosome using a chromosome factory.
@@ -92,4 +89,10 @@ private fun Arb.Companion.orderedIntPair() = arbitrary {
     val first = int().bind()
     val second = int().bind().let { if (it == first) it + 1 else it }
     if (first < second) first to second else second to first
+}
+
+private fun Arb.Companion.reversedPair() = arbitrary {
+    val first = int().bind()
+    val second = int().bind().let { if (it == first) it + 1 else it }
+    if (first < second) second to first else first to second
 }
