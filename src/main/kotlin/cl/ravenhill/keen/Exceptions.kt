@@ -40,11 +40,11 @@ class SelectorException(lazyMessage: () -> String) :
 /**
  * Exception thrown when a constraint is not fulfilled.
  */
-open class UnfulfilledConstraintException(lazyMessage: () -> String) :
+open class UnfulfilledClauseException(lazyMessage: () -> String) :
     KeenException("Unfulfilled constraint: ", lazyMessage)
 
-class IntConstraintException(lazyMessage: () -> String) :
-    UnfulfilledConstraintException(lazyMessage)
+class IntClauseException(lazyMessage: () -> String) :
+    UnfulfilledClauseException(lazyMessage)
 
 /**
  * Exception thrown when a pair constraint is not fulfilled.
@@ -53,10 +53,28 @@ class IntConstraintException(lazyMessage: () -> String) :
  * @since 2.0.0
  * @version 2.0.0
  */
-class PairConstraintException(lazyMessage: () -> String) :
-    UnfulfilledConstraintException(lazyMessage)
+class PairClauseException(lazyMessage: () -> String) :
+    UnfulfilledClauseException(lazyMessage)
 
+/**
+ * Exception thrown when a double constraint is not fulfilled.
+ */
+class DoubleClauseException(lazyMessage: () -> String) :
+    UnfulfilledClauseException(lazyMessage)
+
+/**
+ * Exception thrown when a collection constraint is not fulfilled.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+class CollectionClauseException(lazyMessage: () -> String) :
+    UnfulfilledClauseException(lazyMessage)
+
+/**
+ * Exception thrown when a contract is not fulfilled.
+ */
 class UnfulfilledContractException(val violations: List<Throwable>) : KeenException(
     "Unfulfilled contract: ",
     { violations.joinToString(", ") { "{ ${it.message} }" } })
-

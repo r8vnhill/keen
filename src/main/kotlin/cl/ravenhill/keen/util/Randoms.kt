@@ -15,13 +15,7 @@ import kotlin.random.asJavaRandom
 fun Random.nextChar(filter: (Char) -> Boolean = { true }) =
     generateSequence {
         RandomStringUtils.random(
-            1,
-            0,
-            0,
-            true,
-            true,
-            null,
-            this.asJavaRandom()
+            1, 0, 0, true, true, null, this.asJavaRandom()
         ).first()
     }.filter(filter).first()
 

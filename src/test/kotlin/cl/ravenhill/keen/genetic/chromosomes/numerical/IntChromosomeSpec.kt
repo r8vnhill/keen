@@ -3,16 +3,16 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 import cl.ravenhill.keen.*
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
-import io.kotest.matchers.Matcher
-import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.nonPositiveInt
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
-import kotlin.reflect.KClass
 
 
 class IntChromosomeSpec : WordSpec({
@@ -44,19 +44,85 @@ class IntChromosomeSpec : WordSpec({
                 checkAll(Arb.nonPositiveInt(), Arb.orderedIntPair()) { size, range ->
                     shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(size, range)
-                    }.violations.first() shouldBeOfClass IntConstraintException::class
+                    }.violations.first() shouldBeOfClass IntClauseException::class
                 }
             }
             "throw an exception if the range is not ordered" {
                 checkAll(Arb.int(1, 100_000), Arb.reversedPair()) { size, range ->
                     shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(size, range)
-                    }.violations.first() shouldBeOfClass PairConstraintException::class
+                    }.violations.first() shouldBeOfClass PairClauseException::class
                 }
             }
         }
     }
+    "Duplicating" should {
+        "return a new chromosome with the given genes" {
+            checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
+                val newChromosome = chromosome.duplicate(other.genes)
+                newChromosome shouldNotBeSameInstanceAs other
+                newChromosome.genes shouldBe other.genes
+            }
+        }
+    }
+    "Equality" should {
+        "be true for chromosomes with the same genes and range" {
+            checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
+                val newChromosome = chromosome.duplicate(other.genes)
+                newChromosome shouldNotBeSameInstanceAs other
+                newChromosome shouldBe other
+            }
+        }
+        "be false for chromosomes with different genes" {
+            checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
+                assume(chromosome.genes != other.genes)
+                chromosome shouldNotBeSameInstanceAs other
+                chromosome shouldNotBe other
+            }
+        }
+        "be false for chromosomes with different range" {
+            checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
+                assume(chromosome.range != other.range)
+                chromosome shouldNotBeSameInstanceAs other
+                chromosome shouldNotBe other
+            }
+        }
+        "be null safe" {
+            checkAll(Arb.intChromosome()) { chromosome ->
+                chromosome shouldNotBe null
+            }
+        }
+    }
+    "Hashing" should {
+        "be true for chromosomes with the same genes and range" {
+            checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
+                val newChromosome = chromosome.duplicate(other.genes)
+                newChromosome shouldNotBeSameInstanceAs other
+                newChromosome.hashCode() shouldBe other.hashCode()
+            }
+        }
+        "be false for chromosomes with different genes" {
+            checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
+                assume(chromosome.genes != other.genes)
+                chromosome shouldNotBeSameInstanceAs other
+                chromosome.hashCode() shouldNotBe other.hashCode()
+            }
+        }
+        "be false for chromosomes with different range" {
+            checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
+                assume(chromosome.range != other.range)
+                chromosome shouldNotBeSameInstanceAs other
+                chromosome.hashCode() shouldNotBe other.hashCode()
+            }
+        }
+    }
 })
+
+fun Arb.Companion.intChromosome() = arbitrary {
+    val size = Arb.int(1, 1000).bind()
+    val range = Arb.orderedIntPair().bind()
+    `create a new chromosome using it's factory`(size, range)
+}
 
 /**
  * Creates a new chromosome using a chromosome factory.
@@ -67,29 +133,6 @@ private fun `create a new chromosome using it's factory`(
     /** The range of the genes     */
     range: Pair<Int, Int>
 ) = IntChromosome.Factory().apply { this.size = size; this.range = range }.make()
-
-/**
- * Generates [Arb]itrary [Pair]s of [Int]s where the first element is less than or equal
- * to the second.
- *
- * __Usage:__
- * ```kotlin
- * checkAll(Arb.orderedIntPair()) { (a, b) ->
- *    a <= b shouldBe true
- *    a + b shouldBe b + a
- *    a * b shouldBe b * a
- *    a - b shouldBe -(b - a)
- *    a / b shouldBe 0
- *    a % b shouldBe a
- *    a * b + a - b / a % b shouldBe a * b
- * }
- * ```
- */
-private fun Arb.Companion.orderedIntPair() = arbitrary {
-    val first = int().bind()
-    val second = int().bind().let { if (it == first) it + 1 else it }
-    if (first < second) first to second else second to first
-}
 
 private fun Arb.Companion.reversedPair() = arbitrary {
     val first = int().bind()

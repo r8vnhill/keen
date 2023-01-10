@@ -11,8 +11,8 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.contract
-import cl.ravenhill.keen.IntConstraint.*
-import cl.ravenhill.keen.PairConstraint.*
+import cl.ravenhill.keen.IntClause.*
+import cl.ravenhill.keen.PairClause.*
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -20,6 +20,7 @@ import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.Filterable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.*
 import kotlin.properties.Delegates
 
 typealias IntToInt = Pair<Int, Int>
@@ -69,15 +70,24 @@ class IntChromosome private constructor(
                 }
             }
             genes
-        }, range, predicate)
+        }, range, predicate
+    )
 
     @Suppress("UNCHECKED_CAST")
     override fun duplicate(genes: List<Gene<Int>>) =
         IntChromosome(genes as List<IntGene>, range, predicate)
 
+    // region : equals, hashCode and toString
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is IntChromosome -> false
+        else -> genes == other.genes
+    }
+
+    override fun hashCode() = Objects.hash(IntChromosome::class, genes)
 
     override fun toString() = "${genes.map { it.dna }}"
-
+    // endregion
     /**
      * A [Chromosome.Factory] for [IntChromosome]s.
      *
@@ -95,8 +105,8 @@ class IntChromosome private constructor(
 
         override fun make(): IntChromosome {
             contract {
-                size shouldBe Positive
-                range shouldBe StrictlyOrdered()
+                size should Positive
+                range should StrictlyOrdered()
             }
             return IntChromosome(size, range, filter)
         }

@@ -8,12 +8,15 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.Core.contract
+import cl.ravenhill.keen.DoubleClause.InRange
+import cl.ravenhill.keen.IntClause.*
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.math.BitArray
 import cl.ravenhill.keen.util.math.bitArrayOf
 import cl.ravenhill.keen.util.math.roundUpToMultipleOf
-import java.util.Objects
+import java.util.*
 
 /**
  * A chromosome of [BoolGene]s.
@@ -77,10 +80,16 @@ class BoolChromosome private constructor(
 
         var truesProbability: Double = Double.NaN
 
-        var size : Int = 0
+        var size: Int = 0
 
         /// {@inheritDoc}
-        override fun make() = BoolChromosome(bitArrayOf(size, truesProbability), truesProbability)
+        override fun make(): BoolChromosome {
+            contract {
+                size should Positive
+                truesProbability should InRange(0.0..1.0)
+            }
+            return BoolChromosome(bitArrayOf(size, truesProbability), truesProbability)
+        }
 
         /// {@inheritDoc}
         override fun toString() =

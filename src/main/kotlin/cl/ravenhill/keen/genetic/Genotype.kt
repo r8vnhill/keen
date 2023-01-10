@@ -8,10 +8,10 @@
 
 package cl.ravenhill.keen.genetic
 
+import cl.ravenhill.keen.CollectionClause.NotBeEmpty
+import cl.ravenhill.keen.Core.contract
+import cl.ravenhill.keen.IntClause.BeInRange
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.util.validateNotEmpty
-import cl.ravenhill.keen.util.validatePredicate
-import cl.ravenhill.keen.util.validateRange
 
 
 /**
@@ -21,20 +21,15 @@ import cl.ravenhill.keen.util.validateRange
  * @property chromosomes        The chromosomes of the Genotype
  * @property size               The size of the Genotype (number of chromosomes)
  */
-class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DNA> {
+class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) :
+    GeneticMaterial<DNA> {
 
     override fun verify() = chromosomes.isNotEmpty() && chromosomes.all { it.verify() }
 
     val size: Int = chromosomes.size
 
     override fun toString() = " [ ${chromosomes.joinToString(" | ")} ] "
-    fun map(transform: (List<Chromosome<DNA>>) -> List<Chromosome<DNA>>) =
-        Genotype(transform(chromosomes))
 
-    /**
-     * Converts the Genotype to a List of DNA.
-     */
-    fun toDNA() = chromosomes.map { it.toDNA() }
 
     override fun flatten() =
         chromosomes.fold(mutableListOf<DNA>()) { acc, chromosome ->
@@ -47,8 +42,11 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
     fun duplicate(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes)
 
     fun sequence() = chromosomes.asSequence()
+
     operator fun get(index: Int): Chromosome<DNA> {
-        index.validateRange(0 to size)
+        contract {
+            index should BeInRange(0..size)
+        }
         return chromosomes[index]
     }
 
@@ -77,8 +75,14 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
          * Creates a new [Genotype] with the given ``chromosomes``.
          */
         fun make(): Genotype<DNA> {
-            validatePredicate({ this::chromosomes.isInitialized }) { "Chromosomes must be initialized" }
-            chromosomes.validateNotEmpty { "Chromosomes must not be empty" }
+            contract {
+                if (this@Factory::chromosomes.isInitialized) {
+                    chromosomes should NotBeEmpty
+                }
+                clause("Chromosomes should be initialized") {
+                    this@Factory::chromosomes.isInitialized
+                }
+            }
             return Genotype(chromosomes.map { it.make() })
         }
 

@@ -10,11 +10,9 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.contract
-import cl.ravenhill.keen.IntConstraint.Positive
-import cl.ravenhill.keen.InvalidStateException
-import cl.ravenhill.keen.PairConstraint
-import cl.ravenhill.keen.PairConstraint.Finite
-import cl.ravenhill.keen.PairConstraint.StrictlyOrdered
+import cl.ravenhill.keen.IntClause.Positive
+import cl.ravenhill.keen.PairClause.Finite
+import cl.ravenhill.keen.PairClause.StrictlyOrdered
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -96,9 +94,9 @@ class DoubleChromosome private constructor(
 
         override fun make(): DoubleChromosome {
             contract {
-                size shouldBe Positive
-                range shouldBe StrictlyOrdered()
-                range shouldBe Finite
+                size should Positive
+                range should StrictlyOrdered()
+                range should Finite
             }
             return when {
                 range.first.isNaN() || range.second.isNaN() -> DoubleChromosome((0 until size).map {

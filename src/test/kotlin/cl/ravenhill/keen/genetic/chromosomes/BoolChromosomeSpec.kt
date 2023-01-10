@@ -1,13 +1,16 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.DoubleClauseException
+import cl.ravenhill.keen.PairClauseException
+import cl.ravenhill.keen.UnfulfilledContractException
+import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.util.math.isNotNan
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.positiveInt
+import io.kotest.property.arbitrary.*
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
@@ -59,6 +62,32 @@ class BoolChromosomeSpec : WordSpec({
                         this.truesProbability = 0.0
                     }.make()
                     chromosome.trues() shouldBe 0
+                }
+            }
+            "throw an exception if the size is less than 1" {
+                checkAll(
+                    Arb.nonPositiveInt(),
+                    Arb.double(0.0, 1.0)
+                ) { size, truesProbability ->
+                    assume(truesProbability.isNotNan())
+                    assume(truesProbability.isFinite())
+                    shouldThrow<UnfulfilledContractException> {
+                        BoolChromosome.Factory().apply {
+                            this.size = size
+                            this.truesProbability = truesProbability
+                        }.make()
+                    }.violations.first() shouldBeOfClass DoubleClauseException::class
+                }
+            }
+            "throw an exception if the range is not ordered" {
+                checkAll(Arb.int(1, 100_000), Arb.double()) { size, truesProbability ->
+                    assume(truesProbability !in 0.0..1.0)
+                    shouldThrow<UnfulfilledContractException> {
+                        BoolChromosome.Factory().apply {
+                            this.size = size
+                            this.truesProbability = truesProbability
+                        }.make()
+                    }.violations.first() shouldBeOfClass PairClauseException::class
                 }
             }
         }

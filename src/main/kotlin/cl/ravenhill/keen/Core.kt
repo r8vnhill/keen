@@ -66,14 +66,40 @@ object Core {
         /**
          * Extension function that checks an integer constraint.
          */
-        infix fun Int.shouldBe(constraint: IntConstraint) =
+        infix fun Int.should(constraint: IntClause) =
+            results.add(constraint.validate(this))
+
+        /**
+         * Extension function that checks a double constraint.
+         */
+        infix fun Double.should(constraint: DoubleClause) =
+            results.add(constraint.validate(this))
+
+        /**
+         * Extension function that checks a collection clause.
+         */
+        infix fun <T> Collection<T>.should(constraint: CollectionClause) =
             results.add(constraint.validate(this))
 
         /**
          * Extension function that checks a pair constraint.
          */
-        infix fun <A, B> Pair<A, B>.shouldBe(constraint: PairConstraint<A, B>) =
+        infix fun <A, B> Pair<A, B>.should(constraint: PairClause<A, B>) =
             results.add(constraint.validate(this))
+
+        /**
+         * A clause defined by a predicate.
+         *
+         * @param description The description of the clause.
+         * @param predicate The predicate that defines the clause.
+         */
+        fun clause(description: String, predicate: () -> Boolean) = results.add(
+            if (predicate()) {
+                Result.success(Unit)
+            } else {
+                Result.failure(UnfulfilledClauseException { description })
+            }
+        )
     }
 
     object EvolutionLogger {
