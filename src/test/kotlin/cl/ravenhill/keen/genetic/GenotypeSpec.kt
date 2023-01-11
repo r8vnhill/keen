@@ -139,9 +139,9 @@ private fun Arb.Companion.intOutsideRange(intRange: IntRange) = arbitrary {
 /**
  * Generates a new [Arb]itrary [Genotype] using a given arbitrary [Chromosome] factory.
  */
-private fun <T> Arb.Companion.genotype(chromosome: Arb<Chromosome.Factory<T>>) =
+fun <T> Arb.Companion.genotype(chromosome: Arb<Chromosome.Factory<T>>) =
     arbitrary {
-        val chromosomes = Arb.list(chromosome, 1..1000).bind()
+        val chromosomes = Arb.list(chromosome, 1..100).bind()
         Genotype.Factory<T>().apply {
             chromosomes.forEach {
                 chromosome { it }
@@ -149,7 +149,7 @@ private fun <T> Arb.Companion.genotype(chromosome: Arb<Chromosome.Factory<T>>) =
         }.make()
     }
 
-private fun Arb.Companion.intChromosomeFactory() = arbitrary {
+fun Arb.Companion.intChromosomeFactory() = arbitrary {
     IntChromosome.Factory().apply {
         size = Arb.positiveInt(100).bind()
         range = orderedIntPair().bind()

@@ -16,28 +16,28 @@ import cl.ravenhill.keen.util.math.isNotNan
  */
 open class Phenotype<DNA>(
     open val genotype: Genotype<DNA>,
-    private val generation: Int,
+    val generation: Int,
     open val fitness: Double = Double.NaN
 ) : GeneticMaterial<DNA> {
 
-    override fun verify(): Boolean = TODO()
+    override fun verify(): Boolean = genotype.verify() && fitness.isNotNan()
 
     override fun toString() = "{ $genotype -> $fitness }"
 
     /**
      * Returns ``true`` if the fitness of the phenotype has been evaluated.
      */
-    open fun isEvaluated() = fitness.isNotNan()
+    fun isEvaluated() = fitness.isNotNan()
 
     /**
      * Returns ``true`` if the fitness of the genotype has not been evaluated.
      */
-    open fun isNotEvaluated() = !isEvaluated()
+    fun isNotEvaluated() = !isEvaluated()
 
     /**
      * Creates a new phenotype with a given fitness using the same genotype and generation.
      */
-    open fun withFitness(fitness: Double) = Phenotype(genotype, generation, fitness)
+    fun withFitness(fitness: Double) = Phenotype(genotype, generation, fitness)
 
     override fun flatten() = genotype.flatten()
 }
