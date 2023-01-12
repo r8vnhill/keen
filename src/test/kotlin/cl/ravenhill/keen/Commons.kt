@@ -36,8 +36,9 @@ infix fun Any.shouldBeOfClass(kClass: KClass<*>) = Matcher<Any> { value ->
  * }
  * ```
  */
-fun Arb.Companion.orderedIntPair() = arbitrary {
-    val first = int().bind()
-    val second = int().bind().let { if (it == first) it + 1 else it }
-    if (first < second) first to second else second to first
-}
+fun Arb.Companion.orderedIntPair(lo: Int = Int.MIN_VALUE, hi: Int = Int.MAX_VALUE) =
+    arbitrary {
+        val first = int(lo, hi).bind()
+        val second = int(lo, hi).bind().let { if (it == first) it + 1 else it }
+        if (first < second) first to second else second to first
+    }

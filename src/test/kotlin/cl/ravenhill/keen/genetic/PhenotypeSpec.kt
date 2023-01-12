@@ -57,6 +57,10 @@ class PhenotypeSpec : WordSpec({
     }
 })
 
+
+/**
+ * Generates an [Arb]itrary [Phenotype].
+ */
 fun Arb.Companion.phenotype() = arbitrary {
     val genotype = genotype(intChromosomeFactory()).bind()
     val generation = positiveInt().bind()

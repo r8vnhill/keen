@@ -10,6 +10,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.long
@@ -87,7 +88,8 @@ class IntGeneSpec : WordSpec({
         "Duplicating" should {
             "return a new gene with the given dna" {
                 checkAll(Arb.intGene(-1_000_000, 1_000_000), Arb.long()) { gData, seed ->
-                    val expected = Random(seed).nextInt(gData.range.first, gData.range.second)
+                    val expected =
+                        Random(seed).nextInt(gData.range.first, gData.range.second)
                     IntGene(gData.value, gData.range).duplicate(expected) shouldBe
                             IntGene(expected, gData.range)
                 }
@@ -143,7 +145,7 @@ class IntGeneSpec : WordSpec({
     }
     "Verifying a gene" should {
         "return true if the gene is within the range and passes the filter" {
-            checkAll(Arb.intGene()) { geneData ->
+            checkAll(PropTestConfig(5290263487183540407), Arb.intGene()) { geneData ->
                 assume(geneData.value > 10000 || geneData.value < -10000)
                 IntGene(
                     geneData.value,

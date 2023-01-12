@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val projectVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.8.0"
     `maven-publish`
     `java-library`
     signing
@@ -51,12 +51,12 @@ java {
     withSourcesJar()
 }
 
-tasks.test {
-    useJUnitPlatform()
+kotlin {
+    jvmToolchain(8)
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "18"
+tasks.test {
+    useJUnitPlatform()
 }
 
 publishing {
