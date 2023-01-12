@@ -28,12 +28,11 @@ import java.util.stream.IntStream
  */
 class IntGene(
     override val dna: Int,
-    range: Pair<Int, Int>,
+    val range: Pair<Int, Int>,
     override val filter: (Int) -> Boolean = { true }
 ) : NumberGene<Int>, ComparableGene<Int> {
     private val start = range.first
     private val end = range.second
-    private val range = IntStream.range(start, end).boxed()
 
     /**
      * Calculates the mean of this gene and the given one.

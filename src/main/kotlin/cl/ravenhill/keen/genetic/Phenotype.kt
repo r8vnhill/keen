@@ -18,9 +18,11 @@ open class Phenotype<DNA>(
     open val genotype: Genotype<DNA>,
     val generation: Int,
     open val fitness: Double = Double.NaN
-) : GeneticMaterial<DNA> {
+) : GeneticMaterial<DNA>, Comparable<Phenotype<DNA>> {
 
     override fun verify(): Boolean = genotype.verify() && fitness.isNotNan()
+    override fun compareTo(other: Phenotype<DNA>) =
+        this.fitness compareTo other.fitness
 
     override fun toString() = "{ $genotype -> $fitness }"
 

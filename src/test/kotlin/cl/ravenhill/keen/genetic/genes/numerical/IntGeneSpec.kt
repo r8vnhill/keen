@@ -28,12 +28,10 @@ private val Arb.Companion.intRange
 class IntGeneSpec : WordSpec({
     "Calculating its mean" should {
         "return the mean of the two genes" {
-            checkAll(Arb.intGene(), Arb.intGene()) { gData1, gData2 ->
-                val gene1 = IntGene(gData1.value, gData1.range)
-                val gene2 = IntGene(gData2.value, gData2.range)
+            checkAll(Arb.intGene(), Arb.intGene()) { gene1, gene2 ->
                 gene1.mean(gene2) shouldBe IntGene(
-                    (gData1.value and gData2.value) + ((gData1.value xor gData2.value) shr 1),
-                    gData1.range
+                    (gene1.dna and gene2.dna) + ((gene1.dna xor gene2.dna) shr 1),
+                    gene1.range
                 )
             }
         }
@@ -60,18 +58,15 @@ class IntGeneSpec : WordSpec({
     "Conversion" When {
         "Converting to Int" should {
             "return the gene's dna" {
-                checkAll(Arb.intGene()) { gData ->
-                    IntGene(gData.value, gData.range).toInt() shouldBe gData.value
+                checkAll(Arb.intGene()) { gene ->
+                    gene.toInt() shouldBe gene.dna
                 }
             }
         }
         "Converting to Double" should {
             "return the gene's dna as a Double" {
-                checkAll(Arb.intGene()) { gData ->
-                    IntGene(
-                        gData.value,
-                        gData.range
-                    ).toDouble() shouldBe gData.value.toDouble()
+                checkAll(Arb.intGene()) { gene ->
+                    gene.toDouble() shouldBe gene.dna.toDouble()
                 }
             }
         }
@@ -79,30 +74,29 @@ class IntGeneSpec : WordSpec({
 
     "Flattening" should {
         "return a list with the gene's value" {
-            checkAll(Arb.intGene()) { gData ->
-                IntGene(gData.value, gData.range).flatten() shouldBe listOf(gData.value)
+            checkAll(Arb.intGene()) { gene ->
+                gene.flatten() shouldBe listOf(gene.dna)
             }
         }
     }
     "Genetic operations" When {
         "Duplicating" should {
             "return a new gene with the given dna" {
-                checkAll(Arb.intGene(-1_000_000, 1_000_000), Arb.long()) { gData, seed ->
+                checkAll(Arb.intGene(-1_000_000, 1_000_000), Arb.long()) { gene, seed ->
                     val expected =
-                        Random(seed).nextInt(gData.range.first, gData.range.second)
-                    IntGene(gData.value, gData.range).duplicate(expected) shouldBe
-                            IntGene(expected, gData.range)
+                        Random(seed).nextInt(gene.range.first, gene.range.second)
+                    gene.duplicate(expected) shouldBe
+                            IntGene(expected, gene.range)
                 }
             }
         }
         "Mutation" should {
             "return a gene with a random value" {
-                checkAll(Arb.intGene(-100_000, 100_000), Arb.long()) { gData, seed ->
+                checkAll(Arb.intGene(-100_000, 100_000), Arb.long()) { gene, seed ->
                     Core.random = Random(seed)
                     val rng = Random(seed)
-                    val expected = rng.nextInt(gData.range.first, gData.range.second)
-                    IntGene(gData.value, gData.range).mutate() shouldBe
-                            IntGene(expected, gData.range)
+                    val expected = rng.nextInt(gene.range.first, gene.range.second)
+                    gene.mutate() shouldBe IntGene(expected, gene.range)
                 }
             }
         }
@@ -111,16 +105,16 @@ class IntGeneSpec : WordSpec({
         "checking for equality" should {
             "return true if the genes are the same object" {
                 checkAll(Arb.intGene()) { geneData ->
-                    val gene1 = IntGene(geneData.value, geneData.range)
-                    val gene2 = IntGene(geneData.value, geneData.range)
+                    val gene1 = IntGene(geneData.dna, geneData.range)
+                    val gene2 = IntGene(geneData.dna, geneData.range)
                     gene1 shouldBe gene2
                 }
             }
             "return false if the genes are different objects" {
                 checkAll(Arb.intGene(), Arb.intGene()) { geneData1, geneData2 ->
                     assume(geneData1 != geneData2)
-                    val gene1 = IntGene(geneData1.value, geneData1.range)
-                    val gene2 = IntGene(geneData2.value, geneData2.range)
+                    val gene1 = IntGene(geneData1.dna, geneData1.range)
+                    val gene2 = IntGene(geneData2.dna, geneData2.range)
                     gene1 shouldNotBe gene2
                 }
             }
@@ -128,16 +122,16 @@ class IntGeneSpec : WordSpec({
         "checking hashing" should {
             "return the same hash code for equal genes" {
                 checkAll(Arb.intGene()) { geneData ->
-                    val gene1 = IntGene(geneData.value, geneData.range)
-                    val gene2 = IntGene(geneData.value, geneData.range)
+                    val gene1 = IntGene(geneData.dna, geneData.range)
+                    val gene2 = IntGene(geneData.dna, geneData.range)
                     gene1 shouldHaveSameHashCodeAs gene2
                 }
             }
             "return different hash codes for different genes" {
                 checkAll(Arb.intGene(), Arb.intGene()) { geneData1, geneData2 ->
                     assume(geneData1 != geneData2)
-                    val gene1 = IntGene(geneData1.value, geneData1.range)
-                    val gene2 = IntGene(geneData2.value, geneData2.range)
+                    val gene1 = IntGene(geneData1.dna, geneData1.range)
+                    val gene2 = IntGene(geneData2.dna, geneData2.range)
                     gene1 shouldNotBe gene2
                 }
             }
@@ -146,18 +140,18 @@ class IntGeneSpec : WordSpec({
     "Verifying a gene" should {
         "return true if the gene is within the range and passes the filter" {
             checkAll(PropTestConfig(5290263487183540407), Arb.intGene()) { geneData ->
-                assume(geneData.value > 10000 || geneData.value < -10000)
+                assume(geneData.dna > 10000 || geneData.dna < -10000)
                 IntGene(
-                    geneData.value,
+                    geneData.dna,
                     geneData.range
                 ) { it > 10000 || it < -10000 }.verify() shouldBe true
             }
         }
         "return false if the gene does not pass the filter" {
             checkAll(Arb.intGene()) { geneData ->
-                assume(geneData.value % 5 != 0)
+                assume(geneData.dna % 5 != 0)
                 IntGene(
-                    geneData.value,
+                    geneData.dna,
                     geneData.range
                 ) { it % 5 == 0 }.verify() shouldBe false
             }

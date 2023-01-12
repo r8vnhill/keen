@@ -7,10 +7,39 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.positiveInt
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 
 class PhenotypeSpec : WordSpec({
+    "Comparing" should {
+        "return a negative if the fitness of the other individual is greater than this" {
+            checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+                assume(phenotype1.fitness != phenotype2.fitness)
+                val (p1, p2) = if (phenotype1.fitness < phenotype2.fitness)
+                    phenotype1 to phenotype2
+                else
+                    phenotype2 to phenotype1
+                p1.compareTo(p2) shouldBe -1
+            }
+        }
+        "return a positive if the fitness of the other individual is less than this" {
+            checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+                assume(phenotype1.fitness != phenotype2.fitness)
+                val (p1, p2) = if (phenotype1.fitness < phenotype2.fitness)
+                    phenotype1 to phenotype2
+                else
+                    phenotype2 to phenotype1
+                p2.compareTo(p1) shouldBe 1
+            }
+        }
+        "return 0 if the fitness of the other individual is equal to this" {
+            checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+                val phenotype3 = phenotype2.withFitness(phenotype1.fitness)
+                phenotype1.compareTo(phenotype3) shouldBe 0
+            }
+        }
+    }
     "Duplicating" should {
         "create a new phenotype with the same genotype and generation, but a new fitness" {
             checkAll(Arb.phenotype(), Arb.double()) { phenotype, fitness ->
@@ -61,9 +90,8 @@ class PhenotypeSpec : WordSpec({
 /**
  * Generates an [Arb]itrary [Phenotype].
  */
-fun Arb.Companion.phenotype() = arbitrary {
+fun Arb.Companion.phenotype(fitness: Double = double().next()) = arbitrary {
     val genotype = genotype(intChromosomeFactory()).bind()
     val generation = positiveInt().bind()
-    val fitness = double().next()
     Phenotype(genotype, generation, fitness)
 }

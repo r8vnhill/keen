@@ -9,11 +9,12 @@ import io.kotest.property.arbitrary.int
 
 data class IntGeneData(val value: Int, val range: Pair<Int, Int>)
 
+@OptIn(ExperimentalStdlibApi::class)
 fun Arb.Companion.intGene(lo: Int = Int.MIN_VALUE, hi: Int = Int.MAX_VALUE) =
     arbitrary {
         val range = orderedIntPair(lo, hi).bind()
-        val value = int(range.first until range.second).bind()
-        IntGeneData(value, range)
+        val value = int(range.first ..< range.second).bind()
+        IntGene(value, range)
     }
 
 fun Arb.Companion.doubleGene() = arbitrary { rs ->
