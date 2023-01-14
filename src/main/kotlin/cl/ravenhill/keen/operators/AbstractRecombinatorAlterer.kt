@@ -1,22 +1,31 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.contract
+import cl.ravenhill.keen.IntClause.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.indices
-import cl.ravenhill.keen.util.Subset
-import cl.ravenhill.keen.util.validateAtLeast
+import cl.ravenhill.keen.util.subset
 import kotlin.math.min
 
 
-abstract class AbstractRecombinatorAlterer<DNA>(probability: Double, protected val order: Int) :
-        AbstractAlterer<DNA>(probability) {
+abstract class AbstractRecombinatorAlterer<DNA>(
+    probability: Double,
+    protected val order: Int
+) :
+    AbstractAlterer<DNA>(probability) {
 
     init {
-        order.validateAtLeast(2, "Order")
+        contract {
+            order should BeAtLeast(2)
+        }
     }
 
-    override fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA> {
+    override fun invoke(
+        population: Population<DNA>,
+        generation: Int
+    ): AltererResult<DNA> {
         val pop = population.toMutableList()
         return if (pop.size >= 2) {
             val minOrder = min(order, pop.size)
@@ -30,7 +39,7 @@ abstract class AbstractRecombinatorAlterer<DNA>(probability: Double, protected v
     }
 
     private fun individuals(index: Int, size: Int, ord: Int): IntArray {
-        val ind = Subset.next(size, ord)
+        val ind = Core.random.subset(size, ord)
         var i = 0
         while (ind[i] < index && i < ind.size - 1) {
             ++i

@@ -122,36 +122,3 @@ class GenotypeSpec : WordSpec({
         }
     }
 })
-
-/**
- * Generates an [Arb]itrary [Int] value outside the given ``intRange``.
- *
- * Behaviour when the given range encompasses the whole [Int] range is undefined.
- */
-private fun Arb.Companion.intOutsideRange(intRange: IntRange) = arbitrary {
-    if (intRange.first == Int.MIN_VALUE) {
-        int(intRange.last + 1, Int.MAX_VALUE).bind()
-    } else {
-        int(Int.MIN_VALUE, intRange.first - 1).bind()
-    }
-}
-
-/**
- * Generates a new [Arb]itrary [Genotype] using a given arbitrary [Chromosome] factory.
- */
-fun <T> Arb.Companion.genotype(chromosome: Arb<Chromosome.Factory<T>>) =
-    arbitrary {
-        val chromosomes = Arb.list(chromosome, 1..100).bind()
-        Genotype.Factory<T>().apply {
-            chromosomes.forEach {
-                chromosome { it }
-            }
-        }.make()
-    }
-
-fun Arb.Companion.intChromosomeFactory() = arbitrary {
-    IntChromosome.Factory().apply {
-        size = Arb.positiveInt(100).bind()
-        range = orderedIntPair().bind()
-    }
-}

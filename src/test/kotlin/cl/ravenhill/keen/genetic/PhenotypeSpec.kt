@@ -1,5 +1,8 @@
 package cl.ravenhill.keen.genetic
 
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.intChromosomeFactory
+import cl.ravenhill.keen.phenotype
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -14,7 +17,7 @@ import io.kotest.property.checkAll
 class PhenotypeSpec : WordSpec({
     "Comparing" should {
         "return a negative if the fitness of the other individual is greater than this" {
-            checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+            checkAll(Arb.phenotype(Arb.intChromosomeFactory()), Arb.phenotype(Arb.intChromosomeFactory())) { phenotype1, phenotype2 ->
                 assume(phenotype1.fitness != phenotype2.fitness)
                 val (p1, p2) = if (phenotype1.fitness < phenotype2.fitness)
                     phenotype1 to phenotype2
@@ -24,7 +27,7 @@ class PhenotypeSpec : WordSpec({
             }
         }
         "return a positive if the fitness of the other individual is less than this" {
-            checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+            checkAll(Arb.phenotype(Arb.intChromosomeFactory()), Arb.phenotype(Arb.intChromosomeFactory())) { phenotype1, phenotype2 ->
                 assume(phenotype1.fitness != phenotype2.fitness)
                 val (p1, p2) = if (phenotype1.fitness < phenotype2.fitness)
                     phenotype1 to phenotype2
@@ -34,7 +37,7 @@ class PhenotypeSpec : WordSpec({
             }
         }
         "return 0 if the fitness of the other individual is equal to this" {
-            checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+            checkAll(Arb.phenotype(Arb.intChromosomeFactory()), Arb.phenotype(Arb.intChromosomeFactory())) { phenotype1, phenotype2 ->
                 val phenotype3 = phenotype2.withFitness(phenotype1.fitness)
                 phenotype1.compareTo(phenotype3) shouldBe 0
             }
@@ -42,7 +45,7 @@ class PhenotypeSpec : WordSpec({
     }
     "Duplicating" should {
         "create a new phenotype with the same genotype and generation, but a new fitness" {
-            checkAll(Arb.phenotype(), Arb.double()) { phenotype, fitness ->
+            checkAll(Arb.phenotype(Arb.intChromosomeFactory()), Arb.double()) { phenotype, fitness ->
                 val newPhenotype = phenotype.withFitness(fitness)
                 newPhenotype.genotype shouldBe phenotype.genotype
                 newPhenotype.generation shouldBe phenotype.generation
@@ -52,7 +55,7 @@ class PhenotypeSpec : WordSpec({
     }
     "Flattening" should {
         "return a list with the contents of the genes" {
-            checkAll(Arb.phenotype()) { phenotype ->
+            checkAll(Arb.phenotype(Arb.intChromosomeFactory())) { phenotype ->
                 val flattened = phenotype.flatten()
                 flattened shouldBe phenotype.genotype.flatten()
             }
@@ -61,37 +64,27 @@ class PhenotypeSpec : WordSpec({
     "Evaluation" When {
         "checking if the phenotype is evaluated" should {
             "be true if the genotype is evaluated" {
-                checkAll(Arb.phenotype()) { phenotype ->
+                checkAll(Arb.phenotype(Arb.intChromosomeFactory())) { phenotype ->
                     phenotype.isEvaluated() shouldBe true
                 }
             }
             "be false if the genotype is not evaluated" {
-                checkAll(Arb.phenotype()) { phenotype ->
+                checkAll(Arb.phenotype(Arb.intChromosomeFactory())) { phenotype ->
                     phenotype.withFitness(Double.NaN).isEvaluated() shouldBe false
                 }
             }
         }
         "checking if a phenotype is not evaluated" should {
             "be true if the genotype is not evaluated" {
-                checkAll(Arb.phenotype()) { phenotype ->
+                checkAll(Arb.phenotype(Arb.intChromosomeFactory())) { phenotype ->
                     phenotype.withFitness(Double.NaN).isNotEvaluated() shouldBe true
                 }
             }
             "be false if the genotype is evaluated" {
-                checkAll(Arb.phenotype()) { phenotype ->
+                checkAll(Arb.phenotype(Arb.intChromosomeFactory())) { phenotype ->
                     phenotype.isNotEvaluated() shouldBe false
                 }
             }
         }
     }
 })
-
-
-/**
- * Generates an [Arb]itrary [Phenotype].
- */
-fun Arb.Companion.phenotype(fitness: Double = double().next()) = arbitrary {
-    val genotype = genotype(intChromosomeFactory()).bind()
-    val generation = positiveInt().bind()
-    Phenotype(genotype, generation, fitness)
-}

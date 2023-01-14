@@ -14,7 +14,7 @@ import cl.ravenhill.keen.operators.CombineAlterer
 
 
 /**
- * Performs a crossover between two genotypes using the mean of the genes.
+ * Performs a combination between two genotypes using the mean of the genes.
  *
  * @param DNA   The type of the DNA.
  *              Must be a [Number] type.
@@ -22,7 +22,7 @@ import cl.ravenhill.keen.operators.CombineAlterer
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-class MeanCrossover<DNA : Number>(probability: Double) :
+class MeanCombinator<DNA : Number>(probability: Double) :
         CombineAlterer<DNA>(
             // This cast should be safe
             { g1: Gene<DNA>, g2: Gene<DNA> -> (g1 as NumberGene<DNA>).mean(g2 as NumberGene<DNA>) },

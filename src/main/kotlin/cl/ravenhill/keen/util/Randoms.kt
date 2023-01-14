@@ -21,19 +21,19 @@ fun Random.nextChar(filter: (Char) -> Boolean = { true }) =
 
 
 /**
- * Returns a stream of pseudorandom int values, each conforming to the given origin (inclusive) and
- * bound (exclusive).
+ * Returns a stream of pseudorandom int values, each conforming to the given origin
+ * (inclusive) and bound (exclusive).
  *
  * @receiver the random instance.
  * @param from the origin (inclusive) of each random value.
  * @param until the bound (exclusive) of each random value.
  * @return a stream of pseudorandom int values.
  */
-fun Random.ints(from: Int = 0, until: Int = Int.MAX_VALUE) =
+fun Random.ints(from: Int = 0, until: Int = Int.MAX_VALUE): IntStream =
     IntStream.generate { this.nextInt(from, until) }
 
 /**
- * Returns an array with the indices of a subset of the given size.
+ * Returns an array with the indices of a random subset of the given size.
  *
  * @receiver the random instance.
  * @param from the size of the set.
@@ -42,6 +42,7 @@ fun Random.ints(from: Int = 0, until: Int = Int.MAX_VALUE) =
  */
 fun Random.subset(pick: Int, from: Int): IntArray =
     ints(0, from)
+        .distinct()
         .limit(pick.toLong())
         .sorted()
         .toArray()

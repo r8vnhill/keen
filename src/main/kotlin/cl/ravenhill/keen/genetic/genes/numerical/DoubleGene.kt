@@ -21,9 +21,8 @@ class DoubleGene(
     override val filter: (Double) -> Boolean = { true }
 ) : NumberGene<Double>, ComparableGene<Double> {
 
-    // https://hal.archives-ouvertes.fr/hal-00576641v1/document
     override fun mean(gene: NumberGene<Double>) =
-        duplicate((dna - dna / 2) + (gene.dna - gene.dna / 2))
+        duplicate((dna + gene.dna) / 2)
 
     private val start = range.first
     private val end = range.second

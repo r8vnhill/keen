@@ -12,6 +12,7 @@ import cl.ravenhill.keen.CollectionClause.NotBeEmpty
 import cl.ravenhill.keen.Core.contract
 import cl.ravenhill.keen.IntClause.BeInRange
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import java.util.*
 
 
 /**
@@ -49,6 +50,17 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
         }
         return chromosomes[index]
     }
+
+    // region : equals and hashCode
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is Genotype<*> -> false
+        chromosomes != other.chromosomes -> false
+        else -> true
+    }
+
+    override fun hashCode() = Objects.hash(Genotype::class, chromosomes)
+    // endregion
 
     /**
      * Factory for [Genotype]s.

@@ -37,17 +37,11 @@ class IntGene(
     /**
      * Calculates the mean of this gene and the given one.
      *
-     * This uses the fact that ``(x + y) = ((x & y) + (x | y)) = ((x ^ y) + 2 * (x & y))``.
-     * This operation is _overflow-safe_.
-     *
-     * __References:__
-     * - http://aggregate.org/MAGIC/#Average%20of%20Integers
-     *
      * @param gene NumberGene<Int>
      * @return IntGene
      */
     override fun mean(gene: NumberGene<Int>) =
-        duplicate((gene.dna and dna) + ((gene.dna xor dna) shr 1))
+        duplicate(((gene.dna.toLong() + dna.toLong()) / 2).toInt())
 
     override fun toDouble() = dna.toDouble()
 

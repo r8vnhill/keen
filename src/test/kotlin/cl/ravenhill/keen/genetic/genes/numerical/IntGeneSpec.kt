@@ -30,7 +30,7 @@ class IntGeneSpec : WordSpec({
         "return the mean of the two genes" {
             checkAll(Arb.intGene(), Arb.intGene()) { gene1, gene2 ->
                 gene1.mean(gene2) shouldBe IntGene(
-                    (gene1.dna and gene2.dna) + ((gene1.dna xor gene2.dna) shr 1),
+                    ((gene1.dna.toLong() + gene2.dna.toLong()) / 2).toInt(),
                     gene1.range
                 )
             }

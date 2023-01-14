@@ -42,7 +42,15 @@ open class CombineAlterer<DNA>(
         return 1
     }
 
-    private fun combine(a: Chromosome<DNA>, b: Chromosome<DNA>) = List(a.size) {
-        combiner(a[it], b[it])
+    /**
+     * Returns a list of the genes that are the result of the combination of the genes of
+     * the given chromosomes.
+     */
+    internal fun combine(a: Chromosome<DNA>, b: Chromosome<DNA>) = List(a.size) {
+        if (Core.random.nextDouble() < probability) {
+            combiner(a[it], b[it])
+        } else {
+            a[it]
+        }
     }
 }

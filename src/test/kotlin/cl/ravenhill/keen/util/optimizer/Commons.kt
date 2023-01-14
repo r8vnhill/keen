@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.util.optimizer
 
-import cl.ravenhill.keen.genetic.phenotype
+import cl.ravenhill.keen.intChromosomeFactory
+import cl.ravenhill.keen.phenotype
 import io.kotest.core.spec.style.wordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -11,7 +12,10 @@ fun `invoking should be consistent with compare`(optimizer: PhenotypeOptimizer<D
     wordSpec {
         "Invoking" should {
             "be consistent with compare" {
-                checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+                checkAll(
+                    Arb.phenotype(Arb.intChromosomeFactory()),
+                    Arb.phenotype(Arb.intChromosomeFactory())
+                ) { phenotype1, phenotype2 ->
                     optimizer(phenotype1, phenotype2) shouldBe optimizer.compare(
                         phenotype1,
                         phenotype2
@@ -26,7 +30,10 @@ fun `a comparator can be created from the optimizer`(optimizer: PhenotypeOptimiz
         "a comparator" should {
             "be created from the optimizer" {
                 val comparator = optimizer.comparator
-                checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+                checkAll(
+                    Arb.phenotype(Arb.intChromosomeFactory()),
+                    Arb.phenotype(Arb.intChromosomeFactory())
+                ) { phenotype1, phenotype2 ->
                     comparator.compare(phenotype1, phenotype2) shouldBe optimizer.compare(
                         phenotype1,
                         phenotype2

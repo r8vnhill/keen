@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.util.optimizer
 
-import cl.ravenhill.keen.genetic.phenotype
+import cl.ravenhill.keen.intChromosomeFactory
+import cl.ravenhill.keen.phenotype
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.ints.shouldBeLessThan
@@ -18,17 +19,23 @@ class FitnessMaximizerSpec : WordSpec({
 
     "Comparing two phenotypes" should {
         "return a negative number if the second phenotype is greater than the first" {
-            checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+            checkAll(
+                Arb.phenotype(Arb.intChromosomeFactory()),
+                Arb.phenotype(Arb.intChromosomeFactory())
+            ) { phenotype1, phenotype2 ->
                 assume(phenotype1.fitness != phenotype2.fitness)
                 val (p1, p2) = if (phenotype1.fitness < phenotype2.fitness)
                     phenotype1 to phenotype2
                 else
                     phenotype2 to phenotype1
-                optimizer.compare(p1, p2) shouldBeLessThan  0
+                optimizer.compare(p1, p2) shouldBeLessThan 0
             }
         }
         "return a positive number if the first phenotype is greater than the second" {
-            checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+            checkAll(
+                Arb.phenotype(Arb.intChromosomeFactory()),
+                Arb.phenotype(Arb.intChromosomeFactory())
+            ) { phenotype1, phenotype2 ->
                 assume(phenotype1.fitness != phenotype2.fitness)
                 val (p1, p2) = if (phenotype1.fitness > phenotype2.fitness)
                     phenotype1 to phenotype2
@@ -38,7 +45,10 @@ class FitnessMaximizerSpec : WordSpec({
             }
         }
         "return 0 if the phenotypes have the same fitness" {
-            checkAll(Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2 ->
+            checkAll(
+                Arb.phenotype(Arb.intChromosomeFactory()),
+                Arb.phenotype(Arb.intChromosomeFactory())
+            ) { phenotype1, phenotype2 ->
                 val phenotype3 = phenotype2.withFitness(phenotype1.fitness)
                 optimizer.compare(phenotype1, phenotype3) shouldBe 0
             }
@@ -53,8 +63,16 @@ class FitnessMaximizerSpec : WordSpec({
     }
     "Sorting" should {
         "sort the phenotypes in descending order" {
-            checkAll(Arb.phenotype(), Arb.phenotype(), Arb.phenotype()) { phenotype1, phenotype2, phenotype3 ->
-                val (p1, p2, p3) = listOf(phenotype1, phenotype2, phenotype3).sortedByDescending { it.fitness }
+            checkAll(
+                Arb.phenotype(Arb.intChromosomeFactory()),
+                Arb.phenotype(Arb.intChromosomeFactory()),
+                Arb.phenotype(Arb.intChromosomeFactory())
+            ) { phenotype1, phenotype2, phenotype3 ->
+                val (p1, p2, p3) = listOf(
+                    phenotype1,
+                    phenotype2,
+                    phenotype3
+                ).sortedByDescending { it.fitness }
                 val sorted = optimizer.sort(listOf(p3, p1, p2))
                 sorted shouldBe listOf(p1, p2, p3)
             }

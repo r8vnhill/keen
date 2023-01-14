@@ -43,7 +43,7 @@ sealed interface IntClause : Clause<Int> {
     /**
      * Constraint that checks if an integer is in a given range.
      */
-    class BeInRange(private val range: IntRange) : IntClause {
+    open class BeInRange(private val range: IntRange) : IntClause {
 
         override fun validate(value: Int): Result<Int> =
             if (value !in range) {
@@ -54,6 +54,11 @@ sealed interface IntClause : Clause<Int> {
                 Result.success(value)
             }
     }
+
+    /**
+     * Constraint that checks if an integer is at least a given value.
+     */
+    class BeAtLeast(min: Int) : BeInRange(min..Int.MAX_VALUE)
 }
 
 /**
