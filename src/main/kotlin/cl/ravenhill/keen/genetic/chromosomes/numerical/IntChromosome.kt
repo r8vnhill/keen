@@ -10,7 +10,7 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.contract
+import cl.ravenhill.keen.Core.requirements
 import cl.ravenhill.keen.IntClause.*
 import cl.ravenhill.keen.PairClause.*
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
@@ -104,8 +104,8 @@ class IntChromosome private constructor(
         var size by Delegates.notNull<Int>()
 
         override fun make(): IntChromosome {
-            contract {
-                size should Positive
+            requirements {
+                size should BePositive
                 range should StrictlyOrdered()
             }
             return IntChromosome(size, range, filter)

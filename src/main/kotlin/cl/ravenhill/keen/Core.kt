@@ -39,7 +39,7 @@ object Core {
      * @param builder The contract builder.
      * @throws UnfulfilledContractException If the contract is not fulfilled.
      */
-    fun contract(builder: ContractContext.() -> Unit) {
+    fun requirements(builder: ContractContext.() -> Unit) {
         ContractContext().apply(builder).errors.let { errors ->
             if (errors.isNotEmpty()) {
                 throw UnfulfilledContractException(errors)

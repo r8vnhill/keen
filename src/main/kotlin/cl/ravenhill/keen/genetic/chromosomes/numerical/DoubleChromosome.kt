@@ -9,8 +9,8 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.contract
-import cl.ravenhill.keen.IntClause.Positive
+import cl.ravenhill.keen.Core.requirements
+import cl.ravenhill.keen.IntClause.BePositive
 import cl.ravenhill.keen.PairClause.Finite
 import cl.ravenhill.keen.PairClause.StrictlyOrdered
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
@@ -93,8 +93,8 @@ class DoubleChromosome private constructor(
         var filter: (Double) -> Boolean = { true }
 
         override fun make(): DoubleChromosome {
-            contract {
-                size should Positive
+            requirements {
+                size should BePositive
                 range should StrictlyOrdered()
                 range should Finite
             }

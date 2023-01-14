@@ -188,10 +188,3 @@ fun <T> Arb.Companion.population(
         phenotype(chromosomeFactory, fitness).bind()
     }
 }
-
-/**
- * Generates an [Arb]itrary [Double] in the range [0.0, 1.0].
- */
-private fun Arb.Companion.probability() = arbitrary {
-    double(0.0, 1.0).next()
-}

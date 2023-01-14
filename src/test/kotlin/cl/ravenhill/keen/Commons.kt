@@ -110,3 +110,10 @@ fun <T> Arb.Companion.phenotype(
     val generation = positiveInt().bind()
     Phenotype(genotype, generation, fitness)
 }
+
+/**
+ * Generates an [Arb]itrary [Double] in the range [0.0, 1.0].
+ */
+fun Arb.Companion.probability() = arbitrary {
+    double(0.0, 1.0).next()
+}

@@ -9,6 +9,9 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.requirements
+import cl.ravenhill.keen.DoubleClause.BeInRange
+import cl.ravenhill.keen.IntClause.BePositive
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -49,7 +52,10 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
      * @param generation The current generation
      * @return The mutated population
      */
-    override fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA> {
+    override fun invoke(
+        population: Population<DNA>,
+        generation: Int
+    ): AltererResult<DNA> {
         val p = probability.pow(1 / 3.0)
         val widenedProbability = p.toIntProbability()
         val result = population.map {
@@ -101,9 +107,12 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
         chromosome: Chromosome<DNA>,
         prob: Double
     ): MutatorResult<Chromosome<DNA>> {
-        val widenedProbability = prob.toIntProbability()
+        requirements {
+            chromosome.size should BePositive
+            prob should BeInRange(0.0..1.0)
+        }
         val result = chromosome.sequence().map {
-            if (Core.random.nextInt() < widenedProbability) {
+            if (Core.random.nextDouble() < prob) {
                 MutatorResult(mutateGene(it), 1)
             } else {
                 MutatorResult(it)
@@ -115,7 +124,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
         )
     }
 
-    private fun mutateGene(gene: Gene<DNA>) = gene.mutate()
+    internal fun mutateGene(gene: Gene<DNA>) = gene.mutate()
 
     override fun toString() = "Mutator { " +
             "probability: $probability }"

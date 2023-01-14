@@ -17,7 +17,7 @@ import java.util.Objects
  */
 class DoubleGene(
     override val dna: Double,
-    private val range: Pair<Double, Double>,
+    val range: Pair<Double, Double>,
     override val filter: (Double) -> Boolean = { true }
 ) : NumberGene<Double>, ComparableGene<Double> {
 
@@ -31,7 +31,7 @@ class DoubleGene(
 
     override fun toInt() = dna.toInt()
 
-    override fun generator() = Core.random.nextDouble() * (end - start) + start
+    override fun generator() = Core.random.nextDouble(start, end)
 
     override fun duplicate(dna: Double) = DoubleGene(dna, range)
 

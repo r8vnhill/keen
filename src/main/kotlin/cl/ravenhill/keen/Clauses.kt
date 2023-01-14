@@ -28,7 +28,7 @@ sealed interface IntClause : Clause<Int> {
     /**
      * Constraint that checks if an integer is positive.
      */
-    object Positive : IntClause {
+    object BePositive : IntClause {
 
         override fun validate(value: Int): Result<Int> =
             if (value <= 0) {
@@ -65,7 +65,7 @@ sealed interface IntClause : Clause<Int> {
  * Represents a constraint that can be applied to a double.
  */
 sealed interface DoubleClause : Clause<Double> {
-    class InRange(private val range: ClosedFloatingPointRange<Double>) :
+    class BeInRange(private val range: ClosedFloatingPointRange<Double>) :
         DoubleClause {
         override fun validate(value: Double) = if (value in range) {
             Result.success(value)
