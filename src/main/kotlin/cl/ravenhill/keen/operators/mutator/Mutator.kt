@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.requirements
+import cl.ravenhill.keen.Core.contracts
 import cl.ravenhill.keen.DoubleClause.BeInRange
 import cl.ravenhill.keen.IntClause.BePositive
 import cl.ravenhill.keen.Population
@@ -86,7 +86,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
         val widenedProbability = prob.toIntProbability()
         val result = genotype.sequence().map {
             if (Core.random.nextInt() < widenedProbability) {
-                mutateChromosome(it, prob)
+                mutateChromosome(it)
             } else {
                 MutatorResult(it, 0)
             }
@@ -103,16 +103,14 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
      * Mutates a chromosome and returns a [MutatorResult] with the mutated chromosome and the
      * number of mutations.
      */
-    protected open fun mutateChromosome(
-        chromosome: Chromosome<DNA>,
-        prob: Double
+    internal open fun mutateChromosome(
+        chromosome: Chromosome<DNA>
     ): MutatorResult<Chromosome<DNA>> {
-        requirements {
+        contracts {
             chromosome.size should BePositive
-            prob should BeInRange(0.0..1.0)
         }
         val result = chromosome.sequence().map {
-            if (Core.random.nextDouble() < prob) {
+            if (Core.random.nextDouble() < probability) {
                 MutatorResult(mutateGene(it), 1)
             } else {
                 MutatorResult(it)

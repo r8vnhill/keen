@@ -1,9 +1,9 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.numerical.intChromosome
 import cl.ravenhill.keen.genetic.genes.doubleGene
 import cl.ravenhill.keen.genetic.genes.intGene
-import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.probability
 import io.kotest.core.spec.style.WordSpec
@@ -51,6 +51,18 @@ class MutatorSpec : WordSpec({
                         random.nextDouble(gene.range.first, gene.range.second)
                     )
                     mutated shouldBe expected
+                }
+            }
+        }
+    }
+    "Chromosome" When {
+        "mutating an Int chromosome" should {
+            "return the same chromosome if the probability is 0" {
+                checkAll(
+                    Arb.intChromosome()
+                ) { chromosome ->
+                    val mutated = Mutator<Int>(0.0).mutateChromosome(chromosome)
+                    mutated shouldBe MutatorResult(chromosome, 0)
                 }
             }
         }

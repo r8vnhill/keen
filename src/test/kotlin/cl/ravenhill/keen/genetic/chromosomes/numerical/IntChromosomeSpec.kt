@@ -10,6 +10,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.nonPositiveInt
+import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
@@ -118,8 +119,8 @@ class IntChromosomeSpec : WordSpec({
     }
 })
 
-fun Arb.Companion.intChromosome() = arbitrary {
-    val size = Arb.int(1, 1000).bind()
+fun Arb.Companion.intChromosome(maxSize: Int = 10_000) = arbitrary {
+    val size = Arb.positiveInt(maxSize).bind()
     val range = Arb.orderedIntPair().bind()
     `create a new chromosome using it's factory`(size, range)
 }

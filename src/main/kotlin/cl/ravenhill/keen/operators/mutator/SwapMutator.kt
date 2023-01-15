@@ -24,10 +24,9 @@ import cl.ravenhill.keen.util.swap
 class SwapMutator<DNA>(probability: Double = 0.2) : Mutator<DNA>(probability) {
     override fun mutateChromosome(
         chromosome: Chromosome<DNA>,
-        prob: Double
     ) = if (chromosome.size > 1) {
         val genes = chromosome.genes.toMutableList()
-        val mutations = Core.random.indices(prob, genes.size)
+        val mutations = Core.random.indices(probability, genes.size)
             .map { genes.swap(it, Core.random.nextInt(genes.size)) }
             .count()
         MutatorResult(chromosome.duplicate(genes), mutations)

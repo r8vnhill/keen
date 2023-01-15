@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.requirements
+import cl.ravenhill.keen.Core.contracts
 import cl.ravenhill.keen.IntClause.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
@@ -17,7 +17,7 @@ abstract class AbstractRecombinatorAlterer<DNA>(
     AbstractAlterer<DNA>(probability) {
 
     init {
-        requirements {
+        contracts {
             order should BeAtLeast(2)
         }
     }

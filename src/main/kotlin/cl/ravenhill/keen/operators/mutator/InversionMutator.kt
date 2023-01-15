@@ -25,7 +25,6 @@ import cl.ravenhill.keen.util.subset
 class InversionMutator<DNA>(probability: Double) : Mutator<DNA>(probability) {
     override fun mutateChromosome(
         chromosome: Chromosome<DNA>,
-        prob: Double
     ) = if (chromosome.size < 2) {
         MutatorResult(chromosome, 0)
     } else {

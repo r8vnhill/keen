@@ -39,7 +39,7 @@ object Core {
      * @param builder The contract builder.
      * @throws UnfulfilledContractException If the contract is not fulfilled.
      */
-    fun requirements(builder: ContractContext.() -> Unit) {
+    fun contracts(builder: ContractContext.() -> Unit) {
         ContractContext().apply(builder).errors.let { errors ->
             if (errors.isNotEmpty()) {
                 throw UnfulfilledContractException(errors)
@@ -66,8 +66,8 @@ object Core {
         /**
          * Extension function that checks an integer constraint.
          */
-        infix fun Int.should(constraint: IntClause) =
-            results.add(constraint.validate(this))
+        infix fun Int.should(clause: IntClause) =
+            results.add(clause.validate(this))
 
         /**
          * Extension function that checks a double constraint.
