@@ -31,8 +31,8 @@ class IntGene(
     val range: Pair<Int, Int>,
     override val filter: (Int) -> Boolean = { true }
 ) : NumberGene<Int>, ComparableGene<Int> {
-    private val start = range.first
-    private val end = range.second
+    val start = range.first
+    val end = range.second
 
     /**
      * Calculates the mean of this gene and the given one.

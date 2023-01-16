@@ -65,6 +65,10 @@ sealed interface IntClause : Clause<Int> {
  * Represents a constraint that can be applied to a double.
  */
 sealed interface DoubleClause : Clause<Double> {
+
+    /**
+     * Constraint that checks if a double is in a given range.
+     */
     class BeInRange(private val range: ClosedFloatingPointRange<Double>) :
         DoubleClause {
         override fun validate(value: Double) = if (value in range) {

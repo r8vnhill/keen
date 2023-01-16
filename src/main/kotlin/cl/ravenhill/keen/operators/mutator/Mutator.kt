@@ -9,9 +9,7 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.contracts
-import cl.ravenhill.keen.DoubleClause.BeInRange
-import cl.ravenhill.keen.IntClause.BePositive
+import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -19,6 +17,8 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
+import cl.ravenhill.keen.probability
+import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.math.toIntProbability
 import kotlin.math.pow
 
@@ -75,27 +75,19 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
         phenotype: Phenotype<DNA>,
         prob: Double,
         generation: Int
-    ) = mutateGenotype(phenotype.genotype, prob).map {
+    ) = mutateGenotype(phenotype.genotype).map {
         Phenotype(it, generation)
     }
 
     private fun mutateGenotype(
-        genotype: Genotype<DNA>,
-        prob: Double
+        genotype: Genotype<DNA>
     ): MutatorResult<Genotype<DNA>> {
-        val widenedProbability = prob.toIntProbability()
-        val result = genotype.sequence().map {
-            if (Core.random.nextInt() < widenedProbability) {
-                mutateChromosome(it)
-            } else {
-                MutatorResult(it, 0)
-            }
-        }.toList()
+        val result = genotype.chromosomes.map {
+            mutateChromosome(it)
+        }
         return MutatorResult(
             genotype.duplicate(result.map { it.result }),
-            result.stream()
-                .mapToInt { it.mutations }
-                .sum()
+            result.sumOf { it.mutations }
         )
     }
 
@@ -106,23 +98,35 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
     internal open fun mutateChromosome(
         chromosome: Chromosome<DNA>
     ): MutatorResult<Chromosome<DNA>> {
-        contracts {
-            chromosome.size should BePositive
-        }
-        val result = chromosome.sequence().map {
-            if (Core.random.nextDouble() < probability) {
-                MutatorResult(mutateGene(it), 1)
-            } else {
-                MutatorResult(it)
-            }
-        }.toList()
+        val result = chromosome.genes.map { mutateGene(it) }
         return MutatorResult(
             chromosome.duplicate(result.map { it.result }),
             result.sumOf { it.mutations }
         )
     }
 
-    internal fun mutateGene(gene: Gene<DNA>) = gene.mutate()
+    /**
+     * Mutates a gene and returns a [MutatorResult] with the mutated gene and the number
+     * of mutations.
+     *
+     * The result is defined based in the mutation [probability], the behaviour of this
+     * probability can be defined by three cases:
+     *
+     *  1. The probability is 0.0, then 0 mutations are performed and a copy of the
+     *     original gene is returned.
+     *  2. The probability is 1.0, then 1 mutation is performed and the mutated gene is
+     *     returned.
+     *  3. The probability is between 0.0 and 1.0, then a random number is generated and
+     *     if it is less than the probability, then 1 mutation is performed and the mutated
+     *     gene is returned, otherwise 0 mutations are performed and a copy of the original
+     *     gene is returned.
+     */
+    internal fun mutateGene(gene: Gene<DNA>) =
+        if (probability eq 0.0)
+            MutatorResult(gene)
+        else if (probability eq 1.0 || Dice.probability() < probability)
+            MutatorResult(gene.mutate(), 1)
+        else MutatorResult(gene)
 
     override fun toString() = "Mutator { " +
             "probability: $probability }"

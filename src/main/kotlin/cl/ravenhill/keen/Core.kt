@@ -34,6 +34,13 @@ object Core {
     var random: Random = Random.Default
 
     /**
+     * Represents the "roll" of an n-dimensional or continuous dice.
+     */
+    object Dice {
+        var random: Random = Random.Default
+    }
+
+    /**
      * Checks that a given contract is fulfilled.
      *
      * @param builder The contract builder.
@@ -132,3 +139,8 @@ object Core {
 }
 
 typealias Population<DNA> = List<Phenotype<DNA>>
+
+/**
+ * Generates a new random double in [0, 1).
+ */
+fun Core.Dice.probability() = random.nextDouble()

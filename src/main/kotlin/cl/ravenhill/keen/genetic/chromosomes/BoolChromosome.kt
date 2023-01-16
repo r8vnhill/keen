@@ -9,8 +9,10 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.Core.contracts
+import cl.ravenhill.keen.DoubleClause
 import cl.ravenhill.keen.DoubleClause.BeInRange
-import cl.ravenhill.keen.IntClause.*
+import cl.ravenhill.keen.IntClause
+import cl.ravenhill.keen.IntClause.BePositive
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.math.BitArray
