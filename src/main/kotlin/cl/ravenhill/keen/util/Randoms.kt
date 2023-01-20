@@ -42,7 +42,7 @@ fun Random.ints(from: Int = 0, until: Int = Int.MAX_VALUE): IntStream =
  */
 fun Random.subset(pick: Int, from: Int): IntArray =
     ints(0, from)
-        .distinct()
+//        .distinct()
         .limit(pick.toLong())
         .sorted()
         .toArray()
