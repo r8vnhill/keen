@@ -8,7 +8,9 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.mutator.InversionMutator
 import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.SwapMutator
 import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.logging.fileChannel
 import cl.ravenhill.keen.util.logging.logger
@@ -47,7 +49,7 @@ fun main() {
         }
     }) {
         populationSize = 5000
-        alterers = listOf(Mutator(0.3), SinglePointCrossover(0.3))
+        alterers = listOf(Mutator(0.3), Mutator(0.3))
         optimizer = FitnessMinimizer()
         limits = listOf(SteadyGenerations(10), GenerationCount(1000))
         statistics = listOf(StatisticCollector(), StatisticPlotter())

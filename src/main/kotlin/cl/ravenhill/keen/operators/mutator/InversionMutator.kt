@@ -2,6 +2,8 @@ package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.subset
 
@@ -26,13 +28,33 @@ import cl.ravenhill.keen.util.subset
 class InversionMutator<DNA>(probability: Double) : Mutator<DNA>(probability) {
     override fun mutateChromosome(
         chromosome: Chromosome<DNA>,
-    ) = if (probability eq 0.0 && chromosome.size < 2) {
+    ) = if (probability eq 0.0 || chromosome.size < 2) {
         MutatorResult(chromosome, 0)
     } else {
-        val (start, end) = Core.random.subset(pick = 2, from = chromosome.size)
+        var start = 0
+        var end = chromosome.size - 1
+        for (i in 0 until chromosome.size) {
+            if (Core.Dice.probability() < probability) {
+                start = i
+                break
+            }
+        }
+        for (i in start until chromosome.size) {
+            if (Core.Dice.probability() > probability) {
+                end = i
+                break
+            }
+        }
         val genes = chromosome.genes.toMutableList()
-        var i = start
-        var j = end - 1
+        invert(genes, start, end)
+        MutatorResult(chromosome.duplicate(genes), 1)
+    }
+
+    /**
+     * Inverts the order of the genes in the given [genes] list, between the given [start] and [end] indexes.
+     */
+    private fun invert(genes: MutableList<Gene<DNA>>, start: Int, end: Int) {
+        var (i, j) = if (start < end) start to end else end to start
         while (i < j) {
             val tmp = genes[i]
             genes[i] = genes[j]
@@ -40,6 +62,5 @@ class InversionMutator<DNA>(probability: Double) : Mutator<DNA>(probability) {
             i++
             j--
         }
-        MutatorResult(chromosome.duplicate(genes), 1)
     }
 }
