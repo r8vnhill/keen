@@ -104,9 +104,10 @@ fun Arb.Companion.intChromosomeFactory(maxSize: Int = 100) = arbitrary {
  */
 fun <T> Arb.Companion.phenotype(
     chromosomeFactory: Arb<Chromosome.Factory<T>>,
-    fitness: Double = double().next()
+    fitness: Double = double().next(),
+    maxSize: Int = 100
 ) = arbitrary {
-    val genotype = genotype(chromosomeFactory).bind()
+    val genotype = genotype(chromosomeFactory, maxSize).bind()
     val generation = positiveInt().bind()
     Phenotype(genotype, generation, fitness)
 }

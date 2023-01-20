@@ -2,6 +2,7 @@ package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.subset
 
 
@@ -25,7 +26,7 @@ import cl.ravenhill.keen.util.subset
 class InversionMutator<DNA>(probability: Double) : Mutator<DNA>(probability) {
     override fun mutateChromosome(
         chromosome: Chromosome<DNA>,
-    ) = if (chromosome.size < 2) {
+    ) = if (probability eq 0.0 && chromosome.size < 2) {
         MutatorResult(chromosome, 0)
     } else {
         val (start, end) = Core.random.subset(pick = 2, from = chromosome.size)

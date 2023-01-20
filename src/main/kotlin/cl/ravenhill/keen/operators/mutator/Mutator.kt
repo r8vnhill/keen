@@ -8,9 +8,9 @@
 
 package cl.ravenhill.keen.operators.mutator
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -19,8 +19,6 @@ import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.math.eq
-import cl.ravenhill.keen.util.math.toIntProbability
-import kotlin.math.pow
 
 
 /**
@@ -56,37 +54,37 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
         population: Population<DNA>,
         generation: Int
     ): AltererResult<DNA> {
-        val p = probability.pow(1 / 3.0)
-        val widenedProbability = p.toIntProbability()
+        if (probability eq 0.0) return AltererResult(population)
         val result = population.map {
-            if (Core.random.nextInt() < widenedProbability) {
-                mutatePhenotype(it, p, generation)
-            } else {
-                MutatorResult(it)
-            }
+            mutatePhenotype(it, generation)
         }
         return AltererResult(
-            result.map { it.result },
-            result.stream().mapToInt { it.mutations }.sum()
+            result.map { it.mutated },
+            result.sumOf { it.mutations }
         )
     }
 
-    private fun mutatePhenotype(
+    /**
+     * Mutates a [Phenotype] and returns a [MutatorResult] with the mutated [Phenotype]s
+     * and the number of mutations performed.
+     */
+    internal fun mutatePhenotype(
         phenotype: Phenotype<DNA>,
-        prob: Double,
         generation: Int
     ) = mutateGenotype(phenotype.genotype).map {
         Phenotype(it, generation)
     }
 
-    private fun mutateGenotype(
+    /**
+     * Mutates a genotype and returns a [MutatorResult] with the mutated genotype and the
+     * number of mutations.
+     */
+    internal fun mutateGenotype(
         genotype: Genotype<DNA>
     ): MutatorResult<Genotype<DNA>> {
-        val result = genotype.chromosomes.map {
-            mutateChromosome(it)
-        }
+        val result = genotype.chromosomes.map { mutateChromosome(it) }
         return MutatorResult(
-            genotype.duplicate(result.map { it.result }),
+            genotype.duplicate(result.map { it.mutated }),
             result.sumOf { it.mutations }
         )
     }
@@ -100,7 +98,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
     ): MutatorResult<Chromosome<DNA>> {
         val result = chromosome.genes.map { mutateGene(it) }
         return MutatorResult(
-            chromosome.duplicate(result.map { it.result }),
+            chromosome.duplicate(result.map { it.mutated }),
             result.sumOf { it.mutations }
         )
     }
@@ -132,6 +130,30 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
             "probability: $probability }"
 }
 
-data class MutatorResult<T>(val result: T, val mutations: Int = 0) {
-    fun <B> map(block: (T) -> B) = MutatorResult(block(result), mutations)
+/**
+ * A [MutatorResult] is the result of a mutation operation.
+ *
+ * @param T The type of the mutated object
+ * @property mutated The result of a mutation operation.
+ * @property mutations The number of mutations performed.
+ * @constructor Creates a new [MutatorResult] with the given [mutated] object and the
+ * number of [mutations] performed (default 0).
+ */
+class MutatorResult<T: GeneticMaterial<*>>(val mutated: T, val mutations: Int = 0) {
+
+    /**
+     * Applies the given [transform] function to the [mutated] object and returns the
+     * result.
+     */
+    fun <B: GeneticMaterial<*>> map(transform: (T) -> B) = MutatorResult(transform(mutated), mutations)
+
+    /**
+     * The [mutated] value.
+     */
+    operator fun component1() = mutated
+
+    /**
+     * The number of [mutations] done to the mutated value.
+     */
+    operator fun component2() = mutations
 }

@@ -24,11 +24,13 @@ abstract class AbstractAlterer<DNA>(final override val probability: Double) : Al
     }
 }
 
-data class AltererResult<DNA>(
+class AltererResult<DNA>(
     val population: Population<DNA>,
     val alterations: Int = 0
 ) {
     init {
         alterations.validateAtLeast(0) { "The number of alterations cannot be negative" }
     }
+    operator fun component1() = population
+    operator fun component2() = alterations
 }

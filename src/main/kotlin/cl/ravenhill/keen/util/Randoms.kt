@@ -1,5 +1,8 @@
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.keen.Core.contracts
+import cl.ravenhill.keen.DoubleClause
+import cl.ravenhill.keen.DoubleClause.*
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
@@ -42,7 +45,7 @@ fun Random.ints(from: Int = 0, until: Int = Int.MAX_VALUE): IntStream =
  */
 fun Random.subset(pick: Int, from: Int): IntArray =
     ints(0, from)
-        .distinct()
+//        .distinct()
         .limit(pick.toLong())
         .sorted()
         .toArray()
@@ -56,9 +59,9 @@ fun Random.subset(pick: Int, from: Int): IntArray =
  * @param start the start of the range. Defaults to 0.
  */
 fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int> {
-    pickProbability.validateProbability()
-    val widenedProbability =
-        round(Int.MAX_VALUE * pickProbability + Int.MIN_VALUE).toInt()
+    contracts {
+        pickProbability should BeInRange(0.0..1.0)
+    }
     return when {
         // If the probability is too low, then no indexes will be picked.
         pickProbability <= 1e-20 -> emptyList()
@@ -66,7 +69,7 @@ fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int>
         pickProbability >= 1 - 1e-20 -> List(end - start) { it + start }
         // Otherwise, pick indexes randomly.
         else -> List(end - start) { start + it }
-            .filter { this.nextInt() <= widenedProbability }
+            .filter { this.nextDouble() <= pickProbability }
     }
 }
 

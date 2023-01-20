@@ -37,6 +37,10 @@ object Core {
      * Represents the "roll" of an n-dimensional or continuous dice.
      */
     object Dice {
+
+        /**
+         * Backing [Random] instance.
+         */
         var random: Random = Random.Default
     }
 
@@ -139,6 +143,12 @@ object Core {
 }
 
 typealias Population<DNA> = List<Phenotype<DNA>>
+
+
+/**
+ * Rolls a n-dimensional dice.
+ */
+fun Core.Dice.int(n: Int) = random.nextInt(n)
 
 /**
  * Generates a new random double in [0, 1).

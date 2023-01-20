@@ -1,8 +1,12 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.int
 import cl.ravenhill.keen.util.indices
+import cl.ravenhill.keen.util.math.eq
+import cl.ravenhill.keen.util.math.neq
 import cl.ravenhill.keen.util.swap
 
 
@@ -24,10 +28,11 @@ import cl.ravenhill.keen.util.swap
 class SwapMutator<DNA>(probability: Double = 0.2) : Mutator<DNA>(probability) {
     override fun mutateChromosome(
         chromosome: Chromosome<DNA>,
-    ) = if (chromosome.size > 1) {
+    ) = if (probability neq 0.0 && chromosome.size > 1) {
         val genes = chromosome.genes.toMutableList()
-        val mutations = Core.random.indices(probability, genes.size)
-            .map { genes.swap(it, Core.random.nextInt(genes.size)) }
+        val indices = Dice.random.indices(probability, genes.size)
+        val mutations = indices
+            .map { genes.swap(it, Dice.int(genes.size)) }
             .count()
         MutatorResult(chromosome.duplicate(genes), mutations)
     } else {

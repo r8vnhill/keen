@@ -180,7 +180,7 @@ private fun <T> Arb.Companion.chromosomePair(
  */
 fun <T> Arb.Companion.population(
     chromosomeFactory: Arb<Chromosome.Factory<T>>,
-    maxSize: Int
+    maxSize: Int = 30
 ) = arbitrary {
     val size = positiveInt(maxSize).bind()
     val fitness = Arb.double().bind()

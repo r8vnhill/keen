@@ -13,10 +13,12 @@ import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.logging.fileChannel
 import cl.ravenhill.keen.util.logging.logger
 import cl.ravenhill.keen.util.logging.stdoutChannel
+import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import kotlin.math.abs
+import kotlin.math.ln
 
 private const val TARGET = 420
 
@@ -57,7 +59,7 @@ fun main() {
         append(result.best?.genotype?.flatten()?.filter { it > 1 }
             ?.joinToString(" * "))
     })
-//    (engine.statistics[1] as StatisticPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
+    (engine.statistics[1] as StatisticPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
 }
 
 private val candidateFactors = listOf(

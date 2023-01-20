@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.util.math.isNotNan
+import java.util.*
 
 /**
  * An individual of a population.
@@ -42,4 +43,8 @@ open class Phenotype<DNA>(
     fun withFitness(fitness: Double) = Phenotype(genotype, generation, fitness)
 
     override fun flatten() = genotype.flatten()
+
+    override fun equals(other: Any?) = other is Phenotype<*> && genotype == other.genotype
+
+    override fun hashCode() = Objects.hash(Phenotype::class, genotype)
 }
