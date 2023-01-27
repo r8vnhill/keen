@@ -186,6 +186,6 @@ class MulSpec : WordSpec({
     }
 })
 
-private fun Arb.Companion.multiplication() = arbitrary {
+fun Arb.Companion.multiplication() = arbitrary {
     mul(Arb.program().bind(), Arb.program().bind())
 }

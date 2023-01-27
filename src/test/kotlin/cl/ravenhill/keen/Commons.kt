@@ -4,6 +4,12 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
+import cl.ravenhill.keen.prog.functions.addition
+import cl.ravenhill.keen.prog.functions.greaterThan
+import cl.ravenhill.keen.prog.functions.ifThenElse
+import cl.ravenhill.keen.prog.functions.multiplication
+import cl.ravenhill.keen.prog.terminals.ephemeralConstant
+import cl.ravenhill.keen.prog.terminals.variable
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.property.Arb

@@ -202,6 +202,6 @@ class AddSpec : WordSpec({
     }
 })
 
-private fun Arb.Companion.addition() = arbitrary {
+fun Arb.Companion.addition() = arbitrary {
     add(Arb.program().bind(), Arb.program().bind())
 }

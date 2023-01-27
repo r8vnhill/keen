@@ -9,16 +9,21 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.IntClause.*
 import cl.ravenhill.keen.SelectorException
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import java.util.Objects
+import java.util.*
 import java.util.stream.Stream
 
 class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DNA>() {
+
+    init {
+        Contract {
+            sampleSize should BePositive()
+        }
+    }
 
     override fun select(
         population: List<Phenotype<DNA>>,
@@ -28,7 +33,7 @@ class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DN
         selectOneFrom(population, optimizer)
     }
 
-    private fun selectOneFrom(
+    internal fun selectOneFrom(
         population: List<Phenotype<DNA>>,
         optimizer: PhenotypeOptimizer<DNA>
     ): Phenotype<DNA> {
@@ -40,7 +45,7 @@ class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DN
                     "An error occurred while trying to select an individual by tournament selection"
                 }
             }
-}
+    }
 
     override fun equals(other: Any?) = when {
         other === this -> true

@@ -4,10 +4,13 @@ import cl.ravenhill.keen.*
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.intChromosome
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.genetic.genes.intGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import cl.ravenhill.keen.genetic.genes.programGene
 import cl.ravenhill.keen.operators.crossover.population
-import io.kotest.core.spec.style.WordSpec
+import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
@@ -16,13 +19,83 @@ import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-class MutatorSpec : WordSpec({
+class MutatorSpec : FreeSpec({
     afterAny {
         Core.random = Random.Default
         Core.Dice.random = Random.Default
     }
-    "Chromosome" When {
-        "mutating an Int chromosome" should {
+    "Mutating" - {
+        "a Gene of" - {
+            "Ints should" - {
+                "return the same gene if the probability is 0" {
+                    `mutating a gene with probability 0 returns the same gene`(
+                        Mutator(0.0),
+                        Arb.intGene()
+                    )
+                }
+                "return a random value between its range if the probability is 1" {
+                    `a mutator with probability 1 mutates a gene with a generator`(
+                        Arb.intGene()
+                    ) { gene, random ->
+                        gene as IntGene
+                        IntGene(
+                            random.nextInt(gene.start, gene.end),
+                            gene.range,
+                            gene.filter
+                        )
+                    }
+                }
+                "return a mutated gene according to the probability" {
+                    `a mutator mutates a gene according to a probability`(
+                        Arb.intGene()
+                    ) { gene, random ->
+                        gene as IntGene
+                        IntGene(
+                            random.nextInt(gene.start, gene.end),
+                            gene.range,
+                            gene.filter
+                        )
+                    }
+                }
+            }
+            "Programs should" - {
+                "return the same gene if the probability is 0" {
+                    `mutating a gene with probability 0 returns the same gene`(
+                        Mutator(0.0),
+                        Arb.programGene(6)
+                    )
+                }
+                "return a random program if the probability is 1" {
+                    `a mutator with probability 1 mutates a gene with a generator`(
+                        Arb.programGene(6)
+                    ) { gene, random ->
+                        Core.random = random
+                        gene as ProgramGene
+                        ProgramGene(
+                            gene.generator(),
+                            gene.functions,
+                            gene.terminals
+                        )
+                    }
+                }
+                "return a mutated gene according to the probability" {
+                    `a mutator mutates a gene according to a probability`(
+                        Arb.programGene(6)
+                    ) { gene, random ->
+                        Core.random = random
+                        gene as ProgramGene
+                        ProgramGene(
+                            gene.generator(),
+                            gene.functions,
+                            gene.terminals
+                        )
+                    }
+                }
+            }
+        }
+    }
+    "Mutating a Chromosome of" - {
+        "Ints should" - {
             "return the same chromosome if the probability is 0" {
                 `mutating a chromosome with probability 0 returns the same chromosome`(
                     Mutator(0.0),
@@ -30,24 +103,14 @@ class MutatorSpec : WordSpec({
                 )
             }
             "return a chromosome with all genes mutated if the probability is 1" {
-                checkAll(
-                    Arb.intChromosome(),
-                    Arb.long()
-                ) { chromosome, seed ->
-                    Core.random = Random(seed)
-                    val random = Random(seed)
-                    val mutator = Mutator<Int>(1.0)
-                    val (mutated, mutations) = mutator.mutateChromosome(chromosome)
-                    mutations shouldBe chromosome.genes.size
-                    mutated shouldBe chromosome.duplicate(
-                        chromosome.genes.map { gene ->
-                            gene as IntGene
-                            IntGene(
-                                random.nextInt(gene.start, gene.end),
-                                gene.range,
-                                gene.filter
-                            )
-                        }
+                `a mutator with probability 1 mutates all genes`(
+                    Arb.intChromosome()
+                ) { gene, random ->
+                    gene as IntGene
+                    IntGene(
+                        random.nextInt(gene.start, gene.end),
+                        gene.range,
+                        gene.filter
                     )
                 }
             }
@@ -80,7 +143,7 @@ class MutatorSpec : WordSpec({
             }
         }
     }
-    "Convert to String" should {
+    "Convert to String should" - {
         "return the correct string representation" {
             checkAll(
                 Arb.probability()
@@ -90,61 +153,8 @@ class MutatorSpec : WordSpec({
             }
         }
     }
-    "Gene" When {
-        "mutating an Int gene" should {
-            "return the same gene if the probability is 0" {
-                checkAll(
-                    Arb.intGene()
-                ) { gene ->
-                    val mutator = Mutator<Int>(0.0)
-                    val (mutated, mutations) = mutator.mutateGene(gene)
-                    mutations shouldBe 0
-                    mutated shouldBe gene
-                }
-            }
-            "return a random value between its range if the probability is 1" {
-                checkAll(
-                    Arb.intGene(),
-                    Arb.long()
-                ) { gene, seed ->
-                    val mutator = Mutator<Int>(1.0)
-                    Core.random = Random(seed)
-                    val random = Random(seed)
-                    val (mutated, mutations) = mutator.mutateGene(gene)
-                    mutations shouldBe 1
-                    mutated shouldBe IntGene(
-                        random.nextInt(gene.start, gene.end),
-                        gene.range,
-                        gene.filter
-                    )
-                }
-            }
-            "return a mutated gene according to the probability" {
-                checkAll(
-                    Arb.intGene(),
-                    Arb.probability(),
-                    Arb.long(),
-                    Arb.long()
-                ) { gene, probability, diceSeed, coreSeed ->
-                    val mutator = Mutator<Int>(probability)
-                    Core.Dice.random = Random(diceSeed)
-                    val dice = Random(diceSeed)
-                    Core.random = Random(coreSeed)
-                    val random = Random(coreSeed)
-                    val (mutated, mutations) = mutator.mutateGene(gene)
-                    val roll = dice.nextDouble()
-                    mutations shouldBe if (roll < probability) 1 else 0
-                    mutated shouldBe if (roll < probability) IntGene(
-                        random.nextInt(gene.start, gene.end),
-                        gene.range,
-                        gene.filter
-                    ) else gene
-                }
-            }
-        }
-    }
-    "Mutating a GENOTYPE" When {
-        "mutating an Int genotype" should {
+    "Mutating a GENOTYPE" - {
+        "mutating an Int genotype" - {
             "return the same genotype if the probability is 0" {
                 checkAll(
                     Arb.genotype(Arb.intChromosomeFactory())
@@ -220,8 +230,8 @@ class MutatorSpec : WordSpec({
             }
         }
     }
-    "Mutating a PHENOTYPE" When {
-        "composed of INT genes" should {
+    "Mutating a PHENOTYPE" - {
+        "composed of INT genes" - {
             "return the same phenotype if the probability is 0" {
                 checkAll(
                     Arb.phenotype(Arb.intChromosomeFactory())
@@ -310,7 +320,7 @@ class MutatorSpec : WordSpec({
             }
         }
     }
-    "Invoking" should {
+    "Invoking" - {
         "return the same Population if the probability is 0" {
             checkAll(
                 Arb.population(Arb.intChromosomeFactory()),
@@ -405,3 +415,57 @@ class MutatorSpec : WordSpec({
         }
     }
 })
+
+suspend fun <T> `a mutator with probability 1 mutates a gene with a generator`(
+    arbGene: Arb<Gene<T>>,
+    geneGenerator: (Gene<T>, Random) -> Gene<T>
+) {
+    checkAll(arbGene, Arb.long()) { gene, seed ->
+        val mutator = Mutator<T>(1.0)
+        Core.random = Random(seed)
+        val random = Random(seed)
+        val (mutated, mutations) = mutator.mutateGene(gene)
+        mutations shouldBe 1
+        mutated shouldBe geneGenerator(gene, random)
+    }
+}
+
+suspend fun <T> `a mutator mutates a gene according to a probability`(
+    arbGene: Arb<Gene<T>>,
+    geneGenerator: (Gene<T>, Random) -> Gene<T>
+) {
+    checkAll(
+        arbGene,
+        Arb.probability(),
+        Arb.long(),
+        Arb.long()
+    ) { gene, probability, diceSeed, coreSeed ->
+        val mutator = Mutator<T>(probability)
+        Core.Dice.random = Random(diceSeed)
+        val dice = Random(diceSeed)
+        Core.random = Random(coreSeed)
+        val random = Random(coreSeed)
+        val (mutated, mutations) = mutator.mutateGene(gene)
+        val roll = dice.nextDouble()
+        mutations shouldBe if (roll < probability) 1 else 0
+        mutated shouldBe if (roll < probability) geneGenerator(gene, random) else gene
+    }
+}
+
+suspend fun <T> `a mutator with probability 1 mutates all genes`(
+    arbChromosome: Arb<Chromosome<T>>,
+    geneGenerator: (Gene<T>, Random) -> Gene<T>
+) {
+    checkAll(arbChromosome, Arb.long()) { chromosome, seed ->
+        Core.random = Random(seed)
+        val random = Random(seed)
+        val mutator = Mutator<T>(1.0)
+        val (mutated, mutations) = mutator.mutateChromosome(chromosome)
+        mutations shouldBe chromosome.genes.size
+        mutated shouldBe chromosome.duplicate(
+            chromosome.genes.map { gene ->
+                geneGenerator(gene, random)
+            }
+        )
+    }
+}

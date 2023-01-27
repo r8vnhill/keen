@@ -1,14 +1,12 @@
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.keen.Core.contracts
-import cl.ravenhill.keen.DoubleClause
+import cl.ravenhill.keen.Core.Contract
 import cl.ravenhill.keen.DoubleClause.*
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
 import org.apache.commons.lang3.RandomStringUtils
 import java.util.stream.IntStream
-import kotlin.math.round
 import kotlin.random.Random
 import kotlin.random.asJavaRandom
 
@@ -59,7 +57,7 @@ fun Random.subset(pick: Int, from: Int): IntArray =
  * @param start the start of the range. Defaults to 0.
  */
 fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int> {
-    contracts {
+    Contract {
         pickProbability should BeInRange(0.0..1.0)
     }
     return when {

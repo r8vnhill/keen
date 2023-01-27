@@ -1,6 +1,8 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.IntClause.*
 import kotlin.random.Random
 
 /**
@@ -150,22 +152,36 @@ object Subset {
 
     private fun checkSubset(n: Int, k: Int) {
         k.validateAtLeast(1, "Subset size")
-        n.validateAtLeast(k)
+        n.validateAtLeast(k, "k")
         k.validateSafeMultiplication(n) {
             "n * subset.length [${n * k}] > Int.MAX_VALUE [${Int.MAX_VALUE}]"
         }
     }
 }
 
+// region : MutableCollection
 /**
- * Returns a new list with the subtrahend subtracted from each element.
+ * Adds the given element to the collection if it is not already present.
+ *
+ * @return `true` if the element was added, `false` otherwise.
  */
-infix fun List<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
+fun <E> MutableCollection<E>.addIfAbsent(element: E): Boolean {
+    if (element in this) {
+        return false
+    }
+    return this.add(element)
+}
+// endregion
 
+// region : MutableList
 /**
  * Swaps the elements at the given indices in the receiver.
  */
-fun <E> MutableList<E>.swap(i: Int, j: Int) {
+fun <E> MutableList<E>.swap(i:  Int, j: Int) {
+    Contract {
+        i should BeInRange(0 until this@swap.size)
+        j should BeInRange(0 until this@swap.size)
+    }
     if (i == j) return
     val tmp = this[i]
     this[i] = this[j]
@@ -173,8 +189,16 @@ fun <E> MutableList<E>.swap(i: Int, j: Int) {
 }
 
 /**
- * Swaps the elements in the range [start, end) from this list with the elements in the range
- * [otherStart, otherStart + (end - start)) from the other list.
+ * Swaps the elements in the range [start, end) from [this] [MutableList] with the
+ * elements in the range [`otherStart`, `otherStart + (end - start)`) from the [other]
+ *
+ * @param start the start index of the range to swap in [this] list.
+ *              Must be in the range [0, size).
+ * @param end the end index of the range to swap in [this] list.
+ *            Must be in the range [start, size].
+ * @param other the other list to swap elements with.
+ * @param otherStart the start index of the range to swap in the [other] list.
+ *                   Must be in the range [0, other.size).
  */
 fun <E> MutableList<E>.swap(
     start: Int,
@@ -182,7 +206,19 @@ fun <E> MutableList<E>.swap(
     other: MutableList<E>,
     otherStart: Int
 ) {
-    this.checkIndex(start, end, otherStart, other.size)
+    Contract {
+        start should BePositive()
+        end should BeAtMost(size) {
+            "End index [$end] should be at most size [$size]"
+        }
+        end should BeAtLeast(start) {
+            "End index [$end] should be at least start [$start]"
+        }
+        otherStart should BePositive()
+        other.size should BeAtLeast(otherStart + (end - start)) {
+            "Other list length [${other.size}] should be at least end - start [${end - start}]"
+        }
+    }
     var i = end - start
     while (--i >= 0) {
         val temp = this[i + start]
@@ -190,28 +226,13 @@ fun <E> MutableList<E>.swap(
         other[otherStart + i] = temp
     }
 }
-
-private fun <E> MutableList<E>.checkIndex(
-    start: Int,
-    end: Int,
-    otherStart: Int,
-    otherLength: Int
-) {
-    this.checkIndex(start, end)
-    otherStart.validateAtLeast(0) { "Start index [$otherStart] should be positive" }
-    otherLength.validateAtLeast(otherStart + (end - start)) {
-        "End index [$otherLength] should be at least otherStart + (end - start) " +
-                "[${otherStart + (end - start)}]"
-    }
-}
-
-private fun <E> MutableList<E>.checkIndex(start: Int, end: Int) {
-    start.validateAtLeast(0) { "Start index [$start] should be positive" }
-    size.validateAtLeast(end) { "End index [$end] should be at least the length [$size] of the list" }
-    end.validateAtLeast(start)
-}
+// endregion
 
 // region : List
+/**
+ * Returns a new list with the subtrahend subtracted from each element.
+ */
+infix fun List<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
 
 /**
  * Returns a ``pick`` sized random subset of the receiver.
@@ -225,4 +246,16 @@ fun <E> List<E>.subset(pick: Int) = subset(pick, Core.random)
 fun <E> List<E>.subset(pick: Int, random: Random) = random
     .subset(pick, this.size)    // Get the indices of the elements to pick
     .map { this[it] }           // Map the indices to the elements
+// endregion
+
+// region : Arrays
+/**
+ * Transforms the given array into an incremental array, where each value is the
+ * sum of the previous values.
+ */
+fun DoubleArray.incremental() {
+    for (i in 1 until this.size) {
+        this[i] += this[i - 1]
+    }
+}
 // endregion

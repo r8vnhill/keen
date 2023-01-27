@@ -125,6 +125,6 @@ class IfSpec : WordSpec({
 /**
  * Generates an if expression.
  */
-private fun Arb.Companion.ifThenElse() = arbitrary {
+fun Arb.Companion.ifThenElse() = arbitrary {
     ifThenElse(Arb.program().bind(), Arb.program().bind(), Arb.program().bind())
 }

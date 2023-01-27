@@ -10,6 +10,7 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.validateAtLeast
 import cl.ravenhill.keen.util.validateSum
@@ -26,7 +27,8 @@ private const val SERIAL_INDEX_THRESHOLD = 35
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 1.3.0
  */
-abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) : Selector<DNA> {
+abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
+    Selector<DNA> {
 
     abstract fun probabilities(
         population: List<Phenotype<DNA>>,
@@ -48,15 +50,8 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
         val probabilities = probabilities(population, count, optimizer)
         probabilities.validateSum(1.0) { "Probabilities sum must be 1.0" }
         checkAnCorrect(probabilities)
-        incremental(probabilities)
+        probabilities.incremental()
         return List(count) { pop[indexOf(probabilities)] }
-    }
-
-    private fun incremental(probabilities: DoubleArray): DoubleArray {
-        for (i in 1 until probabilities.size) {
-            probabilities[i] += probabilities[i - 1]
-        }
-        return probabilities
     }
 
     /**

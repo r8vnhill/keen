@@ -17,8 +17,8 @@ class SwapMutatorSpec : WordSpec({
         "it is an Int chromosome" should {
             "return the same chromosome if the probability is 0" {
                 `mutating a chromosome with probability 0 returns the same chromosome`(
-                    mutator = SwapMutator(0.0),
-                    chromosomeArb = Arb.intChromosome()
+                    SwapMutator(0.0),
+                    Arb.intChromosome()
                 )
             }
             "return a chromosome with all genes swapped if the probability is 1 with seed 0" {

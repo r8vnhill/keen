@@ -46,20 +46,20 @@ class DoubleChromosomeSpec : WordSpec({
                             size,
                             Pair(Double.NaN, bound)
                         )
-                    }.violations.first() shouldBeOfClass PairClauseException::class
+                    }.violations.first() shouldBeOfClass PairRequirementException::class
                     shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(bound, Double.NaN)
                         )
-                    }.violations.first() shouldBeOfClass PairClauseException::class
+                    }.violations.first() shouldBeOfClass PairRequirementException::class
                 }
             }
             "throw an exception if the size is less than 1" {
                 checkAll(Arb.nonPositiveInt(), Arb.orderedDoublePair()) { size, range ->
                     shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(size, range)
-                    }.violations.first() shouldBeOfClass IntClauseException::class
+                    }.violations.first() shouldBeOfClass IntRequirementException::class
                 }
             }
             "throw an exception if the range is infinite" {
@@ -70,13 +70,13 @@ class DoubleChromosomeSpec : WordSpec({
                             size,
                             Pair(Double.NEGATIVE_INFINITY, bound)
                         )
-                    }.violations.first() shouldBeOfClass PairClauseException::class
+                    }.violations.first() shouldBeOfClass PairRequirementException::class
                     shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(bound, Double.POSITIVE_INFINITY)
                         )
-                    }.violations.first() shouldBeOfClass PairClauseException::class
+                    }.violations.first() shouldBeOfClass PairRequirementException::class
                 }
             }
             "throw an exception if the range is empty" {
@@ -87,7 +87,7 @@ class DoubleChromosomeSpec : WordSpec({
                             size,
                             Pair(bound, bound)
                         )
-                    }.violations.first() shouldBeOfClass PairClauseException::class
+                    }.violations.first() shouldBeOfClass PairRequirementException::class
                 }
             }
             "throw an exception if the range is reversed" {
@@ -97,7 +97,7 @@ class DoubleChromosomeSpec : WordSpec({
                             size,
                             range.second to range.first
                         )
-                    }.violations.first() shouldBeOfClass PairClauseException::class
+                    }.violations.first() shouldBeOfClass PairRequirementException::class
                 }
             }
         }

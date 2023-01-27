@@ -28,13 +28,15 @@ sealed interface IntClause : Clause<Int> {
     /**
      * Constraint that checks if an integer is positive.
      */
-    object BePositive : IntClause {
+    class BePositive(
+        val lazyDescription: (Int) -> String = { value ->
+            "Expected a positive number, but got $value"
+        }
+    ) : IntClause {
 
         override fun validate(value: Int): Result<Int> =
             if (value <= 0) {
-                Result.failure(IntClauseException {
-                    "Expected a positive number, but got $value"
-                })
+                Result.failure(IntRequirementException { lazyDescription(value) })
             } else {
                 Result.success(value)
             }
@@ -43,12 +45,16 @@ sealed interface IntClause : Clause<Int> {
     /**
      * Constraint that checks if an integer is in a given range.
      */
-    open class BeInRange(private val range: IntRange) : IntClause {
-
+    open class BeInRange(
+        private val range: IntRange,
+        private val lazyDescription: (Int) -> String = { value ->
+            "Expected a number in range $range, but got $value"
+        }
+    ) : IntClause {
         override fun validate(value: Int): Result<Int> =
             if (value !in range) {
-                Result.failure(IntClauseException {
-                    "Expected a number in range $range, but got $value"
+                Result.failure(IntRequirementException {
+                    lazyDescription(value)
                 })
             } else {
                 Result.success(value)
@@ -58,7 +64,21 @@ sealed interface IntClause : Clause<Int> {
     /**
      * Constraint that checks if an integer is at least a given value.
      */
-    class BeAtLeast(min: Int) : BeInRange(min..Int.MAX_VALUE)
+    class BeAtLeast(
+        min: Int, lazyDescription: (Int) -> String = { value ->
+            "Expected a number at least $min, but got $value"
+        }
+    ) : BeInRange(min..Int.MAX_VALUE, { lazyDescription(min) })
+
+    /**
+     * Constraint that checks if an integer is at most a given value.
+     */
+    class BeAtMost(
+        max: Int,
+        lazyDescription: (Int) -> String = {
+            "Expected a number at most $max, but got $it"
+        }
+    ) : BeInRange(Int.MIN_VALUE..max, { lazyDescription(max) })
 }
 
 /**
@@ -74,7 +94,7 @@ sealed interface DoubleClause : Clause<Double> {
         override fun validate(value: Double) = if (value in range) {
             Result.success(value)
         } else {
-            Result.failure(DoubleClauseException {
+            Result.failure(DoubleRequirementException {
                 "Expected a number in range $range, but got $value"
             })
         }
@@ -103,7 +123,7 @@ sealed interface PairClause<T, U> : Clause<Pair<T, U>> {
     class StrictlyOrdered<A : Comparable<A>> : PairClause<A, A> {
         override fun validate(value: Pair<A, A>) =
             if (value.first >= value.second) {
-                Result.failure(PairClauseException {
+                Result.failure(PairRequirementException {
                     "Expected a strictly ordered pair, but got $value"
                 })
             } else {
@@ -116,7 +136,7 @@ sealed interface PairClause<T, U> : Clause<Pair<T, U>> {
             if (value.first.isFinite() && value.second.isFinite()) {
                 Result.success(value)
             } else {
-                Result.failure(PairClauseException {
+                Result.failure(PairRequirementException {
                     "Expected a finite pair, but got $value"
                 })
             }
@@ -138,7 +158,7 @@ sealed interface CollectionClause : Clause<Collection<*>> {
     object NotBeEmpty : CollectionClause {
         override fun validate(value: Collection<*>): Result<Collection<*>> {
             return if (value.isEmpty()) {
-                Result.failure(CollectionClauseException {
+                Result.failure(CollectionRequirementException {
                     "Expected a non-empty collection, but got $value"
                 })
             } else {

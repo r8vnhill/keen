@@ -40,11 +40,11 @@ class SelectorException(lazyMessage: () -> String) :
 /**
  * Exception thrown when a constraint is not fulfilled.
  */
-open class UnfulfilledClauseException(lazyMessage: () -> String) :
+open class UnfulfilledRequirementException(lazyMessage: () -> String) :
     KeenException("Unfulfilled constraint: ", lazyMessage)
 
-class IntClauseException(lazyMessage: () -> String) :
-    UnfulfilledClauseException(lazyMessage)
+class IntRequirementException(lazyMessage: () -> String) :
+    UnfulfilledRequirementException(lazyMessage)
 
 /**
  * Exception thrown when a pair constraint is not fulfilled.
@@ -53,14 +53,14 @@ class IntClauseException(lazyMessage: () -> String) :
  * @since 2.0.0
  * @version 2.0.0
  */
-class PairClauseException(lazyMessage: () -> String) :
-    UnfulfilledClauseException(lazyMessage)
+class PairRequirementException(lazyMessage: () -> String) :
+    UnfulfilledRequirementException(lazyMessage)
 
 /**
  * Exception thrown when a double constraint is not fulfilled.
  */
-class DoubleClauseException(lazyMessage: () -> String) :
-    UnfulfilledClauseException(lazyMessage)
+class DoubleRequirementException(lazyMessage: () -> String) :
+    UnfulfilledRequirementException(lazyMessage)
 
 /**
  * Exception thrown when a collection constraint is not fulfilled.
@@ -69,8 +69,8 @@ class DoubleClauseException(lazyMessage: () -> String) :
  * @since 2.0.0
  * @version 2.0.0
  */
-class CollectionClauseException(lazyMessage: () -> String) :
-    UnfulfilledClauseException(lazyMessage)
+class CollectionRequirementException(lazyMessage: () -> String) :
+    UnfulfilledRequirementException(lazyMessage)
 
 /**
  * Exception thrown when a contract is not fulfilled.

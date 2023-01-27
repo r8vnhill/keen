@@ -47,11 +47,15 @@ object Core {
     /**
      * Checks that a given contract is fulfilled.
      *
+     * UpperCamelCase is used to avoid conflicts with the `contract` function from the
+     * Kotlin standard library.
+     *
      * @param builder The contract builder.
      * @throws UnfulfilledContractException If the contract is not fulfilled.
      */
-    fun contracts(builder: ContractContext.() -> Unit) {
-        ContractContext().apply(builder).errors.let { errors ->
+    @Suppress("FunctionName")
+    fun Contract(builder: RequirementsContext.() -> Unit) {
+        RequirementsContext().apply(builder).errors.let { errors ->
             if (errors.isNotEmpty()) {
                 throw UnfulfilledContractException(errors)
             }
@@ -65,7 +69,7 @@ object Core {
      * @since 2.0.0
      * @version 2.0.0
      */
-    class ContractContext {
+    class RequirementsContext {
         /**
          * The list of results of evaluating the contract.
          */
@@ -108,7 +112,7 @@ object Core {
             if (predicate()) {
                 Result.success(Unit)
             } else {
-                Result.failure(UnfulfilledClauseException { description })
+                Result.failure(UnfulfilledRequirementException { description })
             }
         )
     }

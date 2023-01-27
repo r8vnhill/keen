@@ -45,14 +45,14 @@ class IntChromosomeSpec : WordSpec({
                 checkAll(Arb.nonPositiveInt(), Arb.orderedIntPair()) { size, range ->
                     shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(size, range)
-                    }.violations.first() shouldBeOfClass IntClauseException::class
+                    }.violations.first() shouldBeOfClass IntRequirementException::class
                 }
             }
             "throw an exception if the range is not ordered" {
                 checkAll(Arb.int(1, 100_000), Arb.reversedPair()) { size, range ->
                     shouldThrow<UnfulfilledContractException> {
                         `create a new chromosome using it's factory`(size, range)
-                    }.violations.first() shouldBeOfClass PairClauseException::class
+                    }.violations.first() shouldBeOfClass PairRequirementException::class
                 }
             }
         }

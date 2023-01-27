@@ -1,10 +1,14 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.IntClause
+import cl.ravenhill.keen.IntClause.*
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
+import java.util.*
 
 /**
  * A [Gene] that represents a program tree.
@@ -17,8 +21,8 @@ import cl.ravenhill.keen.prog.terminals.Terminal
  */
 class ProgramGene<DNA> internal constructor(
     program: Reduceable<DNA>,
-    private val functions: List<Fun<DNA>>,
-    private val terminals: List<Terminal<DNA>>,
+    val functions: List<Fun<DNA>>,
+    val terminals: List<Terminal<DNA>>,
 ) : AbstractTreeGene<Reduceable<DNA>>(program, program.arity), Gene<Reduceable<DNA>> {
 
     private val nodes = functions + terminals
@@ -28,9 +32,11 @@ class ProgramGene<DNA> internal constructor(
         get() = dna.depth
 
     init {
-        if (program.height > Core.maxProgramDepth) throw InvalidStateException("program") {
-            "The program's depth (${program.depth}) is greater than the maximum " +
-                    "allowed depth (${Core.maxProgramDepth})."
+        Contract {
+            program.height should BeAtMost(Core.maxProgramDepth) {
+                "The program's depth (${program.depth}) is greater than the maximum " +
+                        "allowed depth (${Core.maxProgramDepth})."
+            }
         }
         // Stores the program in a list (breadth-first).
         children = program.flatten()
@@ -93,5 +99,15 @@ class ProgramGene<DNA> internal constructor(
     override fun duplicate(dna: Reduceable<DNA>) =
         ProgramGene(dna, functions, terminals)
 
+    // region : Equals, HashCode, ToString
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is ProgramGene<*> -> false
+        else -> dna == other.dna
+    }
+
+    override fun hashCode() = Objects.hash(ProgramGene::class, dna)
+
     override fun toString() = children[0].toString()
+    // endregion
 }

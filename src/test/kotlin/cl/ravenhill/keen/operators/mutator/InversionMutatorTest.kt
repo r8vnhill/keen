@@ -26,8 +26,8 @@ class InversionMutatorTest : FreeSpec({
     "Mutating a CHROMOSOME of Ints should" - {
         "return the same chromosome if the probability is 0" {
             `mutating a chromosome with probability 0 returns the same chromosome`(
-                mutator = InversionMutator(0.0),
-                chromosomeArb = Arb.intChromosome()
+                InversionMutator(0.0),
+                Arb.intChromosome()
             )
         }
         "return a chromosome with all genes inverted if the probability is 1" {

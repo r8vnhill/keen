@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.DoubleClauseException
-import cl.ravenhill.keen.PairClauseException
+import cl.ravenhill.keen.DoubleRequirementException
+import cl.ravenhill.keen.PairRequirementException
 import cl.ravenhill.keen.UnfulfilledContractException
 import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.util.math.isNotNan
@@ -76,7 +76,7 @@ class BoolChromosomeSpec : WordSpec({
                             this.size = size
                             this.truesProbability = truesProbability
                         }.make()
-                    }.violations.first() shouldBeOfClass DoubleClauseException::class
+                    }.violations.first() shouldBeOfClass DoubleRequirementException::class
                 }
             }
             "throw an exception if the range is not ordered" {
@@ -87,7 +87,7 @@ class BoolChromosomeSpec : WordSpec({
                             this.size = size
                             this.truesProbability = truesProbability
                         }.make()
-                    }.violations.first() shouldBeOfClass PairClauseException::class
+                    }.violations.first() shouldBeOfClass PairRequirementException::class
                 }
             }
         }

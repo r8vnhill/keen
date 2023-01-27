@@ -8,10 +8,8 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.Core.contracts
-import cl.ravenhill.keen.DoubleClause
+import cl.ravenhill.keen.Core.Contract
 import cl.ravenhill.keen.DoubleClause.BeInRange
-import cl.ravenhill.keen.IntClause
 import cl.ravenhill.keen.IntClause.BePositive
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -86,8 +84,8 @@ class BoolChromosome private constructor(
 
         /// {@inheritDoc}
         override fun make(): BoolChromosome {
-            contracts {
-                size should BePositive
+            Contract {
+                size should BePositive()
                 truesProbability should BeInRange(0.0..1.0)
             }
             return BoolChromosome(bitArrayOf(size, truesProbability), truesProbability)

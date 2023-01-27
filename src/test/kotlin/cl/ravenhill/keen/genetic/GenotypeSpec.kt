@@ -1,16 +1,11 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.*
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
 
 
@@ -48,7 +43,7 @@ class GenotypeSpec : WordSpec({
                 val factory = Genotype.Factory<Int>()
                 shouldThrow<UnfulfilledContractException> {
                     factory.make()
-                }.violations.first() shouldBeOfClass UnfulfilledClauseException::class
+                }.violations.first() shouldBeOfClass UnfulfilledRequirementException::class
             }
         }
     }
@@ -67,7 +62,7 @@ class GenotypeSpec : WordSpec({
             ) { genotype, index ->
                 shouldThrow<UnfulfilledContractException> {
                     genotype[index]
-                }.violations.first() shouldBeOfClass IntClauseException::class
+                }.violations.first() shouldBeOfClass IntRequirementException::class
             }
         }
     }
