@@ -1,10 +1,12 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.IntRequirement
+import cl.ravenhill.keen.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.util.node
-import cl.ravenhill.keen.util.validatePredicate
 import kotlin.math.min
 
 /**
@@ -20,7 +22,11 @@ class SingleNodeCrossover<DNA>(probability: Double) :
         genes1: MutableList<Gene<Reduceable<DNA>>>,
         genes2: MutableList<Gene<Reduceable<DNA>>>
     ): Int {
-        validatePredicate({ genes1.size == genes2.size }) { "The parents must have the same size" }
+        Contract {
+            genes1.size should BeEqualTo(genes2.size) {
+                "The parents must have the same size"
+            }
+        }
         (genes1 zip genes2).forEach { (g1, g2) ->
             if (Core.random.nextDouble() < probability) {
                 val reduceable1 = g1.dna

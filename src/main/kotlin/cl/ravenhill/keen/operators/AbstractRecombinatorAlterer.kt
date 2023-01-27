@@ -2,10 +2,12 @@ package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntClause.BeAtLeast
+import cl.ravenhill.keen.IntRequirement
+import cl.ravenhill.keen.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.indices
+import cl.ravenhill.keen.util.math.neq
 import cl.ravenhill.keen.util.subset
 import kotlin.math.min
 
@@ -27,7 +29,7 @@ abstract class AbstractRecombinatorAlterer<DNA>(
         generation: Int
     ): AltererResult<DNA> {
         val pop = population.toMutableList()
-        return if (pop.size >= 2) {
+        return if (probability neq 0.0 && pop.size >= 2) {
             val minOrder = min(order, pop.size)
             val count = Core.random.indices(probability, pop.size)
                 .map { individuals(it, pop.size, minOrder) }

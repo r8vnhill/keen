@@ -11,8 +11,8 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntClause.*
-import cl.ravenhill.keen.PairClause.*
+import cl.ravenhill.keen.IntRequirement.*
+import cl.ravenhill.keen.PairRequirement.*
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene

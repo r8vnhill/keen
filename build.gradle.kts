@@ -35,8 +35,8 @@ dependencies {
     // Logging
     implementation("org.slf4j:slf4j-simple:2.0.5")  // SLF4J (Tablesaw)
     // Kotest
-    implementation("io.kotest:kotest-framework-datatest:5.5.4")
-    implementation("io.kotest:kotest-assertions-core:5.5.4")
+    testImplementation("io.kotest:kotest-framework-datatest:5.5.4")
+    testImplementation("io.kotest:kotest-assertions-core:5.5.4")
     testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
     testImplementation("io.kotest:kotest-property:5.5.4")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.4")

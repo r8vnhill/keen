@@ -10,7 +10,7 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntClause.*
+import cl.ravenhill.keen.IntRequirement.*
 import cl.ravenhill.keen.SelectorException
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer

@@ -81,25 +81,25 @@ object Core {
         /**
          * Extension function that checks an integer constraint.
          */
-        infix fun Int.should(clause: IntClause) =
-            results.add(clause.validate(this))
+        infix fun Int.should(requirement: IntRequirement) =
+            results.add(requirement.validate(this))
 
         /**
          * Extension function that checks a double constraint.
          */
-        infix fun Double.should(constraint: DoubleClause) =
+        infix fun Double.should(constraint: DoubleRequirement) =
             results.add(constraint.validate(this))
 
         /**
          * Extension function that checks a collection clause.
          */
-        infix fun <T> Collection<T>.should(constraint: CollectionClause) =
+        infix fun <T> Collection<T>.should(constraint: CollectionRequirement) =
             results.add(constraint.validate(this))
 
         /**
          * Extension function that checks a pair constraint.
          */
-        infix fun <A, B> Pair<A, B>.should(constraint: PairClause<A, B>) =
+        infix fun <A, B> Pair<A, B>.should(constraint: PairRequirement<A, B>) =
             results.add(constraint.validate(this))
 
         /**

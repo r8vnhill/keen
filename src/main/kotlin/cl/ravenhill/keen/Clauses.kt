@@ -8,7 +8,7 @@ package cl.ravenhill.keen
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Clause<T> {
+interface Requirement<T> {
 
     /**
      * Checks if the given value fulfills the constraint.
@@ -23,23 +23,26 @@ interface Clause<T> {
  * @since 2.0.0
  * @version 2.0.0
  */
-sealed interface IntClause : Clause<Int> {
+sealed interface IntRequirement : Requirement<Int> {
+    val lazyDescription: (Int) -> String
+    val validator: (Int) -> Boolean
+
+    override fun validate(value: Int): Result<Int> =
+        if (!validator(value)) {
+            Result.failure(IntRequirementException { lazyDescription(value) })
+        } else {
+            Result.success(value)
+        }
 
     /**
      * Constraint that checks if an integer is positive.
      */
     class BePositive(
-        val lazyDescription: (Int) -> String = { value ->
+        override val lazyDescription: (Int) -> String = { value ->
             "Expected a positive number, but got $value"
         }
-    ) : IntClause {
-
-        override fun validate(value: Int): Result<Int> =
-            if (value <= 0) {
-                Result.failure(IntRequirementException { lazyDescription(value) })
-            } else {
-                Result.success(value)
-            }
+    ) : IntRequirement {
+        override val validator = { value: Int -> value > 0 }
     }
 
     /**
@@ -47,18 +50,12 @@ sealed interface IntClause : Clause<Int> {
      */
     open class BeInRange(
         private val range: IntRange,
-        private val lazyDescription: (Int) -> String = { value ->
+        override val lazyDescription: (Int) -> String = { value ->
             "Expected a number in range $range, but got $value"
         }
-    ) : IntClause {
-        override fun validate(value: Int): Result<Int> =
-            if (value !in range) {
-                Result.failure(IntRequirementException {
-                    lazyDescription(value)
-                })
-            } else {
-                Result.success(value)
-            }
+    ) : IntRequirement {
+
+        override val validator = { value: Int -> value in range }
     }
 
     /**
@@ -79,18 +76,31 @@ sealed interface IntClause : Clause<Int> {
             "Expected a number at most $max, but got $it"
         }
     ) : BeInRange(Int.MIN_VALUE..max, { lazyDescription(max) })
+
+    /**
+     * Constraint that checks if an integer is equal to a given value.
+     */
+    class BeEqualTo(
+        private val expected: Int,
+        override val lazyDescription: (Int) -> String = { value ->
+            "Expected $expected, but got $value"
+        }
+    ) : IntRequirement {
+
+        override val validator = { value: Int -> value == expected }
+    }
 }
 
 /**
  * Represents a constraint that can be applied to a double.
  */
-sealed interface DoubleClause : Clause<Double> {
+sealed interface DoubleRequirement : Requirement<Double> {
 
     /**
      * Constraint that checks if a double is in a given range.
      */
     class BeInRange(private val range: ClosedFloatingPointRange<Double>) :
-        DoubleClause {
+        DoubleRequirement {
         override fun validate(value: Double) = if (value in range) {
             Result.success(value)
         } else {
@@ -112,7 +122,7 @@ sealed interface DoubleClause : Clause<Double> {
  * @since 2.0.0
  * @version 2.0.0
  */
-sealed interface PairClause<T, U> : Clause<Pair<T, U>> {
+sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
 
     /**
      * A constraint that checks if a pair is (strictly) ordered.
@@ -120,7 +130,7 @@ sealed interface PairClause<T, U> : Clause<Pair<T, U>> {
      * @since 2.0.0
      * @version 2.0.0
      */
-    class StrictlyOrdered<A : Comparable<A>> : PairClause<A, A> {
+    class StrictlyOrdered<A : Comparable<A>> : PairRequirement<A, A> {
         override fun validate(value: Pair<A, A>) =
             if (value.first >= value.second) {
                 Result.failure(PairRequirementException {
@@ -131,7 +141,7 @@ sealed interface PairClause<T, U> : Clause<Pair<T, U>> {
             }
     }
 
-    object Finite : PairClause<Double, Double> {
+    object Finite : PairRequirement<Double, Double> {
         override fun validate(value: Pair<Double, Double>) =
             if (value.first.isFinite() && value.second.isFinite()) {
                 Result.success(value)
@@ -150,12 +160,12 @@ sealed interface PairClause<T, U> : Clause<Pair<T, U>> {
  * @since 2.0.0
  * @version 2.0.0
  */
-sealed interface CollectionClause : Clause<Collection<*>> {
+sealed interface CollectionRequirement : Requirement<Collection<*>> {
 
     /**
      * A constraint that checks if a collection is empty.
      */
-    object NotBeEmpty : CollectionClause {
+    object NotBeEmpty : CollectionRequirement {
         override fun validate(value: Collection<*>): Result<Collection<*>> {
             return if (value.isEmpty()) {
                 Result.failure(CollectionRequirementException {

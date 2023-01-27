@@ -7,19 +7,22 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.operators.AltererResult
-import io.kotest.core.spec.style.WordSpec
+import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.*
+import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.long
+import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-class MeanCombinatorSpec : WordSpec({
+class MeanCombinatorSpec : FreeSpec({
     beforeAny {
         Core.random = Random.Default
     }
-    "Convert to" When {
-        "String" should {
+    "Convert to" - {
+        "String" - {
             "Return the class name and the probability" {
                 checkAll(Arb.probability()) { probability ->
                     MeanCombinator<Number>(probability).toString() shouldBe
@@ -28,8 +31,8 @@ class MeanCombinatorSpec : WordSpec({
             }
         }
     }
-    "Combining two chromosomes" When {
-        "the genes are Ints" should {
+    "Combining two chromosomes" - {
+        "the genes are Ints" - {
             "return the first chromosome if the probability is 0" {
                 checkAll(Arb.intChromosomePair(), Arb.long()) { (c1, c2), seed ->
                     Core.random = Random(seed)
@@ -73,7 +76,7 @@ class MeanCombinatorSpec : WordSpec({
                 }
             }
         }
-        "the genes are Double" should {
+        "the genes are Double" - {
             "return the first chromosome if the probability is 0" {
                 checkAll(Arb.doubleChromosomePair(), Arb.long()) { (c1, c2), seed ->
                     Core.random = Random(seed)
@@ -122,9 +125,9 @@ class MeanCombinatorSpec : WordSpec({
             }
         }
     }
-    "Invoking" When {
-        "the chromosomes are Ints" should {
-            "!return the first population with 0 alterations if the probability is 0" {
+    "Invoking the combinator on a population of " - {
+        "Ints should" - {
+            "return the first population with 0 alterations if the probability is 0" {
                 checkAll(
                     Arb.population(Arb.intChromosomeFactory(10), 10),
                     Arb.positiveInt(),

@@ -10,9 +10,9 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntClause.BePositive
-import cl.ravenhill.keen.PairClause.Finite
-import cl.ravenhill.keen.PairClause.StrictlyOrdered
+import cl.ravenhill.keen.IntRequirement.BePositive
+import cl.ravenhill.keen.PairRequirement.Finite
+import cl.ravenhill.keen.PairRequirement.StrictlyOrdered
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene

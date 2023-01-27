@@ -2,7 +2,7 @@ package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntClause.*
+import cl.ravenhill.keen.IntRequirement.*
 import kotlin.random.Random
 
 /**
