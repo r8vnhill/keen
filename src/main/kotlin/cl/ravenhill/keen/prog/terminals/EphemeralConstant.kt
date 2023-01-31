@@ -9,9 +9,18 @@ class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
 
     override var parent: Reduceable<T>? = null
 
-    val value: T = generator()
+    private var _value = value
+
+    val value: T
+        get() {
+            _value = generator()
+            return _value
+        }
 
     override fun copy() = EphemeralConstant(generator)
+    override fun staticCopy(): Reduceable<T> {
+        return EphemeralConstant { _value }.also { it.parent = parent }
+    }
 
     override fun deepCopy() =
         EphemeralConstant { value }.also { it.parent = parent }

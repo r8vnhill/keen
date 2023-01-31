@@ -80,4 +80,12 @@ abstract class AbstractFun<T>: Fun<T> {
         }
         it
     }
+
+    override fun staticCopy() = copy().let {
+        it as Fun
+        for (i in 0 until arity) {
+            it[i] = _children[i].staticCopy()
+        }
+        it
+    }
 }

@@ -10,7 +10,13 @@ class Variable<T>(private val name: String, val index: Int) : Terminal<T> {
 
     override var parent: Reduceable<T>? = null
 
-    override fun copy(): Reduceable<T> = Variable(name, index)
+    override fun copy(): Reduceable<T> =
+        Variable<T>(name, index).also { it.parent = parent }
+
+    override fun staticCopy(): Reduceable<T> {
+        return copy()
+    }
+
     override var children: List<Reduceable<T>> = emptyList()
 
 

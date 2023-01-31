@@ -2,10 +2,10 @@ package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntRequirement
 import cl.ravenhill.keen.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.node
 import kotlin.math.min
 
@@ -28,24 +28,23 @@ class SingleNodeCrossover<DNA>(probability: Double) :
             }
         }
         (genes1 zip genes2).forEach { (g1, g2) ->
-            if (Core.random.nextDouble() < probability) {
-                val reduceable1 = g1.dna
-                val reduceable2 = g2.dna
-                crossoverTrees(reduceable1, reduceable2)
-            }
+            val reduceable1 = g1.dna
+            val reduceable2 = g2.dna
+            crossoverTrees(reduceable1, reduceable2)
         }
         return 1
     }
 
-    private fun crossoverTrees(
+    internal fun crossoverTrees(
         reduceable1: Reduceable<DNA>,
         reduceable2: Reduceable<DNA>
     ) {
-        if (min(reduceable1.size, reduceable2.size) < 2) return
+        if (probability eq 0.0 || min(reduceable1.size, reduceable2.size) < 2) return
         val node1 = Core.random.node(reduceable1).deepCopy()
         val node2 = Core.random.node(reduceable2).deepCopy()
         val parent1 = node1.parent
         val parent2 = node2.parent
+        // We check if the nodes can be swapped without exceeding the maximum depth.
         if ((parent1?.height ?: 0) + node2.height <= Core.maxProgramDepth) {
             parent1?.replaceChild(node1, node2)
         }

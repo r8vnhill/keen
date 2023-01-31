@@ -12,7 +12,6 @@ import cl.ravenhill.keen.Core.Contract
 import cl.ravenhill.keen.DoubleRequirement
 import cl.ravenhill.keen.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.util.validateProbability
 import java.util.*
 
 /**
@@ -53,8 +52,10 @@ interface Alterer<DNA> {
 abstract class AbstractAlterer<DNA>(final override val probability: Double) :
     Alterer<DNA> {
     init {
-        probability should DoubleRequirement.BeInRange(0.0..1.0) {
-            "The probability must be between 0 and 1"
+        Contract {
+            probability should DoubleRequirement.BeInRange(0.0..1.0) {
+                "The probability must be between 0 and 1"
+            }
         }
     }
 }

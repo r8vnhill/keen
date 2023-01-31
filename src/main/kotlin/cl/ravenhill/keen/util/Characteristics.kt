@@ -19,6 +19,12 @@ interface Copyable<T> {
      * Creates a deep copy of the object.
      */
     fun deepCopy(): T
+
+    /**
+     * Creates a static copy of the object.
+     * A static copy is a copy that creates a 1:1 copy of the object.
+     */
+    fun staticCopy(): T
 }
 
 /**
