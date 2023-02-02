@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.prog.functions.Fun
 import java.util.*
 
 
@@ -8,7 +9,7 @@ class Variable<T>(private val name: String, val index: Int) : Terminal<T> {
 
     override val arity: Int = 0
 
-    override var parent: Reduceable<T>? = null
+    override var parent: Fun<T>? = null
 
     override fun copy(): Reduceable<T> =
         Variable<T>(name, index).also { it.parent = parent }

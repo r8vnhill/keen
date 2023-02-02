@@ -1,6 +1,5 @@
 package cl.ravenhill.keen.prog.terminals
 
-import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.`check that a reduceable should always be created without a parent`
 import cl.ravenhill.keen.prog.functions.Add
 import io.kotest.core.spec.style.WordSpec

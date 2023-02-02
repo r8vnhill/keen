@@ -23,20 +23,19 @@ private fun fitness(target: Int): (Genotype<Reduceable<Double>>) -> Double = { g
 
 fun main() {
     Core.maxProgramDepth = 3
-    val engine = Builders.engine(fitness(6), Builders.genotype {
+    val engine = Builders.engine(fitness(420), Builders.genotype {
         chromosome {
             program {
                 function { Mul() }
-                terminal { EphemeralConstant { 2.0 } }
-                terminal { EphemeralConstant { 3.0 } }
+                terminal { EphemeralConstant { candidateFactors.random(Core.random) } }
             }
         }
     }) {
         populationSize = 100
         limits = listOf(GenerationCount(100))
-        alterers = listOf(Mutator(0.1))
+        alterers = listOf(Mutator(0.03), SingleNodeCrossover(0.2))
         optimizer = FitnessMinimizer()
-        statistics = listOf(StatisticCollector()/*, StatisticPlotter()*/)
+        statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
     val result = engine.run()
     println(engine.statistics.first())

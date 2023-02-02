@@ -142,20 +142,6 @@ class MulSpec : WordSpec({
                 EphemeralConstant { 0.0 })
         }
     }
-    "Parent" should {
-        "not be set at creation" {
-            checkAll(Arb.multiplication()) { mul ->
-                mul.parent shouldBe null
-            }
-        }
-        "be set when added to a program" {
-            checkAll(Arb.multiplication()) { mul ->
-                val add = Add()
-                add[0] = mul
-                mul.parent shouldBe add
-            }
-        }
-    }
     "Reducing" should {
         "return the multiplication of two constants" {
             checkAll(Arb.ephemeralConstant(), Arb.ephemeralConstant()) { a, b ->

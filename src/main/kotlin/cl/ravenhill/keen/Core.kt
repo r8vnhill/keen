@@ -103,12 +103,12 @@ object Core {
             results.add(constraint.validate(this))
 
         /**
-         * A clause defined by a predicate.
+         * A requirement defined by a predicate.
          *
          * @param description The description of the clause.
          * @param predicate The predicate that defines the clause.
          */
-        fun clause(description: String, predicate: () -> Boolean) = results.add(
+        fun requirement(description: String, predicate: () -> Boolean) = results.add(
             if (predicate()) {
                 Result.success(Unit)
             } else {

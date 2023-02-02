@@ -1,13 +1,14 @@
 package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.prog.functions.Fun
 import java.util.*
 
 
 class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
     override val arity: Int = 0
 
-    override var parent: Reduceable<T>? = null
+    override var parent: Fun<T>? = null
 
     private var _value = value
 

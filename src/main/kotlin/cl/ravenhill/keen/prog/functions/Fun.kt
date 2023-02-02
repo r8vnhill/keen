@@ -1,8 +1,9 @@
 package cl.ravenhill.keen.prog.functions
 
+import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.IntRequirement.*
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
-import cl.ravenhill.keen.util.validateRange
 
 /**
  * This file provides the interface and abstract class for all functions.
@@ -21,7 +22,7 @@ import cl.ravenhill.keen.util.validateRange
  */
 interface Fun<T> : Reduceable<T> { // Fun
 
-    override val children: List<Reduceable<T>>
+    override var children: List<Reduceable<T>>
 
     /**
      * Sets the child at the given index.
@@ -38,7 +39,7 @@ interface Fun<T> : Reduceable<T> { // Fun
  * @since 2.0.0
  * @version 2.0.0
  */
-abstract class AbstractFun<T>: Fun<T> {
+abstract class AbstractFun<T> : Fun<T> {
 
     /**
      * Backing field for the children.
@@ -53,17 +54,20 @@ abstract class AbstractFun<T>: Fun<T> {
             _children.addAll(value)
         }
 
-    override var parent: Reduceable<T>? = null
+    override var parent: Fun<T>? = null
+
 
     override fun set(index: Int, value: Reduceable<T>) {
-        index.validateRange(0 to arity)
-        _children[index] = value
-        value.parent = this
+        Contract {
+            index should BeInRange(0..arity)
+        }
+        _children[index] = value.deepCopy()
+        _children[index].parent = this
     }
 
     override fun replaceChild(original: Reduceable<T>, new: Reduceable<T>) {
         val index = _children.indexOf(original)
-        if (index == -1) {
+        if (original.parent != this) {
             throw InvalidStateException("child") {
                 "The child $original is not a child of this node."
             }
@@ -76,7 +80,7 @@ abstract class AbstractFun<T>: Fun<T> {
     override fun deepCopy() = copy().let {
         it as Fun
         for (i in 0 until arity) {
-            it[i] = _children[i].deepCopy()
+            it[i] = _children[i].deepCopy().also { child -> child.parent = it }
         }
         it
     }

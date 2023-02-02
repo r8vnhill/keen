@@ -2,7 +2,6 @@ package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
-import cl.ravenhill.keen.util.validateRange
 import java.util.*
 
 /**
@@ -28,8 +27,9 @@ class Add : AbstractFun<Double>() {
     // issues. The initial values are set to 0.0 since that is the identity of the
     // addition operation.
     override val _children =
-        mutableListOf<Reduceable<Double>>(EphemeralConstant { 0.0 },
-            EphemeralConstant { 0.0 })
+        mutableListOf<Reduceable<Double>>(
+            EphemeralConstant { 0.0 }.also { it.parent = this },
+            EphemeralConstant { 0.0 }.also { it.parent = this })
 
     override fun copy() = Add().also { it.parent = parent }
 

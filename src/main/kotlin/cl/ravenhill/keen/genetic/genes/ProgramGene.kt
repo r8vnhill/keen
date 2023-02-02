@@ -51,7 +51,7 @@ class ProgramGene<DNA> internal constructor(
 
     override fun generator(): Reduceable<DNA> {
         // Create a deep copy of a random node.
-        val op = nodes.random(Core.random).deepCopy()
+        val op = nodes.random(Core.random).staticCopy()
         generateChildren(op, op.depth + 1, nodes) // Generate the children.
         return op // Return the new node.
     }
@@ -81,6 +81,7 @@ class ProgramGene<DNA> internal constructor(
                     }
                     generateChildren(child, depth + 1, ops)
                     op[i] = child
+                    child.parent = op
                 }
             }
 

@@ -49,7 +49,7 @@ fun main() {
         }
     }) {
         populationSize = 5000
-        alterers = listOf(Mutator(0.3), Mutator(0.3))
+        alterers = listOf(SwapMutator(0.3), SinglePointCrossover(0.3))
         optimizer = FitnessMinimizer()
         limits = listOf(SteadyGenerations(10), GenerationCount(1000))
         statistics = listOf(StatisticCollector(), StatisticPlotter())

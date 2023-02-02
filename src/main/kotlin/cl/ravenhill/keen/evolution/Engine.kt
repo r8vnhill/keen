@@ -205,12 +205,10 @@ class Engine<DNA> private constructor(
         if (start.population.isEmpty()) {
             info { "Initial population is empty, creating a new one." }
             val generation = start.generation
-            val stream =
-                Stream.concat(
-                    start.population.stream(),
-                    Stream.generate { genotype.make() }
-                        .map { Phenotype(it, generation) }
-                )
+            val stream = Stream.concat(
+                start.population.stream(),
+                Stream.generate { genotype.make() }.map { Phenotype(it, generation) }
+            )
             EvolutionStart(
                 stream.limit(populationSize.toLong())
                     .collect(Collectors.toList()),

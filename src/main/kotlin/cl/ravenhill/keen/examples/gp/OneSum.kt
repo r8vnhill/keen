@@ -3,9 +3,9 @@ package cl.ravenhill.keen.examples.gp
 import cl.ravenhill.keen.Builders.Chromosomes.program
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
-import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.SingleNodeCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.prog.Reduceable
@@ -23,7 +23,7 @@ private fun fitness(target: Int): (Genotype<Reduceable<Double>>) -> Double = { g
 }
 
 fun main() {
-    val engine = engine(fitness(20), genotype {
+    val engine = engine(fitness(7), genotype {
         chromosome {
             program {
                 function { Add() }
@@ -33,9 +33,10 @@ fun main() {
     }) {
         populationSize = 100
         limits = listOf(GenerationCount(100))
-        alterers = listOf(SingleNodeCrossover(0.5))
+        alterers = listOf(Mutator(0.03), SingleNodeCrossover(0.3))
         optimizer = FitnessMinimizer()
-        statistics = listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
+        statistics =
+            listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
     }
     val result = engine.run()
     println(engine.statistics.first())

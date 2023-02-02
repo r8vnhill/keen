@@ -91,7 +91,7 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
                 if (this@Factory::chromosomes.isInitialized) {
                     chromosomes should NotBeEmpty
                 }
-                clause("Chromosomes should be initialized") {
+                requirement("Chromosomes should be initialized") {
                     this@Factory::chromosomes.isInitialized
                 }
             }

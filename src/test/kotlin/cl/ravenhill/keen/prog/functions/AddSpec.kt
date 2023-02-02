@@ -1,11 +1,12 @@
 package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.prog.`check that a reduceable should always be created without a parent`
+import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Variable
-import io.kotest.core.spec.style.WordSpec
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
@@ -14,19 +15,21 @@ import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 
 
-class AddSpec : WordSpec({
+class AddSpec : FreeSpec({
     afterAny {
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
     }
-    "Accessing the descendants" should {
+    "Accessing the descendants" - {
         "return two ephemeral constants if it was created without children" {
             val add = Add()
             add.descendants shouldBe listOf(
                 EphemeralConstant { 0.0 },
                 EphemeralConstant { 0.0 })
+            add.children.forEach { it.parent shouldBe add }
         }
         "return the children if it was created with children" {
             val add = add(
@@ -42,8 +45,8 @@ class AddSpec : WordSpec({
                 EphemeralConstant { 0.0 })
         }
     }
-    "Copying" When {
-        "shallow copying" should {
+    "Copying" - {
+        "shallow copying" - {
             "return a new add operation with default ephemeral constants" {
                 checkAll(Arb.addition()) { add ->
                     val copy = add.copy()
@@ -52,7 +55,7 @@ class AddSpec : WordSpec({
                 }
             }
         }
-        "deep copying" should {
+        "deep copying" - {
             "return a new add operation with the addition of two terminals" {
                 val add = add(EphemeralConstant { 1.0 }, Variable("x", 0))
                 val copy = add.deepCopy()
@@ -74,7 +77,7 @@ class AddSpec : WordSpec({
             }
         }
     }
-    "Creating an addition without children" should {
+    "Creating an addition without children" - {
         "create an addition with ephemeral constants as children" {
             val add = Add()
             add.children.size shouldBe 2
@@ -82,7 +85,7 @@ class AddSpec : WordSpec({
             add.children[1] shouldBe EphemeralConstant { 0.0 }
         }
     }
-    "Reducing an add" should {
+    "Reducing an add" - {
         "return the sum of two ephemeral constants" {
             checkAll<Double, Double> { a, b ->
                 val add = add(EphemeralConstant { a }, EphemeralConstant { b })
@@ -102,14 +105,34 @@ class AddSpec : WordSpec({
             }
         }
     }
-    "Add arity" should {
+    "Add arity" - {
         "be 2" {
             checkAll(Arb.addition()) { add ->
                 add.arity shouldBe 2
             }
         }
     }
-    "Flattening an add" should {
+    "The children should" - {
+        "be accessible" {
+            checkAll(Arb.program(), Arb.program()) { a, b ->
+                val add = add(a, b)
+                add.children[0] shouldBe a
+                add.children[1] shouldBe b
+            }
+        }
+        "be modifiable" {
+            checkAll(
+                Arb.program(),
+                Arb.program(),
+                Arb.list(Arb.program(), 0..2)
+            ) { a, b, c ->
+                val add = add(a, b)
+                add.children = c
+                add.children shouldBe c
+            }
+        }
+    }
+    "Flattening an add" - {
         "return a list with the add and its children" {
             val add = add(
                 EphemeralConstant { 1.0 },
@@ -127,8 +150,8 @@ class AddSpec : WordSpec({
             flattened[4] shouldBe (add.children[1] as Add).children[1]
         }
     }
-    "Object identity" When {
-        "comparing equality" should {
+    "Object identity" - {
+        "comparing equality" - {
             "be true if the objects are the same" {
                 checkAll(Arb.addition()) { add ->
                     add shouldBe add
@@ -154,7 +177,7 @@ class AddSpec : WordSpec({
                 add shouldNotBe copy
             }
         }
-        "hashing" should {
+        "hashing" - {
             "be the same if they have the same children" {
                 checkAll(Arb.addition()) { add ->
                     val other = Add()
@@ -176,15 +199,22 @@ class AddSpec : WordSpec({
             }
         }
     }
-    "Parent" should {
-        "not be set at the moment of creation" {
-            `check that a reduceable should always be created without a parent`(
-                Arb.addition()
-            )
+    "Replacing a child should" - {
+        "replace the child if it is found" {
+            checkAll(Arb.addition(), Arb.program()) { add, child ->
+                add.replaceChild(add.children[0], child)
+                add.children[0] shouldBe child
+            }
         }
-
+        "throw an exception if the child is not found" {
+            checkAll(Arb.addition(), Arb.program()) { add, child ->
+                shouldThrow<InvalidStateException> {
+                    add.replaceChild(child, child)
+                }
+            }
+        }
     }
-    "Size" should {
+    "Size" - {
         "be 3 if the add has ephemeral constants as children" {
             val add = Add()
             add.size shouldBe 3
@@ -205,3 +235,4 @@ class AddSpec : WordSpec({
 fun Arb.Companion.addition() = arbitrary {
     add(Arb.program().bind(), Arb.program().bind())
 }
+
