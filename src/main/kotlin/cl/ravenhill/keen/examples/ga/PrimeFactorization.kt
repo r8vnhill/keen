@@ -38,7 +38,6 @@ private fun absDiff(genotype: Genotype<Int>) =
  * The Fundamental Theorem of Arithmetic states that every integer greater than 1 is either a prime
  * number itself or can be represented as a product of prime numbers (its prime factors).
  * This example tries to find the prime factors of a given number.
- *
  */
 fun main() {
     val engine = engine(::absDiff, genotype {
