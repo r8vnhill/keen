@@ -30,7 +30,7 @@ class OnesCountingTest : FreeSpec({
             }) {
                 populationSize = 500
                 selector = TournamentSelector(2)
-                alterers = listOf(Mutator(0.55), SinglePointCrossover(0.2))
+                alterers = listOf(Mutator(0.03), SinglePointCrossover(0.2))
                 limits = listOf(GenerationCount(100), TargetFitness(20.0))
             }
             val result = engine.run()

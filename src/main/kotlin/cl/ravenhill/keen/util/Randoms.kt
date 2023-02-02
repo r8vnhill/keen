@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Contract
 import cl.ravenhill.keen.DoubleRequirement.*
 import cl.ravenhill.keen.prog.Reduceable
@@ -15,9 +16,7 @@ import kotlin.random.asJavaRandom
  */
 fun Random.nextChar(filter: (Char) -> Boolean = { true }) =
     generateSequence {
-        RandomStringUtils.random(
-            1, 0, 0, true, true, null, this.asJavaRandom()
-        ).first()
+        (' '..'z').random(Core.random)
     }.filter(filter).first()
 
 

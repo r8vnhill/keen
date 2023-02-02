@@ -33,8 +33,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.supplyAsync
 import java.util.concurrent.Executor
 import java.util.concurrent.ForkJoinPool.commonPool
-import java.util.stream.Collectors
-import java.util.stream.Stream
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -205,13 +203,11 @@ class Engine<DNA> private constructor(
         if (start.population.isEmpty()) {
             info { "Initial population is empty, creating a new one." }
             val generation = start.generation
-            val stream = Stream.concat(
-                start.population.stream(),
-                Stream.generate { genotype.make() }.map { Phenotype(it, generation) }
-            )
+            val individuals =
+                start.population.asSequence() + generateSequence { genotype.make() }
+                    .map { Phenotype(it, generation) }
             EvolutionStart(
-                stream.limit(populationSize.toLong())
-                    .collect(Collectors.toList()),
+                individuals.take(populationSize).toList(),
                 generation
             ).also {
                 info { "Created a new population." }

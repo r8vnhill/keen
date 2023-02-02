@@ -71,7 +71,7 @@ fun main() {
     }) {
         populationSize = 1000
         limits = listOf(GenerationCount(200))
-        alterers = listOf(InversionMutator(0.1), OrderedCrossover(0.3))
+        alterers = listOf(InversionMutator(0.8), PartiallyMappedCrossover(0.3))
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPrinter(30), StatisticPlotter())
     }

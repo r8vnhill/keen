@@ -207,14 +207,18 @@ fun <E> MutableList<E>.swap(
     otherStart: Int
 ) {
     Contract {
-        start should BePositive()
+        start should BeAtLeast(0) {
+            "Start index [$start] should be at least 0"
+        }
         end should BeAtMost(size) {
             "End index [$end] should be at most size [$size]"
         }
         end should BeAtLeast(start) {
             "End index [$end] should be at least start [$start]"
         }
-        otherStart should BePositive()
+        otherStart should BeAtLeast(0) {
+            "Other start index [$otherStart] should be at least 0"
+        }
         other.size should BeAtLeast(otherStart + (end - start)) {
             "Other list length [${other.size}] should be at least end - start [${end - start}]"
         }
