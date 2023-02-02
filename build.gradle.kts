@@ -28,6 +28,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     // Lang3
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    // Commons Math
+    implementation("org.apache.commons:commons-math-parent:4.0-beta1")
     // Tablesaw
     api("tech.tablesaw:tablesaw-core:0.43.1")
     @Suppress("VulnerableLibrariesLocal")

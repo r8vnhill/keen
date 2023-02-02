@@ -15,9 +15,7 @@ import kotlin.random.asJavaRandom
  * Generates a random "printable" character.
  */
 fun Random.nextChar(filter: (Char) -> Boolean = { true }) =
-    generateSequence {
-        (' '..'z').random(Core.random)
-    }.filter(filter).first()
+    generateSequence { (' '..'z').random(this) }.filter(filter).first()
 
 
 /**

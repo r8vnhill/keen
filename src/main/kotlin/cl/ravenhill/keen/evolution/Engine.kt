@@ -28,6 +28,8 @@ import cl.ravenhill.keen.util.validateAtLeast
 import cl.ravenhill.keen.util.validateNotEmpty
 import cl.ravenhill.keen.util.validatePredicate
 import cl.ravenhill.keen.util.validateRange
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.runBlocking
 import java.time.Clock
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.supplyAsync
@@ -152,7 +154,7 @@ class Engine<DNA> private constructor(
      * @see alter
      * @see EvolutionResult
      */
-    override fun evolve(start: EvolutionStart<DNA>): EvolutionResult<DNA> {
+    override fun evolve(start: EvolutionStart<DNA>) = runBlocking {
         val initTime = clock.millis()
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
@@ -188,9 +190,8 @@ class Engine<DNA> private constructor(
         // (9) The result of the evolution is post-processed
         trace { "Post-processing evolution result." }
         val afterResult = interceptor.after(evolutionResult)
-        statistics.stream().parallel()
-            .forEach { it.generationTimes.add(clock.millis() - initTime) }
-        return afterResult
+        statistics.asFlow().collect { it.generationTimes.add(clock.millis() - initTime) }
+        afterResult
     }
 
     /**

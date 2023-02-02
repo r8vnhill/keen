@@ -26,8 +26,9 @@ class WordGuessingTest : FreeSpec({
     }
 
     "The Evolution Engine should be able to guess a word" {
+        Core.EvolutionLogger.level = Level.Debug()
         checkAll(
-            PropTestConfig(iterations = 50),
+            PropTestConfig(iterations = 100),
             Arb.string(1..20, Codepoint.ascii())
         ) { target ->
             val engine = Builders.engine(matches(target), Builders.genotype {

@@ -15,7 +15,7 @@ class RunnablesAction(
         if ((high - low) <= 5 || getSurplusQueuedTaskCount() > 3) {
             runnables.forEach { it.run() }
         } else {
-            val mid =(low + high) ushr 1
+            val mid = (low + high) ushr 1
             invokeAll(
                 RunnablesAction(runnables, low, mid),
                 RunnablesAction(runnables, mid, high)

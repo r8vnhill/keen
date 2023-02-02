@@ -8,12 +8,27 @@
 
 package cl.ravenhill.keen.operators.selector
 
+import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import cl.ravenhill.keen.util.validateAtLeast
 
+/**
+ * A selector is an operator that selects a subset of the population to be used in the next generation.
+ * The selection is based on the fitness of the phenotypes.
+ *
+ * @param DNA The type of the DNA of the phenotypes.
+ */
 interface Selector<DNA> {
 
+    /**
+     * Selects a subset of the population to be used in the next generation.
+     *
+     * @param population The population to select from.
+     * @param count The number of phenotypes to select.
+     * @param optimizer The optimizer that is using this selector.
+     * @return The selected phenotypes.
+     */
     operator fun invoke(
         population: List<Phenotype<DNA>>,
         count: Int,
@@ -21,16 +36,35 @@ interface Selector<DNA> {
     ): List<Phenotype<DNA>>
 }
 
+/**
+ * An abstract implementation of [Selector] that validates the parameters and delegates the selection
+ * to the [select] method.
+ *
+ * @param DNA The type of the DNA of the phenotypes.
+ */
 abstract class AbstractSelector<DNA> : Selector<DNA> {
     final override operator fun invoke(
         population: List<Phenotype<DNA>>,
         count: Int,
         optimizer: PhenotypeOptimizer<DNA>
     ): List<Phenotype<DNA>> {
-        count.validateAtLeast(0) { "Selection count [$count] must be at least 0" }
+        Contract {
+            population.size should BeAtLeast(1) {
+                "Population size [${population.size}] must be at least 1"
+            }
+            count should BeAtLeast(0) { "Selection count [$count] must be at least 0" }
+        }
         return select(population, count, optimizer)
     }
 
+    /**
+     * Selects a subset of the population to be used in the next generation.
+     *
+     * @param population The population to select from.
+     * @param count The number of phenotypes to select.
+     * @param optimizer The optimizer that is using this selector.
+     * @return The selected phenotypes.
+     */
     protected abstract fun select(
         population: List<Phenotype<DNA>>,
         count: Int,

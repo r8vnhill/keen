@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.util.math
 
+import org.apache.commons.math3.util.Precision
 import kotlin.math.abs
 import kotlin.math.pow
 
@@ -19,7 +20,7 @@ fun Double.isNotNan() = !this.isNaN()
 /**
  * Returns true if this double is equal to the given double.
  */
-infix fun Double.eq(d: Double): Boolean = abs(this - d) < 1e-10
+infix fun Double.eq(d: Double): Boolean = Precision.equals(this, d, 1e-10)
 
 /**
  * Returns true if this double is not equal to the given double.

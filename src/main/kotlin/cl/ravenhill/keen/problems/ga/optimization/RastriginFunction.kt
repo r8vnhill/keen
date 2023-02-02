@@ -8,7 +8,7 @@
  *
  */
 
-package cl.ravenhill.keen.examples.ga.optimization
+package cl.ravenhill.keen.problems.ga.optimization
 
 import cl.ravenhill.keen.Builders.Chromosomes.doubles
 import cl.ravenhill.keen.Builders.engine

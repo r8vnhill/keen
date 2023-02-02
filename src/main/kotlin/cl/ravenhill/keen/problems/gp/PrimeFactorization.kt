@@ -1,15 +1,13 @@
-package cl.ravenhill.keen.examples.gp
+package cl.ravenhill.keen.problems.gp
 
 import cl.ravenhill.keen.Builders
 import cl.ravenhill.keen.Builders.Chromosomes.program
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
-import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.SingleNodeCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.prog.Reduceable
-import cl.ravenhill.keen.prog.functions.Add
 import cl.ravenhill.keen.prog.functions.Mul
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer

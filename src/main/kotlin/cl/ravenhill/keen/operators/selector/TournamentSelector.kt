@@ -10,12 +10,15 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntRequirement.*
-import cl.ravenhill.keen.SelectorException
+import cl.ravenhill.keen.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.IntRequirement.BePositive
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import java.util.*
-import java.util.stream.Stream
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
+import java.util.Objects
 
 class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DNA>() {
 
@@ -29,22 +32,22 @@ class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DN
         population: List<Phenotype<DNA>>,
         count: Int,
         optimizer: PhenotypeOptimizer<DNA>
-    ) = List(count) {
-        selectOneFrom(population, optimizer)
+    ) = runBlocking {
+        (0 until count).asFlow().map { selectOneFrom(population, optimizer) }.toList()
     }
 
     internal fun selectOneFrom(
         population: List<Phenotype<DNA>>,
         optimizer: PhenotypeOptimizer<DNA>
     ): Phenotype<DNA> {
-        return Stream.generate { population[Core.random.nextInt(population.size)] }
-            .limit(sampleSize.toLong())
-            .max(optimizer.comparator)
-            .orElseThrow {
-                SelectorException {
-                    "An error occurred while trying to select an individual by tournament selection"
-                }
+        Contract {
+            population.size should BeAtLeast(sampleSize) {
+                "Population size [${population.size}] must be at least sample size [$sampleSize]"
             }
+        }
+        return generateSequence { population[Core.random.nextInt(population.size)] }
+            .take(sampleSize)
+            .maxWith(optimizer.comparator)
     }
 
     override fun equals(other: Any?) = when {

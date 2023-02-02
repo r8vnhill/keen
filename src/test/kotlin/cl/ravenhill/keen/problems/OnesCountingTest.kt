@@ -1,4 +1,4 @@
-package cl.ravenhill.keen.examples
+package cl.ravenhill.keen.problems
 
 import cl.ravenhill.keen.Builders
 import cl.ravenhill.keen.Builders.Chromosomes.booleans

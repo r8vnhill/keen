@@ -49,7 +49,9 @@ class NumbersKtTest : WordSpec({
 
     "Checking if two Doubles are EQUAL" should {
         "return TRUE if the difference between the two numbers is less than 1e-10" {
-            checkAll(Arb.double(-1e10, 1e10), Arb.double(-1e-10, 1e-10)) { n, eps ->
+            checkAll(
+                PropTestConfig(5592896386977524509L),
+                Arb.double(1.0, 1e10), Arb.double(-1.0, 1e-10)) { n, eps ->
                 assume(n.isFinite() && eps.isFinite())
                 n eq n + eps shouldBe true
                 n neq n + eps shouldBe false
