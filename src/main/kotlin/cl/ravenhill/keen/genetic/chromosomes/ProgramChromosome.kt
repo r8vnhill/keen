@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.IntRequirement.BePositive
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.ProgramGene
@@ -39,7 +39,7 @@ class ProgramChromosome<I> private constructor(
     class Factory<T> : Chromosome.Factory<Reduceable<T>> {
         var size = 1
             set(value) {
-                Contract { value should BePositive() }
+                enforce { value should BePositive() }
                 field = value
             }
 
@@ -64,7 +64,7 @@ class ProgramChromosome<I> private constructor(
         fun terminal(fn: () -> Terminal<T>) = _terminals.addIfAbsent(fn())
 
         override fun make(): ProgramChromosome<T> {
-            Contract {
+            enforce {
                 (_functions.size + _terminals.size) should BePositive {
                     "There must be at least one function or terminal"
                 }

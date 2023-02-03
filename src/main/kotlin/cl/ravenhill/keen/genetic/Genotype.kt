@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.CollectionRequirement.NotBeEmpty
-import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.IntRequirement.BeInRange
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import java.util.*
@@ -45,7 +45,7 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
     fun sequence() = chromosomes.asSequence()
 
     operator fun get(index: Int): Chromosome<DNA> {
-        Contract {
+        enforce {
             index should BeInRange(0..size)
         }
         return chromosomes[index]
@@ -87,7 +87,7 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
          * Creates a new [Genotype] with the given ``chromosomes``.
          */
         fun make(): Genotype<DNA> {
-            Contract {
+            enforce {
                 if (this@Factory::chromosomes.isInitialized) {
                     chromosomes should NotBeEmpty
                 }

@@ -8,7 +8,7 @@
 
 package cl.ravenhill.keen.operators
 
-import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.DoubleRequirement
 import cl.ravenhill.keen.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
@@ -52,7 +52,7 @@ interface Alterer<DNA> {
 abstract class AbstractAlterer<DNA>(final override val probability: Double) :
     Alterer<DNA> {
     init {
-        Contract {
+        enforce {
             probability should DoubleRequirement.BeInRange(0.0..1.0) {
                 "The probability must be between 0 and 1"
             }
@@ -65,7 +65,7 @@ class AltererResult<DNA>(
     val alterations: Int = 0
 ) {
     init {
-        Contract {
+        enforce {
             alterations should BeAtLeast(0) {
                 "The number of alterations cannot be negative"
             }

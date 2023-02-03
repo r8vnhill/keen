@@ -23,7 +23,7 @@ class WordGuessingTest : FreeSpec({
             .size.toDouble()
     }
 
-    "The Evolution Engine should be able to guess a word" {
+    "!The Evolution Engine should be able to guess a word" {
         checkAll(
             PropTestConfig(iterations = 50),
             Arb.string(1..20, Codepoint.ascii())

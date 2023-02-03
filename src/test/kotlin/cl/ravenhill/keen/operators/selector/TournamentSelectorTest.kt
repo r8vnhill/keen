@@ -1,7 +1,11 @@
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.*
-import cl.ravenhill.keen.operators.crossover.population
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.IntRequirementException
+import cl.ravenhill.keen.EnforcementException
+import cl.ravenhill.keen.intChromosomeFactory
+import cl.ravenhill.keen.population
+import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -18,7 +22,7 @@ class TournamentSelectorTest : FreeSpec({
     "Creating a selector should" - {
         "throw an exception if sample size is non-positive" {
             checkAll(Arb.nonPositiveInt()) { sampleSize ->
-                shouldThrow<UnfulfilledContractException> {
+                shouldThrow<EnforcementException> {
                     TournamentSelector<Int>(sampleSize)
                 }.violations.forEach {
                     it shouldBeOfClass IntRequirementException::class
@@ -53,9 +57,19 @@ class TournamentSelectorTest : FreeSpec({
                 selected shouldBe expected
             }
         }
+        "return the only individual when the population has only one individual" {
+            checkAll(
+                Arb.population(Arb.intChromosomeFactory(), 1),
+                Arb.positiveInt(100)
+            ) { population, sampleSize ->
+                val selector = TournamentSelector<Int>(sampleSize)
+                val selected = selector.selectOneFrom(population, FitnessMaximizer())
+                selected shouldBe population.first()
+            }
+        }
         "return the winner of a tournament when sample size is greater than 1" {
             checkAll(
-                Arb.population(Arb.intChromosomeFactory()),
+                Arb.population(Arb.intChromosomeFactory(1), 4),
                 Arb.positiveInt(100),
                 Arb.long()
             ) { population, sampleSize, seed ->

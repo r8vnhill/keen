@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.prog.Reduceable
@@ -22,7 +22,7 @@ class SingleNodeCrossover<DNA>(probability: Double) :
         genes1: MutableList<Gene<Reduceable<DNA>>>,
         genes2: MutableList<Gene<Reduceable<DNA>>>
     ): Int {
-        Contract {
+        enforce {
             genes1.size should BeEqualTo(genes2.size) {
                 "The parents must have the same size"
             }

@@ -9,8 +9,7 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.IntRequirement.BePositive
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
@@ -23,7 +22,7 @@ import java.util.Objects
 class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DNA>() {
 
     init {
-        Contract {
+        enforce {
             sampleSize should BePositive()
         }
     }
@@ -32,7 +31,7 @@ class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DN
         population: List<Phenotype<DNA>>,
         count: Int,
         optimizer: PhenotypeOptimizer<DNA>
-    ) = runBlocking {
+    ): List<Phenotype<DNA>> = runBlocking {
         (0 until count).asFlow().map { selectOneFrom(population, optimizer) }.toList()
     }
 
@@ -40,11 +39,6 @@ class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DN
         population: List<Phenotype<DNA>>,
         optimizer: PhenotypeOptimizer<DNA>
     ): Phenotype<DNA> {
-        Contract {
-            population.size should BeAtLeast(sampleSize) {
-                "Population size [${population.size}] must be at least sample size [$sampleSize]"
-            }
-        }
         return generateSequence { population[Core.random.nextInt(population.size)] }
             .take(sampleSize)
             .maxWith(optimizer.comparator)

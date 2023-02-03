@@ -75,6 +75,6 @@ class CollectionRequirementException(lazyMessage: () -> String) :
 /**
  * Exception thrown when a contract is not fulfilled.
  */
-class UnfulfilledContractException(val violations: List<Throwable>) : KeenException(
+class EnforcementException(val violations: List<Throwable>) : KeenException(
     "Unfulfilled contract: ",
     { violations.joinToString(", ") { "{ ${it.message} }" } })

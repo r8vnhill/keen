@@ -1,8 +1,7 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntRequirement
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
@@ -16,12 +15,10 @@ abstract class AbstractRecombinatorAlterer<DNA>(
     probability: Double,
     protected val order: Int
 ) :
-    AbstractAlterer<DNA>(probability) {
+        AbstractAlterer<DNA>(probability) {
 
     init {
-        Contract {
-            order should BeAtLeast(2)
-        }
+        enforce { order should BeAtLeast(2) { "The order must be at least 2" } }
     }
 
     override fun invoke(

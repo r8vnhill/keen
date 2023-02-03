@@ -45,31 +45,27 @@ object Core {
     }
 
     /**
-     * Checks that a given contract is fulfilled.
+     * Enforces the contract of the given builder.
      *
-     * UpperCamelCase is used to avoid conflicts with the `contract` function from the
-     * Kotlin standard library.
-     *
-     * @param builder The contract builder.
-     * @throws UnfulfilledContractException If the contract is not fulfilled.
+     * @param builder The builder that contains the contract.
+     * @throws EnforcementException If the contract is not fulfilled.
      */
-    @Suppress("FunctionName")
-    fun Contract(builder: RequirementsContext.() -> Unit) {
-        RequirementsContext().apply(builder).errors.let { errors ->
+    fun enforce(builder: EnforceScope.() -> Unit) {
+        EnforceScope().apply(builder).errors.let { errors ->
             if (errors.isNotEmpty()) {
-                throw UnfulfilledContractException(errors)
+                throw EnforcementException(errors)
             }
         }
     }
 
     /**
-     * A contract context that contains the results of evaluating the contract.
+     * The scope of the contract enforcement.
      *
      * @property errors The list of errors that occurred during the evaluation.
      * @since 2.0.0
      * @version 2.0.0
      */
-    class RequirementsContext {
+    class EnforceScope {
         /**
          * The list of results of evaluating the contract.
          */

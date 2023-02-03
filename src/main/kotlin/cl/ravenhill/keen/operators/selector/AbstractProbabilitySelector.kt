@@ -9,13 +9,9 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Contract
-import cl.ravenhill.keen.IntRequirement
-import cl.ravenhill.keen.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import cl.ravenhill.keen.util.validateAtLeast
 import cl.ravenhill.keen.util.validateSum
 
 private const val SERIAL_INDEX_THRESHOLD = 35

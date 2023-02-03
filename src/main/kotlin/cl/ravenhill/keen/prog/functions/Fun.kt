@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.prog.functions
 
-import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.IntRequirement.*
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
@@ -58,7 +58,7 @@ abstract class AbstractFun<T> : Fun<T> {
 
 
     override fun set(index: Int, value: Reduceable<T>) {
-        Contract {
+        enforce {
             index should BeInRange(0..arity)
         }
         _children[index] = value.deepCopy()

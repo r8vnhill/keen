@@ -2,7 +2,7 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.DoubleRequirementException
 import cl.ravenhill.keen.PairRequirementException
-import cl.ravenhill.keen.UnfulfilledContractException
+import cl.ravenhill.keen.EnforcementException
 import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.util.math.isNotNan
 import io.kotest.assertions.throwables.shouldThrow
@@ -71,7 +71,7 @@ class BoolChromosomeSpec : WordSpec({
                 ) { size, truesProbability ->
                     assume(truesProbability.isNotNan())
                     assume(truesProbability.isFinite())
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         BoolChromosome.Factory().apply {
                             this.size = size
                             this.truesProbability = truesProbability
@@ -82,7 +82,7 @@ class BoolChromosomeSpec : WordSpec({
             "throw an exception if the range is not ordered" {
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, truesProbability ->
                     assume(truesProbability !in 0.0..1.0)
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         BoolChromosome.Factory().apply {
                             this.size = size
                             this.truesProbability = truesProbability

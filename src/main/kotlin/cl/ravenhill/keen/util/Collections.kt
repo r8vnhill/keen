@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.IntRequirement.*
 import kotlin.random.Random
 
@@ -178,9 +178,13 @@ fun <E> MutableCollection<E>.addIfAbsent(element: E): Boolean {
  * Swaps the elements at the given indices in the receiver.
  */
 fun <E> MutableList<E>.swap(i:  Int, j: Int) {
-    Contract {
-        i should BeInRange(0 until this@swap.size)
-        j should BeInRange(0 until this@swap.size)
+    enforce {
+        i should BeInRange(0 until this@swap.size) {
+            "i should be in range [0, ${this@swap.size})"
+        }
+        j should BeInRange(0 until this@swap.size) {
+            "j should be in range [0, ${this@swap.size})"
+        }
     }
     if (i == j) return
     val tmp = this[i]
@@ -205,8 +209,8 @@ fun <E> MutableList<E>.swap(
     end: Int,
     other: MutableList<E>,
     otherStart: Int
-) {
-    Contract {
+): Pair<MutableList<E>, MutableList<E>> {
+    enforce {
         start should BeAtLeast(0) {
             "Start index [$start] should be at least 0"
         }
@@ -220,7 +224,7 @@ fun <E> MutableList<E>.swap(
             "Other start index [$otherStart] should be at least 0"
         }
         other.size should BeAtLeast(otherStart + (end - start)) {
-            "Other list length [${other.size}] should be at least end - start [${end - start}]"
+            "Other list length [${other.size}] should be at least `end - start` [${end - start}]"
         }
     }
     var i = end - start
@@ -229,6 +233,7 @@ fun <E> MutableList<E>.swap(
         this[i + start] = other[otherStart + i]
         other[otherStart + i] = temp
     }
+    return this to other
 }
 // endregion
 
@@ -238,18 +243,6 @@ fun <E> MutableList<E>.swap(
  */
 infix fun List<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
 
-/**
- * Returns a ``pick`` sized random subset of the receiver.
- */
-fun <E> List<E>.subset(pick: Int) = subset(pick, Core.random)
-
-/**
- * Returns a ``pick`` sized random subset of the receiver with the given [random] number
- * generator.
- */
-fun <E> List<E>.subset(pick: Int, random: Random) = random
-    .subset(pick, this.size)    // Get the indices of the elements to pick
-    .map { this[it] }           // Map the indices to the elements
 // endregion
 
 // region : Arrays

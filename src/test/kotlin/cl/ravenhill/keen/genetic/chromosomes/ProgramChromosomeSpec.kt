@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.IntRequirementException
-import cl.ravenhill.keen.UnfulfilledContractException
+import cl.ravenhill.keen.EnforcementException
 import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.prog.functions
 import cl.ravenhill.keen.prog.functions.addition
@@ -35,7 +35,7 @@ class ProgramChromosomeSpec : FreeSpec({
             }
             "throw an Exception if Non-Positive" {
                 checkAll(Arb.nonPositiveInt()) { size ->
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         ProgramChromosome.Factory<Double>().apply {
                             this.size = size
                         }
@@ -80,7 +80,7 @@ class ProgramChromosomeSpec : FreeSpec({
             }
         }
         "throw an exception if no functions nor terminals are added" {
-            shouldThrow<UnfulfilledContractException> {
+            shouldThrow<EnforcementException> {
                 ProgramChromosome.Factory<Double>().make()
             }.violations.first() shouldBeOfClass IntRequirementException::class
         }

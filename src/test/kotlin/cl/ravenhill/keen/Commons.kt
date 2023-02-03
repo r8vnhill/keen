@@ -3,6 +3,7 @@ package cl.ravenhill.keen
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.prog.functions.addition
 import cl.ravenhill.keen.prog.functions.greaterThan
@@ -14,11 +15,17 @@ import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.*
+import kotlin.random.Random
 import kotlin.reflect.KClass
 
 
 /**
  * Matcher that checks if the given object is of the given class.
+ *
+ * __Usage:__
+ * ```kotlin
+ * 1 shouldBeOfClass Int::class
+ * ```
  */
 infix fun Any.shouldBeOfClass(kClass: KClass<*>) = Matcher<Any> { value ->
     MatcherResult(
@@ -37,11 +44,6 @@ infix fun Any.shouldBeOfClass(kClass: KClass<*>) = Matcher<Any> { value ->
  * checkAll(Arb.orderedIntPair()) { (a, b) ->
  *    a <= b shouldBe true
  *    a + b shouldBe b + a
- *    a * b shouldBe b * a
- *    a - b shouldBe -(b - a)
- *    a / b shouldBe 0
- *    a % b shouldBe a
- *    a * b + a - b / a % b shouldBe a * b
  * }
  * ```
  */
@@ -55,6 +57,13 @@ fun Arb.Companion.orderedIntPair(lo: Int = Int.MIN_VALUE, hi: Int = Int.MAX_VALU
 /**
  * Generates [Arb]itrary [Pair]s of [Double]s where the first element is less than or
  * equal to the second.
+ *
+ * __Usage:__
+ * ```kotlin
+ * checkAll(Arb.orderedDoublePair()) { (a, b) ->
+ *   a <= b shouldBe true
+ *   a + b shouldBe b + a
+ * }
  */
 fun Arb.Companion.orderedDoublePair(
     lo: Double = Double.MIN_VALUE,
@@ -123,4 +132,54 @@ fun <T> Arb.Companion.phenotype(
  */
 fun Arb.Companion.probability() = arbitrary {
     double(0.0, 1.0).next()
+}
+
+/**
+ * Generates an [Arb]itrary population of [IntChromosome]s with the same range and size.
+ */
+fun <T> Arb.Companion.population(
+    chromosomeFactory: Arb<Chromosome.Factory<T>>,
+    maxSize: Int = 30
+) = arbitrary {
+    val size = positiveInt(maxSize).bind()
+    val fitness = Arb.double().bind()
+    List(size) {
+        phenotype(chromosomeFactory, fitness).bind()
+    }
+}
+
+
+/**
+ * Generates a pair of [IntChromosome]s with the same range and size.
+ */
+fun Arb.Companion.intChromosomePair() = chromosomePair(orderedIntPair()) { size, range ->
+    IntChromosome.Factory().apply {
+        this.range = range
+        this.size = size
+    }
+}
+
+/**
+ * Generates a pair of [DoubleChromosome]s with the same range and size.
+ */
+fun Arb.Companion.doubleChromosomePair() =
+    chromosomePair(orderedDoublePair()) { size, range ->
+        DoubleChromosome.Factory().apply {
+            this.range = range
+            this.size = size
+        }
+    }
+
+/**
+ * Generates a pair of [Chromosome]s with the same range and size.
+ */
+fun <T> Arb.Companion.chromosomePair(
+    pairGenerator: Arb<Pair<T, T>>,
+    factoryCreator: (Int, Pair<T, T>) -> Chromosome.Factory<T>
+) = arbitrary {
+    Core.random = Random(long().bind())
+    val size = positiveInt(10).bind()
+    val range = pairGenerator.bind()
+    val factory = factoryCreator(size, range)
+    factory.make() to factory.make()
 }

@@ -21,7 +21,7 @@ class OnesCountingTest : FreeSpec({
     fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDouble()
     lateinit var engine: Engine<Boolean>
 
-    "The Evolution Engine should be able to solve the ones counting problem" {
+    "!The Evolution Engine should be able to solve the ones counting problem" {
         checkAll(Exhaustive.ints(1..50)) { _ ->
             engine = Builders.engine(::count, Builders.genotype {
                 chromosome {

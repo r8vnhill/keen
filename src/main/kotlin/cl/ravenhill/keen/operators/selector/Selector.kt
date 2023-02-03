@@ -8,7 +8,7 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
@@ -48,7 +48,7 @@ abstract class AbstractSelector<DNA> : Selector<DNA> {
         count: Int,
         optimizer: PhenotypeOptimizer<DNA>
     ): List<Phenotype<DNA>> {
-        Contract {
+        enforce {
             population.size should BeAtLeast(1) {
                 "Population size [${population.size}] must be at least 1"
             }

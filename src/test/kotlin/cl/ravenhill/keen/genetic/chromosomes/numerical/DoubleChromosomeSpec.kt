@@ -41,13 +41,13 @@ class DoubleChromosomeSpec : WordSpec({
             }
             "throw an exception if the range has NaN bounds" {
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, bound ->
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(Double.NaN, bound)
                         )
                     }.violations.first() shouldBeOfClass PairRequirementException::class
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(bound, Double.NaN)
@@ -57,7 +57,7 @@ class DoubleChromosomeSpec : WordSpec({
             }
             "throw an exception if the size is less than 1" {
                 checkAll(Arb.nonPositiveInt(), Arb.orderedDoublePair()) { size, range ->
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         `create a new chromosome using it's factory`(size, range)
                     }.violations.first() shouldBeOfClass IntRequirementException::class
                 }
@@ -65,13 +65,13 @@ class DoubleChromosomeSpec : WordSpec({
             "throw an exception if the range is infinite" {
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, bound ->
                     assume(bound.isNotNan())
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(Double.NEGATIVE_INFINITY, bound)
                         )
                     }.violations.first() shouldBeOfClass PairRequirementException::class
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(bound, Double.POSITIVE_INFINITY)
@@ -82,7 +82,7 @@ class DoubleChromosomeSpec : WordSpec({
             "throw an exception if the range is empty" {
                 checkAll(Arb.int(1, 100_000), Arb.double()) { size, bound ->
                     assume(bound.isNotNan())
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         `create a new chromosome using it's factory`(
                             size,
                             Pair(bound, bound)
@@ -92,7 +92,7 @@ class DoubleChromosomeSpec : WordSpec({
             }
             "throw an exception if the range is reversed" {
                 checkAll(Arb.int(1, 100_000), Arb.orderedDoublePair()) { size, range ->
-                    shouldThrow<UnfulfilledContractException> {
+                    shouldThrow<EnforcementException> {
                         `create a new chromosome using it's factory`(
                             size,
                             range.second to range.first

@@ -2,7 +2,7 @@ package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.IntRequirementException
-import cl.ravenhill.keen.UnfulfilledContractException
+import cl.ravenhill.keen.EnforcementException
 import cl.ravenhill.keen.prog.functions
 import cl.ravenhill.keen.prog.functions.Add
 import cl.ravenhill.keen.prog.functions.add
@@ -46,7 +46,7 @@ class ProgramGeneSpec : FreeSpec({
                     )
                 )
             )
-            shouldThrow<UnfulfilledContractException> {
+            shouldThrow<EnforcementException> {
                 ProgramGene(add, listOf(Add()), listOf(EphemeralConstant { 0.0 }))
             }.violations.first() shouldBeOfClass IntRequirementException::class
         }

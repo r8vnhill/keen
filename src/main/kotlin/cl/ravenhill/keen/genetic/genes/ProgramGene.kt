@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.IntRequirement.*
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
@@ -31,7 +31,7 @@ class ProgramGene<DNA> internal constructor(
         get() = dna.depth
 
     init {
-        Contract {
+        enforce {
             program.height should BeAtMost(Core.maxProgramDepth) {
                 "The program's depth (${program.depth}) is greater than the maximum " +
                         "allowed depth (${Core.maxProgramDepth})."

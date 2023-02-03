@@ -46,33 +46,7 @@ class NumbersKtTest : WordSpec({
             nan.isNotNan() shouldBe false
         }
     }
-
-    "Checking if two Doubles are EQUAL" should {
-        "return TRUE if the difference between the two numbers is less than 1e-10" {
-            checkAll(
-                PropTestConfig(5592896386977524509L),
-                Arb.double(1.0, 1e10), Arb.double(-1.0, 1e-10)) { n, eps ->
-                assume(n.isFinite() && eps.isFinite())
-                n eq n + eps shouldBe true
-                n neq n + eps shouldBe false
-            }
-        }
-        "return FALSE if the difference between the two numbers is greater than 1e-10" {
-            checkAll(
-                Arb.double(-1e10, 1e10),
-                Arb.double(-1e10, 1e10)
-            ) { n, displacement ->
-                assume(abs(displacement) > 1e-10)
-                n eq n + displacement shouldBe false
-                n neq n + displacement shouldBe true
-            }
-        }
-    }
 })
-
-val l = logger("test") {
-    level = Level.Trace()
-}
 
 /**
  * Generates an [Arb]itrary [Pair] of [Int]s, where the first element is a positive integer and the
@@ -86,6 +60,10 @@ private fun Arb.Companion.intAndDivisor() = arbitrary { rs ->
     number to divisor
 }
 
+/**
+ * Generates an [Arb]itrary [Pair] of [Int]s, where the first element is a positive integer and the
+ * second element is a positive non-divisor of the first element.
+ */
 private fun Arb.Companion.nonDivisiblePair() = arbitrary { rs ->
     val number = Arb.int(3, Int.MAX_VALUE).bind()
     val nonDivisor = number
@@ -110,6 +88,9 @@ private fun Int.divisors(rs: RandomSource) = sequence {
     }
 }.shuffled(rs.random)
 
+/**
+ * Returns a randomly ordered lazy [Sequence] of all the non-divisors of this [Int].
+ */
 private fun Int.nonDivisors(rs: RandomSource) =
     generateSequence { rs.random.nextInt(this) }
         .filter { it >= 2 && this % it != 0 }

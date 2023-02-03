@@ -9,9 +9,9 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.keen.IntRequirement.BeInRange
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.swap
-import cl.ravenhill.keen.util.validateRange
 import kotlin.math.min
 
 
@@ -22,19 +22,33 @@ import kotlin.math.min
  * @property probability The probability of crossover.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 1.0.0
  */
 class SinglePointCrossover<DNA>(probability: Double) : MultiPointCrossover<DNA>(probability, 1) {
 
     override fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int {
         val index = Core.random.nextInt(min(genes1.size, genes2.size))
-        crossoverAt(index, genes1 to genes2)
+        val crossed = crossoverAt(index, genes1 to genes2)
+        genes1.clear()
+        genes1.addAll(crossed.first)
+        genes2.clear()
+        genes2.addAll(crossed.second)
         return 2
     }
 
-    private fun crossoverAt(index: Int, mates: Pair<MutableList<Gene<DNA>>, MutableList<Gene<DNA>>>) {
+    /**
+     * Performs a crossover between two lists of genes at the given index.
+     */
+    internal fun crossoverAt(
+        index: Int,
+        mates: Pair<List<Gene<DNA>>, List<Gene<DNA>>>
+    ): Pair<List<Gene<DNA>>, List<Gene<DNA>>> {
         val hi = min(mates.first.size, mates.second.size)
-        index.validateRange(0 to hi)
-        mates.first.swap(index, hi, mates.second, index)
+        enforce { index should BeInRange(0..hi) }
+        val newFirst = mates.first.slice(0 until index) + mates.second.slice(index until hi)
+        val newSecond = mates.second.slice(0 until index) + mates.first.slice(index until hi)
+        return newFirst to newSecond
     }
 
     override fun toString() = "SinglePointCrossover { probability: $probability }"

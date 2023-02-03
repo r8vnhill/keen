@@ -41,7 +41,7 @@ class GenotypeSpec : WordSpec({
             }
             "throw an exception if  the chromosome factories are not initialized" {
                 val factory = Genotype.Factory<Int>()
-                shouldThrow<UnfulfilledContractException> {
+                shouldThrow<EnforcementException> {
                     factory.make()
                 }.violations.first() shouldBeOfClass UnfulfilledRequirementException::class
             }
@@ -60,7 +60,7 @@ class GenotypeSpec : WordSpec({
                 Arb.genotype(Arb.intChromosomeFactory()),
                 Arb.intOutsideRange(0..100)
             ) { genotype, index ->
-                shouldThrow<UnfulfilledContractException> {
+                shouldThrow<EnforcementException> {
                     genotype[index]
                 }.violations.first() shouldBeOfClass IntRequirementException::class
             }

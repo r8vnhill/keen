@@ -9,7 +9,7 @@ import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.genetic.genes.intGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.genetic.genes.programGene
-import cl.ravenhill.keen.operators.crossover.population
+import cl.ravenhill.keen.population
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
