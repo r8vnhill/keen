@@ -2,7 +2,7 @@ package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.IntRequirement.*
+import cl.ravenhill.keen.requirements.IntRequirement.*
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun

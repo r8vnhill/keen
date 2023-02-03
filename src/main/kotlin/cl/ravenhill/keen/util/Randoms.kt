@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.DoubleRequirement.*
+import cl.ravenhill.keen.requirements.DoubleRequirement.*
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal

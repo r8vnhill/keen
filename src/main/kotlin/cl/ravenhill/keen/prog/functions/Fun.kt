@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.IntRequirement.*
+import cl.ravenhill.keen.requirements.IntRequirement.*
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 

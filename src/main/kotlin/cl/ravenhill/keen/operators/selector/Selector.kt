@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 

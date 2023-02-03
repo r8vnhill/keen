@@ -9,8 +9,8 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.DoubleRequirement
-import cl.ravenhill.keen.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.requirements.DoubleRequirement
+import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import java.util.*
 

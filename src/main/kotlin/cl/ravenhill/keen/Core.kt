@@ -12,6 +12,10 @@ import cl.ravenhill.keen.Core.DEFAULT_MAX_PROGRAM_DEPTH
 import cl.ravenhill.keen.Core.maxProgramDepth
 import cl.ravenhill.keen.Core.random
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.requirements.CollectionRequirement
+import cl.ravenhill.keen.requirements.DoubleRequirement
+import cl.ravenhill.keen.requirements.IntRequirement
+import cl.ravenhill.keen.requirements.PairRequirement
 import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.logging.logger
 import cl.ravenhill.keen.util.logging.stdoutChannel

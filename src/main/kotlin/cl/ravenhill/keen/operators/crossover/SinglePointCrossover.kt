@@ -10,7 +10,7 @@ package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.IntRequirement.BeInRange
+import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
 import cl.ravenhill.keen.genetic.genes.Gene
 import kotlin.math.min
 

@@ -8,9 +8,9 @@
 
 package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.keen.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.IntRequirement.BeInRange
+import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import java.util.*
 

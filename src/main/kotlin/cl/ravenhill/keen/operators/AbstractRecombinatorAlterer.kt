@@ -2,7 +2,7 @@ package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.indices
@@ -28,7 +28,7 @@ abstract class AbstractRecombinatorAlterer<DNA>(
         val pop = population.toMutableList()
         return if (probability neq 0.0 && pop.size >= 2) {
             val minOrder = min(order, pop.size)
-            val count = Core.random.indices(probability, pop.size)
+            val count = Core.Dice.random.indices(probability, pop.size)
                 .map { individuals(it, pop.size, minOrder) }
                 .sumOf { recombine(pop, it, generation) }
             AltererResult(pop, count)

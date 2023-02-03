@@ -2,7 +2,7 @@ package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.util.math.eq

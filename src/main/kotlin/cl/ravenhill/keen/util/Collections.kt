@@ -2,8 +2,7 @@ package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.IntRequirement.*
-import kotlin.random.Random
+import cl.ravenhill.keen.requirements.IntRequirement.*
 
 /**
  * Subset permutation.
