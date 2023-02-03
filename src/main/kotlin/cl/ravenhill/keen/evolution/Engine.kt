@@ -70,13 +70,7 @@ class Engine<DNA> private constructor(
         statistics.stream().parallel().forEach { it.population = population }
     }
     private var evolutionResult: EvolutionResult<DNA>
-            by Delegates.observable(
-                EvolutionResult(
-                    optimizer,
-                    listOf(),
-                    0
-                )
-            ) { _, _, new ->
+            by Delegates.observable(EvolutionResult(optimizer, listOf(), 0)) { _, _, new ->
                 statistics.stream().parallel().forEach { it.evolutionResult = new }
             }
 

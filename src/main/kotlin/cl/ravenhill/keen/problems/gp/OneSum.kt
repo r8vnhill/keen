@@ -22,7 +22,7 @@ private fun fitness(target: Int): (Genotype<Reduceable<Double>>) -> Double = { g
 }
 
 fun main() {
-    val engine = engine(fitness(7), genotype {
+    val engine = engine(fitness(20), genotype {
         chromosome {
             program {
                 function { Add() }

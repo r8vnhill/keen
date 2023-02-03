@@ -22,7 +22,6 @@ fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDoubl
  * See the wiki for more information about this example.
  */
 fun main() {
-    Core.EvolutionLogger.level = Level.Trace()
     val engine = engine(::count, genotype {
         chromosome { booleans { size = 20; truesProbability = 0.15 } }
     }) {

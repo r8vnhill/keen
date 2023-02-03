@@ -9,6 +9,9 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.Contract
+import cl.ravenhill.keen.IntRequirement
+import cl.ravenhill.keen.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
@@ -28,7 +31,7 @@ private const val SERIAL_INDEX_THRESHOLD = 35
  * @version 1.3.0
  */
 abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
-    Selector<DNA> {
+    AbstractSelector<DNA>() {
 
     abstract fun probabilities(
         population: List<Phenotype<DNA>>,
@@ -36,12 +39,11 @@ abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
         optimizer: PhenotypeOptimizer<DNA>
     ): DoubleArray
 
-    override operator fun invoke(
+    override fun select(
         population: List<Phenotype<DNA>>,
         count: Int,
         optimizer: PhenotypeOptimizer<DNA>
     ): List<Phenotype<DNA>> {
-        count.validateAtLeast(0) { "Selection count [$count] must be at least 0" }
         val pop = if (sorted) {
             optimizer.sort(population)
         } else {
