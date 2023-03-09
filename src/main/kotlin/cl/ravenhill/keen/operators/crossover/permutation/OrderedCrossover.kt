@@ -43,7 +43,7 @@ class OrderedCrossover<DNA>(probability: Double) :
                 }
             }
         }
-        return 1
+        return 2
     }
 
     /**

@@ -18,7 +18,14 @@ import cl.ravenhill.keen.util.ListTree
  */
 interface Reduceable<T>: ListTree<Reduceable<T>>, Copyable<Reduceable<T>> {
     val height: Int
-        get() = children.maxOf { it.height } + 1
+        get() {
+            for (i in 0..depth) {
+                if (depth - i == 0) {
+                    return i
+                }
+            }
+            return 0
+        }
 
     var parent: Fun<T>?
 
@@ -51,4 +58,5 @@ interface Reduceable<T>: ListTree<Reduceable<T>>, Copyable<Reduceable<T>> {
 
     override val depth: Int
         get() = 1 + (parent?.depth ?: 0)
+
 }

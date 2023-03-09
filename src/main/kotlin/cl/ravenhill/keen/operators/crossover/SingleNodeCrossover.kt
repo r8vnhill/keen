@@ -40,8 +40,8 @@ class SingleNodeCrossover<DNA>(probability: Double) :
         reduceable2: Reduceable<DNA>
     ) {
         if (probability eq 0.0 || min(reduceable1.size, reduceable2.size) < 2) return
-        val node1 = Core.random.node(reduceable1).deepCopy()
-        val node2 = Core.random.node(reduceable2).deepCopy()
+        val node1 = Core.random.node(reduceable1)
+        val node2 = Core.random.node(reduceable2)
         val parent1 = node1.parent
         val parent2 = node2.parent
         // We check if the nodes can be swapped without exceeding the maximum depth.

@@ -61,12 +61,30 @@ class AddSpec : FreeSpec({
                 val copy = add.deepCopy()
                 copy shouldNotBeSameInstanceAs add
                 copy shouldBe add
+                copy.children[0] shouldNotBeSameInstanceAs add.children[0]
+                copy.children[1] shouldNotBeSameInstanceAs add.children[1]
+                copy.children[0] shouldBe add.children[0]
+                copy.children[1] shouldBe add.children[1]
+                copy.children[0].parent shouldBe copy
+                copy.children[1].parent shouldBe copy
             }
             "return a new add operation with the addition of two functions" {
                 val add = add(Add(), Add())
                 val copy = add.deepCopy()
                 copy shouldNotBeSameInstanceAs add
                 copy shouldBe add
+                copy.children[0] shouldNotBeSameInstanceAs add.children[0]
+                copy.children[1] shouldNotBeSameInstanceAs add.children[1]
+                copy.children[0] shouldBe add.children[0]
+                copy.children[1] shouldBe add.children[1]
+                copy.children[0].children[0] shouldNotBeSameInstanceAs add.children[0].children[0]
+                copy.children[0].children[1] shouldNotBeSameInstanceAs add.children[0].children[1]
+                copy.children[1].children[0] shouldNotBeSameInstanceAs add.children[1].children[0]
+                copy.children[1].children[1] shouldNotBeSameInstanceAs add.children[1].children[1]
+                copy.children[0].children[0] shouldBe add.children[0].children[0]
+                copy.children[0].children[1] shouldBe add.children[0].children[1]
+                copy.children[1].children[0] shouldBe add.children[1].children[0]
+                copy.children[1].children[1] shouldBe add.children[1].children[1]
             }
             "return a new add operation with the same children" {
                 checkAll(Arb.addition()) { add ->

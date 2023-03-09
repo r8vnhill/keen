@@ -1,5 +1,7 @@
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.keen.prog.Reduceable
+
 
 /**
  * This file contains a set of classes and functions that are used to represent trees.
@@ -16,6 +18,7 @@ interface Tree<T> {
     val depth: Int
     val size: Int
     val children: List<T>
+    fun equalTo(other: Tree<T>): Boolean
 }
 
 /**

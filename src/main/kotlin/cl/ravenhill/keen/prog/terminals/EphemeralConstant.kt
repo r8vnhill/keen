@@ -2,6 +2,7 @@ package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
+import cl.ravenhill.keen.util.Tree
 import java.util.*
 
 
@@ -27,6 +28,12 @@ class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
         EphemeralConstant { value }.also { it.parent = parent }
 
     override var children: List<Reduceable<T>> = emptyList()
+    override fun equalTo(other: Tree<Reduceable<T>>): Boolean {
+        if (other !is EphemeralConstant<*>) {
+            return false
+        }
+        return value == other.value
+    }
 
     override fun invoke(args: Array<out T>) = value
 

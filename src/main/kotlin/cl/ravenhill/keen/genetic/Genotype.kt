@@ -8,10 +8,11 @@
 
 package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.requirements.CollectionRequirement
+import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import java.util.*
 
 
@@ -89,7 +90,7 @@ class Genotype<DNA> private constructor(val chromosomes: List<Chromosome<DNA>>) 
         fun make(): Genotype<DNA> {
             enforce {
                 if (this@Factory::chromosomes.isInitialized) {
-                    chromosomes should NotBeEmpty
+                    chromosomes should NotBeEmpty()
                 }
                 requirement("Chromosomes should be initialized") {
                     this@Factory::chromosomes.isInitialized

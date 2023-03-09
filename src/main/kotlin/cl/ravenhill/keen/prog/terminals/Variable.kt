@@ -2,6 +2,7 @@ package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
+import cl.ravenhill.keen.util.Tree
 import java.util.*
 
 
@@ -19,6 +20,12 @@ class Variable<T>(private val name: String, val index: Int) : Terminal<T> {
     }
 
     override var children: List<Reduceable<T>> = emptyList()
+    override fun equalTo(other: Tree<Reduceable<T>>): Boolean {
+        if (other !is Variable<*>) {
+            return false
+        }
+        return name == other.name && index == other.index
+    }
 
 
     override fun invoke(args: Array<out T>) = args[index]

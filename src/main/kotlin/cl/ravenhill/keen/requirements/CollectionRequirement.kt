@@ -11,18 +11,24 @@ import cl.ravenhill.keen.CollectionRequirementException
  */
 sealed interface CollectionRequirement : Requirement<Collection<*>> {
 
-    /**
-     * A constraint that checks if a collection is empty.
-     */
-    object NotBeEmpty : CollectionRequirement {
-        override fun validate(value: Collection<*>): Result<Collection<*>> {
-            return if (value.isEmpty()) {
-                Result.failure(CollectionRequirementException {
-                    "Expected a non-empty collection, but got $value"
-                })
-            } else {
-                Result.success(value)
-            }
+    val lazyDescription: (Collection<*>) -> String
+    val validator: (Collection<*>) -> Boolean
+
+    override fun validate(value: Collection<*>): Result<Collection<*>> =
+        if (!validator(value)) {
+            Result.failure(CollectionRequirementException { lazyDescription(value) })
+        } else {
+            Result.success(value)
         }
+
+    /**
+     * Constraint that checks if a collection is not empty.
+     */
+    class NotBeEmpty(
+        override val lazyDescription: (Collection<*>) -> String = { value ->
+            "Expected an empty collection, but got $value"
+        }
+    ) : CollectionRequirement {
+        override val validator = { value: Collection<*> -> value.isNotEmpty() }
     }
 }

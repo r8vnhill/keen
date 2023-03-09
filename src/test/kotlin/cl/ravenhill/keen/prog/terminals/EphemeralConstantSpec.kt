@@ -88,7 +88,7 @@ class EphemeralConstantSpec : WordSpec({
                 ) { ephemeralConstant ->
                     val add = Add()
                     add[0] = ephemeralConstant
-                    ephemeralConstant.parent shouldBe add
+                    add[0].parent shouldBe add
                 }
             }
         }

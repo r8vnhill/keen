@@ -3,6 +3,7 @@ package cl.ravenhill.keen.problems.gp
 import cl.ravenhill.keen.Builders.Chromosomes.program
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.SingleNodeCrossover
@@ -10,6 +11,7 @@ import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Add
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
+import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
@@ -22,6 +24,8 @@ private fun fitness(target: Int): (Genotype<Reduceable<Double>>) -> Double = { g
 }
 
 fun main() {
+    Core.EvolutionLogger.level = Level.Debug()
+    Core.maxProgramDepth = 10
     val engine = engine(fitness(20), genotype {
         chromosome {
             program {

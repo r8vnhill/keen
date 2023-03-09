@@ -11,6 +11,7 @@ package cl.ravenhill.keen.evolution
 import cl.ravenhill.keen.Core.EvolutionLogger.debug
 import cl.ravenhill.keen.Core.EvolutionLogger.info
 import cl.ravenhill.keen.Core.EvolutionLogger.trace
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -20,14 +21,13 @@ import cl.ravenhill.keen.operators.Alterer
 import cl.ravenhill.keen.operators.CompositeAlterer
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
+import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.statistics.Statistic
 import cl.ravenhill.keen.util.statistics.StatisticCollector
-import cl.ravenhill.keen.util.validateAtLeast
-import cl.ravenhill.keen.util.validateNotEmpty
-import cl.ravenhill.keen.util.validatePredicate
-import cl.ravenhill.keen.util.validateRange
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
@@ -67,18 +67,18 @@ class Engine<DNA> private constructor(
 
     // region : PROPERTIES  ------------------------------------------------------------------------
     var population: Population<DNA> by Delegates.observable(listOf()) { _, _, _ ->
-        statistics.stream().parallel().forEach { it.population = population }
+        runBlocking { statistics.asFlow().collect { it.population = population } }
     }
     private var evolutionResult: EvolutionResult<DNA>
             by Delegates.observable(EvolutionResult(optimizer, listOf(), 0)) { _, _, new ->
-                statistics.stream().parallel().forEach { it.evolutionResult = new }
+                runBlocking { statistics.asFlow().collect { it.evolutionResult = new } }
             }
 
     var generation: Int = 0
         private set
 
     var steadyGenerations by Delegates.observable(0) { _, _, new ->
-        statistics.stream().parallel().forEach { it.steadyGenerations = new }
+        runBlocking { statistics.asFlow().collect { it.steadyGenerations = new } }
     }
         private set
 
@@ -227,12 +227,14 @@ class Engine<DNA> private constructor(
                 if (it) trace { "Population is dirty, evaluating fitness." }
             }) {
             evaluator(evolution.population).also {
-                validatePredicate({ populationSize == it.size }) {
-                    "Evaluated population size [${it.size}] doesn't match expected population " +
-                            "size [$populationSize]"
-                }
-                validatePredicate({ it.all { phenotype -> phenotype.isEvaluated() } }) {
-                    "There are unevaluated phenotypes"
+                enforce {
+                    requirement(
+                        "Evaluated population size [${it.size}] doesn't " +
+                                "match expected population size [$populationSize]"
+                    ) { populationSize == it.size }
+                    requirement("There are unevaluated phenotypes") {
+                        it.all { phenotype -> phenotype.isEvaluated() }
+                    }
                 }
             }
         } else {
@@ -368,11 +370,14 @@ class Engine<DNA> private constructor(
     ) {
         // region : Evolution parameters -----------------------------------------------------------
         var populationSize = 50
-            set(value) = value.validateAtLeast(1, "Population size").let { field = it }
+            set(value) = enforce {
+                value should BeAtLeast(1) { "Population size must be greater than 0" }
+            }.let { field = value }
 
         var limits: List<Limit> = listOf(GenerationCount(100))
-            set(value) = value.validateNotEmpty { "Limits must be a non-empty list" }
-                .let { field = it }
+            set(value) = enforce {
+                value should NotBeEmpty { "Limits cannot be empty" }
+            }.let { field = value }
 
         var optimizer: PhenotypeOptimizer<DNA> = FitnessMaximizer()
 
@@ -406,8 +411,9 @@ class Engine<DNA> private constructor(
         var offspringSelector = selector
 
         var offspringFraction = 0.6
-            set(value) = value.validateRange(0.0 to 1.0, "Offspring fraction")
-                .let { field = it }
+            set(value) = enforce {
+                value should BeInRange(0.0..1.0) { "Offspring fraction must be in range [0, 1]" }
+            }.let { field = value }
         // endregion    ----------------------------------------------------------------------------
 
         var statistics: List<Statistic<DNA>> = listOf(StatisticCollector())

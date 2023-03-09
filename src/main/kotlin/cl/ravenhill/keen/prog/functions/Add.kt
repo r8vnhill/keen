@@ -1,7 +1,10 @@
 package cl.ravenhill.keen.prog.functions
 
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
+import cl.ravenhill.keen.requirements.IntRequirement
+import cl.ravenhill.keen.requirements.IntRequirement.*
 import java.util.*
 
 /**
@@ -33,7 +36,9 @@ class Add : AbstractFun<Double>() {
 
     override fun copy() = Add().also { it.parent = parent }
 
-    override fun invoke(args: Array<out Double>) = _children[0](args) + _children[1](args)
+    override fun invoke(args: Array<out Double>) = enforce {
+        _children.size should BeEqualTo(arity)
+    }.let { _children[0](args) + _children[1](args) }
 
     override fun toString() = "(${_children[0]} + ${_children[1]})"
 

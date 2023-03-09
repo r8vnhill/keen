@@ -7,6 +7,7 @@ import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
+import cl.ravenhill.keen.util.Tree
 import java.util.*
 
 /**
@@ -27,6 +28,10 @@ class ProgramGene<DNA> internal constructor(
     private val nodes = functions + terminals
 
     override lateinit var children: List<Reduceable<DNA>>
+    override fun equalTo(other: Tree<Reduceable<DNA>>): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override val depth: Int
         get() = dna.depth
 
@@ -81,7 +86,6 @@ class ProgramGene<DNA> internal constructor(
                     }
                     generateChildren(child, depth + 1, ops)
                     op[i] = child
-                    child.parent = op
                 }
             }
 

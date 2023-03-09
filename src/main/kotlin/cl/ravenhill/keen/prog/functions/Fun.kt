@@ -1,9 +1,10 @@
 package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.IntRequirement.*
-import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.requirements.IntRequirement
+import cl.ravenhill.keen.requirements.IntRequirement.*
+import cl.ravenhill.keen.util.Tree
 
 /**
  * This file provides the interface and abstract class for all functions.
@@ -28,6 +29,27 @@ interface Fun<T> : Reduceable<T> { // Fun
      * Sets the child at the given index.
      */
     operator fun set(index: Int, value: Reduceable<T>)
+    operator fun get(i: Int): Reduceable<T>
+    fun removeChild(original: Reduceable<T>) {
+        children = children.filterFirst { it == original }
+    }
+
+    fun addChild(new: Reduceable<T>) {
+        children = children + new
+    }
+}
+
+private fun <E> List<E>.filterFirst(function: (E) -> Boolean): List<E> {
+    val filtered = mutableListOf<E>()
+    var found = false
+    for (element in this) {
+        if (!found && function(element)) {
+            found = true
+            continue
+        }
+        filtered.add(element)
+    }
+    return filtered
 }
 
 /**
@@ -66,19 +88,25 @@ abstract class AbstractFun<T> : Fun<T> {
     }
 
     override fun replaceChild(original: Reduceable<T>, new: Reduceable<T>) {
-        val index = _children.indexOf(original)
-        if (original.parent != this) {
-            throw InvalidStateException("child") {
-                "The child $original is not a child of this node."
-            }
-        }
-        set(index, new)
+        val originalParent = original.parent
+        originalParent?.addChild(new.staticCopy())
+        originalParent?.removeChild(original)
     }
 
-    override fun flatten() = listOf(this) + _children.flatMap { it.flatten() }
+    override fun flatten(): List<Reduceable<T>> {
+        val flat = mutableListOf<Reduceable<T>>()
+        for (child in _children) {
+            flat.add(child)
+            flat.addAll(child.flatten())
+        }
+        return listOf(this) + flat
+    }
 
     override fun deepCopy() = copy().let {
         it as Fun
+        enforce {
+            it.children.size should BeEqualTo(arity)
+        }
         for (i in 0 until arity) {
             it[i] = _children[i].deepCopy().also { child -> child.parent = it }
         }
@@ -92,4 +120,27 @@ abstract class AbstractFun<T> : Fun<T> {
         }
         it
     }
+
+    override operator fun get(i: Int): Reduceable<T> {
+        enforce {
+            i should BeInRange(0..arity)
+        }
+        return _children[i]
+    }
+
+    override fun equalTo(other: Tree<Reduceable<T>>): Boolean {
+        if (other !is Fun) {
+            return false
+        }
+        if (arity != other.arity) {
+            return false
+        }
+        for (i in 0 until arity) {
+            if (this[i] != other[i]) {
+                return false
+            }
+        }
+        return true
+    }
 }
+
