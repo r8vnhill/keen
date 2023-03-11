@@ -58,6 +58,12 @@ class ProgramGene<DNA> internal constructor(
         // Create a deep copy of a random node.
         val op = nodes.random(Core.random).staticCopy()
         generateChildren(op, op.depth + 1, nodes) // Generate the children.
+        enforce {
+            op.children.size should BeEqualTo(op.arity) {
+                "The number of children (${op.children.size}) is not equal to the arity " +
+                        "(${op.arity}) of the node after the mutation."
+            }
+        }
         return op // Return the new node.
     }
 

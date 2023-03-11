@@ -36,7 +36,7 @@ fun main() {
     }) {
         populationSize = 100
         limits = listOf(GenerationCount(100))
-        alterers = listOf(Mutator(0.03), SingleNodeCrossover(0.3))
+        alterers = listOf(Mutator(0.03)/*, SingleNodeCrossover(0.3)*/)
         optimizer = FitnessMinimizer()
         statistics =
             listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())

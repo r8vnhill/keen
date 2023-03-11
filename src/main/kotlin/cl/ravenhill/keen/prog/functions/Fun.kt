@@ -2,7 +2,6 @@ package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.prog.Reduceable
-import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.IntRequirement.*
 import cl.ravenhill.keen.util.Tree
 
@@ -31,11 +30,13 @@ interface Fun<T> : Reduceable<T> { // Fun
     operator fun set(index: Int, value: Reduceable<T>)
     operator fun get(i: Int): Reduceable<T>
     fun removeChild(original: Reduceable<T>) {
-        children = children.filterFirst { it == original }
+        children = children.filterFirst { it === original }
+        original.parent = null
     }
 
     fun addChild(new: Reduceable<T>) {
         children = children + new
+        new.parent = this
     }
 }
 
@@ -76,6 +77,7 @@ abstract class AbstractFun<T> : Fun<T> {
             _children.addAll(value)
         }
 
+
     override var parent: Fun<T>? = null
 
 
@@ -88,9 +90,31 @@ abstract class AbstractFun<T> : Fun<T> {
     }
 
     override fun replaceChild(original: Reduceable<T>, new: Reduceable<T>) {
-        val originalParent = original.parent
-        originalParent?.addChild(new.staticCopy())
-        originalParent?.removeChild(original)
+        enforce {
+            requirement(
+                "The original child should be a child of this node"
+            ) { original.parent === this@AbstractFun }
+
+            _children.size should BeEqualTo(arity) {
+                "The parent of the original child should have the same arity as the number of " +
+                        "children before the replacement"
+            }
+        }
+        // Here we create a copy because modifying its parent would generate an error while
+        // performing the replacement in the other direction (second swap).
+        val newCopy = new.deepCopy()
+        addChild(newCopy)
+        removeChild(original)
+        enforce {
+            requirement(
+                "The new child should be a child of this node"
+            ) { newCopy.parent === this@AbstractFun }
+
+            _children.size should BeEqualTo(arity) {
+                "The parent of the new child should have the same arity as the number of " +
+                        "children after the replacement"
+            }
+        }
     }
 
     override fun flatten(): List<Reduceable<T>> {
