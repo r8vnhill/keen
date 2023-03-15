@@ -20,37 +20,16 @@ import cl.ravenhill.keen.util.Tree
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Fun<T> : Reduceable<T> { // Fun
+interface Fun<T> : Reduceable<T> {
 
-    override var children: List<Reduceable<T>>
+    override val children: List<Reduceable<T>>
 
     /**
      * Sets the child at the given index.
      */
     operator fun set(index: Int, value: Reduceable<T>)
     operator fun get(i: Int): Reduceable<T>
-    fun removeChild(original: Reduceable<T>) {
-        children = children.filterFirst { it === original }
-        original.parent = null
-    }
 
-    fun addChild(new: Reduceable<T>) {
-        children = children + new
-        new.parent = this
-    }
-}
-
-private fun <E> List<E>.filterFirst(function: (E) -> Boolean): List<E> {
-    val filtered = mutableListOf<E>()
-    var found = false
-    for (element in this) {
-        if (!found && function(element)) {
-            found = true
-            continue
-        }
-        filtered.add(element)
-    }
-    return filtered
 }
 
 /**
@@ -70,12 +49,8 @@ abstract class AbstractFun<T> : Fun<T> {
     @Suppress("PropertyName")
     protected abstract val _children: MutableList<Reduceable<T>>
 
-    override var children: List<Reduceable<T>>
+    override val children: List<Reduceable<T>>
         get() = _children.toList()
-        set(value) {
-            _children.clear()
-            _children.addAll(value)
-        }
 
 
     override var parent: Fun<T>? = null
@@ -85,7 +60,7 @@ abstract class AbstractFun<T> : Fun<T> {
         enforce {
             index should BeInRange(0..arity)
         }
-        _children[index] = value.deepCopy()
+        _children[index] = value
         _children[index].parent = this
     }
 
@@ -103,8 +78,11 @@ abstract class AbstractFun<T> : Fun<T> {
         // Here we create a copy because modifying its parent would generate an error while
         // performing the replacement in the other direction (second swap).
         val newCopy = new.deepCopy()
-        addChild(newCopy)
-        removeChild(original)
+        children.forEachIndexed { index, reduceable ->
+            if (reduceable === original) {
+                set(index, newCopy)
+            }
+        }
         enforce {
             requirement(
                 "The new child should be a child of this node"
