@@ -226,7 +226,7 @@ class Engine<DNA> private constructor(
             } || evolution.isDirty.also {
                 if (it) trace { "Population is dirty, evaluating fitness." }
             }) {
-            evaluator(evolution.population).also {
+            evaluator(evolution.population, true).also {
                 enforce {
                     requirement(
                         "Evaluated population size [${it.size}] doesn't " +
@@ -383,7 +383,7 @@ class Engine<DNA> private constructor(
 
         var executor: Executor = commonPool()
 
-        var evaluator: Evaluator<DNA> = ConcurrentEvaluator(fitnessFunction, executor)
+        var evaluator: Evaluator<DNA> = SequentialEvaluator(fitnessFunction)
 
         val interceptor = EvolutionInterceptor.identity<DNA>()
         // endregion    ----------------------------------------------------------------------------

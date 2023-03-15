@@ -27,7 +27,8 @@ class ProgramGene<DNA> internal constructor(
 
     private val nodes = functions + terminals
 
-    override lateinit var children: List<Reduceable<DNA>>
+    override val children: List<Reduceable<DNA>>
+        get() = dna.children
     override fun equalTo(other: Tree<Reduceable<DNA>>): Boolean {
         TODO("Not yet implemented")
     }
@@ -42,8 +43,6 @@ class ProgramGene<DNA> internal constructor(
                         "allowed depth (${Core.maxProgramDepth})."
             }
         }
-        // Stores the program in a list (breadth-first).
-        children = program.flatten()
     }
 
     /**
@@ -56,14 +55,8 @@ class ProgramGene<DNA> internal constructor(
 
     override fun generator(): Reduceable<DNA> {
         // Create a deep copy of a random node.
-        val op = nodes.random(Core.random).staticCopy()
+        val op = nodes.random(Core.random).copy()
         generateChildren(op, op.depth + 1, nodes) // Generate the children.
-        enforce {
-            op.children.size should BeEqualTo(op.arity) {
-                "The number of children (${op.children.size}) is not equal to the arity " +
-                        "(${op.arity}) of the node after the mutation."
-            }
-        }
         return op // Return the new node.
     }
 
@@ -103,6 +96,12 @@ class ProgramGene<DNA> internal constructor(
                 "The node is not a valid type (${op::class})"
             }
         }
+        enforce {
+            op.children.size should BeEqualTo(op.arity) {
+                "The number of children (${op.children.size}) is not equal to the arity " +
+                        "(${op.arity})"
+            }
+        }
         return op
     }
 
@@ -118,6 +117,6 @@ class ProgramGene<DNA> internal constructor(
 
     override fun hashCode() = Objects.hash(ProgramGene::class, dna)
 
-    override fun toString() = children[0].toString()
+    override fun toString() = dna.toString()
     // endregion
 }

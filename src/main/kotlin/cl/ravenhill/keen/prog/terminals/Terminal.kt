@@ -9,7 +9,7 @@ interface Terminal<T> : Reduceable<T> {
         get() = 0
 
     override val height: Int
-        get() = 1
+        get() = 0
 
     override fun flatten() = listOf(this)
 

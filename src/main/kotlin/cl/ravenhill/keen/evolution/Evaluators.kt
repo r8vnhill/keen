@@ -18,7 +18,10 @@ interface Evaluator<DNA> {
     /**
      * Evaluates the fitness function of a given population.
      */
-    operator fun invoke(population: List<Phenotype<DNA>>): List<Phenotype<DNA>>
+    operator fun invoke(
+        population: List<Phenotype<DNA>>,
+        force: Boolean = false
+    ): List<Phenotype<DNA>>
 }
 
 /**
@@ -35,10 +38,13 @@ class ConcurrentEvaluator<DNA>(
     private val function: (Genotype<DNA>) -> Double,
     private val executor: Executor
 ) : Evaluator<DNA> {
-    override fun invoke(population: List<Phenotype<DNA>>): List<Phenotype<DNA>> =
-        population.stream()
-            .filter { it.isNotEvaluated() }
-            .map { PhenotypeFitness(it, function) }
+    override fun invoke(population: List<Phenotype<DNA>>, force: Boolean): List<Phenotype<DNA>> =
+        if (force) {
+            population.stream()
+        } else {
+            population.stream()
+                .filter { it.isNotEvaluated() }
+        }.map { PhenotypeFitness(it, function) }
             .collect(Collectors.toList())
             .let { notEvaluated ->
                 if (notEvaluated.isNotEmpty()) {
@@ -56,26 +62,51 @@ class ConcurrentEvaluator<DNA>(
                     population
                 }
             }
+}
 
-    /**
-     * The fitness function to evaluate.
-     *
-     * @param phenotype
-     */
-    private class PhenotypeFitness<DNA>(
-        phenotype: Phenotype<DNA>,
-        private val function: (Genotype<DNA>) -> Double
-    ) : Runnable {
+class SequentialEvaluator<DNA>(
+    private val function: (Genotype<DNA>) -> Double
+) : Evaluator<DNA> {
+    override fun invoke(population: List<Phenotype<DNA>>, force: Boolean): List<Phenotype<DNA>> =
+        if (force) {
+            population
+        } else {
+            population.filter { it.isNotEvaluated() }
+        }.map { PhenotypeFitness(it, function) }
+            .let { notEvaluated ->
+                if (notEvaluated.isNotEmpty()) {
+                    notEvaluated.forEach { it.run() }
+                    if (notEvaluated.size == population.size) {
+                        notEvaluated.map { it.phenotype }
+                    } else {
+                        population.filter { it.isEvaluated() }.toMutableList().apply {
+                            addAll(notEvaluated.map { it.phenotype })
+                        }
+                    }
+                } else {
+                    population
+                }
+            }
+}
 
-        private var fitness = Double.NaN
+/**
+ * The fitness function to evaluate.
+ *
+ * @param phenotype
+ */
+private class PhenotypeFitness<DNA>(
+    phenotype: Phenotype<DNA>,
+    private val function: (Genotype<DNA>) -> Double
+) : Runnable {
 
-        val backingPhenotype = phenotype
+    private var fitness = Double.NaN
 
-        val phenotype: Phenotype<DNA>
-            get() = backingPhenotype.withFitness(fitness)
+    val backingPhenotype = phenotype
 
-        override fun run() {
-            fitness = function(phenotype.genotype)
-        }
+    val phenotype: Phenotype<DNA>
+        get() = backingPhenotype.withFitness(fitness)
+
+    override fun run() {
+        fitness = function(phenotype.genotype)
     }
 }
