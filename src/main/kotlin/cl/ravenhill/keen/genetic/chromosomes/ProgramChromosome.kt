@@ -2,12 +2,12 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.util.addIfAbsent
 import java.util.Objects
 
@@ -35,6 +35,7 @@ class ProgramChromosome<I> private constructor(
     override fun hashCode() = Objects.hash(ProgramChromosome::class, genes)
 
     override fun toString() = genes.map { it.dna }.joinToString("\n")
+
     // endregion
     class Factory<T> : Chromosome.Factory<Reduceable<T>> {
         var size = 1
@@ -56,7 +57,8 @@ class ProgramChromosome<I> private constructor(
         /**
          * Adds a new function to the chromosome.
          */
-        fun function(fn: () -> Fun<T>) = _functions.addIfAbsent(fn())
+        fun function(name: String, arity: Int, fn: (Array<out T>) -> T) =
+            _functions.addIfAbsent(Fun(name, arity, fn))
 
         /**
          * Adds a new terminal to the chromosome.
@@ -64,23 +66,24 @@ class ProgramChromosome<I> private constructor(
         fun terminal(fn: () -> Terminal<T>) = _terminals.addIfAbsent(fn())
 
         override fun make(): ProgramChromosome<T> {
-            enforce {
-                (_functions.size + _terminals.size) should BePositive {
-                    "There must be at least one function or terminal"
-                }
-            }
-            return ProgramChromosome(
-                (0 until size).map {
-                    ProgramGene(
-                        (_functions + _terminals).random(Core.random),
-                        _functions,
-                        _terminals
-                    )
-                },
-                _functions,
-                _terminals,
-                validator
-            )
+            TODO()
+//            enforce {
+//                (_functions.size + _terminals.size) should BePositive {
+//                    "There must be at least one function or terminal"
+//                }
+//            }
+//            return ProgramChromosome(
+//                (0 until size).map {
+//                    ProgramGene(
+//                        Core.random.program(Core.maxProgramDepth, _functions, _terminals),
+//                        _functions,
+//                        _terminals
+//                    )
+//                },
+//                _functions,
+//                _terminals,
+//                validator
+//            )
         }
     }
 }

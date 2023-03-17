@@ -84,7 +84,7 @@ class ProgramGene<DNA> internal constructor(
                         terminals.random(Core.random).copy()
                     }
                     generateChildren(child, depth + 1, ops)
-                    op[i] = child
+//                    op[i] = child
                 }
             }
 

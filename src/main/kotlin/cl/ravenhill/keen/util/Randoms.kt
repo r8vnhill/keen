@@ -1,10 +1,10 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.DoubleRequirement.*
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
+import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import java.util.stream.IntStream
 import kotlin.random.Random
 
@@ -94,25 +94,15 @@ fun Random.nextDoubleOutsideOf(range: Pair<Double, Double>): Double {
  * Creates a random program of the given maximum depth, from the given terminals and
  * functions.
  */
-fun <T> Random.program(
-    maxDepth: Int,
-    functions: List<Fun<T>>,
-    terminals: List<Terminal<T>>
-): Reduceable<T> {
-    return when (maxDepth) {
-        1 -> terminals.random(this)
-        else -> (terminals + functions).random(this).let {
-            if (it is Terminal) {
-                it.deepCopy()
-            } else {
-                val f = it.deepCopy() as Fun<T>
-                for (i in 0 until it.arity) {
-                    f[i] = program(maxDepth - 1, functions, terminals)
-                }
-                f
-            }
-        }
-    }
-}
+//fun <T> Random.program(
+//    maxDepth: Int,
+//    functions: List<Fun<T>>,
+//    terminals: List<Terminal<T>>
+//): Reduceable<T> = when (maxDepth) {
+//    1 -> terminals.random(this)
+//    else -> (terminals + functions).random(this).apply {
+//        children = List(this.arity) { program(maxDepth - 1, functions, terminals) }
+//    }
+//}.deepCopy()
 
 fun <DNA> Random.node(reduceable1: Reduceable<DNA>) = reduceable1.descendants.random(this)
