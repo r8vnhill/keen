@@ -8,9 +8,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutator.InversionMutator
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.operators.mutator.SwapMutator
 import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector

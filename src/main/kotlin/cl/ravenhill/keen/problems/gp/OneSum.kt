@@ -9,17 +9,17 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.prog.ProgramNode
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
-import kotlin.math.abs
 
 
-private fun fitness(target: Int): (Genotype<Reduceable<Double>>) -> Double = { gt ->
-    abs(target - gt.flatten().first()(arrayOf()))
+private fun fitness(target: Int) = { gt: Genotype<List<ProgramNode<Double, Reduceable<Double>>>> ->
+    TODO()
 }
 
 fun main() {

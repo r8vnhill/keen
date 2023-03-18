@@ -4,8 +4,12 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.ProgramGene
+import cl.ravenhill.keen.prog.ProgramNode
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
+import cl.ravenhill.keen.prog.generateProgramFull
+import cl.ravenhill.keen.prog.generateProgramGrowing
+import cl.ravenhill.keen.prog.generateProgramWith
 import cl.ravenhill.keen.prog.terminals.Terminal
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.util.addIfAbsent
@@ -16,11 +20,20 @@ class ProgramChromosome<I> private constructor(
     override val genes: List<ProgramGene<I>>,
     private val functions: List<Fun<I>>,
     private val terminals: List<Terminal<I>>,
-    private val validator: (ProgramGene<I>) -> Boolean
-) : Chromosome<Reduceable<I>> {
+    private val validator: (ProgramGene<I>) -> Boolean,
+    private val generationMethods: List<((
+        List<Terminal<I>>, List<Fun<I>>, Int, Int
+    ) -> List<ProgramNode<I, Reduceable<I>>>)>
+) : Chromosome<List<ProgramNode<I, Reduceable<I>>>> {
     @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<Reduceable<I>>>) =
-        ProgramChromosome(genes as List<ProgramGene<I>>, functions, terminals, validator)
+    override fun duplicate(genes: List<Gene<List<ProgramNode<I, Reduceable<I>>>>>) =
+        ProgramChromosome(
+            genes as List<ProgramGene<I>>,
+            functions,
+            terminals,
+            validator,
+            generationMethods
+        )
 
     override fun verify() = genes.isNotEmpty() && genes.all { it.verify() && validator(it) }
 
@@ -37,7 +50,7 @@ class ProgramChromosome<I> private constructor(
     override fun toString() = genes.map { it.dna }.joinToString("\n")
 
     // endregion
-    class Factory<T> : Chromosome.Factory<Reduceable<T>> {
+    class Factory<T> : Chromosome.Factory<List<ProgramNode<T, Reduceable<T>>>> {
         var size = 1
             set(value) {
                 enforce { value should BePositive() }
@@ -54,6 +67,12 @@ class ProgramChromosome<I> private constructor(
 
         var validator: (ProgramGene<T>) -> Boolean = { true }
 
+        var generationMethods: List<((
+            List<Terminal<T>>, List<Fun<T>>, Int, Int
+        ) -> List<ProgramNode<T, Reduceable<T>>>)> = listOf(
+            ::generateProgramGrowing, ::generateProgramFull
+        )
+
         /**
          * Adds a new function to the chromosome.
          */
@@ -66,24 +85,30 @@ class ProgramChromosome<I> private constructor(
         fun terminal(fn: () -> Terminal<T>) = _terminals.addIfAbsent(fn())
 
         override fun make(): ProgramChromosome<T> {
-            TODO()
-//            enforce {
-//                (_functions.size + _terminals.size) should BePositive {
-//                    "There must be at least one function or terminal"
-//                }
-//            }
-//            return ProgramChromosome(
-//                (0 until size).map {
-//                    ProgramGene(
-//                        Core.random.program(Core.maxProgramDepth, _functions, _terminals),
-//                        _functions,
-//                        _terminals
-//                    )
-//                },
-//                _functions,
-//                _terminals,
-//                validator
-//            )
+            enforce {
+                (_functions.size + _terminals.size) should BePositive {
+                    "There must be at least one function or terminal"
+                }
+            }
+            return ProgramChromosome(
+                (0 until size).map {
+                    ProgramGene(
+                        generateProgramWith(
+                            generationMethods,
+                            _terminals,
+                            _functions,
+                            1,
+                            Core.maxProgramDepth
+                        ),
+                        _functions,
+                        _terminals
+                    )
+                },
+                _functions,
+                _terminals,
+                validator,
+                generationMethods
+            )
         }
     }
 }

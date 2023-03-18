@@ -11,6 +11,7 @@ package cl.ravenhill.keen.genetic
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.chromosomes.ProgramChromosome
 import cl.ravenhill.keen.requirements.CollectionRequirement
 import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import java.util.*
