@@ -23,6 +23,7 @@ import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
@@ -198,7 +199,7 @@ class Engine<DNA> private constructor(
         if (start.population.isEmpty()) {
             info { "Initial population is empty, creating a new one." }
             val generation = start.generation
-            val individuals =
+            val individuals       =
                 start.population.asSequence() + generateSequence { genotype.make() }
                     .map { Phenotype(it, generation) }
             EvolutionStart(
@@ -228,10 +229,10 @@ class Engine<DNA> private constructor(
             }) {
             evaluator(evolution.population, true).also {
                 enforce {
-                    requirement(
-                        "Evaluated population size [${it.size}] doesn't " +
+                    populationSize should IntRequirement.BeEqualTo(it.size) {
+                        "Evaluated population size [${it}] doesn't " +
                                 "match expected population size [$populationSize]"
-                    ) { populationSize == it.size }
+                    }
                     requirement("There are unevaluated phenotypes") {
                         it.all { phenotype -> phenotype.isEvaluated() }
                     }

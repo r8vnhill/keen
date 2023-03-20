@@ -4,6 +4,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.ProgramGene
+import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.ProgramNode
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
@@ -16,19 +17,19 @@ import cl.ravenhill.keen.util.addIfAbsent
 import java.util.Objects
 
 
-class ProgramChromosome<I> private constructor(
-    override val genes: List<ProgramGene<I>>,
-    private val functions: List<Fun<I>>,
-    private val terminals: List<Terminal<I>>,
-    private val validator: (ProgramGene<I>) -> Boolean,
+class ProgramChromosome<T> private constructor(
+    override val genes: List<ProgramGene<T>>,
+    private val functions: List<Fun<T>>,
+    private val terminals: List<Terminal<T>>,
+    private val validator: (ProgramGene<T>) -> Boolean,
     private val generationMethods: List<((
-        List<Terminal<I>>, List<Fun<I>>, Int, Int
-    ) -> List<ProgramNode<I>>)>
-) : Chromosome<List<ProgramNode<I>>> {
+        List<Terminal<T>>, List<Fun<T>>, Int, Int
+    ) -> Program<T>)>
+) : Chromosome<Program<T>> {
     @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<List<ProgramNode<I>>>>) =
+    override fun duplicate(genes: List<Gene<Program<T>>>) =
         ProgramChromosome(
-            genes as List<ProgramGene<I>>,
+            genes as List<ProgramGene<T>>,
             functions,
             terminals,
             validator,
@@ -50,7 +51,7 @@ class ProgramChromosome<I> private constructor(
     override fun toString() = genes.map { it.dna }.joinToString("\n")
 
     // endregion
-    class Factory<T> : Chromosome.Factory<List<ProgramNode<T>>> {
+    class Factory<T> : Chromosome.Factory<Program<T>> {
         var size = 1
             set(value) {
                 enforce { value should BePositive() }
@@ -69,14 +70,14 @@ class ProgramChromosome<I> private constructor(
 
         var generationMethods: List<((
             List<Terminal<T>>, List<Fun<T>>, Int, Int
-        ) -> List<ProgramNode<T>>)> = listOf(
+        ) -> Program<T>)> = listOf(
             ::generateProgramGrowing, ::generateProgramFull
         )
 
         /**
          * Adds a new function to the chromosome.
          */
-        fun function(name: String, arity: Int, fn: (Array<out T>) -> T) =
+        fun function(name: String, arity: Int, fn: (List<T>) -> T) =
             _functions.addIfAbsent(Fun(name, arity, fn))
 
         /**

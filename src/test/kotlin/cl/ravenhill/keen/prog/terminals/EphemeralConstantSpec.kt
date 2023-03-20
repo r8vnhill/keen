@@ -67,7 +67,7 @@ class EphemeralConstantSpec : WordSpec({
                     Arb.ephemeralConstant(),
                     Arb.ephemeralConstant()
                 ) { ephemeralConstant1, ephemeralConstant2 ->
-                    assume(ephemeralConstant1(arrayOf()) != ephemeralConstant2(arrayOf()))
+                    assume(ephemeralConstant1.invoke(arrayOf()) != ephemeralConstant2.invoke(arrayOf()))
                     ephemeralConstant1 shouldNotBe ephemeralConstant2
                 }
             }
@@ -97,13 +97,13 @@ class EphemeralConstantSpec : WordSpec({
         "generate a constant value if the generator function returns a constant value" {
             checkAll<Int> { value ->
                 val constant = EphemeralConstant { value }
-                constant(arrayOf()) shouldBe value
+                constant.invoke(arrayOf()) shouldBe value
             }
         }
         "generate a random value if the generator function returns a random value" {
             checkAll<Long> { seed ->
                 val constant = EphemeralConstant { Random(seed).nextInt() }
-                constant(arrayOf()) shouldBe Random(seed).nextInt()
+                constant.invoke(arrayOf()) shouldBe Random(seed).nextInt()
             }
         }
     }

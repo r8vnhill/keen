@@ -146,7 +146,7 @@ class MulSpec : WordSpec({
         "return the multiplication of two constants" {
             checkAll(Arb.ephemeralConstant(), Arb.ephemeralConstant()) { a, b ->
                 val mul = mul(a, b)
-                mul(arrayOf()) shouldBe a(arrayOf()) * b(arrayOf())
+                mul(arrayOf()) shouldBe a.invoke(arrayOf()) * b.invoke(arrayOf())
             }
         }
         "return the multiplication of two variables" {

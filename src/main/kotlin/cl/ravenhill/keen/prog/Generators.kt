@@ -3,7 +3,6 @@ package cl.ravenhill.keen.prog
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.prog.functions.Fun
-import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Terminal
 
 /**
@@ -39,7 +38,10 @@ fun <T> generateProgramGrowing(
     terminals: List<Terminal<T>>, functions: List<Fun<T>>, min: Int, max: Int
 ): Program<T> {
     val condition = { height: Int, depth: Int ->
-        depth == height || (depth >= min && Core.Dice.probability() < terminals.size / (terminals.size + functions.size))
+        depth == height || (
+                depth >= min &&
+                        Core.Dice.probability()
+                        < terminals.size.toDouble() / (terminals.size + functions.size))
     }
     return generateProgram(functions, terminals, min, max, condition)
 }
@@ -97,5 +99,5 @@ fun <T> generateProgram(
         }
         program.add(node)
     }
-    return program
+    return Program(program)
 }

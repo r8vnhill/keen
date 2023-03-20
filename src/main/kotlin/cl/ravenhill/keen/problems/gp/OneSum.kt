@@ -10,13 +10,13 @@ import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.prog.Program
-import cl.ravenhill.keen.prog.reduce
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.abs
+import kotlin.math.ln
 
 
 private fun fitness(target: Int) = { gt: Genotype<Program<Double>> ->
@@ -26,7 +26,6 @@ private fun fitness(target: Int) = { gt: Genotype<Program<Double>> ->
 
 fun main() {
 //    Core.EvolutionLogger.level = Level.Debug()
-    Core.maxProgramDepth = 10
     val engine = engine(fitness(5), genotype {
         chromosome {
             program {
@@ -37,7 +36,7 @@ fun main() {
     }) {
         populationSize = 100
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
-        alterers = listOf(Mutator(0.03)/*, SingleNodeCrossover(0.2)*/)
+        alterers = listOf(Mutator(0.1)/*, SingleNodeCrossover(0.2)*/)
         optimizer = FitnessMinimizer()
         statistics =
             listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
@@ -46,5 +45,5 @@ fun main() {
     val result = engine.run()
     println(engine.statistics.first())
     println(result)
-    (engine.statistics.last() as StatisticPlotter).displayFitness()
+    (engine.statistics.last() as StatisticPlotter).displayFitness { if (it == 0.0) 0.0 else ln(it) }
 }

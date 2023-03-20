@@ -11,20 +11,15 @@ import cl.ravenhill.keen.prog.Reduceable
  * Generic tree data structure.
  *
  * @param T The type of the value stored in the tree.
- * @property depth The depth of this node relative to the root.
  * @property size The number of nodes in the tree.
+ * @property children The children of the tree.
  */
 interface Tree<T> {
-    val depth: Int
     val size: Int
     val children: List<T>
-    fun equalTo(other: Tree<T>): Boolean
 }
 
 /**
  * A tree data structure that uses a list to store its nodes.
  */
-interface ListTree<T: Any> : Tree<T> {
-    override val size: Int
-        get() = children.size + 1
-}
+interface ListTree<T> : Tree<T>

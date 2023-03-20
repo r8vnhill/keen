@@ -87,7 +87,7 @@ class VariableSpec : WordSpec({
                 val rng = Random(seed)
                 val kv = kwargs.random(rng)
                 val variable = Variable<Double>(kv.first, kwargs.indexOf(kv))
-                variable(kwargs.map { it.second }.toTypedArray()) shouldBe kv.second
+                variable.invoke(kwargs.map { it.second }.toTypedArray()) shouldBe kv.second
             }
         }
     }

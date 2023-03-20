@@ -1,5 +1,7 @@
 package cl.ravenhill.keen.genetic.genes
 
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.ProgramNode
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
@@ -19,22 +21,22 @@ import java.util.Objects
  * @version 2.0.0
  */
 class ProgramGene<DNA> internal constructor(
-    program: List<ProgramNode<DNA>>,
+    program: Program<DNA>,
     val functions: List<Fun<DNA>>,
     val terminals: List<Terminal<DNA>>,
     private val generationMethods: List<((
         List<Terminal<DNA>>, List<Fun<DNA>>, Int, Int
-    ) -> List<ProgramNode<DNA>>)> = listOf(
+    ) -> Program<DNA>)> = listOf(
         ::generateProgramGrowing, ::generateProgramFull
     )
-) : Gene<List<ProgramNode<DNA>>> {
+) : Gene<Program<DNA>> {
 
     override val dna = program
 
-    override fun generator() = generateProgramWith(generationMethods, terminals, functions, 1, 1)
+    override fun generator() = generateProgramWith(generationMethods, terminals, functions, 1, Core.maxProgramDepth)
 
-    override fun duplicate(dna: List<ProgramNode<DNA>>) =
-        ProgramGene(dna, functions, terminals, generationMethods)
+    override fun duplicate(dna: Program<DNA>) =
+        ProgramGene(dna.copy(), functions, terminals, generationMethods)
 
 
     // region : Equals, HashCode, ToString
