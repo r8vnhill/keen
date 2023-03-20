@@ -23,10 +23,10 @@ class ProgramChromosome<I> private constructor(
     private val validator: (ProgramGene<I>) -> Boolean,
     private val generationMethods: List<((
         List<Terminal<I>>, List<Fun<I>>, Int, Int
-    ) -> List<ProgramNode<I, Reduceable<I>>>)>
-) : Chromosome<List<ProgramNode<I, Reduceable<I>>>> {
+    ) -> List<ProgramNode<I>>)>
+) : Chromosome<List<ProgramNode<I>>> {
     @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<List<ProgramNode<I, Reduceable<I>>>>>) =
+    override fun duplicate(genes: List<Gene<List<ProgramNode<I>>>>) =
         ProgramChromosome(
             genes as List<ProgramGene<I>>,
             functions,
@@ -50,7 +50,7 @@ class ProgramChromosome<I> private constructor(
     override fun toString() = genes.map { it.dna }.joinToString("\n")
 
     // endregion
-    class Factory<T> : Chromosome.Factory<List<ProgramNode<T, Reduceable<T>>>> {
+    class Factory<T> : Chromosome.Factory<List<ProgramNode<T>>> {
         var size = 1
             set(value) {
                 enforce { value should BePositive() }
@@ -69,7 +69,7 @@ class ProgramChromosome<I> private constructor(
 
         var generationMethods: List<((
             List<Terminal<T>>, List<Fun<T>>, Int, Int
-        ) -> List<ProgramNode<T, Reduceable<T>>>)> = listOf(
+        ) -> List<ProgramNode<T>>)> = listOf(
             ::generateProgramGrowing, ::generateProgramFull
         )
 

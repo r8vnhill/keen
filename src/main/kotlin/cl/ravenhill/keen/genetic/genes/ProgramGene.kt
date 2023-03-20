@@ -19,21 +19,21 @@ import java.util.Objects
  * @version 2.0.0
  */
 class ProgramGene<DNA> internal constructor(
-    program: List<ProgramNode<DNA, Reduceable<DNA>>>,
+    program: List<ProgramNode<DNA>>,
     val functions: List<Fun<DNA>>,
     val terminals: List<Terminal<DNA>>,
     private val generationMethods: List<((
         List<Terminal<DNA>>, List<Fun<DNA>>, Int, Int
-    ) -> List<ProgramNode<DNA, Reduceable<DNA>>>)> = listOf(
+    ) -> List<ProgramNode<DNA>>)> = listOf(
         ::generateProgramGrowing, ::generateProgramFull
     )
-) : Gene<List<ProgramNode<DNA, Reduceable<DNA>>>> {
+) : Gene<List<ProgramNode<DNA>>> {
 
     override val dna = program
 
     override fun generator() = generateProgramWith(generationMethods, terminals, functions, 1, 1)
 
-    override fun duplicate(dna: List<ProgramNode<DNA, Reduceable<DNA>>>) =
+    override fun duplicate(dna: List<ProgramNode<DNA>>) =
         ProgramGene(dna, functions, terminals, generationMethods)
 
 
