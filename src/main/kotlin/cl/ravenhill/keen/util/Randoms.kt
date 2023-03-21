@@ -90,19 +90,4 @@ fun Random.nextDoubleOutsideOf(range: Pair<Double, Double>): Double {
     }
 }
 
-/**
- * Creates a random program of the given maximum depth, from the given terminals and
- * functions.
- */
-//fun <T> Random.program(
-//    maxDepth: Int,
-//    functions: List<Fun<T>>,
-//    terminals: List<Terminal<T>>
-//): Reduceable<T> = when (maxDepth) {
-//    1 -> terminals.random(this)
-//    else -> (terminals + functions).random(this).apply {
-//        children = List(this.arity) { program(maxDepth - 1, functions, terminals) }
-//    }
-//}.deepCopy()
-
-fun <DNA> Random.node(reduceable1: Reduceable<DNA>) = reduceable1.descendants.random(this)
+//fun <DNA> Random.node(tree: Tree<DNA>) = tree.random(this)
