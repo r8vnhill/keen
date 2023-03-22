@@ -4,7 +4,6 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtMost
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.Copyable
-import cl.ravenhill.keen.util.ListTree
 import cl.ravenhill.keen.util.Tree
 
 /***************************************************************************************************
@@ -22,7 +21,8 @@ import cl.ravenhill.keen.util.Tree
  * @since 2.0.0
  * @version 2.0.0
  */
-class Program<T>(override val nodes: List<ProgramNode<T>>) : ListTree<T>, Copyable<Program<T>> {
+class Program<T>(override val nodes: List<ProgramNode<T>>) : Tree<T>,
+    Copyable<Program<T>> {
 
     /**
      * Indicates whether the children of each node in the program tree have been assigned.
@@ -94,10 +94,7 @@ class Program<T>(override val nodes: List<ProgramNode<T>>) : ListTree<T>, Copyab
     override fun toString() = nodes.toString()
 
     // Inherit documentation from Copyable.
-    override fun copy(): Program<T> {
-        val nodes = this.nodes.map { it.copy() }
-        return Program(nodes)
-    }
+    override fun copy() = Program(nodes.map { it.copy() })
 }
 
 /**
@@ -114,24 +111,26 @@ class Program<T>(override val nodes: List<ProgramNode<T>>) : ListTree<T>, Copyab
  * @since 2.0.0
  */
 class ProgramNode<V>(val reduceable: Reduceable<V>, val depth: Int) : Tree<V>,
-        Copyable<ProgramNode<V>> {
+    Copyable<ProgramNode<V>> {
     // Inherit documentation from Tree.
     override val arity: Int = reduceable.arity
+
     // Inherit documentation from Tree.
     override val height: Int
         get() = children.maxBy { it.height }.height + 1
+
+    // Inherit documentation from Tree.
+    override val nodes: List<ProgramNode<V>>
+        get() = listOf(this) + children.flatMap { it.nodes }
 
     /**
      * The list of children of this node.
      */
     private val _children = mutableListOf<ProgramNode<V>>()
+
     // Inherit documentation from Tree.
     override val children: List<ProgramNode<V>>
         get() = _children
-
-    // Inherit documentation from Tree.
-    override val size: Int
-        get() = _children.fold(1) { acc, node -> acc + node.size }
 
     /**
      * Reduces this node to a value.

@@ -8,6 +8,7 @@ import cl.ravenhill.keen.evolution.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
+import cl.ravenhill.keen.operators.crossover.SingleNodeCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
@@ -36,7 +37,7 @@ fun main() {
     }) {
         populationSize = 100
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
-        alterers = listOf(Mutator(0.1)/*, SingleNodeCrossover(0.2)*/)
+        alterers = listOf(Mutator(0.1), SingleNodeCrossover(0.2))
         optimizer = FitnessMinimizer()
         statistics =
             listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())

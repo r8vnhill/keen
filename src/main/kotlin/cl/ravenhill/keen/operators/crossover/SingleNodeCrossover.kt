@@ -1,16 +1,17 @@
 package cl.ravenhill.keen.operators.crossover
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.Tree
 
-class SingleNodeCrossover<DNA>(probability: Double) :
-        AbstractCrossover<Tree<DNA>>(probability) {
+class SingleNodeCrossover<DNA: Tree<*>>(probability: Double) :
+        AbstractCrossover<DNA>(probability) {
 
     override fun crossover(
-        genes1: MutableList<Gene<Tree<DNA>>>,
-        genes2: MutableList<Gene<Tree<DNA>>>
+        genes1: MutableList<Gene<DNA>>,
+        genes2: MutableList<Gene<DNA>>
     ): Int {
         enforce {
             genes1.size should BeEqualTo(genes2.size) {
@@ -30,6 +31,8 @@ class SingleNodeCrossover<DNA>(probability: Double) :
             }
         }
         (genes1 zip genes2).forEach { (g1, g2) ->
+            val node1 = g1.dna.random(Core.random)
+            val node2 = g2.dna.random(Core.random)
 //            val node1 = Core.random.node(g1.dna)
 //            val node2 = Core.random.node(g2.dna)
 //            if (node1 === node2) return@forEach

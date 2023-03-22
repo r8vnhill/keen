@@ -1,10 +1,10 @@
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.prog.Reduceable
-import cl.ravenhill.keen.prog.functions.Fun
-import cl.ravenhill.keen.prog.terminals.Terminal
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.keen.requirements.IntRequirement
+import java.util.LinkedList
 import java.util.stream.IntStream
 import kotlin.random.Random
 
@@ -42,7 +42,7 @@ fun Random.subset(pick: Int, from: Int): IntArray =
         .toArray()
 
 /**
- * Returns a sequence of random indexes.
+ * Returns a sequence of random indices.
  *
  * @receiver the random number generator.
  * @param pickProbability the probability of picking an index.
@@ -90,4 +90,77 @@ fun Random.nextDoubleOutsideOf(range: Pair<Double, Double>): Double {
     }
 }
 
-//fun <DNA> Random.node(tree: Tree<DNA>) = tree.random(this)
+/**
+ * Returns a list of lists of the given size, where each list contains a random subset of the given
+ * elements.
+ *
+ * The subsets can be exclusive or not exclusive.
+ * If exclusive, an element can only be used in one subset.
+ * If not exclusive, an element can be used in multiple subsets.
+ * For this reason, the number of elements must be a multiple of the subset size when using
+ * exclusive subsets.
+ *
+ * This method ensures that each element is used at least once in a subset.
+ *
+ * @param elements the list of elements to use when creating the subsets.
+ * @param exclusive determines whether the same element can be used in more than one subset.
+ *      If true, an element can only be used in one subset. If false, an element can be used in
+ *      multiple subsets.
+ * @param size the size of each subset.
+ */
+fun <T> Random.sublists(elements: List<T>, exclusive: Boolean, size: Int): List<List<T>> {
+    enforce {
+        size should IntRequirement.BeInRange(1..elements.size)
+        if (exclusive) {
+            requirement(
+                "The number of elements must be a multiple of the subset size when using " +
+                        "exclusive subsets."
+            ) { elements.size % size == 0 }
+        }
+    }
+
+    // Create an empty list to hold the subsets.
+    val subsets = mutableListOf<List<T>>()
+
+    // Create a mutable copy of the input list of elements.
+    val remainingElements = LinkedList(elements).also {
+        it.shuffle(this)
+    }
+
+    // While there are still elements to use, create subsets.
+    while (remainingElements.isNotEmpty()) {
+        if (exclusive) {
+            // If exclusive, takes the first ``size`` elements from the list.
+            // Each element is used only once.
+            subsets.add(remainingElements.removeFirst(size))
+        } else {
+            // If not exclusive, creates a subset of the given size.
+            val subset = List(size) {
+                // The first of the subset is always the first unused element.
+                if (it == 0) {
+                    remainingElements.removeFirst()
+                } else {
+                    // The rest of the elements are chosen randomly from the list of elements.
+                    elements.random(Core.random).apply {
+                        // Since the element was used, it is removed from the list of remaining
+                        // elements.
+                        remainingElements.remove(this)
+                    }
+                }
+            }
+            subsets.add(subset)
+        }
+    }
+    return subsets
+}
+
+/**
+ * Removes and returns the first ``size`` elements from the list.
+ */
+private fun <E> LinkedList<E>.removeFirst(size: Int): List<E> {
+    val list = mutableListOf<E>()
+    repeat(size) {
+        list.add(this.removeFirst())
+    }
+    return list
+}
