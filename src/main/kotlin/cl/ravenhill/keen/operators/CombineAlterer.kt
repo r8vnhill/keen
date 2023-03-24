@@ -21,8 +21,8 @@ import cl.ravenhill.keen.probability
 open class CombineAlterer<DNA>(
     private val combiner: (Gene<DNA>, Gene<DNA>) -> Gene<DNA>,
     probability: Double,
-    private val combineRate: Double = 0.5
-) : AbstractRecombinatorAlterer<DNA>(probability, 2) {
+    chromosomeRate: Double = 0.5
+) : AbstractRecombinatorAlterer<DNA>(probability, 1, chromosomeRate = chromosomeRate) {
 
 //    override fun recombine(
 //        population: MutableList<Phenotype<DNA>>,
@@ -47,10 +47,14 @@ open class CombineAlterer<DNA>(
      * the given chromosomes.
      */
     internal fun combine(a: Chromosome<DNA>, b: Chromosome<DNA>) = List(a.size) {
-        if (Dice.probability() < combineRate) {
+        if (Dice.probability() < chromosomeRate) {
             combiner(a[it], b[it])
         } else {
             a[it]
         }
+    }
+
+    override fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+        TODO("Not yet implemented")
     }
 }

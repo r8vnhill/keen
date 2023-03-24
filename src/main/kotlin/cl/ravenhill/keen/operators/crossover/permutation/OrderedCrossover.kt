@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.validateAtLeast
 import kotlinx.coroutines.launch
@@ -72,5 +73,9 @@ class OrderedCrossover<DNA>(probability: Double) :
         offspring.addAll(uniqueGenes.takeLast(remaining))
         offspring.size.validateAtLeast(size)
         return offspring
+    }
+
+    override fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+        TODO("Not yet implemented")
     }
 }

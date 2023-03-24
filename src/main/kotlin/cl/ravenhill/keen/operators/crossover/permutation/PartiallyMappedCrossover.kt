@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.subset
 
@@ -72,5 +73,9 @@ class PartiallyMappedCrossover<DNA>(probability: Double) :
             genes2[gene2Index] = gene2InCrossingRegion
         }
         return 1
+    }
+
+    override fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+        TODO("Not yet implemented")
     }
 }

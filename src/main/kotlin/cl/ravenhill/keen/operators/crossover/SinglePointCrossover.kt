@@ -10,8 +10,10 @@ package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.requirements.IntRequirement
+import cl.ravenhill.keen.requirements.IntRequirement.*
 import kotlin.math.min
 
 
@@ -35,6 +37,18 @@ class SinglePointCrossover<DNA>(probability: Double) : MultiPointCrossover<DNA>(
         genes2.clear()
         genes2.addAll(crossed.second)
         return 2
+    }
+
+    override fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+        enforce { chromosomes.size should BeEqualTo(2) }
+        val first = chromosomes[0].genes.toMutableList()
+        val second = chromosomes[1].genes.toMutableList()
+        val index = Core.random.nextInt(min(first.size, second.size))
+        val crossed = crossoverAt(index, first to second)
+        return listOf(
+            chromosomes[0].duplicate(genes = crossed.first),
+            chromosomes[1].duplicate(genes = crossed.second)
+        )
     }
 
     /**

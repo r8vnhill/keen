@@ -5,7 +5,8 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.requirements.IntRequirement.*
+import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.get
 import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.math.neq
@@ -30,11 +31,11 @@ abstract class AbstractRecombinatorAlterer<DNA>(
     protected val numOut: Int,
     private val numIn: Int = 2,
     private val exclusivity: Boolean = false,
-    private val chromosomeRate: Double = 1.0
+    protected val chromosomeRate: Double = 1.0
 ) : AbstractAlterer<DNA>(probability) {
 
     init {
-        enforce { numOut should BeAtLeast(2) { "The order must be at least 2" } }
+        enforce { numIn should BeAtLeast(2) { "There should be at least 2 inputs to peform a recombination" } }
     }
 
     override fun invoke(
@@ -44,8 +45,8 @@ abstract class AbstractRecombinatorAlterer<DNA>(
         val pop = population.toMutableList()
         return if (probability neq 0.0 && pop.size >= 2) {
             val indices = Core.random.indices(probability, pop.size)
-            val parents = Core.random.subsets(indices, exclusivity, numOut)
-            val count = parents.sumOf { recombine(pop, it, generation) }
+            val parents = Core.random.subsets(indices, exclusivity, numIn)
+            val count = parents.sumOf { recombine(pop, it) }
             AltererResult(pop, count)
         } else {
             AltererResult(pop)
@@ -57,22 +58,27 @@ abstract class AbstractRecombinatorAlterer<DNA>(
      *
      * @param population the population to recombine
      * @param indices the indices of the individuals to recombine
-     * @param generation the current generation
      * @return the number of individuals that were recombined
      */
     private fun recombine(
-        population: MutableList<Phenotype<DNA>>,
-        indices: List<Int>,
-        generation: Int
+        population: MutableList<Phenotype<DNA>>, // the population to be recombined
+        indices: List<Int> // indices of individuals to be recombined
     ): Int {
         enforce { indices.size should BeEqualTo(numOut) }
+        // get the individuals at the specified indices
         val individuals = population[indices]
+        // enforce that all individuals have the same genotype length
         enforce { individuals.map { it.genotype.size }.distinct().size should BeEqualTo(1) }
+        // extract the genotypes of the individuals
         val genotypes = individuals.map { it.genotype }
+        // randomly select indices of chromosomes to recombine
         val chIndices = Core.random.indices(chromosomeRate, genotypes[0].size)
-        val chromosomes = genotypes.map { it.chromosomes[chIndices] }
+        // Associate the chromosomes at the selected indices
+        val chromosomes = chIndices.map { i -> genotypes.map { it[i] } }
+        // recombine the chromosomes to create new individuals
         val recombined = chromosomes.map { recombineChromosomes(it) }
-        return numOut * recombined.size
+        // return the number of newly recombined individuals
+        return recombined.size * numOut
     }
 
     abstract fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>>

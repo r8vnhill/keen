@@ -8,14 +8,8 @@
 
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractRecombinatorAlterer
-import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
-import cl.ravenhill.keen.util.get
-import cl.ravenhill.keen.util.indices
 
 /**
  * Abstract class for crossover operators.
@@ -31,9 +25,11 @@ import cl.ravenhill.keen.util.indices
  */
 abstract class AbstractCrossover<DNA>(
     probability: Double,
-    monogamous: Boolean = false,
+    numOut: Int = 2,
+    numIn: Int = 2,
+    exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0,
-) : AbstractRecombinatorAlterer<DNA>(probability, 2, monogamous, chromosomeRate) {
+) : AbstractRecombinatorAlterer<DNA>(probability, numOut, numIn, exclusivity, chromosomeRate) {
 
 //    override fun recombine(
 //        population: MutableList<Phenotype<DNA>>,

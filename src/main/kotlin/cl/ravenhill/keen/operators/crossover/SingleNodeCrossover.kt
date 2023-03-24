@@ -2,6 +2,7 @@ package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.Tree
@@ -42,6 +43,10 @@ class SingleNodeCrossover<DNA: Tree<*>>(probability: Double) :
 //            swap(parent2, node2, node1)
         }
         return 1
+    }
+
+    override fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+        TODO("Not yet implemented")
     }
 
 //    internal fun crossoverTrees(
