@@ -108,7 +108,7 @@ fun Random.nextDoubleOutsideOf(range: Pair<Double, Double>): Double {
  *      multiple subsets.
  * @param size the size of each subset.
  */
-fun <T> Random.sublists(elements: List<T>, exclusive: Boolean, size: Int): List<List<T>> {
+fun <T> Random.subsets(elements: List<T>, exclusive: Boolean, size: Int): List<List<T>> {
     enforce {
         size should IntRequirement.BeInRange(1..elements.size)
         if (exclusive) {

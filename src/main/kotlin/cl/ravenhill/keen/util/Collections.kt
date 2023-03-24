@@ -242,6 +242,19 @@ fun <E> MutableList<E>.swap(
  */
 infix fun List<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
 
+/**
+ * Returns a new list containing the elements of this list at the given [indices].
+ * The [indices] list may contain duplicate indices, in which case the corresponding elements will
+ * be included multiple times.
+ *
+ * @param indices the list of zero-based indices to retrieve elements from
+ * @return a new list containing the elements at the given indices, in the order they appear in the
+ *      [indices] list
+ * @throws IndexOutOfBoundsException if any index in [indices] is negative or greater than or equal
+ *      to the size of this list
+ * @see List.get
+ */
+operator fun <E> List<E>.get(indices: List<Int>) = indices.map { this[it] }
 // endregion
 
 // region : Arrays
