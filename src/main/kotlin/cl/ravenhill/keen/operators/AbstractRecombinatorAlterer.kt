@@ -35,20 +35,31 @@ abstract class AbstractRecombinatorAlterer<DNA>(
 ) : AbstractAlterer<DNA>(probability) {
 
     init {
-        enforce { numIn should BeAtLeast(2) { "There should be at least 2 inputs to peform a recombination" } }
+        enforce {
+            numIn should BeAtLeast(2) {
+                "There should be at least 2 inputs to perform a recombination"
+            }
+        }
     }
 
+    // Documentation inherited from Alterer interface
     override fun invoke(
         population: Population<DNA>,
         generation: Int
     ): AltererResult<DNA> {
         val pop = population.toMutableList()
+        // check if probability is non-zero and there are at least 2 individuals in the population
         return if (probability neq 0.0 && pop.size >= 2) {
+            // select a subset of individuals to recombine using the provided probability and other parameters
             val indices = Core.random.indices(probability, pop.size)
             val parents = Core.random.subsets(indices, exclusivity, numIn)
+            // recombine the selected parents and count the number of individuals that were recombined
             val count = parents.sumOf { recombine(pop, it) }
+            // return the resulting population and count
             AltererResult(pop, count)
         } else {
+            // if probability is zero or there are less than 2 individuals in the population, return
+            // the original population
             AltererResult(pop)
         }
     }
@@ -64,7 +75,7 @@ abstract class AbstractRecombinatorAlterer<DNA>(
         population: MutableList<Phenotype<DNA>>, // the population to be recombined
         indices: List<Int> // indices of individuals to be recombined
     ): Int {
-        enforce { indices.size should BeEqualTo(numOut) }
+        enforce { indices.size should BeEqualTo(numIn) }
         // get the individuals at the specified indices
         val individuals = population[indices]
         // enforce that all individuals have the same genotype length
