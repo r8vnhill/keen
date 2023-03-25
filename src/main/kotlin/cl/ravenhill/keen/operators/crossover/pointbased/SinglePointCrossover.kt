@@ -1,4 +1,12 @@
-package cl.ravenhill.keen.operators.crossover
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
+
+package cl.ravenhill.keen.operators.crossover.pointbased
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
@@ -32,7 +40,7 @@ class SinglePointCrossover<DNA>(probability: Double) : MultiPointCrossover<DNA>(
      *
      * @return A list with two new [Chromosome]s resulting from the crossover.
      */
-    override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
         enforce { chromosomes.size should BeEqualTo(2) }
         val first = chromosomes[0].genes.toMutableList()
         val second = chromosomes[1].genes.toMutableList()

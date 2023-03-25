@@ -29,7 +29,7 @@ import java.util.*
  * @since 0.1.0
  * @version 2.0.0
  */
-interface Alterer<DNA> {
+interface Alterer<DNA> : GeneticOperator<DNA> {
     val probability: Double
 
     /**

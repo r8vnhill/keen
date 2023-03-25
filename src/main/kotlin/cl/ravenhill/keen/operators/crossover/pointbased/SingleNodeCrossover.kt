@@ -1,10 +1,15 @@
-package cl.ravenhill.keen.operators.crossover
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.enforce
+package cl.ravenhill.keen.operators.crossover.pointbased
+
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.util.Tree
 
 class SingleNodeCrossover<DNA: Tree<*>>(probability: Double) :
@@ -45,7 +50,7 @@ class SingleNodeCrossover<DNA: Tree<*>>(probability: Double) :
 //        return 1
 //    }
 
-    override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
         TODO("Not yet implemented")
     }
 

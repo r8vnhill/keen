@@ -4,6 +4,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.EnforcementException
 import cl.ravenhill.keen.IntRequirementException
 import cl.ravenhill.keen.intChromosomePair
+import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.shouldBeOfClass
 import io.kotest.assertions.throwables.shouldThrow

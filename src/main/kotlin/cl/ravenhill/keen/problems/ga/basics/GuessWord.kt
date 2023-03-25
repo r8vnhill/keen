@@ -6,7 +6,7 @@ import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter

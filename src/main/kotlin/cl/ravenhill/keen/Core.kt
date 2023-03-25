@@ -146,8 +146,15 @@ object Core {
     }
 }
 
+/**
+ * A typealias for a list of [Phenotype] objects representing a population of individuals.
+ */
 typealias Population<DNA> = List<Phenotype<DNA>>
 
+/**
+ * A typealias for a mutable list of [Phenotype] objects representing a population of individuals.
+ */
+typealias MutablePopulation<DNA> = MutableList<Phenotype<DNA>>
 
 /**
  * Rolls a n-dimensional dice.

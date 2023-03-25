@@ -3,7 +3,7 @@ package cl.ravenhill.keen.problems
 import cl.ravenhill.keen.Builders
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.TargetFitness
-import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import io.kotest.core.spec.style.FreeSpec

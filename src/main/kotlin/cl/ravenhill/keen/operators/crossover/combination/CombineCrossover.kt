@@ -1,8 +1,25 @@
-package cl.ravenhill.keen.operators
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
+
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
+
+package cl.ravenhill.keen.operators.crossover.combination
 
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.probability
 
 /**
@@ -29,7 +46,7 @@ open class CombineCrossover<DNA>(
     probability: Double,
     chromosomeRate: Double = 1.0,
     private val geneRate: Double = 1.0
-) : AbstractRecombinatorAlterer<DNA>(probability, 1, chromosomeRate = chromosomeRate) {
+) : AbstractCrossover<DNA>(probability, 1, chromosomeRate = chromosomeRate) {
 
     /**
      * Combines the genes of the given chromosomes using the combiner function.
@@ -57,6 +74,6 @@ open class CombineCrossover<DNA>(
      * @param chromosomes The list of chromosomes to be crossed over.
      * @return A list of chromosomes that contains the result of the crossover operation.
      */
-    override fun crossover(chromosomes: List<Chromosome<DNA>>) =
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>) =
         listOf(chromosomes[0].duplicate(combine(chromosomes)))
 }

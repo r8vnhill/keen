@@ -6,7 +6,7 @@
 //import cl.ravenhill.keen.genetic.Genotype
 //import cl.ravenhill.keen.limits.GenerationCount
 //import cl.ravenhill.keen.limits.TargetFitness
-//import cl.ravenhill.keen.operators.crossover.SingleNodeCrossover
+//import cl.ravenhill.keen.operators.crossover.pointbased.SingleNodeCrossover
 //import cl.ravenhill.keen.operators.mutator.Mutator
 //import cl.ravenhill.keen.prog.Reduceable
 //import cl.ravenhill.keen.prog.functions.Mul
