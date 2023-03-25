@@ -14,6 +14,20 @@ import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import java.util.Objects
 
+/***************************************************************************************************
+ * The code represents an Alterer, a type of genetic operator that alters a population of
+ * individuals by applying some form of alteration such as mutation or crossover.
+ * The Alterer interface extends the GeneticOperator interface and adds a probability property
+ * representing the likelihood of an alteration being applied to an individual in the population.
+ * The interface defines an operator function that applies the Alterer to a population of
+ * individuals and returns an AltererResult, containing the resulting population of individuals and
+ * the count of how many individuals were altered.
+ * The AbstractAlterer class is an abstract base class for implementing genetic algorithm operators
+ * that modify the population by altering individuals according to a given probability.
+ * It enforces the probability is between 0.0 and 1.0.
+ * The AltererResult class represents the result of applying an alteration operation to a
+ * population, containing the altered population and the number of alterations performed.
+ **************************************************************************************************/
 
 /**
  * Represents an alterer, which is a type of genetic operator that modifies a population of
@@ -38,7 +52,7 @@ interface Alterer<DNA> : GeneticOperator<DNA> {
      * @return An AltererResult, which contains the resulting population of individuals and a count
      *      of how many individuals were altered.
      */
-    override operator fun invoke(population: Population<DNA>, generation: Int): GeneticOperationResult<DNA>
+    override operator fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA>
 }
 
 /**
@@ -80,7 +94,7 @@ abstract class AbstractAlterer<DNA>(final override val probability: Double) :
 class AltererResult<DNA>(
     val population: Population<DNA>,
     val alterations: Int = 0
-) {
+) : GeneticOperationResult<DNA> {
     init {
         enforce {
             alterations should BeAtLeast(0) {
