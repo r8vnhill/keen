@@ -1,7 +1,6 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.*
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
@@ -10,7 +9,6 @@ import cl.ravenhill.keen.operators.AltererResult
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
@@ -24,7 +22,7 @@ class MeanCombinatorSpec : FreeSpec({
         "String should" - {
             "Return the class name and the probability" {
                 checkAll(Arb.probability()) { probability ->
-                    MeanCombinator<Number>(probability).toString() shouldBe
+                    MeanCrossover<Number>(probability).toString() shouldBe
                             "MeanCrossover { probability: $probability }"
                 }
             }
@@ -35,14 +33,14 @@ class MeanCombinatorSpec : FreeSpec({
             "return the first chromosome if the probability is 0" {
                 checkAll(Arb.intChromosomePair(), Arb.long()) { (c1, c2), seed ->
                     Core.random = Random(seed)
-                    val combined = MeanCombinator<Int>(0.0).combine(c1, c2)
+                    val combined = MeanCrossover<Int>(0.0).combine(c1, c2)
                     combined shouldBe c1.genes
                 }
             }
             "return the mean of all the genes if the probability is 1" {
                 checkAll(Arb.intChromosomePair(), Arb.long()) { (c1, c2), seed ->
                     Core.random = Random(seed)
-                    val combined = MeanCombinator<Int>(1.0).combine(c1, c2)
+                    val combined = MeanCrossover<Int>(1.0).combine(c1, c2)
                     val expected = c1.genes.zip(c2.genes) { g1, g2 ->
                         IntGene(
                             ((g1.dna.toLong() + g2.dna.toLong()) / 2).toInt(),
@@ -60,7 +58,7 @@ class MeanCombinatorSpec : FreeSpec({
                 ) { (c1, c2), probability, seed ->
                     Core.random = Random(seed)
                     val random = Random(seed)
-                    val combined = MeanCombinator<Int>(probability).combine(c1, c2)
+                    val combined = MeanCrossover<Int>(probability).combine(c1, c2)
                     val expected = c1.genes.zip(c2.genes) { g1, g2 ->
                         IntGene(
                             if (random.nextDouble() < probability) {
@@ -79,14 +77,14 @@ class MeanCombinatorSpec : FreeSpec({
             "return the first chromosome if the probability is 0" {
                 checkAll(Arb.doubleChromosomePair(), Arb.long()) { (c1, c2), seed ->
                     Core.random = Random(seed)
-                    val combined = MeanCombinator<Double>(0.0).combine(c1, c2)
+                    val combined = MeanCrossover<Double>(0.0).combine(c1, c2)
                     combined shouldBe c1.genes
                 }
             }
             "return the mean of all the genes if the probability is 1" {
                 checkAll(Arb.doubleChromosomePair(), Arb.long()) { (c1, c2), seed ->
                     Core.random = Random(seed)
-                    val combined = MeanCombinator<Double>(1.0).combine(c1, c2)
+                    val combined = MeanCrossover<Double>(1.0).combine(c1, c2)
                     val expected = c1.genes.zip(c2.genes) { g1, g2 ->
                         DoubleGene(
                             (g1.dna + g2.dna) / 2,
@@ -106,7 +104,7 @@ class MeanCombinatorSpec : FreeSpec({
                 ) { (c1, c2), probability, seed ->
                     Core.random = Random(seed)
                     val random = Random(seed)
-                    val combined = MeanCombinator<Double>(probability).combine(c1, c2)
+                    val combined = MeanCrossover<Double>(probability).combine(c1, c2)
                     val expected = c1.genes.zip(c2.genes) { g1, g2 ->
                         DoubleGene(
                             if (random.nextDouble() < probability) {
@@ -133,7 +131,7 @@ class MeanCombinatorSpec : FreeSpec({
                     Arb.long()
                 ) { population, generation, seed ->
                     Core.random = Random(seed)
-                    val combinator = MeanCombinator<Int>(0.0)
+                    val combinator = MeanCrossover<Int>(0.0)
                     val combined = combinator(population, generation)
                     combined shouldBe AltererResult(population, 0)
                 }

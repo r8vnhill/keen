@@ -45,7 +45,7 @@ class SingleNodeCrossover<DNA: Tree<*>>(probability: Double) :
         return 1
     }
 
-    override fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+    override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
         TODO("Not yet implemented")
     }
 

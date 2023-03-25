@@ -39,7 +39,7 @@ class DoubleGeneSpec : WordSpec({
             checkAll(Arb.doubleGene(), Arb.doubleGene()) { gData1, gData2 ->
                 val gene1 = DoubleGene(gData1.dna, gData1.range)
                 val gene2 = DoubleGene(gData2.dna, gData2.range)
-                gene1.mean(gene2) shouldBe DoubleGene(
+                gene1.average(gene2) shouldBe DoubleGene(
                     (gData1.dna + gData2.dna) / 2,
                     gData1.range
                 )

@@ -10,38 +10,47 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import java.util.*
-import java.util.stream.IntStream
 
 /**
- * [NumberGene] which holds a 32-bit integer number.
+ * A gene that stores a 64-bit floating point number value.
  *
- * @property dna The value of the gene.
- * @property range The range of the gene.
- * @property filter A filter function to apply to the gene's value.
+ * This gene represents a value within a specified range, and can be used to model discrete
+ * numerical parameters in genetic algorithms.
+ *
+ * @param dna The current value of this gene.
+ * @param range The range of valid values for this gene represented as a pair of [Int] values.
+ *     The first value represents the lower bound of the range (inclusive), and the second value
+ *     represents the upper bound of the range (exclusive).
+ * @param filter A predicate function that determines whether a number should be accepted as valid
+ *      for this gene.
+ *
+ * @property start The lower bound of the range (inclusive).
+ * @property end The upper bound of the range (exclusive).
  *
  * @see IntChromosome
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 2.0.0
  */
 class IntGene(
     override val dna: Int,
     val range: Pair<Int, Int>,
     override val filter: (Int) -> Boolean = { true }
 ) : NumberGene<Int>, ComparableGene<Int> {
+
     val start = range.first
+
     val end = range.second
 
-    /**
-     * Calculates the mean of this gene and the given one.
-     *
-     * @param gene NumberGene<Int>
-     * @return IntGene
-     */
-    override fun mean(gene: NumberGene<Int>) =
-        duplicate(((gene.dna.toLong() + dna.toLong()) / 2).toInt())
+    override fun average(genes: List<NumberGene<Int>>) =
+        duplicate(genes.fold(dna.toDouble() / (genes.size + 1)) { acc, gene ->
+            acc + gene.toDouble() / (genes.size + 1)
+        }.toInt())
 
     override fun toDouble() = dna.toDouble()
 

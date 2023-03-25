@@ -52,6 +52,7 @@ abstract class AbstractRecombinatorAlterer<DNA>(
         return if (probability neq 0.0 && pop.size >= 2) {
             // select a subset of individuals to recombine using the provided probability and other parameters
             val indices = Core.random.indices(probability, pop.size)
+            if (indices.size < numIn) return AltererResult(pop)
             val parents = Core.random.subsets(indices, exclusivity, numIn)
             // recombine the selected parents and count the number of individuals that were recombined
             val count = parents.sumOf { recombine(pop, it) }
@@ -87,10 +88,17 @@ abstract class AbstractRecombinatorAlterer<DNA>(
         // Associate the chromosomes at the selected indices
         val chromosomes = chIndices.map { i -> genotypes.map { it[i] } }
         // recombine the chromosomes to create new individuals
-        val recombined = chromosomes.map { recombineChromosomes(it) }
+        val recombined = chromosomes.map { crossover(it) }
         // return the number of newly recombined individuals
         return recombined.size * numOut
     }
 
-    abstract fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>>
+    /**
+     * Recombines the given list of chromosomes to create a new list of chromosomes.
+     * The specific recombination strategy is implemented in subclasses of this abstract class.
+     *
+     * @param chromosomes the list of chromosomes to recombine
+     * @return the resulting list of recombined chromosomes
+     */
+    abstract fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>>
 }

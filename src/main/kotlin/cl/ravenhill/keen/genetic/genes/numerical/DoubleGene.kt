@@ -6,14 +6,23 @@ import cl.ravenhill.keen.genetic.genes.ComparableGene
 import java.util.Objects
 
 /**
- * [NumberGene] which holds a 64 bit floating point number.
+ * A gene that stores a 64-bit floating point number value.
  *
- * @property dna The value of the gene.
- * @property range The range of the gene.
+ * This gene represents a value within a specified range, and can be used to model continuous
+ * numerical parameters in genetic algorithms.
+ *
+ * @param dna The current value of this gene.
+ * @param range The range of valid values for this gene represented as a pair of [Double] values.
+ *     The first value represents the lower bound of the range (inclusive), and the second value
+ *     represents the upper bound of the range (exclusive).
+ * @param filter A predicate function that determines whether a number should be accepted as valid
+ *      for this gene.
  *
  * @see DoubleChromosome
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 2.0.0
  */
 class DoubleGene(
     override val dna: Double,
@@ -21,10 +30,11 @@ class DoubleGene(
     override val filter: (Double) -> Boolean = { true }
 ) : NumberGene<Double>, ComparableGene<Double> {
 
-    override fun mean(gene: NumberGene<Double>) =
-        duplicate((dna + gene.dna) / 2)
+    override fun average(genes: List<NumberGene<Double>>) =
+        duplicate(genes.fold(dna / (genes.size + 1)) { acc, gene -> acc + gene.dna / (genes.size + 1) })
 
     private val start = range.first
+
     private val end = range.second
 
     override fun toDouble() = dna

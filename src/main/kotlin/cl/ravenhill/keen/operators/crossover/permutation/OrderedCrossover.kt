@@ -75,7 +75,7 @@ class OrderedCrossover<DNA>(probability: Double) :
         return offspring
     }
 
-    override fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+    override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
         TODO("Not yet implemented")
     }
 }

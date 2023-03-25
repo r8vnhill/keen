@@ -14,7 +14,7 @@ class TreeCrossover<DNA>(probability: Double) : AbstractCrossover<Tree<DNA>>(pro
         TODO("Not yet implemented")
     }
 
-    override fun recombineChromosomes(chromosomes: List<Chromosome<Tree<DNA>>>): List<Chromosome<Tree<DNA>>> {
+    override fun crossover(chromosomes: List<Chromosome<Tree<DNA>>>): List<Chromosome<Tree<DNA>>> {
         TODO("Not yet implemented")
     }
 }

@@ -17,7 +17,7 @@ open class MultiPointCrossover<DNA>(probability: Double, private val cuts: Int) 
         TODO("Multiple point crossover is to be implemented on a future release")
     }
 
-    override fun recombineChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+    override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
         TODO("Not yet implemented")
     }
 }

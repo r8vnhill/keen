@@ -12,7 +12,10 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractRecombinatorAlterer
 
 /**
- * Abstract class for crossover operators.
+ * An abstract class for implementing crossover operations between two individuals.
+ *
+ * This class extends the [AbstractRecombinatorAlterer] class and provides a framework for
+ * implementing different crossover strategies.
  *
  * @param DNA   The type of the DNA of the Genotype
  * @property probability    The probability of crossover
@@ -21,7 +24,7 @@ import cl.ravenhill.keen.operators.AbstractRecombinatorAlterer
  * @constructor Creates a new crossover operator
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 1.3.0
+ * @version 2.0.0
  */
 abstract class AbstractCrossover<DNA>(
     probability: Double,
@@ -30,40 +33,6 @@ abstract class AbstractCrossover<DNA>(
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0,
 ) : AbstractRecombinatorAlterer<DNA>(probability, numOut, numIn, exclusivity, chromosomeRate) {
-
-//    override fun recombine(
-//        population: MutableList<Phenotype<DNA>>,
-//        indices: List<Int>,
-//        generation: Int
-//    ): Int {
-//        enforce { indices.size should BeEqualTo(order) }
-//        val individuals = population[indices]
-//        enforce { individuals.map { it.genotype.size }.distinct().size should BeEqualTo(1) }
-//        val genotypes = individuals.map { it.genotype }
-//        val chIndices = Core.random.indices(chromosomeRate, genotypes[0].size)
-//        val chromosomes = genotypes.map { it.chromosomes[chIndices] }
-////        val crossed = chromosomes.map { crossover(it) }
-//        val genes = chromosomes.map { it.map { ch -> ch.genes } }
-//        // Get the parents
-////        val phenotype1 = population[indices]
-////        val phenotype2 = population[Dice.int(population.size)]
-////        // Get the parents' genotype
-////        val genotype1 = phenotype1.genotype
-////        val genotype2 = phenotype2.genotype
-////        // Selects the index of the crossover point
-////        val chromosomeIndex = Dice.int(min(genotype1.size, genotype2.size))
-////        // Get the parents' chromosomes
-////        val chromosomes1 = genotype1.chromosomes.toMutableList()
-////        val chromosomes2 = genotype2.chromosomes.toMutableList()
-////        val genes1 = chromosomes1[chromosomeIndex].genes.toMutableList()
-////        val genes2 = chromosomes2[chromosomeIndex].genes.toMutableList()
-////        crossover(genes1, genes2)
-////        chromosomes1[chromosomeIndex] = chromosomes1[chromosomeIndex].duplicate(genes1)
-////        chromosomes2[chromosomeIndex] = chromosomes2[chromosomeIndex].duplicate(genes2)
-////        population[indices] = Phenotype(genotype1.duplicate(chromosomes1), generation)
-////        population[indices[1]] = Phenotype(genotype1.duplicate(chromosomes2), generation)
-//        return order
-//    }
 
     /**
      * Performs the crossover operation.
