@@ -9,35 +9,36 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.DoubleRequirement
-import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.requirements.DoubleRequirement.*
-import java.util.*
+import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
+import java.util.Objects
+
 
 /**
- * An interface for genetic algorithm operators that alter the population by recombining and/or
- * mutating individuals.
- * Implementations of this interface should specify the probability of applying the operator to each
- * individual.
+ * Represents an alterer, which is a type of genetic operator that modifies a population of
+ * individuals by applying some form of alteration, such as mutation or crossover.
  *
- * @param DNA  The type of the DNA.
- * @property probability The probability of applying this operator to each individual in the
+ * @param DNA The type of data that represents an individual's genotype.
+ *
+ * @property probability the probability that an alteration will be applied to an individual in the
  *      population.
- *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @since 0.1.0
- * @version 2.0.0
  */
 interface Alterer<DNA> : GeneticOperator<DNA> {
+
     val probability: Double
 
     /**
-     * Invokes the alterer on the given ``population`` for the current ``generation`` returning an
-     * [AltererResult] object containing the new population and the number of individuals that were
-     * recombined.
+     * Applies the alterer to the specified population of individuals and returns an AltererResult,
+     * which contains the resulting population of individuals and a count of how many individuals
+     * were altered.
+     *
+     * @param population The population of individuals to which the alterer will be applied.
+     * @param generation The current generation of the population.
+     * @return An AltererResult, which contains the resulting population of individuals and a count
+     *      of how many individuals were altered.
      */
-    operator fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA>
+    override operator fun invoke(population: Population<DNA>, generation: Int): GeneticOperationResult<DNA>
 }
 
 /**
@@ -56,7 +57,7 @@ interface Alterer<DNA> : GeneticOperator<DNA> {
  * @version 2.0.0
  */
 abstract class AbstractAlterer<DNA>(final override val probability: Double) :
-    Alterer<DNA> {
+        Alterer<DNA> {
     init {
         enforce {
             probability should BeInRange(0.0..1.0) {
@@ -91,7 +92,7 @@ class AltererResult<DNA>(
     /**
      * Returns the population.
      */
-    operator fun component1()    = population
+    operator fun component1() = population
 
     /**
      * Returns the number of alterations.

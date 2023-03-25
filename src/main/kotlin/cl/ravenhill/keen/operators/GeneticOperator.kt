@@ -11,6 +11,15 @@ package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Population
 
+/***************************************************************************************************
+ * This code defines two interfaces related to genetic algorithms.
+ * The GeneticOperator interface represents a genetic operator that can be applied to a population
+ * of individuals to create new offspring, and provides a method to apply the operator and return
+ * the resulting population.
+ * The GeneticOperationResult interface represents the result of applying a genetic operator to a
+ * population of individuals.
+ * Both interfaces are parameterized by the type of data that represents an individual's genotype.
+ **************************************************************************************************/
 
 /**
  * Represents a genetic operator that can be applied to a population of individuals to create new
@@ -35,5 +44,15 @@ interface GeneticOperator<DNA> {
      * @return A new population of offspring created by applying the genetic operator to the input
      *      population.
      */
-    operator fun invoke(population: Population<DNA>, generation: Int): Population<DNA>
+    operator fun invoke(population: Population<DNA>, generation: Int): GeneticOperationResult<DNA>
 }
+
+/**
+ * Represents the result of applying a genetic operator to a population of individuals.
+ *
+ * @param DNA The type of data that represents an individual's genotype.
+ *
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+interface GeneticOperationResult<DNA>

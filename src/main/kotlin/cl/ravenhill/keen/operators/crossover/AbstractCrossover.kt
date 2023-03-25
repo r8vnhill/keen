@@ -15,6 +15,7 @@ import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
+import cl.ravenhill.keen.operators.GeneticOperationResult
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.get
@@ -53,7 +54,7 @@ abstract class AbstractCrossover<DNA>(
     override fun invoke(
         population: Population<DNA>,
         generation: Int
-    ): AltererResult<DNA> {
+    ): GeneticOperationResult<DNA> {
         val pop = population.toMutableList()
         // check if probability is non-zero and there are at least 2 individuals in the population
         return if (probability neq 0.0 && pop.size >= 2) {

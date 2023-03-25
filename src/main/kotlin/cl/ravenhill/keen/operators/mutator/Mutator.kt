@@ -17,6 +17,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
+import cl.ravenhill.keen.operators.GeneticOperationResult
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.math.eq
 
@@ -53,7 +54,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
     override fun invoke(
         population: Population<DNA>,
         generation: Int
-    ): AltererResult<DNA> {
+    ): GeneticOperationResult<DNA> {
         if (probability eq 0.0) return AltererResult(population)
         val result = population.map {
             mutatePhenotype(it, generation)
