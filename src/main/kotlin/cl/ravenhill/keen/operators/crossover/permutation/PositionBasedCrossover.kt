@@ -23,25 +23,25 @@ import kotlinx.coroutines.runBlocking
 class PositionBasedCrossover<DNA>(probability: Double) :
     AbstractPermutationCrossover<DNA>(probability) {
 
-    override fun doCrossover(
-        genes1: MutableList<Gene<DNA>>,
-        genes2: MutableList<Gene<DNA>>,
-        size: Int
-    ): Int {
-        runBlocking {
-            launch {
-                val offspring1 = crossoverPair(genes1 to genes2, size)
-                genes1.clear()
-                genes1.addAll(offspring1)
-            }
-            launch {
-                val offspring2 = crossoverPair(genes2 to genes1, size)
-                genes2.clear()
-                genes2.addAll(offspring2)
-            }
-        }
-        return 1
-    }
+//    override fun doCrossover(
+//        genes1: MutableList<Gene<DNA>>,
+//        genes2: MutableList<Gene<DNA>>,
+//        size: Int
+//    ): Int {
+//        runBlocking {
+//            launch {
+//                val offspring1 = crossoverPair(genes1 to genes2, size)
+//                genes1.clear()
+//                genes1.addAll(offspring1)
+//            }
+//            launch {
+//                val offspring2 = crossoverPair(genes2 to genes1, size)
+//                genes2.clear()
+//                genes2.addAll(offspring2)
+//            }
+//        }
+//        return 1
+//    }
 
     private fun crossoverPair(
         parents: Pair<MutableList<Gene<DNA>>, MutableList<Gene<DNA>>>,
@@ -77,6 +77,10 @@ class PositionBasedCrossover<DNA>(probability: Double) :
     }
 
     override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun doCrossover(chromosomes: List<Chromosome<DNA>>): List<List<Gene<DNA>>> {
         TODO("Not yet implemented")
     }
 }

@@ -10,40 +10,40 @@ import cl.ravenhill.keen.util.Tree
 class SingleNodeCrossover<DNA: Tree<*>>(probability: Double) :
         AbstractCrossover<DNA>(probability) {
 
-    override fun crossover(
-        genes1: MutableList<Gene<DNA>>,
-        genes2: MutableList<Gene<DNA>>
-    ): Int {
-        enforce {
-            genes1.size should BeEqualTo(genes2.size) {
-                "The parents must have the same size"
-            }
-            genes1.forEach { gene ->
-                gene.dna.children.size should BeEqualTo(gene.dna.arity) {
-                    "The gene's arity (${gene.dna.arity}) does not match the number of children " +
-                            "(${gene.dna.children.size})."
-                }
-            }
-            genes2.forEach { gene ->
-                gene.dna.children.size should BeEqualTo(gene.dna.arity) {
-                    "The gene's arity (${gene.dna.arity}) does not match the number of children " +
-                            "(${gene.dna.children.size})."
-                }
-            }
-        }
-        (genes1 zip genes2).forEach { (g1, g2) ->
-            val node1 = g1.dna.random(Core.random)
-            val node2 = g2.dna.random(Core.random)
-//            val node1 = Core.random.node(g1.dna)
-//            val node2 = Core.random.node(g2.dna)
-//            if (node1 === node2) return@forEach
-//            val parent1 = node1.parent
-//            val parent2 = node2.parent
-//            swap(parent1, node1, node2)
-//            swap(parent2, node2, node1)
-        }
-        return 1
-    }
+//    override fun crossover(
+//        genes1: MutableList<Gene<DNA>>,
+//        genes2: MutableList<Gene<DNA>>
+//    ): Int {
+//        enforce {
+//            genes1.size should BeEqualTo(genes2.size) {
+//                "The parents must have the same size"
+//            }
+//            genes1.forEach { gene ->
+//                gene.dna.children.size should BeEqualTo(gene.dna.arity) {
+//                    "The gene's arity (${gene.dna.arity}) does not match the number of children " +
+//                            "(${gene.dna.children.size})."
+//                }
+//            }
+//            genes2.forEach { gene ->
+//                gene.dna.children.size should BeEqualTo(gene.dna.arity) {
+//                    "The gene's arity (${gene.dna.arity}) does not match the number of children " +
+//                            "(${gene.dna.children.size})."
+//                }
+//            }
+//        }
+//        (genes1 zip genes2).forEach { (g1, g2) ->
+//            val node1 = g1.dna.random(Core.random)
+//            val node2 = g2.dna.random(Core.random)
+////            val node1 = Core.random.node(g1.dna)
+////            val node2 = Core.random.node(g2.dna)
+////            if (node1 === node2) return@forEach
+////            val parent1 = node1.parent
+////            val parent2 = node2.parent
+////            swap(parent1, node1, node2)
+////            swap(parent2, node2, node1)
+//        }
+//        return 1
+//    }
 
     override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
         TODO("Not yet implemented")

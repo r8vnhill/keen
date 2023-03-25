@@ -46,36 +46,40 @@ typealias PMX<DNA> = PartiallyMappedCrossover<DNA>
 class PartiallyMappedCrossover<DNA>(probability: Double) :
         AbstractPermutationCrossover<DNA>(probability) {
 
-    override fun doCrossover(
-        genes1: MutableList<Gene<DNA>>,
-        genes2: MutableList<Gene<DNA>>,
-        size: Int
-    ): Int {
-        // Select two random indexes
-        val (lo, hi) = Core.random.subset(pick = 2, from = size)
-        // Create the crossing region
-        val crossSection1 = genes1.subList(lo, hi)
-        val crossSection2 = genes2.subList(lo, hi)
-        // The offspring are created
-        for (i in 0 until size) {
-            if (i in lo until hi) continue
-            val gene1 = genes1[i]
-            val gene2 = genes2[i]
-            // If the gene is already in the crossing region, we don't need to do anything
-            if (gene1 in crossSection1 || gene2 in crossSection2) continue
-            // If the gene is not in the crossing region, we need to find the gene that is in the
-            // crossing region and replace it with the gene that is not in the crossing region
-            val gene1Index = genes1.indexOf(gene1)
-            val gene2Index = genes2.indexOf(gene2)
-            val gene1InCrossingRegion = genes1[gene2Index]
-            val gene2InCrossingRegion = genes2[gene1Index]
-            genes1[gene1Index] = gene1InCrossingRegion
-            genes2[gene2Index] = gene2InCrossingRegion
-        }
-        return 1
-    }
+//    override fun doCrossover(
+//        genes1: MutableList<Gene<DNA>>,
+//        genes2: MutableList<Gene<DNA>>,
+//        size: Int
+//    ): Int {
+//        // Select two random indexes
+//        val (lo, hi) = Core.random.subset(pick = 2, from = size)
+//        // Create the crossing region
+//        val crossSection1 = genes1.subList(lo, hi)
+//        val crossSection2 = genes2.subList(lo, hi)
+//        // The offspring are created
+//        for (i in 0 until size) {
+//            if (i in lo until hi) continue
+//            val gene1 = genes1[i]
+//            val gene2 = genes2[i]
+//            // If the gene is already in the crossing region, we don't need to do anything
+//            if (gene1 in crossSection1 || gene2 in crossSection2) continue
+//            // If the gene is not in the crossing region, we need to find the gene that is in the
+//            // crossing region and replace it with the gene that is not in the crossing region
+//            val gene1Index = genes1.indexOf(gene1)
+//            val gene2Index = genes2.indexOf(gene2)
+//            val gene1InCrossingRegion = genes1[gene2Index]
+//            val gene2InCrossingRegion = genes2[gene1Index]
+//            genes1[gene1Index] = gene1InCrossingRegion
+//            genes2[gene2Index] = gene2InCrossingRegion
+//        }
+//        return 1
+//    }
 
     override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun doCrossover(chromosomes: List<Chromosome<DNA>>): List<List<Gene<DNA>>> {
         TODO("Not yet implemented")
     }
 }

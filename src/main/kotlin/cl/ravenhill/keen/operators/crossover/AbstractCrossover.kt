@@ -32,11 +32,4 @@ abstract class AbstractCrossover<DNA>(
     numIn: Int = 2,
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0,
-) : AbstractRecombinatorAlterer<DNA>(probability, numOut, numIn, exclusivity, chromosomeRate) {
-
-    /**
-     * Performs the crossover operation.
-     * @return Int
-     */
-    abstract fun crossover(genes1: MutableList<Gene<DNA>>, genes2: MutableList<Gene<DNA>>): Int
-}
+) : AbstractRecombinatorAlterer<DNA>(probability, numOut, numIn, exclusivity, chromosomeRate)

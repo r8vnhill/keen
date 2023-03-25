@@ -4,39 +4,35 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
-import cl.ravenhill.keen.requirements.IntRequirement.*
-import cl.ravenhill.keen.util.validatePredicate
+import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 
 
 /**
  * A _Permutation Crossover_ operator is a crossover operator that works with a list of
  * genes that represent a permutation of a set of elements (without duplication).
  *
- * @param DNA the type of the DNA.
- * @param probability the probability of crossover.
+ * @param DNA The type of the elements in the genes.
+ * @param probability The probability of performing crossover on each individual of the population.
+ * @param numOut The number of individuals produced by the crossover (default: 2).
+ * @param numIn The number of individuals required to perform the crossover (default: 2).
+ * @param exclusivity whether a parent can be used more than once (default: false)
+ * @param chromosomeRate The rate of chromosomes that will undergo crossover (default: 1.0).
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.2.0
+ * @version 2.0.0
  */
-abstract class AbstractPermutationCrossover<DNA>(probability: Double) :
-    AbstractCrossover<DNA>(probability) {
-    override fun crossover(
-        genes1: MutableList<Gene<DNA>>,
-        genes2: MutableList<Gene<DNA>>
-    ): Int {
-        validatePredicate({ genes1.distinct().size == genes1.size }) { "A permutation crossover can't have duplicated genes: $genes1" }
-        validatePredicate({ genes2.distinct().size == genes2.size }) { "A permutation crossover can't have duplicated genes: $genes2" }
-        val size = minOf(genes1.size, genes2.size)
-        doCrossover(genes1, genes2, size)
-        return 1
-    }
+abstract class AbstractPermutationCrossover<DNA>(
+    probability: Double,
+    numOut: Int = 2,
+    numIn: Int = 2,
+    exclusivity: Boolean = false,
+    chromosomeRate: Double = 1.0
+) : AbstractCrossover<DNA>(probability, numOut, numIn, exclusivity, chromosomeRate) {
 
-    protected abstract fun doCrossover(
-        genes1: MutableList<Gene<DNA>>,
-        genes2: MutableList<Gene<DNA>>,
-        size: Int
-    ): Int
-
-    // Documentation is inherited from AbstractRecombinatorAlterer
+    /**
+     * Performs a permutation crossover between the given chromosomes.
+     */
     override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
         enforce {
             for (chromosome in chromosomes) {
@@ -45,7 +41,12 @@ abstract class AbstractPermutationCrossover<DNA>(probability: Double) :
                 }
             }
         }
-        crossover(chromosomes)
-        TODO("Not yet implemented")
+        val crossed = doCrossover(chromosomes)
+        return crossed.map { chromosomes[0].duplicate(genes = it) }
     }
+
+    /**
+     * Performs permutation crossover on a list of chromosomes.
+     */
+    protected abstract fun doCrossover(chromosomes: List<Chromosome<DNA>>): List<List<Gene<DNA>>>
 }

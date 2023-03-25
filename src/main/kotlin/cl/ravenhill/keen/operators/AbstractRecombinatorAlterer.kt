@@ -23,12 +23,13 @@ import cl.ravenhill.keen.util.subsets
  * @param numOut the number of individuals to create through recombination
  * @param numIn the number of parents to use for recombination (default: 2)
  * @param exclusivity whether a parent can be used more than once (default: false)
- * @param chromosomeRate the proportion of chromosomes to recombine (default: 1.0)
+ * @param chromosomeRate the probability of applying the recombination operation to a chromosome in
+ *      the individual (default: 1.0)
  * @param DNA the type of the genetic material
  */
 abstract class AbstractRecombinatorAlterer<DNA>(
     probability: Double,
-    protected val numOut: Int,
+    private val numOut: Int,
     private val numIn: Int = 2,
     private val exclusivity: Boolean = false,
     protected val chromosomeRate: Double = 1.0
@@ -100,5 +101,5 @@ abstract class AbstractRecombinatorAlterer<DNA>(
      * @param chromosomes the list of chromosomes to recombine
      * @return the resulting list of recombined chromosomes
      */
-    abstract fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>>
+    protected abstract fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>>
 }
