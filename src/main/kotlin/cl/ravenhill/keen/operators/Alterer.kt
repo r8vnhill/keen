@@ -70,8 +70,7 @@ interface Alterer<DNA> : GeneticOperator<DNA> {
  * @since 0.1.0
  * @version 2.0.0
  */
-abstract class AbstractAlterer<DNA>(final override val probability: Double) :
-        Alterer<DNA> {
+abstract class AbstractAlterer<DNA>(final override val probability: Double) : Alterer<DNA> {
     init {
         enforce {
             probability should BeInRange(0.0..1.0) {
