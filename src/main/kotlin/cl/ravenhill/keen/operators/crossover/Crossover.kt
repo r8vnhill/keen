@@ -12,6 +12,31 @@ package cl.ravenhill.keen.operators.crossover
 import cl.ravenhill.keen.MutablePopulation
 import cl.ravenhill.keen.operators.Alterer
 
+/**
+ * Represents a type of genetic operator that performs crossover, which is a method of recombining
+ * genetic information from two or more individuals to create a new individual.
+ *
+ * @param DNA The type of data that represents an individual's genotype.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
 interface Crossover<DNA> : Alterer<DNA> {
+
+    /**
+     * Applies crossover to the individuals in the population specified by the indices and returns
+     * the number of offspring produced by the crossover.
+     *
+     * Crossover is a genetic operator that recombines genetic information from two or more
+     * individuals in a population to create a new individual with a combination of traits from
+     * the parents.
+     * The number of offspring produced by the crossover is returned by this function.
+     *
+     * @param population The population of individuals to which the crossover will be applied.
+     * @param indices A list of indices representing the individuals in the population that will
+     *      participate in the crossover.
+     * @return The number of offspring produced by the crossover.
+     */
     fun crossover(population: MutablePopulation<DNA>, indices: List<Int>): Int
 }
