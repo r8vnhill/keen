@@ -2,8 +2,6 @@ package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.prog.Program
-import cl.ravenhill.keen.prog.ProgramNode
-import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.generateProgramFull
 import cl.ravenhill.keen.prog.generateProgramGrowing
@@ -14,9 +12,23 @@ import java.util.Objects
 /**
  * A [Gene] that represents a program tree.
  *
- * @param DNA The type of the value.
+ * This gene contains a program tree represented by a [Program] instance.
+ * It also contains a list of functions and a list of terminals that can be used to generate new
+ * programs during mutation or crossover.
+ * Additionally, it contains a list of generation methods that determine how new programs are
+ * created.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @param DNA The type of the value.
+ * @param program The program tree represented by this gene.
+ *
+ * @property functions The list of functions that can be used to generate new programs.
+ * @property terminals The list of terminals that can be used to generate new programs.
+ * @property generationMethods The list of generation methods used to create new programs during
+ *      mutation or crossover.
+ *
+ * @constructor Creates a new instance of [ProgramGene] with the specified ``program``, [functions],
+ * [terminals], and [generationMethods].
+ *
  * @since 2.0.0
  * @version 2.0.0
  */
@@ -31,13 +43,26 @@ class ProgramGene<DNA> internal constructor(
     )
 ) : Gene<Program<DNA>> {
 
+    /**
+     * Returns the program tree represented by this gene.
+     */
     override val dna = program
 
-    override fun generator() = generateProgramWith(generationMethods, terminals, functions, 1, Core.maxProgramDepth)
+    /**
+     * Generates a new program tree by applying one of the [generationMethods] with the list of
+     * [terminals] and [functions] and the maximum depth specified.
+     */
+    override fun generator() =
+        generateProgramWith(generationMethods, terminals, functions, 1, Core.maxProgramDepth)
 
+    /**
+     * Creates a new instance of [ProgramGene] with the specified [dna], [functions], [terminals],
+     * and [generationMethods].
+     *
+     * @param dna The program tree for the new instance.
+     */
     override fun duplicate(dna: Program<DNA>) =
         ProgramGene(dna.copy(), functions, terminals, generationMethods)
-
 
     // region : Equals, HashCode, ToString
     override fun equals(other: Any?) = when {

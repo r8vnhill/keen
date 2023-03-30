@@ -21,8 +21,7 @@ import cl.ravenhill.keen.util.Tree
  * @since 2.0.0
  * @version 2.0.0
  */
-class Program<T>(override val nodes: List<ProgramNode<T>>) : Tree<T>,
-    Copyable<Program<T>> {
+class Program<T>(override val nodes: List<ProgramNode<T>>) : Tree<T>, Copyable<Program<T>> {
 
     /**
      * Indicates whether the children of each node in the program tree have been assigned.
@@ -114,8 +113,10 @@ class Program<T>(override val nodes: List<ProgramNode<T>>) : Tree<T>,
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
  */
-class ProgramNode<V>(val reduceable: Reduceable<V>, val depth: Int) : Tree<V>,
-    Copyable<ProgramNode<V>> {
+class ProgramNode<V>(
+    val reduceable: Reduceable<V>,
+    val depth: Int
+) : Tree<V>, Copyable<ProgramNode<V>> {
     // Inherit documentation from Tree.
     override val arity: Int = reduceable.arity
 
