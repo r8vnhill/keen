@@ -75,10 +75,6 @@ class PartiallyMappedCrossover<DNA>(probability: Double) :
 //        return 1
 //    }
 
-    override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
-        TODO("Not yet implemented")
-    }
-
     override fun doCrossover(chromosomes: List<Chromosome<DNA>>): List<List<Gene<DNA>>> {
         TODO("Not yet implemented")
     }

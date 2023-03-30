@@ -21,6 +21,10 @@ import kotlinx.coroutines.runBlocking
  *      the population
  * @param chromosomeRate the probability of applying the recombination operation to a chromosome in
  *      the individual (default: 1.0)
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.2.0
+ * @version 2.0.0
  */
 class OrderedCrossover<DNA>(probability: Double, chromosomeRate: Double = 1.0) :
         AbstractPermutationCrossover<DNA>(probability, chromosomeRate = chromosomeRate) {

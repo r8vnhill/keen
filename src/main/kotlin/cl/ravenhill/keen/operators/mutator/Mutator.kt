@@ -54,7 +54,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
     override fun invoke(
         population: Population<DNA>,
         generation: Int
-    ): GeneticOperationResult<DNA> {
+    ): AltererResult<DNA> {
         if (probability eq 0.0) return AltererResult(population)
         val result = population.map {
             mutatePhenotype(it, generation)

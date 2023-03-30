@@ -15,7 +15,6 @@ import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
-import cl.ravenhill.keen.operators.GeneticOperationResult
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.get
@@ -36,7 +35,7 @@ import cl.ravenhill.keen.util.subsets
  */
 abstract class AbstractCrossover<DNA>(
     probability: Double,
-    private val numOut: Int,
+    private val numOut: Int = 2,
     private val numIn: Int = 2,
     private val exclusivity: Boolean = false,
     protected val chromosomeRate: Double = 1.0
@@ -54,7 +53,7 @@ abstract class AbstractCrossover<DNA>(
     override fun invoke(
         population: Population<DNA>,
         generation: Int
-    ): GeneticOperationResult<DNA> {
+    ): AltererResult<DNA> {
         val pop = population.toMutableList()
         // check if probability is non-zero and there are at least 2 individuals in the population
         return if (probability neq 0.0 && pop.size >= 2) {
@@ -78,7 +77,11 @@ abstract class AbstractCrossover<DNA>(
         // get the individuals at the specified indices
         val individuals = population[indices]
         // enforce that all individuals have the same genotype length
-        enforce { individuals.map { it.genotype.size }.distinct().size should BeEqualTo(1) }
+        enforce {
+            individuals.map { it.genotype.size }.distinct().size should BeEqualTo(1) {
+                "All individuals must have the same genotype length"
+            }
+        }
         // extract the genotypes of the individuals
         val genotypes = individuals.map { it.genotype }
         // randomly select indices of chromosomes to recombine

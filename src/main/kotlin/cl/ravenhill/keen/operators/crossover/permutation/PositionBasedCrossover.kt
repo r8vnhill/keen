@@ -12,13 +12,17 @@ import kotlinx.coroutines.runBlocking
  * selected genes in one parent into the same position in one offspring, and the
  * remaining genes are inserted in the same order as in the other parent.
  *
- * @param <DNA> the type of the DNA.
- * @param probability the probability of crossover.
- *
  * __References:__
  *
  * - Starkweather, Timothy, S. McDaniel, Keith E. Mathias, L. Darrell Whitley, and C.
  *   Whitley. "A Comparison of Genetic Sequencing Operators." In ICGA, pp. 69-76. 1991.
+ *
+ * @param <DNA> the type of the DNA.
+ * @param probability the probability of crossover.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.2.0
+ * @version 2.0.0
  */
 class PositionBasedCrossover<DNA>(probability: Double) :
     AbstractPermutationCrossover<DNA>(probability) {
@@ -74,10 +78,6 @@ class PositionBasedCrossover<DNA>(probability: Double) :
             })
         }
         return offspring
-    }
-
-    override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
-        TODO("Not yet implemented")
     }
 
     override fun doCrossover(chromosomes: List<Chromosome<DNA>>): List<List<Gene<DNA>>> {

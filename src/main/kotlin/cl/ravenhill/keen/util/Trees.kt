@@ -1,12 +1,6 @@
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.keen.prog.Reduceable
 import kotlin.random.Random
-
-
-/**
- * This file contains a set of classes and functions that are used to represent trees.
- */
 
 /**
  * Generic tree data structure where each node is stored as a breadth-first list.
@@ -18,6 +12,10 @@ import kotlin.random.Random
  * @property arity The number of children of the root node.
  * @property descendants The descendants of the tree in a breadth-first order.
  * @property height The height of the program tree, which is the depth of the deepest node.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
  */
 interface Tree<T> {
     val children: List<Tree<T>>
@@ -33,10 +31,32 @@ interface Tree<T> {
      * Returns a random node from the tree using the given [random] number generator.
      */
     fun random(random: Random = Random.Default) = nodes.random(random)
-}
 
-/**
- * A tree data structure that uses a list to store its nodes.
- */
-interface ListTree<T> : Tree<T> {
+    /**
+     * Returns an [IntRange] that corresponds to the indices of the subtree rooted at the specified
+     * [node1].
+     *
+     * @throws NoSuchElementException if the specified [node1] is not found in the tree.
+     */
+    fun searchSubtree(node1: Tree<out T?>): IntRange {
+        // Find the index of the specified node
+        val index = nodes.indexOfFirst { it === node1 }
+        // If the specified node is not found, throw a NoSuchElementException
+        if (index == -1) {
+            throw NoSuchElementException("Node not found in tree.")
+        }
+        // Return an IntRange representing the indices of the subtree rooted at the specified node
+        return index..index + nodes[index].size
+    }
+
+    fun replaceSubtree(range: IntRange, node: Tree<T>): Tree<T> {
+        val newNodes = mutableListOf<Tree<T>>().apply {
+            addAll(nodes.subList(0, range.first))
+            addAll(node.nodes)
+            addAll(nodes.subList(range.last, nodes.size))
+        }
+        return fromBreadthFirst(newNodes)
+    }
+
+    fun fromBreadthFirst(nodes: List<Tree<T>>): Tree<T>
 }

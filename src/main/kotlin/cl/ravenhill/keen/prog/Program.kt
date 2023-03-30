@@ -36,6 +36,10 @@ class Program<T>(override val nodes: List<ProgramNode<T>>) : Tree<T>,
     override val size: Int
         get() = nodes.size
 
+    override fun fromBreadthFirst(nodes: List<Tree<T>>): Tree<T> {
+        TODO("Not yet implemented")
+    }
+
     /**
      * The list of children nodes of the program nodes at depth 1 (i.e., the direct children of the
      * root node).
@@ -118,6 +122,10 @@ class ProgramNode<V>(val reduceable: Reduceable<V>, val depth: Int) : Tree<V>,
     // Inherit documentation from Tree.
     override val height: Int
         get() = children.maxBy { it.height }.height + 1
+
+    override fun fromBreadthFirst(nodes: List<Tree<V>>): Tree<V> {
+        TODO("Not yet implemented")
+    }
 
     // Inherit documentation from Tree.
     override val nodes: List<ProgramNode<V>>

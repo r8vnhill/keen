@@ -28,6 +28,7 @@ import kotlin.random.Random
  * @property maxProgramDepth The maximum depth of a program tree.
  * @property DEFAULT_MAX_PROGRAM_DEPTH The default maximum depth of a program tree (7).
  * @property random The random number generator.
+ * @property skipChecks If true, the library will skip all the checks.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
@@ -36,6 +37,7 @@ object Core {
     const val DEFAULT_MAX_PROGRAM_DEPTH = 7
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
     var random: Random = Random.Default
+    var skipChecks = false
 
     /**
      * Represents the "roll" of an n-dimensional or continuous dice.
@@ -55,6 +57,7 @@ object Core {
      * @throws EnforcementException If the contract is not fulfilled.
      */
     fun enforce(builder: EnforceScope.() -> Unit) {
+        if (skipChecks) return
         EnforceScope().apply(builder).errors.let { errors ->
             if (errors.isNotEmpty()) {
                 throw EnforcementException(errors)

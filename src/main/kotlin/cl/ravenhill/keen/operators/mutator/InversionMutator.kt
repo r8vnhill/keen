@@ -22,7 +22,7 @@ import cl.ravenhill.keen.util.math.eq
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.3.0
- * @version 1.3.0
+ * @version 2.0.0
  */
 class InversionMutator<DNA>(probability: Double) : Mutator<DNA>(probability) {
     override fun mutateChromosome(
@@ -50,7 +50,8 @@ class InversionMutator<DNA>(probability: Double) : Mutator<DNA>(probability) {
     }
 
     /**
-     * Inverts the order of the genes in the given [genes] list, between the given [start] and [end] indexes.
+     * Inverts the order of the genes in the given [genes] list, between the given [start] and [end]
+     * indexes.
      */
     private fun invert(genes: MutableList<Gene<DNA>>, start: Int, end: Int) {
         var (i, j) = if (start < end) start to end else end to start

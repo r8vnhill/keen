@@ -3,6 +3,7 @@ package cl.ravenhill.keen.operators.crossover.permutation
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 
 
@@ -32,7 +33,7 @@ abstract class AbstractPermutationCrossover<DNA>(
     /**
      * Performs a permutation crossover between the given chromosomes.
      */
-    override fun crossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
         enforce {
             for (chromosome in chromosomes) {
                 chromosome.genes.distinct().size should BeEqualTo(chromosome.genes.size) {
