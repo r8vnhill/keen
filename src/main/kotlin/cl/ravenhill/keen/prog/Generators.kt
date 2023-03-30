@@ -5,6 +5,11 @@ import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
 
+/***************************************************************************************************
+ * This code defines functions to generate random programs in the form of breadth-first trees given
+ * a list of functions and terminals.
+ **************************************************************************************************/
+
 /**
  * Generates a random program using a random method from a list of generation methods.
  *
