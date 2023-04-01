@@ -5,8 +5,6 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.prog.Program
-import cl.ravenhill.keen.prog.ProgramNode
-import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.generateProgramFull
 import cl.ravenhill.keen.prog.generateProgramGrowing

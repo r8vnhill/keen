@@ -26,9 +26,6 @@ open class Fun<T>(
     private val body: (List<T>) -> T
 ) : Reduceable<T> {
 
-    // Inherited documentation from Copyable<T>
-    override fun copy() = Fun(name, arity, body)
-
     // Inherited documentation from Reduceable<T>
     override fun invoke(args: List<T>) = body(args)
 

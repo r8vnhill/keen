@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.prog.terminals
 
+import cl.ravenhill.keen.prog.Reduceable
 import java.util.Objects
 
 
@@ -20,8 +21,6 @@ import java.util.Objects
 class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
 
     val value = generator()
-
-    override fun copy() = EphemeralConstant(generator)
 
     /**
      * Invokes this terminal with the given list of arguments.

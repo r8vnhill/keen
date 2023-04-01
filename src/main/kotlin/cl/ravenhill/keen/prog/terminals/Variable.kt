@@ -17,9 +17,6 @@ import java.util.Objects
  */
 class Variable<T>(private val name: String, val index: Int) : Terminal<T> {
 
-    // Inherited documentation from Copyable<T>
-    override fun copy() = Variable<T>(name, index)
-
     // Inherited documentation from Reduceable<T>
     override fun invoke(args: List<T>) = args[index]
 

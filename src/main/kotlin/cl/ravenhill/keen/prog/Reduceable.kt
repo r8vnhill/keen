@@ -1,7 +1,5 @@
 package cl.ravenhill.keen.prog
 
-import cl.ravenhill.keen.util.Copyable
-
 /**
  * A reduce-able operation.
  *
@@ -12,7 +10,7 @@ import cl.ravenhill.keen.util.Copyable
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Reduceable<T>: Copyable<Reduceable<T>> {
+interface Reduceable<T> {
 
     val arity: Int
 

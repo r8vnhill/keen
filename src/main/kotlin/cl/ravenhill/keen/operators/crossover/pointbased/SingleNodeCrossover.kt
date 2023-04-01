@@ -18,7 +18,7 @@ import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.Tree
 
-class SingleNodeCrossover<DNA: Tree<*>>(
+class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
     probability: Double,
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0,
@@ -28,8 +28,7 @@ class SingleNodeCrossover<DNA: Tree<*>>(
     exclusivity = exclusivity,
     chromosomeRate = chromosomeRate
 ) {
-    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>):
-            List<Chromosome<DNA>> {
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
         enforce {
             chromosomes.size should BeEqualTo(2) {
                 "The crossover must have exactly two parents"
@@ -48,25 +47,30 @@ class SingleNodeCrossover<DNA: Tree<*>>(
         }
         // The crossover is only applied if there is at least one gene with more than one node.
         if (chromosomes.all { it.genes.any { g -> g.dna.size > 1 } }) {
-            TODO(
-                "Wait for the implementation of a program chromosome where the genes are the " +
-                        "nodes of the tree"
-            )
-            val genes = mutableListOf<Gene<Tree<DNA>>>() to mutableListOf<Gene<Tree<DNA>>>()
+            val genes = mutableListOf<Gene<DNA>>() to mutableListOf<Gene<DNA>>()
             chromosomes[0].genes.zip(chromosomes[1].genes).forEach { (gene1, gene2) ->
-                val nodes = mutableListOf<Tree<DNA>>() to mutableListOf<Tree<DNA>>()
                 if (Dice.probability() < geneRate) {
                     val node1 = gene1.dna.random(Core.random)
                     val node2 = gene2.dna.random(Core.random)
-//                    val slices = gene1.dna.searchSubtree(node1) to gene2.dna.searchSubtree(node2)
-
+                    val slices = gene1.dna.searchSubtree(node1) to gene2.dna.searchSubtree(node2)
+                    val newTree1 = gene1.dna.replaceSubtree(slices.first, node2)
+                    val newTree2 = gene2.dna.replaceSubtree(slices.second, node1)
+                    genes.first.add(gene1.duplicate(newTree1))
+                    genes.second.add(gene2.duplicate(newTree2))
                 } else {
-//                    nodes.first.add(gene1.dna)
-//                    nodes.second.add(gene2.dna)
+                    genes.first.add(gene1)
+                    genes.second.add(gene2)
                 }
             }
+            return listOf(
+                chromosomes[0].duplicate(genes.first),
+                chromosomes[1].duplicate(genes.second)
+            )
         }
         // If the crossover is not applied, the parents are returned.
-        return listOf(chromosomes[0], chromosomes[1])
+        return listOf(
+            chromosomes[0].duplicate(chromosomes[0].genes),
+            chromosomes[1].duplicate(chromosomes[1].genes)
+        )
     }
 }

@@ -90,19 +90,53 @@ fun <T> generateProgram(
     max: Int,
     condition: (Int, Int) -> Boolean
 ): Program<T> {
-    val program = mutableListOf<ProgramNode<T>>()
     val height = Core.random.nextInt(min, max)
-    val depths = mutableListOf(0)
-    while (depths.isNotEmpty()) {
-        val depth = depths.removeLast()
-        val node = if (condition(height, depth)) {
-            ProgramNode(terminals.random(Core.random), depth)
-        } else {
-            ProgramNode(functions.random(Core.random), depth).also { node ->
-                depths.addAll(List(node.arity) { depth + 1 })
-            }
+    return generateProgramRecursive(functions, terminals, 0, height, condition)
+}
+
+/**
+ * Generates a random program recursively.
+ * The tree is built from the root to the leaves, and it stops growing the current branch when
+ * the condition is met; in which case, it backtracks to the root and starts a new branch.
+ *
+ * @param functions the list of functions.
+ * @param terminals the list of terminals.
+ * @param depth the current depth of the program tree.
+ * @param height the maximum height of the program tree.
+ * @param condition the condition to stop growing the current branch.
+ *
+ * @return a random program as a depth-first tree.
+ */
+private fun <T> generateProgramRecursive(
+    functions: List<Fun<T>>,
+    terminals: List<Terminal<T>>,
+    depth: Int,
+    height: Int,
+    condition: (Int, Int) -> Boolean
+): Program<T> {
+    // Create an empty list to store children of the current node
+    val children = mutableListOf<Program<T>>()
+    // Decide whether to create a terminal or a function node based on the condition
+    val node = if (condition(height, depth)) {
+        Program(terminals.random(Core.random), depth)
+    } else {
+        // Choose a random function from the list of functions
+        val function = functions.random(Core.random)
+        // Create children for the current node
+        repeat(function.arity) {
+            // Recursively create a child node and add it to the list of children
+            children.add(
+                generateProgramRecursive(
+                    functions,
+                    terminals,
+                    depth + 1,
+                    height,
+                    condition
+                )
+            )
         }
-        program.add(node)
+        // Create a function node with the list of children
+        Program(function, depth, children)
     }
-    return Program(program)
+    return node
 }
