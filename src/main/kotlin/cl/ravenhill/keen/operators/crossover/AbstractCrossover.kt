@@ -94,5 +94,12 @@ abstract class AbstractCrossover<DNA>(
         return recombined.size * numOut
     }
 
+    /**
+     * Performs crossover on a list of chromosomes to create new individuals.
+     * The input list contains one chromosome from each parent individual.
+     * The length of the input list is equal to the number of parents specified in the constructor.
+     * The function should return a list of new chromosomes created by recombining the input
+     * chromosomes.
+     */
     protected abstract fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>>
 }
