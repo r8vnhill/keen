@@ -33,6 +33,9 @@ class Program<V>(
     // Inherit documentation from Tree.
     override val arity: Int = reduceable.arity
 
+    val root: Program<V>
+        get() = nodes.first()
+
     // Inherit documentation from Tree.
     override fun fromDepthFirst(nodes: List<Program<V>>): Program<V> {
         enforce {
@@ -48,9 +51,7 @@ class Program<V>(
      * @param args the arguments to reduce this node with.
      * @return the value this node reduces to.
      */
-    fun reduce(vararg args: V): V {
-        return nodes.first().invoke(*args)
-    }
+    fun reduce(vararg args: V) = root(*args)
 
     // Inherit documentation from Tree.
     override val nodes: List<Program<V>>

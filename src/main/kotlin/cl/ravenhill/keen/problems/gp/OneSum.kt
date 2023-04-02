@@ -19,13 +19,30 @@ import kotlin.math.abs
 import kotlin.math.ln
 
 
-private fun fitness(target: Int) = { gt: Genotype<Program<Double>> ->
+/**
+ * Returns a fitness function that computes the absolute difference between the sum of the
+ * generated program and a target integer value.
+ *
+ * @param target the integer value to which the sum of the generated program will be compared.
+ * @return a fitness function that computes the absolute difference between the sum of the
+ *  generated program and the target integer value.
+ */
+private fun fitness(target: Int): (Genotype<Program<Double>>) -> Double = { gt ->
     val program = gt.flatten().first()
-    abs(program.reduce() - target)
+    abs(program() - target)
 }
 
+/**
+ * Finds a program that can generate a target number by adding ones.
+ * The fitness function evaluates the difference between the program's output and the target number.
+ * The genetic algorithm's goal is to minimize the fitness function.
+ * The algorithm uses a combination of mutation and single-node crossover as alterers.
+ * The algorithm runs for a maximum of 1000 generations or until a program with zero fitness is
+ * found.
+ * The final result is displayed along with statistics and a fitness plot.
+ */
 fun main() {
-//    Core.EvolutionLogger.level = Level.Debug()
+    // Set up the genetic algorithm engine
     val engine = engine(fitness(5), genotype {
         chromosome {
             program {
@@ -42,6 +59,7 @@ fun main() {
             listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
         evaluator = SequentialEvaluator(fitness(20))
     }
+    // Run the genetic algorithm and display results
     val result = engine.run()
     println(engine.statistics.first())
     println(result)

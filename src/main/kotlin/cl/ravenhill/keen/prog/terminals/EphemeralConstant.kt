@@ -31,6 +31,7 @@ class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
     override fun invoke(args: List<T>) = value
 
     override fun toString() = "$value"
+    override fun create() = EphemeralConstant(generator)
 
     override fun equals(other: Any?) = when {
         this === other -> true

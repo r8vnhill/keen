@@ -23,6 +23,9 @@ class Variable<T>(private val name: String, val index: Int) : Terminal<T> {
     // Inherited documentation from Any
     override fun toString() = name
 
+    // Inherited documentation from Terminal<T>
+    override fun create() = Variable<T>(name, index)
+
     // Inherited documentation from Any
     override fun equals(other: Any?) = when {
         this === other -> true

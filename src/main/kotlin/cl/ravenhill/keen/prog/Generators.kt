@@ -118,7 +118,7 @@ private fun <T> generateProgramRecursive(
     val children = mutableListOf<Program<T>>()
     // Decide whether to create a terminal or a function node based on the condition
     val node = if (condition(height, depth)) {
-        Program(terminals.random(Core.random), depth)
+        Program(terminals.random(Core.random).create(), depth)
     } else {
         // Choose a random function from the list of functions
         val function = functions.random(Core.random)
