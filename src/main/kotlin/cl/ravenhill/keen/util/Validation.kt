@@ -70,13 +70,3 @@ fun DoubleArray.validateSum(d: Double, lazyMessage: () -> String) = validatePred
     { this.sum() eq d }, lazyMessage
 )
 
-/**
- * Validates if the receiving list is not empty.
- *
- * @return the list itself.
- * @throws InvalidArgumentException if the list is empty.
- */
-fun <E> List<E>.validateNotEmpty(lazyMessage: () -> String) = this.also {
-    validatePredicate({ this.isNotEmpty() }, lazyMessage)
-}
-

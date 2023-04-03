@@ -2,8 +2,6 @@ package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
-import cl.ravenhill.keen.requirements.IntRequirement
-import cl.ravenhill.keen.requirements.IntRequirement.*
 import cl.ravenhill.keen.util.Copyable
 import cl.ravenhill.keen.util.Tree
 
@@ -40,42 +38,12 @@ class Program<V>(
 
     // Inherit documentation from Tree.
     override fun fromDepthFirst(nodes: List<Program<V>>): Program<V> {
-        require(nodes.isNotEmpty()) { "Cannot create a program from an empty list of nodes." }
-
-        val nodeIterator = nodes.iterator()
-
-        // Recursively create the child nodes in depth-first order.
-        fun createChildren(): List<Program<V>> {
-            val children = mutableListOf<Program<V>>()
-            var childDepth = depth + 1
-
-            // Iterate through the child nodes in the depth-first order.
-            while (nodeIterator.hasNext()) {
-                val child = nodeIterator.next()
-
-                // If the child node's depth is greater than or equal to the next expected depth, add it to the children list.
-                if (child.depth >= childDepth) {
-                    children.add(child)
-
-                    // If the child node's depth is equal to the next expected depth, recursively create its children.
-                    if (child.depth == childDepth) {
-                        children.addAll(child.createChildren())
-                    }
-                } else {
-                    // If the child node's depth is less than the next expected depth, it's not a child of this node.
-                    nodeIterator.previous()
-                    break
-                }
-            }
-
-            return children
+        enforce {
+            nodes should NotBeEmpty { "Cannot create a program from an empty list of nodes." }
         }
+        val stack = mutableListOf<Program<V>>()
 
-        // Create the child nodes recursively in depth-first order.
-        val children = createChildren()
-
-        // Create and return a new program node with the collected children.
-        return Program(reduceable, depth, children)
+        return stack.removeFirst()
     }
 
 
