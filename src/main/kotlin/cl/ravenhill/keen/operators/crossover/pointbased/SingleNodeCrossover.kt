@@ -110,8 +110,14 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
                 val newTree1 = gene1.dna.replaceSubtree(slices.first, node2)
                 val newTree2 = gene2.dna.replaceSubtree(slices.second, node1)
                 enforce {
-                    newTree1.height should BeAtMost(Core.maxProgramDepth)
-                    newTree2.height should BeAtMost(Core.maxProgramDepth)
+                    newTree1.height should BeAtMost(Core.maxProgramDepth) {
+                        "The new tree's height (${newTree1.height}) exceeds the maximum " +
+                                "allowed height (${Core.maxProgramDepth})."
+                    }
+                    newTree2.height should BeAtMost(Core.maxProgramDepth) {
+                        "The new tree's height (${newTree2.height}) exceeds the maximum " +
+                                "allowed height (${Core.maxProgramDepth})."
+                    }
                 }
                 // add the new genes to the offspring chromosomes
                 genes.first.add(gene1.duplicate(newTree1))

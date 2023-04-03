@@ -1,7 +1,6 @@
 package cl.ravenhill.keen.prog
 
-import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.IntRequirement.*
 import cl.ravenhill.keen.util.Copyable
 import cl.ravenhill.keen.util.Tree
 
@@ -17,9 +16,9 @@ import cl.ravenhill.keen.util.Tree
  * @param V The type of the value this node reduces to.
  *
  * @property reduceable The reduceable expression used to reduce this node.
- * @property depth The depth of this node in the program tree.
+ * @property children The children of this node.
  *
- * @constructor Creates a new program node with the given [reduceable] expression and [depth].
+ * @constructor Creates a new program node with the given [reduceable] expression and [children].
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -27,33 +26,20 @@ import cl.ravenhill.keen.util.Tree
  */
 class Program<V>(
     val reduceable: Reduceable<V>,
-    private val depth: Int,
     override val children: List<Program<V>> = emptyList()
-) : Tree<V, Program<V>>, Copyable<Program<V>> {
+) : Tree<Reduceable<V>, Program<V>>, Copyable<Program<V>> {
     // Inherit documentation from Tree.
     override val arity: Int = reduceable.arity
+    // Inherit documentation from Tree.
+    override val value = reduceable
 
     val root: Program<V>
         get() = nodes.first()
 
     // Inherit documentation from Tree.
-    override fun fromDepthFirst(nodes: List<Program<V>>): Program<V> {
-        enforce {
-            nodes should NotBeEmpty { "Cannot create a program from an empty list of nodes." }
-        }
-        val stack = mutableListOf<Program<V>>()
+    override fun createNode(value: Reduceable<V>, children: List<Program<V>>) =
+        Program(value, children)
 
-        return stack.removeFirst()
-    }
-
-
-    /**
-     * Reduces this node to a value.
-     *
-     * @param args the arguments to reduce this node with.
-     * @return the value this node reduces to.
-     */
-    fun reduce(vararg args: V) = root(*args)
 
     // Inherit documentation from Tree.
     override val nodes: List<Program<V>>
@@ -68,7 +54,7 @@ class Program<V>(
     operator fun invoke(vararg args: V): V = reduceable(children.map { it(*args) })
 
     // Documentation inherited from Copyable
-    override fun copy(): Program<V> = Program(reduceable, depth, children.map { it.copy() })
+    override fun copy(): Program<V> = Program(reduceable, children.map { it.copy() })
 
     // Documentation inherited from Any
     override fun toString() =

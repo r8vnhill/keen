@@ -1,11 +1,16 @@
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import kotlin.random.Random
 
 /**
  * Generic tree data structure where each node is stored as a depth-first list.
  *
  * @param V The type of the value stored in the tree.
+ * @param T The type of the tree.
+ * @property value The value stored in the root node.
  * @property size The number of nodes in the tree.
  * @property nodes The nodes of the tree in a depth-first order.
  * @property children The children of the tree.
@@ -21,7 +26,8 @@ import kotlin.random.Random
  * @version 2.0.0
  * @since 2.0.0
  */
-interface Tree<V, T: Tree<V, T>> : SelfReferential<T> {
+interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
+    val value: V
     val children: List<T>
     val nodes: List<T>
     val arity: Int
@@ -70,5 +76,34 @@ interface Tree<V, T: Tree<V, T>> : SelfReferential<T> {
     /**
      * Creates a new tree from the given `nodes` in depth-first order.
      */
-    fun fromDepthFirst(nodes: List<T>): T
+    fun fromDepthFirst(nodes: List<T>): T {
+        enforce {
+            nodes should NotBeEmpty { "Cannot create a tree from an empty list of nodes." }
+        }
+        // Create an empty stack to hold the nodes.
+        val stack = mutableListOf<T>()
+        // Traverse the list of nodes in reverse order.
+        nodes.reversed().forEach {
+            // Take the required number of children from the top of the stack.
+            val children = stack.take(it.arity)
+            // Remove the children from the stack.
+            stack.removeAll(children)
+            // Create a new node with the given value and children.
+            val node = createNode(it.value, children)
+            enforce {
+                node.children.size should BeEqualTo(it.arity) {
+                    "The arity of the program does not match the arity of the node."
+                }
+            }
+            // Add the new node to the stack.
+            stack.add(createNode(it.value, children))
+        }
+        // Return the top of the stack.
+        return stack.first()
+    }
+
+    /**
+     * Creates a new node with the given value and children.
+     */
+    fun createNode(value: V, children: List<T>): T
 }
