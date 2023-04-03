@@ -15,6 +15,8 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.probability
+import cl.ravenhill.keen.requirements.IntRequirement
+import cl.ravenhill.keen.requirements.IntRequirement.BeAtMost
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.Tree
 
@@ -107,6 +109,10 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
                 // replace the selected subtrees in each parent with the subtrees from the other parent
                 val newTree1 = gene1.dna.replaceSubtree(slices.first, node2)
                 val newTree2 = gene2.dna.replaceSubtree(slices.second, node1)
+                enforce {
+                    newTree1.height should BeAtMost(Core.maxProgramDepth)
+                    newTree2.height should BeAtMost(Core.maxProgramDepth)
+                }
                 // add the new genes to the offspring chromosomes
                 genes.first.add(gene1.duplicate(newTree1))
                 genes.second.add(gene2.duplicate(newTree2))

@@ -3,6 +3,7 @@ package cl.ravenhill.keen.problems.gp
 import cl.ravenhill.keen.Builders.Chromosomes.program
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.evolution.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
@@ -42,8 +43,9 @@ private fun fitness(target: Int): (Genotype<Program<Double>>) -> Double = { gt -
  * The final result is displayed along with statistics and a fitness plot.
  */
 fun main() {
+    Core.maxProgramDepth = 7
     // Set up the genetic algorithm engine
-    val engine = engine(fitness(5), genotype {
+    val engine = engine(fitness(20), genotype {
         chromosome {
             program {
                 function("+", 2) { it[0] + it[1] }
@@ -53,7 +55,7 @@ fun main() {
     }) {
         populationSize = 100
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
-        alterers = listOf(Mutator(0.1), SingleNodeCrossover(0.2))
+        alterers = listOf(Mutator(0.06), SingleNodeCrossover(0.2))
         optimizer = FitnessMinimizer()
         statistics =
             listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
