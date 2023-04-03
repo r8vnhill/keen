@@ -10,16 +10,9 @@ import cl.ravenhill.keen.CollectionRequirementException
  * @version 2.0.0
  */
 sealed interface CollectionRequirement : Requirement<Collection<*>> {
-
-    val lazyDescription: (Collection<*>) -> String
-    val validator: (Collection<*>) -> Boolean
-
-    override fun validate(value: Collection<*>): Result<Collection<*>> =
-        if (!validator(value)) {
-            Result.failure(CollectionRequirementException { lazyDescription(value) })
-        } else {
-            Result.success(value)
-        }
+    // Inherit documentation from Requirement
+    override fun generateException(description: String) =
+        CollectionRequirementException { description }
 
     /**
      * Constraint that checks if a collection is not empty.

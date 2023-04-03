@@ -6,15 +6,10 @@ import cl.ravenhill.keen.DoubleRequirementException
  * Represents a constraint that can be applied to a double.
  */
 sealed interface DoubleRequirement : Requirement<Double> {
-    val validator: (Double) -> Boolean
-    val lazyDescription: (Double) -> String
 
-    override fun validate(value: Double): Result<Double> =
-        if (!validator(value)) {
-            Result.failure(DoubleRequirementException { lazyDescription(value) })
-        } else {
-            Result.success(value)
-        }
+    // Inherit documentation from Requirement
+    override fun generateException(description: String) = DoubleRequirementException { description }
+
     /**
      * Constraint that checks if a double is in a given range.
      */

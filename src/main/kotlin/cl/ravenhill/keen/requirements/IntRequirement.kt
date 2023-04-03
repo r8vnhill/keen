@@ -10,15 +10,9 @@ import cl.ravenhill.keen.IntRequirementException
  * @version 2.0.0
  */
 sealed interface IntRequirement : Requirement<Int> {
-    val lazyDescription: (Int) -> String
-    val validator: (Int) -> Boolean
 
-    override fun validate(value: Int): Result<Int> =
-        if (!validator(value)) {
-            Result.failure(IntRequirementException { lazyDescription(value) })
-        } else {
-            Result.success(value)
-        }
+    // Inherit documentation from Requirement
+    override fun generateException(description: String) = IntRequirementException { description }
 
     /**
      * Constraint that checks if an integer is positive.

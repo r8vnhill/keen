@@ -96,7 +96,7 @@ class DoubleChromosome private constructor(
             enforce {
                 size should BePositive()
                 range should StrictlyOrdered()
-                range should Finite
+                range should Finite()
             }
             return when {
                 range.first.isNaN() || range.second.isNaN() -> DoubleChromosome((0 until size).map {

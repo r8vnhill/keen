@@ -14,31 +14,29 @@ import cl.ravenhill.keen.PairRequirementException
  */
 sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
 
+    // Inherit documentation from Requirement
+    override fun generateException(description: String) = PairRequirementException { description }
+
     /**
      * A constraint that checks if a pair is (strictly) ordered.
      *
      * @since 2.0.0
      * @version 2.0.0
      */
-    class StrictlyOrdered<A : Comparable<A>> : PairRequirement<A, A> {
-        override fun validate(value: Pair<A, A>) =
-            if (value.first >= value.second) {
-                Result.failure(PairRequirementException {
-                    "Expected a strictly ordered pair, but got $value"
-                })
-            } else {
-                Result.success(value)
-            }
+    class StrictlyOrdered<A : Comparable<A>>(
+        override val lazyDescription: (Pair<A, A>) -> String = { value ->
+            "Expected a strictly ordered pair, but got $value"
+        }
+    ) : PairRequirement<A, A> {
+        override val validator = { value: Pair<A, A> -> value.first < value.second }
     }
 
-    object Finite : PairRequirement<Double, Double> {
-        override fun validate(value: Pair<Double, Double>) =
-            if (value.first.isFinite() && value.second.isFinite()) {
-                Result.success(value)
-            } else {
-                Result.failure(PairRequirementException {
-                    "Expected a finite pair, but got $value"
-                })
-            }
+    class Finite(
+        override val lazyDescription: (Pair<Double, Double>) -> String = { value ->
+            "Expected a finite pair, but got $value"
+        }
+    ) : PairRequirement<Double, Double> {
+        override val validator =
+            { value: Pair<Double, Double> -> value.first.isFinite() && value.second.isFinite() }
     }
 }
