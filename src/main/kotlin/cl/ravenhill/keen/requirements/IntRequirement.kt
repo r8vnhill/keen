@@ -3,7 +3,7 @@ package cl.ravenhill.keen.requirements
 import cl.ravenhill.keen.IntRequirementException
 
 /**
- * Represents a constraint that can be applied to an integer.
+ * Represents a requirement that can be applied to an integer value.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -15,7 +15,7 @@ sealed interface IntRequirement : Requirement<Int> {
     override fun generateException(description: String) = IntRequirementException { description }
 
     /**
-     * Constraint that checks if an integer is positive.
+     * Represents a requirement that an integer value must be positive.
      */
     class BePositive(
         override val lazyDescription: (Int) -> String = { value ->
@@ -26,7 +26,9 @@ sealed interface IntRequirement : Requirement<Int> {
     }
 
     /**
-     * Constraint that checks if an integer is in a given range.
+     * Represents a requirement that an integer value must be within a specified [range].
+     *
+     * @property range The range of values that are allowed.
      */
     open class BeInRange(
         private val range: IntRange,
@@ -39,7 +41,9 @@ sealed interface IntRequirement : Requirement<Int> {
     }
 
     /**
-     * Constraint that checks if an integer is at least a given value.
+     * Represents a requirement that an integer value must be at least a specified value.
+     *
+     * @property min The minimum allowed value.
      */
     class BeAtLeast(
         min: Int, lazyDescription: (Int) -> String = { value ->
@@ -48,7 +52,9 @@ sealed interface IntRequirement : Requirement<Int> {
     ) : BeInRange(min..Int.MAX_VALUE, { lazyDescription(min) })
 
     /**
-     * Constraint that checks if an integer is at most a given value.
+     * Represents a requirement that an integer value must be at most a specified value.
+     *
+     * @property max The maximum allowed value.
      */
     class BeAtMost(
         max: Int,
@@ -58,7 +64,9 @@ sealed interface IntRequirement : Requirement<Int> {
     ) : BeInRange(Int.MIN_VALUE..max, { lazyDescription(max) })
 
     /**
-     * Constraint that checks if an integer is equal to a given value.
+     * Represents a requirement that an integer value must be equal to a specified value.
+     *
+     * @property expected The expected value.
      */
     class BeEqualTo(
         private val expected: Int,
