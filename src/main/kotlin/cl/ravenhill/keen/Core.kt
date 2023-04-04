@@ -1,11 +1,3 @@
-/*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
 package cl.ravenhill.keen
 
 import cl.ravenhill.keen.Core.DEFAULT_MAX_PROGRAM_DEPTH
@@ -21,6 +13,21 @@ import cl.ravenhill.keen.util.logging.logger
 import cl.ravenhill.keen.util.logging.stdoutChannel
 import kotlin.random.Random
 
+/***************************************************************************************************
+ * The Core object contains various properties and functions that are used by the rest of the
+ * library.
+ * It includes a logger, the maximum depth of a program tree, a random number generator, and a
+ * boolean that can skip all checks.
+ * The EnforceScope inner class is used to enforce contracts with different constraint requirements,
+ * and the EvolutionLogger object is a logger that tracks the system's evolution.
+ * The Dice object rolls an n-dimensional or continuous dice.
+ * Additionally, there are two type-aliases: Population and MutablePopulation, which represent a
+ * list of Phenotype objects that represent a population of individuals with mutable or immutable
+ * data.
+ * Lastly, there are two extension functions: int and probability, which generate a random integer
+ * and double in the given ranges.
+ **************************************************************************************************/
+
 /**
  * The `Core` object contains the functions and variables that are used by the rest of the library.
  *
@@ -32,6 +39,7 @@ import kotlin.random.Random
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
+ * @since 1.0.0
  */
 object Core {
     const val DEFAULT_MAX_PROGRAM_DEPTH = 7
@@ -120,6 +128,12 @@ object Core {
         )
     }
 
+    /**
+     * A logger for tracking the evolution of the system.
+     *
+     * @property level The logging level. Defaults to [Level.Warn].
+     * @property logger The logger instance used for logging.
+     */
     object EvolutionLogger {
         var level: Level = Level.Warn()
             set(value) {
@@ -128,22 +142,27 @@ object Core {
             }
         var logger = logger("Evolution") {
             level = Level.Warn()
-            stdoutChannel {
-            }
+            stdoutChannel { }
         }
 
         /**
          * Logs a message at the Trace level.
+         *
+         * @param lazyMessage A lambda that returns the message to be logged.
          */
         fun trace(lazyMessage: () -> String) = logger.trace(lazyMessage)
 
         /**
          * Logs a message at the Debug level.
+         *
+         * @param lazyMessage A lambda that returns the message to be logged.
          */
         fun debug(lazyMessage: () -> String) = logger.debug(lazyMessage)
 
         /**
          * Logs a message at the Info level.
+         *
+         * @param lazyMessage A lambda that returns the message to be logged.
          */
         fun info(lazyMessage: () -> String) = logger.info(lazyMessage)
     }
