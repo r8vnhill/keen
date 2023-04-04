@@ -1,5 +1,14 @@
 package cl.ravenhill.keen.util.logging
 
+/**
+ * A sealed interface representing different logging levels.
+ * Provides functions to log messages at different levels.
+ * Nested classes override the log functions to return the message.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 sealed interface Level {
     /** Returns an empty string.  */
     fun trace(message: () -> String) = ""
@@ -66,12 +75,8 @@ sealed interface Level {
 
         override fun toString() = "FATAL"
 
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
+        override fun equals(other: Any?) = this === other
 
-        override fun hashCode(): Int {
-            return System.identityHashCode(this)
-        }
+        override fun hashCode() = System.identityHashCode(this)
     }
 }

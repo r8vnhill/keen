@@ -107,8 +107,28 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
                 // search for the subtrees rooted at each of the selected nodes
                 val slices = gene1.dna.searchSubtree(node1) to gene2.dna.searchSubtree(node2)
                 // replace the selected subtrees in each parent with the subtrees from the other parent
-                val newTree1 = gene1.dna.replaceSubtree(slices.first, node2)
-                val newTree2 = gene2.dna.replaceSubtree(slices.second, node1)
+                val newTree1 = gene1.dna.replaceSubtree(slices.first, node2).let {
+                    if (it.height > Core.maxProgramDepth) {
+                        if (Core.random.nextBoolean()) {
+                            gene1.dna
+                        } else {
+                            gene2.dna
+                        }
+                    } else {
+                        it
+                    }
+                }
+                val newTree2 = gene2.dna.replaceSubtree(slices.second, node1).let {
+                    if (it.height > Core.maxProgramDepth) {
+                        if (Core.random.nextBoolean()) {
+                            gene1.dna
+                        } else {
+                            gene2.dna
+                        }
+                    } else {
+                        it
+                    }
+                }
                 enforce {
                     newTree1.height should BeAtMost(Core.maxProgramDepth) {
                         "The new tree's height (${newTree1.height}) exceeds the maximum " +
