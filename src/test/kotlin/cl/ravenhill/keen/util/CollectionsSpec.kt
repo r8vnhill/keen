@@ -25,7 +25,7 @@ class CollectionsSpec : FreeSpec({
         "return a random permutation of the given size" {
             val n = 10
             val k = 5
-            val subset = Subset.next(n, k)
+            val subset = Subset.generateRandomSubset(n, k)
             subset.size shouldBe k
             subset.forEach { it shouldBeLessThan n }
         }
@@ -59,7 +59,7 @@ class CollectionsSpec : FreeSpec({
         "not change the list if the elements are the same" {
             checkAll(Arb.list(Arb.double(), 2..10_000), Arb.long()) { list, seed ->
                 Core.random = Random(seed)
-                val i = Subset.next(list.size, 1).first()
+                val i = Subset.generateRandomSubset(list.size, 1).first()
                 val copy = list.toMutableList()
                 copy.swap(i, i)
                 copy shouldBe list

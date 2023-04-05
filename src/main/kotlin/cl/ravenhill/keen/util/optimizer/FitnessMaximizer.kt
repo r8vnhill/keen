@@ -13,6 +13,10 @@ import cl.ravenhill.keen.genetic.Phenotype
 
 /**
  * [PhenotypeOptimizer] that prioritizes the maximum of two values.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 2.0.0
  */
 class FitnessMaximizer<DNA> : PhenotypeOptimizer<DNA> {
 

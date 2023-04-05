@@ -28,20 +28,6 @@ fun Random.ints(from: Int = 0, until: Int = Int.MAX_VALUE): IntStream =
     IntStream.generate { this.nextInt(from, until) }
 
 /**
- * Returns an array with the indices of a random subset of the given size.
- *
- * @receiver the random instance.
- * @param from the size of the set.
- * @param pick the number of elements to pick from the set.
- * @return an array with the indices of a subset of the given size.
- */
-fun Random.subset(pick: Int, from: Int): IntArray =
-    ints(0, from)
-        .limit(pick.toLong())
-        .sorted()
-        .toArray()
-
-/**
  * Returns a sequence of random indices.
  *
  * @receiver the random number generator.

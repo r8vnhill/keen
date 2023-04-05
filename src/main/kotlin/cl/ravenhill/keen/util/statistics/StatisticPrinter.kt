@@ -1,15 +1,16 @@
-/*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
 package cl.ravenhill.keen.util.statistics
 
 
-
+/**
+ * A statistic printer that prints out the evolutionary results at a given interval.
+ *
+ * @param every The interval at which to print out the evolutionary results.
+ * @param DNA The type of the entities being evolved.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 class StatisticPrinter<DNA>(private val every: Int) : AbstractStatistic<DNA>() {
 
     override fun onResultUpdated() {

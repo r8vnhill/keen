@@ -7,6 +7,7 @@ import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.requirements.CollectionRequirement
 import cl.ravenhill.keen.requirements.DoubleRequirement
 import cl.ravenhill.keen.requirements.IntRequirement
+import cl.ravenhill.keen.requirements.LongRequirement
 import cl.ravenhill.keen.requirements.PairRequirement
 import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.logging.logger
@@ -93,6 +94,12 @@ object Core {
          * Extension function that checks an integer constraint.
          */
         infix fun Int.should(requirement: IntRequirement) =
+            results.add(requirement.validate(this))
+
+        /**
+         * Extension function that checks a long constraint.
+         */
+        infix fun Long.should(requirement: LongRequirement) =
             results.add(requirement.validate(this))
 
         /**

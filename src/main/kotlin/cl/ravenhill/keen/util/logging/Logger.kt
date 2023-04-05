@@ -20,6 +20,8 @@ fun logger(name: String, builder: Logger.() -> Unit) =
  * Entity that logs messages to an output channel.
  *
  * @property outputChannel The output channel where the messages will be written to.
+ * @property level The logging level. Messages with a level lower than this will not be logged.
+ *  Defaults to [Level.Info].
  * @param name The name of the logger.
  * @constructor Creates a new logger with the given name.
  *
@@ -56,6 +58,14 @@ class Logger private constructor(private val name: String) {
     fun warn(message: () -> String) =
         outputChannel.write(level.warn { "${msgMeta("WARN")} ${message()}" })
 
+    /**
+     * Formats a log message metadata string with the given logging level.
+     * The metadata string includes the current timestamp, the name of the current thread,
+     * and the logging level name.
+     *
+     * @param level the logging level
+     * @return the formatted metadata string
+     */
     private fun msgMeta(level: String): String = "${
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     } [${Thread.currentThread().name}] $level $name - "
@@ -73,16 +83,31 @@ class Logger private constructor(private val name: String) {
     override fun hashCode() = Objects.hash(Logger::class, name)
 
     companion object {
+        /**
+         * A map of all active loggers with their names as keys and instances of Logger as values.
+         */
         private val activeLoggers = mutableMapOf<String, Logger>()
 
-        /** Returns a unique instance of a logger for the given name.   */
+        /**
+         * Returns a unique instance of a logger for the given name.
+         *
+         * @param name The name of the logger.
+         * @return An instance of Logger for the given name.
+         */
         fun instance(name: String) =
             activeLoggers.getOrDefault(name, Logger(name)).also { activeLoggers[name] = it }
 
-        /** Returns true if a logger with the given name is active. */
+        /**
+         * Returns true if a logger with the given name is active.
+         *
+         * @param name The name of the logger.
+         * @return True if a logger with the given name is active, false otherwise.
+         */
         fun isActive(name: String): Boolean = name in activeLoggers
 
-        /** Clears all active loggers.  */
+        /**
+         * Clears all active loggers.
+         */
         internal fun clearActiveLoggers() = activeLoggers.clear()
     }
 }

@@ -9,7 +9,15 @@
 package cl.ravenhill.keen.util.statistics
 
 
-
+/**
+ * A collector of statistics to be used in the evolutionary algorithm.
+ *
+ * @param DNA  The type of the gene's value.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 1.0.0
+ */
 class StatisticCollector<DNA> : AbstractStatistic<DNA>() {
     override fun toString() = """
         ------------ Statistics Collector -------------

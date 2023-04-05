@@ -8,6 +8,7 @@
 
 package cl.ravenhill.keen.util.optimizer
 
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
 
 /**
@@ -34,5 +35,5 @@ interface PhenotypeOptimizer<DNA> {
     /**
      * Sorts the given list of phenotypes using this optimizer.
      */
-    fun sort(population: List<Phenotype<DNA>>) = population.sortedWith(comparator.reversed())
+    fun sort(population: Population<DNA>) = population.sortedWith(comparator.reversed())
 }

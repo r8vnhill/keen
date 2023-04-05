@@ -1,13 +1,10 @@
 package cl.ravenhill.keen.operators.mutator
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.int
 import cl.ravenhill.keen.util.indices
-import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.math.neq
-import cl.ravenhill.keen.util.swap
 
 
 /**

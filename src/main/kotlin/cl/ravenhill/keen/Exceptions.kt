@@ -17,7 +17,6 @@ package cl.ravenhill.keen
  * @param prefix The prefix to be used in the message.
  * @param lazyMessage The message to be used in the exception.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.0.0
  * @version 1.0.0
  */
@@ -26,43 +25,93 @@ open class KeenException(prefix: String, lazyMessage: () -> String) :
 
 /**
  * Exception thrown when the receiver of a function is not valid.
+ *
+ * @param lazyMessage The message to be used in the exception.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 1.0.0
+ * @since 1.0.0
  */
 class InvalidReceiverException(lazyMessage: () -> String) :
         KeenException("Invalid receiver: ", lazyMessage)
 
 /**
  * Exception thrown when an argument is not valid.
+ *
+ * @param lazyMessage The message to be used in the exception.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 1.0.0
+ * @since 1.0.0
  */
 class InvalidArgumentException(lazyMessage: () -> String) :
         KeenException("Invalid argument: ", lazyMessage)
 
+/**
+ * Exception thrown when a state is not valid.
+ *
+ * @param state The state that is not valid.
+ * @param lazyMessage The message to be used in the exception.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 class InvalidStateException(state: String, lazyMessage: () -> String) :
         KeenException("Invalid state ($state): ", lazyMessage)
 
 /**
  * Exception thrown when a limit is not configured correctly.
+ *
+ * @param lazyMessage The message to be used in the exception.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 1.0.0
+ * @since 1.0.0
  */
 class LimitConfigurationException(lazyMessage: () -> String) :
         KeenException("Genotype configuration error:", lazyMessage)
 
 /**
- * Exception thrown when a selection operation fails.
- */
-class SelectorException(lazyMessage: () -> String) :
-        KeenException("Selector operation exception:", lazyMessage)
-
-
-/**
- * Exception thrown when a constraint is not fulfilled.
+ * Base exception for unfulfilled requirements.
+ *
+ * @param lazyMessage The message to be used in the exception.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
  */
 open class UnfulfilledRequirementException(lazyMessage: () -> String) :
         KeenException("Unfulfilled constraint: ", lazyMessage)
 
+/**
+ * Exception thrown when an integer constraint is not fulfilled.
+ *
+ * @param lazyMessage The message to be used in the exception.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 class IntRequirementException(lazyMessage: () -> String) :
         UnfulfilledRequirementException(lazyMessage)
 
 /**
+ * Exception thrown when a long constraint is not fulfilled.
+ *
+ * @param lazyMessage The message to be used in the exception.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+class LongRequirementException(lazyMessage: () -> String) :
+        UnfulfilledRequirementException(lazyMessage)
+
+/**
  * Exception thrown when a pair constraint is not fulfilled.
+ *
+ * @param lazyMessage The message to be used in the exception.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -73,12 +122,20 @@ class PairRequirementException(lazyMessage: () -> String) :
 
 /**
  * Exception thrown when a double constraint is not fulfilled.
+ *
+ * @param lazyMessage The message to be used in the exception.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
  */
 class DoubleRequirementException(lazyMessage: () -> String) :
         UnfulfilledRequirementException(lazyMessage)
 
 /**
  * Exception thrown when a collection constraint is not fulfilled.
+ *
+ * @param lazyMessage The message to be used in the exception.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -89,6 +146,12 @@ class CollectionRequirementException(lazyMessage: () -> String) :
 
 /**
  * Exception thrown when a contract is not fulfilled.
+ *
+ * @param violations List of contract violations.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
  */
 class EnforcementException(val violations: List<Throwable>) : KeenException(
     "Unfulfilled contract: ",
