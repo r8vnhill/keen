@@ -1,19 +1,39 @@
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import cl.ravenhill.keen.util.validateAtLeast
-import org.jetbrains.annotations.Contract
+
+/***************************************************************************************************
+ * This code defines two classes: EvolutionResult and EvolutionStart that represent the result of an
+ * evolution process and the starting point for a new generation of evolution, respectively.
+ * EvolutionResult contains properties for the optimization strategy used, the population of
+ * phenotypes, the generation number, and the best phenotype of the result.
+ * It also has a function to return a new EvolutionStart object for the next generation.
+ * EvolutionStart contains properties for the initial population of phenotypes, the generation
+ * number, and a flag indicating whether the evaluation process needs to be run again.
+ * It also has a function to create an empty EvolutionStart object.
+ * Both classes have generic types DNA and T respectively, which represent the type of the gene's
+ * value and the type of the phenotype.
+ **************************************************************************************************/
 
 /**
  * Result of an evolution process.
  *
- * @param DNA  The type of the gene's value.
+ * @param DNA The type of the gene's value.
+ *
  * @property optimizer The optimization strategy used.
  * @property population The population of the result.
  * @property generation The generation of the result.
  * @property best The best phenotype of the result.
- * @constructor Creates a new [EvolutionResult].
+ *
+ * @constructor Creates a new [EvolutionResult] with the given [optimizer], [population], and
+ *  [generation].
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 1.0.0
  */
 class EvolutionResult<DNA>(
     val optimizer: PhenotypeOptimizer<DNA>,
@@ -21,24 +41,36 @@ class EvolutionResult<DNA>(
     val generation: Int
 ) : Comparable<EvolutionResult<DNA>> {
 
-    val best: Phenotype<DNA>? = population.stream().max(optimizer.comparator).orElse(null)
+    val best: Phenotype<DNA>
+        get() = population.maxWith(optimizer.comparator)
 
     /**
-     * The next generation of the result.
+     * Returns a new [EvolutionStart] object for the next generation.
      */
     operator fun next() = EvolutionStart(population, generation + 1, true)
 
-    override fun compareTo(other: EvolutionResult<DNA>): Int = when {
-        this.best != null && other.best != null ->
-            optimizer.comparator.compare(this.best, other.best)
-        this.best != null -> 1
-        other.best != null -> -1
-        else -> 0
-    }
+    override fun compareTo(other: EvolutionResult<DNA>): Int =
+        optimizer.comparator.compare(this.best, other.best)
 
     override fun toString() = "EvolutionResult { generation: $generation, best: $best }"
 }
 
+/**
+ * Represents the starting point for a new generation of evolution.
+ *
+ * @property population The initial population of phenotypes.
+ * @property generation The generation number.
+ * @property isDirty A flag indicating whether the evaluation process needs to be run again.
+ *  The default value is `true`.
+ *
+ * @param T The type of the phenotype.
+ *
+ * @constructor Creates a new [EvolutionStart] object.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 1.0.0
+ */
 class EvolutionStart<T>(
     val population: List<Phenotype<T>>,
     val generation: Int,
@@ -46,7 +78,7 @@ class EvolutionStart<T>(
 ) {
 
     init {
-        generation.validateAtLeast(0) { "Generation must be non-negative" }
+        enforce { generation should BeAtLeast(0) { "Generation must be non-negative" } }
     }
 
     override fun toString() = "EvolutionStart { " +
@@ -55,6 +87,13 @@ class EvolutionStart<T>(
             " }"
 
     companion object {
+        /**
+         * Creates an empty [EvolutionStart] object.
+         *
+         * @param T The type of the phenotype.
+         *
+         * @return An empty [EvolutionStart] object.
+         */
         fun <T> empty(): EvolutionStart<T> = EvolutionStart(listOf(), 1)
     }
 }

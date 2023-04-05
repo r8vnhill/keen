@@ -1,12 +1,19 @@
 package cl.ravenhill.keen
 
+import cl.ravenhill.keen.Builders.coroutines
+import cl.ravenhill.keen.Builders.sequential
+import cl.ravenhill.keen.evolution.CoroutineEvaluator
 import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.Evaluator
+import cl.ravenhill.keen.evolution.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import cl.ravenhill.keen.genetic.chromosomes.ProgramChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 /**
  * Builder methods for Keen core classes.
@@ -111,5 +118,19 @@ object Builders {
 
         fun <T> program(builder: ProgramChromosome.Factory<T>.() -> Unit) =
             ProgramChromosome.Factory<T>().apply(builder)
+    }
+
+    fun <DNA> evaluator(init: Evaluator.Factory<DNA>.() -> Unit) =
+        Evaluator.Factory<DNA>().apply(init)
+
+    fun <DNA> Evaluator.Factory<DNA>.sequential() {
+        creator = { SequentialEvaluator(it) }
+    }
+
+    fun <DNA> Evaluator.Factory<DNA>.coroutines(
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+        chunkSize: Int = 100
+    ) {
+        creator = { CoroutineEvaluator(it, dispatcher, chunkSize) }
     }
 }

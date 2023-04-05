@@ -26,26 +26,30 @@ import kotlin.coroutines.CoroutineContext
  **************************************************************************************************/
 
 /**
- * An interface for defining different strategies for evaluating the fitness functions of a given
+ * An interface representing different strategies for evaluating the fitness functions of a given
  * population of DNA sequences.
  *
  * @param DNA The type of DNA sequence to evaluate.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 2.0.0
  * @since 1.0.0
+ * @version 2.0.0
  */
 interface Evaluator<DNA> {
 
     /**
      * Evaluates the fitness function of the given population of DNA sequences.
      *
-     * @param population The population to evaluate.
-     * @param force Whether to force a fitness evaluation of all individuals, even if they have
-     *  already been evaluated.
-     * @return The evaluated population of DNA sequences.
+     * @param population The population of DNA sequences to evaluate.
+     * @param force Whether to force the evaluation of fitness functions for all individuals in
+     * the population, even if they have already been evaluated.
+     * @return The population of evaluated DNA sequences.
      */
     operator fun invoke(population: Population<DNA>, force: Boolean = false): Population<DNA>
+
+    class Factory<DNA> {
+        lateinit var creator: ((Genotype<DNA>) -> Double) -> Evaluator<DNA>
+    }
 }
 
 /**

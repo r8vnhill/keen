@@ -3,7 +3,6 @@ package cl.ravenhill.keen.problems.ga
 import cl.ravenhill.keen.Builders.Chromosomes.ints
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
-import cl.ravenhill.keen.evolution.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
@@ -46,14 +45,12 @@ fun main() {
         optimizer = FitnessMinimizer()
         limits = listOf(SteadyGenerations(10), GenerationCount(1000))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
-        evaluator = SequentialEvaluator(::absDiff)
     }
     val result = engine.run()
     println(engine.statistics.first())
     println(buildString {
         append("$TARGET = ")
-        append(result.best?.genotype?.flatten()?.filter { it > 1 }
-            ?.joinToString(" * "))
+        append(result.best.genotype.flatten().filter { it > 1 }.joinToString(" * "))
     })
     (engine.statistics[1] as StatisticPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
 }

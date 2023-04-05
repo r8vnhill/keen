@@ -58,7 +58,6 @@ fun main() {
         optimizer = FitnessMinimizer()
         statistics =
             listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
-        evaluator = SequentialEvaluator(fitness(20))
     }
     // Run the genetic algorithm and display results
     val result = engine.run()

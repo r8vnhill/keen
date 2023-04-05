@@ -123,7 +123,7 @@ class Engine<DNA> private constructor(
                 debug { "Generation: $generation" }
                 debug { "Best: $best" }
             }
-            bestFitness = result.best?.fitness ?: Double.NaN
+            bestFitness = result.best.fitness
             evolution = result.next()
         }
         statistics.stream().parallel()
@@ -199,7 +199,7 @@ class Engine<DNA> private constructor(
         if (start.population.isEmpty()) {
             info { "Initial population is empty, creating a new one." }
             val generation = start.generation
-            val individuals       =
+            val individuals =
                 start.population.asSequence() + generateSequence { genotype.make() }
                     .map { Phenotype(it, generation) }
             EvolutionStart(
@@ -222,26 +222,18 @@ class Engine<DNA> private constructor(
      * @return the evaluated population.
      */
     private fun evaluate(evolution: EvolutionStart<DNA>, force: Boolean = false) =
-        if (force.also {
-                if (it) trace { "Forcing fitness evaluation." }
-            } || evolution.isDirty.also {
-                if (it) trace { "Population is dirty, evaluating fitness." }
-            }) {
-            evaluator(evolution.population, true).also {
-                enforce {
-                    populationSize should IntRequirement.BeEqualTo(it.size) {
-                        "Evaluated population size [${it}] doesn't " +
-                                "match expected population size [$populationSize]"
-                    }
-                    requirement("There are unevaluated phenotypes") {
-                        it.all { phenotype -> phenotype.isEvaluated() }
-                    }
+        evaluator(evolution.population, force).also {
+            enforce {
+                populationSize should IntRequirement.BeEqualTo(it.size) {
+                    "Evaluated population size [${it}] doesn't " +
+                            "match expected population size [$populationSize]"
+                }
+                requirement("There are unevaluated phenotypes") {
+                    it.all { phenotype -> phenotype.isEvaluated() }
                 }
             }
-        } else {
-            trace { "Population is not dirty, skipping fitness evaluation." }
-            evolution.population
         }
+
 
     /**
      * Selects (asynchronously) the offspring from the evaluated population.
@@ -384,7 +376,7 @@ class Engine<DNA> private constructor(
 
         var executor: Executor = commonPool()
 
-        var evaluator: Evaluator<DNA> = SequentialEvaluator(fitnessFunction)
+        var evaluator = Evaluator.Factory<DNA>().apply { creator = { SequentialEvaluator(it) } }
 
         val interceptor = EvolutionInterceptor.identity<DNA>()
         // endregion    ----------------------------------------------------------------------------
@@ -431,7 +423,7 @@ class Engine<DNA> private constructor(
             optimizer = optimizer,
             statistics = statistics,
             executor = executor,
-            evaluator = evaluator,
+            evaluator = evaluator.creator(fitnessFunction),
             interceptor = interceptor
         )
     }
