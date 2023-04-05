@@ -3,6 +3,7 @@ package cl.ravenhill.keen.problems.ga
 import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.evolution.CoroutineEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -73,6 +74,7 @@ fun main() {
         alterers = listOf(InversionMutator(0.8), OrderedCrossover(0.3))
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPrinter(30), StatisticPlotter())
+        evaluator = CoroutineEvaluator(::fitnessFn)
     }
     val result = engine.run()
     println(engine.statistics.first())
