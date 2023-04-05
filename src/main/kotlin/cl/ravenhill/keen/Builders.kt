@@ -1,19 +1,16 @@
 package cl.ravenhill.keen
 
-import cl.ravenhill.keen.Builders.coroutines
-import cl.ravenhill.keen.Builders.sequential
 import cl.ravenhill.keen.evolution.CoroutineEvaluator
 import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.evolution.Evaluator
 import cl.ravenhill.keen.evolution.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import cl.ravenhill.keen.genetic.chromosomes.ProgramChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 
 /**
  * Builder methods for Keen core classes.
@@ -120,17 +117,62 @@ object Builders {
             ProgramChromosome.Factory<T>().apply(builder)
     }
 
-    fun <DNA> evaluator(init: Evaluator.Factory<DNA>.() -> Unit) =
+    /**
+     * Returns an [Evaluator.Factory] instance initialized with custom settings through [init].
+     *
+     * __Usage:__
+     * ```
+     * val evaluatorFactory = evaluator<Int> {
+     *   creator = { MyEvaluator(it) }
+     * }
+     * ```
+     *
+     * @param init A function that initializes an [Evaluator.Factory] instance with custom settings.
+     * @return An [Evaluator.Factory] instance.
+     */
+    fun <DNA> evaluator(init: Evaluator.Factory<DNA>.() -> Unit): Evaluator.Factory<DNA> =
         Evaluator.Factory<DNA>().apply(init)
 
+    /**
+     * Returns a [CoroutineEvaluator.Factory] instance initialized with custom settings through
+     * [init].
+     * The [CoroutineEvaluator] instances created by this factory will use coroutines to evaluate
+     * fitness functions for [Phenotype] instances in a [Population].
+     *
+     * __Usage:__
+     * ```
+     * val coroutineEvaluatorFactory = coroutines<Int> {
+     *     dispatcher = Dispatchers.IO // Use the IO dispatcher for parallel evaluation
+     *     chunkSize = 50 // Use a chunk size of 50 for parallel evaluation
+     * }
+     * ```
+     *
+     * @param init A function that initializes a [CoroutineEvaluator.Factory] instance with custom settings.
+     * @return A [CoroutineEvaluator.Factory] instance.
+     */
+    fun <DNA> coroutines(init: CoroutineEvaluator.Factory<DNA>.() -> Unit = {}) =
+        CoroutineEvaluator.Factory<DNA>()
+            .apply(init)
+            .apply {
+                creator = { CoroutineEvaluator(it, dispatcher, chunkSize) }
+            }
+
+    /**
+     * Sets the ``creator`` property of this [Evaluator.Factory] instance to create
+     * [SequentialEvaluator] instances.
+     * The [SequentialEvaluator] instances created by this factory will evaluate fitness functions
+     * for [Phenotype] instances in a [Population] sequentially.
+     *
+     * __Usage:__
+     * ```
+     * val sequentialEvaluatorFactory = evaluator<String> {
+     *     sequential() // Use the SequentialEvaluator implementation
+     * }
+     * ```
+     *
+     * @receiver An [Evaluator.Factory] instance.
+     */
     fun <DNA> Evaluator.Factory<DNA>.sequential() {
         creator = { SequentialEvaluator(it) }
-    }
-
-    fun <DNA> Evaluator.Factory<DNA>.coroutines(
-        dispatcher: CoroutineDispatcher = Dispatchers.Default,
-        chunkSize: Int = 100
-    ) {
-        creator = { CoroutineEvaluator(it, dispatcher, chunkSize) }
     }
 }

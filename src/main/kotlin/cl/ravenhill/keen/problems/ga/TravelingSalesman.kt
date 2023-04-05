@@ -15,6 +15,7 @@ import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
+import kotlinx.coroutines.Dispatchers
 import tech.tablesaw.api.DoubleColumn
 import tech.tablesaw.plotly.Plot
 import tech.tablesaw.plotly.components.Figure
@@ -75,6 +76,12 @@ fun main() {
         alterers = listOf(InversionMutator(0.8), OrderedCrossover(0.3))
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPrinter(30), StatisticPlotter())
+        evaluator = evaluator {
+            coroutines<Pair<Int, Int>> {
+                dispatcher = Dispatchers.Main
+                chunkSize = 500
+            }
+        }
     }
     val result = engine.run()
     println(engine.statistics.first())

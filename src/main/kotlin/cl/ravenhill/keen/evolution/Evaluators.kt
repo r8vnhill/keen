@@ -1,8 +1,11 @@
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.requirements.IntRequirement
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,6 +14,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KFunction
+import kotlin.reflect.KProperty
 
 /***************************************************************************************************
  * This code defines classes and interfaces for evaluating the fitness of a population of DNA
@@ -31,7 +37,6 @@ import kotlin.coroutines.CoroutineContext
  *
  * @param DNA The type of DNA sequence to evaluate.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.0.0
  * @version 2.0.0
  */
@@ -42,13 +47,43 @@ interface Evaluator<DNA> {
      *
      * @param population The population of DNA sequences to evaluate.
      * @param force Whether to force the evaluation of fitness functions for all individuals in
-     * the population, even if they have already been evaluated.
+     *  the population, even if they have already been evaluated.
      * @return The population of evaluated DNA sequences.
      */
     operator fun invoke(population: Population<DNA>, force: Boolean = false): Population<DNA>
 
-    class Factory<DNA> {
-        lateinit var creator: ((Genotype<DNA>) -> Double) -> Evaluator<DNA>
+    /**
+     * A factory class for creating instances of the `Evaluator` interface.
+     *
+     * __Usage:__
+     * ```
+     * // Define a concrete Evaluator implementation
+     * class MyEvaluator<DNA>(private val fitnessFunction: (Genotype<DNA>) -> Double) : Evaluator<DNA> {
+     *     override fun invoke(population: Population<DNA>, force: Boolean): Population<DNA> {
+     *         // Evaluate the fitness function for each individual in the population
+     *         return population.map {
+     *             if (force || it.fitness == null) {
+     *                 val fitness = fitnessFunction(it.genotype)
+     *                 it.copy(fitness = fitness)
+     *             } else {
+     *                 it
+     *             }
+     *         }
+     *     }
+     * }
+     *
+     * // Define a Factory implementation that creates instances of MyEvaluator
+     * class MyEvaluatorFactory<DNA> : Evaluator.Factory<DNA>() {
+     *     override lateinit var creator: ((Genotype<DNA>) -> Double) -> Evaluator<DNA>
+     *         get() = { fitnessFunction -> MyEvaluator(fitnessFunction) }
+     * }
+     * ```
+     *
+     * @param DNA The type of DNA sequence to evaluate.
+     * @property creator A function that creates an instance of the `Evaluator` interface.
+     */
+    open class Factory<DNA> {
+        open lateinit var creator: ((Genotype<DNA>) -> Double) -> Evaluator<DNA>
     }
 }
 
@@ -80,8 +115,10 @@ class SequentialEvaluator<DNA>(
  *
  * @param function The fitness function that evaluates a [Genotype] and returns a [Double].
  * @param dispatcher The [CoroutineDispatcher] used to dispatch the coroutines for parallel
- *  evaluation.
+ * evaluation. Defaults to [Dispatchers.Default].
  * @param chunkSize The number of [PhenotypeEvaluator] instances to evaluate in each coroutine.
+ *  Larger values will require more memory, but may improve performance for some use cases.
+ *  Defaults to 100.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
@@ -118,6 +155,27 @@ class CoroutineEvaluator<DNA>(
                 }.awaitAll()
             }
         }
+    }
+
+    /**
+     * A factory for creating instances of [CoroutineEvaluator].
+     *
+     * @param DNA The type of DNA sequence to evaluate.
+     * @property dispatcher The [CoroutineDispatcher] used to dispatch the coroutines for parallel
+     *  evaluation.
+     *  Defaults to [Dispatchers.Default].
+     * @property chunkSize The number of [PhenotypeEvaluator] instances to evaluate in each
+     *  coroutine.
+     *  Larger values will require more memory, but may improve performance for some use cases.
+     *  Defaults to 100.
+     */
+    class Factory<DNA> : Evaluator.Factory<DNA>() {
+        var dispatcher: CoroutineDispatcher = Dispatchers.Default
+        var chunkSize: Int = 100
+            set(value) {
+                enforce { value should BePositive { "The chunk size must be a positive integer." } }
+                field = value
+            }
     }
 }
 
