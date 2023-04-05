@@ -4,7 +4,7 @@ package cl.ravenhill.keen.genetic.genes.numerical
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.doubleGene
 import cl.ravenhill.keen.util.math.isNotNan
-import cl.ravenhill.keen.util.nextDoubleOutsideOf
+import cl.ravenhill.keen.util.nextDoubleExclusive
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
@@ -164,7 +164,7 @@ class DoubleGeneSpec : WordSpec({
         "return false if the gene is outside the range" {
             checkAll(Arb.doubleRange, Arb.long()) { range, seed ->
                 val rng = Random(seed)
-                val gene = DoubleGene(rng.nextDoubleOutsideOf(range), range)
+                val gene = DoubleGene(rng.nextDoubleExclusive(range), range)
                 gene.verify() shouldBe false
             }
         }

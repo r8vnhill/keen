@@ -2,7 +2,7 @@ package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.intGene
-import cl.ravenhill.keen.util.nextIntOutsideOf
+import cl.ravenhill.keen.util.nextIntExclusive
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
@@ -159,7 +159,7 @@ class IntGeneSpec : WordSpec({
         "return false if the gene is outside the range" {
             checkAll(Arb.intRange, Arb.long()) { range, seed ->
                 IntGene(
-                    Random(seed).nextIntOutsideOf(range),
+                    Random(seed).nextIntExclusive(range),
                     range
                 ).verify() shouldBe false
             }

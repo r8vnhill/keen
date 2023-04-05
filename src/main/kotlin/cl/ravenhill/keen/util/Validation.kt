@@ -59,13 +59,6 @@ fun <T : Comparable<T>> T.validateAtLeast(
 ) = this.validateAtLeast(min) { "$propertyName [$this] must be at least $min" }
 
 
-fun Int.validateSafeMultiplication(n: Int, lazyMessage: () -> String) = validatePredicate(
-    {
-        val m = this.toLong() * n.toLong()
-        m.toInt().toLong() == m
-    }, lazyMessage
-).let { this * n }
-
 fun DoubleArray.validateSum(d: Double, lazyMessage: () -> String) = validatePredicate(
     { this.sum() eq d }, lazyMessage
 )
