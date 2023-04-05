@@ -13,16 +13,16 @@ import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
 /***************************************************************************************************
- * This code defines three classes: Evaluator, SequentialEvaluator, and ConcurrentEvaluator, as well
- * as a private helper class PhenotypeEvaluator.
- * Evaluator is an interface that defines the structure of an object that can evaluate a population
- * of DNA sequences using a specific fitness function.
- * SequentialEvaluator is a class that implements the Evaluator interface and evaluates the fitness
- * of a population of DNA sequences sequentially.
- * ConcurrentEvaluator is another class that implements the Evaluator interface and uses coroutines
- * to evaluate the fitness of a population of DNA sequences concurrently.
- * Finally, PhenotypeEvaluator is a private helper class that encapsulates the evaluation of a
- * single Phenotype instance using a fitness function.
+ * This code defines classes and interfaces for evaluating the fitness of a population of DNA
+ * sequences using a specific fitness function.
+ * The Evaluator interface defines the structure of an object that can evaluate a population of DNA
+ * sequences.
+ * The SequentialEvaluator class implements the Evaluator interface and evaluates the fitness of a
+ * population of DNA sequences sequentially using a given fitness function.
+ * The CoroutineEvaluator class is another implementation of the Evaluator interface that uses
+ * coroutines to evaluate the fitness of a population of DNA sequences concurrently.
+ * Finally, the PhenotypeEvaluator class is a private helper class that encapsulates the evaluation
+ * of a single Phenotype instance using a fitness function.
  **************************************************************************************************/
 
 /**
@@ -64,32 +64,10 @@ class SequentialEvaluator<DNA>(
 ) : Evaluator<DNA> {
 
     // Inherit documentation from Evaluator
-    override fun invoke(population: Population<DNA>, force: Boolean): Population<DNA> {
-        // Select individuals to evaluate based on whether they have already been evaluated or not.
-        val toEvaluate = if (force) {
-            population
-        } else {
-            population.filter { it.isNotEvaluated() }
-        }.map { PhenotypeEvaluator(it, function) }
-        // Evaluate the selected individuals.
-        return if (toEvaluate.isNotEmpty()) {
-            toEvaluate.forEach { it.evaluate() }
-            // If all individuals in the population were evaluated, return a new population with the
-            // evaluated individuals.
-            if (toEvaluate.size == population.size) {
-                toEvaluate.map { it.phenotype }
-            } else {
-                // Otherwise, add the evaluated individuals to the population and return a new
-                // population.
-                population.filter { it.isEvaluated() }.toMutableList().apply {
-                    addAll(toEvaluate.map { it.phenotype })
-                }
-            }
-        } else {
-            // If no individuals were selected for evaluation, return the original population.
-            population
-        }
-    }
+    override fun invoke(population: Population<DNA>, force: Boolean) = evaluateAndAddToPopulation(
+        selectAndCreateEvaluators(population, function, force),
+        population
+    ) { evaluators -> evaluators.forEach { it.evaluate() } }
 }
 
 /**
@@ -124,39 +102,76 @@ class CoroutineEvaluator<DNA>(
     override fun invoke(population: Population<DNA>, force: Boolean): Population<DNA> {
         // Initialize the job instance with a new Job
         job = Job()
-        // Create a list of PhenotypeEvaluator instances that need to be evaluated
-        val notEvaluated = if (force) {
+        return evaluateAndAddToPopulation(
+            selectAndCreateEvaluators(population, function, force),
             population
-        } else {
-            population.filter { it.isNotEvaluated() }
-        }.map { PhenotypeEvaluator(it, function) }
-        // If there are any PhenotypeEvaluator instances that need to be evaluated, run them
-        // concurrently
-        return if (notEvaluated.isNotEmpty()) {
-            // Run the evaluations concurrently using coroutines
+        ) { evaluators ->
             runBlocking {
-                // Split the list of PhenotypeEvaluator instances into chunks of size `chunkSize`
-                notEvaluated.chunked(chunkSize).map { chunk ->
-                    // Create a new coroutine to evaluate each chunk of PhenotypeEvaluator instances
+                evaluators.chunked(chunkSize).map { chunk ->
                     async {
                         chunk.forEach { it.evaluate() }
                     }
-                }.awaitAll() // Wait for all coroutines to complete
+                }.awaitAll()
             }
-            // Update the population with the evaluated Phenotype instances
-            if (notEvaluated.size == population.size) {
-                notEvaluated.map { it.phenotype }
-            } else {
-                population.filter { it.isEvaluated() }.toMutableList().apply {
-                    addAll(notEvaluated.map { it.phenotype })
-                }
-            }
-        } else {
-            // If all Phenotype instances have already been evaluated, return the original
-            // population
-            population
         }
     }
+}
+
+/**
+ * Selects the un-evaluated individuals from a population and creates a list of corresponding
+ * [PhenotypeEvaluator] objects for evaluating their fitness.
+ *
+ * @param population the population of individuals to evaluate
+ * @param function the fitness function to use for evaluating individuals
+ * @param force whether to force evaluation of all individuals in the population regardless of
+ * their evaluation status (default is false)
+ * @return a list of [PhenotypeEvaluator] objects corresponding to the un-evaluated individuals
+ * in the population (or all individuals if [force] is true)
+ */
+private fun <DNA> selectAndCreateEvaluators(
+    population: Population<DNA>,
+    function: (Genotype<DNA>) -> Double,
+    force: Boolean = false
+): List<PhenotypeEvaluator<DNA>> = if (force) {
+    // Evaluate all individuals in the population if force is true
+    population
+} else {
+    // Select un-evaluated individuals and create corresponding PhenotypeEvaluator objects
+    population.filter { it.isNotEvaluated() }
+}.map { PhenotypeEvaluator(it, function) }
+
+/**
+ * Evaluates a list of phenotype evaluators and adds the resulting phenotypes to the given
+ * population.
+ *
+ * @param toEvaluate a list of phenotype evaluators to evaluate and add to the population.
+ * @param population the original population to add the evaluated individuals to.
+ * @param evaluationStrategy a function that evaluates the list of phenotype evaluators.
+ * @return a new population that includes the evaluated individuals. If no individuals were selected
+ *  for evaluation, the original population is returned.
+ *  If all individuals in the population were evaluated, only the evaluated individuals are
+ *  returned.
+ */
+private fun <DNA> evaluateAndAddToPopulation(
+    toEvaluate: List<PhenotypeEvaluator<DNA>>,
+    population: Population<DNA>,
+    evaluationStrategy: (List<PhenotypeEvaluator<DNA>>) -> Unit
+) = if (toEvaluate.isNotEmpty()) {
+    evaluationStrategy(toEvaluate)
+    // If all individuals in the population were evaluated, return a new population with the
+    // evaluated individuals.
+    if (toEvaluate.size == population.size) {
+        toEvaluate.map { it.phenotype }
+    } else {
+        // Otherwise, add the evaluated individuals to the population and return a new
+        // population.
+        population.filter { it.isEvaluated() }.toMutableList().apply {
+            addAll(toEvaluate.map { it.phenotype })
+        }
+    }
+} else {
+    // If no individuals were selected for evaluation, return the original population.
+    population
 }
 
 /**
