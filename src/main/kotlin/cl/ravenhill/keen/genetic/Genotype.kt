@@ -56,7 +56,8 @@ class Genotype<DNA>(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DN
      */
     @Deprecated(
         "Use the copy constructor instead",
-        ReplaceWith("Genotype(chromosomes)", "cl.ravenhill.keen.genetic.Genotype")
+        ReplaceWith("Genotype(chromosomes)", "cl.ravenhill.keen.genetic.Genotype"),
+        level = DeprecationLevel.WARNING
     )
     fun duplicate(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes)
 

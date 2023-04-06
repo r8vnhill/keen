@@ -4,47 +4,64 @@ import cl.ravenhill.keen.util.math.isNotNan
 import java.util.*
 
 /**
- * An individual of a population.
+ * Represents a phenotype, which is a combination of a genotype (collection of genetic data)
+ * and its associated fitness.
+ * A phenotype can be evaluated and compared to other phenotypes.
  *
- * A ``Phenotype`` is a collection of genetic material that represents a solution to a problem.
+ * @property genotype The genotype associated with the phenotype.
+ * @property generation The generation in which the phenotype occurred.
+ * @property fitness The fitness associated with the phenotype. Defaults to `Double.NaN`.
  *
- * @param DNA  The type of the phenotype's value.
- * @property genotype  The genotype of the phenotype.
- * @property generation The generation of the phenotype.
- * @property fitness The fitness of the phenotype.
+ * @constructor Creates a new [Phenotype] instance with the given [genotype], [generation] and
+ * [fitness].
  *
- * @constructor Creates a new phenotype with the given genotype, generation and fitness.
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 1.0.0
  */
-open class Phenotype<DNA>(
-    open val genotype: Genotype<DNA>,
+class Phenotype<DNA>(
+    val genotype: Genotype<DNA>,
     val generation: Int,
-    open val fitness: Double = Double.NaN
+    val fitness: Double = Double.NaN
 ) : GeneticMaterial<DNA>, Comparable<Phenotype<DNA>> {
 
+    // Inherit documentation from Verifyable
     override fun verify(): Boolean = genotype.verify() && fitness.isNotNan()
+
+    // Inherit documentation from Comparable
     override fun compareTo(other: Phenotype<DNA>) =
         this.fitness compareTo other.fitness
 
+    // Inherit documentation from Any
     override fun toString() = "{ $genotype -> $fitness }"
 
     /**
-     * Returns ``true`` if the fitness of the phenotype has been evaluated.
+     * Returns a Boolean indicating whether the fitness of the phenotype has been evaluated.
+     *
+     * @return `true` if the fitness has been evaluated, `false` otherwise.
      */
     fun isEvaluated() = fitness.isNotNan()
 
     /**
-     * Returns ``true`` if the fitness of the genotype has not been evaluated.
+     * Returns `true` if the fitness of the phenotype has not been evaluated.
      */
     fun isNotEvaluated() = !isEvaluated()
 
     /**
-     * Creates a new phenotype with a given fitness using the same genotype and generation.
+     * Creates a new [Phenotype] instance with the given fitness value.
+     *
+     * @param fitness The fitness value of the phenotype.
+     * @return A new [Phenotype] instance with the given fitness value.
      */
     fun withFitness(fitness: Double) = Phenotype(genotype, generation, fitness)
 
+
+    // Inherit documentation from GeneticMaterial
     override fun flatten() = genotype.flatten()
 
+    // Inherit documentation from Any
     override fun equals(other: Any?) = other is Phenotype<*> && genotype == other.genotype
 
+    // Inherit documentation from Any
     override fun hashCode() = Objects.hash(Phenotype::class, genotype)
 }
