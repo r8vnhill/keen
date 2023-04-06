@@ -26,6 +26,10 @@ import java.util.Objects
  *     `Genotype`.
  *     This list can be iterated over to access individual `Chromosome` objects, or it can be
  *     manipulated as a whole using the various methods provided by the `Genotype` class.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 1.0.0
  */
 class Genotype<DNA>(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DNA>,
         Iterable<Chromosome<DNA>> {
