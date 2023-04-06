@@ -3,6 +3,7 @@ package cl.ravenhill.keen.problems.gp
 import cl.ravenhill.keen.Builders
 import cl.ravenhill.keen.Builders.Chromosomes.program
 import cl.ravenhill.keen.Builders.engine
+import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
@@ -31,7 +32,7 @@ fun main() {
     Core.maxProgramDepth = 5
     val engine = engine(
         fitness((-10..10).map { it / 10.0 }),
-        Builders.genotype {
+        genotype {
             chromosome {
                 program {
                     function("*", 2) { it[0] * it[1] }

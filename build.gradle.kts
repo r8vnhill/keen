@@ -5,7 +5,7 @@ val projectVersion: String by project
 
 plugins {
     // Configures Kotlin to compile to the JVM
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "1.8.20"
     // Enables publishing artifacts to Maven repositories
     `maven-publish`
     // Enables building a Java library
@@ -32,9 +32,9 @@ repositories {
 
 dependencies {
     // Kotlin standard library with extensions for JDK 8
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20-RC")
     // Library for writing asynchronous code using coroutines in Kotlin
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
     // Library for working with date and time in Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     // Tablesaw core library for working with tabular data in Java and Kotlin
@@ -45,19 +45,19 @@ dependencies {
     // Simple logging facade for Java
     implementation("org.slf4j:slf4j-simple:2.0.5")
     // Kotest library for writing data-driven tests in Kotlin
-    testImplementation("io.kotest:kotest-framework-datatest:5.5.4")
+    testImplementation("io.kotest:kotest-framework-datatest:5.5.5")
     // Kotest library for writing assertions in Kotlin
-    testImplementation("io.kotest:kotest-assertions-core:5.5.4")
+    testImplementation("io.kotest:kotest-assertions-core:5.5.5")
     // Kotest library for running tests with JUnit 5 in Kotlin
-    testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
+    testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
     // Kotest library for writing property-based tests in Kotlin
-    testImplementation("io.kotest:kotest-property:5.5.4")
+    testImplementation("io.kotest:kotest-property:5.5.5")
     // Kotest library for running tests with JUnit 5 in Kotlin/JVM
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.4")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.5")
     // Library for testing code that uses System.exit() in Java/Kotlin
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
     // Dokka plugin for generating documentation in HTML format
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.10")
 }
 
 java {
@@ -70,6 +70,11 @@ java {
 kotlin {
     // Configures the JVM toolchain to use version 8 of the JDK
     jvmToolchain(8)
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
 }
 
 tasks.test {

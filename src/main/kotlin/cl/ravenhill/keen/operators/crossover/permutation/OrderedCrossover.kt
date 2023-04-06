@@ -79,7 +79,7 @@ class OrderedCrossover<DNA>(probability: Double, chromosomeRate: Double = 1.0) :
         // Creates a new list to hold the offspring.
         val offspring = mutableListOf<Gene<DNA>>()
         // Creates a new list to hold the genes from the second parent that are not in the sublist.
-        val uniqueGenes = parents.second.toMutableList().apply { removeAll(sublist) }
+        val uniqueGenes = parents.second.toMutableList().apply { removeAll(sublist.toSet()) }
         // Adds the genes from the second parent that are not in the sublist to the offspring to
         // the new offspring in the same order they appear in the second parent (until the start
         // index).

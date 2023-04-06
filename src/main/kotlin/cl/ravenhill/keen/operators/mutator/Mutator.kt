@@ -85,7 +85,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
     ): MutatorResult<Genotype<DNA>> {
         val result = genotype.chromosomes.map { mutateChromosome(it) }
         return MutatorResult(
-            genotype.duplicate(result.map { it.mutated }),
+            Genotype(result.map { it.mutated }),
             result.sumOf { it.mutations }
         )
     }

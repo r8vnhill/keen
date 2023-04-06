@@ -11,72 +11,120 @@ import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import cl.ravenhill.keen.genetic.chromosomes.ProgramChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 
 /**
- * Builder methods for Keen core classes.
+ * Provides factory methods to create instances of genetic algorithm components, such as [Engine]s,
+ * [Genotype]s, and [Chromosome]s.
+ * For example, to create an engine that evolves a population towards better solutions, you can use
+ * the [engine] method with a fitness function, a genotype factory, and an initialization block
+ * that sets population size, alterers, and termination conditions.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 1.0.0
  */
 object Builders {
 
     /**
-     * Creates a new [Engine] with the given ``fitnessFunction``, ``genotype`` and ``init`` block.
+     * Creates a new [Engine] with the given [fitnessFunction], [genotype], and [init] block.
      *
      * __Usage:__
      * ```
-     *  val engine = engine(::fitnessFn, genotype {
-     *      chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
-     *  }) {
-     *      populationSize = 500
-     *      alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
-     *      limits = listOf(SteadyGenerations(20), GenerationCount(100))
-     *  }
+     * val engine = engine(::fitnessFn, genotype {
+     *     chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+     * }) {
+     *     populationSize = 500
+     *     alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
+     *     limits = listOf(SteadyGenerations(20), GenerationCount(100))
+     * }
      * ```
+     *
+     * @param fitnessFunction A function that evaluates the fitness of a given `Genotype`.
+     * @param genotype A factory for creating a new `Genotype` instance.
+     * @param init A lambda block that allows configuring the engine by setting properties such as
+     *  population size, alterers (e.g. mutation and crossover), and termination conditions (e.g.
+     *  steady generations).
+     *
+     * @return An [Engine] instance that can be used to evolve a population towards better
+     *  solutions.
      */
     fun <DNA> engine(
         fitnessFunction: (Genotype<DNA>) -> Double,
         genotype: Genotype.Factory<DNA>,
         init: Engine.Builder<DNA>.() -> Unit
-    ) = Engine.Builder(fitnessFunction, genotype).apply(init).build()
+    ): Engine<DNA> = Engine.Builder(fitnessFunction, genotype).apply(init).build()
 
     /**
-     * Creates a new [Genotype] with the given ``init`` block.
+     * Creates a new [Genotype] with the given [init] block.
      *
      * __Usage:__
      * ```
-     *  genotype {
-     *      chromosome { booleans(20, 0.15) }
-     *  }
+     * genotype {
+     *     chromosome {
+     *         booleans {
+     *             size = 20
+     *             truesProbability = 0.15
+     *         }
+     *     }
+     * }
      * ```
+     *
+     * @param init A lambda block that allows configuring the genotype by specifying its chromosomes.
+     *
+     * @return A `Genotype` instance that contains the specified chromosomes.
+     *
+     * @see Genotype
+     * @see Chromosomes
      */
     fun <DNA> genotype(init: Genotype.Factory<DNA>.() -> Unit) =
         Genotype.Factory<DNA>().apply(init)
 
     /**
-     * Builder blocks for [Chromosome.Factory]s.
+     * A utility object that provides factory methods to create different types of chromosomes used
+     * in genetic algorithms.
+     *
+     * @see Chromosome
+     * @see Chromosome.Factory
      */
     object Chromosomes {
+
         /**
-         * Creates a new [BoolChromosome.Factory].
+         * Creates a new [BoolChromosome.Factory] with the given [builder] block.
          *
          * __Usage:__
          * ```
-         *  chromosome {
-         *      booleans {
-         *          size = 20
-         *          truesProbability = 0.15
-         *      }
-         *  }
+         * booleans {
+         *     size = 20
+         *     truesProbability = 0.15
+         * }
          * ```
+         *
+         * @param builder A lambda block that allows configuring the [BoolChromosome.Factory] by
+         *  specifying its properties.
+         *
+         * @return A `BoolChromosome.Factory` instance with the specified properties.
+         *
+         * @see BoolChromosome
+         * @see Chromosome
          */
         fun booleans(builder: BoolChromosome.Factory.() -> Unit) =
             BoolChromosome.Factory().apply(builder)
 
         /**
-         * Creates a new [CharChromosome.Factory].
+         * Creates a new [CharChromosome.Factory] with the given [builder] block.
          *
          * __Usage:__
          * ```
-         * chromosome { chars { size = 20 } }
+         * chars {
+         *     size = 20
+         * }
          * ```
+         *
+         * @param builder A lambda block that allows configuring the `CharChromosome.Factory` by
+         *  specifying its properties.
+         *
+         * @return A `CharChromosome.Factory` instance with the specified properties.
          */
         fun chars(builder: CharChromosome.Factory.() -> Unit) =
             CharChromosome.Factory().apply(builder)
@@ -86,33 +134,62 @@ object Builders {
          *
          * __Usage:__
          * ```
-         *  chromosome {
-         *      ints {
-         *          size = 20
-         *          range = 0 to 100
-         *          filter = { it % 2 == 0 }
-         *      }
-         *  }
+         * ints {
+         *     size = 20
+         *     range = 0..100
+         *     filter = { it % 2 == 0 }
+         * }
+         * ```
+         *
+         * @param builder A lambda block that allows configuring the properties of the
+         *  [IntChromosome].
+         *
+         * @return An [IntChromosome.Factory] instance that can be used to create new
+         *  [IntChromosome] instances.
          */
         fun ints(builder: IntChromosome.Factory.() -> Unit) =
             IntChromosome.Factory().apply(builder)
 
         /**
-         * Creates a new [DoubleChromosome.Factory].
+         * Creates a new [DoubleChromosome.Factory] with the given [builder] block.
          *
          * __Usage:__
          * ```
-         *  chromosome {
-         *      doubles {
-         *          size = 20
-         *          range = 0.0 to 100.0
-         *      }
-         *  }
-         *  ```
+         * chromosome {
+         *     doubles {
+         *         size = 20
+         *         range = 0.0..100.0
+         *     }
+         * }
+         * ```
+         *
+         * @param builder A lambda block that allows configuring the properties of the
+         *  [DoubleChromosome].
+         *
+         * @return A [DoubleChromosome.Factory] instance that can be used to create new
+         *  [DoubleChromosome] instances.
          */
         fun doubles(builder: DoubleChromosome.Factory.() -> Unit) =
             DoubleChromosome.Factory().apply(builder)
 
+        /**
+         * Creates a new [ProgramChromosome.Factory] using the specified builder to configure it.
+         *
+         * __Usage:__
+         * ```
+         * program {
+         *     function("*", 2) { it[0] * it[1] }
+         *     function("+", 2) { it[0] + it[1] }
+         *     terminal { EphemeralConstant { Core.random.nextInt(-1, 2).toDouble() } }
+         *     terminal { Variable("x", 0) }
+         * }
+         * ```
+         *
+         * @param builder The lambda block that configures the properties of the [ProgramChromosome].
+         *
+         * @return A [ProgramChromosome.Factory] instance that can be used to create new
+         *  [ProgramChromosome] instances.
+         */
         fun <T> program(builder: ProgramChromosome.Factory<T>.() -> Unit) =
             ProgramChromosome.Factory<T>().apply(builder)
     }

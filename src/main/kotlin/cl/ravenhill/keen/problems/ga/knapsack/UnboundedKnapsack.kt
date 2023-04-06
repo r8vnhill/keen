@@ -110,6 +110,6 @@ fun main() {
     }
     val result = engine.run()
     println(engine.statistics.last())
-    println(result.best?.flatten()?.filter { it.first != 0 })
+    println(result.best.flatten().filter { it.first != 0 })
     (engine.statistics[1] as StatisticPlotter).displayFitness()
 }

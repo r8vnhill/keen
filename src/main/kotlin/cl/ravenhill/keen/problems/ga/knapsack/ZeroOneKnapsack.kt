@@ -63,9 +63,9 @@ fun main() {
     }
     val result = engine.run()
     println(engine.statistics.first())
-    result.best?.flatten()
-        ?.mapIndexed { index, b -> if (b) items[index] else null }
-        ?.filterNotNull()
+    result.best.flatten()
+        .mapIndexed { index, b -> if (b) items[index] else null }
+        .filterNotNull()
         .let { println("Items: $it") }
     (engine.statistics.last() as StatisticPlotter).displayFitness()
 }

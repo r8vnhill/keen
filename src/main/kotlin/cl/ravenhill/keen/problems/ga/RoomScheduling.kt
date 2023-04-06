@@ -86,7 +86,7 @@ fun main() {
     }
     val result = engine.run()
     println(engine.statistics.first())
-    val schedule = MutableList(result.best!!.genotype.size) { mutableListOf<Meeting>() }
+    val schedule = MutableList(result.best.genotype.size) { mutableListOf<Meeting>() }
     meetings.forEachIndexed { index, meeting ->
         val room = result.best.genotype.chromosomes[index].genes[0].dna
         schedule[room].add(meeting)

@@ -29,7 +29,7 @@ fun main() {
     }
     val evolvedPopulation = engine.run()
     println("Solution found in ${evolvedPopulation.generation} generations")
-    println("Solution: ${evolvedPopulation.best?.genotype}")
-    println("With fitness: ${evolvedPopulation.best?.fitness}")
+    println("Solution: ${evolvedPopulation.best.genotype}")
+    println("With fitness: ${evolvedPopulation.best.fitness}")
     (engine.statistics.last() as StatisticPlotter).displayFitness()
 }

@@ -69,7 +69,7 @@ class GenotypeSpec : WordSpec({
     "Convert to sequence" should {
         "return a sequence with the chromosomes of the genotype" {
             checkAll(Arb.genotype(Arb.intChromosomeFactory())) { genotype ->
-                genotype.sequence().forEachIndexed { index, chromosome ->
+                genotype.asSequence().forEachIndexed { index, chromosome ->
                     genotype.chromosomes[index] shouldBe chromosome
                 }
             }
