@@ -10,7 +10,6 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import java.util.*
@@ -48,7 +47,7 @@ class IntGene(
     val end = range.second
 
     override fun average(genes: List<NumberGene<Int>>) =
-        duplicate(genes.fold(dna.toDouble() / (genes.size + 1)) { acc, gene ->
+        withDna(genes.fold(dna.toDouble() / (genes.size + 1)) { acc, gene ->
             acc + gene.toDouble() / (genes.size + 1)
         }.toInt())
 
@@ -58,7 +57,7 @@ class IntGene(
 
     override fun generator() = Core.random.nextInt(start, end)
 
-    override fun duplicate(dna: Int) = IntGene(dna, start to end, filter)
+    override fun withDna(dna: Int) = IntGene(dna, start to end, filter)
 
     @Suppress("ConvertTwoComparisonsToRangeCheck")
     override fun verify() = dna >= start && dna < end && filter(dna)

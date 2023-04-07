@@ -103,7 +103,7 @@ class DoubleGeneSpec : WordSpec({
                     Core.random = Random(seed)
                     val expected =
                         Random(seed).nextDouble(gData.range.first, gData.range.second)
-                    DoubleGene(gData.dna, gData.range).duplicate(expected) shouldBe
+                    DoubleGene(gData.dna, gData.range).withDna(expected) shouldBe
                             DoubleGene(expected, gData.range)
                 }
             }

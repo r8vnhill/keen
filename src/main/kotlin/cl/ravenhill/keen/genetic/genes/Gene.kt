@@ -3,10 +3,10 @@ package cl.ravenhill.keen.genetic.genes
 import cl.ravenhill.keen.genetic.GeneticMaterial
 
 /**
- * Atomic unit of a chromosome.
+ * Represents a gene, which is a unit of heredity that encodes a single trait of an organism.
  *
- * @param DNA The type of the gene's value.
  * @property dna The gene's value.
+ * @constructor Creates a new [Gene] instance with the given [dna].
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.0.0
@@ -14,15 +14,12 @@ import cl.ravenhill.keen.genetic.GeneticMaterial
  */
 interface Gene<DNA> : GeneticMaterial<DNA> {
 
-    /**
-     * The gene's value.
-     */
     val dna: DNA
 
     /**
      * Creates a new gene with a mutated value.
      */
-    fun mutate(): Gene<DNA> = duplicate(generator())
+    fun mutate(): Gene<DNA> = withDna(generator())
 
     /**
      * Generates a new random value for this gene.
@@ -31,8 +28,11 @@ interface Gene<DNA> : GeneticMaterial<DNA> {
 
     /**
      * Creates a new gene with the given value.
+     *
+     * @param dna The value for the new gene.
+     * @return A new [Gene] instance with the given [dna] value.
      */
-    fun duplicate(dna: DNA): Gene<DNA>
+    fun withDna(dna: DNA): Gene<DNA>
 
     // Documentation inherited from GeneticMaterial
     override fun flatten() = listOf(dna)

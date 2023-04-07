@@ -11,8 +11,8 @@
 package cl.ravenhill.keen.problems.ga.optimization
 
 import cl.ravenhill.keen.Builders.Chromosomes.doubles
-import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover

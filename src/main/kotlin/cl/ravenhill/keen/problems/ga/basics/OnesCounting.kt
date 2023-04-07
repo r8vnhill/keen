@@ -1,8 +1,8 @@
 package cl.ravenhill.keen.problems.ga.basics
 
 import cl.ravenhill.keen.Builders.Chromosomes.booleans
-import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness

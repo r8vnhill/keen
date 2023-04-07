@@ -26,34 +26,6 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
  */
 object Builders {
 
-    /**
-     * Creates a new [Engine] with the given [fitnessFunction], [genotype], and [init] block.
-     *
-     * __Usage:__
-     * ```
-     * val engine = engine(::fitnessFn, genotype {
-     *     chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
-     * }) {
-     *     populationSize = 500
-     *     alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
-     *     limits = listOf(SteadyGenerations(20), GenerationCount(100))
-     * }
-     * ```
-     *
-     * @param fitnessFunction A function that evaluates the fitness of a given `Genotype`.
-     * @param genotype A factory for creating a new `Genotype` instance.
-     * @param init A lambda block that allows configuring the engine by setting properties such as
-     *  population size, alterers (e.g. mutation and crossover), and termination conditions (e.g.
-     *  steady generations).
-     *
-     * @return An [Engine] instance that can be used to evolve a population towards better
-     *  solutions.
-     */
-    fun <DNA> engine(
-        fitnessFunction: (Genotype<DNA>) -> Double,
-        genotype: Genotype.Factory<DNA>,
-        init: Engine.Builder<DNA>.() -> Unit
-    ): Engine<DNA> = Engine.Builder(fitnessFunction, genotype).apply(init).build()
 
     /**
      * Creates a new [Genotype] with the given [init] block.
@@ -207,8 +179,7 @@ object Builders {
      * @param init A function that initializes an [Evaluator.Factory] instance with custom settings.
      * @return An [Evaluator.Factory] instance.
      */
-    fun <DNA> evaluator(init: Evaluator.Factory<DNA>.() -> Unit): Evaluator.Factory<DNA> =
-        Evaluator.Factory<DNA>().apply(init)
+    fun <DNA> evaluator(init: () -> Evaluator.Factory<DNA>): Evaluator.Factory<DNA> = init()
 
     /**
      * Returns a [CoroutineEvaluator.Factory] instance initialized with custom settings through

@@ -61,7 +61,7 @@ class ProgramGene<DNA> internal constructor(
      *
      * @param dna The program tree for the new instance.
      */
-    override fun duplicate(dna: Program<DNA>) =
+    override fun withDna(dna: Program<DNA>) =
         ProgramGene(dna.copy(), functions, terminals, generationMethods)
 
     // region : Equals, HashCode, ToString

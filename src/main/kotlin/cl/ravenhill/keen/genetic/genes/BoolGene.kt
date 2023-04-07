@@ -23,7 +23,7 @@ sealed class BoolGene : Gene<Boolean> {
 
     override fun generator() = Core.random.nextBoolean()
 
-    override fun duplicate(dna: Boolean) = if (dna) {
+    override fun withDna(dna: Boolean) = if (dna) {
         True
     } else {
         False

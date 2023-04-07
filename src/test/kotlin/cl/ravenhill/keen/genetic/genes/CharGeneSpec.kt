@@ -86,7 +86,7 @@ class CharGeneSpec : WordSpec({
         "Duplicating" should {
             "return a new gene with the same dna" {
                 checkAll<Char, Char> { original, expected ->
-                    CharGene(original).duplicate(expected) shouldBe CharGene(expected)
+                    CharGene(original).withDna(expected) shouldBe CharGene(expected)
                 }
             }
         }

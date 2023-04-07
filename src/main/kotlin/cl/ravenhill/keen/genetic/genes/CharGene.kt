@@ -17,7 +17,7 @@ class CharGene(override val dna: Char) : ComparableGene<Char> {
 
     override fun generator() = Core.random.nextChar()
 
-    override fun duplicate(dna: Char) = CharGene(dna)
+    override fun withDna(dna: Char) = CharGene(dna)
 
     // region : TYPE CONVERSIONS
     /**

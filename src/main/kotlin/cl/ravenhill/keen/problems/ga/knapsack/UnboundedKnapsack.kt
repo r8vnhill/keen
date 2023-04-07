@@ -8,9 +8,9 @@
 
 package cl.ravenhill.keen.problems.ga.knapsack
 
-import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -57,7 +57,7 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>>): Double {
 class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
     override fun generator() = items.random(Core.random)
 
-    override fun duplicate(dna: Pair<Int, Int>) = KnapsackGene(dna)
+    override fun withDna(dna: Pair<Int, Int>) = KnapsackGene(dna)
 
     override fun toString() = "(${dna.first}, ${dna.second})"
 }
@@ -66,7 +66,7 @@ class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
  * [Chromosome] that holds a list of [KnapsackGene]s.
  */
 class KnapsackChromosome(override val genes: List<KnapsackGene>) :
-    Chromosome<Pair<Int, Int>> {
+        Chromosome<Pair<Int, Int>> {
     override fun duplicate(genes: List<Gene<Pair<Int, Int>>>) =
         KnapsackChromosome(genes.map { KnapsackGene((it.dna)) })
 
@@ -81,7 +81,7 @@ class KnapsackChromosome(override val genes: List<KnapsackGene>) :
      * @param geneFactory The factory method for the genes.
      */
     class Factory(private val size: Int, private val geneFactory: () -> KnapsackGene) :
-        Chromosome.Factory<Pair<Int, Int>> {
+            Chromosome.Factory<Pair<Int, Int>> {
         override fun make() = KnapsackChromosome((0 until size).map { geneFactory() })
     }
 }

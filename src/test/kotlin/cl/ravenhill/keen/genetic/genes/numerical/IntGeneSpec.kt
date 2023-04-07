@@ -85,7 +85,7 @@ class IntGeneSpec : WordSpec({
                 checkAll(Arb.intGene(-1_000_000, 1_000_000), Arb.long()) { gene, seed ->
                     val expected =
                         Random(seed).nextInt(gene.range.first, gene.range.second)
-                    gene.duplicate(expected) shouldBe
+                    gene.withDna(expected) shouldBe
                             IntGene(expected, gene.range)
                 }
             }

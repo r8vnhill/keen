@@ -1,10 +1,10 @@
 package cl.ravenhill.keen.problems.ga
 
 import cl.ravenhill.keen.Builders.coroutines
-import cl.ravenhill.keen.Builders.engine
 import cl.ravenhill.keen.Builders.evaluator
 import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -47,7 +47,7 @@ class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
         TODO("Not yet implemented")
     }
 
-    override fun duplicate(dna: Pair<Int, Int>) = RoutePointGene(dna)
+    override fun withDna(dna: Pair<Int, Int>) = RoutePointGene(dna)
     override fun toString() = "(${dna.first}, ${dna.second})"
     override fun equals(other: Any?) = other is RoutePointGene && dna == other.dna
     override fun hashCode() = Objects.hash(RoutePointGene::class, dna)
@@ -77,7 +77,7 @@ fun main() {
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPrinter(30), StatisticPlotter())
         evaluator = evaluator {
-            coroutines<Pair<Int, Int>> {
+            coroutines {
                 dispatcher = Dispatchers.Main
                 chunkSize = 500
             }

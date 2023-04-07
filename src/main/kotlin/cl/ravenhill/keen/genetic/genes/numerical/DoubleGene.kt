@@ -31,7 +31,7 @@ class DoubleGene(
 ) : NumberGene<Double>, ComparableGene<Double> {
 
     override fun average(genes: List<NumberGene<Double>>) =
-        duplicate(genes.fold(dna / (genes.size + 1)) { acc, gene -> acc + gene.dna / (genes.size + 1) })
+        withDna(genes.fold(dna / (genes.size + 1)) { acc, gene -> acc + gene.dna / (genes.size + 1) })
 
     private val start = range.first
 
@@ -43,7 +43,7 @@ class DoubleGene(
 
     override fun generator() = Core.random.nextDouble(start, end)
 
-    override fun duplicate(dna: Double) = DoubleGene(dna, range)
+    override fun withDna(dna: Double) = DoubleGene(dna, range)
 
     override fun verify() = dna < range.second && dna >= range.first
 

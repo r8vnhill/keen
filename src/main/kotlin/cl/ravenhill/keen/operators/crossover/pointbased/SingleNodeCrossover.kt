@@ -15,7 +15,6 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.probability
-import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtMost
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.Tree
@@ -140,8 +139,8 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
                     }
                 }
                 // add the new genes to the offspring chromosomes
-                genes.first.add(gene1.duplicate(newTree1))
-                genes.second.add(gene2.duplicate(newTree2))
+                genes.first.add(gene1.withDna(newTree1))
+                genes.second.add(gene2.withDna(newTree2))
             } else {
                 // if no crossover is performed, simply add the original genes to the offspring chromosomes
                 genes.first.add(gene1)
