@@ -1,8 +1,9 @@
 package cl.ravenhill.keen.problems.gp
 
-import cl.ravenhill.keen.Builders.Chromosomes.program
-import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
+import cl.ravenhill.keen.builders.genotype
+import cl.ravenhill.keen.builders.program
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness

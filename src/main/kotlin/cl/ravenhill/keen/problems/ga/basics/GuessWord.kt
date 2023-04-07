@@ -1,8 +1,9 @@
 package cl.ravenhill.keen.problems.ga.basics
 
-import cl.ravenhill.keen.Builders.Chromosomes.chars
-import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.builders.chars
+import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
+import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover

@@ -97,32 +97,14 @@ class Genotype<DNA>(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DN
      */
     class Factory<DNA> {
 
-        lateinit var chromosomes: MutableList<Chromosome.Factory<DNA>>
-
-        /**
-         * Adds a chromosome factory to the builder.
-         *
-         * @param lazyFactory A function that returns a [Chromosome.Factory] instance for the
-         *  chromosome.
-         */
-        fun chromosome(lazyFactory: () -> Chromosome.Factory<DNA>) {
-            if (!this::chromosomes.isInitialized) {
-                chromosomes = mutableListOf()
-            }
-            chromosomes.add(lazyFactory())
-        }
+        var chromosomes: MutableList<Chromosome.Factory<DNA>> = mutableListOf()
 
         /**
          * Creates a new [Genotype] instance with the chromosomes added to the builder.
          */
         fun make(): Genotype<DNA> {
             enforce {
-                requirement("Chromosomes should be initialized") {
-                    this@Factory::chromosomes.isInitialized
-                }
-                if (this@Factory::chromosomes.isInitialized) {
-                    chromosomes should NotBeEmpty()
-                }
+                chromosomes should NotBeEmpty()
             }
             return Genotype(chromosomes.map { it.make() })
         }

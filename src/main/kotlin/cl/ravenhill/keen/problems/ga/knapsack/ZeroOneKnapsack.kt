@@ -9,9 +9,10 @@
 
 package cl.ravenhill.keen.problems.ga.knapsack
 
-import cl.ravenhill.keen.Builders.Chromosomes.booleans
-import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.builders.booleans
+import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
+import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover

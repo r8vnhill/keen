@@ -2,9 +2,10 @@ package cl.ravenhill.keen.problems.ga
 
 import cl.ravenhill.keen.Builders.coroutines
 import cl.ravenhill.keen.Builders.evaluator
-import cl.ravenhill.keen.Builders.genotype
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
+import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -42,10 +43,6 @@ private infix fun Pair<Int, Int>.distanceTo(other: Pair<Int, Int>) = sqrt(
 
 class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
     override fun mutate() = TODO()
-
-    override fun generator(): Pair<Int, Int> {
-        TODO("Not yet implemented")
-    }
 
     override fun withDna(dna: Pair<Int, Int>) = RoutePointGene(dna)
     override fun toString() = "(${dna.first}, ${dna.second})"

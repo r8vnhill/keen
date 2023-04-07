@@ -24,7 +24,7 @@ interface Gene<DNA> : GeneticMaterial<DNA> {
     /**
      * Generates a new random value for this gene.
      */
-    fun generator(): DNA
+    fun generator(): DNA = dna
 
     /**
      * Creates a new gene with the given value.

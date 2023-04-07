@@ -1,8 +1,9 @@
 package cl.ravenhill.keen.problems.ga
 
-import cl.ravenhill.keen.Builders.Chromosomes.ints
-import cl.ravenhill.keen.Builders.genotype
+import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
+import cl.ravenhill.keen.builders.genotype
+import cl.ravenhill.keen.builders.ints
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
