@@ -39,11 +39,12 @@ fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDoubl
  * is used to display a graph of the fitness values over time.
  */
 fun main() {
-    val engine = engine(::count, genotype {
-        chromosome {
-            booleans { size = 20; truesProbability = 0.15 }
-        }
-    }) {
+    val engine = engine(::count,
+        genotype {
+            chromosome {
+                booleans { size = 20; truesProbability = 0.15 }
+            }
+        }) {
         populationSize = 500
         selector = TournamentSelector(sampleSize = 2)
         alterers =

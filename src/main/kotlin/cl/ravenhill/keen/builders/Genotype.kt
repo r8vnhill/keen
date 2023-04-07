@@ -12,6 +12,17 @@ package cl.ravenhill.keen.builders
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 
+/**
+ * A scope for configuring a [Genotype] instance by adding chromosome factories.
+ *
+ * A genotype is a collection of chromosomes, each of which contains genetic data that is passed
+ * on to offspring during genetic operations. Use this scope to specify the chromosomes to be used
+ * when creating a genotype.
+ *
+ * @property chromosomes A list of chromosome factories that will be used to create the genotype.
+ *
+ * @see ChromosomeScope
+ */
 class GenotypeScope<DNA> {
     val chromosomes = mutableListOf<Chromosome.Factory<DNA>>()
 }
@@ -19,23 +30,24 @@ class GenotypeScope<DNA> {
 /**
  * Creates a new [Genotype] with the given [init] block.
  *
- * __Usage:__
+ * Use this function to create a new [Genotype] instance with the specified chromosomes. The
+ * [init] block takes a [GenotypeScope] instance, which can be used to add chromosomes to the
+ * genotype. Chromosomes can be specified using the [chromosome] function, which takes a lambda
+ * that returns a [Chromosome.Factory] instance.
+ *
+ * __Example usage:__
  * ```
  * genotype {
  *     chromosome {
- *         booleans {
- *             size = 20
- *             truesProbability = 0.15
- *         }
+ *         booleans { }
  *     }
  * }
  * ```
  *
  * @param init A lambda block that allows configuring the genotype by specifying its chromosomes.
  *
- * @return A `Genotype` instance that contains the specified chromosomes.
- *
- * @see Genotype
+ * @return A [Genotype.Factory] instance that contains the [Chromosome.Factory]s created by the
+ *  [init] block.
  */
 fun <DNA> genotype(init: GenotypeScope<DNA>.() -> Unit) =
     Genotype.Factory<DNA>().apply {

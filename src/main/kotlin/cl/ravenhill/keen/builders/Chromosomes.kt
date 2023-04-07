@@ -19,13 +19,35 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 
 
+/**
+ * A DSL scope for configuring a chromosome factory for a genotype builder.
+ *
+ * Use this scope to specify the characteristics of a chromosome that should be used to build a
+ * genotype.
+ * A chromosome is a sequence of genetic data that will be inherited as a unit to the offspring
+ * during the genetic operations.
+ *
+ * @see Chromosome
+ * @see GenotypeScope
+ */
 class ChromosomeScope<DNA>
 
 /**
  * Adds a chromosome factory to the builder.
  *
+ * __Usage:__
+ * ```
+ * genotype {
+ *   chromosome {
+ *     booleans { }
+ *   }
+ * }
+ * ```
+ *
  * @param lazyFactory A function that returns a [Chromosome.Factory] instance for the
- *  chromosome.
+ *      chromosome.
+ * @return `true` if the element was added, `false` if not.
+ *      This will always return `true`.
  */
 fun <DNA> GenotypeScope<DNA>.chromosome(
     lazyFactory: ChromosomeScope<DNA>.() -> Chromosome.Factory<DNA>
@@ -36,9 +58,13 @@ fun <DNA> GenotypeScope<DNA>.chromosome(
  *
  * __Usage:__
  * ```
- * booleans {
- *     size = 20
- *     truesProbability = 0.15
+ * genotype {
+ *   chromosome {
+ *     booleans {
+ *       size = 20
+ *       truesProbability = 0.15
+ *     }
+ *   }
  * }
  * ```
  *
