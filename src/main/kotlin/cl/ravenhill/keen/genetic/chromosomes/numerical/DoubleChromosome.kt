@@ -86,7 +86,7 @@ class DoubleChromosome private constructor(
      * @property size Int
      * @property filter Function1<Double, Boolean>
      */
-    class Factory : Chromosome.Factory<Double> {
+    class Factory : Chromosome.AbstractFactory<Double, DoubleGene>() {
 
         lateinit var range: Pair<Double, Double>
         var size by Delegates.notNull<Int>()

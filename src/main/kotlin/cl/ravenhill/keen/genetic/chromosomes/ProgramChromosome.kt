@@ -49,7 +49,7 @@ class ProgramChromosome<T> private constructor(
     override fun toString() = genes.map { it.dna }.joinToString("\n")
 
     // endregion
-    class Factory<T> : Chromosome.Factory<Program<T>> {
+    class Factory<T> : Chromosome.AbstractFactory<Program<T>, ProgramGene<T>>() {
         var size = 1
             set(value) {
                 enforce { value should BePositive() }

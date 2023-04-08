@@ -58,7 +58,7 @@ class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) :
 
     override fun toString() = genes.joinToString(" -> ")
 
-    class Factory : Chromosome.Factory<Pair<Int, Int>> {
+    class Factory : Chromosome.AbstractFactory<Pair<Int, Int>, RoutePointGene>() {
         override fun make() =
             RouteChromosome(points.shuffled(Core.random).map { RoutePointGene(it) })
     }

@@ -54,7 +54,7 @@ class ChromosomeScope<DNA> {
  *      This will always return `true`.
  */
 fun <DNA> GenotypeScope<DNA>.chromosome(
-    lazyFactory: ChromosomeScope<DNA>.() -> Chromosome.Factory<DNA>
+    lazyFactory: ChromosomeScope<DNA>.() -> Chromosome.Factory<DNA, *>
 ) = chromosomes.add(ChromosomeScope<DNA>().lazyFactory())
 
 /**

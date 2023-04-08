@@ -24,7 +24,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
  * @see ChromosomeScope
  */
 class GenotypeScope<DNA> {
-    val chromosomes = mutableListOf<Chromosome.Factory<DNA>>()
+    val chromosomes = mutableListOf<Chromosome.Factory<DNA, *>>()
 }
 
 /**

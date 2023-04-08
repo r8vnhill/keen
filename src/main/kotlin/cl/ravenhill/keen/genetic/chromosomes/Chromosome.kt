@@ -4,7 +4,6 @@ import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 
 /**
  * An ordered collection of genes that defines a specific genetic material.
@@ -59,7 +58,7 @@ interface Chromosome<DNA> : GeneticMaterial<DNA>, Iterable<Gene<DNA>> {
      * @param G The type of [Gene] contained in the chromosome.
      * @property executor The executor to use for creating [Gene] objects.
      */
-    interface Factory<DNA, G: Gene<DNA>> {
+    interface Factory<DNA, G : Gene<DNA>> {
 
         var executor: ConstructorExecutor<G>
 
@@ -67,5 +66,9 @@ interface Chromosome<DNA> : GeneticMaterial<DNA>, Iterable<Gene<DNA>> {
          * Creates a new [Chromosome] object.
          */
         fun make(): Chromosome<DNA>
+    }
+
+    abstract class AbstractFactory<DNA, G : Gene<DNA>> : Factory<DNA, G> {
+        override var executor: ConstructorExecutor<G> = SequentialConstructor()
     }
 }

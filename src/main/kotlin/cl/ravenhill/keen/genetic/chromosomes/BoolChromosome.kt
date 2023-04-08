@@ -76,7 +76,7 @@ class BoolChromosome private constructor(
      *
      * @constructor Creates a new builder for [BoolChromosome]s.
      */
-    class Factory : Chromosome.Factory<Boolean> {
+    class Factory : Chromosome.AbstractFactory<Boolean, BoolGene>() {
 
         var truesProbability: Double = Double.NaN
 

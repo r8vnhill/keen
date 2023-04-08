@@ -82,7 +82,7 @@ class KnapsackChromosome(override val genes: List<KnapsackGene>) :
      * @param geneFactory The factory method for the genes.
      */
     class Factory(private val size: Int, private val geneFactory: () -> KnapsackGene) :
-            Chromosome.Factory<Pair<Int, Int>> {
+            Chromosome.AbstractFactory<Pair<Int, Int>, KnapsackGene>() {
         override fun make() = KnapsackChromosome((0 until size).map { geneFactory() })
     }
 }

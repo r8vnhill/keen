@@ -81,7 +81,7 @@ class CharChromosome(
      * @property filter The function used to filter the possible character values for each gene.
      * Defaults to a function that accepts all character values.
      */
-    class Factory : Chromosome.Factory<Char> {
+    class Factory : Chromosome.AbstractFactory<Char, CharGene>() {
         var size = 1
         var range = ' '..'z'
         var filter: (Char) -> Boolean = { true }

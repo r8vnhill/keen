@@ -97,7 +97,7 @@ class Genotype<DNA>(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DN
      */
     class Factory<DNA> {
 
-        var chromosomes: MutableList<Chromosome.Factory<DNA>> = mutableListOf()
+        var chromosomes: MutableList<Chromosome.Factory<DNA, *>> = mutableListOf()
 
         /**
          * Creates a new [Genotype] instance with the chromosomes added to the builder.
