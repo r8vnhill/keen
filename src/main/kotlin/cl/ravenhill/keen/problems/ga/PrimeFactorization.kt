@@ -44,9 +44,6 @@ fun main() {
         chromosome {
             ints {
                 size = 10; range = 1 to 200; filter = { it in candidateFactors }
-                executor = constructorExecutor {
-                    coroutines { dispatcher = Dispatchers.Default; chunkSize = 100 }
-                }
             }
         }
     }) {

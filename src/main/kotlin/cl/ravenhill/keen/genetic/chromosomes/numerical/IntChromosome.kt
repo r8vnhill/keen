@@ -88,13 +88,17 @@ class IntChromosome private constructor(
      *
      * @constructor Creates a new [IntChromosome.Factory].
      */
-    class Factory : Chromosome.Factory<Int> {
+    class Factory : Chromosome.Factory<Int, IntGene> {
 
         var filter: (Int) -> Boolean = { true }
-        lateinit var range: Pair<Int, Int>
-        var size by Delegates.notNull<Int>()
-        var executor: ConstructorExecutor<IntGene> = SequentialConstructor()
 
+        lateinit var range: Pair<Int, Int>
+
+        var size by Delegates.notNull<Int>()
+
+        override var executor: ConstructorExecutor<IntGene> = SequentialConstructor()
+
+        /// Inherited documentation
         override fun make(): IntChromosome {
             enforce {
                 size should BePositive()
