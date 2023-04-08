@@ -84,12 +84,16 @@ fun ChromosomeScope<Boolean>.booleans(builder: BoolChromosome.Factory.() -> Unit
  *
  * __Usage:__
  * ```
- * chars {
- *     size = 20
+ * genotype {
+ *   chromosome {
+ *     chars {
+ *       size = 20
+ *     }
+ *   }
  * }
  * ```
  *
- * @param builder A lambda block that allows configuring the `CharChromosome.Factory` by
+ * @param builder A lambda block that allows configuring the [CharChromosome.Factory] by
  *  specifying its properties.
  *
  * @return A `CharChromosome.Factory` instance with the specified properties.

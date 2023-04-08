@@ -24,8 +24,8 @@ import kotlin.random.Random
  * @return a random "printable" character that satisfies the [filter], or the first one
  *  found if no [filter] is specified.
  */
-fun Random.nextChar(filter: (Char) -> Boolean = { true }) =
-    generateSequence { (' '..'z').random(this) }.filter(filter).first()
+fun Random.nextChar(range: CharRange, filter: (Char) -> Boolean = { true }) =
+    generateSequence { range.random(this) }.filter(filter).first()
 
 /**
  * Returns a stream of pseudorandom int values, each conforming to the given origin

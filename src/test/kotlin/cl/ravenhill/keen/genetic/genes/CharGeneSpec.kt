@@ -21,19 +21,19 @@ class CharGeneSpec : WordSpec({
     "Comparing" should {
         "return 0 if the genes are equal" {
             checkAll<Char> { dna ->
-                CharGene(dna).compareTo(CharGene(dna)) shouldBe 0
+                CharGene(dna, ' '..'z') { true }.compareTo(CharGene(dna, ' '..'z') { true }) shouldBe 0
             }
         }
 
         "return a negative number if the first gene is less than the second" {
             checkComparison { lo, hi ->
-                CharGene(lo).compareTo(CharGene(hi)) shouldBeLessThan 0
+                CharGene(lo, ' '..'z') { true }.compareTo(CharGene(hi, ' '..'z') { true }) shouldBeLessThan 0
             }
         }
 
         "return a positive number if the first gene is greater than the second" {
             checkComparison { lo, hi ->
-                CharGene(hi).compareTo(CharGene(lo)) shouldBeGreaterThan 0
+                CharGene(hi, ' '..'z') { true }.compareTo(CharGene(lo, ' '..'z') { true }) shouldBeGreaterThan 0
             }
         }
     }
@@ -41,7 +41,7 @@ class CharGeneSpec : WordSpec({
     "Filtering" should {
         "create a new gene that fulfills the predicate" {
             checkAll<Char> {
-                val gene = CharGene.create { it in 'a'..'z' }
+                val gene = CharGene.create('a'..'z') { it in 'a'..'z' }
                 gene.dna shouldBeInRange 'a'..'z'
             }
         }
@@ -50,7 +50,7 @@ class CharGeneSpec : WordSpec({
     "Flattening" should {
         "return a list with the gene's value" {
             checkAll<Char> { dna ->
-                CharGene(dna).flatten() shouldBe listOf(dna)
+                CharGene(dna, ' '..'z') { true }.flatten() shouldBe listOf(dna)
             }
         }
     }
@@ -59,7 +59,7 @@ class CharGeneSpec : WordSpec({
         "Converting to Char" should {
             "return the gene's dna" {
                 checkAll<Char> { dna ->
-                    CharGene(dna).toChar() shouldBe dna
+                    CharGene(dna, ' '..'z') { true }.toChar() shouldBe dna
                 }
             }
         }
@@ -67,7 +67,7 @@ class CharGeneSpec : WordSpec({
         "Converting to Int" should {
             "return the gene's dna as an Int" {
                 checkAll<Char> { dna ->
-                    CharGene(dna).toInt() shouldBe dna.code
+                    CharGene(dna, ' '..'z') { true }.toInt() shouldBe dna.code
                 }
             }
         }
@@ -77,8 +77,8 @@ class CharGeneSpec : WordSpec({
             checkAll<Long> { seed ->
                 val random = Random(seed)
                 Core.random = Random(seed)
-                val gene = CharGene.create()
-                gene.dna shouldBe random.nextChar()
+                val gene = CharGene.create(range = 'a'..'z')
+                gene.dna shouldBe random.nextChar('a'..'z')
             }
         }
     }
@@ -86,7 +86,10 @@ class CharGeneSpec : WordSpec({
         "Duplicating" should {
             "return a new gene with the same dna" {
                 checkAll<Char, Char> { original, expected ->
-                    CharGene(original).withDna(expected) shouldBe CharGene(expected)
+                    CharGene(original, ' '..'z') { true }.withDna(expected) shouldBe CharGene(
+                        expected,
+                        ' '..'z'
+                    ) { true }
                 }
             }
         }
@@ -95,8 +98,8 @@ class CharGeneSpec : WordSpec({
                 checkAll<Char, Long> { dna, seed ->
                     val rng = Random(seed)
                     Core.random = Random(seed)
-                    val expected = CharGene(rng.nextChar())
-                    CharGene(dna).mutate() shouldBe expected
+                    val expected = CharGene(rng.nextChar('a'..'z'), ' '..'z') { true }
+                    CharGene(dna, ' '..'z') { true }.mutate() shouldBe expected
                 }
             }
         }
@@ -106,14 +109,14 @@ class CharGeneSpec : WordSpec({
         "checking equality" should {
             "return true if the dna of both genes is the same" {
                 checkAll<Char> { dna ->
-                    CharGene(dna) shouldBe CharGene(dna)
+                    CharGene(dna, ' '..'z') { true } shouldBe CharGene(dna, ' '..'z') { true }
                 }
             }
 
             "return false if the dna of both genes is different" {
                 checkAll<Char, Char> { a, b ->
                     assume(a != b)
-                    CharGene(a) shouldNotBe CharGene(b)
+                    CharGene(a, ' '..'z') { true } shouldNotBe CharGene(b, ' '..'z') { true }
                 }
             }
         }
@@ -121,14 +124,20 @@ class CharGeneSpec : WordSpec({
         "checking hashing" should {
             "return the same hash code for equal genes" {
                 checkAll<Char> { dna ->
-                    CharGene(dna).hashCode() shouldBe CharGene(dna).hashCode()
+                    CharGene(dna, ' '..'z') { true }.hashCode() shouldBe CharGene(
+                        dna,
+                        ' '..'z'
+                    ) { true }.hashCode()
                 }
             }
 
             "return different hash codes for different genes" {
                 checkAll<Char, Char> { a, b ->
                     assume(a != b)
-                    CharGene(a).hashCode() shouldNotBe CharGene(b).hashCode()
+                    CharGene(a, ' '..'z') { true }.hashCode() shouldNotBe CharGene(
+                        b,
+                        ' '..'z'
+                    ) { true }.hashCode()
                 }
             }
         }

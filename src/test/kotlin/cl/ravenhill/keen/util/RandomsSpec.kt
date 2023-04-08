@@ -19,7 +19,7 @@ class RandomsSpec : WordSpec({
         "return a character in the range of printable characters" {
             checkAll<Long> { seed ->
                 Core.random = Random(seed)
-                Core.random.nextChar() shouldBeInRange
+                Core.random.nextChar('a'..'z') shouldBeInRange
                         0.toChar()..Character.MAX_CODE_POINT.toChar()
             }
         }
