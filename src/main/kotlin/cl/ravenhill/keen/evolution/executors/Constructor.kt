@@ -21,7 +21,7 @@ import kotlinx.coroutines.runBlocking
  *
  * @param T The type of object created by the constructor.
  */
-interface ConstructorExecutor<T> {
+interface ConstructorExecutor<T> : KeenExecutor {
 
     /**
      * Executes the constructor [size] number of times and returns a list of the resulting objects.
@@ -31,6 +31,10 @@ interface ConstructorExecutor<T> {
      * @return A list of [size] objects created by the constructor.
      */
     operator fun invoke(size: Int, init: () -> T): List<T>
+
+    open class Factory<T> : KeenExecutor.Factory<Unit, ConstructorExecutor<T>> {
+        override var creator: (Unit) -> ConstructorExecutor<T> = { SequentialConstructor() }
+    }
 }
 
 /**
@@ -57,8 +61,8 @@ class SequentialConstructor<T> : ConstructorExecutor<T> {
  * Defaults to 100.
  */
 class CoroutineConstructor<T>(
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    private val chunkSize: Int = 100
+    val dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    val chunkSize: Int = 100
 ) : ConstructorExecutor<T> {
 
     // Documentation inherited from ConstructorExecutor.
@@ -73,5 +77,12 @@ class CoroutineConstructor<T>(
         // Wait for all the `Deferred` objects to complete using `awaitAll()`, and then filter out
         // any `null` values that might have been returned by the constructor.
         deferredList.awaitAll().filterNotNull()
+    }
+
+    class Factory<G> : ConstructorExecutor.Factory<G>() {
+        var dispatcher: CoroutineDispatcher = Dispatchers.Default
+        var chunkSize: Int = 100
+        override var creator: (Unit) -> ConstructorExecutor<G> =
+            { CoroutineConstructor(dispatcher, chunkSize) }
     }
 }

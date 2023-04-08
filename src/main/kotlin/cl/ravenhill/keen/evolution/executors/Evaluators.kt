@@ -44,7 +44,7 @@ import kotlin.coroutines.CoroutineContext
  * @since 1.0.0
  * @version 2.0.0
  */
-interface EvaluationExecutor<DNA> {
+interface EvaluationExecutor<DNA>: KeenExecutor {
 
     /**
      * Evaluates the fitness function of the given population of DNA sequences.
@@ -84,10 +84,11 @@ interface EvaluationExecutor<DNA> {
      * ```
      *
      * @param DNA The type of DNA sequence to evaluate.
-     * @property creator A function that creates an instance of the `Evaluator` interface.
+     * @property creator A function that creates an instance of the [EvaluationExecutor] interface.
      */
-    open class Factory<DNA> {
-        open lateinit var creator: ((Genotype<DNA>) -> Double) -> EvaluationExecutor<DNA>
+    open class Factory<DNA> :
+            KeenExecutor.Factory<((Genotype<DNA>) -> Double), EvaluationExecutor<DNA>> {
+        override lateinit var creator: ((Genotype<DNA>) -> Double) -> EvaluationExecutor<DNA>
     }
 }
 
@@ -180,6 +181,8 @@ class CoroutineEvaluator<DNA>(
                 enforce { value should BePositive { "The chunk size must be a positive integer." } }
                 field = value
             }
+        override var creator: ((Genotype<DNA>) -> Double) -> EvaluationExecutor<DNA> =
+            { function -> CoroutineEvaluator(function, dispatcher, chunkSize) }
     }
 }
 

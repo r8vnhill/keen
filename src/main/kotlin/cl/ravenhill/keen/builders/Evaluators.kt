@@ -87,9 +87,6 @@ fun <DNA> evaluator(init: EvaluatorScope<DNA>.() -> Unit) =
 fun <DNA> EvaluatorScope<DNA>.coroutines(init: CoroutineEvaluator.Factory<DNA>.() -> Unit = {}) {
     factory = CoroutineEvaluator.Factory<DNA>()
         .apply(init)
-        .apply {
-            creator = { CoroutineEvaluator(it, dispatcher, chunkSize) }
-        }
 }
 
 /**

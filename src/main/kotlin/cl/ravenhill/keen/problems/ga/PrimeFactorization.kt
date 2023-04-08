@@ -1,15 +1,15 @@
 package cl.ravenhill.keen.problems.ga
 
-import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.builders.chromosome
+import cl.ravenhill.keen.builders.constructorExecutor
 import cl.ravenhill.keen.builders.coroutines
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.evaluator
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.builders.ints
 import cl.ravenhill.keen.builders.sequential
-import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
@@ -44,6 +44,9 @@ fun main() {
         chromosome {
             ints {
                 size = 10; range = 1 to 200; filter = { it in candidateFactors }
+                executor = constructorExecutor {
+                    coroutines { dispatcher = Dispatchers.Default; chunkSize = 100 }
+                }
             }
         }
     }) {
@@ -52,6 +55,9 @@ fun main() {
         optimizer = FitnessMinimizer()
         limits = listOf(SteadyGenerations(10), GenerationCount(1000))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
+        evaluator = evaluator {
+            sequential()
+        }
     }
     val result = engine.run()
     println(engine.statistics.first())

@@ -13,7 +13,9 @@ import cl.ravenhill.keen.Core.EvolutionLogger.info
 import cl.ravenhill.keen.Core.EvolutionLogger.trace
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
+import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -52,20 +54,21 @@ import kotlin.properties.Delegates
  * @property limits             The limits that will be used to stop the evolution
  * @property steadyGenerations  The number of generations that the fitness has not changed
  */
-class Engine<DNA> private constructor(
-    private val genotype: Genotype.Factory<DNA>,
-    private val populationSize: Int,
-    private val offspringFraction: Double,
+class Engine<DNA>(
+    val genotype: Genotype.Factory<DNA>,
+    val populationSize: Int,
+    val offspringFraction: Double,
     val selector: Selector<DNA>,
-    private val offspringSelector: Selector<DNA>,
-    private val alterer: Alterer<DNA>,
-    private val limits: List<Limit>,
+    val offspringSelector: Selector<DNA>,
+    val alterer: Alterer<DNA>,
+    val limits: List<Limit>,
     val survivorSelector: Selector<DNA>,
-    private val optimizer: PhenotypeOptimizer<DNA>,
+    val optimizer: PhenotypeOptimizer<DNA>,
     val statistics: List<Statistic<DNA>>,
-    private val executor: Executor,
+    val executor: Executor,
     val evaluator: EvaluationExecutor<DNA>,
-    private val interceptor: EvolutionInterceptor<DNA>
+    val interceptor: EvolutionInterceptor<DNA>,
+    val constructorExecutor: ConstructorExecutor<DNA>
 ) : Evolver<DNA> {
 
     // region : PROPERTIES  ------------------------------------------------------------------------
@@ -326,42 +329,38 @@ class Engine<DNA> private constructor(
      * Builder for the [Engine] class.
      *
      * @param DNA The type of the DNA of the Genotype.
-     *
      * @property fitnessFunction the fitness function used to evaluate the fitness of the
-     *      population.
+     * population.
      * @property genotype the genotype factory used to create the initial population.
-     *
      * @property populationSize The size of the population.
-     *      It must be greater than 0.
-     *      Default value is 50.
+     * It must be greater than 0.
+     * Default value is 50.
      * @property limits The limits that will be used to stop the evolution.
-     *      Default value is ``listOf(GenerationCount(100))``.
+     * Default value is ``listOf(GenerationCount(100))``.
      * @property optimizer The optimization strategy used to compare the fitness of the population.
      * @property executor The executor used to run the evolution.
-     *     Default value is ``ForkJoinPool.commonPool()``.
+     * Default value is ``ForkJoinPool.commonPool()``.
      * @property evaluator The evaluator used to evaluate the fitness of the population.
-     *      Default value is ``ConcurrentEvaluator(fitnessFunction, executor)``.
+     * Default value is ``ConcurrentEvaluator(fitnessFunction, executor)``.
      * @property interceptor The interceptor used to intercept the evolution process.
-     *     Default value is ``EvolutionInterceptor.identity()``.
-     *
+     * Default value is ``EvolutionInterceptor.identity()``.
      * @property selector The selector that will be used to select the individuals.
-     *      Default value is ``TournamentSelector(3)``.
+     * Default value is ``TournamentSelector(3)``.
      * @property offspringSelector The selector that will be used to select the offspring.
-     *      Default value is the same as the ``selector``.
+     * Default value is the same as the ``selector``.
      * @property survivorSelector The selector that will be used to select the survivors.
-     *      Default value is the same as the ``selector``.
+     * Default value is the same as the ``selector``.
      * @property offspringFraction The fraction of the population that will be used to create
-     *     the offspring.
-     *     Default value is 0.6.
-     *
+     * the offspring.
+     * Default value is 0.6.
      * @property alterers The alterers that will be used to alter the population.
-     *      Default value is an empty list.
-     *
+     * Default value is an empty list.
      * @property statistics The statistics collectors used to collect data during the evolution.
+     * @property constructorExecutor The [ConstructorExecutor] used to create individuals.
      */
     class Builder<DNA>(
         private val fitnessFunction: (Genotype<DNA>) -> Double,
-        private val genotype: Genotype.Factory<DNA>,
+        private val genotype: Genotype.Factory<DNA>
     ) {
         // region : Evolution parameters -----------------------------------------------------------
         var populationSize = 50
@@ -376,11 +375,16 @@ class Engine<DNA> private constructor(
 
         var optimizer: PhenotypeOptimizer<DNA> = FitnessMaximizer()
 
+        val interceptor = EvolutionInterceptor.identity<DNA>()
+        // endregion    ----------------------------------------------------------------------------
+
+        // region : Execution -----------------------------------------------------------------------
         var executor: Executor = commonPool()
 
-        var evaluator = EvaluationExecutor.Factory<DNA>().apply { creator = { SequentialEvaluator(it) } }
+        var evaluator =
+            EvaluationExecutor.Factory<DNA>().apply { creator = { SequentialEvaluator(it) } }
 
-        val interceptor = EvolutionInterceptor.identity<DNA>()
+        var constructorExecutor: ConstructorExecutor<DNA> = SequentialConstructor()
         // endregion    ----------------------------------------------------------------------------
 
         // region : Alterers -----------------------------------------------------------------------
@@ -426,7 +430,8 @@ class Engine<DNA> private constructor(
             statistics = statistics,
             executor = executor,
             evaluator = evaluator.creator(fitnessFunction),
-            interceptor = interceptor
+            interceptor = interceptor,
+            constructorExecutor = constructorExecutor
         )
     }
 }

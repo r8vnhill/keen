@@ -11,6 +11,8 @@
 
 package cl.ravenhill.keen.builders
 
+import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
+import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -30,7 +32,9 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
  * @see Chromosome
  * @see GenotypeScope
  */
-class ChromosomeScope<DNA>
+class ChromosomeScope<DNA> {
+    var constructorExecutor: ConstructorExecutor<DNA> = SequentialConstructor()
+}
 
 /**
  * Adds a chromosome factory to the builder.
@@ -124,7 +128,7 @@ fun ChromosomeScope<Char>.chars(builder: CharChromosome.Factory.() -> Unit) =
  * @return An [IntChromosome.Factory] instance that can be used to create new
  *  [IntChromosome] instances.
  */
-fun ints(builder: IntChromosome.Factory.() -> Unit) =
+fun ChromosomeScope<Int>.ints(builder: IntChromosome.Factory.() -> Unit) =
     IntChromosome.Factory().apply(builder)
 
 /**
