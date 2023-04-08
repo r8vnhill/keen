@@ -46,7 +46,7 @@ class InversionMutator<DNA>(probability: Double) : Mutator<DNA>(probability) {
         }
         val genes = chromosome.genes.toMutableList()
         invert(genes, start, end)
-        MutatorResult(chromosome.duplicate(genes), 1)
+        MutatorResult(chromosome.withGenes(genes), 1)
     }
 
     /**

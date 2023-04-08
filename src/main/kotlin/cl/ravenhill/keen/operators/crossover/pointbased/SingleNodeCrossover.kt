@@ -149,8 +149,8 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
         }
         // create two new offspring chromosomes using the modified gene lists
         return listOf(
-            chromosomes[0].duplicate(genes.first),
-            chromosomes[1].duplicate(genes.second)
+            chromosomes[0].withGenes(genes.first),
+            chromosomes[1].withGenes(genes.second)
         )
     }
 
@@ -158,7 +158,7 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
      * Returns the parents as they are.
      */
     private fun returnParents(chromosomes: List<Chromosome<DNA>>) = listOf(
-        chromosomes[0].duplicate(chromosomes[0].genes),
-        chromosomes[1].duplicate(chromosomes[1].genes)
+        chromosomes[0].withGenes(chromosomes[0].genes),
+        chromosomes[1].withGenes(chromosomes[1].genes)
     )
 }

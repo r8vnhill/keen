@@ -60,7 +60,7 @@ class IntChromosomeSpec : WordSpec({
     "Duplicating" should {
         "return a new chromosome with the given genes" {
             checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
-                val newChromosome = chromosome.duplicate(other.genes)
+                val newChromosome = chromosome.withGenes(other.genes)
                 newChromosome shouldNotBeSameInstanceAs other
                 newChromosome.genes shouldBe other.genes
             }
@@ -69,7 +69,7 @@ class IntChromosomeSpec : WordSpec({
     "Equality" should {
         "be true for chromosomes with the same genes and range" {
             checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
-                val newChromosome = chromosome.duplicate(other.genes)
+                val newChromosome = chromosome.withGenes(other.genes)
                 newChromosome shouldNotBeSameInstanceAs other
                 newChromosome shouldBe other
             }
@@ -97,7 +97,7 @@ class IntChromosomeSpec : WordSpec({
     "Hashing" should {
         "be true for chromosomes with the same genes and range" {
             checkAll(Arb.intChromosome(), Arb.intChromosome()) { chromosome, other ->
-                val newChromosome = chromosome.duplicate(other.genes)
+                val newChromosome = chromosome.withGenes(other.genes)
                 newChromosome shouldNotBeSameInstanceAs other
                 newChromosome.hashCode() shouldBe other.hashCode()
             }

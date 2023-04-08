@@ -32,7 +32,7 @@ class SwapMutator<DNA>(probability: Double = 0.2) : Mutator<DNA>(probability) {
         val mutations = indices
             .map { genes.swap(it, Dice.int(genes.size)) }
             .count()
-        MutatorResult(chromosome.duplicate(genes), mutations)
+        MutatorResult(chromosome.withGenes(genes), mutations)
     } else {
         MutatorResult(chromosome, 0)
     }

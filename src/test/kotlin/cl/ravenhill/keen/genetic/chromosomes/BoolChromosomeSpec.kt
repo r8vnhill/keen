@@ -102,7 +102,7 @@ class BoolChromosomeSpec : WordSpec({
     "Duplicating" should {
         "Return a new chromosome with the same genes" {
             checkChromosome {
-                val duplicated = it.duplicate(it.genes)
+                val duplicated = it.withGenes(it.genes)
                 duplicated shouldBe it
             }
         }
@@ -116,7 +116,7 @@ class BoolChromosomeSpec : WordSpec({
             }
             "return true if the chromosomes have the same genes" {
                 checkChromosome {
-                    val other = it.duplicate(it.genes)
+                    val other = it.withGenes(it.genes)
                     it shouldBe other
                 }
             }
@@ -129,7 +129,7 @@ class BoolChromosomeSpec : WordSpec({
             }
             "return the same hash if the chromosomes have the same genes" {
                 checkChromosome {
-                    val other = it.duplicate(it.genes)
+                    val other = it.withGenes(it.genes)
                     it shouldHaveSameHashCodeAs other
                 }
             }

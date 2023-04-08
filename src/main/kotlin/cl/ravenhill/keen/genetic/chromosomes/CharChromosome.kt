@@ -10,7 +10,7 @@ class CharChromosome(
     private val filter: (Char) -> Boolean = { true }
 ) : Chromosome<Char> {
 
-    override fun duplicate(genes: List<Gene<Char>>) = CharChromosome(genes)
+    override fun withGenes(genes: List<Gene<Char>>) = CharChromosome(genes)
 
     constructor(
         size: Int,

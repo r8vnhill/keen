@@ -42,7 +42,7 @@ abstract class AbstractPermutationCrossover<DNA>(
             }
         }
         val crossed = doCrossover(chromosomes)
-        return crossed.map { chromosomes[0].duplicate(genes = it) }
+        return crossed.map { chromosomes[0].withGenes(genes = it) }
     }
 
     /**

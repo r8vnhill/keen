@@ -17,7 +17,6 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
-import cl.ravenhill.keen.operators.GeneticOperationResult
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.math.eq
 
@@ -99,7 +98,7 @@ open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability)
     ): MutatorResult<Chromosome<DNA>> {
         val result = chromosome.genes.map { mutateGene(it) }
         return MutatorResult(
-            chromosome.duplicate(result.map { it.mutated }),
+            chromosome.withGenes(result.map { it.mutated }),
             result.sumOf { it.mutations }
         )
     }

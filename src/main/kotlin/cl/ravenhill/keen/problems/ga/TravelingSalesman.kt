@@ -53,7 +53,7 @@ class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
 class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) :
         Chromosome<Pair<Int, Int>> {
 
-    override fun duplicate(genes: List<Gene<Pair<Int, Int>>>) =
+    override fun withGenes(genes: List<Gene<Pair<Int, Int>>>) =
         RouteChromosome(genes.map { RoutePointGene(it.dna) })
 
     override fun toString() = genes.joinToString(" -> ")

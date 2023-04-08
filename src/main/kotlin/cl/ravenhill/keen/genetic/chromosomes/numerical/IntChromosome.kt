@@ -74,7 +74,7 @@ class IntChromosome private constructor(
     )
 
     @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<Int>>) =
+    override fun withGenes(genes: List<Gene<Int>>) =
         IntChromosome(genes as List<IntGene>, range, predicate)
 
     // region : equals, hashCode and toString

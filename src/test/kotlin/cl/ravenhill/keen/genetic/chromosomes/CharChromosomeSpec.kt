@@ -45,7 +45,7 @@ class CharChromosomeSpec : WordSpec({
     "Duplicating" should {
         "Return a new chromosome with the same genes" {
             checkAll(Arb.charChromosome()) { chromosome ->
-                val duplicated = chromosome.duplicate(chromosome.genes)
+                val duplicated = chromosome.withGenes(chromosome.genes)
                 duplicated.size shouldBe chromosome.size
                 duplicated.genes shouldBe chromosome.genes
             }
@@ -62,7 +62,7 @@ class CharChromosomeSpec : WordSpec({
 
             "return true if the chromosomes have the same genes" {
                 checkAll(Arb.charChromosome()) { chromosome ->
-                    val other = chromosome.duplicate(chromosome.genes)
+                    val other = chromosome.withGenes(chromosome.genes)
                     chromosome shouldBe other
                 }
             }
@@ -87,7 +87,7 @@ class CharChromosomeSpec : WordSpec({
 
             "return the same hash code if the chromosomes have the same genes" {
                 checkAll(Arb.charChromosome()) { chromosome ->
-                    val other = chromosome.duplicate(chromosome.genes)
+                    val other = chromosome.withGenes(chromosome.genes)
                     chromosome shouldHaveSameHashCodeAs other
                 }
             }

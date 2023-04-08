@@ -65,7 +65,7 @@ class DoubleChromosome private constructor(
     override fun verify() = genes.all { it.verify() }
 
     @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<Double>>) =
+    override fun withGenes(genes: List<Gene<Double>>) =
         DoubleChromosome(genes as List<DoubleGene>, range, predicate)
 
     override fun equals(other: Any?) = when {

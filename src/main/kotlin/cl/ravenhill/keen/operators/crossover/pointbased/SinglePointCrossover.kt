@@ -47,8 +47,8 @@ class SinglePointCrossover<DNA>(probability: Double) : MultiPointCrossover<DNA>(
         val index = Core.random.nextInt(min(first.size, second.size))
         val crossed = crossoverAt(index, first to second)
         return listOf(
-            chromosomes[0].duplicate(genes = crossed.first),
-            chromosomes[0].duplicate(genes = crossed.second)
+            chromosomes[0].withGenes(genes = crossed.first),
+            chromosomes[0].withGenes(genes = crossed.second)
         )
     }
 

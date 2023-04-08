@@ -67,5 +67,5 @@ open class CombineCrossover<DNA>(
      * @return A list of chromosomes that contains the result of the crossover operation.
      */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>) =
-        listOf(chromosomes[0].duplicate(combine(chromosomes)))
+        listOf(chromosomes[0].withGenes(combine(chromosomes)))
 }

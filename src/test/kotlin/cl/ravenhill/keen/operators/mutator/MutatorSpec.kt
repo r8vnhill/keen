@@ -129,7 +129,7 @@ class MutatorSpec : FreeSpec({
                     val (mutated, mutations) = mutator.mutateChromosome(chromosome)
                     val rolls = chromosome.genes.map { dice.nextDouble() }
                     mutations shouldBe rolls.count { it < probability }
-                    mutated shouldBe chromosome.duplicate(
+                    mutated shouldBe chromosome.withGenes(
                         chromosome.genes.mapIndexed { index, gene ->
                             gene as IntGene
                             if (rolls[index] < probability) IntGene(
@@ -462,7 +462,7 @@ suspend fun <T> `a mutator with probability 1 mutates all genes`(
         val mutator = Mutator<T>(1.0)
         val (mutated, mutations) = mutator.mutateChromosome(chromosome)
         mutations shouldBe chromosome.genes.size
-        mutated shouldBe chromosome.duplicate(
+        mutated shouldBe chromosome.withGenes(
             chromosome.genes.map { gene ->
                 geneGenerator(gene, random)
             }

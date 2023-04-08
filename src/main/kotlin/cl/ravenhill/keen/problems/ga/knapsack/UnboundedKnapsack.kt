@@ -68,7 +68,7 @@ class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
  */
 class KnapsackChromosome(override val genes: List<KnapsackGene>) :
         Chromosome<Pair<Int, Int>> {
-    override fun duplicate(genes: List<Gene<Pair<Int, Int>>>) =
+    override fun withGenes(genes: List<Gene<Pair<Int, Int>>>) =
         KnapsackChromosome(genes.map { KnapsackGene((it.dna)) })
 
     override fun verify() = genes.sumOf { it.dna.second } <= MAX_WEIGHT

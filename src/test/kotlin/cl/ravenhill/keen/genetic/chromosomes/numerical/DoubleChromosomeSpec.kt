@@ -105,7 +105,7 @@ class DoubleChromosomeSpec : WordSpec({
     "Duplicating" should {
         "return a new chromosome with the given genes" {
             checkAll(Arb.doubleChromosome()) { chromosome ->
-                val duplicated = chromosome.duplicate(chromosome.genes)
+                val duplicated = chromosome.withGenes(chromosome.genes)
                 duplicated shouldBe chromosome
             }
         }

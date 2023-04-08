@@ -25,7 +25,7 @@ class ProgramChromosome<T> private constructor(
     ) -> Program<T>)>
 ) : Chromosome<Program<T>> {
     @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<Program<T>>>) =
+    override fun withGenes(genes: List<Gene<Program<T>>>) =
         ProgramChromosome(
             genes as List<ProgramGene<T>>,
             functions,
