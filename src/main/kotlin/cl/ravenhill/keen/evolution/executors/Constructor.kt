@@ -15,11 +15,30 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 
+/***************************************************************************************************
+ * This module provides an interface and two classes that implement it.
+ * The interface, called ConstructorExecutor, defines a contract for classes that execute a
+ * constructor a certain number of times and return a list of the resulting objects.
+ * The SequentialConstructor class implements the interface by executing the constructor
+ * sequentially the specified number of times.
+ * The CoroutineConstructor class also implements the interface and executes the constructor
+ * concurrently using coroutines.
+ * The CoroutineConstructor takes two optional parameters: dispatcher which specifies the coroutine
+ * dispatcher to use, and chunkSize which specifies the number of objects to create in each
+ * coroutine.
+ * The ConstructorExecutor interface also includes a nested factory class for creating instances of
+ * implementing classes.
+ **************************************************************************************************/
+
 /**
  * An interface for classes that execute a constructor `size` number of times and return a list of
  * the resulting objects.
  *
  * @param T The type of object created by the constructor.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
  */
 interface ConstructorExecutor<T> : KeenExecutor {
 
@@ -32,7 +51,13 @@ interface ConstructorExecutor<T> : KeenExecutor {
      */
     operator fun invoke(size: Int, init: () -> T): List<T>
 
+    /**
+     * A factory class for creating [ConstructorExecutor] instances.
+     *
+     * @param T The type of object created by the constructor.
+     */
     open class Factory<T> : KeenExecutor.Factory<Unit, ConstructorExecutor<T>> {
+        // Documentation inherited from KeenExecutor.Factory.
         override var creator: (Unit) -> ConstructorExecutor<T> = { SequentialConstructor() }
     }
 }
@@ -42,6 +67,10 @@ interface ConstructorExecutor<T> : KeenExecutor {
  * sequentially `size` number of times.
  *
  * @param T The type of object created by the constructor.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
  */
 class SequentialConstructor<T> : ConstructorExecutor<T> {
 
@@ -79,10 +108,23 @@ class CoroutineConstructor<T>(
         deferredList.awaitAll().filterNotNull()
     }
 
-    class Factory<G> : ConstructorExecutor.Factory<G>() {
+    /**
+     * A factory class for creating [CoroutineConstructor] instances.
+     *
+     * @param T The type of object created by the constructor.
+     * @property dispatcher The dispatcher to use for launching coroutines.
+     * Defaults to [Dispatchers.Default].
+     * @property chunkSize The number of objects to create in each coroutine.
+     * Defaults to 100.
+     */
+    class Factory<T> : ConstructorExecutor.Factory<T>() {
+
         var dispatcher: CoroutineDispatcher = Dispatchers.Default
+
         var chunkSize: Int = 100
-        override var creator: (Unit) -> ConstructorExecutor<G> =
+
+        // Documentation inherited from ConstructorExecutor.Factory.
+        override var creator: (Unit) -> ConstructorExecutor<T> =
             { CoroutineConstructor(dispatcher, chunkSize) }
     }
 }
