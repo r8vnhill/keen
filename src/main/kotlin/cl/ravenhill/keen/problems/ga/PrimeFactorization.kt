@@ -1,9 +1,14 @@
 package cl.ravenhill.keen.problems.ga
 
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.builders.chromosome
+import cl.ravenhill.keen.builders.coroutines
 import cl.ravenhill.keen.builders.engine
+import cl.ravenhill.keen.builders.evaluator
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.builders.ints
+import cl.ravenhill.keen.builders.sequential
+import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
@@ -13,6 +18,7 @@ import cl.ravenhill.keen.util.math.eq
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
+import kotlinx.coroutines.Dispatchers
 import kotlin.math.abs
 import kotlin.math.ln
 

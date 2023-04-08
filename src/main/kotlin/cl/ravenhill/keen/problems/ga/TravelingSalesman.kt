@@ -1,10 +1,10 @@
 package cl.ravenhill.keen.problems.ga
 
-import cl.ravenhill.keen.Builders.coroutines
-import cl.ravenhill.keen.Builders.evaluator
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.builders.chromosome
+import cl.ravenhill.keen.builders.coroutines
 import cl.ravenhill.keen.builders.engine
+import cl.ravenhill.keen.builders.evaluator
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
