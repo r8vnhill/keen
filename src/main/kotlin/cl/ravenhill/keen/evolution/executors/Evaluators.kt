@@ -1,10 +1,17 @@
-package cl.ravenhill.keen.evolution
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
+
+package cl.ravenhill.keen.evolution.executors
 
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -14,9 +21,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KFunction
-import kotlin.reflect.KProperty
 
 /***************************************************************************************************
  * This code defines classes and interfaces for evaluating the fitness of a population of DNA
@@ -40,7 +44,7 @@ import kotlin.reflect.KProperty
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Evaluator<DNA> {
+interface EvaluationExecutor<DNA> {
 
     /**
      * Evaluates the fitness function of the given population of DNA sequences.
@@ -83,12 +87,12 @@ interface Evaluator<DNA> {
      * @property creator A function that creates an instance of the `Evaluator` interface.
      */
     open class Factory<DNA> {
-        open lateinit var creator: ((Genotype<DNA>) -> Double) -> Evaluator<DNA>
+        open lateinit var creator: ((Genotype<DNA>) -> Double) -> EvaluationExecutor<DNA>
     }
 }
 
 /**
- * A class that implements the [Evaluator] interface and provides sequential fitness evaluation for
+ * A class that implements the [EvaluationExecutor] interface and provides sequential fitness evaluation for
  * a given [Population] using a given fitness function.
  *
  * @param DNA The type of DNA sequence to evaluate.
@@ -100,7 +104,7 @@ interface Evaluator<DNA> {
  */
 class SequentialEvaluator<DNA>(
     private val function: (Genotype<DNA>) -> Double
-) : Evaluator<DNA> {
+) : EvaluationExecutor<DNA> {
 
     // Inherit documentation from Evaluator
     override fun invoke(population: Population<DNA>, force: Boolean) = evaluateAndAddToPopulation(
@@ -128,7 +132,7 @@ class CoroutineEvaluator<DNA>(
     private val function: (Genotype<DNA>) -> Double,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val chunkSize: Int = 100
-) : Evaluator<DNA>, CoroutineScope {
+) : EvaluationExecutor<DNA>, CoroutineScope {
 
     /**
      * The [Job] instance used to manage the coroutines created by this instance.
@@ -169,7 +173,7 @@ class CoroutineEvaluator<DNA>(
      *  Larger values will require more memory, but may improve performance for some use cases.
      *  Defaults to 100.
      */
-    class Factory<DNA> : Evaluator.Factory<DNA>() {
+    class Factory<DNA> : EvaluationExecutor.Factory<DNA>() {
         var dispatcher: CoroutineDispatcher = Dispatchers.Default
         var chunkSize: Int = 100
             set(value) {

@@ -1,9 +1,9 @@
 package cl.ravenhill.keen
 
-import cl.ravenhill.keen.evolution.CoroutineEvaluator
+import cl.ravenhill.keen.evolution.executors.CoroutineEvaluator
 import cl.ravenhill.keen.evolution.Engine
-import cl.ravenhill.keen.evolution.Evaluator
-import cl.ravenhill.keen.evolution.SequentialEvaluator
+import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
+import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -22,7 +22,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 object Builders {
 
     /**
-     * Returns an [Evaluator.Factory] instance initialized with custom settings through [init].
+     * Returns an [EvaluationExecutor.Factory] instance initialized with custom settings through [init].
      *
      * __Usage:__
      * ```
@@ -31,10 +31,10 @@ object Builders {
      * }
      * ```
      *
-     * @param init A function that initializes an [Evaluator.Factory] instance with custom settings.
-     * @return An [Evaluator.Factory] instance.
+     * @param init A function that initializes an [EvaluationExecutor.Factory] instance with custom settings.
+     * @return An [EvaluationExecutor.Factory] instance.
      */
-    fun <DNA> evaluator(init: () -> Evaluator.Factory<DNA>): Evaluator.Factory<DNA> = init()
+    fun <DNA> evaluator(init: () -> EvaluationExecutor.Factory<DNA>): EvaluationExecutor.Factory<DNA> = init()
 
     /**
      * Returns a [CoroutineEvaluator.Factory] instance initialized with custom settings through
@@ -61,7 +61,7 @@ object Builders {
             }
 
     /**
-     * Sets the ``creator`` property of this [Evaluator.Factory] instance to create
+     * Sets the ``creator`` property of this [EvaluationExecutor.Factory] instance to create
      * [SequentialEvaluator] instances.
      * The [SequentialEvaluator] instances created by this factory will evaluate fitness functions
      * for [Phenotype] instances in a [Population] sequentially.
@@ -73,9 +73,9 @@ object Builders {
      * }
      * ```
      *
-     * @receiver An [Evaluator.Factory] instance.
+     * @receiver An [EvaluationExecutor.Factory] instance.
      */
-    fun <DNA> Evaluator.Factory<DNA>.sequential() {
+    fun <DNA> EvaluationExecutor.Factory<DNA>.sequential() {
         creator = { SequentialEvaluator(it) }
     }
 }

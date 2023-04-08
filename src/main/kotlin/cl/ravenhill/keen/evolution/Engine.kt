@@ -13,6 +13,8 @@ import cl.ravenhill.keen.Core.EvolutionLogger.info
 import cl.ravenhill.keen.Core.EvolutionLogger.trace
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
+import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.limits.GenerationCount
@@ -62,7 +64,7 @@ class Engine<DNA> private constructor(
     private val optimizer: PhenotypeOptimizer<DNA>,
     val statistics: List<Statistic<DNA>>,
     private val executor: Executor,
-    val evaluator: Evaluator<DNA>,
+    val evaluator: EvaluationExecutor<DNA>,
     private val interceptor: EvolutionInterceptor<DNA>
 ) : Evolver<DNA> {
 
@@ -376,7 +378,7 @@ class Engine<DNA> private constructor(
 
         var executor: Executor = commonPool()
 
-        var evaluator = Evaluator.Factory<DNA>().apply { creator = { SequentialEvaluator(it) } }
+        var evaluator = EvaluationExecutor.Factory<DNA>().apply { creator = { SequentialEvaluator(it) } }
 
         val interceptor = EvolutionInterceptor.identity<DNA>()
         // endregion    ----------------------------------------------------------------------------

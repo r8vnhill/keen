@@ -11,16 +11,17 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.IntRequirement.*
-import cl.ravenhill.keen.requirements.PairRequirement.*
+import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
+import cl.ravenhill.keen.evolution.executors.CoroutineConstructor
+import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
+import cl.ravenhill.keen.requirements.PairRequirement.StrictlyOrdered
 import cl.ravenhill.keen.util.Filterable
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.util.*
+import java.util.Objects
 import kotlin.properties.Delegates
 
 typealias IntToInt = Pair<Int, Int>
@@ -33,6 +34,7 @@ typealias IntToInt = Pair<Int, Int>
  * @property predicate The filter to apply to the genes.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
  * @version 2.0.0
  */
 class IntChromosome private constructor(
@@ -51,27 +53,16 @@ class IntChromosome private constructor(
     private constructor(
         size: Int,
         range: IntToInt,
-        predicate: (Int) -> Boolean
-    ) : this(
-        runBlocking {
-            val genes = mutableListOf<IntGene>()
-            launch {
-                repeat(size) {
-                    genes.add(
-                        IntGene(
-                            sequence {
-                                while (true) {
-                                    yield(Core.random.nextInt(range.first, range.second))
-                                }
-                            }.filter(predicate).first(),
-                            range, predicate
-                        )
-                    )
-                }
-            }
-            genes
-        }, range, predicate
-    )
+        predicate: (Int) -> Boolean,
+        constructorExecutor: ConstructorExecutor<IntGene>
+    ) : this(constructorExecutor(size) {
+        IntGene(
+            generateSequence { Core.random.nextInt(range.first, range.second) }
+                .filter(predicate)
+                .first(),
+            range.first to range.second, predicate
+        )
+    }, range, predicate)
 
     @Suppress("UNCHECKED_CAST")
     override fun withGenes(genes: List<Gene<Int>>) =
@@ -102,13 +93,14 @@ class IntChromosome private constructor(
         var filter: (Int) -> Boolean = { true }
         lateinit var range: Pair<Int, Int>
         var size by Delegates.notNull<Int>()
+        var executor: ConstructorExecutor<IntGene> = SequentialConstructor()
 
         override fun make(): IntChromosome {
             enforce {
                 size should BePositive()
                 range should StrictlyOrdered()
             }
-            return IntChromosome(size, range, filter)
+            return IntChromosome(size, range, filter, executor)
         }
 
         override fun toString() = "IntChromosome.Builder { " +

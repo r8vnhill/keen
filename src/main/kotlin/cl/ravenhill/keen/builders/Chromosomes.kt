@@ -88,6 +88,7 @@ fun ChromosomeScope<Boolean>.booleans(builder: BoolChromosome.Factory.() -> Unit
  *   chromosome {
  *     chars {
  *       size = 20
+ *       range = 'a'..'z'
  *     }
  *   }
  * }
@@ -106,10 +107,14 @@ fun ChromosomeScope<Char>.chars(builder: CharChromosome.Factory.() -> Unit) =
  *
  * __Usage:__
  * ```
- * ints {
- *     size = 20
- *     range = 0..100
- *     filter = { it % 2 == 0 }
+ * genotype {
+ *   chromosome {
+ *     ints {
+ *       size = 20
+ *       range = 0..100
+ *       filter = { it % 2 == 0 }
+ *     }
+ *   }
  * }
  * ```
  *
