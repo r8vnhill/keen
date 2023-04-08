@@ -1,22 +1,22 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
  * Creative Commons Attribution 4.0 International License.
  * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
-
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.keen.requirements.IntRequirement.BePositive
+import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.math.BitArray
-import cl.ravenhill.keen.util.math.bitArrayOf
+import cl.ravenhill.keen.probability
+import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.util.math.roundUpToMultipleOf
-import java.util.*
+import java.util.Objects
 
 /**
  * A chromosome of [BoolGene]s.
@@ -30,25 +30,27 @@ class BoolChromosome private constructor(
     private val truesProbability: Double
 ) : AbstractChromosome<Boolean>(genes) {
 
-    constructor(genes: BitArray, truesProbability: Double) : this(
-        genes.toBoolGeneList(),
-        truesProbability
+    constructor(
+        size: Int,
+        truesProbability: Double,
+        constructorExecutor: ConstructorExecutor<BoolGene>
+    ) : this(
+        constructorExecutor(size) {
+            if (Dice.probability() < truesProbability) BoolGene.True else BoolGene.False
+        }, truesProbability
     )
 
-    /// {@inheritDoc}
+    /// Documentation inherited from [Verifiable].
     override fun verify() = genes.isNotEmpty()
 
-    /**
-     * Returns the number of true genes in this chromosome.
-     */
     fun trues() = genes.count { it == BoolGene.True }
 
-    /// {@inheritDoc}
+    /// Documentation inherited from [Chromosome].
     @Suppress("UNCHECKED_CAST")
     override fun withGenes(genes: List<Gene<Boolean>>) =
         BoolChromosome(genes as List<BoolGene>, truesProbability)
 
-    /// {@inheritDoc}
+    /// Documentation inherited from [Any].
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is BoolChromosome -> false
@@ -57,10 +59,10 @@ class BoolChromosome private constructor(
         else -> true
     }
 
-    /// {@inheritDoc}
+    /// Documentation inherited from [Any].
     override fun hashCode() = Objects.hash(BoolChromosome::class, genes)
 
-    /// {@inheritDoc}
+    /// Documentation inherited from [Any].
     override fun toString(): String {
         var str = ""
         genes.forEach { str += if (it == BoolGene.True) "1" else "0" }
@@ -82,16 +84,16 @@ class BoolChromosome private constructor(
 
         var size: Int = 0
 
-        /// {@inheritDoc}
+        /// Documentation inherited from [Chromosome.Factory].
         override fun make(): BoolChromosome {
             enforce {
                 size should BePositive()
                 truesProbability should BeInRange(0.0..1.0)
             }
-            return BoolChromosome(bitArrayOf(size, truesProbability), truesProbability)
+            return BoolChromosome(size, truesProbability, executor)
         }
 
-        /// {@inheritDoc}
+        /// Documentation inherited from [Any].
         override fun toString() =
             "BoolChromosome.Factory { size: $size, truesProbability: $truesProbability }"
     }
