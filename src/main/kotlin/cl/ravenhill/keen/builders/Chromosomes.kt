@@ -23,14 +23,16 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * A DSL scope for configuring a chromosome factory for a genotype builder.
  *
  * Use this scope to specify the characteristics of a chromosome that should be used to build a
- * genotype.
- * A chromosome is a sequence of genetic data that will be inherited as a unit to the offspring
- * during the genetic operations.
+ * genotype. A chromosome is a sequence of genetic data that will be inherited as a unit to the
+ * offspring during genetic operations.
+ *
+ * @param DNA the type of the data carried by each gene in the chromosome.
  *
  * @see Chromosome
  * @see GenotypeScope
  */
 class ChromosomeScope<DNA>
+
 
 /**
  * Adds a chromosome factory to the builder.
@@ -48,10 +50,14 @@ class ChromosomeScope<DNA>
  *      chromosome.
  * @return `true` if the element was added, `false` if not.
  *      This will always return `true`.
+ *
+ * @param DNA The type of data that the chromosomes are made of.
+ * @param G The type of gene that the chromosomes contain.
  */
 fun <DNA, G : Gene<DNA, G>> GenotypeScope<DNA, G>.chromosome(
     lazyFactory: ChromosomeScope<DNA>.() -> Chromosome.Factory<DNA, G>
 ) = chromosomes.add(ChromosomeScope<DNA>().lazyFactory())
+
 
 /**
  * Creates a new [BoolChromosome.Factory] with the given [builder] block.

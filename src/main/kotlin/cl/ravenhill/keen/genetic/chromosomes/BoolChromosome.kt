@@ -95,7 +95,7 @@ class BoolChromosome(
     }
 
     /**
-     * Builder for [BoolChromosome]s.
+     * Factory for [BoolChromosome]s.
      *
      * @property size The size of the chromosome to build.
      * @property truesProbability The probability of a gene being true.
