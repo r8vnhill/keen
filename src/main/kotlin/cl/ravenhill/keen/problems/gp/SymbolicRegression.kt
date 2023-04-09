@@ -6,6 +6,7 @@ import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.builders.program
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SingleNodeCrossover
@@ -19,7 +20,8 @@ import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import kotlin.math.ln
 import kotlin.math.pow
 
-private fun fitness(inputs: List<Double>): (Genotype<Program<Double>>) -> Double = { gt ->
+private fun fitness(inputs: List<Double>):
+            (Genotype<Program<Double>, ProgramGene<Double>>) -> Double = { gt ->
     val program = gt.flatten().first()
     inputs.map { input ->
         val expected = input.pow(4) + input.pow(3) + input.pow(2) + input

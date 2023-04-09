@@ -6,7 +6,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 /**
  * Alias for [PartiallyMappedCrossover].
  */
-typealias PMX<DNA> = PartiallyMappedCrossover<DNA>
+typealias PMX<DNA, G> = PartiallyMappedCrossover<DNA, G>
 
 /**
  * The ``PartiallyMatchedCrossover`` (PMX) guarantees that all [Gene]s are found exactly once in
@@ -41,12 +41,12 @@ typealias PMX<DNA> = PartiallyMappedCrossover<DNA>
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-class PartiallyMappedCrossover<DNA>(probability: Double) :
-        AbstractPermutationCrossover<DNA>(probability) {
+class PartiallyMappedCrossover<DNA, G: Gene<DNA, G>>(probability: Double) :
+        AbstractPermutationCrossover<DNA, G>(probability) {
 
 //    override fun doCrossover(
-//        genes1: MutableList<Gene<DNA>>,
-//        genes2: MutableList<Gene<DNA>>,
+//        genes1: MutableList<Gene<DNA, G>>,
+//        genes2: MutableList<Gene<DNA, G>>,
 //        size: Int
 //    ): Int {
 //        // Select two random indexes
@@ -73,7 +73,7 @@ class PartiallyMappedCrossover<DNA>(probability: Double) :
 //        return 1
 //    }
 
-    override fun doCrossover(chromosomes: List<Chromosome<DNA>>): List<List<Gene<DNA>>> {
+    override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
         TODO("Not yet implemented")
     }
 }

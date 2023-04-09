@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.genetic
 
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.math.isNotNan
 import java.util.*
 
@@ -19,17 +20,17 @@ import java.util.*
  * @version 2.0.0
  * @since 1.0.0
  */
-class Phenotype<DNA>(
-    val genotype: Genotype<DNA>,
+class Phenotype<DNA, G: Gene<DNA, G>>(
+    val genotype: Genotype<DNA, G>,
     val generation: Int,
     val fitness: Double = Double.NaN
-) : GeneticMaterial<DNA>, Comparable<Phenotype<DNA>> {
+) : GeneticMaterial<DNA, G>, Comparable<Phenotype<DNA, G>> {
 
     // Inherit documentation from Verifyable
     override fun verify(): Boolean = genotype.verify() && fitness.isNotNan()
 
     // Inherit documentation from Comparable
-    override fun compareTo(other: Phenotype<DNA>) =
+    override fun compareTo(other: Phenotype<DNA, G>) =
         this.fitness compareTo other.fitness
 
     // Inherit documentation from Any
@@ -60,7 +61,7 @@ class Phenotype<DNA>(
     override fun flatten() = genotype.flatten()
 
     // Inherit documentation from Any
-    override fun equals(other: Any?) = other is Phenotype<*> && genotype == other.genotype
+    override fun equals(other: Any?) = other is Phenotype<*, *> && genotype == other.genotype
 
     // Inherit documentation from Any
     override fun hashCode() = Objects.hash(Phenotype::class, genotype)

@@ -9,7 +9,9 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.validateSum
@@ -26,20 +28,20 @@ private const val SERIAL_INDEX_THRESHOLD = 35
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 1.3.0
  */
-abstract class AbstractProbabilitySelector<DNA>(protected val sorted: Boolean) :
-    AbstractSelector<DNA>() {
+abstract class AbstractProbabilitySelector<DNA, G: Gene<DNA, G>>(protected val sorted: Boolean) :
+    AbstractSelector<DNA, G>() {
 
     abstract fun probabilities(
-        population: List<Phenotype<DNA>>,
+        population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA>
+        optimizer: PhenotypeOptimizer<DNA, G>
     ): DoubleArray
 
     override fun select(
-        population: List<Phenotype<DNA>>,
+        population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA>
-    ): List<Phenotype<DNA>> {
+        optimizer: PhenotypeOptimizer<DNA, G>
+    ): Population<DNA, G> {
         val pop = if (sorted) {
             optimizer.sort(population)
         } else {

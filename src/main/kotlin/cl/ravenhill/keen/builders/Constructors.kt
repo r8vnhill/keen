@@ -50,7 +50,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 2.0.0
  * @version 2.0.0
  */
-class ConstructorScope<G : Gene<*>> {
+class ConstructorScope<G : Gene<*, *>> {
     var factory = ConstructorExecutor.Factory<G>()
         set(value) {
             field = value
@@ -87,7 +87,7 @@ class ConstructorScope<G : Gene<*>> {
  * `creator` property.
  * @return A [ConstructorExecutor] instance.
  */
-fun <DNA, G : Gene<DNA>> ChromosomeScope<DNA>.constructorExecutor(init: ConstructorScope<G>.() -> Unit) =
+fun <DNA, G : Gene<DNA, G>> ChromosomeScope<DNA>.constructorExecutor(init: ConstructorScope<G>.() -> Unit) =
     ConstructorScope<G>().apply(init).creator(Unit)
 
 /**
@@ -107,7 +107,7 @@ fun <DNA, G : Gene<DNA>> ChromosomeScope<DNA>.constructorExecutor(init: Construc
  * }
  * ```
  */
-fun <DNA, G : Gene<DNA>> ConstructorScope<G>.sequential() {
+fun <DNA, G : Gene<DNA, G>> ConstructorScope<G>.sequential() {
     factory = ConstructorExecutor.Factory()
 }
 
@@ -136,7 +136,7 @@ fun <DNA, G : Gene<DNA>> ConstructorScope<G>.sequential() {
  * @param init A lambda that takes a [CoroutineConstructor.Factory] instance and configures it using
  * the `scope` and `parallelismLevel` properties.
  */
-fun <DNA, G : Gene<DNA>> ConstructorScope<G>.coroutines(
+fun <DNA, G : Gene<DNA, G>> ConstructorScope<G>.coroutines(
     init: CoroutineConstructor.Factory<G>.() -> Unit
 ) {
     factory = CoroutineConstructor.Factory<G>().apply(init)

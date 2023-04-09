@@ -26,8 +26,8 @@ import kotlinx.coroutines.runBlocking
  * @since 1.2.0
  * @version 2.0.0
  */
-class OrderedCrossover<DNA>(probability: Double, chromosomeRate: Double = 1.0) :
-        AbstractPermutationCrossover<DNA>(probability, chromosomeRate = chromosomeRate) {
+class OrderedCrossover<DNA, G: Gene<DNA, G>>(probability: Double, chromosomeRate: Double = 1.0) :
+        AbstractPermutationCrossover<DNA, G>(probability, chromosomeRate = chromosomeRate) {
 
     /**
      * Performs ordered crossover on a list of chromosomes.
@@ -35,7 +35,7 @@ class OrderedCrossover<DNA>(probability: Double, chromosomeRate: Double = 1.0) :
      * @param chromosomes the list of chromosomes to be crossed over
      * @return a list of the offspring produced by the crossover operation
      */
-    override fun doCrossover(chromosomes: List<Chromosome<DNA>>): List<List<Gene<DNA>>> {
+    override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
         val size = chromosomes.minOf { it.size }
         if (size >= 2) {
             val r1 = Core.random.nextInt(size)
@@ -43,8 +43,8 @@ class OrderedCrossover<DNA>(probability: Double, chromosomeRate: Double = 1.0) :
             val (start, end) = if (r1 < r2) r1 to r2 else r2 to r1
             val genes1 = chromosomes[0].genes
             val genes2 = chromosomes[1].genes
-            lateinit var offspring1: List<Gene<DNA>>
-            lateinit var offspring2: List<Gene<DNA>>
+            lateinit var offspring1: List<G>
+            lateinit var offspring2: List<G>
             // Launches the two crossover operations concurrently.
             runBlocking {
                 launch {
@@ -69,15 +69,15 @@ class OrderedCrossover<DNA>(probability: Double, chromosomeRate: Double = 1.0) :
      * @return a new list of genes representing the offspring produced by the crossover operation
      */
     private fun crossoverGenes(
-        parents: Pair<List<Gene<DNA>>, List<Gene<DNA>>>,
+        parents: Pair<List<G>, List<G>>,
         start: Int,
         end: Int,
         size: Int
-    ): List<Gene<DNA>> {
+    ): List<G> {
         // Takes a sublist of genes from the first parent to be inserted into the second parent.
         val sublist = parents.first.subList(start, end + 1)
         // Creates a new list to hold the offspring.
-        val offspring = mutableListOf<Gene<DNA>>()
+        val offspring = mutableListOf<G>()
         // Creates a new list to hold the genes from the second parent that are not in the sublist.
         val uniqueGenes = parents.second.toMutableList().apply { removeAll(sublist.toSet()) }
         // Adds the genes from the second parent that are not in the sublist to the offspring to

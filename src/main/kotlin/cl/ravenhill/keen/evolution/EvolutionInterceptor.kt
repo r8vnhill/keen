@@ -1,5 +1,7 @@
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.genetic.genes.Gene
+
 
 /**
  * The EvolutionInterceptor class allows for customization of the evolutionary process by enabling
@@ -17,16 +19,16 @@ package cl.ravenhill.keen.evolution
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionInterceptor<DNA>(
-    val before: (EvolutionStart<DNA>) -> EvolutionStart<DNA>,
-    val after: (EvolutionResult<DNA>) -> EvolutionResult<DNA>
+class EvolutionInterceptor<DNA, G: Gene<DNA, G>>(
+    val before: (EvolutionStart<DNA, G>) -> EvolutionStart<DNA, G>,
+    val after: (EvolutionResult<DNA, G>) -> EvolutionResult<DNA, G>
 ) {
     companion object {
         /**
          * Returns an [EvolutionInterceptor] that does nothing.
          */
-        fun <DNA> identity() = EvolutionInterceptor(
-            { before: EvolutionStart<DNA> -> before }
-        ) { end: EvolutionResult<DNA> -> end }
+        fun <DNA, G: Gene<DNA, G>> identity() = EvolutionInterceptor(
+            { before: EvolutionStart<DNA, G> -> before }
+        ) { end: EvolutionResult<DNA, G> -> end }
     }
 }

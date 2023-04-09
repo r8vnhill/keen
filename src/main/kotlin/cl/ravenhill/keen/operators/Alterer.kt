@@ -1,15 +1,16 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
  * Creative Commons Attribution 4.0 International License.
  * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import java.util.Objects
@@ -38,7 +39,7 @@ import java.util.Objects
  * @property probability the probability that an alteration will be applied to an individual in the
  *      population.
  */
-interface Alterer<DNA> : GeneticOperator<DNA> {
+interface Alterer<DNA, G : Gene<DNA, G>> : GeneticOperator<DNA, G> {
 
     val probability: Double
 
@@ -52,7 +53,10 @@ interface Alterer<DNA> : GeneticOperator<DNA> {
      * @return An AltererResult, which contains the resulting population of individuals and a count
      *      of how many individuals were altered.
      */
-    override operator fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA>
+    override operator fun invoke(
+        population: Population<DNA, G>,
+        generation: Int
+    ): AltererResult<DNA, G>
 }
 
 /**
@@ -70,7 +74,8 @@ interface Alterer<DNA> : GeneticOperator<DNA> {
  * @since 0.1.0
  * @version 2.0.0
  */
-abstract class AbstractAlterer<DNA>(final override val probability: Double) : Alterer<DNA> {
+abstract class AbstractAlterer<DNA, G : Gene<DNA, G>>(final override val probability: Double) :
+        Alterer<DNA, G> {
     init {
         enforce {
             probability should BeInRange(0.0..1.0) {
@@ -90,8 +95,8 @@ abstract class AbstractAlterer<DNA>(final override val probability: Double) : Al
  * @since 0.1.0
  * @version 2.0.0
  */
-class AltererResult<DNA>(
-    val population: Population<DNA>,
+class AltererResult<DNA, G: Gene<DNA, G>>(
+    val population: Population<DNA, G>,
     val alterations: Int = 0
 ) : GeneticOperationResult<DNA> {
     init {
@@ -119,7 +124,7 @@ class AltererResult<DNA>(
     // Documentation inherited from Any
     override fun equals(other: Any?) = when {
         this === other -> true
-        other !is AltererResult<*> -> false
+        other !is AltererResult<*, *> -> false
         population != other.population -> false
         alterations != other.alterations -> false
         else -> true

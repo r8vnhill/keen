@@ -5,18 +5,18 @@
  * You should have received a copy of the license along with this
  * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
+
 @file:Suppress("UnusedReceiverParameter")
 
 package cl.ravenhill.keen.builders
 
-import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
-import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.ProgramChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 
 
 /**
@@ -30,9 +30,7 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
  * @see Chromosome
  * @see GenotypeScope
  */
-class ChromosomeScope<DNA> {
-    var constructorExecutor: ConstructorExecutor<DNA> = SequentialConstructor()
-}
+class ChromosomeScope<DNA>
 
 /**
  * Adds a chromosome factory to the builder.
@@ -51,8 +49,8 @@ class ChromosomeScope<DNA> {
  * @return `true` if the element was added, `false` if not.
  *      This will always return `true`.
  */
-fun <DNA> GenotypeScope<DNA>.chromosome(
-    lazyFactory: ChromosomeScope<DNA>.() -> Chromosome.Factory<DNA, *>
+fun <DNA, G : Gene<DNA, G>> GenotypeScope<DNA, G>.chromosome(
+    lazyFactory: ChromosomeScope<DNA>.() -> Chromosome.Factory<DNA, G>
 ) = chromosomes.add(ChromosomeScope<DNA>().lazyFactory())
 
 /**
@@ -73,7 +71,7 @@ fun <DNA> GenotypeScope<DNA>.chromosome(
  * @param builder A lambda block that allows configuring the [BoolChromosome.Factory] by
  *  specifying its properties.
  *
- * @return A `BoolChromosome.Factory` instance with the specified properties.
+ * @return A [BoolChromosome.Factory] instance with the specified properties.
  *
  * @see BoolChromosome
  * @see Chromosome

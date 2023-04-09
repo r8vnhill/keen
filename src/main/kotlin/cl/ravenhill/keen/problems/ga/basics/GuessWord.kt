@@ -5,6 +5,7 @@ import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
@@ -14,7 +15,7 @@ import cl.ravenhill.keen.util.statistics.StatisticPrinter
 
 private const val TARGET = "Sopaipilla"
 
-private fun matches(genotype: Genotype<Char>) = genotype.flatten()
+private fun matches(genotype: Genotype<Char, CharGene>) = genotype.flatten()
     .filterIndexed { index, char -> char == TARGET[index] }
     .size.toDouble()
 

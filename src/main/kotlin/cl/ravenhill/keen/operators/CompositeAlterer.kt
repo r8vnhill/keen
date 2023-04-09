@@ -9,6 +9,7 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.genes.Gene
 
 
 /**
@@ -23,7 +24,8 @@ import cl.ravenhill.keen.Population
  * @since 1.0.0
  * @version 2.0.0
  */
-class CompositeAlterer<DNA>(private val alterers: List<Alterer<DNA>>) : AbstractAlterer<DNA>(1.0) {
+class CompositeAlterer<DNA, G : Gene<DNA, G>>(private val alterers: List<Alterer<DNA, G>>) :
+        AbstractAlterer<DNA, G>(1.0) {
     /**
      * Applies the composite alterer to the specified population of individuals and returns an
      * [AltererResult], which contains the resulting population of individuals and a count of how
@@ -34,7 +36,7 @@ class CompositeAlterer<DNA>(private val alterers: List<Alterer<DNA>>) : Abstract
      * @return An [AltererResult], which contains the resulting population of individuals and a count
      *      of how many individuals were altered.
      */
-    override fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA> {
+    override fun invoke(population: Population<DNA, G>, generation: Int): AltererResult<DNA, G> {
         var result = AltererResult(population)
         for (alterer in alterers) {
             val altererResult = alterer(result.population, generation)

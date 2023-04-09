@@ -28,10 +28,10 @@ import java.util.*
  * @version 2.0.0
  */
 class CharChromosome(
-    override val genes: List<Gene<Char>>,
+    override val genes: List<CharGene>,
     val range: CharRange,
     private val filter: (Char) -> Boolean = { true }
-) : Chromosome<Char> {
+) : Chromosome<Char, CharGene> {
 
 
     /**
@@ -50,7 +50,7 @@ class CharChromosome(
     ) : this(List(size) { CharGene.create(range, filter) }, range = ' '..'z')
 
     // Documentation inherited from Chromosome
-    override fun withGenes(genes: List<Gene<Char>>) = CharChromosome(genes, range, filter)
+    override fun withGenes(genes: List<CharGene>) = CharChromosome(genes, range, filter)
 
     // Documentation inherited from Verifiable
     override fun verify() = genes.all { filter(it.dna) }

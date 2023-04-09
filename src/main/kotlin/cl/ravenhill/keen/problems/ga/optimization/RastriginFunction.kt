@@ -15,6 +15,7 @@ import cl.ravenhill.keen.builders.doubles
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
@@ -39,7 +40,7 @@ private const val N = 2
  * The function is usually evaluated on the square xi ∈ [-5.12, 5.12], for all i = 1, …, n.
  * The global minimum is located at x* = (0, …, 0) where f(x*) = 0.
  */
-private fun fitness(x: Genotype<Double>) = A * N + x.flatten().fold(0.0) { acc, gene ->
+private fun fitness(x: Genotype<Double, DoubleGene>) = A * N + x.flatten().fold(0.0) { acc, gene ->
     acc + gene * gene - A * cos(2 * Math.PI * gene)
 }
 

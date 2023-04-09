@@ -178,12 +178,12 @@ object Core {
 /**
  * A typealias for a list of [Phenotype] objects representing a population of individuals.
  */
-typealias Population<DNA> = List<Phenotype<DNA>>
+typealias Population<DNA, G> = List<Phenotype<DNA, G>>
 
 /**
  * A typealias for a mutable list of [Phenotype] objects representing a population of individuals.
  */
-typealias MutablePopulation<DNA> = MutableList<Phenotype<DNA>>
+typealias MutablePopulation<DNA, G> = MutableList<Phenotype<DNA, G>>
 
 /**
  * Rolls a n-dimensional dice.

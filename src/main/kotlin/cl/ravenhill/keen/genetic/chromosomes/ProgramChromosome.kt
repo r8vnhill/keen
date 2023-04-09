@@ -23,11 +23,10 @@ class ProgramChromosome<T> private constructor(
     private val generationMethods: List<((
         List<Terminal<T>>, List<Fun<T>>, Int, Int
     ) -> Program<T>)>
-) : Chromosome<Program<T>> {
-    @Suppress("UNCHECKED_CAST")
-    override fun withGenes(genes: List<Gene<Program<T>>>) =
+) : Chromosome<Program<T>, ProgramGene<T>> {
+    override fun withGenes(genes: List<ProgramGene<T>>) =
         ProgramChromosome(
-            genes as List<ProgramGene<T>>,
+            genes,
             functions,
             terminals,
             validator,

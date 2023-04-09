@@ -5,6 +5,7 @@ import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.builders.ints
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
@@ -44,7 +45,7 @@ private val meetings =
  * It is calculated as the number of rooms needed to schedule all the meetings plus the number of
  * meetings that overlap.
  */
-private fun fitnessFn(genotype: Genotype<Int>): Double {
+private fun fitnessFn(genotype: Genotype<Int, IntGene>): Double {
     // We create a list to represent the rooms.
     // The size of the list is the number meetings, since the worst case scenario is that each
     // meeting is in a different room.

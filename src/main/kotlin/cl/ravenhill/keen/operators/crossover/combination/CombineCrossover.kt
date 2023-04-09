@@ -33,12 +33,12 @@ import cl.ravenhill.keen.probability
  * @since 0.9
  * @version 2.0.0
  */
-open class CombineCrossover<DNA>(
-    private val combiner: (List<Gene<DNA>>) -> Gene<DNA>,
+open class CombineCrossover<DNA, G: Gene<DNA, G>>(
+    private val combiner: (List<G>) -> G,
     probability: Double,
     chromosomeRate: Double = 1.0,
     private val geneRate: Double = 1.0
-) : AbstractCrossover<DNA>(probability, 1, chromosomeRate = chromosomeRate) {
+) : AbstractCrossover<DNA, G>(probability, 1, chromosomeRate = chromosomeRate) {
 
     /**
      * Combines the genes of the given chromosomes using the combiner function.
@@ -50,7 +50,7 @@ open class CombineCrossover<DNA>(
      * @return A new chromosome that is the result of the combination.
      * @see Dice.probability
      */
-    internal fun combine(chromosomes: List<Chromosome<DNA>>) = List(chromosomes[0].size) { i ->
+    internal fun combine(chromosomes: List<Chromosome<DNA, G>>) = List(chromosomes[0].size) { i ->
         if (Dice.probability() < geneRate) {
             combiner(chromosomes.map { it[i] })
         } else {
@@ -66,6 +66,6 @@ open class CombineCrossover<DNA>(
      * @param chromosomes The list of chromosomes to be crossed over.
      * @return A list of chromosomes that contains the result of the crossover operation.
      */
-    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>) =
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>) =
         listOf(chromosomes[0].withGenes(combine(chromosomes)))
 }

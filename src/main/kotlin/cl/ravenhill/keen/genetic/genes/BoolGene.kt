@@ -5,7 +5,7 @@ import cl.ravenhill.keen.Core
 /**
  * A boolean gene.
  */
-sealed class BoolGene : Gene<Boolean> {
+sealed class BoolGene : Gene<Boolean, BoolGene> {
 
     /**
      * Returns the boolean value of the gene.
@@ -19,7 +19,7 @@ sealed class BoolGene : Gene<Boolean> {
 
     override fun toString() = "$dna"
 
-    override fun mutate() = super.mutate() as BoolGene
+    override fun mutate() = super.mutate()
 
     override fun generator() = Core.random.nextBoolean()
 

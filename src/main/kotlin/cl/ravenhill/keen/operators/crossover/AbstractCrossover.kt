@@ -13,6 +13,7 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.MutablePopulation
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
@@ -33,13 +34,13 @@ import cl.ravenhill.keen.util.subsets
  * @param exclusivity If true, individuals cannot be selected more than once for a given crossover operation
  * @param chromosomeRate The probability that a given chromosome within an individual will be selected for recombination
  */
-abstract class AbstractCrossover<DNA>(
+abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     probability: Double,
     private val numOut: Int = 2,
     private val numIn: Int = 2,
     private val exclusivity: Boolean = false,
     protected val chromosomeRate: Double = 1.0
-) : AbstractAlterer<DNA>(probability), Crossover<DNA> {
+) : AbstractAlterer<DNA, G>(probability), Crossover<DNA, G> {
 
     init {
         enforce {
@@ -51,9 +52,9 @@ abstract class AbstractCrossover<DNA>(
 
     // Documentation inherited from Alterer interface
     override fun invoke(
-        population: Population<DNA>,
+        population: Population<DNA, G>,
         generation: Int
-    ): AltererResult<DNA> {
+    ): AltererResult<DNA, G> {
         val pop = population.toMutableList()
         // check if probability is non-zero and there are at least 2 individuals in the population
         return if (probability neq 0.0 && pop.size >= 2) {
@@ -72,7 +73,7 @@ abstract class AbstractCrossover<DNA>(
         }
     }
 
-    override fun crossover(population: MutablePopulation<DNA>, indices: List<Int>): Int {
+    override fun crossover(population: MutablePopulation<DNA, G>, indices: List<Int>): Int {
         enforce { indices.size should BeEqualTo(numIn) }
         // get the individuals at the specified indices
         val individuals = population[indices]
@@ -101,5 +102,6 @@ abstract class AbstractCrossover<DNA>(
      * The function should return a list of new chromosomes created by recombining the input
      * chromosomes.
      */
-    protected abstract fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>>
+    protected abstract fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>):
+            List<Chromosome<DNA, G>>
 }

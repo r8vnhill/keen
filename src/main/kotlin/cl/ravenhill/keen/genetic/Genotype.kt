@@ -2,6 +2,7 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
 import java.util.Objects
@@ -31,8 +32,8 @@ import java.util.Objects
  * @version 2.0.0
  * @since 1.0.0
  */
-class Genotype<DNA>(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DNA>,
-        Iterable<Chromosome<DNA>> {
+class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>) :
+        GeneticMaterial<DNA, G>, Iterable<Chromosome<DNA, G>> {
 
     init {
         enforce {
@@ -59,12 +60,12 @@ class Genotype<DNA>(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DN
         ReplaceWith("Genotype(chromosomes)", "cl.ravenhill.keen.genetic.Genotype"),
         level = DeprecationLevel.WARNING
     )
-    fun duplicate(chromosomes: List<Chromosome<DNA>>) = Genotype(chromosomes)
+    fun duplicate(chromosomes: List<Chromosome<DNA, G>>) = Genotype(chromosomes)
 
     /**
      * Returns the [Chromosome] at the given `index`.
      */
-    operator fun get(index: Int): Chromosome<DNA> {
+    operator fun get(index: Int): Chromosome<DNA, G> {
         enforce { index should BeInRange(0 until size) }
         return chromosomes[index]
     }
@@ -76,7 +77,7 @@ class Genotype<DNA>(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DN
     // Inherit documentation from Any
     override fun equals(other: Any?) = when {
         this === other -> true
-        other !is Genotype<*> -> false
+        other !is Genotype<*, *> -> false
         chromosomes != other.chromosomes -> false
         else -> true
     }
@@ -95,14 +96,14 @@ class Genotype<DNA>(val chromosomes: List<Chromosome<DNA>>) : GeneticMaterial<DN
      *
      * @property chromosomes The list of chromosome factories added to this builder.
      */
-    class Factory<DNA> {
+    class Factory<DNA, G : Gene<DNA, G>> {
 
-        var chromosomes: MutableList<Chromosome.Factory<DNA, *>> = mutableListOf()
+        var chromosomes: MutableList<Chromosome.Factory<DNA, G>> = mutableListOf()
 
         /**
          * Creates a new [Genotype] instance with the chromosomes added to the builder.
          */
-        fun make(): Genotype<DNA> {
+        fun make(): Genotype<DNA, G> {
             enforce {
                 chromosomes should NotBeEmpty()
             }

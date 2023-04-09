@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.util.statistics
 
+import cl.ravenhill.keen.genetic.genes.Gene
 import tech.tablesaw.api.DoubleColumn
 import tech.tablesaw.plotly.Plot
 import tech.tablesaw.plotly.components.Figure
@@ -16,7 +17,7 @@ import tech.tablesaw.plotly.traces.ScatterTrace
  * @version 1.0.0
  * @since 1.0.0
  */
-class StatisticPlotter<DNA> : AbstractStatistic<DNA>() {
+class StatisticPlotter<DNA, G: Gene<DNA, G>> : AbstractStatistic<DNA, G>() {
 
     /**
      * Displays a plot of the fitness of the population throughout evolution.

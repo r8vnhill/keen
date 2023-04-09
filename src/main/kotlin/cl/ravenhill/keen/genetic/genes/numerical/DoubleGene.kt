@@ -28,9 +28,9 @@ class DoubleGene(
     override val dna: Double,
     val range: Pair<Double, Double>,
     override val filter: (Double) -> Boolean = { true }
-) : NumberGene<Double>, ComparableGene<Double> {
+) : NumberGene<Double, DoubleGene>, ComparableGene<Double, DoubleGene> {
 
-    override fun average(genes: List<NumberGene<Double>>) =
+    override fun average(genes: List<DoubleGene>) =
         withDna(genes.fold(dna / (genes.size + 1)) { acc, gene -> acc + gene.dna / (genes.size + 1) })
 
     private val start = range.first

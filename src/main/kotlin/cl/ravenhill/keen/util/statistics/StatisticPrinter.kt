@@ -1,5 +1,7 @@
 package cl.ravenhill.keen.util.statistics
 
+import cl.ravenhill.keen.genetic.genes.Gene
+
 
 /**
  * A statistic printer that prints out the evolutionary results at a given interval.
@@ -11,7 +13,7 @@ package cl.ravenhill.keen.util.statistics
  * @version 1.0.0
  * @since 1.0.0
  */
-class StatisticPrinter<DNA>(private val every: Int) : AbstractStatistic<DNA>() {
+class StatisticPrinter<DNA, G: Gene<DNA, G>>(private val every: Int) : AbstractStatistic<DNA, G>() {
 
     override fun onResultUpdated() {
         super.onResultUpdated()

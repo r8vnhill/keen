@@ -11,6 +11,7 @@ package cl.ravenhill.keen.builders
 
 import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
  * Creates a new [Engine] with the given [fitnessFunction], [genotype], and [init] block.
@@ -35,8 +36,8 @@ import cl.ravenhill.keen.genetic.Genotype
  * @return An [Engine] instance that can be used to evolve a population towards better
  *  solutions.
  */
-fun <DNA> engine(
-    fitnessFunction: (Genotype<DNA>) -> Double,
-    genotype: Genotype.Factory<DNA>,
-    init: Engine.Builder<DNA>.() -> Unit
-): Engine<DNA> = Engine.Builder(fitnessFunction, genotype).apply(init).build()
+fun <DNA, G: Gene<DNA, G>> engine(
+    fitnessFunction: (Genotype<DNA, G>) -> Double,
+    genotype: Genotype.Factory<DNA, G>,
+    init: Engine.Builder<DNA, G>.() -> Unit
+): Engine<DNA, G> = Engine.Builder(fitnessFunction, genotype).apply(init).build()

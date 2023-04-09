@@ -5,6 +5,7 @@ import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.builders.program
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SingleNodeCrossover
@@ -26,7 +27,7 @@ import kotlin.math.abs
  * @return a fitness function that computes the absolute difference between the sum of the
  *  generated program and the target integer value.
  */
-private fun fitness(target: Int): (Genotype<Program<Double>>) -> Double = { gt ->
+private fun fitness(target: Int): (Genotype<Program<Double>, ProgramGene<Double>>) -> Double = { gt ->
     val program = gt.flatten().first()
     abs(program() - target)
 }

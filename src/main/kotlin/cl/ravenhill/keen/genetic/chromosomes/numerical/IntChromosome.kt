@@ -41,7 +41,7 @@ class IntChromosome private constructor(
     genes: List<IntGene>,
     val range: IntToInt,
     override val predicate: (Int) -> Boolean
-) : AbstractChromosome<Int>(genes), Filterable<Int> {
+) : AbstractChromosome<Int, IntGene>(genes), Filterable<Int> {
 
     /**
      * Creates a new [IntChromosome] from a given [size], [range] and a [predicate]
@@ -64,9 +64,8 @@ class IntChromosome private constructor(
         )
     }, range, predicate)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun withGenes(genes: List<Gene<Int>>) =
-        IntChromosome(genes as List<IntGene>, range, predicate)
+    override fun withGenes(genes: List<IntGene>) =
+        IntChromosome(genes, range, predicate)
 
     // region : equals, hashCode and toString
     override fun equals(other: Any?) = when {

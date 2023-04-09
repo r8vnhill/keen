@@ -22,18 +22,18 @@ import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
  * @since 1.2.0
  * @version 2.0.0
  */
-abstract class AbstractPermutationCrossover<DNA>(
+abstract class AbstractPermutationCrossover<DNA, G: Gene<DNA, G>>(
     probability: Double,
     numOut: Int = 2,
     numIn: Int = 2,
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0
-) : AbstractCrossover<DNA>(probability, numOut, numIn, exclusivity, chromosomeRate) {
+) : AbstractCrossover<DNA, G>(probability, numOut, numIn, exclusivity, chromosomeRate) {
 
     /**
      * Performs a permutation crossover between the given chromosomes.
      */
-    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         enforce {
             for (chromosome in chromosomes) {
                 chromosome.genes.distinct().size should BeEqualTo(chromosome.genes.size) {
@@ -48,5 +48,5 @@ abstract class AbstractPermutationCrossover<DNA>(
     /**
      * Performs permutation crossover on a list of chromosomes.
      */
-    protected abstract fun doCrossover(chromosomes: List<Chromosome<DNA>>): List<List<Gene<DNA>>>
+    protected abstract fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>>
 }

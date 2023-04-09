@@ -23,7 +23,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 1.0.0
  * @version 2.0.0
  */
-interface NumberGene<DNA : Number> : Gene<DNA> {
+interface NumberGene<DNA : Number, G: NumberGene<DNA, G>> : Gene<DNA, G> {
     val filter: (DNA) -> Boolean
 
     /**
@@ -32,7 +32,7 @@ interface NumberGene<DNA : Number> : Gene<DNA> {
      * @param genes A list of [NumberGene] objects to compute the average with.
      * @return A new [NumberGene] object that represents the average value.
      */
-    fun average(genes: List<NumberGene<DNA>>): NumberGene<DNA>
+    fun average(genes: List<G>): G
 
     /**
      * Converts this gene to a [Double].

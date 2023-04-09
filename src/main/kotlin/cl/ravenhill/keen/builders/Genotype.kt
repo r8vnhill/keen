@@ -6,11 +6,11 @@
  * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-
 package cl.ravenhill.keen.builders
 
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
  * A scope for configuring a [Genotype] instance by adding chromosome factories.
@@ -23,8 +23,8 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
  *
  * @see ChromosomeScope
  */
-class GenotypeScope<DNA> {
-    val chromosomes = mutableListOf<Chromosome.Factory<DNA, *>>()
+class GenotypeScope<DNA, G : Gene<DNA, G>> {
+    val chromosomes = mutableListOf<Chromosome.Factory<DNA, G>>()
 }
 
 /**
@@ -49,7 +49,7 @@ class GenotypeScope<DNA> {
  * @return A [Genotype.Factory] instance that contains the [Chromosome.Factory]s created by the
  *  [init] block.
  */
-fun <DNA> genotype(init: GenotypeScope<DNA>.() -> Unit) =
-    Genotype.Factory<DNA>().apply {
-        chromosomes.addAll(GenotypeScope<DNA>().apply(init).chromosomes)
+fun <DNA, G : Gene<DNA, G>> genotype(init: GenotypeScope<DNA, G>.() -> Unit) =
+    Genotype.Factory<DNA, G>().apply {
+        chromosomes.addAll(GenotypeScope<DNA, G>().apply(init).chromosomes)
     }

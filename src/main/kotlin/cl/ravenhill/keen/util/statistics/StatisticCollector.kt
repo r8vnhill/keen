@@ -8,6 +8,8 @@
 
 package cl.ravenhill.keen.util.statistics
 
+import cl.ravenhill.keen.genetic.genes.Gene
+
 
 /**
  * A collector of statistics to be used in the evolutionary algorithm.
@@ -18,7 +20,7 @@ package cl.ravenhill.keen.util.statistics
  * @since 1.0.0
  * @version 1.0.0
  */
-class StatisticCollector<DNA> : AbstractStatistic<DNA>() {
+class StatisticCollector<DNA, G: Gene<DNA, G>> : AbstractStatistic<DNA, G>() {
     override fun toString() = """
         ------------ Statistics Collector -------------
         -------------- Selection Times ----------------

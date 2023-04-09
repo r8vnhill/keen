@@ -1,9 +1,9 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
  * Creative Commons Attribution 4.0 International License.
  * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
 package cl.ravenhill.keen.evolution
@@ -19,6 +19,7 @@ import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.operators.Alterer
@@ -54,28 +55,27 @@ import kotlin.properties.Delegates
  * @property limits             The limits that will be used to stop the evolution
  * @property steadyGenerations  The number of generations that the fitness has not changed
  */
-class Engine<DNA>(
-    val genotype: Genotype.Factory<DNA>,
+class Engine<DNA, G: Gene<DNA, G>>(
+    val genotype: Genotype.Factory<DNA, G>,
     val populationSize: Int,
     val offspringFraction: Double,
-    val selector: Selector<DNA>,
-    val offspringSelector: Selector<DNA>,
-    val alterer: Alterer<DNA>,
+    val selector: Selector<DNA, G>,
+    val offspringSelector: Selector<DNA, G>,
+    val alterer: Alterer<DNA, G>,
     val limits: List<Limit>,
-    val survivorSelector: Selector<DNA>,
-    val optimizer: PhenotypeOptimizer<DNA>,
-    val statistics: List<Statistic<DNA>>,
+    val survivorSelector: Selector<DNA, G>,
+    val optimizer: PhenotypeOptimizer<DNA, G>,
+    val statistics: List<Statistic<DNA, G>>,
     val executor: Executor,
-    val evaluator: EvaluationExecutor<DNA>,
-    val interceptor: EvolutionInterceptor<DNA>,
-    val constructorExecutor: ConstructorExecutor<DNA>
-) : Evolver<DNA> {
+    val evaluator: EvaluationExecutor<DNA, G>,
+    val interceptor: EvolutionInterceptor<DNA, G>
+) : Evolver<DNA, G> {
 
     // region : PROPERTIES  ------------------------------------------------------------------------
-    var population: Population<DNA> by Delegates.observable(listOf()) { _, _, _ ->
+    var population: Population<DNA, G> by Delegates.observable(listOf()) { _, _, _ ->
         runBlocking { statistics.asFlow().collect { it.population = population } }
     }
-    private var evolutionResult: EvolutionResult<DNA>
+    private var evolutionResult: EvolutionResult<DNA, G>
             by Delegates.observable(EvolutionResult(optimizer, listOf(), 0)) { _, _, new ->
                 runBlocking { statistics.asFlow().collect { it.evolutionResult = new } }
             }
@@ -100,7 +100,7 @@ class Engine<DNA>(
     /**
      * The fittest individual of the current generation.
      */
-    private var fittest: Phenotype<DNA>? by Delegates.observable(null) { _, _, _ ->
+    private var fittest: Phenotype<DNA, G>? by Delegates.observable(null) { _, _, _ ->
     }
 
     /**
@@ -115,11 +115,11 @@ class Engine<DNA>(
      * @return an [EvolutionResult] containing the last generation of the evolution process.
      * @see [evolve]
      */
-    fun run(): EvolutionResult<DNA> {
+    fun run(): EvolutionResult<DNA, G> {
         val initTime = clock.millis()
         info { "Starting evolution process." }
         var evolution =
-            EvolutionStart.empty<DNA>().apply { debug { "Started an empty evolution." } }
+            EvolutionStart.empty<DNA, G>().apply { debug { "Started an empty evolution." } }
         var result = EvolutionResult(optimizer, evolution.population, generation)
         debug { "Optimizer: ${result.optimizer}" }
         debug { "Best: ${result.best}" }
@@ -154,7 +154,7 @@ class Engine<DNA>(
      * @see alter
      * @see EvolutionResult
      */
-    override fun evolve(start: EvolutionStart<DNA>) = runBlocking {
+    override fun evolve(start: EvolutionStart<DNA, G>) = runBlocking {
         val initTime = clock.millis()
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
@@ -200,7 +200,7 @@ class Engine<DNA>(
      * @param start the starting state of the evolution at this generation.
      * @return the initial population of the evolution.
      */
-    private fun evolutionStart(start: EvolutionStart<DNA>) =
+    private fun evolutionStart(start: EvolutionStart<DNA, G>) =
         if (start.population.isEmpty()) {
             info { "Initial population is empty, creating a new one." }
             val generation = start.generation
@@ -226,7 +226,7 @@ class Engine<DNA>(
      * @param force if true, the fitness will be evaluated even if it has already been evaluated.
      * @return the evaluated population.
      */
-    private fun evaluate(evolution: EvolutionStart<DNA>, force: Boolean = false) =
+    private fun evaluate(evolution: EvolutionStart<DNA, G>, force: Boolean = false) =
         evaluator(evolution.population, force).also {
             enforce {
                 populationSize should IntRequirement.BeEqualTo(it.size) {
@@ -246,7 +246,7 @@ class Engine<DNA>(
      * @param population the evaluated population.
      * @return the offspring.
      */
-    private fun selectOffspring(population: Population<DNA>) =
+    private fun selectOffspring(population: Population<DNA, G>) =
         asyncSelect {
             debug { "Selecting offspring." }
             val initTime = clock.millis()
@@ -267,7 +267,7 @@ class Engine<DNA>(
      * @param population the evaluated population.
      * @return the survivors.
      */
-    private fun selectSurvivors(population: List<Phenotype<DNA>>) =
+    private fun selectSurvivors(population: List<Phenotype<DNA, G>>) =
         asyncSelect {
             debug { "Selecting survivors." }
             val initTime = clock.millis()
@@ -289,7 +289,7 @@ class Engine<DNA>(
      *
      * @see supplyAsync
      */
-    private fun asyncSelect(select: () -> Population<DNA>) = supplyAsync({
+    private fun asyncSelect(select: () -> Population<DNA, G>) = supplyAsync({
         select()
     }, executor)
 
@@ -303,8 +303,8 @@ class Engine<DNA>(
      * @see CompletableFuture.thenApplyAsync
      */
     private fun alter(
-        population: CompletableFuture<Population<DNA>>,
-        evolution: EvolutionStart<DNA>
+        population: CompletableFuture<Population<DNA, G>>,
+        evolution: EvolutionStart<DNA, G>
     ) = population.thenApplyAsync({
         debug { "Altering offspring." }
         val initTime = clock.millis()
@@ -358,9 +358,9 @@ class Engine<DNA>(
      * @property statistics The statistics collectors used to collect data during the evolution.
      * @property constructorExecutor The [ConstructorExecutor] used to create individuals.
      */
-    class Builder<DNA>(
-        private val fitnessFunction: (Genotype<DNA>) -> Double,
-        private val genotype: Genotype.Factory<DNA>
+    class Builder<DNA, G: Gene<DNA, G>>(
+        private val fitnessFunction: (Genotype<DNA, G>) -> Double,
+        private val genotype: Genotype.Factory<DNA, G>
     ) {
         // region : Evolution parameters -----------------------------------------------------------
         var populationSize = 50
@@ -373,33 +373,33 @@ class Engine<DNA>(
                 value should NotBeEmpty { "Limits cannot be empty" }
             }.let { field = value }
 
-        var optimizer: PhenotypeOptimizer<DNA> = FitnessMaximizer()
+        var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
 
-        val interceptor = EvolutionInterceptor.identity<DNA>()
+        val interceptor = EvolutionInterceptor.identity<DNA, G>()
         // endregion    ----------------------------------------------------------------------------
 
         // region : Execution -----------------------------------------------------------------------
         var executor: Executor = commonPool()
 
         var evaluator =
-            EvaluationExecutor.Factory<DNA>().apply { creator = { SequentialEvaluator(it) } }
+            EvaluationExecutor.Factory<DNA, G>().apply { creator = { SequentialEvaluator(it) } }
 
         var constructorExecutor: ConstructorExecutor<DNA> = SequentialConstructor()
         // endregion    ----------------------------------------------------------------------------
 
         // region : Alterers -----------------------------------------------------------------------
-        var alterers: List<Alterer<DNA>> = emptyList()
+        var alterers: List<Alterer<DNA, G>> = emptyList()
 
         /**
          * The "main" alterer, by default it is a [CompositeAlterer] that contains all the alterers
          * added to the builder.
          */
-        private val alterer: Alterer<DNA>
+        private val alterer: Alterer<DNA, G>
             get() = CompositeAlterer(alterers)
         // endregion    ----------------------------------------------------------------------------
 
         // region : Selection ----------------------------------------------------------------------
-        var selector: Selector<DNA> = TournamentSelector(3)
+        var selector: Selector<DNA, G> = TournamentSelector(3)
             set(value) {
                 offspringSelector = value
                 field = value
@@ -415,7 +415,7 @@ class Engine<DNA>(
             }.let { field = value }
         // endregion    ----------------------------------------------------------------------------
 
-        var statistics: List<Statistic<DNA>> = listOf(StatisticCollector())
+        var statistics: List<Statistic<DNA, G>> = listOf(StatisticCollector())
 
         fun build() = Engine(
             genotype = genotype,
@@ -430,8 +430,7 @@ class Engine<DNA>(
             statistics = statistics,
             executor = executor,
             evaluator = evaluator.creator(fitnessFunction),
-            interceptor = interceptor,
-            constructorExecutor = constructorExecutor
+            interceptor = interceptor
         )
     }
 }

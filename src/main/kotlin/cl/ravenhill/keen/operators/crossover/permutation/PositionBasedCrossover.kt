@@ -24,12 +24,12 @@ import kotlinx.coroutines.runBlocking
  * @since 1.2.0
  * @version 2.0.0
  */
-class PositionBasedCrossover<DNA>(probability: Double) :
-    AbstractPermutationCrossover<DNA>(probability) {
+class PositionBasedCrossover<DNA, G: Gene<DNA, G>>(probability: Double) :
+    AbstractPermutationCrossover<DNA, G>(probability) {
 
 //    override fun doCrossover(
-//        genes1: MutableList<Gene<DNA>>,
-//        genes2: MutableList<Gene<DNA>>,
+//        genes1: MutableList<Gene<DNA, G>>,
+//        genes2: MutableList<Gene<DNA, G>>,
 //        size: Int
 //    ): Int {
 //        runBlocking {
@@ -48,9 +48,9 @@ class PositionBasedCrossover<DNA>(probability: Double) :
 //    }
 
     private fun crossoverPair(
-        parents: Pair<MutableList<Gene<DNA>>, MutableList<Gene<DNA>>>,
+        parents: Pair<MutableList<Gene<DNA, G>>, MutableList<Gene<DNA, G>>>,
         size: Int
-    ): MutableList<Gene<DNA>> {
+    ): MutableList<Gene<DNA, G>> {
         // We select random indices to insert the genes from the second parent into the first one.
         val indices = Core.random
             .indices(1 / size.toDouble(), Core.random.nextInt(size))
@@ -62,7 +62,7 @@ class PositionBasedCrossover<DNA>(probability: Double) :
         val remaining =
             parents.first.filter { gene -> gene !in selected.map { it.second } }
         // We create the offspring
-        val offspring = mutableListOf<Gene<DNA>>()
+        val offspring = mutableListOf<Gene<DNA, G>>()
         // We maintain two indices, one for traversing the selected genes and the other
         // for traversing the remaining genes
         var selectIdx = 0
@@ -80,9 +80,9 @@ class PositionBasedCrossover<DNA>(probability: Double) :
         return offspring
     }
 
-    override fun doCrossover(chromosomes: List<Chromosome<DNA>>): List<List<Gene<DNA>>> {
+    override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
         TODO("Not yet implemented")
     }
 }
 
-typealias PBX<DNA> = PositionBasedCrossover<DNA>
+typealias PBX<DNA, G> = PositionBasedCrossover<DNA, G>

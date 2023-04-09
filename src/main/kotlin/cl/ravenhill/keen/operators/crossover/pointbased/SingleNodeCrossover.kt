@@ -46,19 +46,19 @@ import cl.ravenhill.keen.util.Tree
  * @since 2.0.0
  * @version 2.0.0
  */
-class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
+class SingleNodeCrossover<V, DNA : Tree<V, DNA>, G: Gene<DNA, G>>(
     probability: Double,
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0,
     private val geneRate: Double = 1.0
-) : AbstractCrossover<DNA>(
+) : AbstractCrossover<DNA, G>(
     probability,
     exclusivity = exclusivity,
     chromosomeRate = chromosomeRate
 ) {
 
     // Inherit documentation from AbstractCrossover.
-    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         enforcePreconditions(chromosomes)
         return if (chromosomes.all { it.genes.any { g -> g.dna.size > 1 } }) {
             applyCrossover(chromosomes)
@@ -70,7 +70,7 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
     /**
      * Ensures that the parents meet the preconditions for the crossover.
      */
-    private fun enforcePreconditions(chromosomes: List<Chromosome<DNA>>) = enforce {
+    private fun enforcePreconditions(chromosomes: List<Chromosome<DNA, G>>) = enforce {
         chromosomes.size should BeEqualTo(2) {
             "The crossover must have exactly two parents"
         }
@@ -93,9 +93,9 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
      * @param chromosomes the parents to apply the crossover to.
      * @return a list with the resulting offspring.
      */
-    private fun applyCrossover(chromosomes: List<Chromosome<DNA>>): List<Chromosome<DNA>> {
+    private fun applyCrossover(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         // create two mutable lists to hold the new genes for each offspring chromosome
-        val genes = mutableListOf<Gene<DNA>>() to mutableListOf<Gene<DNA>>()
+        val genes = mutableListOf<G>() to mutableListOf<G>()
         // iterate over each pair of genes from the two parent chromosomes
         chromosomes[0].genes.zip(chromosomes[1].genes).forEach { (gene1, gene2) ->
             // randomly decide whether to perform a crossover at this point
@@ -157,7 +157,7 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>>(
     /**
      * Returns the parents as they are.
      */
-    private fun returnParents(chromosomes: List<Chromosome<DNA>>) = listOf(
+    private fun returnParents(chromosomes: List<Chromosome<DNA, G>>) = listOf(
         chromosomes[0].withGenes(chromosomes[0].genes),
         chromosomes[1].withGenes(chromosomes[1].genes)
     )

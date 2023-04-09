@@ -10,6 +10,7 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.MutablePopulation
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.Alterer
 
 /**
@@ -22,7 +23,7 @@ import cl.ravenhill.keen.operators.Alterer
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Crossover<DNA> : Alterer<DNA> {
+interface Crossover<DNA, G: Gene<DNA, G>> : Alterer<DNA, G> {
 
     /**
      * Applies crossover to the individuals in the population specified by the indices and returns
@@ -38,5 +39,5 @@ interface Crossover<DNA> : Alterer<DNA> {
      *      participate in the crossover.
      * @return The number of offspring produced by the crossover.
      */
-    fun crossover(population: MutablePopulation<DNA>, indices: List<Int>): Int
+    fun crossover(population: MutablePopulation<DNA, G>, indices: List<Int>): Int
 }

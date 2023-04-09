@@ -1,7 +1,9 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
@@ -35,13 +37,13 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionResult<DNA>(
-    val optimizer: PhenotypeOptimizer<DNA>,
-    val population: List<Phenotype<DNA>>,
+class EvolutionResult<DNA, G: Gene<DNA, G>>(
+    val optimizer: PhenotypeOptimizer<DNA, G>,
+    val population: Population<DNA, G>,
     val generation: Int
-) : Comparable<EvolutionResult<DNA>> {
+) : Comparable<EvolutionResult<DNA, G>> {
 
-    val best: Phenotype<DNA>
+    val best: Phenotype<DNA, G>
         get() = population.maxWith(optimizer.comparator)
 
     /**
@@ -49,7 +51,7 @@ class EvolutionResult<DNA>(
      */
     operator fun next() = EvolutionStart(population, generation + 1, true)
 
-    override fun compareTo(other: EvolutionResult<DNA>): Int =
+    override fun compareTo(other: EvolutionResult<DNA, G>): Int =
         optimizer.comparator.compare(this.best, other.best)
 
     override fun toString() = "EvolutionResult { generation: $generation, best: $best }"
@@ -63,7 +65,7 @@ class EvolutionResult<DNA>(
  * @property isDirty A flag indicating whether the evaluation process needs to be run again.
  *  The default value is `true`.
  *
- * @param T The type of the phenotype.
+ * @param DNA The type of the phenotype.
  *
  * @constructor Creates a new [EvolutionStart] object.
  *
@@ -71,8 +73,8 @@ class EvolutionResult<DNA>(
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionStart<T>(
-    val population: List<Phenotype<T>>,
+class EvolutionStart<DNA, G: Gene<DNA, G>>(
+    val population: List<Phenotype<DNA, G>>,
     val generation: Int,
     val isDirty: Boolean = true
 ) {
@@ -90,10 +92,10 @@ class EvolutionStart<T>(
         /**
          * Creates an empty [EvolutionStart] object.
          *
-         * @param T The type of the phenotype.
+         * @param DNA The type of the phenotype.
          *
          * @return An empty [EvolutionStart] object.
          */
-        fun <T> empty(): EvolutionStart<T> = EvolutionStart(listOf(), 1)
+        fun <DNA, G: Gene<DNA, G>> empty(): EvolutionStart<DNA, G> = EvolutionStart(listOf(), 1)
     }
 }

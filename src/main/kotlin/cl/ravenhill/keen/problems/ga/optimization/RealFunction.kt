@@ -5,6 +5,7 @@ import cl.ravenhill.keen.builders.doubles
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
@@ -19,7 +20,7 @@ import kotlin.math.sin
 /**
  * The function to minimize.
  */
-private fun fitnessFunction(genotype: Genotype<Double>) = genotype.flatten().first()
+private fun fitnessFunction(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().first()
     .let {
         ln(cos(sin(it)) + sin(cos(it)))
     }

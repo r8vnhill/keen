@@ -8,7 +8,6 @@
 
 package cl.ravenhill.keen.operators.crossover.combination
 
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
 
 
@@ -30,14 +29,12 @@ import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
  * @since 1.0.0
  * @version 2.0.0
  */
-class MeanCrossover<DNA : Number>(
+class MeanCrossover<DNA : Number, G : NumberGene<DNA, G>>(
     probability: Double,
     chromosomeRate: Double = 1.0,
     geneRate: Double = 1.0
-) : CombineCrossover<DNA>(
-    { genes: List<Gene<DNA>> ->
-        @Suppress("UNCHECKED_CAST")
-        genes as List<NumberGene<DNA>>
+) : CombineCrossover<DNA, G>(
+    { genes: List<G> ->
         genes[0].average(genes.drop(1))
     },
     probability,

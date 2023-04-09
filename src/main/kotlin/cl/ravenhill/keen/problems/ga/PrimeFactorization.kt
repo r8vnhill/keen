@@ -28,7 +28,7 @@ private const val TARGET = 420
  * Calculates the absolute difference between the target and the multiplication of the prime factors
  * of the genotype.
  */
-private fun absDiff(genotype: Genotype<Int>) =
+private fun absDiff(genotype: Genotype<Int, IntGene>) =
     genotype.flatten()
         .map { it.toLong() }
         .let { factors -> abs(TARGET.toLong() - factors.fold(1L) { acc, i -> acc * i }) }

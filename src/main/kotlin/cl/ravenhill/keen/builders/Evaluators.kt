@@ -15,6 +15,7 @@ import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
  * A scope that provides a way to configure an [EvaluationExecutor.Factory] instance with custom
@@ -32,15 +33,15 @@ import cl.ravenhill.keen.genetic.Phenotype
  * @since 2.0.0
  * @version 2.0.0
  */
-class EvaluatorScope<DNA> {
+class EvaluatorScope<DNA, G : Gene<DNA, G>> {
 
-    var factory = EvaluationExecutor.Factory<DNA>()
+    var factory = EvaluationExecutor.Factory<DNA, G>()
         set(value) {
             field = value
             creator = value.creator
         }
 
-    var creator: ((Genotype<DNA>) -> Double) -> EvaluationExecutor<DNA> =
+    var creator: ((Genotype<DNA, G>) -> Double) -> EvaluationExecutor<DNA, G> =
         { SequentialEvaluator(it) }
         set(value) {
             factory.creator = value
@@ -62,8 +63,8 @@ class EvaluatorScope<DNA> {
  * @param init A function that initializes an [EvaluationExecutor.Factory] instance with custom settings.
  * @return An [EvaluationExecutor.Factory] instance.
  */
-fun <DNA> evaluator(init: EvaluatorScope<DNA>.() -> Unit) =
-    EvaluatorScope<DNA>().apply(init).factory
+fun <DNA, G : Gene<DNA, G>> evaluator(init: EvaluatorScope<DNA, G>.() -> Unit) =
+    EvaluatorScope<DNA, G>().apply(init).factory
 
 /**
  * Returns a [CoroutineEvaluator.Factory] instance initialized with custom settings through
@@ -84,8 +85,10 @@ fun <DNA> evaluator(init: EvaluatorScope<DNA>.() -> Unit) =
  * @param init A function that initializes a [CoroutineEvaluator.Factory] instance with custom settings.
  * @return A [CoroutineEvaluator.Factory] instance.
  */
-fun <DNA> EvaluatorScope<DNA>.coroutines(init: CoroutineEvaluator.Factory<DNA>.() -> Unit = {}) {
-    factory = CoroutineEvaluator.Factory<DNA>()
+fun <DNA, G : Gene<DNA, G>> EvaluatorScope<DNA, G>.coroutines(
+    init: CoroutineEvaluator.Factory<DNA, G>.() -> Unit = {}
+) {
+    factory = CoroutineEvaluator.Factory<DNA, G>()
         .apply(init)
 }
 
@@ -104,8 +107,8 @@ fun <DNA> EvaluatorScope<DNA>.coroutines(init: CoroutineEvaluator.Factory<DNA>.(
  *
  * @receiver An [EvaluationExecutor.Factory] instance.
  */
-fun <DNA> EvaluatorScope<DNA>.sequential() {
-    factory = EvaluationExecutor.Factory<DNA>().apply {
+fun <DNA, G: Gene<DNA, G>> EvaluatorScope<DNA, G>.sequential() {
+    factory = EvaluationExecutor.Factory<DNA, G>().apply {
         creator = { SequentialEvaluator(it) }
     }
 }

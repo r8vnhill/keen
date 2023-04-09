@@ -24,9 +24,9 @@ import cl.ravenhill.keen.util.math.eq
  * @since 1.3.0
  * @version 2.0.0
  */
-class InversionMutator<DNA>(probability: Double) : Mutator<DNA>(probability) {
+class InversionMutator<DNA, G: Gene<DNA, G>>(probability: Double) : Mutator<DNA, G>(probability) {
     override fun mutateChromosome(
-        chromosome: Chromosome<DNA>,
+        chromosome: Chromosome<DNA, G>,
     ) = if (probability eq 0.0 || chromosome.size < 2) {
         MutatorResult(chromosome, 0)
     } else {
@@ -53,7 +53,7 @@ class InversionMutator<DNA>(probability: Double) : Mutator<DNA>(probability) {
      * Inverts the order of the genes in the given [genes] list, between the given [start] and [end]
      * indexes.
      */
-    private fun invert(genes: MutableList<Gene<DNA>>, start: Int, end: Int) {
+    private fun invert(genes: MutableList<G>, start: Int, end: Int) {
         var (i, j) = if (start < end) start to end else end to start
         while (i < j) {
             val tmp = genes[i]

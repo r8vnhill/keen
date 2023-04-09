@@ -41,7 +41,7 @@ class DoubleChromosome private constructor(
     genes: List<DoubleGene>,
     val range: Pair<Double, Double>,
     override val predicate: (Double) -> Boolean
-) : AbstractChromosome<Double>(genes), Filterable<Double> {
+) : AbstractChromosome<Double, DoubleGene>(genes), Filterable<Double> {
 
     private constructor(
         size: Int,
@@ -64,9 +64,8 @@ class DoubleChromosome private constructor(
 
     override fun verify() = genes.all { it.verify() }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun withGenes(genes: List<Gene<Double>>) =
-        DoubleChromosome(genes as List<DoubleGene>, range, predicate)
+    override fun withGenes(genes: List<DoubleGene>) =
+        DoubleChromosome(genes, range, predicate)
 
     override fun equals(other: Any?) = when {
         this === other -> true

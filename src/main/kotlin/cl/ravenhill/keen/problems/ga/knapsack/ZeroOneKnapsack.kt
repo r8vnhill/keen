@@ -14,6 +14,7 @@ import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
@@ -40,7 +41,7 @@ private val items =
  * @param genotype The genotype to calculate the fitness for.
  * @return The fitness of the genotype.
  */
-private fun fitnessFn(genotype: Genotype<Boolean>) =
+private fun fitnessFn(genotype: Genotype<Boolean, BoolGene>) =
     (genotype.flatten() zip items)
         .sumOf { (isInBag, item) -> if (isInBag) item.first else 0 }
         .let { if (it > MAX_WEIGHT) it - MAX_WEIGHT else it }

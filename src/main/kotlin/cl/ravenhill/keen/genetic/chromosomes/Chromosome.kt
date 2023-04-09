@@ -15,6 +15,12 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * chromosome.
  *
  * @param DNA The type of the genes' values.
+ * @param G The type of the genes.
+ * This parameter is needed to ensure type safety in the chromosome's operations and to provide a
+ * way to access the genes' specific data type [DNA].
+ * By specifying the gene type as a generic parameter, the Chromosome interface provides a flexible
+ * way of representing genetic data, allowing different types of genes to be used in different
+ * contexts
  *
  * @property genes The genes of the chromosome, ordered from start to end.
  * @property size The number of genes in the chromosome.
@@ -23,9 +29,9 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Chromosome<DNA> : GeneticMaterial<DNA>, Iterable<Gene<DNA>> {
+interface Chromosome<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<Gene<DNA, G>> {
 
-    val genes: List<Gene<DNA>>
+    val genes: List<G>
 
     val size: Int
         get() = genes.size
@@ -44,7 +50,7 @@ interface Chromosome<DNA> : GeneticMaterial<DNA>, Iterable<Gene<DNA>> {
     /**
      * Returns a new chromosome with the given ``genes``.
      */
-    fun withGenes(genes: List<Gene<DNA>>): Chromosome<DNA>
+    fun withGenes(genes: List<G>): Chromosome<DNA, G>
 
     /// Documentation inherited from [GeneticMaterial].
     override fun flatten(): List<DNA> = genes.fold(mutableListOf()) { acc, gene ->
@@ -58,17 +64,26 @@ interface Chromosome<DNA> : GeneticMaterial<DNA>, Iterable<Gene<DNA>> {
      * @param G The type of [Gene] contained in the chromosome.
      * @property executor The executor to use for creating [Gene] objects.
      */
-    interface Factory<DNA, G : Gene<DNA>> {
+    interface Factory<DNA, G : Gene<DNA, G>> {
 
         var executor: ConstructorExecutor<G>
 
         /**
          * Creates a new [Chromosome] object.
          */
-        fun make(): Chromosome<DNA>
+        fun make(): Chromosome<DNA, G>
     }
 
-    abstract class AbstractFactory<DNA, G : Gene<DNA>> : Factory<DNA, G> {
+    /**
+     * An abstract implementation of the [Factory] interface for creating [Chromosome] objects.
+     *
+     * @param DNA The type of the genes' values.
+     * @param G The type of [Gene] contained in the chromosome.
+     * @property executor The executor to use for creating [Gene] objects.
+     * The default implementation uses a [SequentialConstructor] object.
+     */
+    abstract class AbstractFactory<DNA, G : Gene<DNA, G>> : Factory<DNA, G> {
+        /// Documentation inherited from [Factory].
         override var executor: ConstructorExecutor<G> = SequentialConstructor()
     }
 }

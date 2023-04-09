@@ -27,7 +27,7 @@ import java.util.Objects
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-private fun fitnessFn(genotype: Genotype<Pair<Int, Int>>): Double {
+private fun fitnessFn(genotype: Genotype<Pair<Int, Int>, RoutePointGene>): Double {
     val routePoints = genotype.flatten()
     var distance = 0.0
     for (i in 1 until points.size) {
@@ -41,7 +41,7 @@ private infix fun Pair<Int, Int>.distanceTo(other: Pair<Int, Int>) = sqrt(
             + (this.second - other.second).toDouble().pow(2)
 )
 
-class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
+class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>, RoutePointGene> {
     override fun mutate() = TODO()
 
     override fun withDna(dna: Pair<Int, Int>) = RoutePointGene(dna)
@@ -50,10 +50,10 @@ class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
     override fun hashCode() = Objects.hash(RoutePointGene::class, dna)
 }
 
-class RouteChromosome(override val genes: List<Gene<Pair<Int, Int>>>) :
-        Chromosome<Pair<Int, Int>> {
+class RouteChromosome(override val genes: List<RoutePointGene>) :
+        Chromosome<Pair<Int, Int>, RoutePointGene> {
 
-    override fun withGenes(genes: List<Gene<Pair<Int, Int>>>) =
+    override fun withGenes(genes: List<RoutePointGene>) =
         RouteChromosome(genes.map { RoutePointGene(it.dna) })
 
     override fun toString() = genes.joinToString(" -> ")

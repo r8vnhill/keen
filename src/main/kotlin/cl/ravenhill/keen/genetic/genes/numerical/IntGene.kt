@@ -40,13 +40,13 @@ class IntGene(
     override val dna: Int,
     val range: Pair<Int, Int>,
     override val filter: (Int) -> Boolean = { true }
-) : NumberGene<Int>, ComparableGene<Int> {
+) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene> {
 
     val start = range.first
 
     val end = range.second
 
-    override fun average(genes: List<NumberGene<Int>>) =
+    override fun average(genes: List<IntGene>) =
         withDna(genes.fold(dna.toDouble() / (genes.size + 1)) { acc, gene ->
             acc + gene.toDouble() / (genes.size + 1)
         }.toInt())

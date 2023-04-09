@@ -41,7 +41,7 @@ class ProgramGene<DNA> internal constructor(
     ) -> Program<DNA>)> = listOf(
         ::generateProgramGrowing, ::generateProgramFull
     )
-) : Gene<Program<DNA>> {
+) : Gene<Program<DNA>, ProgramGene<DNA>> {
 
     /**
      * Returns the program tree represented by this gene.

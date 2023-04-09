@@ -43,7 +43,7 @@ private val items = listOf(4 to 12, 2 to 1, 2 to 2, 1 to 1, 10 to 4, 0 to 0)
  * @param genotype The genotype to calculate the fitness for.
  * @return The fitness of the genotype.
  */
-private fun fitnessFn(genotype: Genotype<Pair<Int, Int>>): Double {
+private fun fitnessFn(genotype: Genotype<Pair<Int, Int>, KnapsackGene>): Double {
     val items = genotype.flatten()
     val value = items.sumOf { it.first }
     val weight = items.sumOf { it.second }
@@ -55,7 +55,7 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>>): Double {
 /**
  * [Gene] that holds a pair (value, weight) of an item.
  */
-class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
+class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>, KnapsackGene> {
     override fun generator() = items.random(Core.random)
 
     override fun withDna(dna: Pair<Int, Int>) = KnapsackGene(dna)
@@ -67,8 +67,8 @@ class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>> {
  * [Chromosome] that holds a list of [KnapsackGene]s.
  */
 class KnapsackChromosome(override val genes: List<KnapsackGene>) :
-        Chromosome<Pair<Int, Int>> {
-    override fun withGenes(genes: List<Gene<Pair<Int, Int>>>) =
+        Chromosome<Pair<Int, Int>, KnapsackGene> {
+    override fun withGenes(genes: List<KnapsackGene>) =
         KnapsackChromosome(genes.map { KnapsackGene((it.dna)) })
 
     override fun verify() = genes.sumOf { it.dna.second } <= MAX_WEIGHT

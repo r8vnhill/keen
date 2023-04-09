@@ -5,6 +5,7 @@ import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
@@ -21,7 +22,7 @@ import cl.ravenhill.keen.util.statistics.StatisticPrinter
  * @param genotype The genotype to count the `true` values in.
  * @return The number of `true` values in the given [genotype] as a [Double].
  */
-fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDouble()
+fun count(genotype: Genotype<Boolean, BoolGene>) = genotype.flatten().count { it }.toDouble()
 
 /**
  * This is an example of using a genetic algorithm to evolve a population of `Boolean` genotypes

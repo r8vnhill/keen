@@ -1,16 +1,17 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
  * Creative Commons Attribution 4.0 International License.
  * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
 /**
@@ -19,7 +20,7 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
  *
  * @param DNA The type of the DNA of the phenotypes.
  */
-interface Selector<DNA> {
+interface Selector<DNA, G : Gene<DNA, G>> {
 
     /**
      * Selects a subset of the population to be used in the next generation.
@@ -30,10 +31,10 @@ interface Selector<DNA> {
      * @return The selected phenotypes.
      */
     operator fun invoke(
-        population: List<Phenotype<DNA>>,
+        population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA>
-    ): List<Phenotype<DNA>>
+        optimizer: PhenotypeOptimizer<DNA, G>
+    ): Population<DNA, G>
 }
 
 /**
@@ -42,12 +43,12 @@ interface Selector<DNA> {
  *
  * @param DNA The type of the DNA of the phenotypes.
  */
-abstract class AbstractSelector<DNA> : Selector<DNA> {
+abstract class AbstractSelector<DNA, G : Gene<DNA, G>> : Selector<DNA, G> {
     final override operator fun invoke(
-        population: List<Phenotype<DNA>>,
+        population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA>
-    ): List<Phenotype<DNA>> {
+        optimizer: PhenotypeOptimizer<DNA, G>
+    ): Population<DNA, G> {
         enforce {
             population.size should BeAtLeast(1) {
                 "Population size [${population.size}] must be at least 1"
@@ -66,9 +67,8 @@ abstract class AbstractSelector<DNA> : Selector<DNA> {
      * @return The selected phenotypes.
      */
     protected abstract fun select(
-        population: List<Phenotype<DNA>>,
+        population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA>
-    ): List<Phenotype<DNA>>
-
+        optimizer: PhenotypeOptimizer<DNA, G>
+    ): Population<DNA, G>
 }

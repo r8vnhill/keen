@@ -3,6 +3,7 @@ package cl.ravenhill.keen.util.statistics
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
 
@@ -28,10 +29,10 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Statistic<DNA> {
-    var evolutionResult: EvolutionResult<DNA>
-    var population: Population<DNA>
-    var optimizer: PhenotypeOptimizer<DNA>
+interface Statistic<DNA, G: Gene<DNA, G>> {
+    var evolutionResult: EvolutionResult<DNA, G>
+    var population: Population<DNA, G>
+    var optimizer: PhenotypeOptimizer<DNA, G>
     val survivorSelectionTime: MutableList<Long>
     val offspringSelectionTime: MutableList<Long>
     val alterTime: MutableList<Long>
@@ -40,7 +41,7 @@ interface Statistic<DNA> {
     var bestFitness: MutableList<Double>
     var worstFitness: MutableList<Double>
     var averageFitness: MutableList<Double>
-    val fittest: Phenotype<DNA>?
+    val fittest: Phenotype<DNA, G>?
     var steadyGenerations: Int
     var generation: Int
 
