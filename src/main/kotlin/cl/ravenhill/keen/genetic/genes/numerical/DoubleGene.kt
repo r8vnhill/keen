@@ -3,6 +3,7 @@ package cl.ravenhill.keen.genetic.genes.numerical
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
+import cl.ravenhill.keen.util.math.DoubleToDouble
 import java.util.Objects
 
 /**
@@ -26,29 +27,43 @@ import java.util.Objects
  */
 class DoubleGene(
     override val dna: Double,
-    val range: Pair<Double, Double>,
+    val range: DoubleToDouble,
     override val filter: (Double) -> Boolean = { true }
 ) : NumberGene<Double, DoubleGene>, ComparableGene<Double, DoubleGene> {
 
+    /**
+     * The lower bound of the range (inclusive).
+     */
+    private val start = range.first
+
+    /**
+     * The upper bound of the range (exclusive).
+     */
+    private val end = range.second
+
+    /// Documentation inherited from [NumberGene]
     override fun average(genes: List<DoubleGene>) =
         withDna(genes.fold(dna / (genes.size + 1)) { acc, gene -> acc + gene.dna / (genes.size + 1) })
 
-    private val start = range.first
-
-    private val end = range.second
-
+    /// Documentation inherited from [NumberGene]
     override fun toDouble() = dna
 
+    /// Documentation inherited from [NumberGene]
     override fun toInt() = dna.toInt()
 
+    /// Documentation inherited from [Gene]
     override fun generator() = Core.random.nextDouble(start, end)
 
+    /// Documentation inherited from [Gene]
     override fun withDna(dna: Double) = DoubleGene(dna, range)
 
+    /// Documentation inherited from [Verifiable]
     override fun verify() = dna < range.second && dna >= range.first
 
+    /// Documentation inherited from [Any]
     override fun toString() = "$dna"
 
+    /// Documentation inherited from [Any]
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is DoubleGene -> false
@@ -57,5 +72,6 @@ class DoubleGene(
                 && range == other.range
     }
 
+    /// Documentation inherited from [Any]
     override fun hashCode() = Objects.hash(DoubleGene::class, dna, range)
 }

@@ -12,6 +12,16 @@ import org.apache.commons.math3.util.Precision
  **************************************************************************************************/
 
 /**
+ * A typealias for a pair of integers that represent a range.
+ */
+typealias IntToInt = Pair<Int, Int>
+
+/**
+ * A typealias for a pair of doubles that represent a range.
+ */
+typealias DoubleToDouble = Pair<Double, Double>
+
+/**
  * Rounds up this integer to the next multiple of the given integer.
  */
 infix fun Int.roundUpToMultipleOf(i: Int): Int {

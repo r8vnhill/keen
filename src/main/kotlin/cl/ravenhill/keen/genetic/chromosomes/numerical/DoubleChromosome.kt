@@ -91,6 +91,7 @@ class DoubleChromosome private constructor(
         var size by Delegates.notNull<Int>()
         var filter: (Double) -> Boolean = { true }
 
+        /// Documentation inherited from [Chromosome.Factory]
         override fun make(): DoubleChromosome {
             enforce {
                 size should BePositive()
@@ -106,10 +107,8 @@ class DoubleChromosome private constructor(
             }
         }
 
-        override fun toString(): String {
-            return "DoubleChromosome.Builder { " +
+        override fun toString() = "DoubleChromosome.Builder { " +
                     "size: $size, " +
                     "range: $range }"
-        }
     }
 }

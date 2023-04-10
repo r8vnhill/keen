@@ -18,6 +18,21 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
+/***************************************************************************************************
+ * This is a Kotlin file that contains a DSL for configuring genetic algorithms.
+ * It allows the user to define and customize the genotype of a population.
+ * Specifically, it provides a chromosome function that adds a chromosome factory to the builder,
+ * which can be used to specify the characteristics of a chromosome that should be used to build a
+ * genotype.
+ * The chromosome can be of various types including boolean, character, integer, double, and
+ * program chromosomes.
+ * The chromosome function takes a lazyFactory function that returns a Chromosome.Factory instance
+ * for the chromosome.
+ * The file contains several extension functions that allow the user to configure each type of
+ * chromosome using a lambda block. For instance, the booleans function creates a new
+ * BoolChromosome.Factory instance with the given builder block, and the ints function creates a new
+ * IntChromosome.Factory.
+ **************************************************************************************************/
 
 /**
  * A DSL scope for configuring a chromosome factory for a genotype builder.
@@ -152,7 +167,7 @@ fun ChromosomeScope<Int>.ints(builder: IntChromosome.Factory.() -> Unit) =
  * @return A [DoubleChromosome.Factory] instance that can be used to create new
  *  [DoubleChromosome] instances.
  */
-fun doubles(builder: DoubleChromosome.Factory.() -> Unit) =
+fun ChromosomeScope<Double>.doubles(builder: DoubleChromosome.Factory.() -> Unit) =
     DoubleChromosome.Factory().apply(builder)
 
 /**

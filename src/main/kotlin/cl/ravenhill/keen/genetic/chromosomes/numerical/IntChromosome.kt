@@ -18,13 +18,10 @@ import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.requirements.PairRequirement.StrictlyOrdered
 import cl.ravenhill.keen.util.Filterable
+import cl.ravenhill.keen.util.math.IntToInt
 import java.util.Objects
 import kotlin.properties.Delegates
 
-/**
- * A typealias for a pair of integers that represent a range.
- */
-typealias IntToInt = Pair<Int, Int>
 
 /**
  * A chromosome that contains a list of [IntGene]s.
@@ -32,9 +29,9 @@ typealias IntToInt = Pair<Int, Int>
  *
  * The [range] and [predicate] of a chromosome determine the valid values for each gene.
  * The [range] is a [Pair] of [Int] that defines the minimum and maximum possible values for each
- * gene. The predicate is a function that tests whether a given
- * value satisfies the problem constraints for a gene. A gene is considered valid if its value is within the range and
- * satisfies the predicate.
+ * gene. The predicate is a function that tests whether a given value satisfies the problem
+ * constraints for a gene.
+ * A gene is considered valid if its value is within the range and satisfies the predicate.
  *
  * @param genes The list of genes that this chromosome will contain.
  * @property range A pair of [Int]s that represents the range of the genes (``a to b``).
