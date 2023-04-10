@@ -23,7 +23,7 @@ sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
      * @since 2.0.0
      * @version 2.0.0
      */
-    class StrictlyOrdered<A : Comparable<A>>(
+    class BeStrictlyOrdered<A : Comparable<A>>(
         override val lazyDescription: (Pair<A, A>) -> String = { value ->
             "Expected a strictly ordered pair, but got $value"
         }
@@ -31,7 +31,7 @@ sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
         override val validator = { value: Pair<A, A> -> value.first < value.second }
     }
 
-    class Finite(
+    class BeFinite(
         override val lazyDescription: (Pair<Double, Double>) -> String = { value ->
             "Expected a finite pair, but got $value"
         }

@@ -11,12 +11,10 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
-import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import cl.ravenhill.keen.requirements.IntRequirement.BePositive
-import cl.ravenhill.keen.requirements.PairRequirement.StrictlyOrdered
+import cl.ravenhill.keen.requirements.PairRequirement.*
 import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.keen.util.math.IntToInt
 import java.util.Objects
@@ -27,7 +25,7 @@ import kotlin.properties.Delegates
  * A chromosome that contains a list of [IntGene]s.
  * The genes represent the encoded variables of a solution in a genetic algorithm.
  *
- * The [range] and [predicate] of a chromosome determine the valid values for each gene.
+ * The [range] and [filter] of a chromosome determine the valid values for each gene.
  * The [range] is a [Pair] of [Int] that defines the minimum and maximum possible values for each
  * gene. The predicate is a function that tests whether a given value satisfies the problem
  * constraints for a gene.
@@ -35,9 +33,9 @@ import kotlin.properties.Delegates
  *
  * @param genes The list of genes that this chromosome will contain.
  * @property range A pair of [Int]s that represents the range of the genes (``a to b``).
- * @property predicate The filter to apply to the genes.
+ * @property filter The filter to apply to the genes.
  *
- * @constructor Creates a new [IntChromosome] with the given [genes], [range], and [predicate].
+ * @constructor Creates a new [IntChromosome] with the given [genes], [range], and [filter].
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.0.0
@@ -46,7 +44,7 @@ import kotlin.properties.Delegates
 class IntChromosome(
     genes: List<IntGene>,
     val range: IntToInt,
-    override val predicate: (Int) -> Boolean
+    override val filter: (Int) -> Boolean
 ) : AbstractChromosome<Int, IntGene>(genes), Filterable<Int> {
 
     /**
@@ -63,6 +61,7 @@ class IntChromosome(
         predicate: (Int) -> Boolean,
         constructorExecutor: ConstructorExecutor<IntGene>
     ) : this(constructorExecutor(size) {
+        enforce { range should BeStrictlyOrdered { "The range must be ordered" } }
         IntGene(
             generateSequence { Core.random.nextInt(range.first, range.second) }
                 .filter(predicate)
@@ -72,7 +71,7 @@ class IntChromosome(
     }, range, predicate)
 
     /// Documentation inherited from [Chromosome]
-    override fun withGenes(genes: List<IntGene>) = IntChromosome(genes, range, predicate)
+    override fun withGenes(genes: List<IntGene>) = IntChromosome(genes, range, filter)
 
     // region : equals, hashCode and toString
     /// Documentation inherited from [Any]
@@ -98,28 +97,21 @@ class IntChromosome(
      *
      * @constructor Creates a new [IntChromosome.Factory].
      */
-    class Factory : Chromosome.Factory<Int, IntGene> {
+    class Factory : Chromosome.AbstractFactory<Int, IntGene>() {
 
         var filter: (Int) -> Boolean = { true }
 
-        lateinit var range: Pair<Int, Int>
+        lateinit var range: IntToInt
 
         var size by Delegates.notNull<Int>()
 
-        override var executor: ConstructorExecutor<IntGene> = SequentialConstructor()
-
-        /// Inherited documentation
-        override fun make(): IntChromosome {
-            enforce {
-                size should BePositive()
-                range should StrictlyOrdered()
-            }
-            return IntChromosome(size, range, filter, executor)
-        }
+        /// Documentation inherited from [Chromosome.Factory]
+        override fun make() = IntChromosome(size, range, filter, executor)
 
         override fun toString() = "IntChromosome.Builder { " +
                 "size: $size, " +
                 "range: $range," +
-                "filter: $filter }"
+                "filter: $filter," +
+                "executor: $executor }"
     }
 }

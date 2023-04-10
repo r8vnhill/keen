@@ -1,8 +1,13 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
+import cl.ravenhill.keen.requirements.DoubleRequirement
+import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.keen.requirements.PairRequirement.BeFinite
+import cl.ravenhill.keen.requirements.PairRequirement.BeStrictlyOrdered
 import cl.ravenhill.keen.util.math.DoubleToDouble
 import java.util.Objects
 
@@ -30,6 +35,14 @@ class DoubleGene(
     val range: DoubleToDouble,
     override val filter: (Double) -> Boolean = { true }
 ) : NumberGene<Double, DoubleGene>, ComparableGene<Double, DoubleGene> {
+
+    init {
+        enforce {
+            range should BeStrictlyOrdered()
+            range should BeFinite()
+            dna should BeInRange(range)
+        }
+    }
 
     /**
      * The lower bound of the range (inclusive).

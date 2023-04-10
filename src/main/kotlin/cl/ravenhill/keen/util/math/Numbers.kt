@@ -22,6 +22,13 @@ typealias IntToInt = Pair<Int, Int>
 typealias DoubleToDouble = Pair<Double, Double>
 
 /**
+ * Returns true if the given [Double] is within the range represented by this [Pair] of [Double]
+ * values.
+ */
+operator fun DoubleToDouble.contains(d: Double) = d < second && d >= first
+
+
+/**
  * Rounds up this integer to the next multiple of the given integer.
  */
 infix fun Int.roundUpToMultipleOf(i: Int): Int {

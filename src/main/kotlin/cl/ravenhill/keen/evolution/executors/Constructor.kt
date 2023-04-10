@@ -9,6 +9,9 @@
 
 package cl.ravenhill.keen.evolution.executors
 
+import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.keen.requirements.IntRequirement
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -75,7 +78,10 @@ interface ConstructorExecutor<T> : KeenExecutor {
 class SequentialConstructor<T> : ConstructorExecutor<T> {
 
     // Documentation inherited from ConstructorExecutor.
-    override fun invoke(size: Int, init: () -> T) = List(size) { init() }
+    override fun invoke(size: Int, init: () -> T): List<T> {
+        enforce { size should BePositive { "The size must be positive." } }
+        return List(size) { init() }
+    }
 }
 
 
@@ -96,6 +102,7 @@ class CoroutineConstructor<T>(
 
     // Documentation inherited from ConstructorExecutor.
     override fun invoke(size: Int, init: () -> T): List<T & Any> = runBlocking {
+        enforce { size should BePositive { "The size must be positive." } }
         // Create a list of `Deferred` objects using `async` and the `dispatcher` to execute
         // the constructor `init()` concurrently.
         val deferredList = List(size) {
