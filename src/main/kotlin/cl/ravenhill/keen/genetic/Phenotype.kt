@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.math.isNotNan
+import cl.ravenhill.keen.util.isNotNan
 import java.util.*
 
 /**

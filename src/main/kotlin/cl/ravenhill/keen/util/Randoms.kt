@@ -61,7 +61,9 @@ fun Random.ints(from: Int = 0, until: Int = Int.MAX_VALUE): IntStream =
  */
 fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int> {
     enforce {
-        pickProbability should BeInRange(0.0..1.0)
+        "The probability [$pickProbability] must be between 0.0 and 1.0, inclusive." {
+            pickProbability should BeInRange(0.0..1.0)
+        }
     }
     // Select the indices using the given pick probability.
     return when {
@@ -148,12 +150,15 @@ fun Random.nextDoubleExclusive(range: Pair<Double, Double>) =
  */
 fun <T> Random.subsets(elements: List<T>, exclusive: Boolean, size: Int): List<List<T>> {
     enforce {
-        size should IntRequirement.BeInRange(1..elements.size)
+        "The subset size [$size] must be at least 1 and at most the number of elements " +
+                "in the input list [${elements.size}]." {
+                    size should IntRequirement.BeInRange(1..elements.size)
+                }
         if (exclusive) {
-            requirement(
-                "The number of elements must be a multiple of the subset size when using " +
-                        "exclusive subsets."
-            ) { elements.size % size == 0 }
+            "The number of elements must be a multiple of the subset size when using " +
+                    "exclusive subsets." {
+                        requirement { elements.size % size == 0 }
+                    }
         }
     }
     // Create an empty list to hold the subsets.

@@ -104,15 +104,16 @@ interface EvaluationExecutor<DNA, G : Gene<DNA, G>> : KeenExecutor {
  * @version 2.0.0
  * @since 2.0.0
  */
-class SequentialEvaluator<DNA, G: Gene<DNA, G>>(
+class SequentialEvaluator<DNA, G : Gene<DNA, G>>(
     private val function: (Genotype<DNA, G>) -> Double
 ) : EvaluationExecutor<DNA, G> {
 
     // Inherit documentation from Evaluator
-    override fun invoke(population: Population<DNA, G>, force: Boolean) = evaluateAndAddToPopulation(
-        selectAndCreateEvaluators(population, function, force),
-        population
-    ) { evaluators -> evaluators.forEach { it.evaluate() } }
+    override fun invoke(population: Population<DNA, G>, force: Boolean) =
+        evaluateAndAddToPopulation(
+            selectAndCreateEvaluators(population, function, force),
+            population
+        ) { evaluators -> evaluators.forEach { it.evaluate() } }
 }
 
 /**
@@ -130,7 +131,7 @@ class SequentialEvaluator<DNA, G: Gene<DNA, G>>(
  * @version 2.0.0
  * @since 2.0.0
  */
-class CoroutineEvaluator<DNA, G: Gene<DNA, G>>(
+class CoroutineEvaluator<DNA, G : Gene<DNA, G>>(
     private val function: (Genotype<DNA, G>) -> Double,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val chunkSize: Int = 100
@@ -175,13 +176,18 @@ class CoroutineEvaluator<DNA, G: Gene<DNA, G>>(
      *  Larger values will require more memory, but may improve performance for some use cases.
      *  Defaults to 100.
      */
-    class Factory<DNA, G: Gene<DNA, G>> : EvaluationExecutor.Factory<DNA, G>() {
+    class Factory<DNA, G : Gene<DNA, G>> : EvaluationExecutor.Factory<DNA, G>() {
         var dispatcher: CoroutineDispatcher = Dispatchers.Default
         var chunkSize: Int = 100
             set(value) {
-                enforce { value should BePositive { "The chunk size must be a positive integer." } }
+                enforce {
+                    "The chunk size [$value] must be a positive integer." {
+                        value should BePositive
+                    }
+                }
                 field = value
             }
+
         override var creator: ((Genotype<DNA, G>) -> Double) -> EvaluationExecutor<DNA, G> =
             { function -> CoroutineEvaluator(function, dispatcher, chunkSize) }
     }
@@ -198,7 +204,7 @@ class CoroutineEvaluator<DNA, G: Gene<DNA, G>>(
  * @return a list of [PhenotypeEvaluator] objects corresponding to the un-evaluated individuals
  * in the population (or all individuals if [force] is true)
  */
-private fun <DNA, G: Gene<DNA, G>> selectAndCreateEvaluators(
+private fun <DNA, G : Gene<DNA, G>> selectAndCreateEvaluators(
     population: Population<DNA, G>,
     function: (Genotype<DNA, G>) -> Double,
     force: Boolean = false
@@ -222,7 +228,7 @@ private fun <DNA, G: Gene<DNA, G>> selectAndCreateEvaluators(
  *  If all individuals in the population were evaluated, only the evaluated individuals are
  *  returned.
  */
-private fun <DNA, G: Gene<DNA, G>> evaluateAndAddToPopulation(
+private fun <DNA, G : Gene<DNA, G>> evaluateAndAddToPopulation(
     toEvaluate: List<PhenotypeEvaluator<DNA, G>>,
     population: Population<DNA, G>,
     evaluationStrategy: (List<PhenotypeEvaluator<DNA, G>>) -> Unit
@@ -255,7 +261,7 @@ private fun <DNA, G: Gene<DNA, G>> evaluateAndAddToPopulation(
  * @version 2.0.0
  * @since 2.0.0
  */
-private class PhenotypeEvaluator<DNA, G: Gene<DNA, G>>(
+private class PhenotypeEvaluator<DNA, G : Gene<DNA, G>>(
     phenotype: Phenotype<DNA, G>,
     private val function: (Genotype<DNA, G>) -> Double
 ) {

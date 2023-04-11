@@ -20,7 +20,7 @@ import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.get
 import cl.ravenhill.keen.util.indices
-import cl.ravenhill.keen.util.math.neq
+import cl.ravenhill.keen.util.neq
 import cl.ravenhill.keen.util.subsets
 
 
@@ -44,8 +44,8 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
 
     init {
         enforce {
-            numIn should BeAtLeast(2) {
-                "There should be at least 2 inputs to perform a crossover operation"
+            "There should be at least 2 inputs to perform a crossover operation" {
+                numIn should BeAtLeast(2)
             }
         }
     }
@@ -74,13 +74,17 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     }
 
     override fun crossover(population: MutablePopulation<DNA, G>, indices: List<Int>): Int {
-        enforce { indices.size should BeEqualTo(numIn) }
+        enforce {
+            "The number of indices must be equal to the number of inputs" {
+                indices.size should BeEqualTo(numIn)
+            }
+        }
         // get the individuals at the specified indices
         val individuals = population[indices]
         // enforce that all individuals have the same genotype length
         enforce {
-            individuals.map { it.genotype.size }.distinct().size should BeEqualTo(1) {
-                "All individuals must have the same genotype length"
+            "All individuals must have the same genotype length" {
+                individuals.map { it.genotype.size }.distinct().size should BeEqualTo(1)
             }
         }
         // extract the genotypes of the individuals

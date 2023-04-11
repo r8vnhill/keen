@@ -26,8 +26,21 @@ interface Requirement<T> {
      * @return A [Result] object that contains the original value if it satisfies the constraint,
      * or an exception with the description of the constraint violation otherwise.
      */
-    fun validate(value: T): Result<T> = if (!validator(value)) {
-        Result.failure(generateException(lazyDescription(value)))
+    @Deprecated(
+        "Use validate(value, message) instead",
+        ReplaceWith("validate(value, message)"),
+        DeprecationLevel.WARNING
+    )
+    fun validate(value: T): Result<T> = validate(value, lazyDescription(value))
+
+    /**
+     * Checks if the given value fulfills the constraint.
+     *
+     * @return A [Result] object that contains the original value if it satisfies the constraint,
+     * or an exception with the description of the constraint violation otherwise.
+     */
+    fun validate(value: T, message: String): Result<T> = if (!validator(value)) {
+        Result.failure(generateException(message))
     } else {
         Result.success(value)
     }

@@ -1,9 +1,12 @@
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
+import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 
 /***************************************************************************************************
  * This code defines functions to generate random programs in the form of breadth-first trees given
@@ -27,7 +30,15 @@ fun <T> generateProgramWith(
     functions: List<Fun<T>>,
     min: Int,
     max: Int
-) = methods.random(Core.random).invoke(terminals, functions, min, max)
+): Program<T> {
+    enforce {
+        "The list of generation methods must not be empty" { methods should NotBeEmpty }
+        "The list of terminals and functions must not be empty" {
+            terminals.size + functions.size should BePositive
+        }
+    }
+    return methods.random(Core.random).invoke(terminals, functions, min, max)
+}
 
 /**
  * Generates a program where each leaf might have different depth.

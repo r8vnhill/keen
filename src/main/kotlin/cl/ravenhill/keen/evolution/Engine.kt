@@ -29,7 +29,7 @@ import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.requirements.IntRequirement
-import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.statistics.Statistic
@@ -55,7 +55,7 @@ import kotlin.properties.Delegates
  * @property limits             The limits that will be used to stop the evolution
  * @property steadyGenerations  The number of generations that the fitness has not changed
  */
-class Engine<DNA, G: Gene<DNA, G>>(
+class Engine<DNA, G : Gene<DNA, G>>(
     val genotype: Genotype.Factory<DNA, G>,
     val populationSize: Int,
     val offspringFraction: Double,
@@ -229,12 +229,12 @@ class Engine<DNA, G: Gene<DNA, G>>(
     private fun evaluate(evolution: EvolutionStart<DNA, G>, force: Boolean = false) =
         evaluator(evolution.population, force).also {
             enforce {
-                populationSize should IntRequirement.BeEqualTo(it.size) {
-                    "Evaluated population size [${it}] doesn't " +
-                            "match expected population size [$populationSize]"
-                }
-                requirement("There are unevaluated phenotypes") {
-                    it.all { phenotype -> phenotype.isEvaluated() }
+                "Evaluated population size [${it.size}] doesn't " +
+                        "match expected population size [$populationSize]" {
+                            populationSize should IntRequirement.BeEqualTo(it.size)
+                        }
+                "There are unevaluated phenotypes" {
+                    requirement { it.all { phenotype -> phenotype.isEvaluated() } }
                 }
             }
         }
@@ -358,19 +358,19 @@ class Engine<DNA, G: Gene<DNA, G>>(
      * @property statistics The statistics collectors used to collect data during the evolution.
      * @property constructorExecutor The [ConstructorExecutor] used to create individuals.
      */
-    class Builder<DNA, G: Gene<DNA, G>>(
+    class Builder<DNA, G : Gene<DNA, G>>(
         private val fitnessFunction: (Genotype<DNA, G>) -> Double,
         private val genotype: Genotype.Factory<DNA, G>
     ) {
         // region : Evolution parameters -----------------------------------------------------------
         var populationSize = 50
             set(value) = enforce {
-                value should BeAtLeast(1) { "Population size must be greater than 0" }
+                "Population size must be greater than 0" { value should BePositive }
             }.let { field = value }
 
         var limits: List<Limit> = listOf(GenerationCount(100))
             set(value) = enforce {
-                value should NotBeEmpty { "Limits cannot be empty" }
+                "Limits cannot be empty" { value should NotBeEmpty }
             }.let { field = value }
 
         var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
@@ -411,7 +411,7 @@ class Engine<DNA, G: Gene<DNA, G>>(
 
         var offspringFraction = 0.6
             set(value) = enforce {
-                value should BeInRange(0.0..1.0) { "Offspring fraction must be in range [0, 1]" }
+                "Offspring fraction must be in range [0, 1]" { value should BeInRange(0.0..1.0) }
             }.let { field = value }
         // endregion    ----------------------------------------------------------------------------
 

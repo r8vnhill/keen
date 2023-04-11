@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.*
-import cl.ravenhill.keen.util.math.isNotNan
+import cl.ravenhill.keen.util.isNotNan
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe

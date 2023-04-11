@@ -2,7 +2,6 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.functions.Fun
@@ -24,18 +23,20 @@ class ProgramChromosome<T> private constructor(
         List<Terminal<T>>, List<Fun<T>>, Int, Int
     ) -> Program<T>)>
 ) : Chromosome<Program<T>, ProgramGene<T>> {
-    override fun withGenes(genes: List<ProgramGene<T>>) =
-        ProgramChromosome(
-            genes,
-            functions,
-            terminals,
-            validator,
-            generationMethods
-        )
 
+    /// Documentation inherited from [Chromosome]
+    override fun withGenes(genes: List<ProgramGene<T>>) = ProgramChromosome(
+        genes,
+        functions,
+        terminals,
+        validator,
+        generationMethods
+    )
+
+    /// Documentation inherited from [Verifiable]
     override fun verify() = genes.isNotEmpty() && genes.all { it.verify() && validator(it) }
 
-    // region : Equals, HashCode and ToString
+    /// Documentation inherited from [Any]
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is ProgramChromosome<*> -> false
@@ -43,17 +44,13 @@ class ProgramChromosome<T> private constructor(
         else -> true
     }
 
+    /// Documentation inherited from [Any]
     override fun hashCode() = Objects.hash(ProgramChromosome::class, genes)
 
+    /// Documentation inherited from [Any]
     override fun toString() = genes.map { it.dna }.joinToString("\n")
 
-    // endregion
     class Factory<T> : Chromosome.AbstractFactory<Program<T>, ProgramGene<T>>() {
-        var size = 1
-            set(value) {
-                enforce { value should BePositive() }
-                field = value
-            }
 
         /** The functions that can be used in the chromosome */
         private val _functions = mutableListOf<Fun<T>>()
@@ -83,11 +80,6 @@ class ProgramChromosome<T> private constructor(
         fun terminal(fn: () -> Terminal<T>) = _terminals.addIfAbsent(fn())
 
         override fun make(): ProgramChromosome<T> {
-            enforce {
-                (_functions.size + _terminals.size) should BePositive {
-                    "There must be at least one function or terminal"
-                }
-            }
             return ProgramChromosome(
                 (0 until size).map {
                     ProgramGene(

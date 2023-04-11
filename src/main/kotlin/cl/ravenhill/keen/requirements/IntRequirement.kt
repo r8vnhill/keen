@@ -1,6 +1,8 @@
 package cl.ravenhill.keen.requirements
 
 import cl.ravenhill.keen.IntRequirementException
+import cl.ravenhill.keen.util.IntToInt
+import cl.ravenhill.keen.util.contains
 
 /**
  * Represents a requirement that can be applied to an integer value.
@@ -17,11 +19,10 @@ sealed interface IntRequirement : Requirement<Int> {
     /**
      * Represents a requirement that an integer value must be positive.
      */
-    class BePositive(
+    data object BePositive : IntRequirement {
         override val lazyDescription: (Int) -> String = { value ->
             "Expected a positive number, but got $value"
         }
-    ) : IntRequirement {
         override val validator = { value: Int -> value > 0 }
     }
 
@@ -31,11 +32,14 @@ sealed interface IntRequirement : Requirement<Int> {
      * @property range The range of values that are allowed.
      */
     open class BeInRange(
-        private val range: IntRange,
+        private val range: IntToInt,
         override val lazyDescription: (Int) -> String = { value ->
             "Expected a number in range $range, but got $value"
         }
     ) : IntRequirement {
+        constructor(range: IntRange) : this(range.first to range.last, { value ->
+            "Expected a number in range $range, but got $value"
+        })
 
         override val validator = { value: Int -> value in range }
     }
@@ -49,7 +53,7 @@ sealed interface IntRequirement : Requirement<Int> {
         min: Int, lazyDescription: (Int) -> String = { value ->
             "Expected a number at least $min, but got $value"
         }
-    ) : BeInRange(min..Int.MAX_VALUE, { lazyDescription(min) })
+    ) : BeInRange(min to Int.MAX_VALUE, { lazyDescription(min) })
 
     /**
      * Represents a requirement that an integer value must be at most a specified value.
@@ -61,7 +65,7 @@ sealed interface IntRequirement : Requirement<Int> {
         lazyDescription: (Int) -> String = {
             "Expected a number at most $max, but got $it"
         }
-    ) : BeInRange(Int.MIN_VALUE..max, { lazyDescription(max) })
+    ) : BeInRange(Int.MIN_VALUE to max, { lazyDescription(max) })
 
     /**
      * Represents a requirement that an integer value must be equal to a specified value.

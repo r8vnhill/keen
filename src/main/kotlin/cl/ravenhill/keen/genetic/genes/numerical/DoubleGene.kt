@@ -4,11 +4,10 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import cl.ravenhill.keen.requirements.DoubleRequirement
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.requirements.PairRequirement.BeFinite
 import cl.ravenhill.keen.requirements.PairRequirement.BeStrictlyOrdered
-import cl.ravenhill.keen.util.math.DoubleToDouble
+import cl.ravenhill.keen.util.DoubleToDouble
 import java.util.Objects
 
 /**
@@ -38,9 +37,9 @@ class DoubleGene(
 
     init {
         enforce {
-            range should BeStrictlyOrdered()
-            range should BeFinite()
-            dna should BeInRange(range)
+            "The range [$range] must be ordered" { range should BeStrictlyOrdered() }
+            "The range [$range] must be finite" { range should BeFinite }
+            "The value [$dna] must be in range [$range]" { dna should BeInRange(range) }
         }
     }
 

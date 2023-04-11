@@ -12,6 +12,7 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
 /**
@@ -50,10 +51,10 @@ abstract class AbstractSelector<DNA, G : Gene<DNA, G>> : Selector<DNA, G> {
         optimizer: PhenotypeOptimizer<DNA, G>
     ): Population<DNA, G> {
         enforce {
-            population.size should BeAtLeast(1) {
-                "Population size [${population.size}] must be at least 1"
+            "Population size [${population.size}] must be at least 1" {
+                population.size should BePositive
             }
-            count should BeAtLeast(0) { "Selection count [$count] must be at least 0" }
+            "Selection count [$count] must be at least 0" { count should BeAtLeast(0) }
         }
         return select(population, count, optimizer)
     }

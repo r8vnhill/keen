@@ -4,7 +4,7 @@ import cl.ravenhill.keen.DoubleRequirementException
 import cl.ravenhill.keen.PairRequirementException
 import cl.ravenhill.keen.EnforcementException
 import cl.ravenhill.keen.shouldBeOfClass
-import cl.ravenhill.keen.util.math.isNotNan
+import cl.ravenhill.keen.util.isNotNan
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe

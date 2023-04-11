@@ -22,7 +22,7 @@ import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
  * @since 1.2.0
  * @version 2.0.0
  */
-abstract class AbstractPermutationCrossover<DNA, G: Gene<DNA, G>>(
+abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
     probability: Double,
     numOut: Int = 2,
     numIn: Int = 2,
@@ -36,8 +36,8 @@ abstract class AbstractPermutationCrossover<DNA, G: Gene<DNA, G>>(
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         enforce {
             for (chromosome in chromosomes) {
-                chromosome.genes.distinct().size should BeEqualTo(chromosome.genes.size) {
-                    "A permutation crossover can't have duplicated genes: ${chromosome.genes}"
+                "A permutation crossover can't have duplicated genes: ${chromosome.genes}" {
+                    chromosome.genes.distinct().size should BeEqualTo(chromosome.genes.size)
                 }
             }
         }

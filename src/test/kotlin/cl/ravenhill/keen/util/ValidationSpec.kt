@@ -1,7 +1,6 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.InvalidArgumentException
-import cl.ravenhill.keen.util.math.isNotNan
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec

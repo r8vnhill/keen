@@ -37,7 +37,7 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionResult<DNA, G: Gene<DNA, G>>(
+class EvolutionResult<DNA, G : Gene<DNA, G>>(
     val optimizer: PhenotypeOptimizer<DNA, G>,
     val population: Population<DNA, G>,
     val generation: Int
@@ -73,19 +73,20 @@ class EvolutionResult<DNA, G: Gene<DNA, G>>(
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionStart<DNA, G: Gene<DNA, G>>(
+class EvolutionStart<DNA, G : Gene<DNA, G>>(
     val population: List<Phenotype<DNA, G>>,
     val generation: Int,
     val isDirty: Boolean = true
 ) {
 
     init {
-        enforce { generation should BeAtLeast(0) { "Generation must be non-negative" } }
+        enforce { "Generation [$generation] must be non-negative" { generation should BeAtLeast(0) } }
     }
 
     override fun toString() = "EvolutionStart { " +
             "population: $population, " +
             "generation: $generation, " +
+            "isDirty: $isDirty" +
             " }"
 
     companion object {
@@ -96,6 +97,6 @@ class EvolutionStart<DNA, G: Gene<DNA, G>>(
          *
          * @return An empty [EvolutionStart] object.
          */
-        fun <DNA, G: Gene<DNA, G>> empty(): EvolutionStart<DNA, G> = EvolutionStart(listOf(), 1)
+        fun <DNA, G : Gene<DNA, G>> empty(): EvolutionStart<DNA, G> = EvolutionStart(listOf(), 1)
     }
 }

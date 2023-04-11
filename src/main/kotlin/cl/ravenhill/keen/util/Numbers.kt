@@ -1,4 +1,14 @@
-package cl.ravenhill.keen.util.math
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
+
+@file:Suppress("ConvertTwoComparisonsToRangeCheck")
+
+package cl.ravenhill.keen.util
 
 import org.apache.commons.math3.util.Precision
 
@@ -22,11 +32,16 @@ typealias IntToInt = Pair<Int, Int>
 typealias DoubleToDouble = Pair<Double, Double>
 
 /**
- * Returns true if the given [Double] is within the range represented by this [Pair] of [Double]
- * values.
+ * Returns true if the given [Int] is within the range represented by this [Pair] of [Int] values
+ * (inclusive).
  */
-operator fun DoubleToDouble.contains(d: Double) = d < second && d >= first
+operator fun IntToInt.contains(i: Int) = i <= second && i >= first
 
+/**
+ * Returns true if the given [Double] is within the range represented by this [Pair] of [Double]
+ * values (inclusive).
+ */
+operator fun DoubleToDouble.contains(d: Double) = d <= second && d >= first
 
 /**
  * Rounds up this integer to the next multiple of the given integer.

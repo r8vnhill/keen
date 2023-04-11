@@ -14,9 +14,8 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.util.Filterable
-import cl.ravenhill.keen.util.math.DoubleToDouble
+import cl.ravenhill.keen.util.DoubleToDouble
 import java.util.Objects
-import kotlin.properties.Delegates
 
 
 /**
@@ -93,7 +92,6 @@ class DoubleChromosome(
     class Factory : Chromosome.AbstractFactory<Double, DoubleGene>() {
 
         lateinit var range: DoubleToDouble
-        var size by Delegates.notNull<Int>()
         var filter: (Double) -> Boolean = { true }
 
         /// Documentation inherited from [Chromosome.Factory]

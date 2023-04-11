@@ -1,7 +1,6 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.InvalidArgumentException
-import cl.ravenhill.keen.util.math.eq
 
 /**
  * Validates if a given predicate is true, otherwise throws an [InvalidArgumentException].

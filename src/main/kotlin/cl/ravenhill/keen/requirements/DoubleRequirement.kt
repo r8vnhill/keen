@@ -1,8 +1,8 @@
 package cl.ravenhill.keen.requirements
 
 import cl.ravenhill.keen.DoubleRequirementException
-import cl.ravenhill.keen.util.math.DoubleToDouble
-import cl.ravenhill.keen.util.math.contains
+import cl.ravenhill.keen.util.DoubleToDouble
+import cl.ravenhill.keen.util.contains
 
 /**
  * Represents a constraint that can be applied to a double.
@@ -43,7 +43,9 @@ sealed interface DoubleRequirement : Requirement<Double> {
          */
         constructor(
             range: ClosedFloatingPointRange<Double>,
-            lazyDescription: (Double) -> String
+            lazyDescription: (Double) -> String = { value ->
+                "Expected a number in range $range, but got $value"
+            }
         ) : this(range.start to range.endInclusive, lazyDescription)
 
         /// Documentation inherited from [Requirement]

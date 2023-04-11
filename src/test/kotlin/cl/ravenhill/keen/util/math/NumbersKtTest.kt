@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.util.math
 
-import cl.ravenhill.keen.util.logging.Level
-import cl.ravenhill.keen.util.logging.logger
+import cl.ravenhill.keen.util.isNotNan
+import cl.ravenhill.keen.util.roundUpToMultipleOf
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.*
@@ -9,7 +9,6 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.positiveInt
-import kotlin.math.abs
 import kotlin.math.sqrt
 
 class NumbersKtTest : WordSpec({

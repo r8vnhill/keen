@@ -4,6 +4,7 @@ import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.genes.Gene
+import kotlin.properties.Delegates
 
 /**
  * An ordered collection of genes that defines a specific genetic material.
@@ -63,10 +64,12 @@ interface Chromosome<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<G
      * @param DNA The type of the genes' values.
      * @param G The type of [Gene] contained in the chromosome.
      * @property executor The executor to use for creating [Gene] objects.
+     * @property size The number of genes in the chromosome.
      */
     interface Factory<DNA, G : Gene<DNA, G>> {
-
         var executor: ConstructorExecutor<G>
+
+        var size: Int
 
         /**
          * Creates a new [Chromosome] object.
@@ -83,6 +86,9 @@ interface Chromosome<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<G
      * The default implementation uses a [SequentialConstructor] object.
      */
     abstract class AbstractFactory<DNA, G : Gene<DNA, G>> : Factory<DNA, G> {
+        /// Documentation inherited from [Factory].
+        override var size: Int by Delegates.notNull()
+
         /// Documentation inherited from [Factory].
         override var executor: ConstructorExecutor<G> = SequentialConstructor()
     }

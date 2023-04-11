@@ -4,7 +4,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.probability
-import cl.ravenhill.keen.util.math.eq
+import cl.ravenhill.keen.util.eq
 
 
 /**

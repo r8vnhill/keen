@@ -67,11 +67,11 @@ fun <E> MutableCollection<E>.removeFirst(size: Int): List<E> =
  */
 fun <E> MutableList<E>.swap(i: Int, j: Int) {
     enforce {
-        i should BeInRange(0 until this@swap.size) {
-            "i should be in range [0, ${this@swap.size})"
+        "i should be in range [0, ${this@swap.size})" {
+            i should BeInRange(0 until this@swap.size)
         }
-        j should BeInRange(0 until this@swap.size) {
-            "j should be in range [0, ${this@swap.size})"
+        "j should be in range [0, ${this@swap.size})" {
+            j should BeInRange(0 until this@swap.size)
         }
     }
     if (i == j) return

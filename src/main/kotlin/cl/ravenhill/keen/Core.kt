@@ -1,14 +1,13 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.keen.Core.DEFAULT_MAX_PROGRAM_DEPTH
+import cl.ravenhill.keen.Core.EvolutionLogger.level
+import cl.ravenhill.keen.Core.EvolutionLogger.logger
 import cl.ravenhill.keen.Core.maxProgramDepth
 import cl.ravenhill.keen.Core.random
+import cl.ravenhill.keen.Core.skipChecks
 import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.requirements.CollectionRequirement
-import cl.ravenhill.keen.requirements.DoubleRequirement
-import cl.ravenhill.keen.requirements.IntRequirement
-import cl.ravenhill.keen.requirements.LongRequirement
-import cl.ravenhill.keen.requirements.PairRequirement
+import cl.ravenhill.keen.requirements.Requirement
 import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.logging.logger
 import cl.ravenhill.keen.util.logging.stdoutChannel
@@ -75,64 +74,64 @@ object Core {
     }
 
     /**
-     * The scope of the contract enforcement.
+     * A utility class for enforcing contracts.
      *
-     * @property errors The list of errors that occurred during the evaluation.
+     * An instance of this class can be used to enforce a contract by defining clauses using string
+     * literals as message keys and lambda expressions that define the predicate.
+     * Each clause defines a requirement, which can be validated by calling the `validate()` method
+     * of a [Requirement] instance.
+     *
+     * @property results The list of results of evaluating the contract.
+     *
      * @since 2.0.0
      * @version 2.0.0
      */
     class EnforceScope {
-        /**
-         * The list of results of evaluating the contract.
-         */
         private val results: MutableList<Result<*>> = mutableListOf()
 
         val errors: List<Throwable>
             get() = results.filter { it.isFailure }.map { it.exceptionOrNull()!! }
 
         /**
-         * Extension function that checks an integer constraint.
-         */
-        infix fun Int.should(requirement: IntRequirement) =
-            results.add(requirement.validate(this))
-
-        /**
-         * Extension function that checks a long constraint.
-         */
-        infix fun Long.should(requirement: LongRequirement) =
-            results.add(requirement.validate(this))
-
-        /**
-         * Extension function that checks a double constraint.
-         */
-        infix fun Double.should(constraint: DoubleRequirement) =
-            results.add(constraint.validate(this))
-
-        /**
-         * Extension function that checks a collection clause.
-         */
-        infix fun <T> Collection<T>.should(constraint: CollectionRequirement) =
-            results.add(constraint.validate(this))
-
-        /**
-         * Extension function that checks a pair constraint.
-         */
-        infix fun <A, B> Pair<A, B>.should(constraint: PairRequirement<A, B>) =
-            results.add(constraint.validate(this))
-
-        /**
-         * A requirement defined by a predicate.
+         * Defines a clause of a contract.
          *
-         * @param description The description of the clause.
-         * @param predicate The predicate that defines the clause.
+         * @receiver The message key for the clause.
+         * @param value A lambda expression that defines the predicate for the clause.
+         *
+         * @return A [StringScope] instance that can be used to define a [Requirement] for the clause.
          */
-        fun requirement(description: String, predicate: () -> Boolean) = results.add(
-            if (predicate()) {
-                Result.success(Unit)
-            } else {
-                Result.failure(UnfulfilledRequirementException { description })
-            }
-        )
+        operator fun String.invoke(value: StringScope.() -> Boolean) =
+            StringScope(this, results).apply { value() }
+
+        /**
+         * A scope for defining a [Requirement] for a contract clause.
+         *
+         * @property message The message key for the clause.
+         * @property results The list of results of evaluating the contract.
+         */
+        class StringScope(private val message: String, private val results: MutableList<Result<*>>) {
+            /**
+             * Defines a [Requirement] for a contract clause.
+             *
+             * @param requirement The [Requirement] instance to validate.
+             * @return A [Result] instance representing the result of the validation.
+             */
+            infix fun <T, R : Requirement<T>> T.should(requirement: R) =
+                results.add(requirement.validate(this, message))
+
+            /**
+             * Defines a [Requirement] based on a predicate.
+             *
+             * @param predicate The predicate that defines the clause.
+             */
+            fun requirement(predicate: () -> Boolean) = results.add(
+                if (predicate()) {
+                    Result.success(Unit)
+                } else {
+                    Result.failure(UnfulfilledRequirementException { message })
+                }
+            )
+        }
     }
 
     /**

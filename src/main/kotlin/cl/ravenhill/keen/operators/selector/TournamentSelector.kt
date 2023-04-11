@@ -25,9 +25,7 @@ class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
         AbstractSelector<DNA, G>() {
 
     init {
-        enforce {
-            sampleSize should BePositive()
-        }
+        enforce { "The sample size must be positive" { sampleSize should BePositive } }
     }
 
     override fun select(

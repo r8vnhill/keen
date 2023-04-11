@@ -77,9 +77,7 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
      * Creates a new tree from the given `nodes` in depth-first order.
      */
     fun fromDepthFirst(nodes: List<T>): T {
-        enforce {
-            nodes should NotBeEmpty { "Cannot create a tree from an empty list of nodes." }
-        }
+        enforce { "Cannot create a tree from an empty list of nodes." { nodes should NotBeEmpty } }
         // Create an empty stack to hold the nodes.
         val stack = mutableListOf<T>()
         // Traverse the list of nodes in reverse order.
@@ -91,9 +89,8 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
             // Create a new node with the given value and children.
             val node = createNode(it.value, children)
             enforce {
-                node.children.size should BeEqualTo(it.arity) {
-                    "The arity of the program does not match the arity of the node."
-                }
+                "The arity of the program [${it.arity}] does not match the arity of the node " +
+                        "[${node.children.size}]." { node.children.size should BeEqualTo(it.arity) }
             }
             // Add the new node to the stack.
             stack.add(createNode(it.value, children))

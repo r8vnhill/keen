@@ -46,7 +46,7 @@ import cl.ravenhill.keen.util.Tree
  * @since 2.0.0
  * @version 2.0.0
  */
-class SingleNodeCrossover<V, DNA : Tree<V, DNA>, G: Gene<DNA, G>>(
+class SingleNodeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
     probability: Double,
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0,
@@ -71,18 +71,16 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>, G: Gene<DNA, G>>(
      * Ensures that the parents meet the preconditions for the crossover.
      */
     private fun enforcePreconditions(chromosomes: List<Chromosome<DNA, G>>) = enforce {
-        chromosomes.size should BeEqualTo(2) {
-            "The crossover must have exactly two parents"
-        }
+        "The crossover must have exactly two parents" { chromosomes.size should BeEqualTo(2) }
         chromosomes.forEach { chromosome ->
-            chromosome.genes.size should BeEqualTo(chromosomes[0].genes.size) {
-                "The parents must have the same size"
+            "The parents must have the same size" {
+                chromosome.genes.size should BeEqualTo(chromosomes[0].genes.size)
             }
             chromosome.genes.forEach { gene ->
-                gene.dna.children.size should BeEqualTo(gene.dna.arity) {
-                    "The gene's arity (${gene.dna.arity}) does not match the number of " +
-                            "children (${gene.dna.children.size})."
-                }
+                "The gene's arity (${gene.dna.arity}) does not match the number of " +
+                        "children (${gene.dna.children.size})." {
+                            gene.dna.children.size should BeEqualTo(gene.dna.arity)
+                        }
             }
         }
     }
@@ -129,14 +127,14 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>, G: Gene<DNA, G>>(
                     }
                 }
                 enforce {
-                    newTree1.height should BeAtMost(Core.maxProgramDepth) {
-                        "The new tree's height (${newTree1.height}) exceeds the maximum " +
-                                "allowed height (${Core.maxProgramDepth})."
-                    }
-                    newTree2.height should BeAtMost(Core.maxProgramDepth) {
-                        "The new tree's height (${newTree2.height}) exceeds the maximum " +
-                                "allowed height (${Core.maxProgramDepth})."
-                    }
+                    "The new tree's height (${newTree1.height}) exceeds the maximum " +
+                            "allowed height (${Core.maxProgramDepth})." {
+                                newTree1.height should BeAtMost(Core.maxProgramDepth)
+                            }
+                    "The new tree's height (${newTree2.height}) exceeds the maximum " +
+                            "allowed height (${Core.maxProgramDepth})." {
+                                newTree2.height should BeAtMost(Core.maxProgramDepth)
+                            }
                 }
                 // add the new genes to the offspring chromosomes
                 genes.first.add(gene1.withDna(newTree1))

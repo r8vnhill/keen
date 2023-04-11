@@ -14,11 +14,10 @@ import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import cl.ravenhill.keen.requirements.PairRequirement.*
+import cl.ravenhill.keen.requirements.PairRequirement.BeStrictlyOrdered
 import cl.ravenhill.keen.util.Filterable
-import cl.ravenhill.keen.util.math.IntToInt
+import cl.ravenhill.keen.util.IntToInt
 import java.util.Objects
-import kotlin.properties.Delegates
 
 
 /**
@@ -61,7 +60,7 @@ class IntChromosome(
         predicate: (Int) -> Boolean,
         constructorExecutor: ConstructorExecutor<IntGene>
     ) : this(constructorExecutor(size) {
-        enforce { range should BeStrictlyOrdered { "The range must be ordered" } }
+        enforce { "The range must be ordered" { range should BeStrictlyOrdered() } }
         IntGene(
             generateSequence { Core.random.nextInt(range.first, range.second) }
                 .filter(predicate)
@@ -91,7 +90,6 @@ class IntChromosome(
     /**
      * A [Chromosome.Factory] for [IntChromosome]s.
      *
-     * @property size The size of the chromosome.
      * @property range The range of the genes.
      * @property filter The filter to apply to the genes.
      *
@@ -102,8 +100,6 @@ class IntChromosome(
         var filter: (Int) -> Boolean = { true }
 
         lateinit var range: IntToInt
-
-        var size by Delegates.notNull<Int>()
 
         /// Documentation inherited from [Chromosome.Factory]
         override fun make() = IntChromosome(size, range, filter, executor)

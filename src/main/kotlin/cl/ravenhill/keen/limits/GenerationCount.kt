@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 
 /**
  * Limits the number of generations the evolution will run.
@@ -22,6 +22,6 @@ import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
  */
 class GenerationCount(private val i: Int) : Match({ generation >= i }) {
     init {
-        enforce { i should BeAtLeast(1) { "Generation count [$i] must be at least 1" } }
+        enforce { "Generation count [$i] must be at least 1" { i should BePositive } }
     }
 }

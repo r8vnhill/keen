@@ -26,7 +26,7 @@ import kotlinx.coroutines.runBlocking
  * @since 1.2.0
  * @version 2.0.0
  */
-class OrderedCrossover<DNA, G: Gene<DNA, G>>(probability: Double, chromosomeRate: Double = 1.0) :
+class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRate: Double = 1.0) :
         AbstractPermutationCrossover<DNA, G>(probability, chromosomeRate = chromosomeRate) {
 
     /**
@@ -91,8 +91,8 @@ class OrderedCrossover<DNA, G: Gene<DNA, G>>(probability: Double, chromosomeRate
         offspring.addAll(uniqueGenes.takeLast(remaining))
         // Ensures that the size of the offspring's genes is at least the expected size.
         enforce {
-            offspring.size should BeAtLeast(size) {
-                "The size of the offspring's genes should be at least $size"
+            "The size of the offspring's genes should be at least $size" {
+                offspring.size should BeAtLeast(size)
             }
         }
         return offspring

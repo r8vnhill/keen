@@ -14,8 +14,7 @@ import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.keen.requirements.IntRequirement.BePositive
-import cl.ravenhill.keen.util.math.roundUpToMultipleOf
+import cl.ravenhill.keen.util.roundUpToMultipleOf
 import java.util.Objects
 
 /**
@@ -58,7 +57,14 @@ class BoolChromosome(
         truesProbability: Double,
         constructorExecutor: ConstructorExecutor<BoolGene>
     ) : this(
-        constructorExecutor(size) {
+        constructorExecutor(
+            enforce {
+                "The trues probability [$truesProbability] must be between 0 and 1, inclusive." {
+                    truesProbability should BeInRange(0.0..1.0)
+                }
+            }.let {
+                size
+            }) {
             if (Dice.probability() < truesProbability) BoolGene.True else BoolGene.False
         }, truesProbability
     )
@@ -86,13 +92,20 @@ class BoolChromosome(
     // Documentation inherited from [Any].
     override fun hashCode() = Objects.hash(BoolChromosome::class, genes)
 
-    // Documentation inherited from [Any].
-    override fun toString(): String {
-        var str = ""
-        genes.forEach { str += if (it == BoolGene.True) "1" else "0" }
-        return str.chunked(4).joinToString("|")
-            .padStart(genes.size.roundUpToMultipleOf(8), '0')
-    }
+    /**
+     * Returns a string representation of the chromosome in binary format.
+     * Each gene is represented by a bit: [BoolGene.True] is represented as '1' and [BoolGene.False]
+     * as '0'.
+     * The genes are grouped in sets of 4 bits, separated by '|'.
+     * The string is padded with '0's to make its length a multiple of 8.
+     *
+     * @return a string representation of the chromosome in binary format.
+     */
+    override fun toString() = genes.map { if (it == BoolGene.True) "1" else "0" }
+        .chunked(4) { it.joinToString(separator = "") }
+        .joinToString(separator = "|")
+        .padStart(genes.size.roundUpToMultipleOf(8), '0')
+
 
     /**
      * Factory for [BoolChromosome]s.
@@ -104,16 +117,8 @@ class BoolChromosome(
 
         var truesProbability: Double = Double.NaN
 
-        var size: Int = 0
-
         // Documentation inherited from [Chromosome.Factory].
-        override fun make(): BoolChromosome {
-            enforce {
-                size should BePositive()
-                truesProbability should BeInRange(0.0..1.0)
-            }
-            return BoolChromosome(size, truesProbability, executor)
-        }
+        override fun make() = BoolChromosome(size, truesProbability, executor)
 
         // Documentation inherited from [Any].
         override fun toString() =

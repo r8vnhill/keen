@@ -1,9 +1,8 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.math.eq
+import cl.ravenhill.keen.util.eq
 import cl.ravenhill.keen.util.sub
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import kotlin.math.min

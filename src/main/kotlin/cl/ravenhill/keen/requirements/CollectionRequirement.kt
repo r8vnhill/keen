@@ -17,11 +17,14 @@ sealed interface CollectionRequirement : Requirement<Collection<*>> {
     /**
      * Constraint that checks if a collection is not empty.
      */
-    class NotBeEmpty(
-        override val lazyDescription: (Collection<*>) -> String = { value ->
-            "Expected an empty collection, but got $value"
-        }
-    ) : CollectionRequirement {
+    data object NotBeEmpty : CollectionRequirement {
+        @Deprecated(
+            "Use validate(value, message) instead",
+            ReplaceWith("validate(value, message)"),
+            DeprecationLevel.WARNING
+        )
+        override val lazyDescription: (Collection<*>) -> String = { "The collection must not be empty." }
+
         override val validator = { value: Collection<*> -> value.isNotEmpty() }
     }
 }

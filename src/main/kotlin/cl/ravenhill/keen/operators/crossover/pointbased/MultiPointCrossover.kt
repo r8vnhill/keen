@@ -11,17 +11,17 @@ package cl.ravenhill.keen.operators.crossover.pointbased
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 
 /**
  * Not yet implemented.
  */
-open class MultiPointCrossover<DNA, G: Gene<DNA, G>>(probability: Double, private val cuts: Int) :
+open class MultiPointCrossover<DNA, G : Gene<DNA, G>>(probability: Double, private val cuts: Int) :
         AbstractCrossover<DNA, G>(probability) {
 
     init {
-        enforce { cuts should BeAtLeast(1) { "The crossover must have at least one cut" } }
+        enforce { "The crossover must have at least one cut" { cuts should BePositive } }
     }
 
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {

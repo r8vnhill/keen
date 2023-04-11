@@ -17,6 +17,7 @@ import cl.ravenhill.keen.genetic.chromosomes.ProgramChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.prog.Program
 
 /***************************************************************************************************
  * This is a Kotlin file that contains a DSL for configuring genetic algorithms.
@@ -153,11 +154,13 @@ fun ChromosomeScope<Int>.ints(builder: IntChromosome.Factory.() -> Unit) =
  *
  * __Usage:__
  * ```
- * chromosome {
+ * genotype
+ *   chromosome {
  *     doubles {
- *         size = 20
- *         range = 0.0..100.0
+ *       size = 20
+ *       range = 0.0..100.0
  *     }
+ *   }
  * }
  * ```
  *
@@ -175,11 +178,15 @@ fun ChromosomeScope<Double>.doubles(builder: DoubleChromosome.Factory.() -> Unit
  *
  * __Usage:__
  * ```
- * program {
- *     function("*", 2) { it[0] * it[1] }
- *     function("+", 2) { it[0] + it[1] }
- *     terminal { EphemeralConstant { Core.random.nextInt(-1, 2).toDouble() } }
- *     terminal { Variable("x", 0) }
+ * genotype {
+ *   chromosome {
+ *     program {
+ *       function("*", 2) { it[0] * it[1] }
+ *       function("+", 2) { it[0] + it[1] }
+ *       terminal { EphemeralConstant { Core.random.nextInt(-1, 2).toDouble() } }
+ *       terminal { Variable("x", 0) }
+ *     }
+ *   }
  * }
  * ```
  *
@@ -188,5 +195,5 @@ fun ChromosomeScope<Double>.doubles(builder: DoubleChromosome.Factory.() -> Unit
  * @return A [ProgramChromosome.Factory] instance that can be used to create new
  *  [ProgramChromosome] instances.
  */
-fun <T> program(builder: ProgramChromosome.Factory<T>.() -> Unit) =
+fun <T> ChromosomeScope<Program<T>>.program(builder: ProgramChromosome.Factory<T>.() -> Unit) =
     ProgramChromosome.Factory<T>().apply(builder)

@@ -30,7 +30,8 @@ import kotlin.math.min
  * @since 1.0.0
  * @version 2.0.0
  */
-class SinglePointCrossover<DNA, G: Gene<DNA, G>>(probability: Double) : MultiPointCrossover<DNA, G>(probability, 1) {
+class SinglePointCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
+        MultiPointCrossover<DNA, G>(probability, 1) {
 
     /**
      * Performs a single point crossover between the given chromosomes.
@@ -41,7 +42,11 @@ class SinglePointCrossover<DNA, G: Gene<DNA, G>>(probability: Double) : MultiPoi
      * @return A list with two new [Chromosome]s resulting from the crossover.
      */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
-        enforce { chromosomes.size should BeEqualTo(2) }
+        enforce {
+            "The number of chromosomes to be crossed over must be 2." {
+                chromosomes.size should BeEqualTo(2)
+            }
+        }
         val first = chromosomes[0].genes.toMutableList()
         val second = chromosomes[1].genes.toMutableList()
         val index = Core.random.nextInt(min(first.size, second.size))
@@ -65,7 +70,9 @@ class SinglePointCrossover<DNA, G: Gene<DNA, G>>(probability: Double) : MultiPoi
         mates: Pair<List<G>, List<G>>
     ): Pair<List<G>, List<G>> {
         val hi = min(mates.first.size, mates.second.size)
-        enforce { index should BeInRange(0..hi) }
+        enforce {
+            "The index must be in the range [0, $hi)." { index should BeInRange(0 until hi) }
+        }
         val newFirst = mates.first.slice(0 until index) + mates.second.slice(index until hi)
         val newSecond = mates.second.slice(0 until index) + mates.first.slice(index until hi)
         return newFirst to newSecond
