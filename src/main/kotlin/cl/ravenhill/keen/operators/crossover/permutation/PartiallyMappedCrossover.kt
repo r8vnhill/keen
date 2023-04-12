@@ -104,22 +104,43 @@ class PartiallyMappedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
         }
         val genes1 = chromosomes[0].genes.toMutableList()
         val genes2 = chromosomes[1].genes.toMutableList()
-        // Select two random indexes
-        val (lo, hi) = Core.random.subsets(List(chromosomes[0].size) { it }, true, 2, 1)
+        val (lo, hi) = selectRandomIndexes(chromosomes[0].size)
+        val (crossSection1, crossSection2) = createCrossingRegions(genes1, genes2, lo, hi)
+        replaceGenesOutsideCrossingRegions(genes1, genes2, crossSection1, crossSection2, lo, hi)
+        return listOf(genes1, genes2)
+    }
+
+    private fun selectRandomIndexes(size: Int): Pair<Int, Int> {
+        val (lo, hi) = Core.random.subsets(List(size) { it }, true, 2, 1)
             .first()
             .sorted()
-        // Create the crossing region
+        return Pair(lo, hi)
+    }
+
+    private fun createCrossingRegions(
+        genes1: MutableList<G>,
+        genes2: MutableList<G>,
+        lo: Int,
+        hi: Int
+    ): Pair<List<G>, List<G>> {
         val crossSection1 = genes1.subList(lo, hi)
         val crossSection2 = genes2.subList(lo, hi)
-        // The offspring are created
-        for (i in 0 until chromosomes[0].size) {
+        return Pair(crossSection1, crossSection2)
+    }
+
+    private fun replaceGenesOutsideCrossingRegions(
+        genes1: MutableList<G>,
+        genes2: MutableList<G>,
+        crossSection1: List<G>,
+        crossSection2: List<G>,
+        lo: Int,
+        hi: Int
+    ) {
+        for (i in 0 until genes1.size) {
             if (i in lo until hi) continue
             val gene1 = genes1[i]
             val gene2 = genes2[i]
-            // If the gene is already in the crossing region, we don't need to do anything
             if (gene1 in crossSection1 || gene2 in crossSection2) continue
-            // If the gene is not in the crossing region, we need to find the gene that is in the
-            // crossing region and replace it with the gene that is not in the crossing region
             val gene1Index = genes1.indexOf(gene1)
             val gene2Index = genes2.indexOf(gene2)
             val gene1InCrossingRegion = genes1[gene2Index]
@@ -127,6 +148,5 @@ class PartiallyMappedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
             genes1[gene1Index] = gene1InCrossingRegion
             genes2[gene2Index] = gene2InCrossingRegion
         }
-        return listOf(genes1, genes2)
     }
 }
