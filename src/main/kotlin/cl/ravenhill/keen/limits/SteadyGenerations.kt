@@ -1,22 +1,23 @@
-/*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.LimitConfigurationException
+import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 
-
-class SteadyGenerations(private val n: Int) : Match({ steadyGenerations >= n }) {
+/**
+ * A [Match] limit that checks if the population has remained steady for a given number of
+ * generations.
+ *
+ * @property n The number of steady generations required to satisfy the limit.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 2.0.0
+ */
+data class SteadyGenerations(val n: Int) : Match({ steadyGenerations >= n }) {
     init {
-        if (n < 0) {
-            throw LimitConfigurationException {
-                "Steady generations must not be negative, but was $n"
-            }
-        }
+        enforce { "Steady generations must be positive" { n should BePositive } }
     }
+
+    /// Documentation inherited from [Any]
+    override fun toString() = "SteadyGenerations($n)"
 }

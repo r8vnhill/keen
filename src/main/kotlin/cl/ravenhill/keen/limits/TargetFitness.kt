@@ -1,11 +1,12 @@
-/*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
 package cl.ravenhill.keen.limits
 
-class TargetFitness(private val d: Double) : Match({ bestFitness == d })
+/**
+ * A [Limit] that checks whether the genetic algorithm has reached the target fitness.
+ *
+ * @param fitness The target fitness to reach.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 1.0.0
+ */
+data class TargetFitness(val fitness: Double) : Match({ bestFitness == fitness })
