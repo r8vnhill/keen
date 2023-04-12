@@ -1,17 +1,28 @@
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
 import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 
 /***************************************************************************************************
  * This code defines functions to generate random programs in the form of breadth-first trees given
  * a list of functions and terminals.
  **************************************************************************************************/
+
+/**
+ * Typealias for a generation method that takes a list of terminals, a list of functions,
+ * a minimum program length, and a maximum program length, and returns a program.
+ */
+typealias GenerationMethod<T> = (
+    terminals: List<Terminal<T>>, functions: List<Fun<T>>, min: Int, max: Int
+) -> Program<T>
+
 
 /**
  * Generates a random program using a random method from a list of generation methods.
@@ -25,18 +36,13 @@ import cl.ravenhill.keen.requirements.IntRequirement.BePositive
  * @return a random program as a breadth-first tree.
  */
 fun <T> generateProgramWith(
-    methods: List<(List<Terminal<T>>, List<Fun<T>>, Int, Int) -> Program<T>>,
+    methods: List<GenerationMethod<T>>,
     terminals: List<Terminal<T>>,
     functions: List<Fun<T>>,
     min: Int,
     max: Int
 ): Program<T> {
-    enforce {
-        "The list of generation methods must not be empty" { methods should NotBeEmpty }
-        "The list of terminals and functions must not be empty" {
-            terminals.size + functions.size should BePositive
-        }
-    }
+    enforce { "The list of generation methods must not be empty" { methods should NotBeEmpty } }
     return methods.random(Core.random).invoke(terminals, functions, min, max)
 }
 
@@ -53,11 +59,8 @@ fun <T> generateProgramWith(
 fun <T> generateProgramGrowing(
     terminals: List<Terminal<T>>, functions: List<Fun<T>>, min: Int, max: Int
 ): Program<T> {
-    val condition = { height: Int, depth: Int ->
-        depth == height || (
-                depth >= min &&
-                        Core.Dice.probability()
-                        < terminals.size.toDouble() / (terminals.size + functions.size))
+    val condition = { h: Int, d: Int ->
+        d == h || d >= min && Dice.probability() < terminals.size.toDouble() / (terminals.size + functions.size)
     }
     return generateProgram(functions, terminals, min, max, condition)
 }
@@ -101,6 +104,14 @@ fun <T> generateProgram(
     max: Int,
     condition: (Int, Int) -> Boolean
 ): Program<T> {
+    enforce {
+        "The list of terminals and functions must not be empty" {
+            terminals.size + functions.size should BePositive
+        }
+        "The minimum height must be positive" { min should BePositive }
+        "The maximum height must be positive" { max should BePositive }
+        "The maximum height must be greater than the minimum height" { max should BeAtLeast(min) }
+    }
     val height = Core.random.nextInt(min, max)
     return generateProgramRecursive(functions, terminals, 0, height, condition)
 }

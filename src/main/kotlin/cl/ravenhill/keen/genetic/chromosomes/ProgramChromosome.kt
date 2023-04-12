@@ -1,29 +1,44 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.ProgramGene
+import cl.ravenhill.keen.prog.GenerationMethod
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.generateProgramFull
 import cl.ravenhill.keen.prog.generateProgramGrowing
 import cl.ravenhill.keen.prog.generateProgramWith
 import cl.ravenhill.keen.prog.terminals.Terminal
-import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.util.addIfAbsent
 import java.util.Objects
 
 
-class ProgramChromosome<T> private constructor(
+class ProgramChromosome<T>(
     override val genes: List<ProgramGene<T>>,
     private val functions: List<Fun<T>>,
     private val terminals: List<Terminal<T>>,
     private val validator: (ProgramGene<T>) -> Boolean,
-    private val generationMethods: List<((
-        List<Terminal<T>>, List<Fun<T>>, Int, Int
-    ) -> Program<T>)>
+    private val generationMethods: List<GenerationMethod<T>>
 ) : Chromosome<Program<T>, ProgramGene<T>> {
 
+    constructor(
+        size: Int,
+        functions: MutableList<Fun<T>>,
+        terminals: MutableList<Terminal<T>>,
+        validator: (ProgramGene<T>) -> Boolean,
+        generationMethods: List<GenerationMethod<T>>,
+        constructorExecutor: ConstructorExecutor<ProgramGene<T>>
+    ) : this(constructorExecutor(size) {
+        ProgramGene(
+            generateProgramWith(generationMethods, terminals, functions, 0, Core.maxProgramDepth),
+            functions,
+            terminals,
+            generationMethods
+        )
+    }, functions, terminals, validator, generationMethods)
+
+    // region : -== OVERRIDES ==- :
     /// Documentation inherited from [Chromosome]
     override fun withGenes(genes: List<ProgramGene<T>>) = ProgramChromosome(
         genes,
@@ -49,17 +64,9 @@ class ProgramChromosome<T> private constructor(
 
     /// Documentation inherited from [Any]
     override fun toString() = genes.map { it.dna }.joinToString("\n")
+    // endregion OVERRIDES
 
     class Factory<T> : Chromosome.AbstractFactory<Program<T>, ProgramGene<T>>() {
-
-        /** The functions that can be used in the chromosome */
-        private val _functions = mutableListOf<Fun<T>>()
-        val functions get() = _functions.toList()
-
-        /** The terminals that can be used in the chromosome */
-        private val _terminals = mutableListOf<Terminal<T>>()
-        val terminals get() = _terminals.toList()
-
         var validator: (ProgramGene<T>) -> Boolean = { true }
 
         var generationMethods: List<((
@@ -68,37 +75,30 @@ class ProgramChromosome<T> private constructor(
             ::generateProgramGrowing, ::generateProgramFull
         )
 
+        // region : -== FUNCTIONS ==- :
+        /** The functions that can be used in the chromosome */
+        private val _functions = mutableListOf<Fun<T>>()
+        val functions get() = _functions.toList()
+
         /**
          * Adds a new function to the chromosome.
          */
         fun function(name: String, arity: Int, fn: (List<T>) -> T) =
             _functions.addIfAbsent(Fun(name, arity, fn))
+        // endregion FUNCTIONS
+
+        // region : -== TERMINALS ==- :
+        /** The terminals that can be used in the chromosome */
+        private val _terminals = mutableListOf<Terminal<T>>()
+        val terminals get() = _terminals.toList()
 
         /**
          * Adds a new terminal to the chromosome.
          */
         fun terminal(fn: () -> Terminal<T>) = _terminals.addIfAbsent(fn())
+        // endregion TERMINALS
 
-        override fun make(): ProgramChromosome<T> {
-            return ProgramChromosome(
-                (0 until size).map {
-                    ProgramGene(
-                        generateProgramWith(
-                            generationMethods,
-                            _terminals,
-                            _functions,
-                            1,
-                            Core.maxProgramDepth
-                        ),
-                        _functions,
-                        _terminals
-                    )
-                },
-                _functions,
-                _terminals,
-                validator,
-                generationMethods
-            )
-        }
+        override fun make() =
+            ProgramChromosome(size, _functions, _terminals, validator, generationMethods, executor)
     }
 }

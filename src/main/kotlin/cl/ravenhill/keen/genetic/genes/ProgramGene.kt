@@ -29,10 +29,11 @@ import java.util.Objects
  * @constructor Creates a new instance of [ProgramGene] with the specified ``program``, [functions],
  * [terminals], and [generationMethods].
  *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
  * @version 2.0.0
  */
-class ProgramGene<DNA> internal constructor(
+class ProgramGene<DNA>(
     program: Program<DNA>,
     val functions: List<Fun<DNA>>,
     val terminals: List<Terminal<DNA>>,
@@ -44,10 +45,11 @@ class ProgramGene<DNA> internal constructor(
 ) : Gene<Program<DNA>, ProgramGene<DNA>> {
 
     /**
-     * Returns the program tree represented by this gene.
+     * The program tree represented by this gene.
      */
     override val dna = program
 
+    // region : -== FACTORY METHODS ==-
     /**
      * Generates a new program tree by applying one of the [generationMethods] with the list of
      * [terminals] and [functions] and the maximum depth specified.
@@ -63,16 +65,20 @@ class ProgramGene<DNA> internal constructor(
      */
     override fun withDna(dna: Program<DNA>) =
         ProgramGene(dna.copy(), functions, terminals, generationMethods)
+    // endregion FACTORY METHODS
 
-    // region : Equals, HashCode, ToString
+    // region : -== IMPLEMENTATION OF [Any] ==-
+    /// Documentation inherited from [Any]
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is ProgramGene<*> -> false
         else -> dna == other.dna
     }
 
+    /// Documentation inherited from [Any]
     override fun hashCode() = Objects.hash(ProgramGene::class, dna)
 
+    /// Documentation inherited from [Any]
     override fun toString() = dna.toString()
-    // endregion
+    // endregion IMPLEMENTATION OF [Any]
 }
