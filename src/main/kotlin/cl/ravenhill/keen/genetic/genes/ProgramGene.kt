@@ -18,18 +18,19 @@ import java.util.Objects
  * Additionally, it contains a list of generation methods that determine how new programs are
  * created.
  *
+ * Genetic programming is a type of evolutionary algorithm that evolves computer programs to solve a
+ * specific problem.
+ * In this case, the [ProgramGene] represents a single program in the population being evolved.
+ * The functions and terminals are the building blocks of the programs, and the generation methods
+ * are used to create new programs during mutation or crossover.
+ *
  * @param DNA The type of the value.
  * @param program The program tree represented by this gene.
- *
  * @property functions The list of functions that can be used to generate new programs.
  * @property terminals The list of terminals that can be used to generate new programs.
  * @property generationMethods The list of generation methods used to create new programs during
- *      mutation or crossover.
+ * mutation or crossover.
  *
- * @constructor Creates a new instance of [ProgramGene] with the specified ``program``, [functions],
- * [terminals], and [generationMethods].
- *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
  * @version 2.0.0
  */
