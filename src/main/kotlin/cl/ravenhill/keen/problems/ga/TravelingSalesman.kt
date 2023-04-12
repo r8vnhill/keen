@@ -11,6 +11,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.permutation.OrderedCrossover
+import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
 import cl.ravenhill.keen.operators.mutator.InversionMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
@@ -70,7 +71,7 @@ fun main() {
     }) {
         populationSize = 1000
         limits = listOf(GenerationCount(200))
-        alterers = listOf(InversionMutator(0.8), OrderedCrossover(0.3))
+        alterers = listOf(InversionMutator(0.8), PartiallyMappedCrossover(0.3))
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPrinter(30), StatisticPlotter())
         evaluator = evaluator {

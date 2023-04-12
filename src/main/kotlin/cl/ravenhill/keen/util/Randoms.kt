@@ -148,7 +148,12 @@ fun Random.nextDoubleExclusive(range: Pair<Double, Double>) =
  * @param size the size of each subset.
  * @return a list of subsets.
  */
-fun <T> Random.subsets(elements: List<T>, exclusive: Boolean, size: Int): List<List<T>> {
+fun <T> Random.subsets(
+    elements: List<T>,
+    exclusive: Boolean,
+    size: Int,
+    limit: Int = Int.MAX_VALUE
+): List<List<T>> {
     enforce {
         "The subset size [$size] must be at least 1 and at most the number of elements " +
                 "in the input list [${elements.size}]." {
@@ -167,8 +172,9 @@ fun <T> Random.subsets(elements: List<T>, exclusive: Boolean, size: Int): List<L
     val remainingElements = LinkedList(elements).also {
         it.shuffle(this)
     }
+    var i = 0
     // While there are still elements to use, create subsets.
-    while (remainingElements.isNotEmpty()) {
+    while (remainingElements.isNotEmpty() && i < limit) {
         if (exclusive) {
             // If exclusive, takes the first `size` elements from the list.
             // Each element is used only once.
@@ -190,6 +196,7 @@ fun <T> Random.subsets(elements: List<T>, exclusive: Boolean, size: Int): List<L
             }
             subsets.add(subset)
         }
+        i++
     }
     return subsets
 }

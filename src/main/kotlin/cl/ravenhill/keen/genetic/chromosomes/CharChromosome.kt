@@ -82,7 +82,6 @@ class CharChromosome(
      * Defaults to a function that accepts all character values.
      */
     class Factory : Chromosome.AbstractFactory<Char, CharGene>() {
-        var size = 1
         var range = ' '..'z'
         var filter: (Char) -> Boolean = { true }
 

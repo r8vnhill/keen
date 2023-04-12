@@ -4,7 +4,9 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -36,6 +38,11 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRat
      * @return a list of the offspring produced by the crossover operation
      */
     override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
+        enforce {
+            "The Ordered Crossover operator requires exactly two chromosomes" {
+                chromosomes.size should BeEqualTo(2)
+            }
+        }
         val size = chromosomes.minOf { it.size }
         if (size >= 2) {
             val r1 = Core.random.nextInt(size)
