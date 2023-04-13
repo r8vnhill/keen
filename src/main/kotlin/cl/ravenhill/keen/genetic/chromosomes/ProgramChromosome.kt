@@ -98,7 +98,7 @@ class ProgramChromosome<T>(
         constructorExecutor: ConstructorExecutor<ProgramGene<T>>
     ) : this(constructorExecutor(size) {
         ProgramGene(
-            generateProgramWith(generationMethods, terminals, functions, 0, Core.maxProgramDepth),
+            generateProgramWith(generationMethods, terminals, functions, 1, Core.maxProgramDepth),
             functions,
             terminals,
             generationMethods

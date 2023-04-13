@@ -144,14 +144,16 @@ fun Random.nextDoubleExclusive(range: Pair<Double, Double>) =
  * Each element in the input list is guaranteed to be included in at least one subset.
  *
  * @param elements the input list of elements to generate subsets from.
- * @param exclusive whether each element can be used only once across all subsets.
  * @param size the size of each subset.
- * @return a list of subsets.
+ * @param exclusive whether each element can be used only once across all subsets.
+ * @param limit the maximum number of subsets to generate.
+ * Default is [Int.MAX_VALUE].
+ * @return a list of randomly generated subsets.
  */
 fun <T> Random.subsets(
     elements: List<T>,
-    exclusive: Boolean,
     size: Int,
+    exclusive: Boolean,
     limit: Int = Int.MAX_VALUE
 ): List<List<T>> {
     enforce {

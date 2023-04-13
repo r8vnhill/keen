@@ -24,18 +24,6 @@ open class KeenException(prefix: String, lazyMessage: () -> String) :
         Exception("$prefix ${lazyMessage()}")
 
 /**
- * Exception thrown when the receiver of a function is not valid.
- *
- * @param lazyMessage The message to be used in the exception.
- *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 1.0.0
- * @since 1.0.0
- */
-class InvalidReceiverException(lazyMessage: () -> String) :
-        KeenException("Invalid receiver: ", lazyMessage)
-
-/**
  * Exception thrown when an argument is not valid.
  *
  * @param lazyMessage The message to be used in the exception.

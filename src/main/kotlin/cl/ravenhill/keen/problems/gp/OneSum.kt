@@ -46,6 +46,7 @@ fun main() {
     val engine = engine(fitness(20), genotype {
         chromosome {
             program {
+                size = 1
                 function("+", 2) { it[0] + it[1] }
                 terminal { EphemeralConstant { 1.0 } }
             }

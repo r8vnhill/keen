@@ -61,7 +61,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
             // select a subset of individuals to recombine using the provided probability and other parameters
             val indices = Core.random.indices(probability, pop.size)
             if (indices.size < numIn) return AltererResult(pop)
-            val parents = Core.random.subsets(indices, exclusivity, numIn)
+            val parents = Core.random.subsets(indices, numIn, exclusivity)
             // recombine the selected parents and count the number of individuals that were recombined
             val count = parents.sumOf { crossover(pop, it) }
             // return the resulting population and count

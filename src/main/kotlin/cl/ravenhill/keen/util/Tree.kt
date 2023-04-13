@@ -93,7 +93,7 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
                         "[${node.children.size}]." { node.children.size should BeEqualTo(it.arity) }
             }
             // Add the new node to the stack.
-            stack.add(createNode(it.value, children))
+            stack.add(node)
         }
         // Return the top of the stack.
         return stack.first()
