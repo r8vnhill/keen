@@ -5,6 +5,7 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.subsets
 
 /**
@@ -35,7 +36,7 @@ typealias PMX<DNA, G> = PartiallyMappedCrossover<DNA, G>
  * # Pseudo-code
  *
  * ```
- * function partiallyMappedCrossover(parent1, parent2):
+ * fun partiallyMappedCrossover(parent1, parent2):
  *     offspring1 = makeCopy(parent1)
  *     offspring2 = makeCopy(parent2)
  *     // Select two random indexes
@@ -44,7 +45,7 @@ typealias PMX<DNA, G> = PartiallyMappedCrossover<DNA, G>
  *     crossSection1 = parent1[lo:hi]
  *     crossSection2 = parent2[lo:hi]
  *     // Replace the values outside the crossing region
- *     for i in range(length(parent1)):
+ *     for i in 0..parent1.size:
  *         if i < lo or i >= hi:
  *             if offspring1[i] in crossSection2:
  *                 index = crossSection2.index(offspring1[i])
@@ -104,24 +105,10 @@ class PartiallyMappedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
         }
         val genes1 = chromosomes[0].genes.toMutableList()
         val genes2 = chromosomes[1].genes.toMutableList()
-        val (lo, hi) = selectRandomIndexes(chromosomes[0].size)
+        val (lo, hi) = Core.random.indices(2, chromosomes[0].size).sorted()
         val (crossSection1, crossSection2) = createCrossingRegions(genes1, genes2, lo, hi)
         replaceGenesOutsideCrossingRegions(genes1, genes2, crossSection1, crossSection2, lo, hi)
         return listOf(genes1, genes2)
-    }
-
-    /**
-     * Generates a random [Pair] of indices in the range [0, [size]).
-     *
-     * @param size the size of the list to select indices from.
-     * @return a pair of indices ``(lo, hi)`` such that ``lo <= hi``.
-     */
-    private fun selectRandomIndexes(size: Int): Pair<Int, Int> {
-        // Generate a single random subset of size 2 from a list containing elements [0, size)
-        val (lo, hi) = Core.random.subsets(List(size) { it }, 2, true, 1)
-            .first()
-            .sorted()
-        return lo to hi
     }
 
     /**

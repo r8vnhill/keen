@@ -89,7 +89,7 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
             // Create a new node with the given value and children.
             val node = createNode(it.value, children)
             enforce {
-                "The arity of the program [${it.arity}] does not match the arity of the node " +
+                "The arity of the tree [${it.arity}] does not match the arity of the node " +
                         "[${node.children.size}]." { node.children.size should BeEqualTo(it.arity) }
             }
             // Add the new node to the stack.

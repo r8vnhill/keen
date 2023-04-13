@@ -78,6 +78,17 @@ fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int>
 }
 
 /**
+ * Generates a random [List] of indices in the range [0, [end]).
+ *
+ * @param size the size of the list to generate.
+ * @param end the size of the list to select indices from.
+ * @param start the inclusive start index of the range to select from (default is 0).
+ * @return a list of indices.
+ */
+fun Random.indices(size: Int, end: Int, start: Int = 0): List<Int> =
+    subsets(List(end - start) { it + start }, size, true, 1).first()
+
+/**
  * Returns a random value outside the specified [range], using this [Random] instance.
  *
  * If the range includes all possible values, the function will always return a random value.
