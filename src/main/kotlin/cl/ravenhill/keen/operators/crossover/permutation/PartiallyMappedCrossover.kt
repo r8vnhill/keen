@@ -6,7 +6,6 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.indices
-import cl.ravenhill.keen.util.subsets
 
 /**
  * Alias for [PartiallyMappedCrossover].

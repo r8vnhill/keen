@@ -33,11 +33,11 @@ import cl.ravenhill.keen.probability
  * @since 0.9
  * @version 2.0.0
  */
-open class CombineCrossover<DNA, G: Gene<DNA, G>>(
+open class CombineCrossover<DNA, G : Gene<DNA, G>>(
     private val combiner: (List<G>) -> G,
     probability: Double,
     chromosomeRate: Double = 1.0,
-    private val geneRate: Double = 1.0
+    val geneRate: Double = 1.0
 ) : AbstractCrossover<DNA, G>(probability, 1, chromosomeRate = chromosomeRate) {
 
     /**
@@ -68,4 +68,8 @@ open class CombineCrossover<DNA, G: Gene<DNA, G>>(
      */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>) =
         listOf(chromosomes[0].withGenes(combine(chromosomes)))
+
+    /// Documentation inherited from [Any]
+    override fun toString() =
+        "CombineCrossover(combiner=$combiner, probability=$probability, chromosomeRate=$chromosomeRate, geneRate=$geneRate)"
 }

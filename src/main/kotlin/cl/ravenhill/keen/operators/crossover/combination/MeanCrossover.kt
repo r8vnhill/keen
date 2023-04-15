@@ -41,5 +41,6 @@ class MeanCrossover<DNA : Number, G : NumberGene<DNA, G>>(
     chromosomeRate,
     geneRate
 ) {
-    override fun toString() = "MeanCrossover { probability: $probability }"
+    override fun toString() =
+        "MeanCrossover(probability=$probability, chromosomeRate=$chromosomeRate, geneRate=$geneRate)"
 }

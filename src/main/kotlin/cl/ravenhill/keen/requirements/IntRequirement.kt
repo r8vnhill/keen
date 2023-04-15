@@ -20,9 +20,6 @@ sealed interface IntRequirement : Requirement<Int> {
      * Represents a requirement that an integer value must be positive.
      */
     data object BePositive : IntRequirement {
-        override val lazyDescription: (Int) -> String = { value ->
-            "Expected a positive number, but got $value"
-        }
         override val validator = { value: Int -> value > 0 }
     }
 
@@ -32,14 +29,9 @@ sealed interface IntRequirement : Requirement<Int> {
      * @property range The range of values that are allowed.
      */
     open class BeInRange(
-        private val range: IntToInt,
-        override val lazyDescription: (Int) -> String = { value ->
-            "Expected a number in range $range, but got $value"
-        }
+        private val range: IntToInt
     ) : IntRequirement {
-        constructor(range: IntRange) : this(range.first to range.last, { value ->
-            "Expected a number in range $range, but got $value"
-        })
+        constructor(range: IntRange) : this(range.first to range.last)
 
         override val validator = { value: Int -> value in range }
     }
@@ -53,7 +45,7 @@ sealed interface IntRequirement : Requirement<Int> {
         min: Int, lazyDescription: (Int) -> String = { value ->
             "Expected a number at least $min, but got $value"
         }
-    ) : BeInRange(min to Int.MAX_VALUE, { lazyDescription(min) })
+    ) : BeInRange(min to Int.MAX_VALUE)
 
     /**
      * Represents a requirement that an integer value must be at most a specified value.
@@ -61,11 +53,8 @@ sealed interface IntRequirement : Requirement<Int> {
      * @property max The maximum allowed value.
      */
     class BeAtMost(
-        max: Int,
-        lazyDescription: (Int) -> String = {
-            "Expected a number at most $max, but got $it"
-        }
-    ) : BeInRange(Int.MIN_VALUE to max, { lazyDescription(max) })
+        max: Int
+    ) : BeInRange(Int.MIN_VALUE to max)
 
     /**
      * Represents a requirement that an integer value must be equal to a specified value.
@@ -73,10 +62,7 @@ sealed interface IntRequirement : Requirement<Int> {
      * @property expected The expected value.
      */
     class BeEqualTo(
-        private val expected: Int,
-        override val lazyDescription: (Int) -> String = { value ->
-            "Expected $expected, but got $value"
-        }
+        private val expected: Int
     ) : IntRequirement {
 
         override val validator = { value: Int -> value == expected }

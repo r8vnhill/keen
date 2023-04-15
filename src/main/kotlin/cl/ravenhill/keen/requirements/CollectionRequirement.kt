@@ -23,7 +23,6 @@ sealed interface CollectionRequirement : Requirement<Collection<*>> {
             ReplaceWith("validate(value, message)"),
             DeprecationLevel.WARNING
         )
-        override val lazyDescription: (Collection<*>) -> String = { "The collection must not be empty." }
 
         override val validator = { value: Collection<*> -> value.isNotEmpty() }
     }

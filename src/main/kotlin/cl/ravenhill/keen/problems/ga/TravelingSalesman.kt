@@ -12,9 +12,11 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.permutation.OrderedCrossover
 import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
+import cl.ravenhill.keen.operators.crossover.permutation.PositionBasedCrossover
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.InversionMutator
 import cl.ravenhill.keen.operators.mutator.SwapMutator
+import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
@@ -73,14 +75,12 @@ fun main() {
     }) {
         populationSize = 1000
         limits = listOf(GenerationCount(200))
+        selector = RouletteWheelSelector()
         alterers = listOf(InversionMutator(0.8), OrderedCrossover(0.3))
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPrinter(30), StatisticPlotter())
         evaluator = evaluator {
-            coroutines {
-                dispatcher = Dispatchers.Main
-                chunkSize = 500
-            }
+            coroutines()
         }
     }
     val result = engine.run()

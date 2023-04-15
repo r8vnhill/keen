@@ -25,6 +25,8 @@ import cl.ravenhill.keen.util.eq
  * @version 2.0.0
  */
 class InversionMutator<DNA, G: Gene<DNA, G>>(probability: Double) : Mutator<DNA, G>(probability) {
+
+    /// Documentation inherited from [Mutator]
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
     ) = if (probability eq 0.0 || chromosome.size < 2) {
@@ -32,6 +34,7 @@ class InversionMutator<DNA, G: Gene<DNA, G>>(probability: Double) : Mutator<DNA,
         // chromosome
         MutatorResult(chromosome, 0)
     } else {
+        val genes = chromosome.genes.toMutableList()
         var start = 0
         var end = chromosome.size - 1
         for (i in 0 until chromosome.size) {
@@ -46,7 +49,6 @@ class InversionMutator<DNA, G: Gene<DNA, G>>(probability: Double) : Mutator<DNA,
                 break
             }
         }
-        val genes = chromosome.genes.toMutableList()
         invert(genes, start, end)
         MutatorResult(chromosome.withGenes(genes), 1)
     }

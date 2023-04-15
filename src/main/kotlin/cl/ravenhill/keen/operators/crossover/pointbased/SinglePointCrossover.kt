@@ -20,8 +20,29 @@ import kotlin.math.min
 /**
  * A [MultiPointCrossover] with only one cut point.
  *
- * Given a list of two chromosomes, this crossover will select a random crossover point and swap the
- * genes of the two chromosomes up to that point, creating two new chromosomes.
+ * Given a list of two chromosomes, this crossover will randomly select a single crossover point,
+ * and swap the genes of the two chromosomes up to that point, creating two new chromosomes.
+ * This means that all genes to the left of the crossover point will be swapped between the
+ * chromosomes, while all genes to the right will remain in their original positions.
+ *
+ * # Pseudo-code
+ * ```
+ * fun singlePointCrossover(P1, P2):
+ *    i = randomIndex(0, min(P1.size, P2.size))
+ *    O1 = P1[0..i] + P2[i+1..P2.size]
+ *    O2 = P2[0..i] + P1[i+1..P1.size]
+ *    return O1, O2
+ * ```
+ *
+ * # Example
+ *
+ * Suppose we have ``P1 = [1, 2, 3, 4, 5]`` and ``P2 = [6, 7, 8, 9, 10]``.
+ *
+ * If the randomly generated index ``i = 2``, then the offspring would be:
+ * ```
+ * O1 = [1, 2, 8, 9, 10]
+ * O2 = [6, 7, 3, 4, 5]
+ * ```
  *
  * @param DNA The type of the values stored in the genes.
  * @param probability The probability of performing crossover on each individual of the population.
@@ -78,5 +99,6 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
         return newFirst to newSecond
     }
 
-    override fun toString() = "SinglePointCrossover { probability: $probability }"
+    /// Documentation inherited from [Any].
+    override fun toString() = "SinglePointCrossover(probability=$probability)"
 }

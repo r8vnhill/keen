@@ -33,14 +33,9 @@ sealed interface LongRequirement : Requirement<Long> {
      * A [BeEqualTo] requirement checks whether a given Long value is equal to an expected value.
      *
      * @param expected The expected value to compare with.
-     * @param lazyDescription A lazily evaluated description of the requirement. It takes a Long parameter
-     * and returns a String.
      */
     class BeEqualTo(
-        private val expected: Long,
-        override val lazyDescription: (Long) -> String = { value ->
-            "Expected $expected, but got $value"
-        }
+        private val expected: Long
     ) : LongRequirement {
 
         /**

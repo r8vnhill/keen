@@ -10,6 +10,10 @@ import cl.ravenhill.keen.util.indices
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
+/**
+ * Type alias for the [OrderedCrossover] class with generic types ``DNA`` and ``G``.
+ */
+typealias OX<DNA, G> = OrderedCrossover<DNA, G>
 
 /**
  * The ordered crossover operator works by selecting a random subsequence of genes from one parent
@@ -76,7 +80,8 @@ import kotlinx.coroutines.runBlocking
  * @version 2.0.0
  */
 class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRate: Double = 1.0) :
-        AbstractPermutationCrossover<DNA, G>(probability, chromosomeRate = chromosomeRate) {
+        AbstractPermutationCrossover<DNA, G>(probability, chromosomeRate
+        = chromosomeRate) {
 
     /**
      * Performs ordered crossover on a list of chromosomes.
@@ -117,20 +122,11 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRat
     ): List<G> {
         // Takes a sublist of genes from the first parent to be inserted into the second parent.
         val sublist = parents.first.subList(start, end + 1)
-        // Creates a new list to hold the offspring.
-        val offspring = mutableListOf<G>()
         // Creates a new list to hold the genes from the second parent that are not in the sublist.
-        val uniqueGenes = parents.second.toMutableList().apply { removeAll(sublist.toSet()) }
-        // Adds the genes from the second parent that are not in the sublist to the offspring to
-        // the new offspring in the same order they appear in the second parent (until the start
-        // index).
-        offspring.addAll(uniqueGenes.take(start))
-        val remaining = uniqueGenes.size - offspring.size
-        // Adds the sublist to the new offspring.
-        offspring.addAll(sublist)
-        // Adds the remaining genes from the second parent to the new offspring.
-        offspring.addAll(uniqueGenes.takeLast(remaining))
-        // Ensures that the size of the offspring's genes is at least the expected size.
+        val uniqueGenes = parents.second.filter { it !in sublist }
+        // Creates the new offspring list by combining genes from the second parent and the sublist
+        // of the first parent.
+        val offspring = uniqueGenes.take(start) + sublist + uniqueGenes.drop(start)
         enforce {
             "The size of the offspring's genes should be at least $size" {
                 offspring.size should BeAtLeast(size)
@@ -138,4 +134,8 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRat
         }
         return offspring
     }
+
+    /// Documentation inherited from [Any]
+    override fun toString() =
+        "OrderedCrossover(probability=$probability, chromosomeRate=$chromosomeRate)"
 }

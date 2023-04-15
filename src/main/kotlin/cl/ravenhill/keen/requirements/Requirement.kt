@@ -17,21 +17,7 @@ import cl.ravenhill.keen.UnfulfilledRequirementException
  * @version 2.0.0
  */
 interface Requirement<T> {
-    val lazyDescription: (T) -> String
     val validator: (T) -> Boolean
-
-    /**
-     * Checks if the given value fulfills the constraint.
-     *
-     * @return A [Result] object that contains the original value if it satisfies the constraint,
-     * or an exception with the description of the constraint violation otherwise.
-     */
-    @Deprecated(
-        "Use validate(value, message) instead",
-        ReplaceWith("validate(value, message)"),
-        DeprecationLevel.WARNING
-    )
-    fun validate(value: T): Result<T> = validate(value, lazyDescription(value))
 
     /**
      * Checks if the given value fulfills the constraint.
