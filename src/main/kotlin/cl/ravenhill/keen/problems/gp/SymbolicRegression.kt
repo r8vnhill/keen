@@ -37,6 +37,7 @@ fun main() {
         genotype {
             chromosome {
                 program {
+                    size = 1
                     function("*", 2) { it[0] * it[1] }
                     function("+", 2) { it[0] + it[1] }
                     terminal { EphemeralConstant { Core.random.nextInt(-1, 2).toDouble() } }

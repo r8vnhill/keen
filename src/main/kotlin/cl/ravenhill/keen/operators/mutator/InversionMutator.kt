@@ -28,6 +28,8 @@ class InversionMutator<DNA, G: Gene<DNA, G>>(probability: Double) : Mutator<DNA,
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
     ) = if (probability eq 0.0 || chromosome.size < 2) {
+        // If the mutation probability is 0 or the chromosome is too small, return the original
+        // chromosome
         MutatorResult(chromosome, 0)
     } else {
         var start = 0
@@ -49,18 +51,37 @@ class InversionMutator<DNA, G: Gene<DNA, G>>(probability: Double) : Mutator<DNA,
         MutatorResult(chromosome.withGenes(genes), 1)
     }
 
+    private fun getRandomIndices(size: Int, probability: Double): Pair<Int, Int> {
+        var start = 0
+        var end = size - 1
+        for (i in 0 until size) {
+            if (Core.Dice.probability() < probability) {
+                start = i
+                break
+            }
+        }
+        for (i in start until size) {
+            if (Core.Dice.probability() > probability) {
+                end = i
+                break
+            }
+        }
+        return start to end
+    }
+
     /**
-     * Inverts the order of the genes in the given [genes] list, between the given [start] and [end]
+     * Inverts the order of the genes in the given `genes` list, between the given `start` and `end`
      * indexes.
      */
     private fun invert(genes: MutableList<G>, start: Int, end: Int) {
-        var (i, j) = if (start < end) start to end else end to start
-        while (i < j) {
+        // Iterate over half the range of genes to swap their positions.
+        for (i in start until (start + (end - start + 1) / 2)) {
+            // Calculate the corresponding index to swap with.
+            val j = end - (i - start)
+            // Swap the positions of the genes at indices i and j.
             val tmp = genes[i]
             genes[i] = genes[j]
             genes[j] = tmp
-            i++
-            j--
         }
     }
 }
