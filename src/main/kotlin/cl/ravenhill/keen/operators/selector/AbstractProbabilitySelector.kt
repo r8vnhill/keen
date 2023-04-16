@@ -112,12 +112,10 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
      * @param incr the sorted array of increasing values to search
      * @return the index of the random value
      */
-    private fun indexOf(incr: DoubleArray): Int {
-        return if (incr.size <= SERIAL_INDEX_THRESHOLD) {
-            serialSearchIndex(incr)
-        } else {
-            binarySearchIndex(incr)
-        }
+    private fun indexOf(incr: DoubleArray) = if (incr.size <= SERIAL_INDEX_THRESHOLD) {
+        serialSearchIndex(incr)
+    } else {
+        binarySearchIndex(incr)
     }
 
     /**
