@@ -53,50 +53,85 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>, KnapsackGene>): Double 
 }
 
 /**
- * [Gene] that holds a pair (value, weight) of an item.
+ * A gene implementation for the knapsack problem, where each gene represents a pair of
+ * integers (value, weight).
+ *
+ * @property dna The pair of integers represented by this gene.
  */
 class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>, KnapsackGene> {
+    // \ Documentation inherited from [Gene]
     override fun generator() = items.random(Core.random)
 
+    /// Documentation inherited from [Gene]
     override fun withDna(dna: Pair<Int, Int>) = KnapsackGene(dna)
 
+    /// Documentation inherited from [Any]
     override fun toString() = "(${dna.first}, ${dna.second})"
 }
 
 /**
- * [Chromosome] that holds a list of [KnapsackGene]s.
+ * A chromosome representing a solution to the Knapsack problem.
+ *
+ * @property genes The list of genes making up the chromosome.
  */
 class KnapsackChromosome(override val genes: List<KnapsackGene>) :
         Chromosome<Pair<Int, Int>, KnapsackGene> {
+
+    /// Documentation inherited from [Chromosome]
     override fun withGenes(genes: List<KnapsackGene>) =
         KnapsackChromosome(genes.map { KnapsackGene((it.dna)) })
 
+    /**
+     * Verifies whether this chromosome satisfies the constraints of the Knapsack problem.
+     */
     override fun verify() = genes.sumOf { it.dna.second } <= MAX_WEIGHT
 
+    /// Documentation inherited from [Any]
     override fun toString() = genes.joinToString(", ", "[", "]")
 
     /**
-     * [Chromosome.Factory] for [KnapsackChromosome]s.
+     * A factory for creating instances of [KnapsackChromosome].
      *
-     * @param size The size of the chromosome.
-     * @param geneFactory The factory method for the genes.
+     * @property size The number of genes to include in each chromosome.
+     * @property geneFactory The factory function for creating genes to use in the chromosome.
      */
     class Factory(override var size: Int, private val geneFactory: () -> KnapsackGene) :
             Chromosome.AbstractFactory<Pair<Int, Int>, KnapsackGene>() {
+        /// Documentation inherited from [Chromosome.Factory]
         override fun make() = KnapsackChromosome((0 until size).map { geneFactory() })
     }
 }
 
 /**
- * The Unbounded Knapsack problem is a variation of the Knapsack problem where the items can be
- * repeated without limit.
+ * The unbounded knapsack problem is a well-known problem in computer science that involves filling
+ * a knapsack with a maximum weight capacity with items that have different weights and values.
+ * The goal is to maximize the total value of the items in the knapsack without exceeding the
+ * maximum weight capacity.
  *
- * The problem is to fill a knapsack with items of different weights and values so that the total
- * weight is less than or equal to a given limit and the total value is as large as possible.
+ * This problem is NP-complete, meaning that it's unlikely that an efficient algorithm exists for
+ * solving it exactly in polynomial time.
+ * Instead, we must rely on heuristic approaches that provide approximate solutions.
  *
- * The problem is NP-hard, and there is no known polynomial-time algorithm that can solve it.
+ * This code uses a genetic algorithm to solve the unbounded knapsack problem.
+ * The approach involves representing each item as a pair of integers (value, weight) and using a
+ * chromosome to represent a solution to the problem.
+ * In this implementation, the chromosome is composed of genes that represent individual items.
  *
- * This example uses a genetic algorithm to solve the problem.
+ * The fitness function for the problem calculates the fitness of a given genotype by summing the
+ * values of the items in the knapsack.
+ * If the weight of the knapsack is greater than the maximum weight, the fitness is reduced by the
+ * difference between the weight and the maximum weight.
+ *
+ * The genetic algorithm is initialized with a population of chromosomes, where each chromosome is
+ * created using a factory function that generates random genes representing items.
+ * The algorithm uses a combination of mutation and crossover to generate new solutions, with the
+ * aim of converging to the optimal solution over time.
+ * Finally, the algorithm returns the best solution found.
+ *
+ * Overall, this code provides a good illustration of how genetic algorithms can be used to solve
+ * NP-complete problems like the unbounded knapsack problem.
+ * However, the efficiency of the algorithm is dependent on the number of iterations and the size of
+ * the population, which can make it slow for large problem sizes.
  */
 fun main() {
     val engine = engine(::fitnessFn, genotype {
