@@ -12,6 +12,8 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.MutablePopulation
 import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
@@ -50,7 +52,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
-    // Documentation inherited from Alterer interface
+    // Documentation inherited from [Alterer] interface
     override fun invoke(
         population: Population<DNA, G>,
         generation: Int
@@ -61,11 +63,13 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
             // select a subset of individuals to recombine using the provided probability and other parameters
             val indices = Core.random.indices(probability, pop.size)
             if (indices.size < numIn) return AltererResult(pop)
-            val parents = Core.random.subsets(indices, numIn, exclusivity)
+            val parents = Core.random.subsets(pop, numIn, exclusivity)
             // recombine the selected parents and count the number of individuals that were recombined
-            val count = parents.sumOf { crossover(pop, it) }
+            val recombined = generateSequence {
+                crossover(parents.random(Core.random).map { it.genotype })
+            }.take(pop.size).flatten().toList()
             // return the resulting population and count
-            AltererResult(pop, count)
+            AltererResult(pop, 0)
         } else {
             // if probability is zero or there are less than 2 individuals in the population, return
             // the original population
@@ -73,7 +77,36 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
-    override fun crossover(population: MutablePopulation<DNA, G>, indices: List<Int>): Int {
+    private fun crossover(inputs: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
+        enforce {
+            "The number of inputs [${inputs.size}] must be equal to the number of inputs " +
+                    "specified in the constructor [$numIn]" {
+                        inputs.size should BeEqualTo(numIn)
+                    }
+            "All inputs must have the same genotype length" {
+                inputs.map { it.size }.distinct().size should BeEqualTo(1)
+            }
+        }
+        val size = inputs[0].size
+        // randomly select indices of chromosomes to recombine
+        val chIndices = Core.random.indices(chromosomeRate, size)
+        // Associate the chromosomes at the selected indices
+        val chromosomes = chIndices.map { i -> inputs.map { it[i] } }
+        // recombine the chromosomes to create new individuals
+        val recombined = chromosomes
+            .map { crossoverChromosomes(it) }
+        enforce {
+            "All recombined individuals must have the same genotype length" {
+                recombined.map { it.size }.distinct().size should BeEqualTo(1)
+            }
+        }
+        TODO()
+    }
+
+    override fun crossover(
+        population: MutablePopulation<DNA, G>,
+        indices: List<Int>
+    ): List<List<Chromosome<DNA, G>>> {
         enforce {
             "The number of indices must be equal to the number of inputs" {
                 indices.size should BeEqualTo(numIn)
@@ -95,10 +128,11 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         val chromosomes = chIndices.map { i -> genotypes.map { it[i] } }
         // recombine the chromosomes to create new individuals
         val recombined = chromosomes.map { crossoverChromosomes(it) }
+        val results =
         // TODO: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         // Update the population with the new individuals
-        // return the number of newly recombined individuals
-        return recombined.size * numOut
+            // return the number of newly recombined individuals
+            return recombined
     }
 
     /**
