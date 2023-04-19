@@ -10,6 +10,7 @@
 
 package cl.ravenhill.keen.problems.ga.optimization
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.doubles
 import cl.ravenhill.keen.builders.engine
@@ -19,6 +20,7 @@ import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
@@ -40,9 +42,10 @@ private const val N = 2
  * The function is usually evaluated on the square xi ∈ [-5.12, 5.12], for all i = 1, …, n.
  * The global minimum is located at x* = (0, …, 0) where f(x*) = 0.
  */
-private fun fitness(x: Genotype<Double, DoubleGene>) = A * N + x.flatten().fold(0.0) { acc, gene ->
-    acc + gene * gene - A * cos(2 * Math.PI * gene)
-}
+private fun rastriginFunction(x: Genotype<Double, DoubleGene>) =
+    A * N + x.flatten().fold(0.0) { acc, gene ->
+        acc + gene * gene - A * cos(2 * Math.PI * gene)
+    }
 
 /**
  * The Rastrigin function is a non-convex function used as a performance test problem for
@@ -52,13 +55,14 @@ private fun fitness(x: Genotype<Double, DoubleGene>) = A * N + x.flatten().fold(
  * In this example we will use a genetic algorithm to find the global minimum of the function.
  */
 fun main() {
-    val engine = engine(::fitness, genotype {
+//    Core.EvolutionLogger.level = Level.Debug()
+    val engine = engine(::rastriginFunction, genotype {
         chromosome { doubles { size = N; range = -R to R } }
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.03), MeanCrossover(0.15))
-        limits = listOf(SteadyGenerations(20))
+        alterers = listOf(Mutator(0.03), MeanCrossover(0.3, geneRate = 0.5))
+        limits = listOf(SteadyGenerations(50))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
     engine.run()

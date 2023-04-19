@@ -18,12 +18,6 @@ sealed interface CollectionRequirement : Requirement<Collection<*>> {
      * Constraint that checks if a collection is not empty.
      */
     data object NotBeEmpty : CollectionRequirement {
-        @Deprecated(
-            "Use validate(value, message) instead",
-            ReplaceWith("validate(value, message)"),
-            DeprecationLevel.WARNING
-        )
-
         override val validator = { value: Collection<*> -> value.isNotEmpty() }
     }
 }

@@ -95,6 +95,8 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         val chromosomes = chIndices.map { i -> genotypes.map { it[i] } }
         // recombine the chromosomes to create new individuals
         val recombined = chromosomes.map { crossoverChromosomes(it) }
+        // TODO: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        // Update the population with the new individuals
         // return the number of newly recombined individuals
         return recombined.size * numOut
     }

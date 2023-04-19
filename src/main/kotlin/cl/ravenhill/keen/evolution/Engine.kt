@@ -23,6 +23,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.operators.Alterer
+import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.operators.CompositeAlterer
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
@@ -122,7 +123,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             EvolutionStart.empty<DNA, G>().apply { debug { "Started an empty evolution." } }
         var result = EvolutionResult(optimizer, evolution.population, generation)
         debug { "Optimizer: ${result.optimizer}" }
-        debug { "Best: ${result.best}" }
+//        debug { "Best: ${result.best}" }
         while (limits.none { it(this) }) { // While none of the limits are met
             result = evolve(evolution).apply {
                 debug { "Generation: $generation" }
@@ -177,14 +178,10 @@ class Engine<DNA, G : Gene<DNA, G>>(
         val alteredOffspring = alter(offspring, evolution)
         // (7) The altered offspring is merged with the survivors
         trace { "Merging offspring and survivors." }
-        val nextPopulation = survivors.thenCombineAsync(
-            alteredOffspring,
-            { s, o -> s + o.population },
-            executor
-        )
+        val nextPopulation = survivors + alteredOffspring.population
         // (8) The next population is evaluated
         trace { "Evaluating next population." }
-        val pop = evaluate(EvolutionStart(nextPopulation.join(), generation), true)
+        val pop = evaluate(EvolutionStart(nextPopulation, generation), true)
         evolutionResult = EvolutionResult(optimizer, pop, ++generation)
         fittest = evolutionResult.best
         // (9) The result of the evolution is post-processed
@@ -246,20 +243,19 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param population the evaluated population.
      * @return the offspring.
      */
-    private fun selectOffspring(population: Population<DNA, G>) =
-        asyncSelect {
-            debug { "Selecting offspring." }
-            val initTime = clock.millis()
-            offspringSelector(
-                population,
-                (offspringFraction * populationSize).roundToInt(),
-                optimizer
-            ).also {
-                statistics.stream().parallel()
-                    .forEach { it.offspringSelectionTime.add(clock.millis() - initTime) }
-                debug { "Selected offspring." }
-            }
+    private fun selectOffspring(population: Population<DNA, G>): Population<DNA, G> {
+        debug { "Selecting offspring." }
+        val initTime = clock.millis()
+        return offspringSelector(
+            population,
+            (offspringFraction * populationSize).roundToInt(),
+            optimizer
+        ).also {
+            statistics.stream().parallel()
+                .forEach { it.offspringSelectionTime.add(clock.millis() - initTime) }
+            debug { "Selected offspring." }
         }
+    }
 
     /**
      * Selects (asynchronously) the survivors from the evaluated population.
@@ -267,19 +263,18 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param population the evaluated population.
      * @return the survivors.
      */
-    private fun selectSurvivors(population: List<Phenotype<DNA, G>>) =
-        asyncSelect {
-            debug { "Selecting survivors." }
-            val initTime = clock.millis()
-            survivorSelector(
-                population,
-                ((1 - offspringFraction) * populationSize).roundToInt(),
-                optimizer
-            ).also {
-                statistics.stream().parallel()
-                    .forEach { it.survivorSelectionTime.add(clock.millis() - initTime) }
-            }
+    private fun selectSurvivors(population: List<Phenotype<DNA, G>>): Population<DNA, G> {
+        debug { "Selecting survivors." }
+        val initTime = clock.millis()
+        return survivorSelector(
+            population,
+            ((1 - offspringFraction) * populationSize).roundToInt(),
+            optimizer
+        ).also {
+            statistics.stream().parallel()
+                .forEach { it.survivorSelectionTime.add(clock.millis() - initTime) }
         }
+    }
 
     /**
      * Selects individuals from the population asynchronously.
@@ -303,17 +298,18 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see CompletableFuture.thenApplyAsync
      */
     private fun alter(
-        population: CompletableFuture<Population<DNA, G>>,
+        population: Population<DNA, G>,
         evolution: EvolutionStart<DNA, G>
-    ) = population.thenApplyAsync({
+    ): AltererResult<DNA, G> {
         debug { "Altering offspring." }
         val initTime = clock.millis()
-        alterer(it, evolution.generation)
+        return alterer(population, evolution.generation)
             .also {
                 statistics.stream().parallel()
                     .forEach { stat -> stat.alterTime.add(clock.millis() - initTime) }
             }
-    }, executor)
+
+    }
 
     override fun toString() =
         "Engine { " +

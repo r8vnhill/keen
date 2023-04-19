@@ -4,11 +4,15 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
+import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.requirements.PairRequirement.BeFinite
 import cl.ravenhill.keen.requirements.PairRequirement.BeStrictlyOrdered
 import cl.ravenhill.keen.util.DoubleToDouble
 import java.util.Objects
+import kotlin.math.abs
+import kotlin.random.Random
+import kotlin.random.asJavaRandom
 
 /**
  * A gene that stores a 64-bit floating point number value.
@@ -54,8 +58,10 @@ class DoubleGene(
     private val end = range.second
 
     /// Documentation inherited from [NumberGene]
-    override fun average(genes: List<DoubleGene>) =
-        withDna(genes.fold(dna / (genes.size + 1)) { acc, gene -> acc + gene.dna / (genes.size + 1) })
+    override fun average(genes: List<DoubleGene>): DoubleGene {
+        enforce { "The list of genes must not be empty" { genes should NotBeEmpty } }
+        return withDna((dna + genes.sumOf { it.dna }) / (genes.size + 1))
+    }
 
     /// Documentation inherited from [NumberGene]
     override fun toDouble() = dna
@@ -64,7 +70,7 @@ class DoubleGene(
     override fun toInt() = dna.toInt()
 
     /// Documentation inherited from [Gene]
-    override fun generator() = Core.random.nextDouble(start, end)
+    override fun generator() = Core.random.asJavaRandom().nextDouble() * (end - start) + start
 
     /// Documentation inherited from [Gene]
     override fun withDna(dna: Double) = DoubleGene(dna, range)

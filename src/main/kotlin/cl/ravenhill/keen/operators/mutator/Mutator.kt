@@ -132,7 +132,7 @@ open class Mutator<DNA, G : Gene<DNA, G>>(probability: Double) :
  * @constructor Creates a new [MutatorResult] with the given [mutated] object and the
  * number of [mutations] performed (default 0).
  */
-class MutatorResult<DNA, G, T>(val mutated: T, val mutations: Int = 0)
+data class MutatorResult<DNA, G, T>(val mutated: T, val mutations: Int = 0)
         where T : GeneticMaterial<DNA, G>, G : Gene<DNA, G> {
 
     /**
@@ -141,14 +141,4 @@ class MutatorResult<DNA, G, T>(val mutated: T, val mutations: Int = 0)
      */
     fun <B : GeneticMaterial<DNA, G>> map(transform: (T) -> B) =
         MutatorResult(transform(mutated), mutations)
-
-    /**
-     * The [mutated] value.
-     */
-    operator fun component1() = mutated
-
-    /**
-     * The number of [mutations] done to the mutated value.
-     */
-    operator fun component2() = mutations
 }
