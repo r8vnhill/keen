@@ -94,7 +94,7 @@ fun main() {
         limits = listOf(SteadyGenerations(20))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
-    val result = engine.run()
+    val result = engine.evolve()
     println(engine.statistics.first())
     println("Selected: ${
         result.best.flatten()

@@ -144,7 +144,7 @@ fun main() {
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
         statistics = listOf(StatisticPrinter(1), StatisticPlotter(), StatisticCollector())
     }
-    val result = engine.run()
+    val result = engine.evolve()
     println(engine.statistics.last())
     println(result.best.flatten().filter { it.first != 0 })
     (engine.statistics[1] as StatisticPlotter).displayFitness()

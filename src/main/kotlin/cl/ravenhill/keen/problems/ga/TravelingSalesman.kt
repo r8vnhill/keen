@@ -11,17 +11,11 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.permutation.OrderedCrossover
-import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
-import cl.ravenhill.keen.operators.crossover.permutation.PositionBasedCrossover
-import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.InversionMutator
-import cl.ravenhill.keen.operators.mutator.SwapMutator
-import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
-import kotlinx.coroutines.Dispatchers
 import tech.tablesaw.api.DoubleColumn
 import tech.tablesaw.plotly.Plot
 import tech.tablesaw.plotly.components.Figure
@@ -82,7 +76,7 @@ fun main() {
             coroutines()
         }
     }
-    val result = engine.run()
+    val result = engine.evolve()
     println(engine.statistics.first())
     println(result)
     (engine.statistics.last() as StatisticPlotter).displayFitness()

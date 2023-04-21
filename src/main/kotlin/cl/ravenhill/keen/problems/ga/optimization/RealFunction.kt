@@ -41,7 +41,7 @@ fun main() {
         limits = listOf(SteadyGenerations(20))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
-    engine.run()
+    engine.evolve()
     println(engine.statistics.first())
     (engine.statistics.last() as StatisticPlotter).displayFitness()
 }

@@ -24,11 +24,9 @@ import cl.ravenhill.keen.genetic.genes.Gene
 interface Evolver<DNA, G: Gene<DNA, G>> {
 
     /**
-     * Evolves the population of genetic material from an initial state to a final state, using the
-     * provided `start` configuration.
+     * The entry point of the evolution process.
      *
-     * @param start the configuration for the evolution process
-     * @return the result of the evolution process
+     * @return an [EvolutionResult] containing the last generation of the evolution process.
      */
-    fun evolve(start: EvolutionStart<DNA, G>): EvolutionResult<DNA, G>
+    fun evolve(): EvolutionResult<DNA, G>
 }

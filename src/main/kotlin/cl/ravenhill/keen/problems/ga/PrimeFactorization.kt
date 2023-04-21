@@ -53,7 +53,7 @@ fun main() {
             sequential()
         }
     }
-    val result = engine.run()
+    val result = engine.evolve()
     println(engine.statistics.first())
     println(buildString {
         append("$TARGET = ")

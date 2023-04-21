@@ -86,7 +86,7 @@ fun main() {
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
-    val result = engine.run()
+    val result = engine.evolve()
     println(engine.statistics.first())
     val schedule = MutableList(result.best.genotype.size) { mutableListOf<Meeting>() }
     meetings.forEachIndexed { index, meeting ->

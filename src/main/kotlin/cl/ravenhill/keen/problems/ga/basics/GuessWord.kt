@@ -49,7 +49,7 @@ fun main() {
         limits = listOf(TargetFitness(TARGET.length.toDouble()))
         statistics = listOf(StatisticPrinter(every = 10), StatisticPlotter())
     }
-    val evolvedPopulation = engine.run()
+    val evolvedPopulation = engine.evolve()
     println("Solution found in ${evolvedPopulation.generation} generations")
     println("Solution: ${evolvedPopulation.best.genotype}")
     println("With fitness: ${evolvedPopulation.best.fitness}")

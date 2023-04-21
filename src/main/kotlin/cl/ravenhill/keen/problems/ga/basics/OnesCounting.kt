@@ -54,7 +54,7 @@ fun main() {
         statistics =
             listOf(StatisticCollector(), StatisticPrinter(1), StatisticPlotter())
     }
-    engine.run()
+    engine.evolve()
     println(engine.statistics.first())
     (engine.statistics.last() as StatisticPlotter).displayFitness()
 }

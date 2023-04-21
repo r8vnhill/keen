@@ -116,7 +116,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @return an [EvolutionResult] containing the last generation of the evolution process.
      * @see [evolve]
      */
-    fun run(): EvolutionResult<DNA, G> {
+    override fun evolve(): EvolutionResult<DNA, G> {
         val initTime = clock.millis()
         info { "Starting evolution process." }
         var evolution =
@@ -155,7 +155,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see alter
      * @see EvolutionResult
      */
-    override fun evolve(start: EvolutionStart<DNA, G>) = runBlocking {
+    fun evolve(start: EvolutionStart<DNA, G>) = runBlocking {
         val initTime = clock.millis()
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)

@@ -52,7 +52,7 @@ fun main() {
         optimizer = FitnessMinimizer()
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
-    val result = engine.run()
+    val result = engine.evolve()
     println(engine.statistics.first())
     println(result)
     (engine.statistics.last() as StatisticPlotter).displayFitness { if (it < 0.0) 0.0 else ln(it) }

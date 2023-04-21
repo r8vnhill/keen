@@ -60,7 +60,7 @@ fun main() {
             listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
     }
     // Run the genetic algorithm and display results
-    val result = engine.run()
+    val result = engine.evolve()
     println(engine.statistics.first())
     println(result)
     (engine.statistics.last() as StatisticPlotter).displayFitness()// { if (it == 0.0) 0.0 else ln(it) }

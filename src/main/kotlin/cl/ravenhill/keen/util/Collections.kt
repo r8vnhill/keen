@@ -27,7 +27,7 @@ fun DoubleArray.incremental() {
 infix fun Iterable<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
 // endregion
 
-// region : List
+// region : -== LIST ==- :
 /**
  * Returns a new list containing the elements of this list at the given [indices].
  * The [indices] list may contain duplicate indices, in which case the corresponding elements will
@@ -41,7 +41,31 @@ infix fun Iterable<Double>.sub(subtrahend: Double) = this.map { it - subtrahend 
  * @see List.get
  */
 operator fun <E> List<E>.get(indices: List<Int>) = indices.map { this[it] }
-// endregion
+
+/**
+ * Returns a new list that is the transpose of this list of lists.
+ *
+ * The resulting list has the same number of elements as the sublists of this list, and each element
+ * is a list that contains the i-th element of each sublist of this list.
+ *
+ * ```
+ * val matrix = listOf(
+ *     listOf(1, 2, 3),
+ *     listOf(4, 5, 6),
+ *     listOf(7, 8, 9)
+ * )
+ *
+ * val transposedMatrix = matrix.transpose()
+ *
+ * println(matrix) // [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+ * println(transposedMatrix) // [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+ * ```
+ */
+fun <E> List<List<E>>.transpose() = when {
+    isEmpty() -> emptyList()
+    else -> (0 until first().size).map { i -> map { it[i] } }
+}
+// endregion LIST
 
 // region : MutableCollection
 /**

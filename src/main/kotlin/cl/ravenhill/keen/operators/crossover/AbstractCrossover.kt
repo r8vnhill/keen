@@ -13,7 +13,6 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.MutablePopulation
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
@@ -24,6 +23,7 @@ import cl.ravenhill.keen.util.get
 import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.neq
 import cl.ravenhill.keen.util.subsets
+import cl.ravenhill.keen.util.transpose
 
 
 /**
@@ -77,30 +77,24 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
-    private fun crossover(inputs: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
+    private fun crossover(inGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
         enforce {
-            "The number of inputs [${inputs.size}] must be equal to the number of inputs " +
+            "The number of inputs [${inGenotypes.size}] must be equal to the number of inputs " +
                     "specified in the constructor [$numIn]" {
-                        inputs.size should BeEqualTo(numIn)
+                        inGenotypes.size should BeEqualTo(numIn)
                     }
             "All inputs must have the same genotype length" {
-                inputs.map { it.size }.distinct().size should BeEqualTo(1)
+                inGenotypes.map { it.size }.distinct().size should BeEqualTo(1)
             }
         }
-        val size = inputs[0].size
+        val size = inGenotypes[0].size
         // randomly select indices of chromosomes to recombine
         val chIndices = Core.random.indices(chromosomeRate, size)
         // Associate the chromosomes at the selected indices
-        val chromosomes = chIndices.map { i -> inputs.map { it[i] } }
+        val chromosomes = chIndices.map { i -> inGenotypes.map { it[i] } }
         // recombine the chromosomes to create new individuals
-        val recombined = chromosomes
-            .map { crossoverChromosomes(it) }
-        enforce {
-            "All recombined individuals must have the same genotype length" {
-                recombined.map { it.size }.distinct().size should BeEqualTo(1)
-            }
-        }
-        TODO()
+        val recombined = chromosomes.map { crossoverChromosomes(it) }.transpose()
+        val result = recombined
     }
 
     override fun crossover(
@@ -137,10 +131,12 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
 
     /**
      * Performs crossover on a list of chromosomes to create new individuals.
-     * The input list contains one chromosome from each parent individual.
-     * The length of the input list is equal to the number of parents specified in the constructor.
-     * The function should return a list of new chromosomes created by recombining the input
-     * chromosomes.
+     *
+     * This method receives a list of [numIn] input [chromosomes] and returns a list of [numOut]
+     * output [chromosomes].
+     *
+     * @param chromosomes The list of chromosomes to recombine
+     * @return The list of chromosomes produced by the crossover operation
      */
     protected abstract fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>):
             List<Chromosome<DNA, G>>

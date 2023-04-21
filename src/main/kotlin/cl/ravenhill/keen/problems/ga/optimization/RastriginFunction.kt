@@ -10,7 +10,6 @@
 
 package cl.ravenhill.keen.problems.ga.optimization
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.doubles
 import cl.ravenhill.keen.builders.engine
@@ -20,7 +19,6 @@ import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
@@ -65,7 +63,7 @@ fun main() {
         limits = listOf(SteadyGenerations(50))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
-    engine.run()
+    engine.evolve()
     println(engine.statistics[0])
     (engine.statistics[1] as StatisticPlotter).displayFitness()
 }
