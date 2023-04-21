@@ -10,6 +10,7 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.MutablePopulation
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.Alterer
@@ -26,19 +27,6 @@ import cl.ravenhill.keen.operators.Alterer
  */
 interface Crossover<DNA, G: Gene<DNA, G>> : Alterer<DNA, G> {
 
-    /**
-     * Applies crossover to the individuals in the population specified by the indices and returns
-     * the number of offspring produced by the crossover.
-     *
-     * Crossover is a genetic operator that recombines genetic information from two or more
-     * individuals in a population to create a new individual with a combination of traits from
-     * the parents.
-     * The number of offspring produced by the crossover is returned by this function.
-     *
-     * @param population The population of individuals to which the crossover will be applied.
-     * @param indices A list of indices representing the individuals in the population that will
-     *      participate in the crossover.
-     * @return The number of offspring produced by the crossover.
-     */
-    fun crossover(population: MutablePopulation<DNA, G>, indices: List<Int>): List<List<Chromosome<DNA, G>>>
+
+    fun crossover(inGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>>
 }
