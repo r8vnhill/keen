@@ -1,3 +1,11 @@
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
+
 package cl.ravenhill.keen.problems.ga
 
 import cl.ravenhill.keen.builders.chromosome
@@ -15,7 +23,7 @@ import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 
 /**
- * Information of a meeting.
+ * Represents a meeting with a start and end time.
  *
  * @property start The start time of the meeting.
  * @property end The end time of the meeting.
@@ -23,7 +31,7 @@ import cl.ravenhill.keen.util.statistics.StatisticPlotter
 data class Meeting(val start: Int, val end: Int)
 
 /**
- * The meetings to schedule.
+ * A list of Meeting objects representing various meetings scheduled with start and end times.
  */
 private val meetings =
     listOf(
@@ -45,34 +53,43 @@ private val meetings =
  * It is calculated as the number of rooms needed to schedule all the meetings plus the number of
  * meetings that overlap.
  */
+/**
+ * Calculates the fitness score of a given genotype.
+ * The fitness score represents how good a solution is.
+ * A lower score is better.
+ *
+ * @param genotype the genotype to evaluate.
+ * @return the fitness score.
+ */
 private fun fitnessFn(genotype: Genotype<Int, IntGene>): Double {
-    // We create a list to represent the rooms.
-    // The size of the list is the number meetings, since the worst case scenario is that each
-    // meeting is in a different room.
-    val rooms = MutableList(genotype.size) { mutableListOf<Meeting>() }
-    meetings.forEachIndexed { index, meeting ->
-        val room = genotype.chromosomes[index].genes[0].dna
-        rooms[room].add(meeting)
-    }
-    var conflicts = 0
-    rooms.forEach { meetingList ->
-        val table = IntArray(10)
+    // Create a map to represent the rooms, where the key is the room number and the value is
+    // a list of meetings in that room.
+    val rooms = meetings.groupBy { genotype.chromosomes[meetings.indexOf(it)].genes[0].dna }
+    // Calculate the number of conflicts in each room.
+    val conflicts = rooms.values.sumOf { meetingList ->
+        val table = IntArray(10) // Create an array to represent the time slots in a day.
         meetingList.forEach { meeting ->
+            // Increment the time slots for each meeting.
             for (i in meeting.start until meeting.end) {
                 table[i]++
             }
         }
-        conflicts += table.count { it > 1 }
+        // Count the number of time slots with more than one meeting.
+        table.count { it > 1 }
     }
-    return rooms.filter { it.isNotEmpty() }.size.toDouble() + conflicts
+    // The fitness score is the number of rooms used plus the number of conflicts.
+    // We add 1 to the number of rooms used to avoid a fitness score of 0.
+    return rooms.size.toDouble() + conflicts
 }
 
 /**
- * The meeting room scheduling problem is a combinatorial optimization problem that consists of
- * scheduling meetings in a set of rooms so that no meetings overlap.
- * This example uses a genetic algorithm to find the optimal solution.
+ * Solves the room scheduling problem for a list of meetings, where each meeting has a start and end
+ * time and must be assigned to a room.
+ * The goal is to minimize the number of conflicts, defined as the number of time slots where two or
+ * more meetings are scheduled in the same room.
  */
 fun main() {
+    // Create a genetic algorithm engine with the fitness function and genotype for the problem.
     val engine = engine(::fitnessFn, genotype {
         repeat(meetings.size) {
             chromosome {
@@ -80,21 +97,27 @@ fun main() {
             }
         }
     }) {
+        // Set the parameters for the genetic algorithm.
         populationSize = 100
         optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.06), SinglePointCrossover(0.06))
+        alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
+    // Evolve the population and get the best result.
     val result = engine.evolve()
+    // Print the statistics of the genetic algorithm.
     println(engine.statistics.first())
+    // Create a schedule based on the best genotype.
     val schedule = MutableList(result.best.genotype.size) { mutableListOf<Meeting>() }
     meetings.forEachIndexed { index, meeting ->
         val room = result.best.genotype.chromosomes[index].genes[0].dna
         schedule[room].add(meeting)
     }
+    // Print the schedule for each room.
     schedule.forEachIndexed { index, room ->
         println("Room $index: $room")
     }
+    // Display a plot of the fitness values over time.
     (engine.statistics.last() as StatisticPlotter).displayFitness()
 }

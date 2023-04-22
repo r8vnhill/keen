@@ -46,6 +46,6 @@ interface NumberGene<DNA : Number, G: NumberGene<DNA, G>> : Gene<DNA, G> {
     override fun mutate() =
         withDna(
             generateSequence { generator() }
-                .filter { filter(it) }
+                .filter(filter)
                 .first())
 }

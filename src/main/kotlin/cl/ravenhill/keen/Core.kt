@@ -7,6 +7,7 @@ import cl.ravenhill.keen.Core.maxProgramDepth
 import cl.ravenhill.keen.Core.random
 import cl.ravenhill.keen.Core.skipChecks
 import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.requirements.Requirement
 import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.logging.logger
@@ -44,6 +45,10 @@ import kotlin.random.Random
 object Core {
     const val DEFAULT_MAX_PROGRAM_DEPTH = 7
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
+        set(value) {
+            enforce { "The maximum program depth must be positive" { value should BePositive } }
+            field = value
+        }
     var random: Random = Random.Default
     var skipChecks = false
 
@@ -109,7 +114,10 @@ object Core {
          * @property message The message key for the clause.
          * @property results The list of results of evaluating the contract.
          */
-        class StringScope(private val message: String, private val results: MutableList<Result<*>>) {
+        class StringScope(
+            private val message: String,
+            private val results: MutableList<Result<*>>
+        ) {
             /**
              * Defines a [Requirement] for a contract clause.
              *
@@ -178,11 +186,6 @@ object Core {
  * A typealias for a list of [Phenotype] objects representing a population of individuals.
  */
 typealias Population<DNA, G> = List<Phenotype<DNA, G>>
-
-/**
- * A typealias for a mutable list of [Phenotype] objects representing a population of individuals.
- */
-typealias MutablePopulation<DNA, G> = MutableList<Phenotype<DNA, G>>
 
 /**
  * Rolls a n-dimensional dice.

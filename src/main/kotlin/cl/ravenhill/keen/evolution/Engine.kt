@@ -379,8 +379,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
         var evaluator =
             EvaluationExecutor.Factory<DNA, G>().apply { creator = { SequentialEvaluator(it) } }
-
-        var constructorExecutor: ConstructorExecutor<DNA> = SequentialConstructor()
         // endregion    ----------------------------------------------------------------------------
 
         // region : Alterers -----------------------------------------------------------------------

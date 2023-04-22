@@ -43,14 +43,14 @@ fun main() {
     val engine = engine(::count,
         genotype {
             chromosome {
-                booleans { size = 20; truesProbability = 0.15 }
+                booleans { size = 50; truesProbability = 0.15 }
             }
         }) {
-        populationSize = 500
+        populationSize = 50
         selector = TournamentSelector(sampleSize = 2)
         alterers =
-            listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.2))
-        limits = listOf(GenerationCount(100), TargetFitness(20.0))
+            listOf(Mutator(probability = 0.03), SinglePointCrossover(probability = 0.2))
+        limits = listOf(GenerationCount(100), TargetFitness(50.0))
         statistics =
             listOf(StatisticCollector(), StatisticPrinter(1), StatisticPlotter())
     }

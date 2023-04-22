@@ -29,16 +29,19 @@ private const val R = 5.12
 private const val N = 2
 
 /**
- * The fitness function is defined as:
- * f(x) = A * n + sum(x_i^2 - A * cos(2 * pi * x_i))
- * where:
- * - n is the number of dimensions
- * - x_i is the i-th dimension
- * - A is a constant
- * - pi is the mathematical constant pi
+ * Computes the Rastrigin function for the input genotype.
  *
- * The function is usually evaluated on the square xi ∈ [-5.12, 5.12], for all i = 1, …, n.
- * The global minimum is located at x* = (0, …, 0) where f(x*) = 0.
+ * The Rastrigin function is a non-convex multimodal function commonly used as a benchmark for
+ * optimization algorithms.
+ * It is defined as:
+ *    f(x) = A * N + sum(i=1 to N) [ x_i^2 - A * cos(2*pi*x_i) ]
+ * where A is a constant, N is the number of dimensions, and x_i is the i-th component of the input
+ * genotype.
+ *
+ * The function computes the sum of the squared values of the genes in the input genotype, subtracts
+ * A times the cosine of twice the value of pi times each gene, and adds A times the number of
+ * genes.
+ * The result is returned as the fitness value of the input genotype.
  */
 private fun rastriginFunction(x: Genotype<Double, DoubleGene>) =
     A * N + x.flatten().fold(0.0) { acc, gene ->
@@ -46,14 +49,28 @@ private fun rastriginFunction(x: Genotype<Double, DoubleGene>) =
     }
 
 /**
- * The Rastrigin function is a non-convex function used as a performance test problem for
- * optimization algorithms.
- * The function is continuous, differentiable, and unimodal, but it has many local minima.
+ * The main function of the program that performs a genetic algorithm optimization using the
+ * Rastrigin function.
  *
- * In this example we will use a genetic algorithm to find the global minimum of the function.
+ * The function first creates a genetic algorithm engine with the Rastrigin function as the fitness
+ * function and a genotype consisting of a single chromosome of N doubles.
+ * The population size is set to 500 and the optimizer is set to minimize the fitness value.
+ *
+ * The engine is then configured with two alterers: a mutator that randomly changes the value of a
+ * gene with a probability of 0.03 and a mean crossover that combines the values of two genes by
+ * taking their average with a probability of 0.3.
+ *
+ * The limits of the engine are set to a single steady generation limit, which stops the evolution
+ * if the best fitness value has not improved for 50 consecutive generations.
+ *
+ * Two statistics collectors are added to the engine: a `StatisticCollector` that records the best,
+ * worst, and average fitness values for each generation, and a `StatisticPlotter` that displays a
+ * plot of the fitness values over time.
+ *
+ * Finally, the engine is run for one evolution cycle and the best fitness value and fitness plot
+ * are printed to the console.
  */
 fun main() {
-//    Core.EvolutionLogger.level = Level.Debug()
     val engine = engine(::rastriginFunction, genotype {
         chromosome { doubles { size = N; range = -R to R } }
     }) {

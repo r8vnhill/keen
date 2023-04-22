@@ -68,8 +68,8 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
                 chromosomes.size should BeEqualTo(2)
             }
         }
-        val first = chromosomes[0].genes.toMutableList()
-        val second = chromosomes[1].genes.toMutableList()
+        val first = chromosomes[0].genes
+        val second = chromosomes[1].genes
         val index = Core.random.nextInt(min(first.size, second.size))
         val crossed = crossoverAt(index, first to second)
         return listOf(

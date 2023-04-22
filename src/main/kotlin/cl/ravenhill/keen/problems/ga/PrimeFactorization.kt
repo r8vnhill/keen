@@ -2,10 +2,8 @@ package cl.ravenhill.keen.problems.ga
 
 import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
-import cl.ravenhill.keen.builders.evaluator
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.builders.ints
-import cl.ravenhill.keen.builders.sequential
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.limits.GenerationCount
@@ -22,8 +20,13 @@ import kotlin.math.ln
 private const val TARGET = 420
 
 /**
- * Calculates the absolute difference between the target and the multiplication of the prime factors
- * of the genotype.
+ * Calculates the absolute difference between the target number and the product of the genes in a
+ * genotype.
+ *
+ * Given a genotype consisting of a single chromosome of N integer genes, the function flattens the
+ * genotype, converts each gene to a Long and calculates the product of the genes.
+ * The function then computes the absolute difference between this product and the target number,
+ * and returns this difference as a Double.
  */
 private fun absDiff(genotype: Genotype<Int, IntGene>) =
     genotype.flatten()
@@ -31,12 +34,22 @@ private fun absDiff(genotype: Genotype<Int, IntGene>) =
         .let { factors -> abs(TARGET.toLong() - factors.fold(1L) { acc, i -> acc * i }) }
         .toDouble()
 
+
 /**
- * The Fundamental Theorem of Arithmetic states that every integer greater than 1 is either a prime
- * number itself or can be represented as a product of prime numbers (its prime factors).
- * This example tries to find the prime factors of a given number.
+ * This genetic algorithm solves the fundamental theorem of arithmetic, which states that every
+ * positive integer greater than 1 can be uniquely represented as a product of prime numbers.
+ *
+ * The algorithm uses a genetic algorithm approach to find a set of 10 factors that when multiplied
+ * together will result in the target number.
+ * The possible factors are restricted to a pre-defined list of primes, specified in the
+ * [candidateFactors] list.
+ *
+ * The [absDiff] function calculates the absolute difference between the target number and the
+ * product of the candidate factors in a given genotype.
+ * This is used as the fitness function for the genetic algorithm.
  */
 fun main() {
+    // Set up the genetic algorithm
     val engine = engine(::absDiff, genotype {
         chromosome {
             ints {
@@ -44,17 +57,15 @@ fun main() {
             }
         }
     }) {
-        populationSize = 5000
-        alterers = listOf(Mutator(0.2)/*, SinglePointCrossover(0.3)*/)
+        populationSize = 1000
+        alterers = listOf(Mutator(0.1), SinglePointCrossover(0.3))
         optimizer = FitnessMinimizer()
         limits = listOf(SteadyGenerations(10), GenerationCount(1000))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
-        evaluator = evaluator {
-            sequential()
-        }
     }
+    // Run the genetic algorithm and output the results
     val result = engine.evolve()
-    println(engine.statistics.first())
+    println("Statistics: ${engine.statistics.first()}")
     println(buildString {
         append("$TARGET = ")
         append(result.best.genotype.flatten().filter { it > 1 }.joinToString(" * "))
@@ -62,6 +73,14 @@ fun main() {
     (engine.statistics[1] as StatisticPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
 }
 
+/**
+ * A list of candidate factors used in a genetic algorithm to find the factors of a target number.
+ * The genetic algorithm generates genotypes consisting of 1 or more integers, where each integer is
+ * one of the candidate factors in this list.
+ * The fitness of each genotype is evaluated based on its proximity to the factors of the target
+ * number.
+ * This list contains 43 prime numbers between 1 and 200.
+ */
 private val candidateFactors = listOf(
     1,
     2,

@@ -18,7 +18,12 @@ import kotlin.math.sin
 
 
 /**
- * The function to minimize.
+ * The fitness function used in the genetic algorithm optimization.
+ *
+ * The fitness of a genotype is defined as the natural logarithm of the sum of the cosine of the
+ * sine of the first gene value and the sine of the cosine of the first gene value.
+ * The fitness function operates on a genotype consisting of a single chromosome of N double genes,
+ * and returns a single fitness value.
  */
 private fun fitnessFunction(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().first()
     .let {
@@ -37,7 +42,7 @@ fun main() {
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.01), MeanCrossover(0.15))
+        alterers = listOf(Mutator(0.03), MeanCrossover(0.3))
         limits = listOf(SteadyGenerations(20))
         statistics = listOf(StatisticCollector(), StatisticPlotter())
     }

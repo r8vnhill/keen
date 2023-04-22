@@ -9,9 +9,7 @@
 
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.keen.MutablePopulation
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.Alterer
 

@@ -56,6 +56,7 @@ class ConstructorScope<G : Gene<*, *>> {
             field = value
             creator = value.creator
         }
+
     var creator: (Unit) -> ConstructorExecutor<G> = { SequentialConstructor() }
         set(value) {
             factory.creator = value
@@ -137,7 +138,7 @@ fun <DNA, G : Gene<DNA, G>> ConstructorScope<G>.sequential() {
  * the `scope` and `parallelismLevel` properties.
  */
 fun <DNA, G : Gene<DNA, G>> ConstructorScope<G>.coroutines(
-    init: CoroutineConstructor.Factory<G>.() -> Unit
+    init: CoroutineConstructor.Factory<G>.() -> Unit = {}
 ) {
     factory = CoroutineConstructor.Factory<G>().apply(init)
 }

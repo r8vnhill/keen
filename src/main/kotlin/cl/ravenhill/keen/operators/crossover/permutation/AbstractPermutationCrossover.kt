@@ -30,9 +30,7 @@ abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
     chromosomeRate: Double = 1.0
 ) : AbstractCrossover<DNA, G>(probability, numOut, numIn, exclusivity, chromosomeRate) {
 
-    /**
-     * Performs a permutation crossover between the given chromosomes.
-     */
+    /// Documentation inherited from [AbstractCrossover]
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         enforce {
             for (chromosome in chromosomes) {
