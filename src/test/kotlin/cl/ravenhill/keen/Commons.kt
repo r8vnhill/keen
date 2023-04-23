@@ -1,34 +1,33 @@
-//package cl.ravenhill.keen
-//
-//import cl.ravenhill.keen.genetic.Genotype
-//import cl.ravenhill.keen.genetic.Phenotype
-//import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-//import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
-//import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
-//import io.kotest.matchers.Matcher
-//import io.kotest.matchers.MatcherResult
-//import io.kotest.property.Arb
-//import io.kotest.property.arbitrary.*
-//import kotlin.random.Random
-//import kotlin.reflect.KClass
-//
-//
-///**
-// * Matcher that checks if the given object is of the given class.
-// *
-// * __Usage:__
-// * ```kotlin
-// * 1 shouldBeOfClass Int::class
-// * ```
-// */
-//infix fun Any.shouldBeOfClass(kClass: KClass<*>) = Matcher<Any> { value ->
-//    MatcherResult(
-//        value::class == kClass,
-//        { "$value should be an instance of $kClass" },
-//        { "$value should not be an instance of $kClass" }
-//    )
-//}
-//
+package cl.ravenhill.keen
+
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
+import io.kotest.matchers.should
+import kotlin.reflect.KClass
+
+
+/**
+ * A helper function that returns a Matcher instance that matches if the given value is an instance
+ * of the given class.
+ *
+ * ## Usage:
+ *
+ * ```kotlin
+ * 1 shouldBeOfClass Int::class // Assertion passes
+ * 1 shouldBeOfClass String::class // Assertion fails
+ * ```
+ *
+ * @param kClass The class to match against.
+ * @return A Matcher instance that matches if the given value is an instance of the given class.
+ */
+infix fun Any.shouldBeOfClass(kClass: KClass<*>) = should(Matcher { value ->
+    MatcherResult(
+        value::class == kClass,
+        { "$value should be an instance of $kClass" },
+        { "$value should not be an instance of $kClass" }
+    )
+})
+
 ///**
 // * Generates [Arb]itrary [Pair]s of [Int]s where the first element is less than or equal
 // * to the second.

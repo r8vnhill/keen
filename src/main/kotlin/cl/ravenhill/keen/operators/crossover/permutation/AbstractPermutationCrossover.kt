@@ -5,6 +5,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.util.duplicates
 
 
 /**
@@ -34,7 +35,7 @@ abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         enforce {
             for (chromosome in chromosomes) {
-                "A permutation crossover can't have duplicated genes: ${chromosome.genes}" {
+                "A permutation crossover can't have duplicated genes: ${chromosome.genes.duplicates}" {
                     chromosome.genes.distinct().size should BeEqualTo(chromosome.genes.size)
                 }
             }

@@ -25,6 +25,16 @@ fun DoubleArray.incremental() {
  * Returns a new list with the subtrahend subtracted from each element.
  */
 infix fun Iterable<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
+
+/**
+ * Returns a map with the duplicates and their indices of an iterable.
+ *
+ * @return a map with the duplicates and their indices.
+ */
+val <T> Iterable<T>.duplicates: Map<T, List<Int>>
+    get() = withIndex() // add the index to each element in the iterable
+        .groupBy({ it.value }) { it.index } // group the elements by their value and collect their indices
+        .filterValues { it.size > 1 } // filter out any values that only appear once
 // endregion
 
 // region : -== LIST ==- :

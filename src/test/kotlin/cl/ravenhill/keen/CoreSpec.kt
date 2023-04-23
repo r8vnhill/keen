@@ -13,20 +13,43 @@ import kotlin.reflect.KClass
 
 class CoreSpec : FreeSpec({
     beforeAny {
+        Core.random = Random.Default
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
+        Core.skipChecks = false
     }
 
-    "Core should be able to generate random numbers" {
-        checkAll<Long> { seed ->
-            val r = Random(seed)
-            Core.random = Random(seed)
-            repeat(100) {
-                r.nextDouble() shouldBe Core.random.nextDouble()
+    "The random number generator" - {
+        "has a default value of Random.Default" {
+            Core.random shouldBe Random.Default
+        }
+
+        "can be set to a new Random" {
+            Core.random shouldBe Random.Default
+            checkAll<Long> { seed ->
+                val r = Random(seed)
+                Core.random = r
+                Core.random shouldBe r
+            }
+        }
+
+        "can generate random numbers" {
+            Core.random shouldBe Random.Default
+            checkAll<Long> { seed ->
+                val r = Random(seed)
+                Core.random = Random(seed)
+                repeat(100) {
+                    r.nextDouble() shouldBe Core.random.nextDouble()
+                }
             }
         }
     }
 
     "The maximum program depth" - {
+        "has a default value of 7" {
+            Core.DEFAULT_MAX_PROGRAM_DEPTH shouldBe 7
+            Core.maxProgramDepth shouldBe Core.DEFAULT_MAX_PROGRAM_DEPTH
+        }
+
         "can be set to a positive integer" {
             Core.maxProgramDepth shouldBe Core.DEFAULT_MAX_PROGRAM_DEPTH
             checkAll(Arb.positiveInt()) { depth ->
@@ -44,11 +67,44 @@ class CoreSpec : FreeSpec({
             }
         }
     }
-})
 
-/**
- * Checks whether the class of this object is equal to the specified [kClass].
- * Throws an AssertionError if the classes are not equal.
- * @param kClass the expected class of this object.
- */
-private infix fun Any.shouldBeOfClass(kClass: KClass<*>) = this::class shouldBe kClass
+    "The skip checks flag" - {
+        "has a default value of false" {
+            Core.skipChecks shouldBe false
+        }
+
+        "can be set to true" {
+            Core.skipChecks shouldBe false
+            Core.skipChecks = true
+            Core.skipChecks shouldBe true
+        }
+    }
+
+    "The Dice" - {
+        "random number generator" - {
+            "has a default value of Random.Default" {
+                Core.Dice.random shouldBe Random.Default
+            }
+
+            "can be set to a new Random" {
+                Core.Dice.random shouldBe Random.Default
+                checkAll<Long> { seed ->
+                    val r = Random(seed)
+                    Core.Dice.random = r
+                    Core.Dice.random shouldBe r
+                }
+            }
+
+            "can generate random numbers" {
+                Core.Dice.random shouldBe Random.Default
+                checkAll<Long> { seed ->
+                    val r = Random(seed)
+                    Core.Dice.random = Random(seed)
+                    repeat(100) {
+                        r.nextDouble() shouldBe Core.Dice.random.nextDouble()
+                    }
+                }
+            }
+        }
+    }
+})
