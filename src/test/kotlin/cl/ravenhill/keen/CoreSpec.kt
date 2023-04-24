@@ -1,16 +1,18 @@
 package cl.ravenhill.keen
 
+import cl.ravenhill.keen.requirements.IntRequirement
+import cl.ravenhill.keen.requirements.Requirement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 import kotlin.random.Random
-import kotlin.reflect.KClass
 
 
 class CoreSpec : FreeSpec({
@@ -114,14 +116,37 @@ class CoreSpec : FreeSpec({
         "Scope" - {
             "StringScope" - {
                 "Should add a success to the results when a requirement is met" {
-                    checkAll(Arb.stringScope()) { scope ->
-                        
+                    checkAll(Arb.stringScope(), Arb.list(Arb.requirement())) { scope, reqs ->
+                        with(scope) {
+                            reqs.forEach {
+                                Any() should it
+                            }
+                        }
                     }
                 }
             }
         }
     }
 })
+
+/**
+ * A helper function that creates an [Arb] instance that generates instances of [Requirement] for
+ * testing.
+ *
+ * @param success Whether the generated [Requirement] instances should be successful.
+ * Default is true.
+ * @return An [Arb] instance that generates instances of [Requirement] for testing.
+ */
+private fun Arb.Companion.requirement(success: Boolean = true) = arbitrary {
+    val requirement = object : Requirement<Any> {
+        override val validator: (Any) -> Boolean
+            get() = { success }
+
+        override fun generateException(description: String) =
+            object : UnfulfilledRequirementException({ description }) {}
+    }
+    requirement
+}
 
 private fun Arb.Companion.stringScope() = arbitrary {
     val message = string().bind()

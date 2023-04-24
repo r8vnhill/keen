@@ -121,7 +121,6 @@ object Core {
              * @return A [Result] instance representing the result of the validation.
              */
             infix fun <T, R : Requirement<T>> T.should(requirement: R) =
-
                 results.add(requirement.validate(this, message))
 
             /**
