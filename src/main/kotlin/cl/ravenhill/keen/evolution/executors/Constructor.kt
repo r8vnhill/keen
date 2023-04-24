@@ -13,6 +13,7 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -91,16 +92,13 @@ class SequentialConstructor<T> : ConstructorExecutor<T> {
  * @param T The type of object created by the constructor.
  * @property dispatcher The dispatcher to use for launching coroutines.
  * Defaults to [Dispatchers.Default].
- * @property chunkSize The number of objects to create in each coroutine.
- * Defaults to 100.
  */
 class CoroutineConstructor<T>(
-    val dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    val chunkSize: Int = 100
+    val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ConstructorExecutor<T> {
 
     // Documentation inherited from ConstructorExecutor.
-    override fun invoke(size: Int, init: () -> T): List<T & Any> = runBlocking {
+    override fun invoke(size: Int, init: () -> T): List<T> = runBlocking {
         enforce { "The size [$size] must be positive." { size should BePositive } }
         // Create a list of `Deferred` objects using `async` and the `dispatcher` to execute
         // the constructor `init()` concurrently.
@@ -109,9 +107,8 @@ class CoroutineConstructor<T>(
                 init()
             }
         }
-        // Wait for all the `Deferred` objects to complete using `awaitAll()`, and then filter out
-        // any `null` values that might have been returned by the constructor.
-        deferredList.awaitAll().filterNotNull()
+        // Wait for all the `Deferred` objects to complete using `awaitAll()`
+        deferredList.awaitAll()
     }
 
     /**
@@ -120,17 +117,13 @@ class CoroutineConstructor<T>(
      * @param T The type of object created by the constructor.
      * @property dispatcher The dispatcher to use for launching coroutines.
      * Defaults to [Dispatchers.Default].
-     * @property chunkSize The number of objects to create in each coroutine.
-     * Defaults to 100.
      */
     class Factory<T> : ConstructorExecutor.Factory<T>() {
 
         var dispatcher: CoroutineDispatcher = Dispatchers.Default
 
-        var chunkSize: Int = 100
-
         // Documentation inherited from ConstructorExecutor.Factory.
         override var creator: (Unit) -> ConstructorExecutor<T> =
-            { CoroutineConstructor(dispatcher, chunkSize) }
+            { CoroutineConstructor(dispatcher) }
     }
 }

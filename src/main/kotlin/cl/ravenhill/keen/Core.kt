@@ -106,18 +106,14 @@ object Core {
          * @return A [StringScope] instance that can be used to define a [Requirement] for the clause.
          */
         operator fun String.invoke(value: StringScope.() -> Boolean) =
-            StringScope(this, results).apply { value() }
+            StringScope(this).apply { value() }
 
         /**
          * A scope for defining a [Requirement] for a contract clause.
          *
          * @property message The message key for the clause.
-         * @property results The list of results of evaluating the contract.
          */
-        class StringScope(
-            private val message: String,
-            private val results: MutableList<Result<*>>
-        ) {
+        inner class StringScope(private val message: String) {
             /**
              * Defines a [Requirement] for a contract clause.
              *
@@ -125,6 +121,7 @@ object Core {
              * @return A [Result] instance representing the result of the validation.
              */
             infix fun <T, R : Requirement<T>> T.should(requirement: R) =
+
                 results.add(requirement.validate(this, message))
 
             /**

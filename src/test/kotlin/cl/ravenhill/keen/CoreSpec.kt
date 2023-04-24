@@ -4,8 +4,10 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.positiveInt
+import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -107,4 +109,21 @@ class CoreSpec : FreeSpec({
             }
         }
     }
+
+    "Enforcement" - {
+        "Scope" - {
+            "StringScope" - {
+                "Should add a success to the results when a requirement is met" {
+                    checkAll(Arb.stringScope()) { scope ->
+                        
+                    }
+                }
+            }
+        }
+    }
 })
+
+private fun Arb.Companion.stringScope() = arbitrary {
+    val message = string().bind()
+    Core.EnforceScope().StringScope(message)
+}

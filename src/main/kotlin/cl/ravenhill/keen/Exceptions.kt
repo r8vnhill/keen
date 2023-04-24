@@ -24,18 +24,6 @@ open class KeenException(prefix: String, lazyMessage: () -> String) :
         Exception("$prefix ${lazyMessage()}")
 
 /**
- * Exception thrown when an argument is not valid.
- *
- * @param lazyMessage The message to be used in the exception.
- *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 1.0.0
- * @since 1.0.0
- */
-class InvalidArgumentException(lazyMessage: () -> String) :
-        KeenException("Invalid argument: ", lazyMessage)
-
-/**
  * Exception thrown when a state is not valid.
  *
  * @param state The state that is not valid.
@@ -46,19 +34,7 @@ class InvalidArgumentException(lazyMessage: () -> String) :
  * @since 1.0.0
  */
 class InvalidStateException(state: String, lazyMessage: () -> String) :
-        KeenException("Invalid state ($state): ", lazyMessage)
-
-/**
- * Exception thrown when a limit is not configured correctly.
- *
- * @param lazyMessage The message to be used in the exception.
- *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 1.0.0
- * @since 1.0.0
- */
-class LimitConfigurationException(lazyMessage: () -> String) :
-        KeenException("Genotype configuration error:", lazyMessage)
+        KeenException("Invalid state ($state):", lazyMessage)
 
 /**
  * Base exception for unfulfilled requirements.
@@ -70,7 +46,7 @@ class LimitConfigurationException(lazyMessage: () -> String) :
  * @since 2.0.0
  */
 open class UnfulfilledRequirementException(lazyMessage: () -> String) :
-        KeenException("Unfulfilled constraint: ", lazyMessage)
+        KeenException("Unfulfilled constraint:", lazyMessage)
 
 /**
  * Exception thrown when an integer constraint is not fulfilled.
@@ -142,5 +118,5 @@ class CollectionRequirementException(lazyMessage: () -> String) :
  * @since 2.0.0
  */
 class EnforcementException(val violations: List<Throwable>) : KeenException(
-    "Unfulfilled contract: ",
+    "Unfulfilled contract:",
     { violations.joinToString(", ") { "{ ${it.message} }" } })
