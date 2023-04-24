@@ -92,10 +92,12 @@ object Core {
      * @version 2.0.0
      */
     class EnforceScope {
-        private val results: MutableList<Result<*>> = mutableListOf()
+        private val _results: MutableList<Result<*>> = mutableListOf()
+        val results: List<Result<*>>
+            get() = _results
 
         val errors: List<Throwable>
-            get() = results.filter { it.isFailure }.map { it.exceptionOrNull()!! }
+            get() = _results.filter { it.isFailure }.map { it.exceptionOrNull()!! }
 
         /**
          * Defines a clause of a contract.
@@ -113,7 +115,14 @@ object Core {
          *
          * @property message The message key for the clause.
          */
-        inner class StringScope(private val message: String) {
+        inner class StringScope(val message: String) {
+
+            /**
+             * Property that returns the outer `EnforceScope` instance.
+             */
+            internal val outerScope: EnforceScope
+                get() = this@EnforceScope
+
             /**
              * Defines a [Requirement] for a contract clause.
              *
@@ -121,14 +130,14 @@ object Core {
              * @return A [Result] instance representing the result of the validation.
              */
             infix fun <T, R : Requirement<T>> T.should(requirement: R) =
-                results.add(requirement.validate(this, message))
+                _results.add(requirement.validate(this, message))
 
             /**
              * Defines a [Requirement] based on a predicate.
              *
              * @param predicate The predicate that defines the clause.
              */
-            fun requirement(predicate: () -> Boolean) = results.add(
+            fun requirement(predicate: () -> Boolean) = _results.add(
                 if (predicate()) {
                     Result.success(Unit)
                 } else {

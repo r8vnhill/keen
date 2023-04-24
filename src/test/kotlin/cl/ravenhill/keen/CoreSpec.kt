@@ -1,6 +1,5 @@
 package cl.ravenhill.keen
 
-import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.Requirement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -20,6 +19,7 @@ class CoreSpec : FreeSpec({
         Core.random = Random.Default
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
         Core.skipChecks = false
+        Core.Dice.random = Random.Default
     }
 
     "The random number generator" - {
@@ -118,10 +118,20 @@ class CoreSpec : FreeSpec({
                 "Should add a success to the results when a requirement is met" {
                     checkAll(Arb.stringScope(), Arb.list(Arb.requirement())) { scope, reqs ->
                         with(scope) {
-                            reqs.forEach {
-                                Any() should it
-                            }
+                            reqs.forEach { Any() should it }
                         }
+                        scope.outerScope.results.size shouldBe reqs.size
+                        scope.outerScope.results.filter { it.isSuccess }.size shouldBe reqs.size
+                    }
+                }
+
+                "Should add a failure to the results when a requirement is not met" {
+                    checkAll(Arb.stringScope(), Arb.list(Arb.requirement(false))) { scope, reqs ->
+                        with(scope) {
+                            reqs.forEach { Any() should it }
+                        }
+                        scope.outerScope.results.size shouldBe reqs.size
+                        scope.outerScope.errors.size shouldBe reqs.size
                     }
                 }
             }
@@ -138,16 +148,19 @@ class CoreSpec : FreeSpec({
  * @return An [Arb] instance that generates instances of [Requirement] for testing.
  */
 private fun Arb.Companion.requirement(success: Boolean = true) = arbitrary {
-    val requirement = object : Requirement<Any> {
+    object : Requirement<Any> {
         override val validator: (Any) -> Boolean
             get() = { success }
 
         override fun generateException(description: String) =
             object : UnfulfilledRequirementException({ description }) {}
     }
-    requirement
 }
 
+/**
+ * Helper function that creates an instance of `Arb` for generating instances of
+ * [Core.EnforceScope.StringScope] class.
+ */
 private fun Arb.Companion.stringScope() = arbitrary {
     val message = string().bind()
     Core.EnforceScope().StringScope(message)
