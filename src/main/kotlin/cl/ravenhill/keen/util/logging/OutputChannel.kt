@@ -4,6 +4,20 @@ import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.util.Clearable
 import java.io.File
 
+/***************************************************************************************************
+ * This code defines several classes and interfaces for creating and managing output channels that
+ * can write messages to different sources.
+ * The `OutputChannel` interface defines a method for writing messages, while the
+ * `CompositeOutputChannel` class allows the creation of a composite channel that can write to
+ * multiple channels simultaneously.
+ * The `BufferedOutputChannel` class implements a buffered output channel that stores all messages
+ * written to it in a `StringBuilder`.
+ * The `StdoutChannel` and `FileOutputChannel` classes define output channels that write to the
+ * standard output and a file, respectively.
+ * The code also includes builder functions for creating and adding new channels to the Logger
+ * class.
+ **************************************************************************************************/
+
 /**
  * Channel where messages can be written to.
  *
@@ -22,9 +36,9 @@ interface OutputChannel {
      * @return A result indicating if the operation was successful or not.
      */
     fun add(outputChannel: OutputChannel): Result<Boolean> =
-        throw InvalidStateException("${this::class.simpleName}") {
+        Result.failure(InvalidStateException("${this::class.simpleName}") {
             "Cannot add channel to this channel."
-        }
+        })
 }
 
 /**
@@ -106,8 +120,7 @@ class BufferedOutputChannel : OutputChannel, Clearable {
  * @param builder The builder for this channel.
  * @return A new stdout output channel.
  */
-fun Logger.stdoutChannel(builder: StdoutChannel.() -> Unit) =
-    outputChannel.add(StdoutChannel().also { builder(it) })
+fun Logger.stdoutChannel() = outputChannel.add(StdoutChannel())
 
 /**
  * An output channel that will write to the standard output.

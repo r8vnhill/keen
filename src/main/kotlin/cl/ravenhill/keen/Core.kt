@@ -6,12 +6,14 @@ import cl.ravenhill.keen.Core.EvolutionLogger.logger
 import cl.ravenhill.keen.Core.maxProgramDepth
 import cl.ravenhill.keen.Core.random
 import cl.ravenhill.keen.Core.skipChecks
+import cl.ravenhill.keen.evolution.Evolver
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.requirements.Requirement
 import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.logging.logger
 import cl.ravenhill.keen.util.logging.stdoutChannel
+import java.util.Objects
 import kotlin.random.Random
 
 /***************************************************************************************************
@@ -144,17 +146,28 @@ object Core {
                     Result.failure(UnfulfilledRequirementException { message })
                 }
             )
+
+            /// Documentation inherited from [Any].
+            override fun equals(other: Any?) = when (other) {
+                is StringScope -> message == other.message
+                else -> false
+            }
+
+            /// Documentation inherited from [Any].
+            override fun hashCode() = Objects.hash(StringScope::class, message)
         }
     }
 
     /**
-     * A logger for tracking the evolution of the system.
+     * A logger for tracking the evolution of [Evolver] instances.
      *
-     * @property level The logging level. Defaults to [Level.Warn].
+     * @property DEFAULT_LEVEL The default logging level ([Level.Warn]).
+     * @property level The logging level. Defaults to [DEFAULT_LEVEL].
      * @property logger The logger instance used for logging.
      */
     object EvolutionLogger {
-        var level: Level = Level.Warn()
+        val DEFAULT_LEVEL: Level = Level.Warn()
+        var level: Level = DEFAULT_LEVEL
             set(value) {
                 field = value
                 logger.level = value

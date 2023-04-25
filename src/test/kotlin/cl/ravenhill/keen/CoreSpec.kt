@@ -1,15 +1,22 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.keen.requirements.Requirement
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.haveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.boolean
+import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.nonPositiveInt
+import io.kotest.property.arbitrary.pair
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.arbitrary.string
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -20,6 +27,7 @@ class CoreSpec : FreeSpec({
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
         Core.skipChecks = false
         Core.Dice.random = Random.Default
+        Core.EvolutionLogger.level = Core.EvolutionLogger.DEFAULT_LEVEL
     }
 
     "The random number generator" - {
@@ -115,7 +123,7 @@ class CoreSpec : FreeSpec({
     "Enforcement" - {
         "Scope" - {
             "StringScope" - {
-                "Should add a success to the results when a requirement is met" {
+                "should add a success to the results when a `should` requirement is met" {
                     checkAll(Arb.stringScope(), Arb.list(Arb.requirement())) { scope, reqs ->
                         with(scope) {
                             reqs.forEach { Any() should it }
@@ -125,8 +133,8 @@ class CoreSpec : FreeSpec({
                     }
                 }
 
-                "Should add a failure to the results when a requirement is not met" {
-                    checkAll(Arb.stringScope(), Arb.list(Arb.requirement(false))) { scope, reqs ->
+                "should add a failure to the results when a `should` requirement is not met" {
+                    checkAll(Arb.stringScope(), Arb.list(Arb.requirement(Arb.constant(false)))) { scope, reqs ->
                         with(scope) {
                             reqs.forEach { Any() should it }
                         }
@@ -134,8 +142,87 @@ class CoreSpec : FreeSpec({
                         scope.outerScope.errors.size shouldBe reqs.size
                     }
                 }
+
+                "should add a success to the results when a predicate requirement is met" {
+                    checkAll(Arb.stringScope(), Arb.list(Arb.constant(true))) { scope, trues ->
+                        trues.forEach { scope.requirement { it } }
+                        scope.outerScope.results.size shouldBe trues.size
+                        scope.outerScope.results.filter { it.isSuccess }.size shouldBe trues.size
+                    }
+                }
+
+                "should add a failure to the results when a predicate requirement is not met" {
+                    checkAll(Arb.stringScope(), Arb.list(Arb.constant(false))) { scope, falses ->
+                        falses.forEach { scope.requirement { it } }
+                        scope.outerScope.results.size shouldBe falses.size
+                        scope.outerScope.errors.size shouldBe falses.size
+                    }
+                }
+            }
+
+            "should be able to create a string scope from a string" {
+                checkAll(Arb.string()) { message ->
+                    val scope = Core.EnforceScope()
+                    val expectedScope = Core.EnforceScope().StringScope(message)
+                    lateinit var strScope: Core.EnforceScope.StringScope
+                    with(scope) {
+                        strScope = message.invoke { true }
+                    }
+                    strScope shouldBe expectedScope
+                    strScope should haveSameHashCodeAs(expectedScope)
+                }
             }
         }
+
+        "If `skipChecks` is true then no exceptions should be thrown" {
+            Core.skipChecks = true
+            checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement(Arb.boolean())))) { pairs ->
+                shouldNotThrow<EnforcementException> {
+                    Core.enforce {
+                        pairs.forEach { (message, req) ->
+                            message.invoke { Any() should req }
+                        }
+                    }
+                }
+            }
+        }
+
+        "If `skipChecks` is false then" - {
+            "if all requirements are met then no exceptions should be thrown" {
+                Core.skipChecks = false
+                checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement()))) { messages ->
+                    shouldNotThrow<EnforcementException> {
+                        Core.enforce {
+                            messages.forEach { (message, req) ->
+                                message.invoke { Any() should req }
+                            }
+                        }
+                    }
+                }
+            }
+
+            "if any requirement is not met then an exception should be thrown" {
+                Core.skipChecks = false
+                checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement(Arb.boolean())))) { pairs ->
+                    assume(pairs.any { !it.second.validator(true) })
+                    shouldThrow<EnforcementException> {
+                        Core.enforce {
+                            pairs.forEach { (message, req) ->
+                                message.invoke { Any() should req }
+                            }
+                        }
+                    }.violations.size shouldBe pairs.filter { !it.second.validator(true) }.size
+                }
+            }
+        }
+    }
+
+    "Evolution logger" - {
+        "default logging level should be Warn" {
+            Core.EvolutionLogger.level shouldBe Core.EvolutionLogger.DEFAULT_LEVEL
+        }
+
+        
     }
 })
 
@@ -147,10 +234,11 @@ class CoreSpec : FreeSpec({
  * Default is true.
  * @return An [Arb] instance that generates instances of [Requirement] for testing.
  */
-private fun Arb.Companion.requirement(success: Boolean = true) = arbitrary {
+private fun Arb.Companion.requirement(success: Arb<Boolean> = Arb.constant(true)) = arbitrary {
+    val successBool = success.bind()
     object : Requirement<Any> {
         override val validator: (Any) -> Boolean
-            get() = { success }
+            get() = { successBool }
 
         override fun generateException(description: String) =
             object : UnfulfilledRequirementException({ description }) {}

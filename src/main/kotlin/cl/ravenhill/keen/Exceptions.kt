@@ -1,5 +1,7 @@
 package cl.ravenhill.keen
 
+import java.util.Objects
+
 /***************************************************************************************************
  * This code defines a hierarchy of exception classes for the Keen library.
  * The base class KeenException is extended by other classes that represent specific types of
@@ -30,11 +32,21 @@ open class KeenException(prefix: String, lazyMessage: () -> String) :
  * @param lazyMessage The message to be used in the exception.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 1.0.0
+ * @version 2.0.0
  * @since 1.0.0
  */
 class InvalidStateException(state: String, lazyMessage: () -> String) :
-        KeenException("Invalid state ($state):", lazyMessage)
+        KeenException("Invalid state ($state):", lazyMessage) {
+
+    /// Documentation inherited from [Any].
+    override fun equals(other: Any?) = when (other) {
+        is InvalidStateException -> other.message == message
+        else -> false
+    }
+
+    /// Documentation inherited from [Any].
+    override fun hashCode() = Objects.hash(InvalidStateException::class, message)
+}
 
 /**
  * Base exception for unfulfilled requirements.

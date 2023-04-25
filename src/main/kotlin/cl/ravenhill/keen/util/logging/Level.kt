@@ -74,9 +74,5 @@ sealed interface Level {
         override fun fatal(message: () -> String) = message()
 
         override fun toString() = "FATAL"
-
-        override fun equals(other: Any?) = this === other
-
-        override fun hashCode() = System.identityHashCode(this)
     }
 }
