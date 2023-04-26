@@ -1,7 +1,10 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package cl.ravenhill.keen.util.logging
 
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.util.Clearable
+import cl.ravenhill.keen.util.SelfReferential
 import java.io.File
 
 /***************************************************************************************************
@@ -19,23 +22,35 @@ import java.io.File
  **************************************************************************************************/
 
 /**
- * Channel where messages can be written to.
+ * An output channel to which messages can be written.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 2.0.0
+ * An output channel is an entity that represents a target where a message can be written to.
+ * Implementations of this interface define how messages are written to a specific output channel.
+ *
+ * @param T the concrete type of the output channel.
+ *
  * @since 2.0.0
+ * @version 2.0.0
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-interface OutputChannel {
-    /** Writes a message to the channel.    */
-    fun write(message: String)
+interface OutputChannel<T : OutputChannel<T>> : SelfReferential<T> {
+
+    /**
+     * Writes a message to the output channel.
+     *
+     * @param message the message to be written to the output channel.
+     * @return the same instance of the output channel that was used to write the message.
+     */
+    fun write(message: String): T
 
     /**
      * Adds a new output channel to this channel.
      *
-     * @param outputChannel The output channel to add.
-     * @return A result indicating if the operation was successful or not.
+     * @param outputChannel the output channel to add.
+     * @return a result indicating if the operation was successful or not.
+     * @throws InvalidStateException if the operation was not successful.
      */
-    fun add(outputChannel: OutputChannel): Result<Boolean> =
+    fun add(outputChannel: OutputChannel<*>): Result<Boolean> =
         Result.failure(InvalidStateException("${this::class.simpleName}") {
             "Cannot add channel to this channel."
         })
@@ -52,13 +67,17 @@ interface OutputChannel {
  * @version 2.0.0
  * @since 2.0.0
  */
-class CompositeOutputChannel(vararg outputChannels: OutputChannel) : OutputChannel {
+class CompositeOutputChannel(vararg outputChannels: OutputChannel<*>) :
+        OutputChannel<CompositeOutputChannel> {
+
     private val outputChannels = outputChannels.toMutableList()
 
-    override fun write(message: String) =
-        outputChannels.parallelStream().forEach { it.write(message) }
+    override fun write(message: String): CompositeOutputChannel {
+        outputChannels.forEach { it.write(message) }
+        return this
+    }
 
-    override fun add(outputChannel: OutputChannel) =
+    override fun add(outputChannel: OutputChannel<*>) =
         outputChannels.add(outputChannel).let { Result.success(it) }
 
     companion object {
@@ -80,12 +99,12 @@ class CompositeOutputChannel(vararg outputChannels: OutputChannel) : OutputChann
      * @since 2.0.0
      */
     class Builder {
-        private val outputStreams = mutableListOf<OutputChannel>()
+        private val outputStreams = mutableListOf<OutputChannel<*>>()
 
         /**
          * Adds a new output channel to this builder.
          */
-        fun add(outputStream: OutputChannel) = apply { outputStreams.add(outputStream) }
+        fun add(outputStream: OutputChannel<*>) = apply { outputStreams.add(outputStream) }
     }
 }
 
@@ -93,31 +112,39 @@ class CompositeOutputChannel(vararg outputChannels: OutputChannel) : OutputChann
  * A buffered output channel that will store all the messages written to it.
  * This uses a [StringBuilder] to store the messages.
  *
- * @property buffer The buffer where the messages will be stored.
  * @constructor Creates a new buffered output channel.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
  * @since 2.0.0
  */
-class BufferedOutputChannel : OutputChannel, Clearable {
+class BufferedOutputChannel : OutputChannel<BufferedOutputChannel>,
+        Clearable<BufferedOutputChannel> {
+
+    /**
+     * The buffer where the messages will be stored.
+     */
     private val buffer = StringBuilder()
 
-    override fun write(message: String) {
+    /// Documentation inherited from [OutputChannel].
+    override fun write(message: String): BufferedOutputChannel {
         buffer.append(message)
+        return this
     }
 
-    override fun toString() = buffer.toString()
-
-    override fun clear() {
+    /// Documentation inherited from [Clearable].
+    override fun clear(): BufferedOutputChannel {
         buffer.clear()
+        return this
     }
+
+    /// Documentation inherited from [Any].
+    override fun toString() = buffer.toString()
 }
 
 /**
  * Creates a new stdout output channel.
  *
- * @param builder The builder for this channel.
  * @return A new stdout output channel.
  */
 fun Logger.stdoutChannel() = outputChannel.add(StdoutChannel())
@@ -131,11 +158,12 @@ fun Logger.stdoutChannel() = outputChannel.add(StdoutChannel())
  * @version 2.0.0
  * @since 2.0.0
  */
-class StdoutChannel : OutputChannel {
-    override fun write(message: String) {
+class StdoutChannel : OutputChannel<StdoutChannel> {
+    override fun write(message: String): StdoutChannel {
         if (message.isNotBlank()) {
             println(message)
         }
+        return this
     }
 }
 
@@ -144,13 +172,31 @@ fun Logger.fileChannel(builder: FileOutputChannel.() -> Unit) =
 
 /**
  * An output channel that will write into a file.
+ *
+ * @property filename The name of the file where the messages will be written to.
+ * @constructor Creates a new output channel that will write into a file.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
  */
-class FileOutputChannel : OutputChannel {
+class FileOutputChannel : OutputChannel<FileOutputChannel> {
     var filename: String = "keen.log"
-
-    override fun write(message: String) {
-        if (message.isNotBlank()) {
-            File(filename).appendText("$message${System.lineSeparator()}", Charsets.UTF_8)
+        set(value) {
+            field = value
+            file = File(value)
         }
+
+    /**
+     * The file where the messages will be written to.
+     */
+    private var file = File(filename)
+
+    /// Documentation inherited from [OutputChannel].
+    override fun write(message: String): FileOutputChannel {
+        if (message.isNotBlank()) {
+            file.appendText("$message${System.lineSeparator()}", Charsets.UTF_8)
+        }
+        return this
     }
 }

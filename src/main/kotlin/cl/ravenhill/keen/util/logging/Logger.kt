@@ -30,7 +30,7 @@ fun logger(name: String, builder: Logger.() -> Unit) =
  * @since 2.0.0
  */
 class Logger private constructor(private val name: String) {
-    var outputChannel: OutputChannel = CompositeOutputChannel()
+    var outputChannel: OutputChannel<*> = CompositeOutputChannel()
         private set
     var level: Level = Level.Info()
 

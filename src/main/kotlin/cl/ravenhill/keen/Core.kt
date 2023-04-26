@@ -174,7 +174,7 @@ object Core {
             }
         var logger = logger("Evolution") {
             level = Level.Warn()
-            stdoutChannel { }
+            stdoutChannel()
         }
 
         /**

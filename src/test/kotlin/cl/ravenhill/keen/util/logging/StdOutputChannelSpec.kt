@@ -32,11 +32,9 @@ class StdOutputChannelSpec : FreeSpec({
         }
 
         "return a failure when trying to add a child" {
-            val stdoutStream = StdoutChannel()
-            val child = StdoutChannel()
-            stdoutStream.add(child) should FailureMatcher(InvalidStateException(
-                "${child::class.simpleName}"
-            ) { "Cannot add channel to this channel." })
+            `check that trying to add a child channel returns a failure` {
+                StdoutChannel()
+            }
         }
     }
 })

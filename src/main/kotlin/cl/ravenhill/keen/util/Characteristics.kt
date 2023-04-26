@@ -46,18 +46,30 @@ interface Verifiable {
 }
 
 /**
- * Mixin interface for objects that can be cleared.
+ * A mixin interface for objects that can be cleared.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * Objects that implement this interface can be cleared of any data they may contain.
+ * The exact behavior of [clear] depends on the implementation of the object.
+ *
+ * @param T the type of the object being cleared.
+ *
  * @since 2.0.0
  * @version 2.0.0
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-interface Clearable {
+interface Clearable<T> {
 
     /**
      * Clears the object.
+     *
+     * After calling this method, the object should be in a state equivalent to creating a new
+     * instance of the object, without actually creating a new instance.
+     * The implementation of this method should take care of releasing any resources held by the
+     * object and resetting any properties to their default values.
+     *
+     * @return a reference to the cleared object, to allow for method chaining.
      */
-    fun clear()
+    fun clear(): T
 }
 
 /**

@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.util.logging
 
-import io.kotest.core.spec.style.WordSpec
+import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.chunked
@@ -8,8 +8,8 @@ import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 
 
-class BufferedOutputChannelSpec : WordSpec({
-    "BufferedOutputChannel" should {
+class BufferedOutputChannelSpec : FreeSpec({
+    "BufferedOutputChannel should" - {
         "write to buffer" {
             // Generates a list of 0 to 1000 strings
             checkAll(Arb.string(1, 1000).chunked(0, 100)) { messages ->
@@ -18,6 +18,7 @@ class BufferedOutputChannelSpec : WordSpec({
                 bufferedOutputChannel.toString() shouldBe messages.joinToString("")
             }
         }
+
         "clear buffer" {
             // Generates a list of 0 to 1000 strings
             checkAll(Arb.string(1, 1000).chunked(0, 100)) { messages ->
@@ -25,6 +26,12 @@ class BufferedOutputChannelSpec : WordSpec({
                 messages.forEach { bufferedOutputChannel.write(it) }
                 bufferedOutputChannel.clear()
                 bufferedOutputChannel.toString() shouldBe ""
+            }
+        }
+
+        "return a failure when trying to add a child" {
+            `check that trying to add a child channel returns a failure` {
+                BufferedOutputChannel()
             }
         }
     }

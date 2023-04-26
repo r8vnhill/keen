@@ -19,8 +19,6 @@ sealed class BoolGene : Gene<Boolean, BoolGene> {
 
     override fun toString() = "$dna"
 
-    override fun mutate() = super.mutate()
-
     override fun generator() = Core.random.nextBoolean()
 
     override fun withDna(dna: Boolean) = if (dna) {
