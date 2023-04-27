@@ -16,6 +16,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.file
+import io.kotest.property.arbitrary.stringPattern
 import io.kotest.property.checkAll
 import java.io.File
 
@@ -46,7 +47,7 @@ suspend fun <T : OutputChannel<T>> `check that trying to add a child channel ret
 fun Arb.Companion.outputChannel() = arbitrary {
     element(
         stdoutOutputChannel().bind(),
-        fileOutputChannel(file()).bind().first,
+        fileOutputChannel(filename()).bind().first,
         bufferedOutputChannel().bind()
     ).bind()
 }
@@ -62,17 +63,34 @@ fun Arb.Companion.stdoutOutputChannel() = arbitrary { StdoutChannel() }
  * The ``filename`` property of the [FileOutputChannel] is set to the filename in the generated
  * [File].
  *
- * @param file The arbitrary that generates the [File] used to set the ``filename`` property of the
+ * @param filename The arbitrary that generates the [File] used to set the ``filename`` property of the
  * [FileOutputChannel].
  * @return An arbitrary that generates a [Pair] of a [FileOutputChannel] and a [String] containing
  * the filename.
  */
-fun Arb.Companion.fileOutputChannel(file: Arb<File>) = arbitrary {
-    val filename = file.bind().name
-    FileOutputChannel().apply { this.filename = filename } to filename
+fun Arb.Companion.fileOutputChannel(filename: Arb<String>) = arbitrary {
+    filename.bind().let {
+        FileOutputChannel().apply { this.filename = it } to it
+    }
 }
 
 /**
  * Provides arbitrary instances of [BufferedOutputChannel] for property-based testing.
  */
 fun Arb.Companion.bufferedOutputChannel() = arbitrary { BufferedOutputChannel() }
+
+
+/**
+ * Returns an [Arb] that generates arbitrary valid filenames.
+ *
+ * The generated filenames have the following format:
+ * [a-zA-Z0-9_-]+\\.\\w{1,5}
+ *
+ * That is, they consist of one or more alphanumeric characters, dashes, or underscores,
+ * followed by a dot and a file extension consisting of 1 to 5 alphanumeric characters.
+ *
+ * @return an [Arb] that generates arbitrary valid filenames.
+ */
+fun Arb.Companion.filename(): Arb<String> = arbitrary {
+    stringPattern("[a-zA-Z0-9_-]+\\.\\w{1,5}").bind()
+}

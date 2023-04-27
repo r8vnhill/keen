@@ -12,9 +12,11 @@ package cl.ravenhill.keen.util.logging
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.chunked
 import io.kotest.property.arbitrary.file
 import io.kotest.property.arbitrary.string
+import io.kotest.property.arbitrary.stringPattern
 import io.kotest.property.checkAll
 import java.io.File
 
@@ -36,7 +38,7 @@ class FileOutputChannelSpec : FreeSpec({
 
         "be able to set the output file path" {
             checkAll(
-                Arb.fileOutputChannel(Arb.file()),
+                Arb.fileOutputChannel(Arb.filename()),
                 Arb.file()
             ) { (channel, filename), newFile ->
                 channel.filename shouldBe filename
@@ -47,11 +49,13 @@ class FileOutputChannelSpec : FreeSpec({
 
         "write to file" {
             checkAll(
-                Arb.fileOutputChannel(Arb.file()),
+                Arb.fileOutputChannel(Arb.filename()),
                 Arb.string().chunked(1..500)
             ) { (channel, filename), messages ->
                 val file = File(filename)
-
+                messages.forEach { channel.write(it) }
+                file.readText() shouldBe messages.joinToString(System.lineSeparator())
+                file.delete()
             }
         }
 
