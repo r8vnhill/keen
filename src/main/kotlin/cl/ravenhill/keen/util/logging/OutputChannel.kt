@@ -70,42 +70,20 @@ interface OutputChannel<T : OutputChannel<T>> : SelfReferential<T> {
 class CompositeOutputChannel(vararg outputChannels: OutputChannel<*>) :
         OutputChannel<CompositeOutputChannel> {
 
-    private val outputChannels = outputChannels.toMutableList()
+    /**
+     * The output channels that this channel contains.
+     */
+    private val _outputChannels = outputChannels.toMutableList()
+    val outputChannels: List<OutputChannel<*>>
+        get() = _outputChannels
 
     override fun write(message: String): CompositeOutputChannel {
-        outputChannels.forEach { it.write(message) }
+        _outputChannels.forEach { it.write(message) }
         return this
     }
 
     override fun add(outputChannel: OutputChannel<*>) =
-        outputChannels.add(outputChannel).let { Result.success(it) }
-
-    companion object {
-        /**
-         * Builder for [CompositeOutputChannel].
-         */
-        val builder: Builder
-            get() = Builder()
-    }
-
-    /**
-     * Builder for [CompositeOutputChannel].
-     *
-     * @property outputStreams The output channels that this builder will contain.
-     * @constructor Creates a new builder for [CompositeOutputChannel].
-     *
-     * @author <a href="https://www.github.com/r8vnhill">R8V</a>
-     * @version 2.0.0
-     * @since 2.0.0
-     */
-    class Builder {
-        private val outputStreams = mutableListOf<OutputChannel<*>>()
-
-        /**
-         * Adds a new output channel to this builder.
-         */
-        fun add(outputStream: OutputChannel<*>) = apply { outputStreams.add(outputStream) }
-    }
+        _outputChannels.add(outputChannel).let { Result.success(it) }
 }
 
 /**

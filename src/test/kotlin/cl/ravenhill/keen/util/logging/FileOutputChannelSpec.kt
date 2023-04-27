@@ -9,14 +9,16 @@
 
 package cl.ravenhill.keen.util.logging
 
+import cl.ravenhill.keen.shouldBeEqualIgnoringBreaks
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.file.shouldExist
+import io.kotest.matchers.file.shouldNotExist
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldNotBeBlank
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.chunked
 import io.kotest.property.arbitrary.file
 import io.kotest.property.arbitrary.string
-import io.kotest.property.arbitrary.stringPattern
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 import java.io.File
 
@@ -36,6 +38,51 @@ class FileOutputChannelSpec : FreeSpec({
             FileOutputChannel().filename shouldBe defaultOutputFilePath
         }
 
+        "create an output file if it doesn't exist when writing a non-blank message" {
+            checkAll(
+                Arb.fileOutputChannel(Arb.filename()),
+                Arb.string()
+            ) { (channel, filename), message ->
+                assume {
+                    File(filename).shouldNotExist()
+                    message.shouldNotBeBlank()
+                }
+                val file = File(filename)
+                try {
+                    channel.write(message)
+                    file.shouldExist()
+                    file.readText() shouldBeEqualIgnoringBreaks message
+                } finally {
+                    if (file.exists()) {
+                        file.delete()
+                    }
+                }
+            }
+        }
+
+        "write to an existing file" {
+            checkAll(
+                Arb.fileOutputChannel(Arb.filename()),
+                Arb.string()
+            ) { (channel, filename), message ->
+                assume {
+                    File(filename).shouldNotExist()
+                    message.shouldNotBeBlank()
+                }
+                val file = File(filename)
+                try {
+                    file.writeText("Hello, world!\n")
+                    channel.write(message)
+                    file.shouldExist()
+                    file.readText() shouldBeEqualIgnoringBreaks "Hello, world!\n$message"
+                } finally {
+                    if (file.exists()) {
+                        file.delete()
+                    }
+                }
+            }
+        }
+
         "be able to set the output file path" {
             checkAll(
                 Arb.fileOutputChannel(Arb.filename()),
@@ -44,18 +91,6 @@ class FileOutputChannelSpec : FreeSpec({
                 channel.filename shouldBe filename
                 channel.filename = newFile.name
                 channel.filename shouldBe newFile.name
-            }
-        }
-
-        "write to file" {
-            checkAll(
-                Arb.fileOutputChannel(Arb.filename()),
-                Arb.string().chunked(1..500)
-            ) { (channel, filename), messages ->
-                val file = File(filename)
-                messages.forEach { channel.write(it) }
-                file.readText() shouldBe messages.joinToString(System.lineSeparator())
-                file.delete()
             }
         }
 

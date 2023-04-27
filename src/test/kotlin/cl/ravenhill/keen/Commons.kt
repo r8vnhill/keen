@@ -28,6 +28,23 @@ infix fun Any.shouldBeOfClass(kClass: KClass<*>) = should(Matcher { value ->
     )
 })
 
+/**
+ * A custom assertion that compares two strings while ignoring differences in line breaks.
+ *
+ * @param expected The expected string to compare against.
+ * @throws AssertionError If the strings are not equal.
+ */
+infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(Matcher { value ->
+    val normalizedValue = value.replace("\r\n", "\n").replace("\r", "\n")
+    val normalizedExpected = "$expected\n".replace("\r\n", "\n").replace("\r", "\n")
+
+    MatcherResult(
+        normalizedValue == normalizedExpected,
+        { "$value should be equal to $expected ignoring line breaks" },
+        { "$value should not be equal to $expected ignoring line breaks" }
+    )
+})
+
 ///**
 // * Generates [Arb]itrary [Pair]s of [Int]s where the first element is less than or equal
 // * to the second.
