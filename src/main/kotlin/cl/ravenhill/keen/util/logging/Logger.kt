@@ -3,7 +3,8 @@ package cl.ravenhill.keen.util.logging
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import java.util.*
+import java.util.Objects
+import kotlin.properties.Delegates
 
 /**
  * Creates a new logger.
@@ -29,9 +30,8 @@ fun logger(name: String, builder: Logger.() -> Unit) =
  * @version 2.0.0
  * @since 2.0.0
  */
-class Logger private constructor(private val name: String) {
-    var outputChannel: OutputChannel<*> = CompositeOutputChannel()
-        private set
+class Logger private constructor(val name: String) {
+    val outputChannel = CompositeOutputChannel()
     var level: Level = Level.Info()
 
     /** Logs a message at the DEBUG level.  */
@@ -84,30 +84,28 @@ class Logger private constructor(private val name: String) {
 
     companion object {
         /**
-         * A map of all active loggers with their names as keys and instances of Logger as values.
+         * A map of all active loggers with their names as keys and instances of [Logger] as values.
          */
-        private val activeLoggers = mutableMapOf<String, Logger>()
+        private val _activeLoggers = mutableMapOf<String, Logger>()
+
+        /**
+         * An immutable map of all active loggers with their names as keys and instances of [Logger]
+         * as values.
+         */
+        val activeLoggers: Map<String, Logger> get() = _activeLoggers
 
         /**
          * Returns a unique instance of a logger for the given name.
          *
          * @param name The name of the logger.
-         * @return An instance of Logger for the given name.
+         * @return An instance of [Logger] for the given name.
          */
         fun instance(name: String) =
-            activeLoggers.getOrDefault(name, Logger(name)).also { activeLoggers[name] = it }
-
-        /**
-         * Returns true if a logger with the given name is active.
-         *
-         * @param name The name of the logger.
-         * @return True if a logger with the given name is active, false otherwise.
-         */
-        fun isActive(name: String): Boolean = name in activeLoggers
+            _activeLoggers.getOrDefault(name, Logger(name)).also { _activeLoggers[name] = it }
 
         /**
          * Clears all active loggers.
          */
-        internal fun clearActiveLoggers() = activeLoggers.clear()
+        internal fun clearActiveLoggers() = _activeLoggers.clear()
     }
 }
