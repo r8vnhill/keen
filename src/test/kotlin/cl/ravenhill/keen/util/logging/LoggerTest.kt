@@ -9,6 +9,8 @@
 
 package cl.ravenhill.keen.util.logging
 
+import cl.ravenhill.keen.logPattern
+import cl.ravenhill.keen.loggers
 import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.util.Clearable
 import io.kotest.core.spec.style.FreeSpec
@@ -24,10 +26,6 @@ import io.kotest.property.checkAll
 
 
 class LoggerTest : FreeSpec({
-    val regex = { level: String ->
-        "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})? \\[.*] $level .* - .*".toRegex()
-    }
-
     "A logger" - {
         "should be able to be obtained by name" {
             checkAll(Arb.uniqueStrings()) { names ->
@@ -69,7 +67,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Fatal(),
                     Logger::fatal,
-                    regex("FATAL")
+                    logPattern("FATAL")
                 )
             }
 
@@ -119,7 +117,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Error(),
                     Logger::fatal,
-                    regex("FATAL")
+                    logPattern("FATAL")
                 )
             }
 
@@ -127,7 +125,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Error(),
                     Logger::error,
-                    regex("ERROR")
+                    logPattern("ERROR")
                 )
             }
 
@@ -169,7 +167,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Warn(),
                     Logger::fatal,
-                    regex("FATAL")
+                    logPattern("FATAL")
                 )
             }
 
@@ -177,7 +175,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Warn(),
                     Logger::error,
-                    regex("ERROR")
+                    logPattern("ERROR")
                 )
             }
 
@@ -185,7 +183,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Warn(),
                     Logger::warn,
-                    regex("WARN")
+                    logPattern("WARN")
                 )
             }
 
@@ -219,7 +217,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Info(),
                     Logger::fatal,
-                    regex("FATAL")
+                    logPattern("FATAL")
                 )
             }
 
@@ -227,7 +225,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Info(),
                     Logger::error,
-                    regex("ERROR")
+                    logPattern("ERROR")
                 )
             }
 
@@ -235,7 +233,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Info(),
                     Logger::warn,
-                    regex("WARN")
+                    logPattern("WARN")
                 )
             }
 
@@ -243,7 +241,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Info(),
                     Logger::info,
-                    regex("INFO")
+                    logPattern("INFO")
                 )
             }
 
@@ -269,7 +267,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::fatal,
-                    regex("FATAL")
+                    logPattern("FATAL")
                 )
             }
 
@@ -277,7 +275,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::error,
-                    regex("ERROR")
+                    logPattern("ERROR")
                 )
             }
 
@@ -285,7 +283,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::warn,
-                    regex("WARN")
+                    logPattern("WARN")
                 )
             }
 
@@ -293,7 +291,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::info,
-                    regex("INFO")
+                    logPattern("INFO")
                 )
             }
 
@@ -301,7 +299,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::debug,
-                    regex("DEBUG")
+                    logPattern("DEBUG")
                 )
             }
 
@@ -319,7 +317,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::fatal,
-                    regex("FATAL")
+                    logPattern("FATAL")
                 )
             }
 
@@ -327,7 +325,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::error,
-                    regex("ERROR")
+                    logPattern("ERROR")
                 )
             }
 
@@ -335,7 +333,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::warn,
-                    regex("WARN")
+                    logPattern("WARN")
                 )
             }
 
@@ -343,7 +341,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::info,
-                    regex("INFO")
+                    logPattern("INFO")
                 )
             }
 
@@ -351,7 +349,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::debug,
-                    regex("DEBUG")
+                    logPattern("DEBUG")
                 )
             }
 
@@ -359,7 +357,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::trace,
-                    regex("TRACE")
+                    logPattern("TRACE")
                 )
             }
         }
@@ -410,7 +408,14 @@ class LoggerTest : FreeSpec({
 
     "A [Logger] can be created with the builder function" {
         checkAll(Arb.uniqueStrings()) { names ->
-
+            names.forEach {
+                val logger = logger(it) {
+                    bufferedOutputChannel()
+                }
+                logger.name shouldBe it
+                logger.compositeChannel.outputChannels.first() shouldBeOfClass
+                        BufferedOutputChannel::class
+            }
         }
     }
 })
@@ -430,22 +435,6 @@ fun <T: Clearable<T>> clearAll(clearables: Iterable<Clearable<T>>) =
  */
 private fun <T> Iterable<T>.applyForEach(function: T.() -> Unit) = forEach {
     it.apply { function() }
-}
-
-/**
- * Returns an arbitrary generator of a list of [Logger] instances based on a given [names] generator
- * of string lists.
- *
- * The returned generator creates a list of [Logger] instances with names generated by [names].
- * Note that creating an instance of a [Logger] automatically adds it to the [Logger.activeLoggers]
- * list.
- * This function can be used to generate a list of loggers for testing purposes.
- *
- * @param names The generator used to create the list of logger names.
- * @return An arbitrary generator of a list of [Logger] instances.
- */
-private fun Arb.Companion.loggers(names: Arb<List<String>>) = arbitrary {
-    names.bind().map { Logger.instance(it) }
 }
 
 /**

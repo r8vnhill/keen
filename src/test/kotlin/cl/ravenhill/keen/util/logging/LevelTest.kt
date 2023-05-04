@@ -9,7 +9,10 @@
 
 package cl.ravenhill.keen.util.logging
 
+import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.comparables.shouldBeGreaterThan
+import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.property.checkAll
 
@@ -32,6 +35,20 @@ class LevelTest : FreeSpec({
     }
 
     "A fatal level" - {
+        "should be greater than any other level" {
+            fatal shouldBeGreaterThanAll listOf(
+                error,
+                warn,
+                info,
+                debug,
+                trace
+            )
+        }
+
+        "should be equal to another fatal level" {
+            fatal shouldBe Level.Fatal()
+        }
+
         "should return the message when logging a fatal message" {
             checkAll<String> {
                 fatal.fatal { it } shouldBe it
@@ -72,6 +89,23 @@ class LevelTest : FreeSpec({
     }
 
     "An error level" - {
+        "should be greater than any other level except fatal" {
+            error shouldBeGreaterThanAll listOf(
+                warn,
+                info,
+                debug,
+                trace
+            )
+        }
+
+        "should be less than fatal" {
+            error shouldBeLessThan fatal
+        }
+
+        "should be equal to another error level" {
+            error shouldBe Level.Error()
+        }
+
         "should return the message when logging" - {
             "a fatal message" {
                 checkAll<String> {
@@ -114,6 +148,25 @@ class LevelTest : FreeSpec({
     }
 
     "A warn level" - {
+        "should be greater than any other level except fatal and error" {
+            warn shouldBeGreaterThanAll listOf(
+                info,
+                debug,
+                trace
+            )
+        }
+
+        "should be less than fatal and error" {
+            warn shouldBeLessThanAll listOf(
+                fatal,
+                error
+            )
+        }
+
+        "should be equal to another warn level" {
+            warn shouldBe Level.Warn()
+        }
+
         "should return the message when logging" - {
             "a fatal message" {
                 checkAll<String> {
@@ -156,6 +209,25 @@ class LevelTest : FreeSpec({
     }
 
     "An info level" - {
+        "should be greater than any other level except fatal, error and warn" {
+            info shouldBeGreaterThanAll listOf(
+                debug,
+                trace
+            )
+        }
+
+        "should be less than fatal, error and warn" {
+            info shouldBeLessThanAll listOf(
+                fatal,
+                error,
+                warn
+            )
+        }
+
+        "should be equal to another info level" {
+            info shouldBe Level.Info()
+        }
+
         "should return the message when logging" - {
             "a fatal message" {
                 checkAll<String> {
@@ -198,6 +270,23 @@ class LevelTest : FreeSpec({
     }
 
     "A debug level" - {
+        "should be greater than any other level except fatal, error, warn and info" {
+            debug shouldBeGreaterThan trace
+        }
+
+        "should be less than fatal, error, warn and info" {
+            debug shouldBeLessThanAll listOf(
+                fatal,
+                error,
+                warn,
+                info
+            )
+        }
+
+        "should be equal to another debug level" {
+            debug shouldBe Level.Debug()
+        }
+
         "should return the message when logging" - {
             "a fatal message" {
                 checkAll<String> {
@@ -240,6 +329,20 @@ class LevelTest : FreeSpec({
     }
 
     "A trace level" - {
+        "should be less than any other level" {
+            trace shouldBeLessThanAll listOf(
+                fatal,
+                error,
+                warn,
+                info,
+                debug
+            )
+        }
+
+        "should be equal to another trace level" {
+            trace shouldBe Level.Trace()
+        }
+
         "should return the message when logging" - {
             "a fatal message" {
                 checkAll<String> {
@@ -279,3 +382,27 @@ class LevelTest : FreeSpec({
         }
     }
 })
+
+/**
+ * Asserts that a value is greater than all other values in a list of comparable values.
+ *
+ * @param others a list of comparable values to compare against the receiver.
+ * @throws AssertionError if the receiver is not greater than all other values.
+ */
+private infix fun <T : Comparable<T>> T.shouldBeGreaterThanAll(others: List<T>) = assertSoftly {
+    others.forEach {
+        this shouldBeGreaterThan it
+    }
+}
+
+/**
+ * Asserts that a value is less than all other values in a list of comparable values.
+ *
+ * @param others a list of comparable values to compare against the receiver.
+ * @throws AssertionError if the receiver is not less than all other values.
+ */
+private infix fun <T : Comparable<T>> T.shouldBeLessThanAll(others: List<T>) = assertSoftly {
+    others.forEach {
+        this shouldBeLessThan it
+    }
+}

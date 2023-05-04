@@ -1,8 +1,11 @@
 package cl.ravenhill.keen
 
+import cl.ravenhill.keen.util.logging.Logger
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
 import kotlin.reflect.KClass
 
 
@@ -45,151 +48,36 @@ infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(Matcher 
     )
 })
 
-///**
-// * Generates [Arb]itrary [Pair]s of [Int]s where the first element is less than or equal
-// * to the second.
-// *
-// * __Usage:__
-// * ```kotlin
-// * checkAll(Arb.orderedIntPair()) { (a, b) ->
-// *    a <= b shouldBe true
-// *    a + b shouldBe b + a
-// * }
-// * ```
-// */
-//fun Arb.Companion.orderedIntPair(lo: Int = Int.MIN_VALUE, hi: Int = Int.MAX_VALUE) =
-//    arbitrary {
-//        val first = int(lo, hi).bind()
-//        val second = int(lo, hi).bind().let { if (it == first) it + 1 else it }
-//        if (first < second) first to second else second to first
-//    }
-//
-///**
-// * Generates [Arb]itrary [Pair]s of [Double]s where the first element is less than or
-// * equal to the second.
-// *
-// * __Usage:__
-// * ```kotlin
-// * checkAll(Arb.orderedDoublePair()) { (a, b) ->
-// *   a <= b shouldBe true
-// *   a + b shouldBe b + a
-// * }
-// */
-//fun Arb.Companion.orderedDoublePair(
-//    lo: Double = Double.MIN_VALUE,
-//    hi: Double = Double.MAX_VALUE
-//) =
-//    arbitrary {
-//        val first = double(lo, hi).next()
-//        val second = double(lo, hi).next().let { if (it == first) it + 1 else it }
-//        if (first < second) first to second else second to first
-//    }
-//
-///**
-// * Generates an [Arb]itrary [Int] value outside the given ``intRange``.
-// *
-// * Behaviour when the given range encompasses the whole [Int] range is undefined.
-// */
-//fun Arb.Companion.intOutsideRange(intRange: IntRange) = arbitrary {
-//    if (intRange.first == Int.MIN_VALUE) {
-//        int(intRange.last + 1, Int.MAX_VALUE).bind()
-//    } else {
-//        int(Int.MIN_VALUE, intRange.first - 1).bind()
-//    }
-//}
-//
-///**
-// * Generates a new [Arb]itrary [Genotype] using a given arbitrary [Chromosome] factory.
-// */
-//fun <T> Arb.Companion.genotype(
-//    chromosome: Arb<Chromosome.Factory<T>>,
-//    maxSize: Int = 100
-//) =
-//    arbitrary {
-//        val chromosomes = Arb.list(chromosome, 1..maxSize).bind()
-//        Genotype.Factory<T>().apply {
-//            chromosomes.forEach {
-//                chromosome { it }
-//            }
-//        }.make()
-//    }
-//
-///**
-// * Generates a new [Arb]itrary [IntChromosome] factory.
-// */
-//fun Arb.Companion.intChromosomeFactory(maxSize: Int = 100) = arbitrary {
-//    IntChromosome.Factory().apply {
-//        size = positiveInt(maxSize).bind()
-//        range = orderedIntPair().bind()
-//    }
-//}
-//
-///**
-// * Generates an [Arb]itrary [Phenotype].
-// */
-//fun <T> Arb.Companion.phenotype(
-//    chromosomeFactory: Arb<Chromosome.Factory<T>>,
-//    fitness: Double = double().next(),
-//    maxSize: Int = 100
-//) = arbitrary {
-//    val genotype = genotype(chromosomeFactory, maxSize).bind()
-//    val generation = positiveInt().bind()
-//    Phenotype(genotype, generation, fitness)
-//}
-//
-///**
-// * Generates an [Arb]itrary [Double] in the range [0.0, 1.0].
-// */
-//fun Arb.Companion.probability() = arbitrary {
-//    double(0.0, 1.0).next()
-//}
-//
-///**
-// * Generates an [Arb]itrary population of [IntChromosome]s with the same range and size.
-// */
-//fun <T> Arb.Companion.population(
-//    chromosomeFactory: Arb<Chromosome.Factory<T>>,
-//    maxSize: Int = 30
-//) = arbitrary {
-//    val size = positiveInt(maxSize).bind()
-//    val fitness = Arb.double().bind()
-//    List(size) {
-//        phenotype(chromosomeFactory, fitness).bind()
-//    }
-//}
-//
-//
-///**
-// * Generates a pair of [IntChromosome]s with the same range and size.
-// */
-//fun Arb.Companion.intChromosomePair() = chromosomePair(orderedIntPair()) { size, range ->
-//    IntChromosome.Factory().apply {
-//        this.range = range
-//        this.size = size
-//    }
-//}
-//
-///**
-// * Generates a pair of [DoubleChromosome]s with the same range and size.
-// */
-//fun Arb.Companion.doubleChromosomePair() =
-//    chromosomePair(orderedDoublePair()) { size, range ->
-//        DoubleChromosome.Factory().apply {
-//            this.range = range
-//            this.size = size
-//        }
-//    }
-//
-///**
-// * Generates a pair of [Chromosome]s with the same range and size.
-// */
-//fun <T> Arb.Companion.chromosomePair(
-//    pairGenerator: Arb<Pair<T, T>>,
-//    factoryCreator: (Int, Pair<T, T>) -> Chromosome.Factory<T>
-//) = arbitrary {
-//    Core.random = Random(long().bind())
-//    val size = positiveInt(10).bind()
-//    val range = pairGenerator.bind()
-//    val factory = factoryCreator(size, range)
-//    factory.make() to factory.make()
-//}
+/**
+ * Returns an arbitrary generator of a list of [Logger] instances based on a given [names] generator
+ * of string lists.
+ *
+ * The returned generator creates a list of [Logger] instances with names generated by [names].
+ * Note that creating an instance of a [Logger] automatically adds it to the [Logger.activeLoggers]
+ * list.
+ * This function can be used to generate a list of loggers for testing purposes.
+ *
+ * @param names The generator used to create the list of logger names.
+ * @return An arbitrary generator of a list of [Logger] instances.
+ */
+fun Arb.Companion.loggers(names: Arb<List<String>>) = arbitrary {
+    names.bind().map { Logger.instance(it) }
+}
+
+/**
+ * Returns a regular expression pattern that matches log messages with the specified level.
+ * The pattern matches lines that start with a datetime string in the format
+ * "yyyy-MM-ddTHH:mm:ss[.SSS...]" followed by a thread name in brackets, then the log level, then
+ * the logger name, and finally a hyphen (-) followed by the message.
+ * The (?s) flag at the beginning of the pattern enables dot-all mode, which makes the dot (.)
+ * character match any character, including line breaks.
+ *
+ * Example of a log message that matches this pattern:
+ *
+ * ``2023-05-05T10:20:30.123456789 [main] ERROR com.example.app - An error occurred``
+ *
+ * @param level The log level to match (e.g. "ERROR", "WARN", etc.).
+ * @return A regular expression pattern that matches log messages with the specified level.
+ */
+fun logPattern(level: String) =
+    "(?s)^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})? \\[.*] $level .* - .*".toRegex()

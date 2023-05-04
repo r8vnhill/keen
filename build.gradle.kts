@@ -37,6 +37,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
     // Library for working with date and time in Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    // Library for working with reflection in Kotlin
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
     // Tablesaw core library for working with tabular data in Java and Kotlin
     api("tech.tablesaw:tablesaw-core:0.43.1")
     // Tablesaw library for creating JS plots in Kotlin/JVM

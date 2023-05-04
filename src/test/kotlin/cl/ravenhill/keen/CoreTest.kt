@@ -2,11 +2,19 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.keen.requirements.Requirement
 import cl.ravenhill.keen.util.logging.Level
+import cl.ravenhill.keen.util.logging.Logger
+import cl.ravenhill.keen.util.logging.StdoutChannel
+import cl.ravenhill.keen.util.logging.bufferedOutputChannel
+import cl.ravenhill.keen.util.logging.logger
+import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldMatch
+import io.kotest.matchers.string.shouldNotBeBlank
+import io.kotest.matchers.string.shouldNotBeEmpty
 import io.kotest.matchers.types.haveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
@@ -22,6 +30,95 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
+
+/**
+ * A helper function that creates an [Arb] instance that generates instances of [Requirement] for
+ * testing.
+ *
+ * @param success Whether the generated [Requirement] instances should be successful.
+ * Default is true.
+ * @return An [Arb] instance that generates instances of [Requirement] for testing.
+ */
+private fun Arb.Companion.requirement(success: Arb<Boolean> = Arb.constant(true)) = arbitrary {
+    val successBool = success.bind()
+    object : Requirement<Any> {
+        override val validator: (Any) -> Boolean
+            get() = { successBool }
+
+        override fun generateException(description: String) =
+            object : UnfulfilledRequirementException({ description }) {}
+    }
+}
+
+/**
+ * Helper function that creates an instance of `Arb` for generating instances of
+ * [Core.EnforceScope.StringScope] class.
+ */
+private fun Arb.Companion.stringScope() = arbitrary {
+    val message = string().bind()
+    Core.EnforceScope().StringScope(message)
+}
+
+/**
+ * Returns an arbitrary `Level` from a list of predefined log levels:
+ * - [Level.Trace]
+ * - [Level.Debug]
+ * - [Level.Info]
+ * - [Level.Warn]
+ * - [Level.Error]
+ * - [Level.Fatal]
+ */
+private fun Arb.Companion.level() = arbitrary {
+    element(
+        Level.Trace(),
+        Level.Debug(),
+        Level.Info(),
+        Level.Warn(),
+        Level.Error(),
+        Level.Fatal()
+    ).bind()
+}
+
+/**
+ * Suspends the current coroutine and checks that the logger can log a message at the given logging
+ * level.
+ * This function generates random messages using [Arb.Companion.string] and random logging levels
+ * using [Arb.Companion.level].
+ * The generated message is logged using the given [method] and the output is checked against the
+ * expected format.
+ * If the logging level is the same as the given [logMethodLevel], the output should match the
+ * expected format.
+ * If the logging level is different from the given [logMethodLevel], the output should be empty.
+ *
+ * @param logMethodLevel The logging level to use for this test.
+ * @param method The method to use for logging the message.
+ *
+ * @throws AssertionError If the output does not match the expected format or is not empty when it
+ * should be.
+ */
+suspend fun `check that the logger can log a message`(
+    logMethodLevel: Level,
+    method: (message: () -> String) -> Unit
+) {
+    checkAll(Arb.string(), Arb.level()) { message, level ->
+        assume {
+            message.shouldNotBeBlank()
+            message.shouldNotBeEmpty()
+        }
+        Core.EvolutionLogger.logger = logger("TestLogger") {
+            bufferedOutputChannel()
+            this.level = level
+        }
+        method { message }
+        val output = Core.EvolutionLogger.logger.compositeChannel.first().toString()
+        if (level <= logMethodLevel) {
+            output shouldMatch logPattern("$logMethodLevel")
+        } else {
+            output shouldBe ""
+        }
+        Logger.clearActiveLoggers()
+    }
+}
 
 class CoreTest : FreeSpec({
     beforeAny {
@@ -241,61 +338,73 @@ class CoreTest : FreeSpec({
             }
         }
 
-        "default logger should be named 'Evolution'" {
-            Core.EvolutionLogger.logger.name shouldBe "Evolution"
+        "default logger should" - {
+            "be named 'Evolution'" {
+                Core.EvolutionLogger.logger.name shouldBe "Evolution"
+            }
+
+            "have one output standard output channel" {
+                Core.EvolutionLogger.logger.compositeChannel.outputChannels.size shouldBe 1
+                Core.EvolutionLogger.logger.compositeChannel.first() shouldBeOfClass
+                        StdoutChannel::class
+            }
+
+            "have a default level of Warn" {
+                Core.EvolutionLogger.logger.level shouldBeOfClass Level.Warn::class
+            }
         }
 
-        "default logger should have one output standard output channel" {
-            Core.EvolutionLogger.logger.compositeChannel.outputChannels.size shouldBe 1
-            Core.EvolutionLogger.logger.compositeChannel
+        "be able to set a custom logger" {
+            checkAll(Arb.loggers(Arb.list(Arb.string()))) { loggers ->
+                loggers.forEach {
+                    Core.EvolutionLogger.logger = it
+                    Core.EvolutionLogger.logger.name shouldBe it.name
+                }
+            }
+        }
+
+        "be able to log a message at" - {
+            "Trace level" {
+                `check that the logger can log a message`(
+                    Level.Trace(),
+                    Core.EvolutionLogger::trace
+                )
+            }
+
+            "Debug level" {
+                `check that the logger can log a message`(
+                    Level.Debug(),
+                    Core.EvolutionLogger::debug
+                )
+            }
+
+            "Info level" {
+                `check that the logger can log a message`(
+                    Level.Info(),
+                    Core.EvolutionLogger::info
+                )
+            }
+
+            "Warn level" {
+                `check that the logger can log a message`(
+                    Level.Warn(),
+                    Core.EvolutionLogger::warn
+                )
+            }
+
+            "Error level" {
+                `check that the logger can log a message`(
+                    Level.Error(),
+                    Core.EvolutionLogger::error
+                )
+            }
+
+            "Fatal level" {
+                `check that the logger can log a message`(
+                    Level.Fatal(),
+                    Core.EvolutionLogger::fatal
+                )
+            }
         }
     }
 })
-
-/**
- * A helper function that creates an [Arb] instance that generates instances of [Requirement] for
- * testing.
- *
- * @param success Whether the generated [Requirement] instances should be successful.
- * Default is true.
- * @return An [Arb] instance that generates instances of [Requirement] for testing.
- */
-private fun Arb.Companion.requirement(success: Arb<Boolean> = Arb.constant(true)) = arbitrary {
-    val successBool = success.bind()
-    object : Requirement<Any> {
-        override val validator: (Any) -> Boolean
-            get() = { successBool }
-
-        override fun generateException(description: String) =
-            object : UnfulfilledRequirementException({ description }) {}
-    }
-}
-
-/**
- * Helper function that creates an instance of `Arb` for generating instances of
- * [Core.EnforceScope.StringScope] class.
- */
-private fun Arb.Companion.stringScope() = arbitrary {
-    val message = string().bind()
-    Core.EnforceScope().StringScope(message)
-}
-
-/**
- * Returns an arbitrary `Level` from a list of predefined log levels:
- * - [Level.Trace]
- * - [Level.Debug]
- * - [Level.Info]
- * - [Level.Warn]
- * - [Level.Error]
- * - [Level.Fatal]
- */
-private fun Arb.Companion.level() = arbitrary {
-    element(
-        Level.Trace(),
-        Level.Debug(),
-        Level.Info(),
-        Level.Warn(),
-        Level.Error(),
-        Level.Fatal()
-    ).bind()
-}
