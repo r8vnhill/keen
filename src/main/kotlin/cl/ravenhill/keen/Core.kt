@@ -197,6 +197,27 @@ object Core {
          * @param lazyMessage A lambda that returns the message to be logged.
          */
         fun info(lazyMessage: () -> String) = logger.info(lazyMessage)
+
+        /**
+         * Logs a message at the Warn level.
+         *
+         * @param lazyMessage A lambda that returns the message to be logged.
+         */
+        fun warn(lazyMessage: () -> String) = logger.warn(lazyMessage)
+
+        /**
+         * Logs a message at the Error level.
+         *
+         * @param lazyMessage A lambda that returns the message to be logged.
+         */
+        fun error(lazyMessage: () -> String) = logger.error(lazyMessage)
+
+        /**
+         * Logs a message at the Fatal level.
+         *
+         * @param lazyMessage A lambda that returns the message to be logged.
+         */
+        fun fatal(lazyMessage: () -> String) = logger.fatal(lazyMessage)
     }
 }
 

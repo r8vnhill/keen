@@ -1,6 +1,7 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.keen.requirements.Requirement
+import cl.ravenhill.keen.util.logging.Level
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -11,6 +12,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.constant
+import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.pair
@@ -134,7 +136,10 @@ class CoreTest : FreeSpec({
                 }
 
                 "should add a failure to the results when a `should` requirement is not met" {
-                    checkAll(Arb.stringScope(), Arb.list(Arb.requirement(Arb.constant(false)))) { scope, reqs ->
+                    checkAll(
+                        Arb.stringScope(),
+                        Arb.list(Arb.requirement(Arb.constant(false)))
+                    ) { scope, reqs ->
                         with(scope) {
                             reqs.forEach { Any() should it }
                         }
@@ -203,7 +208,14 @@ class CoreTest : FreeSpec({
 
             "if any requirement is not met then an exception should be thrown" {
                 Core.skipChecks = false
-                checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement(Arb.boolean())))) { pairs ->
+                checkAll(
+                    Arb.list(
+                        Arb.pair(
+                            Arb.string(),
+                            Arb.requirement(Arb.boolean())
+                        )
+                    )
+                ) { pairs ->
                     assume(pairs.any { !it.second.validator(true) })
                     shouldThrow<EnforcementException> {
                         Core.enforce {
@@ -220,6 +232,22 @@ class CoreTest : FreeSpec({
     "Evolution logger" - {
         "default logging level should be Warn" {
             Core.EvolutionLogger.level shouldBe Core.EvolutionLogger.DEFAULT_LEVEL
+        }
+
+        "should be able to set the logging level" {
+            checkAll(Arb.level()) { level ->
+                Core.EvolutionLogger.level = level
+                Core.EvolutionLogger.level shouldBeOfClass level::class
+            }
+        }
+
+        "default logger should be named 'Evolution'" {
+            Core.EvolutionLogger.logger.name shouldBe "Evolution"
+        }
+
+        "default logger should have one output standard output channel" {
+            Core.EvolutionLogger.logger.compositeChannel.outputChannels.size shouldBe 1
+            Core.EvolutionLogger.logger.compositeChannel
         }
     }
 })
@@ -250,4 +278,24 @@ private fun Arb.Companion.requirement(success: Arb<Boolean> = Arb.constant(true)
 private fun Arb.Companion.stringScope() = arbitrary {
     val message = string().bind()
     Core.EnforceScope().StringScope(message)
+}
+
+/**
+ * Returns an arbitrary `Level` from a list of predefined log levels:
+ * - [Level.Trace]
+ * - [Level.Debug]
+ * - [Level.Info]
+ * - [Level.Warn]
+ * - [Level.Error]
+ * - [Level.Fatal]
+ */
+private fun Arb.Companion.level() = arbitrary {
+    element(
+        Level.Trace(),
+        Level.Debug(),
+        Level.Info(),
+        Level.Warn(),
+        Level.Error(),
+        Level.Fatal()
+    ).bind()
 }

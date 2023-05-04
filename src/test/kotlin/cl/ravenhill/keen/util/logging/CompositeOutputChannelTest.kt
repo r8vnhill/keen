@@ -9,6 +9,7 @@
 
 package cl.ravenhill.keen.util.logging
 
+import cl.ravenhill.keen.shouldBeOfClass
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
@@ -51,6 +52,14 @@ class CompositeOutputChannelTest : FreeSpec({
                 childChannels.forEach { compositeChannel.add(it) }
                 compositeChannel.write(message)
                 childChannels.forEach { it.toString() shouldContain message }
+            }
+        }
+
+        "have an iterator that iterates over the output channels" {
+            checkAll(Arb.compositeOutputChannel(1..10)) { composite ->
+                composite.iterator().asSequence().toList().forEachIndexed { index, outputChannel ->
+                    outputChannel shouldBeOfClass composite[index]::class
+                }
             }
         }
     }

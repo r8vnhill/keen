@@ -63,8 +63,8 @@ fun Arb.Companion.outputChannel() = arbitrary {
  *
  * @see [outputChannel]
  */
-fun Arb.Companion.compositeOutputChannel() = arbitrary {
-    CompositeOutputChannel(*array(outputChannel()).bind())
+fun Arb.Companion.compositeOutputChannel(range: IntRange = 1..100) = arbitrary {
+    CompositeOutputChannel(*array(outputChannel(), range).bind())
 }
 
 /**

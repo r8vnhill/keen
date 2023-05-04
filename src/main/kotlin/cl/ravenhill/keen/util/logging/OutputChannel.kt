@@ -82,7 +82,7 @@ interface OutputChannel<T : OutputChannel<T>> : Clearable<OutputChannel<T>>, Sel
  * @since 2.0.0
  */
 class CompositeOutputChannel(vararg outputChannels: OutputChannel<*>) :
-        OutputChannel<CompositeOutputChannel> {
+        OutputChannel<CompositeOutputChannel>, Iterable<OutputChannel<*>> {
 
     /**
      * The output channels that this channel contains.
@@ -91,13 +91,23 @@ class CompositeOutputChannel(vararg outputChannels: OutputChannel<*>) :
     val outputChannels: List<OutputChannel<*>>
         get() = _outputChannels
 
+    /// Documentation inherited from [OutputChannel].
     override fun write(message: String): CompositeOutputChannel {
         _outputChannels.forEach { it.write(message) }
         return this
     }
 
+    /// Documentation inherited from [OutputChannel].
     override fun add(outputChannel: OutputChannel<*>) =
         _outputChannels.add(outputChannel).let { Result.success(it) }
+
+    /// Documentation inherited from [Iterable].
+    override fun iterator() = _outputChannels.iterator()
+
+    /**
+     * Gets the output channel at the specified ``index``.
+     */
+    operator fun get(index: Int) = _outputChannels[index]
 }
 
 /**
