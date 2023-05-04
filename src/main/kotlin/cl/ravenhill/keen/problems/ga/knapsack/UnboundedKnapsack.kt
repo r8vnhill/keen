@@ -59,7 +59,7 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>, KnapsackGene>): Double 
  * @property dna The pair of integers represented by this gene.
  */
 class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>, KnapsackGene> {
-    // \ Documentation inherited from [Gene]
+    /// Documentation inherited from [Gene]
     override fun generator() = items.random(Core.random)
 
     /// Documentation inherited from [Gene]

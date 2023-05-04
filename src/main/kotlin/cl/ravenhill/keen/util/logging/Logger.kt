@@ -1,10 +1,9 @@
 package cl.ravenhill.keen.util.logging
 
+import cl.ravenhill.keen.util.Clearable
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import java.util.Objects
-import kotlin.properties.Delegates
 
 /**
  * Creates a new logger.
@@ -20,7 +19,7 @@ fun logger(name: String, builder: Logger.() -> Unit) =
 /**
  * Entity that logs messages to an output channel.
  *
- * @property outputChannel The output channel where the messages will be written to.
+ * @property compositeChannel The output channel where the messages will be written to.
  * @property level The logging level. Messages with a level lower than this will not be logged.
  *  Defaults to [Level.Info].
  * @param name The name of the logger.
@@ -30,33 +29,33 @@ fun logger(name: String, builder: Logger.() -> Unit) =
  * @version 2.0.0
  * @since 2.0.0
  */
-class Logger private constructor(val name: String) {
-    val outputChannel = CompositeOutputChannel()
+class Logger private constructor(val name: String) : Clearable<Logger> {
+    val compositeChannel = CompositeOutputChannel()
     var level: Level = Level.Info()
 
     /** Logs a message at the DEBUG level.  */
     fun debug(message: () -> String) =
-        outputChannel.write(level.debug { "${msgMeta("DEBUG")} ${message()}" })
+        compositeChannel.write(level.debug { "${msgMeta("DEBUG")} ${message()}" })
 
     /** Logs a message at the ERROR level.  */
     fun error(message: () -> String) =
-        outputChannel.write(level.error { "${msgMeta("ERROR")} ${message()}" })
+        compositeChannel.write(level.error { "${msgMeta("ERROR")} ${message()}" })
 
     /** Logs a message at the FATAL level.  */
     fun fatal(message: () -> String) =
-        outputChannel.write(level.fatal { "${msgMeta("FATAL")} ${message()}" })
+        compositeChannel.write(level.fatal { "${msgMeta("FATAL")} ${message()}" })
 
     /** Logs a message at the INFO level.  */
     fun info(message: () -> String) =
-        outputChannel.write(level.info { "${msgMeta("INFO")} ${message()}" })
+        compositeChannel.write(level.info { "${msgMeta("INFO")} ${message()}" })
 
     /** Logs a message at the TRACE level.  */
     fun trace(message: () -> String) =
-        outputChannel.write(level.trace { "${msgMeta("TRACE")} ${message()}" })
+        compositeChannel.write(level.trace { "${msgMeta("TRACE")} ${message()}" })
 
     /** Logs a message at the WARN level.  */
     fun warn(message: () -> String) =
-        outputChannel.write(level.warn { "${msgMeta("WARN")} ${message()}" })
+        compositeChannel.write(level.warn { "${msgMeta("WARN")} ${message()}" })
 
     /**
      * Formats a log message metadata string with the given logging level.
@@ -70,17 +69,13 @@ class Logger private constructor(val name: String) {
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     } [${Thread.currentThread().name}] $level $name - "
 
-    override fun toString() = "Logger { name: '$name' }"
-
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is Logger -> false
-        Logger::class != other::class -> false
-        name != other.name -> false
-        else -> true
+    override fun clear(): Logger {
+        compositeChannel.clear()
+        _activeLoggers.remove(name)
+        return this
     }
 
-    override fun hashCode() = Objects.hash(Logger::class, name)
+    override fun toString() = "Logger(name='$name', level=$level, outputChannel=$compositeChannel)"
 
     companion object {
         /**

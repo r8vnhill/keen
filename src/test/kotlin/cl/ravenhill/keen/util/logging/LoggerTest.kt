@@ -10,6 +10,7 @@
 package cl.ravenhill.keen.util.logging
 
 import cl.ravenhill.keen.shouldBeOfClass
+import cl.ravenhill.keen.util.Clearable
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldMatch
@@ -23,6 +24,10 @@ import io.kotest.property.checkAll
 
 
 class LoggerTest : FreeSpec({
+    val regex = { level: String ->
+        "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})? \\[.*] $level .* - .*".toRegex()
+    }
+
     "A logger" - {
         "should be able to be obtained by name" {
             checkAll(Arb.uniqueStrings()) { names ->
@@ -64,7 +69,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Fatal(),
                     Logger::fatal,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] FATAL .* - .*".toRegex()
+                    regex("FATAL")
                 )
             }
 
@@ -114,7 +119,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Error(),
                     Logger::fatal,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] FATAL .* - .*".toRegex()
+                    regex("FATAL")
                 )
             }
 
@@ -122,7 +127,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Error(),
                     Logger::error,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] ERROR .* - .*".toRegex()
+                    regex("ERROR")
                 )
             }
 
@@ -164,7 +169,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Warn(),
                     Logger::fatal,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] FATAL .* - .*".toRegex()
+                    regex("FATAL")
                 )
             }
 
@@ -172,7 +177,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Warn(),
                     Logger::error,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] ERROR .* - .*".toRegex()
+                    regex("ERROR")
                 )
             }
 
@@ -180,7 +185,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Warn(),
                     Logger::warn,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] WARN .* - .*".toRegex()
+                    regex("WARN")
                 )
             }
 
@@ -214,7 +219,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Info(),
                     Logger::fatal,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] FATAL .* - .*".toRegex()
+                    regex("FATAL")
                 )
             }
 
@@ -222,7 +227,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Info(),
                     Logger::error,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] ERROR .* - .*".toRegex()
+                    regex("ERROR")
                 )
             }
 
@@ -230,7 +235,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Info(),
                     Logger::warn,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] WARN .* - .*".toRegex()
+                    regex("WARN")
                 )
             }
 
@@ -238,7 +243,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Info(),
                     Logger::info,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] INFO .* - .*".toRegex()
+                    regex("INFO")
                 )
             }
 
@@ -264,7 +269,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::fatal,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] FATAL .* - .*".toRegex()
+                    regex("FATAL")
                 )
             }
 
@@ -272,7 +277,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::error,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} \\[.*] ERROR .* - .*".toRegex()
+                    regex("ERROR")
                 )
             }
 
@@ -280,7 +285,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::warn,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3} WARN .* - .*".toRegex()
+                    regex("WARN")
                 )
             }
 
@@ -288,7 +293,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::info,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3} \\[.*] INFO .* - .*".toRegex()
+                    regex("INFO")
                 )
             }
 
@@ -296,7 +301,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Debug(),
                     Logger::debug,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3} \\[.*] DEBUG .* - .*".toRegex()
+                    regex("DEBUG")
                 )
             }
 
@@ -314,7 +319,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::fatal,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3} \\[.*] FATAL .* - .*".toRegex()
+                    regex("FATAL")
                 )
             }
 
@@ -322,7 +327,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::error,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3} \\[.*] ERROR .* - .*".toRegex()
+                    regex("ERROR")
                 )
             }
 
@@ -330,7 +335,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::warn,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3} \\[.*] WARN .* - .*".toRegex()
+                    regex("WARN")
                 )
             }
 
@@ -338,7 +343,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::info,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3} \\[.*] INFO .* - .*".toRegex()
+                    regex("INFO")
                 )
             }
 
@@ -346,7 +351,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::debug,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3} \\[.*] DEBUG .* - .*".toRegex()
+                    regex("DEBUG")
                 )
             }
 
@@ -354,7 +359,7 @@ class LoggerTest : FreeSpec({
                 `check that the logger is able to log a message at the given level`(
                     Level.Trace(),
                     Logger::trace,
-                    "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3} \\[.*] TRACE .* - .*".toRegex()
+                    regex("TRACE")
                 )
             }
         }
@@ -369,7 +374,63 @@ class LoggerTest : FreeSpec({
             }
         }
     }
+
+    "A [BufferedOutputChannel] can be added to the [Logger]" {
+        checkAll(Arb.loggers(Arb.uniqueStrings())) { loggers ->
+            loggers.applyForEach {
+                bufferedOutputChannel()
+                compositeChannel.outputChannels.first() shouldBeOfClass
+                        BufferedOutputChannel::class
+            }
+            clearAll(loggers)
+        }
+    }
+
+    "A [FileOutputChannel] can be added to the [Logger]" {
+        checkAll(Arb.loggers(Arb.uniqueStrings()), Arb.filename()) { loggers, filename ->
+            loggers.applyForEach {
+                fileChannel { this.filename = filename }
+                compositeChannel.outputChannels.first() shouldBeOfClass
+                        FileOutputChannel::class
+            }
+            clearAll(loggers)
+        }
+    }
+
+    "A [StdoutChannel] can be added to the [Logger]" {
+        checkAll(Arb.loggers(Arb.uniqueStrings())) { loggers ->
+            loggers.applyForEach {
+                stdoutChannel()
+                compositeChannel.outputChannels.first() shouldBeOfClass
+                        StdoutChannel::class
+            }
+            clearAll(loggers)
+        }
+    }
+
+    "A [Logger] can be created with the builder function" {
+        checkAll(Arb.uniqueStrings()) { names ->
+
+        }
+    }
 })
+
+fun <T: Clearable<T>> clearAll(clearables: Iterable<Clearable<T>>) =
+    clearables.forEach { it.clear() }
+
+/**
+ * Applies the given [function] to each element of the iterable.
+ *
+ * This function applies the given [function] to each element of the iterable, using the `apply`
+ * method to apply the function in the context of the element.
+ * This allows for a more concise and readable syntax when applying the same operation to each
+ * element of the iterable.
+ *
+ * @param function The function to apply to each element of the iterable.
+ */
+private fun <T> Iterable<T>.applyForEach(function: T.() -> Unit) = forEach {
+    it.apply { function() }
+}
 
 /**
  * Returns an arbitrary generator of a list of [Logger] instances based on a given [names] generator
@@ -409,7 +470,7 @@ private suspend fun `check that the logger is able to log a message at the given
         Arb.bufferedOutputChannel()
     ) { name, message, channel ->
         val logger = Logger.instance(name)
-        logger.outputChannel.add(channel)
+        logger.compositeChannel.add(channel)
         logger.level = level
         logger.method { message }
         channel.toString() shouldMatch regex

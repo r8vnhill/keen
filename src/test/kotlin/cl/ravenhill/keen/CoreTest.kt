@@ -21,7 +21,7 @@ import io.kotest.property.checkAll
 import kotlin.random.Random
 
 
-class CoreSpec : FreeSpec({
+class CoreTest : FreeSpec({
     beforeAny {
         Core.random = Random.Default
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
@@ -221,8 +221,6 @@ class CoreSpec : FreeSpec({
         "default logging level should be Warn" {
             Core.EvolutionLogger.level shouldBe Core.EvolutionLogger.DEFAULT_LEVEL
         }
-
-        
     }
 })
 

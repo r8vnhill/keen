@@ -5,6 +5,7 @@ package cl.ravenhill.keen.util.logging
 import cl.ravenhill.keen.InvalidStateException
 import cl.ravenhill.keen.util.Clearable
 import cl.ravenhill.keen.util.SelfReferential
+import com.ibm.icu.impl.TextTrieMap.Output
 import java.io.File
 
 /***************************************************************************************************
@@ -33,7 +34,7 @@ import java.io.File
  * @version 2.0.0
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-interface OutputChannel<T : OutputChannel<T>> : SelfReferential<T> {
+interface OutputChannel<T : OutputChannel<T>> : Clearable<OutputChannel<T>>, SelfReferential<T> {
 
     /**
      * Writes a message to the output channel.
@@ -54,6 +55,19 @@ interface OutputChannel<T : OutputChannel<T>> : SelfReferential<T> {
         Result.failure(InvalidStateException("${this::class.simpleName}") {
             "Cannot add channel to this channel."
         })
+
+    /**
+     * Clears the current state of the object to prepare it for reuse.
+     * This function should be called before the object is used again, as it resets any properties
+     * or resources that were used in the previous operation.
+     *
+     * This implementation of `clear` simply returns the object instance, indicating that it is now
+     * in a cleared state without actually doing anything else.
+     * Subclasses should override this function if they need to perform additional clearing logic.
+     *
+     * @return This object instance, indicating that it has been cleared and is ready for reuse.
+     */
+    override fun clear() = this
 }
 
 /**
@@ -87,6 +101,11 @@ class CompositeOutputChannel(vararg outputChannels: OutputChannel<*>) :
 }
 
 /**
+ * Adds a new [BufferedOutputChannel] to the `outputChannel` of the logger.
+ */
+fun Logger.bufferedOutputChannel() = compositeChannel.add(BufferedOutputChannel())
+
+/**
  * A buffered output channel that will store all the messages written to it.
  * This uses a [StringBuilder] to store the messages.
  *
@@ -96,8 +115,7 @@ class CompositeOutputChannel(vararg outputChannels: OutputChannel<*>) :
  * @version 2.0.0
  * @since 2.0.0
  */
-class BufferedOutputChannel : OutputChannel<BufferedOutputChannel>,
-        Clearable<BufferedOutputChannel> {
+class BufferedOutputChannel : OutputChannel<BufferedOutputChannel> {
 
     /**
      * The buffer where the messages will be stored.
@@ -125,7 +143,7 @@ class BufferedOutputChannel : OutputChannel<BufferedOutputChannel>,
  *
  * @return A new stdout output channel.
  */
-fun Logger.stdoutChannel() = outputChannel.add(StdoutChannel())
+fun Logger.stdoutChannel() = compositeChannel.add(StdoutChannel())
 
 /**
  * An output channel that will write to the standard output.
@@ -146,7 +164,7 @@ class StdoutChannel : OutputChannel<StdoutChannel> {
 }
 
 fun Logger.fileChannel(builder: FileOutputChannel.() -> Unit) =
-    outputChannel.add(FileOutputChannel().also { builder(it) })
+    compositeChannel.add(FileOutputChannel().also { builder(it) })
 
 /**
  * An output channel that will write into a file.
