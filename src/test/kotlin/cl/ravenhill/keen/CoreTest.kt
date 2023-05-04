@@ -6,7 +6,6 @@ import cl.ravenhill.keen.util.logging.Logger
 import cl.ravenhill.keen.util.logging.StdoutChannel
 import cl.ravenhill.keen.util.logging.bufferedOutputChannel
 import cl.ravenhill.keen.util.logging.logger
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -22,6 +21,7 @@ import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.pair
 import io.kotest.property.arbitrary.positiveInt
@@ -214,6 +214,22 @@ class CoreTest : FreeSpec({
                     repeat(100) {
                         r.nextDouble() shouldBe Core.Dice.random.nextDouble()
                     }
+                }
+            }
+
+            "can generate a random integer between 0 and the given maximum" {
+                checkAll(Arb.positiveInt(), Arb.long()) { max, seed ->
+                    val (r1, r2) = Random(seed) to Random(seed)
+                    Core.Dice.random = r1
+                    Core.Dice.int(max) shouldBe r2.nextInt(max)
+                }
+            }
+
+            "can generate a random probability" {
+                checkAll(Arb.long()) { seed ->
+                    val (r1, r2) = Random(seed) to Random(seed)
+                    Core.Dice.random = r1
+                    Core.Dice.probability() shouldBe r2.nextDouble()
                 }
             }
         }
