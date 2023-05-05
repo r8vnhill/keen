@@ -12,6 +12,7 @@ package cl.ravenhill.keen.util.logging
 import cl.ravenhill.keen.logPattern
 import cl.ravenhill.keen.loggers
 import cl.ravenhill.keen.shouldBeOfClass
+import cl.ravenhill.keen.uniqueStrings
 import cl.ravenhill.keen.util.Clearable
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -435,17 +436,6 @@ fun <T: Clearable<T>> clearAll(clearables: Iterable<Clearable<T>>) =
  */
 private fun <T> Iterable<T>.applyForEach(function: T.() -> Unit) = forEach {
     it.apply { function() }
-}
-
-/**
- * Returns an arbitrary generator of a list of unique strings.
- * The function generates a set of strings and then converts it to a list, ensuring that
- * there are no repeated strings in the output.
- *
- * @return An arbitrary generator of a list of unique strings.
- */
-private fun Arb.Companion.uniqueStrings() = arbitrary {
-    set(string()).bind().toList()
 }
 
 private suspend fun `check that the logger is able to log a message at the given level`(

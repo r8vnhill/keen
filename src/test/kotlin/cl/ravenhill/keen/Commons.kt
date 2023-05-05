@@ -6,6 +6,8 @@ import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.set
+import io.kotest.property.arbitrary.string
 import kotlin.reflect.KClass
 
 
@@ -62,6 +64,17 @@ infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(Matcher 
  */
 fun Arb.Companion.loggers(names: Arb<List<String>>) = arbitrary {
     names.bind().map { Logger.instance(it) }
+}
+
+/**
+ * Returns an arbitrary generator of a list of unique strings.
+ * The function generates a set of strings and then converts it to a list, ensuring that
+ * there are no repeated strings in the output.
+ *
+ * @return An arbitrary generator of a list of unique strings.
+ */
+fun Arb.Companion.uniqueStrings(range: IntRange = 0..100) = arbitrary {
+    set(string(), range).bind().toList()
 }
 
 /**
