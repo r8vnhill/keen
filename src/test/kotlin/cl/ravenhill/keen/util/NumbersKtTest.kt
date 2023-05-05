@@ -94,32 +94,6 @@ private fun Double.shouldBeFinite() = should(Matcher { value ->
         { "$value should not be finite" }
     )
 })
-
-/**
- * Asserts that this Double is equal to the specified Double value ``d``, within a certain tolerance
- * range.
- * Uses the [eq] function to compare the values with a default tolerance of 1e-10.
- */
-private infix fun Double.shouldEq(d: Double) = should(Matcher { value ->
-    MatcherResult(
-        value eq d,
-        { "Expected $d but got $value" },
-        { "Expected $d to be different from $value" }
-    )
-})
-
-/**
- * Asserts that this Double is not equal to the specified Double value ``d``, within a certain
- * tolerance range.
- * Uses the [neq] function to compare the values with a default tolerance of 1e-10.
- */
-private infix fun Double.shouldNeq(d: Double) = should(Matcher { value ->
-    MatcherResult(
-        value neq d,
-        { "Expected $d to be different from $value" },
-        { "Expected $d but got $value" }
-    )
-})
 // endregion DOUBLE
 // endregion SHOULD ASSERTIONS
 

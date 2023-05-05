@@ -191,7 +191,7 @@ fun <T> Random.subsets(
         if (exclusive) {
             // If exclusive, takes the first `size` elements from the list.
             // Each element is used only once.
-            subsets.add(remainingElements.removeFirst(size))
+            subsets.add(remainingElements.dropFirst(size))
         } else {
             // If not exclusive, creates a subset of the given size.
             val subset = List(size) {

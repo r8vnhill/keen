@@ -123,12 +123,12 @@ class CollectionRequirementException(lazyMessage: () -> String) :
 /**
  * Exception thrown when a contract is not fulfilled.
  *
- * @param violations List of contract violations.
+ * @param infringements List of contract violations.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
  * @since 2.0.0
  */
-class EnforcementException(val violations: List<Throwable>) : KeenException(
+class EnforcementException(val infringements: List<Throwable>) : KeenException(
     "Unfulfilled contract:",
-    { violations.joinToString(", ") { "{ ${it.message} }" } })
+    { infringements.joinToString(", ") { "{ ${it.message} }" } })

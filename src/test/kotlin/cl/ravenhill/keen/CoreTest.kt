@@ -174,7 +174,7 @@ class CoreTest : FreeSpec({
             checkAll(Arb.nonPositiveInt()) { depth ->
                 shouldThrow<EnforcementException> {
                     depth.also { Core.maxProgramDepth = it }
-                }.violations.forEach { it shouldBeOfClass IntRequirementException::class }
+                }.infringements.forEach { it shouldBeOfClass IntRequirementException::class }
             }
         }
     }
@@ -336,7 +336,7 @@ class CoreTest : FreeSpec({
                                 message.invoke { Any() should req }
                             }
                         }
-                    }.violations.size shouldBe pairs.filter { !it.second.validator(true) }.size
+                    }.infringements.size shouldBe pairs.filter { !it.second.validator(true) }.size
                 }
             }
         }

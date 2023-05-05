@@ -8,7 +8,7 @@ import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
  * Kotlin.
  **************************************************************************************************/
 
-// region : Arrays
+// region : -== ARRAYS ==-
 /**
  * Transforms the given array into an incremental array, where each value is the
  * sum of the previous values.
@@ -18,9 +18,9 @@ fun DoubleArray.incremental() {
         this[i] += this[i - 1]
     }
 }
-// endregion
+// endregion ARRAYS
 
-// region : Iterable
+// region : -== ITERABLE ==-
 /**
  * Returns a new list with the subtrahend subtracted from each element.
  */
@@ -35,7 +35,7 @@ val <T> Iterable<T>.duplicates: Map<T, List<Int>>
     get() = withIndex() // add the index to each element in the iterable
         .groupBy({ it.value }) { it.index } // group the elements by their value and collect their indices
         .filterValues { it.size > 1 } // filter out any values that only appear once
-// endregion
+// endregion ITERABLE
 
 // region : -== LIST ==- :
 /**
@@ -58,6 +58,8 @@ operator fun <E> List<E>.get(indices: List<Int>) = indices.map { this[it] }
  * The resulting list has the same number of elements as the sublists of this list, and each element
  * is a list that contains the i-th element of each sublist of this list.
  *
+ * ## Example
+ *
  * ```
  * val matrix = listOf(
  *     listOf(1, 2, 3),
@@ -70,14 +72,23 @@ operator fun <E> List<E>.get(indices: List<Int>) = indices.map { this[it] }
  * println(matrix) // [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
  * println(transposedMatrix) // [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
  * ```
+ *
+ * ## Note
+ *
+ * The sublists of this list must all have the same size, i.e. this list must be a valid matrix.
  */
-fun <E> List<List<E>>.transpose() = when {
-    isEmpty() -> emptyList()
-    else -> (0 until first().size).map { i -> map { it[i] } }
+fun <E> List<List<E>>.transpose(): List<List<E>> {
+    enforce {
+        "All sublists must have the same size" { requirement { all { it.size == first().size } } }
+    }
+    return when {
+        isEmpty() -> emptyList()
+        else -> (0 until first().size).map { i -> map { it[i] } }
+    }
 }
 // endregion LIST
 
-// region : MutableCollection
+// region : -== MUTABLE COLLECTION ==-
 /**
  * Adds the given element to the collection if it is not already present.
  *
@@ -86,25 +97,28 @@ fun <E> List<List<E>>.transpose() = when {
 fun <E> MutableCollection<E>.addIfAbsent(element: E) = !this.contains(element) && this.add(element)
 
 /**
- * Removes the first [size] elements from this linked list and returns them as a list.
+ * Removes the first [n] elements from this collection.
  *
- * @param size the number of elements to remove.
+ * @param n the number of elements to remove.
  * @return a list containing the removed elements.
  */
-fun <E> MutableCollection<E>.removeFirst(size: Int): List<E> =
-    take(size).also { removeAll(it.toSet()) } // Use a set to improve performance.
-// endregion
+fun <E> MutableList<E>.dropFirst(n: Int): List<E> {
+    enforce {
+        "size should be in range [0, ${n}]" { n should BeInRange(0..size) }
+    }
+    return toMutableList().apply { repeat(n) { removeAt(0) } }
+}
 
-// region : MutableList
+// region : -== LIST ==-
 /**
  * Swaps the elements at the given indices in the receiver.
  */
 fun <E> MutableList<E>.swap(i: Int, j: Int) {
     enforce {
-        "i should be in range [0, ${this@swap.size})" {
+        "i [$i] should be in range [0, ${this@swap.size})" {
             i should BeInRange(0 until this@swap.size)
         }
-        "j should be in range [0, ${this@swap.size})" {
+        "j [$j] should be in range [0, ${this@swap.size})" {
             j should BeInRange(0 until this@swap.size)
         }
     }
@@ -113,4 +127,5 @@ fun <E> MutableList<E>.swap(i: Int, j: Int) {
     this[i] = this[j]
     this[j] = tmp
 }
-// endregion
+// endregion LIST
+// endregion MUTABLE COLLECTION
