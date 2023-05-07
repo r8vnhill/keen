@@ -99,7 +99,7 @@ class PartiallyMappedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
     override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
         enforce {
             "Partially mapped crossover requires exactly two chromosomes" {
-                chromosomes.size should BeEqualTo(2)
+                chromosomes.size must BeEqualTo(2)
             }
         }
         val genes1 = chromosomes[0].genes.toMutableList()

@@ -69,6 +69,7 @@ class Logger private constructor(val name: String) : Clearable<Logger> {
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     } [${Thread.currentThread().name}] $level $name - "
 
+    /// Documentation inherited from [Clearable].
     override fun clear(): Logger {
         compositeChannel.clear()
         _activeLoggers.remove(name)

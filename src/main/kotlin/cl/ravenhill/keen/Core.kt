@@ -1,6 +1,7 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.keen.Core.DEFAULT_MAX_PROGRAM_DEPTH
+import cl.ravenhill.keen.Core.EvolutionLogger.DEFAULT_LEVEL
 import cl.ravenhill.keen.Core.EvolutionLogger.level
 import cl.ravenhill.keen.Core.EvolutionLogger.logger
 import cl.ravenhill.keen.Core.maxProgramDepth
@@ -48,7 +49,7 @@ object Core {
     const val DEFAULT_MAX_PROGRAM_DEPTH = 7
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
         set(value) {
-            enforce { "The maximum program depth must be positive" { value should BePositive } }
+            enforce { "The maximum program depth must be positive" { value must BePositive } }
             field = value
         }
     var random: Random = Random.Default
@@ -131,7 +132,7 @@ object Core {
              * @param requirement The [Requirement] instance to validate.
              * @return A [Result] instance representing the result of the validation.
              */
-            infix fun <T, R : Requirement<T>> T.should(requirement: R) =
+            infix fun <T, R : Requirement<T>> T.must(requirement: R) =
                 _results.add(requirement.validate(this, message))
 
             /**
@@ -148,13 +149,17 @@ object Core {
             )
 
             /// Documentation inherited from [Any].
-            override fun equals(other: Any?) = when (other) {
-                is StringScope -> message == other.message
+            override fun equals(other: Any?) = when {
+                other === this -> true
+                other is StringScope -> message == other.message
                 else -> false
             }
 
             /// Documentation inherited from [Any].
             override fun hashCode() = Objects.hash(StringScope::class, message)
+
+            /// Documentation inherited from [Any].
+            override fun toString() = "StringScope(message='$message')"
         }
     }
 

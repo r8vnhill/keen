@@ -104,22 +104,22 @@ fun <E> MutableCollection<E>.addIfAbsent(element: E) = !this.contains(element) &
  */
 fun <E> MutableList<E>.dropFirst(n: Int): List<E> {
     enforce {
-        "size should be in range [0, ${n}]" { n should BeInRange(0..size) }
+        "Size [$n] should be in range [0, ${n}]" { n must BeInRange(0..size) }
     }
-    return toMutableList().apply { repeat(n) { removeAt(0) } }
+    return (0 until n).map { removeFirst() }
 }
-
 // region : -== LIST ==-
+
 /**
  * Swaps the elements at the given indices in the receiver.
  */
 fun <E> MutableList<E>.swap(i: Int, j: Int) {
     enforce {
         "i [$i] should be in range [0, ${this@swap.size})" {
-            i should BeInRange(0 until this@swap.size)
+            i must BeInRange(0 until this@swap.size)
         }
         "j [$j] should be in range [0, ${this@swap.size})" {
-            j should BeInRange(0 until this@swap.size)
+            j must BeInRange(0 until this@swap.size)
         }
     }
     if (i == j) return

@@ -99,7 +99,7 @@ class PositionBasedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
     override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
         enforce {
             "PBX crossover requires two chromosomes" {
-                chromosomes.size should BeEqualTo(2)
+                chromosomes.size must BeEqualTo(2)
             }
         }
         val size = chromosomes.minOf { it.size }

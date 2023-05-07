@@ -60,7 +60,7 @@ class BoolChromosome(
         constructorExecutor(
             enforce {
                 "The trues probability [$truesProbability] must be between 0 and 1, inclusive." {
-                    truesProbability should BeInRange(0.0..1.0)
+                    truesProbability must BeInRange(0.0..1.0)
                 }
             }.let {
                 size

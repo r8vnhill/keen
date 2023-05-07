@@ -83,17 +83,6 @@ private infix fun Double.shouldNotBeIn(range: DoubleToDouble) = should(Matcher {
         { "$value should be in $range" }
     )
 })
-
-/**
- * Asserts that this [Double] value is finite.
- */
-private fun Double.shouldBeFinite() = should(Matcher { value ->
-    MatcherResult(
-        value.isFinite(),
-        { "$value should be finite" },
-        { "$value should not be finite" }
-    )
-})
 // endregion DOUBLE
 // endregion SHOULD ASSERTIONS
 
@@ -140,8 +129,7 @@ private fun Arb.Companion.nonDivisiblePair() = arbitrary { rs ->
  * This is useful for testing functions that expect input in ascending order.
  */
 private fun Arb.Companion.orderedDoubleTriple() = arbitrary {
-    val ns = Arb.list(Arb.double(), 3..3).bind().sorted()
-    Triple(ns[0], ns[1], ns[2])
+    orderedTriple(Arb.double(), Arb.double(), Arb.double()).bind()
 }
 
 /**

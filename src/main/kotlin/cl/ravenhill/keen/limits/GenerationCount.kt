@@ -22,6 +22,6 @@ import cl.ravenhill.keen.requirements.IntRequirement.BePositive
  */
 data class GenerationCount(private val i: Int) : Match({ generation >= i }) {
     init {
-        enforce { "Generation count [$i] must be at least 1" { i should BePositive } }
+        enforce { "Generation count [$i] must be at least 1" { i must BePositive } }
     }
 }

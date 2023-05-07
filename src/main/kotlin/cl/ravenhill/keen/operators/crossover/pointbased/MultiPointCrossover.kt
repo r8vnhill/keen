@@ -21,7 +21,7 @@ open class MultiPointCrossover<DNA, G : Gene<DNA, G>>(probability: Double, priva
         AbstractCrossover<DNA, G>(probability) {
 
     init {
-        enforce { "The crossover must have at least one cut" { cuts should BePositive } }
+        enforce { "The crossover must have at least one cut" { cuts must BePositive } }
     }
 
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {

@@ -59,7 +59,7 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
         val probabilities = probabilities(population, count, optimizer)
         // Check that the probabilities sum to 1.0
         enforce {
-            "Probabilities must sum 1.0" { probabilities.sum() should BeEqualTo(1.0) }
+            "Probabilities must sum 1.0" { probabilities.sum() must BeEqualTo(1.0) }
         }
         // Correct any rounding errors in the probabilities
         checkAndCorrectProbabilities(probabilities)

@@ -80,7 +80,7 @@ class EvolutionStart<DNA, G : Gene<DNA, G>>(
 ) {
 
     init {
-        enforce { "Generation [$generation] must be non-negative" { generation should BeAtLeast(0) } }
+        enforce { "Generation [$generation] must be non-negative" { generation must BeAtLeast(0) } }
     }
 
     override fun toString() = "EvolutionStart { " +

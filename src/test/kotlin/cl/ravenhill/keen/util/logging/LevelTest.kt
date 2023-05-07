@@ -14,6 +14,8 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.property.checkAll
 
 
@@ -35,18 +37,40 @@ class LevelTest : FreeSpec({
     }
 
     "A fatal level" - {
-        "should be greater than any other level" {
-            fatal shouldBeGreaterThanAll listOf(
-                error,
-                warn,
-                info,
-                debug,
-                trace
-            )
+        "comparison should" - {
+            "be greater than any other level" {
+                fatal shouldBeGreaterThanAll listOf(
+                    error,
+                    warn,
+                    info,
+                    debug,
+                    trace
+                )
+            }
+
+            "be equal to another fatal level" {
+                fatal shouldBe Level.Fatal()
+            }
+
+            "not be equal to any other level" {
+                fatal shouldNotBeAnyOf listOf(error, warn, info, debug, trace)
+            }
         }
 
-        "should be equal to another fatal level" {
-            fatal shouldBe Level.Fatal()
+        "hashing should" - {
+            "be equal to another fatal level" {
+                fatal.hashCode() shouldBe Level.Fatal().hashCode()
+            }
+
+            "not be equal to any other level" {
+                fatal.hashCode() shouldNotBeAnyOf listOf(
+                    error.hashCode(),
+                    warn.hashCode(),
+                    info.hashCode(),
+                    debug.hashCode(),
+                    trace.hashCode()
+                )
+            }
         }
 
         "should return the message when logging a fatal message" {
@@ -89,21 +113,43 @@ class LevelTest : FreeSpec({
     }
 
     "An error level" - {
-        "should be greater than any other level except fatal" {
-            error shouldBeGreaterThanAll listOf(
-                warn,
-                info,
-                debug,
-                trace
-            )
+        "comparison should" - {
+            "be greater than any other level except fatal" {
+                error shouldBeGreaterThanAll listOf(
+                    warn,
+                    info,
+                    debug,
+                    trace
+                )
+            }
+
+            "be less than fatal" {
+                error shouldBeLessThan fatal
+            }
+
+            "be equal to another error level" {
+                error shouldBe Level.Error()
+            }
+
+            "not be equal to any other level" {
+                error shouldNotBeAnyOf listOf(fatal, warn, info, debug, trace)
+            }
         }
 
-        "should be less than fatal" {
-            error shouldBeLessThan fatal
-        }
+        "hashing should" - {
+            "be equal to another error level" {
+                error.hashCode() shouldBe Level.Error().hashCode()
+            }
 
-        "should be equal to another error level" {
-            error shouldBe Level.Error()
+            "not be equal to any other level" {
+                error.hashCode() shouldNotBeAnyOf listOf(
+                    fatal.hashCode(),
+                    warn.hashCode(),
+                    info.hashCode(),
+                    debug.hashCode(),
+                    trace.hashCode()
+                )
+            }
         }
 
         "should return the message when logging" - {
@@ -148,23 +194,45 @@ class LevelTest : FreeSpec({
     }
 
     "A warn level" - {
-        "should be greater than any other level except fatal and error" {
-            warn shouldBeGreaterThanAll listOf(
-                info,
-                debug,
-                trace
-            )
+        "comparison should" - {
+            "be greater than any other level except fatal and error" {
+                warn shouldBeGreaterThanAll listOf(
+                    info,
+                    debug,
+                    trace
+                )
+            }
+
+            "be less than fatal and error" {
+                warn shouldBeLessThanAll listOf(
+                    fatal,
+                    error
+                )
+            }
+
+            "be equal to another warn level" {
+                warn shouldBe Level.Warn()
+            }
+
+            "not be equal to any other level" {
+                warn shouldNotBeAnyOf listOf(fatal, error, info, debug, trace)
+            }
         }
 
-        "should be less than fatal and error" {
-            warn shouldBeLessThanAll listOf(
-                fatal,
-                error
-            )
-        }
+        "hashing should" - {
+            "be equal to another warn level" {
+                warn.hashCode() shouldBe Level.Warn().hashCode()
+            }
 
-        "should be equal to another warn level" {
-            warn shouldBe Level.Warn()
+            "not be equal to any other level" {
+                warn.hashCode() shouldNotBeAnyOf listOf(
+                    fatal.hashCode(),
+                    error.hashCode(),
+                    info.hashCode(),
+                    debug.hashCode(),
+                    trace.hashCode()
+                )
+            }
         }
 
         "should return the message when logging" - {
@@ -209,23 +277,45 @@ class LevelTest : FreeSpec({
     }
 
     "An info level" - {
-        "should be greater than any other level except fatal, error and warn" {
-            info shouldBeGreaterThanAll listOf(
-                debug,
-                trace
-            )
+        "comparison should" - {
+            "be greater than any other level except fatal, error, and warn" {
+                info shouldBeGreaterThanAll listOf(
+                    debug,
+                    trace
+                )
+            }
+
+            "be less than fatal, error, and warn" {
+                info shouldBeLessThanAll listOf(
+                    fatal,
+                    error,
+                    warn
+                )
+            }
+
+            "be equal to another info level" {
+                info shouldBe Level.Info()
+            }
+
+            "not be equal to any other level" {
+                info shouldNotBeAnyOf listOf(fatal, error, warn, debug, trace)
+            }
         }
 
-        "should be less than fatal, error and warn" {
-            info shouldBeLessThanAll listOf(
-                fatal,
-                error,
-                warn
-            )
-        }
+        "hashing should" - {
+            "be equal to another info level" {
+                info.hashCode() shouldBe Level.Info().hashCode()
+            }
 
-        "should be equal to another info level" {
-            info shouldBe Level.Info()
+            "not be equal to any other level" {
+                info.hashCode() shouldNotBeAnyOf listOf(
+                    fatal.hashCode(),
+                    error.hashCode(),
+                    warn.hashCode(),
+                    debug.hashCode(),
+                    trace.hashCode()
+                )
+            }
         }
 
         "should return the message when logging" - {
@@ -270,21 +360,45 @@ class LevelTest : FreeSpec({
     }
 
     "A debug level" - {
-        "should be greater than any other level except fatal, error, warn and info" {
-            debug shouldBeGreaterThan trace
+        "comparison should" - {
+            "be greater than any other level except fatal, error, warn, and info" {
+                debug shouldBeGreaterThanAll listOf(
+                    trace
+                )
+            }
+
+            "be less than fatal, error, warn, and info" {
+                debug shouldBeLessThanAll listOf(
+                    fatal,
+                    error,
+                    warn,
+                    info
+                )
+            }
+
+            "be equal to another debug level" {
+                debug shouldBe Level.Debug()
+            }
+
+            "not be equal to any other level" {
+                debug shouldNotBeAnyOf listOf(fatal, error, warn, info, trace)
+            }
         }
 
-        "should be less than fatal, error, warn and info" {
-            debug shouldBeLessThanAll listOf(
-                fatal,
-                error,
-                warn,
-                info
-            )
-        }
+        "hashing should" - {
+            "be equal to another debug level" {
+                debug.hashCode() shouldBe Level.Debug().hashCode()
+            }
 
-        "should be equal to another debug level" {
-            debug shouldBe Level.Debug()
+            "not be equal to any other level" {
+                debug.hashCode() shouldNotBeAnyOf listOf(
+                    fatal.hashCode(),
+                    error.hashCode(),
+                    warn.hashCode(),
+                    info.hashCode(),
+                    trace.hashCode()
+                )
+            }
         }
 
         "should return the message when logging" - {
@@ -329,18 +443,40 @@ class LevelTest : FreeSpec({
     }
 
     "A trace level" - {
-        "should be less than any other level" {
-            trace shouldBeLessThanAll listOf(
-                fatal,
-                error,
-                warn,
-                info,
-                debug
-            )
+        "comparison should" - {
+            "be less than any other level" {
+                trace shouldBeLessThanAll listOf(
+                    fatal,
+                    error,
+                    warn,
+                    info,
+                    debug
+                )
+            }
+
+            "be equal to another trace level" {
+                trace shouldBe Level.Trace()
+            }
+
+            "not be equal to any other level" {
+                trace shouldNotBeAnyOf listOf(fatal, error, warn, info, debug)
+            }
         }
 
-        "should be equal to another trace level" {
-            trace shouldBe Level.Trace()
+        "hashing should" - {
+            "be equal to another [Trace] level" {
+                trace shouldHaveSameHashCodeAs Level.Trace()
+            }
+
+            "not be equal to any other level" {
+                trace.hashCode() shouldNotBeAnyOf listOf(
+                    fatal.hashCode(),
+                    error.hashCode(),
+                    warn.hashCode(),
+                    info.hashCode(),
+                    debug.hashCode()
+                )
+            }
         }
 
         "should return the message when logging" - {
@@ -382,6 +518,18 @@ class LevelTest : FreeSpec({
         }
     }
 })
+
+/**
+ * Asserts that a [Level] instance should not be equal to any of the levels in the given
+ * list.
+ *
+ * @param levels the list of levels to compare against.
+ */
+private infix fun <T> T.shouldNotBeAnyOf(levels: List<T>) = assertSoftly {
+    levels.forEach {
+        this shouldNotBe it
+    }
+}
 
 /**
  * Asserts that a value is greater than all other values in a list of comparable values.

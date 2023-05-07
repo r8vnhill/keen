@@ -91,7 +91,7 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRat
     override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
         enforce {
             "The Ordered Crossover operator requires exactly two chromosomes" {
-                chromosomes.size should BeEqualTo(2)
+                chromosomes.size must BeEqualTo(2)
             }
         }
         val size = chromosomes.minOf { it.size }
@@ -128,7 +128,7 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRat
         val offspring = uniqueGenes.take(start) + sublist + uniqueGenes.drop(start)
         enforce {
             "The size of the offspring's genes should be at least $size" {
-                offspring.size should BeAtLeast(size)
+                offspring.size must BeAtLeast(size)
             }
         }
         return offspring

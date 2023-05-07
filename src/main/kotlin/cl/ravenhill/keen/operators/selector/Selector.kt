@@ -52,9 +52,9 @@ abstract class AbstractSelector<DNA, G : Gene<DNA, G>> : Selector<DNA, G> {
     ): Population<DNA, G> {
         enforce {
             "Population size [${population.size}] must be at least 1" {
-                population.size should BePositive
+                population.size must BePositive
             }
-            "Selection count [$count] must be at least 0" { count should BeAtLeast(0) }
+            "Selection count [$count] must be at least 0" { count must BeAtLeast(0) }
         }
         return select(population, count, optimizer)
     }

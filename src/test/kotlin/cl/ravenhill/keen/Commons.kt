@@ -17,9 +17,10 @@ import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.set
 import io.kotest.property.arbitrary.short
 import io.kotest.property.arbitrary.string
+import kotlin.random.Random
 import kotlin.reflect.KClass
 
-
+// region : -== SHOULD ASSERTIONS ==-
 /**
  * A helper function that returns a Matcher instance that matches if the given value is an instance
  * of the given class.
@@ -36,7 +37,7 @@ import kotlin.reflect.KClass
  */
 infix fun Any.shouldBeOfClass(kClass: KClass<*>) = should(Matcher { value ->
     MatcherResult(
-        value::class == kClass,
+        kClass == value::class,
         { "$value should be an instance of $kClass" },
         { "$value should not be an instance of $kClass" }
     )
@@ -58,6 +59,18 @@ infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(Matcher 
         { "$value should not be equal to $expected ignoring line breaks" }
     )
 })
+// endregion SHOULD ASSERTIONS
+
+// region : -== ARBITRARY GENERATORS ==-
+/**
+ * Generates arbitrary instances of [Logger] using the provided [name].
+ *
+ * @param name the arbitrary generator for the name of the logger.
+ * @return an arbitrary instance of [Logger].
+ */
+fun Arb.Companion.logger(name: Arb<String>) = arbitrary {
+    Logger.instance(name.bind())
+}
 
 /**
  * Returns an arbitrary generator of a list of [Logger] instances based on a given [names] generator
@@ -108,6 +121,18 @@ fun Arb.Companion.any() = arbitrary {
 }
 
 /**
+ * Returns an arbitrary that generates random instances of [Random] class.
+ *
+ * @param seed the arbitrary of the seed value to be used for the initialization of the [Random]
+ * instance.
+ * @return an [Arb] that generates [Random] instances with the given seed.
+ */
+fun Arb.Companion.random(seed: Arb<Long> = Arb.long()) = arbitrary {
+    Random(seed.bind())
+}
+// endregion ARBITRARY GENERATORS
+
+/**
  * Returns a regular expression pattern that matches log messages with the specified level.
  * The pattern matches lines that start with a datetime string in the format
  * "yyyy-MM-ddTHH:mm:ss[.SSS...]" followed by a thread name in brackets, then the log level, then
@@ -124,3 +149,13 @@ fun Arb.Companion.any() = arbitrary {
  */
 fun logPattern(level: String) =
     "(?s)^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})? \\[.*] $level .* - .*".toRegex()
+
+/**
+ * Constructs an error message indicating an unfulfilled constraint based on the given
+ * [description].
+ * This function is typically used when enforcing constraints and reporting constraint violations.
+ *
+ * @param description the description of the unfulfilled constraint.
+ * @return an error message indicating the unfulfilled constraint.
+ */
+fun unfulfilledConstraint(description: String): String = "Unfulfilled constraint: $description"

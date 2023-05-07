@@ -65,7 +65,7 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         enforce {
             "The number of chromosomes to be crossed over must be 2." {
-                chromosomes.size should BeEqualTo(2)
+                chromosomes.size must BeEqualTo(2)
             }
         }
         val first = chromosomes[0].genes
@@ -92,7 +92,7 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
     ): Pair<List<G>, List<G>> {
         val hi = min(mates.first.size, mates.second.size)
         enforce {
-            "The index must be in the range [0, $hi)." { index should BeInRange(0 until hi) }
+            "The index must be in the range [0, $hi)." { index must BeInRange(0 until hi) }
         }
         val newFirst = mates.first.slice(0 until index) + mates.second.slice(index until hi)
         val newSecond = mates.second.slice(0 until index) + mates.first.slice(index until hi)

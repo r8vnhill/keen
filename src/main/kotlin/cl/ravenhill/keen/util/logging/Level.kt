@@ -29,7 +29,7 @@ sealed interface Level : Comparable<Level> {
     fun error(message: () -> String) = ""
 
     /** Returns an empty string.  */
-    fun fatal(message: () -> String) = ""
+    fun fatal(message: () -> String): String
 
     /// Documentation inherited from [Comparable].
     override fun compareTo(other: Level) = when {

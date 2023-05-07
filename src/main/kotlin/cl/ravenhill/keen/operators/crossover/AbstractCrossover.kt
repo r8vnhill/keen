@@ -46,7 +46,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     init {
         enforce {
             "There should be at least 2 inputs to perform a crossover operation" {
-                numIn should BeAtLeast(2)
+                numIn must BeAtLeast(2)
             }
         }
     }
@@ -81,10 +81,10 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         enforce {
             "The number of inputs [${inGenotypes.size}] must be equal to the number of inputs " +
                     "specified in the constructor [$numIn]" {
-                        inGenotypes.size should BeEqualTo(numIn)
+                        inGenotypes.size must BeEqualTo(numIn)
                     }
             "All inputs must have the same genotype length" {
-                inGenotypes.map { it.size }.distinct().size should BeEqualTo(1)
+                inGenotypes.map { it.size }.distinct().size must BeEqualTo(1)
             }
         }
         val size = inGenotypes[0].size

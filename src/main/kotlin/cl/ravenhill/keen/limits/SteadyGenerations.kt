@@ -15,7 +15,7 @@ import cl.ravenhill.keen.requirements.IntRequirement.BePositive
  */
 data class SteadyGenerations(val n: Int) : Match({ steadyGenerations >= n }) {
     init {
-        enforce { "Steady generations must be positive" { n should BePositive } }
+        enforce { "Steady generations must be positive" { n must BePositive } }
     }
 
     /// Documentation inherited from [Any]

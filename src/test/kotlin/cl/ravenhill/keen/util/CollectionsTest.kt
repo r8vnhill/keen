@@ -13,7 +13,9 @@ import cl.ravenhill.keen.EnforcementException
 import cl.ravenhill.keen.IntRequirementException
 import cl.ravenhill.keen.UnfulfilledRequirementException
 import cl.ravenhill.keen.any
+import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldBeOfClass
+import cl.ravenhill.keen.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -26,20 +28,18 @@ import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.negativeInt
-import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.arbitrary.set
 import io.kotest.property.assume
 import io.kotest.property.checkAll
-import kotlin.random.Random
 
 
 /**
@@ -192,24 +192,6 @@ private fun <T> Arb.Companion.matrix(gen: Arb<T>) = arbitrary {
     List(rows) { List(cols) { gen.bind() } }
 }
 // endregion COLLECTIONS
-/**
- * Returns an arbitrary generator for [Double] values within the given [range], excluding NaN and
- * infinite values.
- */
-private fun Arb.Companion.real(range: ClosedFloatingPointRange<Double>) = arbitrary {
-    double(range).next()
-}
-
-/**
- * Returns an arbitrary that generates random instances of [Random] class.
- *
- * @param seed the arbitrary of the seed value to be used for the initialization of the [Random]
- * instance.
- * @return an [Arb] that generates [Random] instances with the given seed.
- */
-private fun Arb.Companion.random(seed: Arb<Long> = Arb.long()) = arbitrary {
-    Random(seed.bind())
-}
 // endregion GENERATORS
 
 class CollectionsTest : FreeSpec({
@@ -315,10 +297,11 @@ class CollectionsTest : FreeSpec({
     "Removing the first n elements of a list should" - {
         "Remove the first n elements if the size of the collection is greater than n" {
             checkAll(Arb.mutableListAndIndex(Arb.any())) { (list, n) ->
-                val modified = list.dropFirst(n)
+                val copy = list.toMutableList()
+                copy.dropFirst(n)
                 assertSoftly {
-                    modified shouldHaveSize list.size - n
-                    modified.forEachIndexed { i, e ->
+                    copy shouldHaveSize list.size - n
+                    copy.forEachIndexed { i, e ->
                         e shouldBe list[i + n]
                     }
                 }
@@ -330,9 +313,13 @@ class CollectionsTest : FreeSpec({
                 assume {
                     n shouldBeGreaterThan list.size
                 }
-                shouldThrow<EnforcementException> {
+                val ex = shouldThrow<EnforcementException> {
                     list.dropFirst(n)
-                }.infringements.first() shouldBeOfClass IntRequirementException::class
+                }
+                with(ex.infringements.first()) {
+                    shouldBeInstanceOf<IntRequirementException>()
+                    message shouldBe unfulfilledConstraint("Size [$n] should be in range [0, ${n}]")
+                }
             }
         }
     }
@@ -373,9 +360,9 @@ class CollectionsTest : FreeSpec({
                 with(ex.infringements) {
                     assertSoftly {
                         size shouldBe 2
-                        first() shouldBeOfClass IntRequirementException::class
+                        first().shouldBeOfClass(IntRequirementException::class)
                         first().message shouldBe "Unfulfilled constraint: i [$i] should be in range [0, ${list.size})"
-                        last() shouldBeOfClass IntRequirementException::class
+                        last().shouldBeOfClass(IntRequirementException::class)
                         last().message shouldBe "Unfulfilled constraint: j [$j] should be in range [0, ${list.size})"
                     }
                 }

@@ -60,7 +60,7 @@ class IntChromosome(
         predicate: (Int) -> Boolean,
         constructorExecutor: ConstructorExecutor<IntGene>
     ) : this(constructorExecutor(size) {
-        enforce { "The range must be ordered" { range should BeStrictlyOrdered() } }
+        enforce { "The range must be ordered" { range must BeStrictlyOrdered() } }
         IntGene(
             generateSequence { Core.random.nextInt(range.first, range.second) }
                 .filter(predicate)

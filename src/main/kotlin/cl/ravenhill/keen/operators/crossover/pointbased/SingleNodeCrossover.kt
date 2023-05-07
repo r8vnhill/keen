@@ -71,15 +71,15 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
      * Ensures that the parents meet the preconditions for the crossover.
      */
     private fun enforcePreconditions(chromosomes: List<Chromosome<DNA, G>>) = enforce {
-        "The crossover must have exactly two parents" { chromosomes.size should BeEqualTo(2) }
+        "The crossover must have exactly two parents" { chromosomes.size must BeEqualTo(2) }
         chromosomes.forEach { chromosome ->
             "The parents must have the same size" {
-                chromosome.genes.size should BeEqualTo(chromosomes[0].genes.size)
+                chromosome.genes.size must BeEqualTo(chromosomes[0].genes.size)
             }
             chromosome.genes.forEach { gene ->
                 "The gene's arity (${gene.dna.arity}) does not match the number of " +
                         "children (${gene.dna.children.size})." {
-                            gene.dna.children.size should BeEqualTo(gene.dna.arity)
+                            gene.dna.children.size must BeEqualTo(gene.dna.arity)
                         }
             }
         }
@@ -129,11 +129,11 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
                 enforce {
                     "The new tree's height (${newTree1.height}) exceeds the maximum " +
                             "allowed height (${Core.maxProgramDepth})." {
-                                newTree1.height should BeAtMost(Core.maxProgramDepth)
+                                newTree1.height must BeAtMost(Core.maxProgramDepth)
                             }
                     "The new tree's height (${newTree2.height}) exceeds the maximum " +
                             "allowed height (${Core.maxProgramDepth})." {
-                                newTree2.height should BeAtMost(Core.maxProgramDepth)
+                                newTree2.height must BeAtMost(Core.maxProgramDepth)
                             }
                 }
                 // add the new genes to the offspring chromosomes

@@ -11,6 +11,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.string.shouldNotBeBlank
 import io.kotest.matchers.string.shouldNotBeEmpty
@@ -241,7 +242,7 @@ class CoreTest : FreeSpec({
                 "should add a success to the results when a `should` requirement is met" {
                     checkAll(Arb.stringScope(), Arb.list(Arb.requirement())) { scope, reqs ->
                         with(scope) {
-                            reqs.forEach { Any() should it }
+                            reqs.forEach { Any() must it }
                         }
                         scope.outerScope.results.size shouldBe reqs.size
                         scope.outerScope.results.filter { it.isSuccess }.size shouldBe reqs.size
@@ -254,7 +255,7 @@ class CoreTest : FreeSpec({
                         Arb.list(Arb.requirement(Arb.constant(false)))
                     ) { scope, reqs ->
                         with(scope) {
-                            reqs.forEach { Any() should it }
+                            reqs.forEach { Any() must it }
                         }
                         scope.outerScope.results.size shouldBe reqs.size
                         scope.outerScope.errors.size shouldBe reqs.size
@@ -274,6 +275,39 @@ class CoreTest : FreeSpec({
                         falses.forEach { scope.requirement { it } }
                         scope.outerScope.results.size shouldBe falses.size
                         scope.outerScope.errors.size shouldBe falses.size
+                    }
+                }
+
+                "equality should" - {
+                    "be true for the same scope" {
+                        checkAll(Arb.stringScope()) { scope ->
+                            scope shouldBe scope
+                        }
+                    }
+
+                    "be true for two scopes with the same message" {
+                        checkAll(Arb.string()) { message ->
+                            val scope1 = Core.EnforceScope().StringScope(message)
+                            val scope2 = Core.EnforceScope().StringScope(message)
+                            scope1 shouldBe scope2
+                        }
+                    }
+
+                    "be false for two scopes with different messages" {
+                        checkAll(Arb.string(), Arb.string()) { message1, message2 ->
+                            assume {
+                                message1 shouldNotBe message2
+                            }
+                            val scope1 = Core.EnforceScope().StringScope(message1)
+                            val scope2 = Core.EnforceScope().StringScope(message2)
+                            scope1 shouldNotBe scope2
+                        }
+                    }
+
+                    "be false for a scope and a non-scope" {
+                        checkAll(Arb.stringScope(), Arb.any()) { scope, any ->
+                            scope shouldNotBe any
+                        }
                     }
                 }
             }
@@ -298,7 +332,7 @@ class CoreTest : FreeSpec({
                 shouldNotThrow<EnforcementException> {
                     Core.enforce {
                         pairs.forEach { (message, req) ->
-                            message.invoke { Any() should req }
+                            message.invoke { Any() must req }
                         }
                     }
                 }
@@ -312,7 +346,7 @@ class CoreTest : FreeSpec({
                     shouldNotThrow<EnforcementException> {
                         Core.enforce {
                             messages.forEach { (message, req) ->
-                                message.invoke { Any() should req }
+                                message.invoke { Any() must req }
                             }
                         }
                     }
@@ -333,7 +367,7 @@ class CoreTest : FreeSpec({
                     shouldThrow<EnforcementException> {
                         Core.enforce {
                             pairs.forEach { (message, req) ->
-                                message.invoke { Any() should req }
+                                message.invoke { Any() must req }
                             }
                         }
                     }.infringements.size shouldBe pairs.filter { !it.second.validator(true) }.size
@@ -361,12 +395,12 @@ class CoreTest : FreeSpec({
 
             "have one output standard output channel" {
                 Core.EvolutionLogger.logger.compositeChannel.outputChannels.size shouldBe 1
-                Core.EvolutionLogger.logger.compositeChannel.first() shouldBeOfClass
-                        StdoutChannel::class
+                Core.EvolutionLogger.logger.compositeChannel.first()
+                    .shouldBeOfClass(StdoutChannel::class)
             }
 
             "have a default level of Warn" {
-                Core.EvolutionLogger.logger.level shouldBeOfClass Level.Warn::class
+                Core.EvolutionLogger.logger.level.shouldBeOfClass(Level.Warn::class)
             }
         }
 

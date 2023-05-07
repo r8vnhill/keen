@@ -10,8 +10,6 @@ import cl.ravenhill.keen.requirements.PairRequirement.BeFinite
 import cl.ravenhill.keen.requirements.PairRequirement.BeStrictlyOrdered
 import cl.ravenhill.keen.util.DoubleToDouble
 import java.util.Objects
-import kotlin.math.abs
-import kotlin.random.Random
 import kotlin.random.asJavaRandom
 
 /**
@@ -41,9 +39,9 @@ class DoubleGene(
 
     init {
         enforce {
-            "The range [$range] must be ordered" { range should BeStrictlyOrdered() }
-            "The range [$range] must be finite" { range should BeFinite }
-            "The value [$dna] must be in range [$range]" { dna should BeInRange(range) }
+            "The range [$range] must be ordered" { range must BeStrictlyOrdered() }
+            "The range [$range] must be finite" { range must BeFinite }
+            "The value [$dna] must be in range [$range]" { dna must BeInRange(range) }
         }
     }
 
@@ -59,7 +57,7 @@ class DoubleGene(
 
     /// Documentation inherited from [NumberGene]
     override fun average(genes: List<DoubleGene>): DoubleGene {
-        enforce { "The list of genes must not be empty" { genes should NotBeEmpty } }
+        enforce { "The list of genes must not be empty" { genes must NotBeEmpty } }
         return withDna((dna + genes.sumOf { it.dna }) / (genes.size + 1))
     }
 

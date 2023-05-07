@@ -15,7 +15,6 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
-import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -228,7 +227,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             enforce {
                 "Evaluated population size [${it.size}] doesn't " +
                         "match expected population size [$populationSize]" {
-                            populationSize should IntRequirement.BeEqualTo(it.size)
+                            populationSize must IntRequirement.BeEqualTo(it.size)
                         }
                 "There are unevaluated phenotypes" {
                     requirement { it.all { phenotype -> phenotype.isEvaluated() } }
@@ -361,12 +360,12 @@ class Engine<DNA, G : Gene<DNA, G>>(
         // region : Evolution parameters -----------------------------------------------------------
         var populationSize = 50
             set(value) = enforce {
-                "Population size must be greater than 0" { value should BePositive }
+                "Population size must be greater than 0" { value must BePositive }
             }.let { field = value }
 
         var limits: List<Limit> = listOf(GenerationCount(100))
             set(value) = enforce {
-                "Limits cannot be empty" { value should NotBeEmpty }
+                "Limits cannot be empty" { value must NotBeEmpty }
             }.let { field = value }
 
         var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
@@ -405,7 +404,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
         var offspringFraction = 0.6
             set(value) = enforce {
-                "Offspring fraction must be in range [0, 1]" { value should BeInRange(0.0..1.0) }
+                "Offspring fraction must be in range [0, 1]" { value must BeInRange(0.0..1.0) }
             }.let { field = value }
         // endregion    ----------------------------------------------------------------------------
 

@@ -36,7 +36,7 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
         GeneticMaterial<DNA, G>, Iterable<Chromosome<DNA, G>> {
 
     init {
-        enforce { "The chromosomes list must not be empty" { chromosomes should NotBeEmpty } }
+        enforce { "The chromosomes list must not be empty" { chromosomes must NotBeEmpty } }
     }
 
     val size: Int = chromosomes.size
@@ -66,7 +66,7 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
     operator fun get(index: Int): Chromosome<DNA, G> {
         enforce {
             "The index [$index] must be in the range [0, $size)" {
-                index should BeInRange(0 to size)
+                index must BeInRange(0 to size)
             }
         }
         return chromosomes[index]
@@ -106,7 +106,7 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
          * Creates a new [Genotype] instance with the chromosomes added to the builder.
          */
         fun make(): Genotype<DNA, G> {
-            enforce { "The chromosomes list must not be empty" { chromosomes should NotBeEmpty } }
+            enforce { "The chromosomes list must not be empty" { chromosomes must NotBeEmpty } }
             return Genotype(chromosomes.map { it.make() })
         }
 

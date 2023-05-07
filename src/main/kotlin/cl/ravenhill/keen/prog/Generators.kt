@@ -42,7 +42,7 @@ fun <T> generateProgramWith(
     min: Int,
     max: Int
 ): Program<T> {
-    enforce { "The list of generation methods must not be empty" { methods should NotBeEmpty } }
+    enforce { "The list of generation methods must not be empty" { methods must NotBeEmpty } }
     return methods.random(Core.random).invoke(terminals, functions, min, max)
 }
 
@@ -106,11 +106,11 @@ fun <T> generateProgram(
 ): Program<T> {
     enforce {
         "The list of terminals and functions must not be empty" {
-            terminals.size + functions.size should BePositive
+            terminals.size + functions.size must BePositive
         }
-        "The minimum height must be positive" { min should BePositive }
-        "The maximum height must be positive" { max should BePositive }
-        "The maximum height must be greater than the minimum height" { max should BeAtLeast(min) }
+        "The minimum height must be positive" { min must BePositive }
+        "The maximum height must be positive" { max must BePositive }
+        "The maximum height must be greater than the minimum height" { max must BeAtLeast(min) }
     }
     val height = Core.random.nextInt(min, max)
     return generateProgramRecursive(functions, terminals, 0, height, condition)

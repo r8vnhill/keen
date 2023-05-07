@@ -182,7 +182,7 @@ class CoroutineEvaluator<DNA, G : Gene<DNA, G>>(
             set(value) {
                 enforce {
                     "The chunk size [$value] must be a positive integer." {
-                        value should BePositive
+                        value must BePositive
                     }
                 }
                 field = value

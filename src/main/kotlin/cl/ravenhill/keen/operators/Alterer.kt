@@ -79,7 +79,7 @@ abstract class AbstractAlterer<DNA, G : Gene<DNA, G>>(final override val probabi
     init {
         enforce {
             "The alteration probability [$probability] must be between 0.0 and 1.0" {
-                probability should BeInRange(0.0..1.0)
+                probability must BeInRange(0.0..1.0)
             }
         }
     }
@@ -102,7 +102,7 @@ class AltererResult<DNA, G : Gene<DNA, G>>(
     init {
         enforce {
             "The number of alterations [$alterations] must be greater than or equal to 0" {
-                alterations should BeAtLeast(0)
+                alterations must BeAtLeast(0)
             }
         }
     }

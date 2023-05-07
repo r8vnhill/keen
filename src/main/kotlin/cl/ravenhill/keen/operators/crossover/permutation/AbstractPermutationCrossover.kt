@@ -36,7 +36,7 @@ abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
         enforce {
             for (chromosome in chromosomes) {
                 "A permutation crossover can't have duplicated genes: ${chromosome.genes.duplicates}" {
-                    chromosome.genes.distinct().size should BeEqualTo(chromosome.genes.size)
+                    chromosome.genes.distinct().size must BeEqualTo(chromosome.genes.size)
                 }
             }
         }
