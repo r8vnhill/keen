@@ -2,6 +2,7 @@ package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.Terminal
+import cl.ravenhill.keen.util.trees.Intermediate
 
 /**
  * This is an open class that represents a function with a name, an arity, and a body.
@@ -24,7 +25,7 @@ open class Fun<T>(
     private val name: String,
     override val arity: Int,
     private val body: (List<T>) -> T
-) : Reduceable<T> {
+) : Reduceable<T>, Intermediate<Reduceable<T>> {
 
     // Inherited documentation from Reduceable<T>
     override fun invoke(args: List<T>) = body(args)

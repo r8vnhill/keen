@@ -1,8 +1,7 @@
 package cl.ravenhill.keen.prog
 
-import cl.ravenhill.keen.requirements.IntRequirement.*
 import cl.ravenhill.keen.util.Copyable
-import cl.ravenhill.keen.util.Tree
+import cl.ravenhill.keen.util.trees.Tree
 
 /**
  * Represents a node in a program tree.

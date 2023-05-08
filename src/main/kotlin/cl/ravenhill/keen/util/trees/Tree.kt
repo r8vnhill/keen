@@ -1,8 +1,17 @@
-package cl.ravenhill.keen.util
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
+
+package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.util.SelfReferential
 import kotlin.random.Random
 
 /**
@@ -103,4 +112,11 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
      * Creates a new node with the given value and children.
      */
     fun createNode(value: V, children: List<T>): T
+
+    /**
+     * Companion object for the [Tree] interface, empty on purpose.
+     * This is used to provide static-like access to the [Tree] interface to be available to
+     * create extension functions.
+     */
+    companion object
 }

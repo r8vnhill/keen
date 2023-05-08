@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.util.trees.Leaf
 
 
 /**
@@ -14,7 +15,7 @@ import cl.ravenhill.keen.prog.Reduceable
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Terminal<T> : Reduceable<T> {
+interface Terminal<T> : Reduceable<T>, Leaf<Reduceable<T>> {
     /**
      * Creates a new instance of this terminal operation.
      *

@@ -17,7 +17,7 @@ import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtMost
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
-import cl.ravenhill.keen.util.Tree
+import cl.ravenhill.keen.util.trees.Tree
 
 /**
  * A genetic operator that performs a single node crossover on a pair of parents.

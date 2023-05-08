@@ -1,5 +1,7 @@
 package cl.ravenhill.keen.prog
 
+import cl.ravenhill.keen.util.trees.Node
+
 /**
  * A reduce-able operation.
  *
@@ -10,7 +12,7 @@ package cl.ravenhill.keen.prog
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Reduceable<T> {
+interface Reduceable<T>: Node<Reduceable<T>> {
 
     val arity: Int
 
