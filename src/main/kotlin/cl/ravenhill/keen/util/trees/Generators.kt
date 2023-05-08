@@ -32,6 +32,43 @@ import cl.ravenhill.keen.Core
  * this same function. The [generateRecursive] function returns the root node of the generated tree,
  * which is of type [T].
  *
+ * ## Example
+ *
+ * ```
+ * // Define intermediate and leaf nodes
+ * data class MyIntermediate(val arity: Int) : Intermediate<String>
+ * data class MyLeaf(val value: String) : Leaf<String>
+
+ * // Define condition function
+ * val condition: (Int, Int) -> Boolean = { height, depth ->
+ *     height == 0 || depth == 0
+ * }
+ *
+ * // Define leafFactory and intermediateFactory functions
+ * val leafFactory: (MyLeaf) -> MyTree = { leaf ->
+ *     MyTree(leaf.value, emptyList())
+ * }
+ *
+ * val intermediateFactory: (MyIntermediate, List<MyTree>) -> MyTree = { intermediate, children ->
+ *     MyTree("Intermediate", children)
+ * }
+ *
+ * // Create intermediates and leafs lists
+ * val intermediates = listOf(MyIntermediate(2), MyIntermediate(3))
+ * val leafs = listOf(MyLeaf("A"), MyLeaf("B"), MyLeaf("C"))
+ *
+ * // Generate the recursive tree
+ * val root = Tree.generateRecursive(
+ *     intermediates,
+ *     leafs,
+ *     depth = 3,
+ *     height = 2,
+ *     condition = condition,
+ *     leafFactory = leafFactory,
+ *     intermediateFactory = intermediateFactory
+ * )
+ * ```
+ *
  * @param V the type of value stored in the tree.
  * @param T the actual type of the tree.
  * @param I the type of intermediate nodes.

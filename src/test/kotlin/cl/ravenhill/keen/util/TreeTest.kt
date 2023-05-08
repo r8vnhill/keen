@@ -9,27 +9,205 @@
 
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.keen.util.trees.Intermediate
+import cl.ravenhill.keen.util.trees.Leaf
+import cl.ravenhill.keen.util.trees.Node
 import cl.ravenhill.keen.util.trees.Tree
+import cl.ravenhill.keen.util.trees.generateRecursive
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.list
 
-private class AnyTree(
-    override val value: Any,
-    override val children: List<AnyTree>,
-    override val nodes: List<AnyTree>,
-    override val arity: Int
-) : Tree<Any, AnyTree> {
-    override fun createNode(value: Any, children: List<AnyTree>) =
-        AnyTree(value, children, children.flatMap { it.nodes }, children.size)
+
+/**
+ * Represents an intermediate node in a typed tree structure.
+ * An intermediate node is a node that has a specific arity, which determines the number of child
+ * nodes it can have.
+ *
+ * @param T the type of data contained in the node.
+ * @property arity the arity of the intermediate node, which determines the number of child nodes
+ * it can have.
+ *
+ * @constructor Creates a new instance of [TypedIntermediate] with the specified [arity].
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+data class TypedIntermediate<T>(override val arity: Int) : Intermediate<T>
+
+/**
+ * Represents a leaf node in a typed tree structure.
+ * A leaf node is a node that does not have any child nodes.
+ *
+ * @param T the type of data contained in the node.
+ * @property value the value associated with the leaf node.
+ *
+ * @constructor Creates a new instance of [TypedLeaf] with the specified [value].
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+data class TypedLeaf<T>(val value: T) : Leaf<T>
+
+/**
+ * Represents a typed tree node that holds a reference to a node of type [Node] and a list of child
+ * nodes of type [TypedTree].
+ *
+ * @param V the type of data contained in the node.
+ * @property node the node object associated with this typed tree node.
+ * @property children the list of child nodes of type [TypedTree].
+ *
+ * @param node the node object associated with this typed tree node.
+ * @param children the list of child nodes of type [TypedTree]. It is an empty list by default.
+ *
+ * @property arity the arity of the typed tree node, which indicates the number of child nodes it
+ * can have.
+ * It is derived from the associated [node]'s arity.
+ * @property value the value of the typed tree node, which is the associated [node].
+ * @property nodes a list of all nodes in the typed tree, including the current node and its
+ * descendants.
+ *
+ * @constructor Creates a new instance of [TypedTree] with the specified [node] and [children].
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+data class TypedTree<V>(
+    val node: Node<V>,
+    override val children: List<TypedTree<V>> = emptyList()
+) : Tree<Node<V>, TypedTree<V>> {
+    /// Inherit documentation from Tree.
+    override val arity: Int = node.arity
+
+    /// Inherit documentation from Tree.
+    override val value = node
+
+    /// Inherit documentation from Tree.
+    override fun createNode(value: Node<V>, children: List<TypedTree<V>>) =
+        TypedTree(value, children)
+
+
+    /// Inherit documentation from Tree.
+    override val nodes: List<TypedTree<V>>
+        get() = listOf(this) + children.flatMap { it.nodes }
+
+    /// Inherit documentation from [Any].
+    override fun toString() = "TypedTree($node, $children)"
 }
 
-private fun Arb.Companion.tree(maxDepth: IntRange = 1..100) = arbitrary {
-    val depth = int(maxDepth)
+/**
+ * Creates a leaf node in the tree with the specified value.
+ */
+private fun <T> leafFactory(value: Leaf<T>) = TypedTree(value, emptyList())
 
+/**
+ * Creates an intermediate node in the tree with the specified value and children.
+ */
+private fun <T> intermediateFactory(value: Intermediate<T>, children: List<TypedTree<T>>) =
+    TypedTree(value, children)
+
+/**
+ * Creates an [Arb] instance that generates a leaf node in a tree with the specified `gen`
+ * generator.
+ */
+private fun <T> Arb.Companion.leaf(gen: Arb<T>) = arbitrary {
+    val v = gen.bind()
+    TypedLeaf(v)
+}
+
+/**
+ * Creates an [Arb] instance that generates an intermediate node in a tree with the specified
+ * [arity] generator.
+ * The [arity] generator determines the number of children the intermediate node will have.
+ *
+ * @param arity The generator to use for generating the arity (number of children) of the
+ * intermediate node.
+ * @return A new instance of [Arb] representing a generator for an intermediate node.
+ * @throws IllegalArgumentException if the generated arity is not positive.
+ */
+private fun <T> Arb.Companion.intermediate(arity: Arb<Int> = Arb.int(1..100)) =
+    arbitrary {
+        val a = arity.bind()
+        require(a > 0)
+        TypedIntermediate<T>(a)
+    }
+
+private fun <T> Arb.Companion.tree(gen: Arb<T>, maxDepth: IntRange = 1..20) = arbitrary {
+    val depth = int(maxDepth)
+    Tree.generateRecursive(
+        intermediates = list(intermediate<T>()).bind(),
+        leafs = list(leaf(gen)).bind(),
+        depth = depth.bind(),
+        height = 0,
+        condition = { _, _ -> true },
+        leafFactory = { value -> leafFactory(value) },
+        intermediateFactory = { value, children -> intermediateFactory(value, children) })
 }
 
 class TreeTest : FreeSpec({
+    /* val basic:
+            intermediateNode
+                |
+          +-----+-----+
+          |           |
+        leafNode  intermediateNode
+                      |
+                +-----+-----+
+                |           |
+             leafNode   leafNode
 
+     */
+    val leafNode = TypedLeaf(1)
+    val leafTree = TypedTree(leafNode)
+    val intermediateNode = TypedIntermediate<Int>(2)
+    val intermediateTree = TypedTree(intermediateNode, listOf(leafTree, leafTree))
+    val basic = TypedTree(intermediateNode, listOf(leafTree, intermediateTree))
+
+    "A leaf should" - {
+        "have a `value` equal to the leaf object" {
+            leafTree.value shouldBe leafNode
+        }
+
+        "have an empty list of `children`" {
+            leafTree.children shouldBe emptyList()
+        }
+
+        "have a list with itself as the only element in `nodes`" {
+            leafTree.nodes shouldBe listOf(leafTree)
+        }
+    }
+
+    "An intermediate node should" - {
+        "have a `value` equal to the intermediate object" {
+            intermediateTree.value shouldBe intermediateNode
+        }
+
+        "have a list of `children` equal to itself and its child nodes" {
+            intermediateTree.children shouldBe listOf(intermediateTree, leafTree, leafTree)
+        }
+
+        "have a list of `nodes` equal to the list of child nodes" {
+            intermediateTree.nodes shouldBe listOf(leafTree, leafTree)
+        }
+    }
+
+    "A tree should" - {
+        "have a `value` equal to the root node" {
+            basic.value shouldBe intermediateNode
+        }
+
+        "have a list of `children` equal to the list of child nodes" {
+            basic.children shouldBe listOf(leafTree, intermediateTree)
+        }
+
+        "have a list of `nodes` equal to the list of all nodes in the tree" {
+            basic.nodes shouldBe listOf(basic, intermediateTree, leafTree, leafTree)
+        }
+    }
 })

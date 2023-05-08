@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.prog.terminals
 
+import cl.ravenhill.keen.prog.Reduceable
 import java.util.Objects
 
 

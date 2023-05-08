@@ -14,8 +14,6 @@ import cl.ravenhill.keen.util.trees.Node
  */
 interface Reduceable<T>: Node<Reduceable<T>> {
 
-    val arity: Int
-
     /**
      * Reduces the operation to a single value.
      *
