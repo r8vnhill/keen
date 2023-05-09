@@ -99,8 +99,8 @@ class SingleNodeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
             // randomly decide whether to perform a crossover at this point
             if (Dice.probability() < geneRate) {
                 // randomly select two nodes from the two parent genes
-                val node1 = gene1.dna.random(Core.random)
-                val node2 = gene2.dna.random(Core.random)
+                val node1 = gene1.dna.random()
+                val node2 = gene2.dna.random()
                 // search for the subtrees rooted at each of the selected nodes
                 val slices = gene1.dna.searchSubtree(node1) to gene2.dna.searchSubtree(node2)
                 // replace the selected subtrees in each parent with the subtrees from the other parent

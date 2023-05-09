@@ -8,11 +8,11 @@
 
 package cl.ravenhill.keen.util.trees
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.SelfReferential
-import kotlin.random.Random
 
 /**
  * Generic tree data structure where each node is stored as a depth-first list.
@@ -50,7 +50,7 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
     /**
      * Returns a random node from the tree using the given [random] number generator.
      */
-    fun random(random: Random = Random.Default) = nodes.random(random)
+    fun random() = nodes.random(Core.random)
 
     /**
      * Returns an [IntRange] that corresponds to the indices of the subtree rooted at the specified

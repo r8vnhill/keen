@@ -7,21 +7,15 @@
  */
 
 
-package cl.ravenhill.keen.util
+package cl.ravenhill.keen.util.trees
 
-import cl.ravenhill.keen.util.trees.Intermediate
-import cl.ravenhill.keen.util.trees.Leaf
-import cl.ravenhill.keen.util.trees.Node
-import cl.ravenhill.keen.util.trees.Tree
-import cl.ravenhill.keen.util.trees.generateRecursive
-import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 
 
+// region : -== TREE NODES ==-
 /**
  * Represents an intermediate node in a typed tree structure.
  * An intermediate node is a node that has a specific arity, which determines the number of child
@@ -53,6 +47,7 @@ data class TypedIntermediate<T>(override val arity: Int) : Intermediate<T>
  * @since 2.0.0
  */
 data class TypedLeaf<T>(val value: T) : Leaf<T>
+// endregion TREE NODES
 
 /**
  * Represents a typed tree node that holds a reference to a node of type [Node] and a list of child
@@ -101,6 +96,7 @@ data class TypedTree<V>(
     override fun toString() = "TypedTree($node, $children)"
 }
 
+// region : -== FACTORY FUNCTIONS ==-
 /**
  * Creates a leaf node in the tree with the specified value.
  */
@@ -111,7 +107,9 @@ private fun <T> leafFactory(value: Leaf<T>) = TypedTree(value, emptyList())
  */
 private fun <T> intermediateFactory(value: Intermediate<T>, children: List<TypedTree<T>>) =
     TypedTree(value, children)
+// endregion FACTORY FUNCTIONS
 
+// region : -== GENERATORS ==-
 /**
  * Creates an [Arb] instance that generates a leaf node in a tree with the specified `gen`
  * generator.
@@ -149,65 +147,4 @@ private fun <T> Arb.Companion.tree(gen: Arb<T>, maxDepth: IntRange = 1..20) = ar
         leafFactory = { value -> leafFactory(value) },
         intermediateFactory = { value, children -> intermediateFactory(value, children) })
 }
-
-class TreeTest : FreeSpec({
-    /* val basic:
-            intermediateNode
-                |
-          +-----+-----+
-          |           |
-        leafNode  intermediateNode
-                      |
-                +-----+-----+
-                |           |
-             leafNode   leafNode
-
-     */
-    val leafNode = TypedLeaf(1)
-    val leafTree = TypedTree(leafNode)
-    val intermediateNode = TypedIntermediate<Int>(2)
-    val intermediateTree = TypedTree(intermediateNode, listOf(leafTree, leafTree))
-    val basic = TypedTree(intermediateNode, listOf(leafTree, intermediateTree))
-
-    "A leaf should" - {
-        "have a `value` equal to the leaf object" {
-            leafTree.value shouldBe leafNode
-        }
-
-        "have an empty list of `children`" {
-            leafTree.children shouldBe emptyList()
-        }
-
-        "have a list with itself as the only element in `nodes`" {
-            leafTree.nodes shouldBe listOf(leafTree)
-        }
-    }
-
-    "An intermediate node should" - {
-        "have a `value` equal to the intermediate object" {
-            intermediateTree.value shouldBe intermediateNode
-        }
-
-        "have a list of `children` equal to itself and its child nodes" {
-            intermediateTree.children shouldBe listOf(intermediateTree, leafTree, leafTree)
-        }
-
-        "have a list of `nodes` equal to the list of child nodes" {
-            intermediateTree.nodes shouldBe listOf(leafTree, leafTree)
-        }
-    }
-
-    "A tree should" - {
-        "have a `value` equal to the root node" {
-            basic.value shouldBe intermediateNode
-        }
-
-        "have a list of `children` equal to the list of child nodes" {
-            basic.children shouldBe listOf(leafTree, intermediateTree)
-        }
-
-        "have a list of `nodes` equal to the list of all nodes in the tree" {
-            basic.nodes shouldBe listOf(basic, intermediateTree, leafTree, leafTree)
-        }
-    }
-})
+// endregion GENERATORS
