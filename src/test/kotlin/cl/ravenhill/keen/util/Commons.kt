@@ -65,6 +65,23 @@ fun Arb.Companion.real(range: ClosedFloatingPointRange<Double>) = arbitrary {
 }
 
 /**
+ * Returns an [Arb] that generates ordered pairs of values from two other [Arb]s.
+ *
+ * The generated pair is ordered, so the first element is guaranteed to be less than or equal to the
+ * second element.
+ * If the two elements are equal, the pair will always contain the same value twice.
+ *
+ * @param a the first [Arb] to generate values from
+ * @param b the second [Arb] to generate values from
+ * @return an [Arb] that generates ordered pairs of values from the two given [Arb]s
+ */
+fun <T : Comparable<T>> Arb.Companion.orderedPair(a: Arb<T>, b: Arb<T>) = arbitrary {
+    val i = a.bind()
+    val j = b.bind()
+    if (i < j) i to j else j to i
+}
+
+/**
  * Returns an [Arb] that generates a triple of values of type [T], such that the values are ordered
  * in ascending order.
  * The values are generated from the given [Arb]s for each position in the triple.

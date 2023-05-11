@@ -41,11 +41,7 @@ sealed interface IntRequirement : Requirement<Int> {
      *
      * @property min The minimum allowed value.
      */
-    class BeAtLeast(
-        min: Int, lazyDescription: (Int) -> String = { value ->
-            "Expected a number at least $min, but got $value"
-        }
-    ) : BeInRange(min to Int.MAX_VALUE)
+    class BeAtLeast(min: Int) : BeInRange(min to Int.MAX_VALUE)
 
     /**
      * Represents a requirement that an integer value must be at most a specified value.

@@ -9,6 +9,7 @@
 
 package cl.ravenhill.keen.util.trees
 
+import cl.ravenhill.keen.util.orderedPair
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
@@ -137,14 +138,14 @@ private fun <T> Arb.Companion.intermediate(arity: Arb<Int> = Arb.int(1..100)) =
     }
 
 private fun <T> Arb.Companion.tree(gen: Arb<T>, maxDepth: IntRange = 1..20) = arbitrary {
-    val depth = int(maxDepth)
-    Tree.generateRecursive(
-        intermediates = list(intermediate<T>()).bind(),
+    val (lo, hi) = orderedPair(int(maxDepth), int(maxDepth)).bind()
+    Tree.generate(
         leafs = list(leaf(gen)).bind(),
-        depth = depth.bind(),
-        height = 0,
+        intermediates = list(intermediate<T>()).bind(),
+        min = lo,
+        max = hi,
         condition = { _, _ -> true },
-        leafFactory = { value -> leafFactory(value) },
-        intermediateFactory = { value, children -> intermediateFactory(value, children) })
+        leafFactory = { value -> leafFactory(value) }
+    ) { value, children -> intermediateFactory(value, children) }
 }
 // endregion GENERATORS

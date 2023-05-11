@@ -110,7 +110,7 @@ object Core {
          *
          * @return A [StringScope] instance that can be used to define a [Requirement] for the clause.
          */
-        operator fun String.invoke(value: StringScope.() -> Boolean) =
+        inline operator fun String.invoke(value: StringScope.() -> Boolean) =
             StringScope(this).apply { value() }
 
         /**
