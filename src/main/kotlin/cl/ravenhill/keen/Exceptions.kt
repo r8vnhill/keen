@@ -23,7 +23,10 @@ import java.util.Objects
  * @version 1.0.0
  */
 open class KeenException(prefix: String, lazyMessage: () -> String) :
-        Exception("$prefix ${lazyMessage()}")
+        Exception("$prefix ${lazyMessage()}") {
+    /// Documentation inherited from [Any].
+    override fun toString() = "${this::class.simpleName} { message: $message }"
+}
 
 /**
  * Exception thrown when a state is not valid.

@@ -239,7 +239,7 @@ class CoreTest : FreeSpec({
     "Enforcement" - {
         "Scope" - {
             "StringScope" - {
-                "should add a success to the results when a `should` requirement is met" {
+                "should add a success to the results when a `must` requirement is met" {
                     checkAll(Arb.stringScope(), Arb.list(Arb.requirement())) { scope, reqs ->
                         with(scope) {
                             reqs.forEach { Any() must it }
@@ -249,13 +249,39 @@ class CoreTest : FreeSpec({
                     }
                 }
 
-                "should add a failure to the results when a `should` requirement is not met" {
+                "should add a failure to the results when a `must` requirement is not met" {
                     checkAll(
                         Arb.stringScope(),
                         Arb.list(Arb.requirement(Arb.constant(false)))
                     ) { scope, reqs ->
                         with(scope) {
                             reqs.forEach { Any() must it }
+                        }
+                        scope.outerScope.results.size shouldBe reqs.size
+                        scope.outerScope.errors.size shouldBe reqs.size
+                    }
+                }
+
+                "should add a success to the results when a `mustNot` requirement is met" {
+                    checkAll(
+                        Arb.stringScope(),
+                        Arb.list(Arb.requirement(Arb.constant(false)))
+                    ) { scope, reqs ->
+                        with(scope) {
+                            reqs.forEach { Any() mustNot it }
+                        }
+                        scope.outerScope.results.size shouldBe reqs.size
+                        scope.outerScope.results.filter { it.isSuccess }.size shouldBe reqs.size
+                    }
+                }
+
+                "should add a failure to the results when a `mustNot` requirement is not met" {
+                    checkAll(
+                        Arb.stringScope(),
+                        Arb.list(Arb.requirement(Arb.constant(true)))
+                    ) { scope, reqs ->
+                        with(scope) {
+                            reqs.forEach { Any() mustNot it }
                         }
                         scope.outerScope.results.size shouldBe reqs.size
                         scope.outerScope.errors.size shouldBe reqs.size

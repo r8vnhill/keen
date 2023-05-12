@@ -47,22 +47,6 @@ import io.kotest.property.checkAll
  */
 private fun DoubleArray.sumFirst(n: Int) = this.take(n).sum()
 
-/**
- * Asserts that at least one element in the Iterable matches the given predicate.
- *
- * @param predicate The predicate to match the element against.
- *
- * @return A matcher result indicating whether the Iterable has any elements that match the predicate.
- *
- * @throws AssertionError If the Iterable has no elements that match the predicate.
- */
-private infix fun <T> Iterable<T>.shouldAny(predicate: (T) -> Boolean) = should(Matcher { value ->
-    MatcherResult(
-        value.any(predicate),
-        { "Iterable should have at least one element that matches the predicate" },
-        { "Iterable should not have any elements that match the predicate" })
-})
-
 // region : -== GENERATORS ==-
 // region : -== COLLECTIONS ==-
 // region : -== MUTABLE COLLECTIONS ==-

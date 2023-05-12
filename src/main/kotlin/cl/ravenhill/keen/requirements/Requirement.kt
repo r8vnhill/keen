@@ -8,8 +8,6 @@ import cl.ravenhill.keen.UnfulfilledRequirementException
  *
  * @param T The type of the value this constraint can be applied to.
  *
- * @property lazyDescription A function that generates a description of the constraint violation,
- *  given a value that failed the validation.
  * @property validator A function that checks if a value satisfies the constraint.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
@@ -20,12 +18,32 @@ interface Requirement<T> {
     val validator: (T) -> Boolean
 
     /**
-     * Checks if the given value fulfills the constraint.
+     * Validates that the given value satisfies a condition based on a validator function.
+     * If the value does not satisfy the condition, a failure result with a generated exception
+     * containing the specified message is returned.
+     * Otherwise, a success result with the original value is returned.
      *
-     * @return A [Result] object that contains the original value if it satisfies the constraint,
-     * or an exception with the description of the constraint violation otherwise.
+     * @param value the value to validate.
+     * @param message the message to include in the generated exception if the validation fails.
+     * @return a [Result] object that represents the validation result.
      */
     fun validate(value: T, message: String): Result<T> = if (!validator(value)) {
+        Result.failure(generateException(message))
+    } else {
+        Result.success(value)
+    }
+
+    /**
+     * Validates that the given value does not satisfy a condition based on a validator function.
+     * If the value satisfies the condition, a failure result with a generated exception containing
+     * the specified message is returned.
+     * Otherwise, a success result with the original value is returned.
+     *
+     * @param value the value to validate.
+     * @param message the message to include in the generated exception if the validation fails.
+     * @return a [Result] object that represents the validation result.
+     */
+    fun validateNot(value: T, message: String): Result<T> = if (validator(value)) {
         Result.failure(generateException(message))
     } else {
         Result.success(value)

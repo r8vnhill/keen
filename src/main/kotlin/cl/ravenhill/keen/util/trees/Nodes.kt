@@ -29,6 +29,7 @@ package cl.ravenhill.keen.util.trees
  * @param T the type of data contained in the node.
  *
  * @property arity the arity of the node, which determines the number of child nodes it can have.
+ * The restriction on the positive value of the arity should be dealt with by the implementers.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
@@ -50,9 +51,7 @@ interface Node<T> {
  * @since 2.0.0
  */
 interface Intermediate<T> : Node<T> {
-    /**
-     * The arity of the intermediate node, which determines the number of child nodes it can have.
-     */
+    /// Documentation inherited from [Node]
     override val arity: Int
 }
 

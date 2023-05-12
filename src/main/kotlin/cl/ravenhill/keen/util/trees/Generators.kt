@@ -13,7 +13,9 @@ package cl.ravenhill.keen.util.trees
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.EnforcementException
+import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 
 
@@ -68,12 +70,15 @@ fun <V, L, I, T> Tree.Companion.generate(
     intermediateFactory: (I, List<T>) -> T,
 ): T where L : Leaf<V>, I : Intermediate<V>, T : Tree<V, T> {
     enforce {
-        "There should be at least one intermediate or leaf node" {
+        "There should be at least one intermediate or leaf node." {
             leafs.size + intermediates.size must BePositive
         }
-        "The minimum height must be positive" { min must BePositive }
-        "The maximum height must be positive" { max must BePositive }
-        "The maximum height must be greater than the minimum height" { max must BeAtLeast(min) }
+        "The minimum height must be positive." { min must BePositive }
+        "The maximum height must be positive." { max must BePositive }
+        "The maximum height [$max] must be greater than the minimum height [$min]." {
+            min mustNot BeEqualTo(Int.MAX_VALUE)
+            max must BeAtLeast(min + 1)
+        }
     }
     val height = Core.random.nextInt(min, max)
     return generateRecursive(

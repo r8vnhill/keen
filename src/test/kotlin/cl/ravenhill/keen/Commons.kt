@@ -59,6 +59,41 @@ infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(Matcher 
         { "$value should not be equal to $expected ignoring line breaks" }
     )
 })
+
+/**
+ * Enforces that an [UnfulfilledRequirementException] is present in the
+ * [EnforcementException.infringements] list.
+ *
+ * @param message the message to match against the [UnfulfilledRequirementException].
+ * @throws AssertionError if the [EnforcementException.infringements] list does not contain an
+ * [UnfulfilledRequirementException] of type [T] with the specified [message].
+ */
+inline fun <reified T> EnforcementException.shouldHaveInfringement(message: String)
+        where T : UnfulfilledRequirementException = should(
+    if (infringements.none { it is T }) {
+        Matcher { value ->
+            MatcherResult(
+                false,
+                { "$value should have an infringement of type ${T::class.simpleName} with message: $message" },
+                { "$value should not have an infringement of type ${T::class.simpleName} with message: $message" }
+            )
+        }
+    } else {
+        Matcher { value ->
+            val filtered = infringements.filterIsInstance<T>()
+            MatcherResult(
+                filtered.any { it.message == message },
+                {
+                    "$value should have an infringement of type ${T::class.simpleName} with message: $message. " +
+                            "Actual: $filtered"
+                },
+                {
+                    "$value should not have an infringement of type ${T::class.simpleName} with message: $message. " +
+                            "Actual: $filtered"
+                }
+            )
+        }
+    })
 // endregion SHOULD ASSERTIONS
 
 // region : -== ARBITRARY GENERATORS ==-

@@ -101,12 +101,12 @@ data class TypedTree<V>(
 /**
  * Creates a leaf node in the tree with the specified value.
  */
-private fun <T> leafFactory(value: Leaf<T>) = TypedTree(value, emptyList())
+fun <T> leafFactory(value: Leaf<T>) = TypedTree(value, emptyList())
 
 /**
  * Creates an intermediate node in the tree with the specified value and children.
  */
-private fun <T> intermediateFactory(value: Intermediate<T>, children: List<TypedTree<T>>) =
+fun <T> intermediateFactory(value: Intermediate<T>, children: List<TypedTree<T>>) =
     TypedTree(value, children)
 // endregion FACTORY FUNCTIONS
 
@@ -115,7 +115,7 @@ private fun <T> intermediateFactory(value: Intermediate<T>, children: List<Typed
  * Creates an [Arb] instance that generates a leaf node in a tree with the specified `gen`
  * generator.
  */
-private fun <T> Arb.Companion.leaf(gen: Arb<T>) = arbitrary {
+fun <T> Arb.Companion.leaf(gen: Arb<T>) = arbitrary {
     val v = gen.bind()
     TypedLeaf(v)
 }
@@ -130,7 +130,7 @@ private fun <T> Arb.Companion.leaf(gen: Arb<T>) = arbitrary {
  * @return A new instance of [Arb] representing a generator for an intermediate node.
  * @throws IllegalArgumentException if the generated arity is not positive.
  */
-private fun <T> Arb.Companion.intermediate(arity: Arb<Int> = Arb.int(1..100)) =
+fun <T> Arb.Companion.intermediate(arity: Arb<Int> = Arb.int(1..100)) =
     arbitrary {
         val a = arity.bind()
         require(a > 0)

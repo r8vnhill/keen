@@ -127,13 +127,29 @@ object Core {
                 get() = this@EnforceScope
 
             /**
-             * Defines a [Requirement] for a contract clause.
+             * Infix function that validates that the current value satisfies the specified
+             * requirement.
              *
-             * @param requirement The [Requirement] instance to validate.
-             * @return A [Result] instance representing the result of the validation.
+             * @param requirement the requirement to validate against.
+             * @receiver the current value to be validated.
+             *
+             * @see Requirement.validate
              */
+
             infix fun <T, R : Requirement<T>> T.must(requirement: R) =
                 _results.add(requirement.validate(this, message))
+
+            /**
+             * Infix function that validates that the current value does not satisfy the specified
+             * requirement.
+             *
+             * @param requirement the requirement to validate against.
+             * @receiver the current value to be validated.
+             *
+             * @see Requirement.validateNot
+             */
+            infix fun <T, R : Requirement<T>> T.mustNot(requirement: R) =
+                _results.add(requirement.validateNot(this, message))
 
             /**
              * Defines a [Requirement] based on a predicate.
