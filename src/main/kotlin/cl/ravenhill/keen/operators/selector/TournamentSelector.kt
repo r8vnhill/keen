@@ -66,7 +66,7 @@ class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
     }
 
     /// Documentation inherited from [Any]
-    override fun toString() = "TournamentSelector(sampleSize=$sampleSize)"
+    override fun toString() = "TournamentSelector { sampleSize: $sampleSize }"
 
     /// Documentation inherited from [Any]
     override fun hashCode() = Objects.hash(TournamentSelector::class, sampleSize)

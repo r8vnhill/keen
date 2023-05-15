@@ -13,7 +13,6 @@ import cl.ravenhill.keen.Core.EvolutionLogger.info
 import cl.ravenhill.keen.Core.EvolutionLogger.trace
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
@@ -26,10 +25,11 @@ import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.operators.CompositeAlterer
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
-import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
+import cl.ravenhill.keen.util.Pretty
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.statistics.Statistic
@@ -38,9 +38,6 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletableFuture.supplyAsync
-import java.util.concurrent.Executor
-import java.util.concurrent.ForkJoinPool.commonPool
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -66,10 +63,9 @@ class Engine<DNA, G : Gene<DNA, G>>(
     val survivorSelector: Selector<DNA, G>,
     val optimizer: PhenotypeOptimizer<DNA, G>,
     val statistics: List<Statistic<DNA, G>>,
-    val executor: Executor,
     val evaluator: EvaluationExecutor<DNA, G>,
     val interceptor: EvolutionInterceptor<DNA, G>
-) : Evolver<DNA, G> {
+) : Evolver<DNA, G>, Pretty {
 
     // region : PROPERTIES  ------------------------------------------------------------------------
     var population: Population<DNA, G> by Delegates.observable(listOf()) { _, _, _ ->
@@ -276,18 +272,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
     }
 
     /**
-     * Selects individuals from the population asynchronously.
-     *
-     * @param select the function that selects the individuals.
-     * @return the selected individuals.
-     *
-     * @see supplyAsync
-     */
-    private fun asyncSelect(select: () -> Population<DNA, G>) = supplyAsync({
-        select()
-    }, executor)
-
-    /**
      * Alters a population of individuals.
      *
      * @param population the population to alter.
@@ -317,7 +301,10 @@ class Engine<DNA, G : Gene<DNA, G>>(
                 "selector: $selector, " +
                 "alterer: $alterer, " +
                 "optimizer: $optimizer, " +
-                "survivorSelector: $survivorSelector " +
+                "survivorSelector: $survivorSelector, " +
+                "evaluator: $evaluator, " +
+                "interceptor: $interceptor, " +
+                "limits: $limits " +
                 "}"
 
     /**
@@ -333,8 +320,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @property limits The limits that will be used to stop the evolution.
      * Default value is ``listOf(GenerationCount(100))``.
      * @property optimizer The optimization strategy used to compare the fitness of the population.
-     * @property executor The executor used to run the evolution.
-     * Default value is ``ForkJoinPool.commonPool()``.
      * @property evaluator The evaluator used to evaluate the fitness of the population.
      * Default value is ``ConcurrentEvaluator(fitnessFunction, executor)``.
      * @property interceptor The interceptor used to intercept the evolution process.
@@ -351,7 +336,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @property alterers The alterers that will be used to alter the population.
      * Default value is an empty list.
      * @property statistics The statistics collectors used to collect data during the evolution.
-     * @property constructorExecutor The [ConstructorExecutor] used to create individuals.
      */
     class Builder<DNA, G : Gene<DNA, G>>(
         private val fitnessFunction: (Genotype<DNA, G>) -> Double,
@@ -365,7 +349,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
         var limits: List<Limit> = listOf(GenerationCount(100))
             set(value) = enforce {
-                "Limits cannot be empty" { value must NotBeEmpty }
+                "Limits cannot be empty" { value mustNot BeEmpty }
             }.let { field = value }
 
         var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
@@ -373,12 +357,10 @@ class Engine<DNA, G : Gene<DNA, G>>(
         val interceptor = EvolutionInterceptor.identity<DNA, G>()
         // endregion    ----------------------------------------------------------------------------
 
-        // region : Execution -----------------------------------------------------------------------
-        var executor: Executor = commonPool()
-
+        // region : -== EXECUTION ==-
         var evaluator =
             EvaluationExecutor.Factory<DNA, G>().apply { creator = { SequentialEvaluator(it) } }
-        // endregion    ----------------------------------------------------------------------------
+        // endregion EXECUTION
 
         // region : Alterers -----------------------------------------------------------------------
         var alterers: List<Alterer<DNA, G>> = emptyList()
@@ -421,7 +403,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
             survivorSelector = survivorSelector,
             optimizer = optimizer,
             statistics = statistics,
-            executor = executor,
             evaluator = evaluator.creator(fitnessFunction),
             interceptor = interceptor
         )

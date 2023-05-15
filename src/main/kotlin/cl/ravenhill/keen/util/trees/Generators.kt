@@ -13,6 +13,8 @@ package cl.ravenhill.keen.util.trees
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.EnforcementException
+import cl.ravenhill.keen.requirements.CollectionRequirement
+import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
@@ -70,9 +72,7 @@ fun <V, L, I, T> Tree.Companion.generate(
     intermediateFactory: (I, List<T>) -> T,
 ): T where L : Leaf<V>, I : Intermediate<V>, T : Tree<V, T> {
     enforce {
-        "There should be at least one intermediate or leaf node." {
-            leafs.size + intermediates.size must BePositive
-        }
+        "There should be at least one intermediate node." { intermediates mustNot BeEmpty }
         "The minimum height must be positive." { min must BePositive }
         "The maximum height must be positive." { max must BePositive }
         "The maximum height [$max] must be greater than the minimum height [$min]." {

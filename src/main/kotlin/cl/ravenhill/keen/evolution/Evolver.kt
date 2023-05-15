@@ -9,6 +9,7 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.genetic.genes.Gene
+import java.io.Serializable
 
 
 /**

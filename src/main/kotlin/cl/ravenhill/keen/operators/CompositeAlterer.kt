@@ -47,4 +47,6 @@ class CompositeAlterer<DNA, G : Gene<DNA, G>>(private val alterers: List<Alterer
         }
         return result
     }
+
+    override fun toString() = "CompositeAlterer { alterers: $alterers }"
 }

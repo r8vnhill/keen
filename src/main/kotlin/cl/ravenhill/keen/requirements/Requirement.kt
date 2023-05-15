@@ -18,14 +18,15 @@ interface Requirement<T> {
     val validator: (T) -> Boolean
 
     /**
-     * Validates that the given value satisfies a condition based on a validator function.
-     * If the value does not satisfy the condition, a failure result with a generated exception
-     * containing the specified message is returned.
-     * Otherwise, a success result with the original value is returned.
+     * Validates the given value using the provided validator function and returns a [Result]
+     * indicating the outcome.
+     * If the validator function returns `false`, a failure [Result] is returned with the generated
+     * exception message.
+     * Otherwise, a success [Result] is returned with the original value.
      *
      * @param value the value to validate.
-     * @param message the message to include in the generated exception if the validation fails.
-     * @return a [Result] object that represents the validation result.
+     * @param message the error message to use in case of validation failure.
+     * @return a [Result] indicating the validation outcome.
      */
     fun validate(value: T, message: String): Result<T> = if (!validator(value)) {
         Result.failure(generateException(message))
@@ -34,14 +35,15 @@ interface Requirement<T> {
     }
 
     /**
-     * Validates that the given value does not satisfy a condition based on a validator function.
-     * If the value satisfies the condition, a failure result with a generated exception containing
-     * the specified message is returned.
-     * Otherwise, a success result with the original value is returned.
+     * Validates the given value using the provided validator function and returns a [Result]
+     * indicating the outcome.
+     * If the validator function returns `true`, a failure [Result] is returned with the generated
+     * exception message.
+     * Otherwise, a success [Result] is returned with the original value.
      *
      * @param value the value to validate.
-     * @param message the message to include in the generated exception if the validation fails.
-     * @return a [Result] object that represents the validation result.
+     * @param message the error message to use in case of validation failure.
+     * @return a [Result] indicating the validation outcome.
      */
     fun validateNot(value: T, message: String): Result<T> = if (validator(value)) {
         Result.failure(generateException(message))

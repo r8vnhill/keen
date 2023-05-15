@@ -6,7 +6,7 @@ import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
-import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.util.trees.Tree
 import cl.ravenhill.keen.util.trees.generate
 
@@ -42,7 +42,7 @@ fun <T> generateProgramWith(
     min: Int,
     max: Int
 ): Program<T> {
-    enforce { "The list of generation methods must not be empty" { methods must NotBeEmpty } }
+    enforce { "The list of generation methods must not be empty" { methods mustNot BeEmpty } }
     return methods.random(Core.random).invoke(terminals, functions, min, max)
 }
 

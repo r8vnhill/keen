@@ -17,7 +17,7 @@ sealed interface CollectionRequirement : Requirement<Collection<*>> {
     /**
      * Constraint that checks if a collection is not empty.
      */
-    data object NotBeEmpty : CollectionRequirement {
-        override val validator = { value: Collection<*> -> value.isNotEmpty() }
+    data object BeEmpty : CollectionRequirement {
+        override val validator = { value: Collection<*> -> value.isEmpty() }
     }
 }

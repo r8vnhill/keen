@@ -17,7 +17,8 @@ import cl.ravenhill.keen.unfulfilledConstraint
 import cl.ravenhill.keen.util.orderedPair
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.ints.shouldBeLessThanOrEqual
+import io.kotest.matchers.ints.shouldBePositive
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.element
@@ -44,6 +45,35 @@ private fun Arb.Companion.condition() = arbitrary {
 
 class GeneratorsTest : FreeSpec({
     "Generating a [Tree] using the recursive method should" - {
+        "create a tree with a maximum height between the minimum and maximum heights." {
+            checkAll(
+                Arb.list(Arb.leaf(Arb.any())),
+                Arb.list(Arb.intermediate<Any>()),
+                Arb.orderedPair(Arb.positiveInt(), Arb.positiveInt()),
+                Arb.condition()
+            ) { leaves, intermediates, (minHeight, maxHeight), condition ->
+                assume {
+                    (leaves.size + intermediates.size).shouldBePositive()
+                }
+                val tree = Tree.generate(
+                    leaves,
+                    intermediates,
+                    minHeight,
+                    maxHeight,
+                    condition.next(),
+                    { leafFactory(it) },
+                    { intermediate, children ->
+                        intermediateFactory(intermediate, children)
+                    })
+                with(tree.height) {
+                    shouldBePositive()
+                    shouldBeLessThanOrEqual(maxHeight)
+                }
+
+
+            }
+        }
+
         "throw an exception when" - {
             "there are no intermediate or leaf nodes." {
                 checkAll(

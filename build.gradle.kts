@@ -8,14 +8,13 @@ plugins {
     kotlin("jvm") version "1.8.20"
     // Enables publishing artifacts to Maven repositories
     `maven-publish`
-    // Enables building a Java library
-    `java-library`
     // Enables signing published artifacts
     signing
     // Enables generating documentation
     id("org.jetbrains.dokka") version "1.7.20"
     // Enables checking Kotlin code style
     id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
+    kotlin("plugin.serialization") version "1.8.21"
 }
 
 // These two lines set the group and version of the project, which are used in the Maven coordinates
@@ -39,6 +38,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     // Library for working with reflection in Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     // Tablesaw core library for working with tabular data in Java and Kotlin
     api("tech.tablesaw:tablesaw-core:0.43.1")
     // Tablesaw library for creating JS plots in Kotlin/JVM
@@ -85,31 +85,29 @@ tasks.test {
 }
 
 publishing {
-    publications {
-        // Create a new Maven publication named "mavenJava"
-        create<MavenPublication>("mavenJava") {
-            // Define the POM (Project Object Model) for the Maven publication
-            pom {
-                // Set the name of the project
-                name.set("Keen")
-                // Set the description of the project
-                description.set("A genetic algorithm framework for Kotlin")
-                // Set the URL of the project
-                url.set("https://github.com/r8vnhill/keen")
-                // Define the license(s) for the project
-                licenses {
-                    license {
-                        name.set("Attribution 4.0 International (CC BY 4.0)")
-                        url.set("https://creativecommons.org/licenses/by/4.0/legalcode")
-                    }
+    repositories {
+        maven {
+            val isSnapshot = projectVersion.endsWith("SNAPSHOT")
+
+            // If the version ends with "SNAPSHOT", publish to the snapshot repository. Otherwise,
+            // publish to the release repository.
+            val destintation = if (isSnapshot) {
+                "https://oss.sonatype.org/content/repositories/snapshots/"
+            } else {
+                "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+
+            url = uri(destintation)
+
+            credentials {
+                if (System.getProperty("os.name").startsWith("Windows")) {
+                    username = System.getenv("SonatypeUsername")
+                    password = System.getenv("SonatypePassword")
+                } else {
+                    username = System.getenv("SONATYPE_USERNAME")
+                    password = System.getenv("SONATYPE_PASSWORD")
                 }
             }
-            // Set the Maven coordinates for the publication
-            groupId = "cl.ravenhill"
-            artifactId = "keen"
-            version = projectVersion
-            // Include the compiled Java components in the publication
-            from(components["java"])
         }
     }
 }

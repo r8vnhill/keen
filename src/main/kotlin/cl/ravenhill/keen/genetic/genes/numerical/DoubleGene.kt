@@ -4,7 +4,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.requirements.PairRequirement.BeFinite
 import cl.ravenhill.keen.requirements.PairRequirement.BeStrictlyOrdered
@@ -57,7 +57,7 @@ class DoubleGene(
 
     /// Documentation inherited from [NumberGene]
     override fun average(genes: List<DoubleGene>): DoubleGene {
-        enforce { "The list of genes must not be empty" { genes must NotBeEmpty } }
+        enforce { "The list of genes must not be empty" { genes mustNot BeEmpty } }
         return withDna((dna + genes.sumOf { it.dna }) / (genes.size + 1))
     }
 

@@ -7,7 +7,7 @@
  */
 
 
-package cl.ravenhill.keen.problems.ga.stacktrace
+package cl.ravenhill.keen.problems.gp.stacktrace
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
@@ -55,8 +55,7 @@ class InputFactory {
      *
      * @return A randomly generated input object.
      */
-    fun random(): Sequence<Any?> = generateSequence {
-        val returnType = types.random(Core.random)
-        typeConstructors[returnType]?.invoke()
+    fun random(type: KType): Sequence<Any?> = generateSequence {
+        typeConstructors[type]?.invoke()
     }
 }

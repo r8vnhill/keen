@@ -10,7 +10,7 @@ package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.SelfReferential
 
@@ -86,7 +86,7 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
      * Creates a new tree from the given `nodes` in depth-first order.
      */
     fun fromDepthFirst(nodes: List<T>): T {
-        enforce { "Cannot create a tree from an empty list of nodes." { nodes must NotBeEmpty } }
+        enforce { "Cannot create a tree from an empty list of nodes." { nodes mustNot BeEmpty } }
         // Create an empty stack to hold the nodes.
         val stack = mutableListOf<T>()
         // Traverse the list of nodes in reverse order.

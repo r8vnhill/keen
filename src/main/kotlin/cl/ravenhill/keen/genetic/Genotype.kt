@@ -3,7 +3,7 @@ package cl.ravenhill.keen.genetic
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
 import java.util.Objects
 
@@ -36,7 +36,7 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
         GeneticMaterial<DNA, G>, Iterable<Chromosome<DNA, G>> {
 
     init {
-        enforce { "The chromosomes list must not be empty" { chromosomes must NotBeEmpty } }
+        enforce { "The chromosomes list must not be empty" { chromosomes mustNot BeEmpty } }
     }
 
     val size: Int = chromosomes.size
@@ -106,7 +106,7 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
          * Creates a new [Genotype] instance with the chromosomes added to the builder.
          */
         fun make(): Genotype<DNA, G> {
-            enforce { "The chromosomes list must not be empty" { chromosomes must NotBeEmpty } }
+            enforce { "The chromosomes list must not be empty" { chromosomes mustNot BeEmpty } }
             return Genotype(chromosomes.map { it.make() })
         }
 

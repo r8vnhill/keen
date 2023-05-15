@@ -2,7 +2,7 @@ package cl.ravenhill.keen.util
 
 import cl.ravenhill.keen.Core.enforce
 import cl.ravenhill.keen.EnforcementException
-import cl.ravenhill.keen.requirements.CollectionRequirement.NotBeEmpty
+import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.requirements.IntRequirement
 import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
@@ -214,7 +214,7 @@ private fun <T> Random.createNonExclusiveSubset(
 private fun <T> validateSubsetsInput(elements: List<T>, size: Int, exclusive: Boolean, limit: Int) =
     enforce {
         if (elements.isEmpty()) {
-            "The input list must not be empty." { elements must NotBeEmpty }
+            "The input list must not be empty." { elements mustNot BeEmpty }
         } else {
             "The subset size [$size] must be at least 1 and at most the number of elements in the input list [${elements.size}]." {
                 size must IntRequirement.BeInRange(1..elements.size)
