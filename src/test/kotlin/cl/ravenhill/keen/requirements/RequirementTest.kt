@@ -15,6 +15,7 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.result.shouldBeFailure
 import io.kotest.matchers.result.shouldBeSuccess
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
@@ -75,6 +76,15 @@ class RequirementTest : FreeSpec({
                     shouldBeFailure()
                     exceptionOrNull() shouldBe requirement.generateException(description)
                 }
+            }
+        }
+    }
+
+    "Generating an exception should return an exception with the specified description" {
+        checkAll(Arb.string()) { description ->
+            with(requirement { true }.generateException(description)) {
+                message shouldBe "Unfulfilled constraint: $description"
+                shouldBeInstanceOf<UnfulfilledRequirementException>()
             }
         }
     }
