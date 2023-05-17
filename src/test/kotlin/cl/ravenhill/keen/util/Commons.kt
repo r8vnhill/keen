@@ -76,7 +76,9 @@ infix fun <T> Iterable<T>.shouldAny(predicate: (T) -> Boolean) = should(Matcher 
  * Returns an arbitrary generator for [Double] values within the given [range], excluding NaN and
  * infinite values.
  */
-fun Arb.Companion.real(range: ClosedFloatingPointRange<Double>) = arbitrary {
+fun Arb.Companion.real(
+    range: ClosedFloatingPointRange<Double> = Double.MIN_VALUE..Double.MAX_VALUE
+) = arbitrary {
     double(range).next()
 }
 
@@ -107,7 +109,7 @@ fun <T : Comparable<T>> Arb.Companion.orderedPair(a: Arb<T>, b: Arb<T>) = arbitr
  * @param c an [Arb] for generating the third value of type [T]
  * @return an [Arb] that generates an ordered triple of values of type [T]
  */
-fun <T: Comparable<T>> Arb.Companion.orderedTriple(a: Arb<T>, b: Arb<T>, c: Arb<T>) = arbitrary {
+fun <T : Comparable<T>> Arb.Companion.orderedTriple(a: Arb<T>, b: Arb<T>, c: Arb<T>) = arbitrary {
     val ns = Arb.list(Arb.choice(a, b, c), 3..3).bind().sorted()
     Triple(ns[0], ns[1], ns[2])
 }

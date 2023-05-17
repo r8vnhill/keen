@@ -16,6 +16,8 @@ import io.kotest.matchers.doubles.shouldNotBeNaN
 import io.kotest.matchers.ints.shouldBeLessThan
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNot
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.RandomSource
 import io.kotest.property.arbitrary.arbitrary
@@ -31,19 +33,27 @@ import kotlin.math.sqrt
 // region : -== SHOULD ASSERTIONS ==-
 // region : -== INT ==-
 /**
+ * Creates a matcher that checks if an integer value is within a specified range.
+ *
+ * @param range The range of integers to check against.
+ * @return A matcher that validates if the given value is within the specified range.
+ */
+private fun beInRange(range: IntToInt) = Matcher { value: Int ->
+    MatcherResult(
+        value in range,
+        { "$value should be in $range" },
+        { "$value should not be in $range" }
+    )
+}
+
+/**
  * Asserts that the integer is within the specified range (inclusive).
  *
  * @param range the range to check against
  *
  * @throws AssertionError if the integer is not within the range
  */
-private infix fun Int.shouldBeIn(range: IntToInt) = should(Matcher { value ->
-    MatcherResult(
-        value in range,
-        { "$value should be in $range" },
-        { "$value should not be in $range" }
-    )
-})
+private infix fun Int.shouldBeInRange(range: IntToInt) = should(beInRange(range))
 
 /**
  * Asserts that the integer is not within the specified range (inclusive).
@@ -52,20 +62,14 @@ private infix fun Int.shouldBeIn(range: IntToInt) = should(Matcher { value ->
  *
  * @throws AssertionError if the integer is within the range
  */
-private infix fun Int.shouldNotBeIn(range: IntToInt) = should(Matcher { value ->
-    MatcherResult(
-        value !in range,
-        { "$value should not be in $range" },
-        { "$value should be in $range" }
-    )
-})
+private infix fun Int.shouldNotBeIn(range: IntToInt) = shouldNot(beInRange(range))
 // endregion INT
 
 // region : -== DOUBLE ==-
 /**
  * Asserts that the [Double] is within the specified ``range`` (inclusive).
  */
-private infix fun Double.shouldBeIn(range: DoubleToDouble) = should(Matcher { value ->
+private infix fun Double.shouldBeInRange(range: DoubleToDouble) = should(Matcher { value ->
     MatcherResult(
         value in range,
         { "$value should be in $range" },
@@ -192,24 +196,58 @@ private fun Int.divisors(rs: RandomSource) = sequence {
 private fun Int.nonDivisors(rs: RandomSource) =
     generateSequence { rs.random.nextInt(this) }
         .filter { it >= 2 && this % it != 0 }
+
+/**
+ * Iterates over each element in the provided vararg `elements` and performs the provided
+ * `action` on each.
+ *
+ * ## Examples
+ * ### Example 1: Iterating over an array of numbers
+ * ```
+ * val numbers = arrayOf(1, 2, 3, 4, 5)
+ * iterateOverElements(*numbers) { println(it) }
+ * ```
+ * ### Example 2: Iterating over a list of strings
+ * ```
+ * val strings = arrayOf("apple", "banana", "cherry")
+ * iterateOverElements(*strings) { println(it) }
+ * ```
+ *
+ * @param T The type of elements in the `elements` vararg.
+ * @param elements Vararg of elements to be iterated over.
+ * @param action A higher-order function to be applied on each element.
+ */
+inline fun <T> iterateOverElements(vararg elements: T, action: (T) -> Unit) =
+    elements.forEach(action)
 // endregion AUXILIARY FUNCTIONS
 
-class NumbersKtTest : FreeSpec({
+class NumbersTest : FreeSpec({
     "An integer pair range" - {
         "contains an integer within the range" {
             checkAll(Arb.orderedIntTriple()) { (lo, mid, hi) ->
-                mid shouldBeIn (lo to hi)
+                mid shouldBeInRange (lo to hi)
             }
         }
 
         "does not contain an integer outside the range" {
             checkAll(Arb.orderedIntTriple()) { (lo, mid, hi) ->
                 assume {
-                    lo shouldBeLessThan mid
-                    mid shouldBeLessThan hi
+                    iterateOverElements(lo to mid, mid to hi) {
+                        it.first shouldBeLessThan it.second
+                    }
                 }
                 lo shouldNotBeIn (mid to hi)
                 hi shouldNotBeIn (lo to mid)
+            }
+        }
+
+        "can be converted to an [IntRange]" {
+            checkAll(Arb.orderedPair(Arb.int(), Arb.int())) { range ->
+                with(range.toRange()) {
+                    shouldBeInstanceOf<IntRange>()
+                    start shouldBe range.first
+                    endInclusive shouldBe range.second
+                }
             }
         }
     }
@@ -218,12 +256,10 @@ class NumbersKtTest : FreeSpec({
         "contains a [Double] within the range" {
             checkAll(Arb.orderedDoubleTriple()) { (lo, mid, hi) ->
                 assume {
-                    lo.shouldNotBeNaN()
-                    mid.shouldNotBeNaN()
-                    hi.shouldNotBeNaN()
+                    iterateOverElements(lo, mid, hi) { it.shouldNotBeNaN() }
                     lo.shouldBeFinite()
                 }
-                mid shouldBeIn (lo to hi)
+                mid shouldBeInRange (lo to hi)
             }
         }
 
@@ -235,6 +271,16 @@ class NumbersKtTest : FreeSpec({
                 }
                 lo shouldNotBeIn (mid to hi)
                 hi shouldNotBeIn (lo to mid)
+            }
+        }
+
+        "can be converted to a [ClosedFloatingPointRange]" {
+            checkAll(Arb.orderedPair(Arb.double(), Arb.double())) { range ->
+                with(range.toRange()) {
+                    shouldBeInstanceOf<ClosedFloatingPointRange<Double>>()
+                    start shouldBe range.first
+                    endInclusive shouldBe range.second
+                }
             }
         }
     }

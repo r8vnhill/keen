@@ -44,6 +44,22 @@ operator fun IntToInt.contains(i: Int) = i <= second && i >= first
 operator fun DoubleToDouble.contains(d: Double) = d <= second && d >= first
 
 /**
+ * Converts an [IntToInt] function to a range.
+ *
+ * @return A range of integers from the lower bound (inclusive) to the upper bound (inclusive)
+ * defined by the [IntToInt] function.
+ */
+fun IntToInt.toRange() = first..second
+
+/**
+ * Converts a [DoubleToDouble] function to a range.
+ *
+ * @return A range of doubles from the lower bound (inclusive) to the upper bound (inclusive)
+ * defined by the [DoubleToDouble] function.
+ */
+fun DoubleToDouble.toRange() = first..second
+
+/**
  * Rounds up this integer to the next multiple of the given integer.
  */
 infix fun Int.roundUpToMultipleOf(i: Int): Int {
