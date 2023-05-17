@@ -23,12 +23,15 @@ import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 
-
+/**
+ * Creates an arbitrary for testing the requirement that a collection should be empty.
+ */
 private fun Arb.Companion.beEmpty() = arbitrary { CollectionRequirement.BeEmpty }
 
-private fun Arb.Companion.requirement() = arbitrary {
-    choice(beEmpty()).bind()
-}
+/**
+ * Creates an arbitrary for generating a requirement.
+ */
+private fun Arb.Companion.requirement() = arbitrary { choice(beEmpty()).bind() }
 
 class CollectionRequirementTest : FreeSpec({
     "Generating an exception should return a CollectionRequirementException" {
