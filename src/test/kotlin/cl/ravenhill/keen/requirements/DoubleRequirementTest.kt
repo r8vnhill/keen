@@ -13,20 +13,15 @@ import cl.ravenhill.keen.DoubleRequirementException
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.unfulfilledConstraint
-import cl.ravenhill.keen.util.DoubleToDouble
 import cl.ravenhill.keen.util.contains
 import cl.ravenhill.keen.util.orderedPair
 import cl.ravenhill.keen.util.real
 import cl.ravenhill.keen.util.toRange
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.Matcher
-import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.result.shouldBeFailure
 import io.kotest.matchers.result.shouldBeSuccess
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNot
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
@@ -56,64 +51,39 @@ import io.kotest.property.checkAll
  * ```
  */
 private typealias DoubleRange = ClosedFloatingPointRange<Double>
-// region : -== SHOULD ASSERTIONS ==-
+
+// region : -== ARBITRARY GENERATORS ==-
 /**
- * Creates a matcher that checks if a double value is within a specified range.
+ * Generates an arbitrary non-negative `Double` value up to the provided upper limit, excluding NaN
+ * and infinity.
  *
- * @param range the range to check against, represented as a pair of doubles (start to end).
- * @return a matcher for checking if a value is within the specified range.
+ * By default, if no upper limit is provided, it generates values up to `Double.MAX_VALUE`.
+ *
+ * @receiver The `Arb.Companion` object.
+ * @param hi The maximum value that the generated `Double` can take.
+ * Defaults to `Double.MAX_VALUE`.
+ * @return An [Arb] instance that generates non-negative `Double` values up to the specified limit.
  */
-private fun beInRange(range: DoubleToDouble) = Matcher { value: Double ->
-    MatcherResult(
-        value in range,
-        { "Value $value should be in range $range" },
-        { "Value $value should not be in range $range" }
-    )
+private fun Arb.Companion.nonNegativeReal(hi: Double = Double.MAX_VALUE) = arbitrary {
+    double(0.0, hi).next()
 }
 
 /**
- * This function is an infix function that checks if the receiver `Double` is within the given `range`.
+ * Generates an arbitrary negative `Double` value down to the provided lower limit, excluding NaN
+ * and infinity.
  *
- * ## Examples
- * ### Example 1: Checking if a number is in range
- * ```
- * val range = 1.0 to 5.0
- * 3.0 shouldBeInRange range // Passes as 3.0 is within 1.0 to 5.0
- * ```
- * ### Example 2: Checking if a number is out of range
- * ```
- * val range = 1.0 to 5.0
- * 6.0 shouldBeInRange range // Fails as 6.0 is outside 1.0 to 5.0
- * ```
+ * By default, if no lower limit is provided, it generates values down to `-Double.MAX_VALUE`.
  *
- * @receiver The `Double` value to be checked.
- * @param range The [DoubleToDouble] range to check against.
+ * @receiver The `Arb.Companion` object.
+ * @param lo The minimum value (negative) that the generated `Double` can take.
+ * Defaults to `Double.MAX_VALUE`.
+ * @return An [Arb] instance that generates negative `Double` values down to the specified limit.
  */
-private infix fun Double.shouldBeInRange(range: DoubleToDouble) = this should beInRange(range)
+private fun Arb.Companion.negativeReal(lo: Double = -Double.MAX_VALUE) = arbitrary {
+    negativeDouble(lo).next()
+}
 
-/**
- * This function is an infix function that checks if the receiver `Double` is not within the given `range`.
- *
- * ## Examples
- * ### Example 1: Checking if a number is in range
- * ```
- * val range = 1.0 to 5.0
- * 3.0 shouldNotBeInRange range // Fails as 3.0 is within 1.0 to 5.0
- * ```
- * ### Example 2: Checking if a number is out of range
- * ```
- * val range = 1.0 to 5.0
- * 6.0 shouldNotBeInRange range // Passes as 6.0 is outside 1.0 to 5.0
- * ```
- *
- * @receiver The `Double` value to be checked.
- * @param range The [DoubleToDouble] range to check against.
- */
-private infix fun Double.shouldNotBeInRange(range: DoubleToDouble) =
-    this shouldNot beInRange(range)
-// endregion SHOULD ASSERTIONS
-
-// region : -== ARBITRARY GENERATORS ==-
+// region : -== REQUIREMENTS ==-
 /**
  * Creates an arbitrary for generating a requirement to check if a value is within a specified
  * range.
@@ -126,14 +96,56 @@ private fun Arb.Companion.beInRange(
 }
 
 /**
+ * Generates an arbitrary [BeEqualTo] instance using provided arbitrary [Double] values for
+ * `value` and `tolerance`.
+ *
+ * @receiver The `Arb.Companion` object.
+ * @param value The [Arb] instance for generating `value` in `BeEqualTo`.
+ * Defaults to `Arb.real()`.
+ * @param tolerance The [Arb] instance for generating `tolerance` in `BeEqualTo`.
+ * Defaults to `Arb.nonNegativeReal()`.
+ * @return An [Arb] instance that generates `BeEqualTo` instances with arbitrary `value` and
+ * `tolerance`.
+ *
+ * @see Arb.Companion.real
+ * @see Arb.Companion.nonNegativeReal
+ */
+private fun Arb.Companion.beEqualTo(
+    value: Arb<Double> = Arb.real(),
+    tolerance: Arb<Double> = Arb.nonNegativeReal()
+) = arbitrary {
+    BeEqualTo(value.bind(), tolerance.bind())
+}
+
+/**
  * Creates an arbitrary for generating a requirement for double values.
  */
 private fun Arb.Companion.doubleRequirement() = arbitrary {
-    choice(beInRange()).bind()
+    choice(beInRange(), beEqualTo()).bind()
 }
 
 /**
  * Restricts an arbitrary value generator to a specified range defined by a requirement.
+ *
+ * ## Examples
+ * ### Example 1: Generating a value within a specified range
+ * ```
+ * val rangeRequirement = Arb.constant(BeInRange(1.0..5.0))
+ * val arbDouble = Arb.restrictedToRange(rangeRequirement) { range ->
+ *      Arb.double(range.start, range.endInclusive)
+ * }
+ * val valueInRange = arbDouble.next()
+ * println(valueInRange) // Prints: a value that is within the range 1.0 to 5.0, inclusive
+ * ```
+ * ### Example 2: Using custom value generator within a specified range
+ * ```
+ * val rangeRequirement = Arb.constant(BeInRange(10.0..50.0))
+ * val arbDouble = Arb.restrictedToRange(rangeRequirement) { range ->
+ *      Arb.double(range.start * 2, range.endInclusive * 2)
+ * }
+ * val valueInRange = arbDouble.next()
+ * println(valueInRange) // Prints: a value that is within the range 20.0 to 100.0, inclusive
+ * ```
  *
  * @param requirement The [Arb] instance representing the requirement of being within a certain
  * range.
@@ -145,9 +157,10 @@ private fun Arb.Companion.restrictedToRange(
     requirement: Arb<BeInRange>,
     value: (ClosedFloatingPointRange<Double>) -> Arb<Double>
 ) = arbitrary {
-    val req = requirement.next()
+    val req = requirement.bind()
     req to value(req.range.toRange()).bind()
 }
+
 
 /**
  * Generates arbitrary values outside a specified range defined by a requirement.
@@ -171,34 +184,75 @@ private fun Arb.Companion.restrictedToOutsideRange(
 }
 
 /**
- * Generates an arbitrary non-negative `Double` value up to the provided upper limit.
+ * Generates an arbitrary pair where the first element is a `BeEqualTo` requirement and the second
+ * element is a `Double` value that satisfies this requirement.
  *
- * By default, if no upper limit is provided, it generates values up to `Double.MAX_VALUE`.
+ * The `Double` value is generated using a provided generator function, `value`, which is invoked
+ * with the `expected` value and `tolerance` of the `BeEqualTo` requirement.
+ *
+ * ## Examples
+ * ### Example 1: Generating a pair with `BeEqualTo` requirement and a satisfying `Double` value
+ * ```
+ * val arbPair = Arb.beEqualToValue(Arb.beEqualTo()) { expected: Double, tolerance: Double ->
+ *     Arb.real(expected - tolerance..expected + tolerance)
+ * }
+ * val pair = arbPair.next()
+ * println(pair) // Prints: Pair(BeEqualTo instance, value in range [expected - tolerance, expected + tolerance])
+ * ```
  *
  * @receiver The `Arb.Companion` object.
- * @param hi The maximum value that the generated `Double` can take.
- * Defaults to `Double.MAX_VALUE`.
- * @return An [Arb] instance that generates non-negative `Double` values up to the specified limit.
+ * @param requirement The [Arb] instance generating the `BeEqualTo` requirements.
+ * @param value A function that takes an `expected` `Double` value and `tolerance` `Double`,
+ * and returns an [Arb] instance for generating `Double` values within the range defined by the `expected` and `tolerance`.
+ * @return An [Arb] instance that generates pairs where the first element is a `BeEqualTo` requirement and the second
+ * element is a `Double` value satisfying this requirement.
  */
-private fun Arb.Companion.nonNegativeReal(hi: Double = Double.MAX_VALUE) = arbitrary {
-    double(0.0, hi).next()
+private fun Arb.Companion.beEqualToValue(
+    requirement: Arb<BeEqualTo>,
+    value: (expected: Double, tolerance: Double) -> Arb<Double>,
+) = arbitrary {
+    val req = requirement.bind()
+    val expected = value(req.expected, req.tolerance).bind()
+    req to expected
 }
 
 /**
- * Generates an arbitrary negative `Double` value down to the provided lower limit.
+ * Generates an arbitrary pair where the first element is a `BeEqualTo` requirement and the second
+ * element is a `Double` value that lies outside of this requirement's tolerance range.
  *
- * By default, if no lower limit is provided, it generates values down to `-Double.MAX_VALUE`.
+ * The `Double` value is generated using a provided generator function, `value`, which is invoked
+ * with a range that excludes the tolerance range of the `BeEqualTo` requirement.
+ *
+ * ## Examples
+ * ### Example 1:
+ * Generating a pair with `BeEqualTo` requirement and a `Double` value outside the tolerance range
+ * ```
+ * val arbPair = Arb.notBeEqualToValue(Arb.beEqualTo(Arb.real(-1e100, 1e100)) {
+ *     Arb.real(it)
+ * }
+ * val pair = arbPair.next()
+ * println(pair) // Prints: Pair(BeEqualTo instance, value not in range [expected - tolerance, expected + tolerance])
+ * ```
  *
  * @receiver The `Arb.Companion` object.
- * @param lo The minimum value (negative) that the generated `Double` can take.
- * Defaults to `Double.MAX_VALUE`.
- * @return An [Arb] instance that generates negative `Double` values down to the specified limit.
+ * @param requirement The [Arb] instance generating the `BeEqualTo` requirements.
+ * @param value A function that takes a [ClosedFloatingPointRange] and returns an [Arb] instance for generating `Double` values within that range.
+ * @return An [Arb] instance that generates pairs where the first element is a `BeEqualTo` requirement and the second
+ * element is a `Double` value that lies outside of this requirement's tolerance range.
  */
-private fun Arb.Companion.negativeReal(lo: Double = -Double.MAX_VALUE) = arbitrary {
-    negativeDouble(lo).next()
+private fun Arb.Companion.notBeEqualToValue(
+    requirement: Arb<BeEqualTo>,
+    value: (ClosedFloatingPointRange<Double>) -> Arb<Double>
+) = arbitrary {
+    val req = requirement.bind()
+    val unexpected = Arb.choice(
+        value(-Double.MAX_VALUE..req.expected - req.tolerance),
+        value(req.expected + req.tolerance..Double.MAX_VALUE)
+    ).bind()
+    req to unexpected
 }
-
-// endregion ARBITRARY GENERATORS ==-
+// endregion REQUIREMENTS
+// endregion ARBITRARY GENERATORS
 
 class DoubleRequirementTest : FreeSpec({
     "Generating an exception should return a [DoubleRequirementException]" {
@@ -299,6 +353,34 @@ class DoubleRequirementTest : FreeSpec({
             checkAll(Arb.real(), Arb.nonNegativeReal()) { expected, tolerance ->
                 val requirement = BeEqualTo(expected, tolerance)
                 requirement.toString() shouldBe "BeEqualTo { expected: $expected, tolerance: $tolerance }"
+            }
+        }
+
+        "when validating that a double is equal to the expected value should return a" - {
+            "[Success] if the double is equal to the expected value" {
+                checkAll(
+                    Arb.beEqualToValue(Arb.beEqualTo()) { expected: Double, tolerance: Double ->
+                        Arb.real(expected - tolerance..expected + tolerance)
+                    },
+                    Arb.string()
+                ) { (requirement, value), description ->
+                    with(requirement.validate(value, description)) {
+                        shouldBeSuccess()
+                        getOrNull() shouldBe value
+                    }
+                }
+            }
+
+            "[Failure] if the double is not equal to the expected value" {
+                checkAll(
+                    Arb.notBeEqualToValue(Arb.beEqualTo(Arb.real(-1e-100..1e-100))) { Arb.real(it) },
+                    Arb.string()
+                ) { (requirement, value), description ->
+                    with(requirement.validate(value, description)) {
+                        shouldBeFailure()
+                        exceptionOrNull() shouldBe requirement.generateException(description)
+                    }
+                }
             }
         }
     }
