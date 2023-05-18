@@ -10,6 +10,7 @@
 package cl.ravenhill.keen.requirements
 
 import cl.ravenhill.keen.DoubleRequirementException
+import cl.ravenhill.keen.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.unfulfilledConstraint
 import cl.ravenhill.keen.util.DoubleToDouble
@@ -17,6 +18,7 @@ import cl.ravenhill.keen.util.contains
 import cl.ravenhill.keen.util.orderedPair
 import cl.ravenhill.keen.util.real
 import cl.ravenhill.keen.util.toRange
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
@@ -29,6 +31,8 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
+import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.negativeDouble
 import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
@@ -165,10 +169,39 @@ private fun Arb.Companion.restrictedToOutsideRange(
     }
     req to potentialValue
 }
+
+/**
+ * Generates an arbitrary non-negative `Double` value up to the provided upper limit.
+ *
+ * By default, if no upper limit is provided, it generates values up to `Double.MAX_VALUE`.
+ *
+ * @receiver The `Arb.Companion` object.
+ * @param hi The maximum value that the generated `Double` can take.
+ * Defaults to `Double.MAX_VALUE`.
+ * @return An [Arb] instance that generates non-negative `Double` values up to the specified limit.
+ */
+private fun Arb.Companion.nonNegativeReal(hi: Double = Double.MAX_VALUE) = arbitrary {
+    double(0.0, hi).next()
+}
+
+/**
+ * Generates an arbitrary negative `Double` value down to the provided lower limit.
+ *
+ * By default, if no lower limit is provided, it generates values down to `-Double.MAX_VALUE`.
+ *
+ * @receiver The `Arb.Companion` object.
+ * @param lo The minimum value (negative) that the generated `Double` can take.
+ * Defaults to `Double.MAX_VALUE`.
+ * @return An [Arb] instance that generates negative `Double` values down to the specified limit.
+ */
+private fun Arb.Companion.negativeReal(lo: Double = -Double.MAX_VALUE) = arbitrary {
+    negativeDouble(lo).next()
+}
+
 // endregion ARBITRARY GENERATORS ==-
 
 class DoubleRequirementTest : FreeSpec({
-    "Generating an exception should return a DoubleRequirementException" {
+    "Generating an exception should return a [DoubleRequirementException]" {
         checkAll(Arb.doubleRequirement(), Arb.string()) { requirement, description ->
             with(requirement.generateException(description)) {
                 shouldBeInstanceOf<DoubleRequirementException>()
@@ -177,28 +210,95 @@ class DoubleRequirementTest : FreeSpec({
         }
     }
 
-    "Validating that a double is in range should" - {
-        "return a success if the double is in range" {
-            checkAll(
-                Arb.restrictedToRange(Arb.beInRange()) { Arb.real(it) },
-                Arb.string()
-            ) { (requirement, value), description ->
-                with(requirement.validate(value, description)) {
-                    shouldBeSuccess()
-                    getOrNull() shouldBe value
+    "A [BeInRange] requirement" - {
+        "can be created from" - {
+            "a pair of doubles" {
+                checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
+                    val requirement = BeInRange(first to last)
+                    requirement.range shouldBe (first to last)
+                }
+            }
+
+            "a range" {
+                checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
+                    val requirement = BeInRange(first..last)
+                    requirement.range shouldBe (first to last)
                 }
             }
         }
 
-        "return a failure if the double is not in range" {
-            checkAll(
-                Arb.restrictedToOutsideRange(Arb.beInRange(-1.0..1.0), Arb.real()),
-                Arb.string()
-            ) { (requirement, value), description ->
-                with(requirement.validate(value, description)) {
-                    shouldBeFailure()
-                    exceptionOrNull() shouldBe requirement.generateException(description)
+        "should throw an exception when the first value is greater than the second" {
+            checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
+                shouldThrow<IllegalArgumentException> {
+                    BeInRange(last to first)
+                }.message shouldBe "The first value in the range must be less than or equal to the second value."
+            }
+        }
+
+        "when validating that a double is in range should" - {
+            "return a success if the double is in range" {
+                checkAll(
+                    Arb.restrictedToRange(Arb.beInRange()) { Arb.real(it) },
+                    Arb.string()
+                ) { (requirement, value), description ->
+                    with(requirement.validate(value, description)) {
+                        shouldBeSuccess()
+                        getOrNull() shouldBe value
+                    }
                 }
+            }
+
+            "return a failure if the double is not in range" {
+                checkAll(
+                    Arb.restrictedToOutsideRange(Arb.beInRange(-1.0..1.0), Arb.real()),
+                    Arb.string()
+                ) { (requirement, value), description ->
+                    with(requirement.validate(value, description)) {
+                        shouldBeFailure()
+                        exceptionOrNull() shouldBe requirement.generateException(description)
+                    }
+                }
+            }
+        }
+
+        "can be converted to a string" {
+            checkAll(Arb.beInRange()) { requirement ->
+                requirement.toString() shouldBe "BeInRange { range: ${requirement.range} }"
+            }
+        }
+    }
+
+    "A [BeEqualTo] requirement" - {
+        "can be created with" - {
+            "an expected value and a default tolerance" {
+                checkAll(Arb.real()) { expected ->
+                    val requirement = BeEqualTo(expected)
+                    requirement.expected shouldBe expected
+                    requirement.tolerance shouldBe 1e-8
+                }
+            }
+
+            "an expected value and a tolerance" {
+                checkAll(Arb.real(), Arb.nonNegativeReal()) { expected, tolerance ->
+                    val requirement = BeEqualTo(expected, tolerance)
+                    requirement.expected shouldBe expected
+                    requirement.tolerance shouldBe tolerance
+                }
+            }
+        }
+
+        "should throw an exception if the tolerance is negative" {
+            checkAll(Arb.real(), Arb.negativeReal()) { expected, tolerance ->
+                shouldThrow<IllegalArgumentException> {
+                    BeEqualTo(expected, tolerance)
+                }.message shouldBe "The tolerance must be non-negative."
+            }
+        }
+
+        "can be converted to a string" {
+            checkAll(Arb.real(), Arb.nonNegativeReal()) { expected, tolerance ->
+                val requirement = BeEqualTo(expected, tolerance)
+                requirement.toString() shouldBe "BeEqualTo { expected: $expected, tolerance: $tolerance }"
             }
         }
     }

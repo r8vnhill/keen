@@ -24,6 +24,12 @@ sealed interface DoubleRequirement : Requirement<Double> {
      */
     class BeInRange(val range: DoubleToDouble) : DoubleRequirement {
 
+        init {
+            require(range.first <= range.second) {
+                "The first value in the range must be less than or equal to the second value."
+            }
+        }
+
         /**
          * A secondary constructor that allows for the range to be specified as a
          * [ClosedFloatingPointRange].
@@ -46,10 +52,16 @@ sealed interface DoubleRequirement : Requirement<Double> {
      * @property tolerance The maximum allowable difference between the given value and the expected
      * value. Defaults to `1e-8`.
      */
-    class BeEqualTo(private val expected: Double, private val tolerance: Double = 1e-8) :
-            DoubleRequirement {
+    class BeEqualTo(val expected: Double, val tolerance: Double = 1e-8) : DoubleRequirement {
+
+        init {
+            require(tolerance >= 0) { "The tolerance must be non-negative." }
+        }
 
         /// Documentation inherited from [Requirement]
         override val validator = { value: Double -> abs(value - expected) <= tolerance }
+
+        /// Documentation inherited from [Any]
+        override fun toString() = "BeEqualTo { expected: $expected, tolerance: $tolerance }"
     }
 }
