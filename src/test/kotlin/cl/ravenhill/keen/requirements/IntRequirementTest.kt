@@ -13,12 +13,16 @@ import cl.ravenhill.keen.IntRequirementException
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.unfulfilledConstraint
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.constant
+import io.kotest.property.arbitrary.nonPositiveInt
+import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 
@@ -40,5 +44,27 @@ class IntRequirementTest : FreeSpec({
                 message shouldBe unfulfilledConstraint(description)
             }
         }
+    }
+
+    "A [BePositive] requirement" - {
+        "can be converted to a [String]" {
+            BePositive.toString() shouldBe "BePositive"
+        }
+
+        "when validating that an [Int] is positive should return" - {
+            "[true] if it is positive" {
+                checkAll(Arb.positiveInt()) { value ->
+                    BePositive.validator(value).shouldBeTrue()
+                }
+            }
+
+            "[false] if it is not positive" {
+                checkAll(Arb.nonPositiveInt()) { value ->
+                    BePositive.validator(value).shouldBeFalse()
+                }
+            }
+        }
+
+
     }
 })

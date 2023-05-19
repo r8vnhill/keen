@@ -19,6 +19,8 @@ import cl.ravenhill.keen.util.real
 import cl.ravenhill.keen.util.toRange
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.result.shouldBeFailure
 import io.kotest.matchers.result.shouldBeSuccess
 import io.kotest.matchers.shouldBe
@@ -289,28 +291,20 @@ class DoubleRequirementTest : FreeSpec({
             }
         }
 
-        "when validating that a double is in range should" - {
-            "return a success if the double is in range" {
+        "when _validating_ that a [Double] is in range should return" - {
+            "[true] if it is in range" {
                 checkAll(
-                    Arb.restrictedToRange(Arb.beInRange()) { Arb.real(it) },
-                    Arb.string()
-                ) { (requirement, value), description ->
-                    with(requirement.validate(value, description)) {
-                        shouldBeSuccess()
-                        getOrNull() shouldBe value
-                    }
+                    Arb.restrictedToRange(Arb.beInRange()) { Arb.real(it) }
+                ) { (requirement, value) ->
+                    requirement.validator(value).shouldBeTrue()
                 }
             }
 
-            "return a failure if the double is not in range" {
+            "[false] if it is not in range" {
                 checkAll(
                     Arb.restrictedToOutsideRange(Arb.beInRange(-1.0..1.0), Arb.real()),
-                    Arb.string()
-                ) { (requirement, value), description ->
-                    with(requirement.validate(value, description)) {
-                        shouldBeFailure()
-                        exceptionOrNull() shouldBe requirement.generateException(description)
-                    }
+                ) { (requirement, value) ->
+                    requirement.validator(value).shouldBeFalse()
                 }
             }
         }
