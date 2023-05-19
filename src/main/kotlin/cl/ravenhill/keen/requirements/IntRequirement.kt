@@ -13,26 +13,38 @@ import cl.ravenhill.keen.util.contains
  */
 sealed interface IntRequirement : Requirement<Int> {
 
-    // Inherit documentation from Requirement
+    /// Documentation inherited from [Requirement].
     override fun generateException(description: String) = IntRequirementException { description }
 
     /**
      * Represents a requirement that an integer value must be positive.
      */
     data object BePositive : IntRequirement {
+
+        /// Documentation inherited from [Requirement].
         override val validator = { value: Int -> value > 0 }
     }
 
     /**
      * Represents a requirement that an integer value must be within a specified [range].
      *
+     * @constructor Creates a [BeInRange] requirement with a range of integer values specified as an
+     * [IntToInt].
      * @property range The range of values that are allowed.
      */
     open class BeInRange(
         private val range: IntToInt
     ) : IntRequirement {
+
+        /**
+         * Creates a [BeInRange] requirement with a range of integer values specified as an
+         * [IntRange].
+         *
+         * @param range The [IntRange] of allowed values.
+         */
         constructor(range: IntRange) : this(range.first to range.last)
 
+        /// Documentation inherited from [Requirement].
         override val validator = { value: Int -> value in range }
     }
 
