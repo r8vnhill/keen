@@ -10,8 +10,11 @@
 package cl.ravenhill.keen.requirements
 
 import cl.ravenhill.keen.IntRequirementException
+import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.unfulfilledConstraint
+import cl.ravenhill.keen.util.IntToInt
+import cl.ravenhill.keen.util.orderedPair
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -21,20 +24,11 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.constant
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
-
-/**
- * Generates an arbitrary instance of [IntRequirement].
- *
- * @receiver The `Arb.Companion` object.
- * @return An [Arb] instance that generates [IntRequirement]s.
- */
-private fun Arb.Companion.intRequirement() = arbitrary {
-    choice(constant(BePositive)).bind()
-}
 
 class IntRequirementTest : FreeSpec({
     "Generating an exception should return an [IntRequirementException]" {
@@ -51,7 +45,7 @@ class IntRequirementTest : FreeSpec({
             BePositive.toString() shouldBe "BePositive"
         }
 
-        "when validating that an [Int] is positive should return" - {
+        "when _validating_ that a value is positive should return" - {
             "[true] if it is positive" {
                 checkAll(Arb.positiveInt()) { value ->
                     BePositive.validator(value).shouldBeTrue()
@@ -64,7 +58,52 @@ class IntRequirementTest : FreeSpec({
                 }
             }
         }
+    }
 
+    "A [BeInRange] requirement" - {
+        "can be converted to a [String]" {
+            checkAll(
+                Arb.beInRangeData(Arb.orderedPair(Arb.int(), Arb.int()))
+            ) { (requirement, range) ->
 
+            }
+        }
     }
 })
+
+/**
+ * Generates an arbitrary instance of [IntRequirement].
+ *
+ * @receiver The `Arb.Companion` object.
+ * @return An [Arb] instance that generates [IntRequirement]s.
+ */
+private fun Arb.Companion.intRequirement() = arbitrary {
+    choice(constant(BePositive)).bind()
+}
+
+private fun Arb.Companion.beInRangeData(
+    range: Arb<IntToInt> = Arb.orderedPair(Arb.int(), Arb.int())
+) = arbitrary {
+    BeInRangeData(range.bind())
+}
+
+/**
+ * Data class that encapsulates a range of integer values, represented as a [IntToInt],
+ * and a corresponding [BeInRange] requirement.
+ *
+ * The class provides a convenient way to package a range of values together with the
+ * associated [BeInRange] requirement that uses this range.
+ * The class also overrides the `component2` function to return the `requirement` property,
+ * which allows for destructuring declarations.
+ *
+ * @property range The range of values that are allowed, represented as a [IntToInt].
+ * @property requirement A [BeInRange] requirement that uses the [range].
+ */
+data class BeInRangeData(val range: IntToInt) {
+    val requirement = BeInRange(range)
+
+    /**
+     * Returns the [requirement] property when this class is destructured.
+     */
+    operator fun component2() = requirement
+}
