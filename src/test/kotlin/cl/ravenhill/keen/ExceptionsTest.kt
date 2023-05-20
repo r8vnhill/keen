@@ -1,13 +1,9 @@
 package cl.ravenhill.keen
 
-import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.element
-import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 
@@ -81,35 +77,4 @@ class ExceptionsTest : FreeSpec({
             }
         }
     }
-
-    "Requirement exceptions" - {
-        "can be created with a requirement and a message" {
-            checkAll(Arb.requirementException()) { (exception, message) ->
-                exception().message shouldBe "Unfulfilled constraint: $message"
-            }
-        }
-    }
-
-    "An EnforcementException" - {
-        "can be created with a list of violations" {
-            checkAll(Arb.list(Arb.requirementException())) { violations ->
-                val exceptions = violations.map { it.first() }
-                val messages = violations.map { it.second }
-                val exception = cl.ravenhill.enforcer.EnforcementException(exceptions)
-                exception.message shouldBe
-                        "Unfulfilled contract: ${messages.joinToString(", ") { "{ Unfulfilled constraint: $it }" }}"
-            }
-        }
-    }
 })
-
-private fun Arb.Companion.requirementException() = arbitrary {
-    val message = string().bind()
-    element(
-        { cl.ravenhill.enforcer.IntRequirementException { message } } to message,
-        { cl.ravenhill.enforcer.LongRequirementException { message } } to message,
-        { cl.ravenhill.enforcer.PairRequirementException { message } } to message,
-        { cl.ravenhill.enforcer.DoubleRequirementException { message } } to message,
-        { cl.ravenhill.enforcer.CollectionRequirementException { message } } to message,
-        { UnfulfilledRequirementException { message } } to message).bind()
-}

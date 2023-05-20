@@ -5,7 +5,7 @@ import cl.ravenhill.keen.any
 import cl.ravenhill.keen.orderedPair
 import cl.ravenhill.keen.orderedTriple
 import cl.ravenhill.keen.random
-import cl.ravenhill.keen.unfulfilledConstraint
+import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec

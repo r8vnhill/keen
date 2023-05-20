@@ -11,7 +11,7 @@ package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.keen.any
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.keen.unfulfilledConstraint
+import cl.ravenhill.unfulfilledConstraint
 import cl.ravenhill.keen.orderedPair
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec

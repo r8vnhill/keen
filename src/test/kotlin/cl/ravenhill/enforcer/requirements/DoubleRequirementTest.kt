@@ -20,7 +20,7 @@ package cl.ravenhill.enforcer.requirements
 import cl.ravenhill.keen.orderedPair
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.keen.unfulfilledConstraint
+import cl.ravenhill.unfulfilledConstraint
 import cl.ravenhill.keen.util.contains
 import cl.ravenhill.keen.util.real
 import cl.ravenhill.keen.util.toRange

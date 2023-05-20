@@ -10,7 +10,14 @@
 package cl.ravenhill.enforcer
 
 /***************************************************************************************************
- * TODO: Add top-level file documentation.
+ * This file defines a hierarchy of custom exceptions for unfulfilled requirements.
+ * The hierarchy is based on the open class `UnfulfilledRequirementException`, which itself extends
+ * `Exception`.
+ * Specific exceptions for various data types (integer, long, pair, double, and collection) are
+ * derived from `UnfulfilledRequirementException`, enabling the system to raise specific exceptions
+ * based on the type of unfulfilled requirement.
+ * Furthermore, `EnforcementException` is used to handle situations where a contract as a whole is
+ * unfulfilled, and it aggregates a list of violations for clearer error reporting.
  **************************************************************************************************/
 
 /**
@@ -96,6 +103,6 @@ class CollectionRequirementException(lazyMessage: () -> String) :
  */
 class EnforcementException(val infringements: List<Throwable>) : Exception(
     "Unfulfilled contract: [ " +
-            infringements.joinToString(", ") { it.message.toString() } +
+            infringements.joinToString(", ") { "{ ${it.message} }" } +
             " ]"
 )

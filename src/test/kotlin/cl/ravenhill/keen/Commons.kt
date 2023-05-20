@@ -292,13 +292,3 @@ fun Arb.Companion.random(seed: Arb<Long> = Arb.long()) = arbitrary {
  */
 fun logPattern(level: String) =
     "(?s)^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})? \\[.*] $level .* - .*".toRegex()
-
-/**
- * Constructs an error message indicating an unfulfilled constraint based on the given
- * [description].
- * This function is typically used when enforcing constraints and reporting constraint violations.
- *
- * @param description the description of the unfulfilled constraint.
- * @return an error message indicating the unfulfilled constraint.
- */
-fun unfulfilledConstraint(description: String): String = "Unfulfilled constraint: $description"

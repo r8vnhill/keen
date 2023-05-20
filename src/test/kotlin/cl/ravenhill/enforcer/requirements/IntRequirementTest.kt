@@ -20,7 +20,7 @@ package cl.ravenhill.enforcer.requirements
 import cl.ravenhill.keen.orderedPair
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
 import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
-import cl.ravenhill.keen.unfulfilledConstraint
+import cl.ravenhill.unfulfilledConstraint
 import cl.ravenhill.keen.util.IntToInt
 import cl.ravenhill.keen.util.toRange
 import io.kotest.assertions.throwables.shouldThrowWithMessage

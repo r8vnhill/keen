@@ -13,7 +13,7 @@ import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.keen.any
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldBeOfClass
-import cl.ravenhill.keen.unfulfilledConstraint
+import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
