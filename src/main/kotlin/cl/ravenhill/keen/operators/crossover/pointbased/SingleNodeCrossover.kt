@@ -10,13 +10,13 @@ package cl.ravenhill.keen.operators.crossover.pointbased
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.probability
-import cl.ravenhill.keen.requirements.IntRequirement.BeAtMost
-import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtMost
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.trees.Tree
 
 /**

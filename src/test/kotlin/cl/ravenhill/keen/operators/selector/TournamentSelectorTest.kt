@@ -1,8 +1,8 @@
 //package cl.ravenhill.keen.operators.selector
 //
 //import cl.ravenhill.keen.Core
-//import cl.ravenhill.keen.IntRequirementException
-//import cl.ravenhill.keen.EnforcementException
+//import cl.ravenhill.enforcer.IntRequirementException
+//import cl.ravenhill.enforcer.EnforcementException
 //import cl.ravenhill.keen.intChromosomeFactory
 //import cl.ravenhill.keen.population
 //import cl.ravenhill.keen.shouldBeOfClass

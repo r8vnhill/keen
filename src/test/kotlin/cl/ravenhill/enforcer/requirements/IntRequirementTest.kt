@@ -6,13 +6,20 @@
  * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-package cl.ravenhill.keen.requirements
 
-import cl.ravenhill.keen.IntRequirementException
+package cl.ravenhill.enforcer.requirements
+
 import cl.ravenhill.keen.orderedPair
-import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
-import cl.ravenhill.keen.requirements.IntRequirement.BePositive
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
+import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.unfulfilledConstraint
 import cl.ravenhill.keen.util.IntToInt
 import cl.ravenhill.keen.util.toRange
@@ -36,7 +43,7 @@ class IntRequirementTest : FreeSpec({
     "Generating an exception should return an [IntRequirementException]" {
         checkAll(Arb.intRequirement(), Arb.string()) { requirement, description ->
             with(requirement.generateException(description)) {
-                shouldBeInstanceOf<IntRequirementException>()
+                shouldBeInstanceOf<cl.ravenhill.enforcer.IntRequirementException>()
                 message shouldBe unfulfilledConstraint(description)
             }
         }

@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.IntRequirement.BePositive
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 
 /**
  * A [Match] limit that checks if the population has remained steady for a given number of

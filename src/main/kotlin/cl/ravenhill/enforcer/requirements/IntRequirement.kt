@@ -1,6 +1,13 @@
-package cl.ravenhill.keen.requirements
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-import cl.ravenhill.keen.IntRequirementException
+package cl.ravenhill.enforcer.requirements
+
 import cl.ravenhill.keen.util.IntToInt
 import cl.ravenhill.keen.util.contains
 
@@ -14,7 +21,8 @@ import cl.ravenhill.keen.util.contains
 sealed interface IntRequirement : Requirement<Int> {
 
     /// Documentation inherited from [Requirement].
-    override fun generateException(description: String) = IntRequirementException { description }
+    override fun generateException(description: String) =
+        cl.ravenhill.enforcer.IntRequirementException { description }
 
     /**
      * Represents a requirement that an integer value must be positive.

@@ -1,6 +1,12 @@
-package cl.ravenhill.keen.requirements
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-import cl.ravenhill.keen.CollectionRequirementException
+package cl.ravenhill.enforcer.requirements
 
 /**
  * Represents a constraint that can be applied to a collection.
@@ -12,7 +18,7 @@ import cl.ravenhill.keen.CollectionRequirementException
 sealed interface CollectionRequirement : Requirement<Collection<*>> {
     // Inherit documentation from Requirement
     override fun generateException(description: String) =
-        CollectionRequirementException { description }
+        cl.ravenhill.enforcer.CollectionRequirementException { description }
 
     /**
      * Constraint that checks if a collection is not empty.

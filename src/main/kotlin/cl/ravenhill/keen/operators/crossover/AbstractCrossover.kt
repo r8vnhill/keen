@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -17,8 +17,8 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
-import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.neq
 import cl.ravenhill.keen.util.subsets

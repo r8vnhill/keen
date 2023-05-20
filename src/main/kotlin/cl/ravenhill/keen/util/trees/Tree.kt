@@ -9,9 +9,9 @@
 package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
-import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.SelfReferential
 
 /**

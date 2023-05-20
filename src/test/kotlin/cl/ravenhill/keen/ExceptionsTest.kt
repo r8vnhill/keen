@@ -1,5 +1,6 @@
 package cl.ravenhill.keen
 
+import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -94,7 +95,7 @@ class ExceptionsTest : FreeSpec({
             checkAll(Arb.list(Arb.requirementException())) { violations ->
                 val exceptions = violations.map { it.first() }
                 val messages = violations.map { it.second }
-                val exception = EnforcementException(exceptions)
+                val exception = cl.ravenhill.enforcer.EnforcementException(exceptions)
                 exception.message shouldBe
                         "Unfulfilled contract: ${messages.joinToString(", ") { "{ Unfulfilled constraint: $it }" }}"
             }
@@ -105,10 +106,10 @@ class ExceptionsTest : FreeSpec({
 private fun Arb.Companion.requirementException() = arbitrary {
     val message = string().bind()
     element(
-        { IntRequirementException { message } } to message,
-        { LongRequirementException { message } } to message,
-        { PairRequirementException { message } } to message,
-        { DoubleRequirementException { message } } to message,
-        { CollectionRequirementException { message } } to message,
+        { cl.ravenhill.enforcer.IntRequirementException { message } } to message,
+        { cl.ravenhill.enforcer.LongRequirementException { message } } to message,
+        { cl.ravenhill.enforcer.PairRequirementException { message } } to message,
+        { cl.ravenhill.enforcer.DoubleRequirementException { message } } to message,
+        { cl.ravenhill.enforcer.CollectionRequirementException { message } } to message,
         { UnfulfilledRequirementException { message } } to message).bind()
 }

@@ -8,11 +8,11 @@
 
 package cl.ravenhill.keen.operators
 
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import java.util.Objects
 
 /***************************************************************************************************

@@ -1,10 +1,10 @@
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
 /***************************************************************************************************

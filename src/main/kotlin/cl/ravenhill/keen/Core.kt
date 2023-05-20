@@ -1,35 +1,22 @@
 package cl.ravenhill.keen
 
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.Core.DEFAULT_MAX_PROGRAM_DEPTH
 import cl.ravenhill.keen.Core.EvolutionLogger.DEFAULT_LEVEL
 import cl.ravenhill.keen.Core.EvolutionLogger.level
 import cl.ravenhill.keen.Core.EvolutionLogger.logger
 import cl.ravenhill.keen.Core.maxProgramDepth
 import cl.ravenhill.keen.Core.random
-import cl.ravenhill.keen.Core.skipChecks
 import cl.ravenhill.keen.evolution.Evolver
 import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.requirements.IntRequirement.BePositive
-import cl.ravenhill.keen.requirements.Requirement
 import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.logging.logger
 import cl.ravenhill.keen.util.logging.stdoutChannel
-import java.util.Objects
 import kotlin.random.Random
 
 /***************************************************************************************************
- * The Core object contains various properties and functions that are used by the rest of the
- * library.
- * It includes a logger, the maximum depth of a program tree, a random number generator, and a
- * boolean that can skip all checks.
- * The EnforceScope inner class is used to enforce contracts with different constraint requirements,
- * and the EvolutionLogger object is a logger that tracks the system's evolution.
- * The Dice object rolls an n-dimensional or continuous dice.
- * Additionally, there are two type-aliases: Population and MutablePopulation, which represent a
- * list of Phenotype objects that represent a population of individuals with mutable or immutable
- * data.
- * Lastly, there are two extension functions: int and probability, which generate a random integer
- * and double in the given ranges.
+ * TODO: Add top-level file documentation.
  **************************************************************************************************/
 
 /**
@@ -39,7 +26,6 @@ import kotlin.random.Random
  * @property maxProgramDepth The maximum depth of a program tree.
  * @property DEFAULT_MAX_PROGRAM_DEPTH The default maximum depth of a program tree (7).
  * @property random The random number generator.
- * @property skipChecks If true, the library will skip all the checks.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
@@ -53,7 +39,6 @@ object Core {
             field = value
         }
     var random: Random = Random.Default
-    var skipChecks = false
 
     /**
      * Represents the "roll" of an n-dimensional or continuous dice.
@@ -64,119 +49,6 @@ object Core {
          * Backing [Random] instance.
          */
         var random: Random = Random.Default
-    }
-
-    /**
-     * Enforces the contract of the given builder.
-     *
-     * @param builder The builder that contains the contract.
-     * @throws EnforcementException If the contract is not fulfilled.
-     */
-    fun enforce(builder: EnforceScope.() -> Unit) {
-        if (skipChecks) return
-        EnforceScope().apply(builder).errors.let { errors ->
-            if (errors.isNotEmpty()) {
-                throw EnforcementException(errors)
-            }
-        }
-    }
-
-    /**
-     * A utility class for enforcing contracts.
-     *
-     * An instance of this class can be used to enforce a contract by defining clauses using string
-     * literals as message keys and lambda expressions that define the predicate.
-     * Each clause defines a requirement, which can be validated by calling the `validate()` method
-     * of a [Requirement] instance.
-     *
-     * @property results The list of results of evaluating the contract.
-     *
-     * @since 2.0.0
-     * @version 2.0.0
-     */
-    class EnforceScope {
-        private val _results: MutableList<Result<*>> = mutableListOf()
-        val results: List<Result<*>>
-            get() = _results
-
-        val errors: List<Throwable>
-            get() = _results.filter { it.isFailure }.map { it.exceptionOrNull()!! }
-
-        /**
-         * Defines a clause of a contract.
-         *
-         * @receiver The message key for the clause.
-         * @param value A lambda expression that defines the predicate for the clause.
-         *
-         * @return A [StringScope] instance that can be used to define a [Requirement] for the clause.
-         */
-        inline operator fun String.invoke(value: StringScope.() -> Boolean) =
-            StringScope(this).apply { value() }
-
-        /**
-         * A scope for defining a [Requirement] for a contract clause.
-         *
-         * @property message The message key for the clause.
-         */
-        inner class StringScope(val message: String) {
-
-            /**
-             * Property that returns the outer `EnforceScope` instance.
-             */
-            internal val outerScope: EnforceScope
-                get() = this@EnforceScope
-
-            /**
-             * Infix function that validates that the current value satisfies the specified
-             * requirement.
-             *
-             * @param requirement the requirement to validate against.
-             * @receiver the current value to be validated.
-             *
-             * @see Requirement.validate
-             */
-
-            infix fun <T, R : Requirement<T>> T.must(requirement: R) =
-                _results.add(requirement.validate(this, message))
-
-            /**
-             * Infix function that validates that the current value does not satisfy the specified
-             * requirement.
-             *
-             * @param requirement the requirement to validate against.
-             * @receiver the current value to be validated.
-             *
-             * @see Requirement.validateNot
-             */
-            infix fun <T, R : Requirement<T>> T.mustNot(requirement: R) =
-                _results.add(requirement.validateNot(this, message))
-
-            /**
-             * Defines a [Requirement] based on a predicate.
-             *
-             * @param predicate The predicate that defines the clause.
-             */
-            fun requirement(predicate: () -> Boolean) = _results.add(
-                if (predicate()) {
-                    Result.success(Unit)
-                } else {
-                    Result.failure(UnfulfilledRequirementException { message })
-                }
-            )
-
-            /// Documentation inherited from [Any].
-            override fun equals(other: Any?) = when {
-                other === this -> true
-                other is StringScope -> message == other.message
-                else -> false
-            }
-
-            /// Documentation inherited from [Any].
-            override fun hashCode() = Objects.hash(StringScope::class, message)
-
-            /// Documentation inherited from [Any].
-            override fun toString() = "StringScope(message='$message')"
-        }
     }
 
     /**

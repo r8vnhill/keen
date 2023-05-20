@@ -1,6 +1,14 @@
-package cl.ravenhill.keen.requirements
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-import cl.ravenhill.keen.UnfulfilledRequirementException
+package cl.ravenhill.enforcer.requirements
+
+import cl.ravenhill.enforcer.UnfulfilledRequirementException
 
 
 /**

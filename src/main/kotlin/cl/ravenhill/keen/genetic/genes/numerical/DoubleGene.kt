@@ -1,13 +1,13 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
-import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.keen.requirements.PairRequirement.BeFinite
-import cl.ravenhill.keen.requirements.PairRequirement.BeStrictlyOrdered
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.enforcer.requirements.PairRequirement.BeFinite
+import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
 import cl.ravenhill.keen.util.DoubleToDouble
 import java.util.Objects
 import kotlin.random.asJavaRandom

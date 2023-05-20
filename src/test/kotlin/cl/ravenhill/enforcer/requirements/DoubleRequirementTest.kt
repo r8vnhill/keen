@@ -6,13 +6,20 @@
  * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-package cl.ravenhill.keen.requirements
 
-import cl.ravenhill.keen.DoubleRequirementException
+package cl.ravenhill.enforcer.requirements
+
 import cl.ravenhill.keen.orderedPair
-import cl.ravenhill.keen.requirements.DoubleRequirement.BeEqualTo
-import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeEqualTo
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.unfulfilledConstraint
 import cl.ravenhill.keen.util.contains
 import cl.ravenhill.keen.util.real
@@ -261,7 +268,7 @@ class DoubleRequirementTest : FreeSpec({
     "Generating an exception should return a [DoubleRequirementException]" {
         checkAll(Arb.doubleRequirement(), Arb.string()) { requirement, description ->
             with(requirement.generateException(description)) {
-                shouldBeInstanceOf<DoubleRequirementException>()
+                shouldBeInstanceOf<cl.ravenhill.enforcer.DoubleRequirementException>()
                 message shouldBe unfulfilledConstraint(description)
             }
         }

@@ -8,8 +8,8 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.IntRequirement.BePositive
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 
 /**
  * Limits the number of generations the evolution will run.

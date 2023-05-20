@@ -1,6 +1,13 @@
-package cl.ravenhill.keen.requirements
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-import cl.ravenhill.keen.DoubleRequirementException
+package cl.ravenhill.enforcer.requirements
+
 import cl.ravenhill.keen.util.DoubleToDouble
 import cl.ravenhill.keen.util.contains
 import kotlin.math.abs
@@ -15,7 +22,8 @@ import kotlin.math.abs
 sealed interface DoubleRequirement : Requirement<Double> {
 
     /// Documentation inherited from [Requirement]
-    override fun generateException(description: String) = DoubleRequirementException { description }
+    override fun generateException(description: String) =
+        cl.ravenhill.enforcer.DoubleRequirementException { description }
 
     /**
      * A [DoubleRequirement] constraint that checks if a given [Double] is within a specified range.

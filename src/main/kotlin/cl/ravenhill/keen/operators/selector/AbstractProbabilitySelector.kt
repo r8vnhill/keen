@@ -9,10 +9,10 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.requirements.DoubleRequirement.BeEqualTo
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 

@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
 
 /***************************************************************************************************
  * This code includes a collection of extensions and functions for different types of collections in

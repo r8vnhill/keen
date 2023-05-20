@@ -1,11 +1,11 @@
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.keen.Core.enforce
-import cl.ravenhill.keen.EnforcementException
-import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
-import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.keen.requirements.IntRequirement
-import cl.ravenhill.keen.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.EnforcementException
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.enforcer.requirements.IntRequirement
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import java.util.LinkedList
 import kotlin.random.Random
 

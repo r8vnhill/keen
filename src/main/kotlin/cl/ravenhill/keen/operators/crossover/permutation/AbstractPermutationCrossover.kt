@@ -1,10 +1,10 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
-import cl.ravenhill.keen.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.duplicates
 
 

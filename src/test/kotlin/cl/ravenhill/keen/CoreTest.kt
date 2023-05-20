@@ -1,6 +1,8 @@
 package cl.ravenhill.keen
 
-import cl.ravenhill.keen.requirements.Requirement
+import cl.ravenhill.enforcer.Enforcement
+import cl.ravenhill.enforcer.UnfulfilledRequirementException
+import cl.ravenhill.enforcer.requirements.Requirement
 import cl.ravenhill.keen.util.logging.Level
 import cl.ravenhill.keen.util.logging.Logger
 import cl.ravenhill.keen.util.logging.StdoutChannel
@@ -53,11 +55,11 @@ private fun Arb.Companion.requirement(success: Arb<Boolean> = Arb.constant(true)
 
 /**
  * Helper function that creates an instance of `Arb` for generating instances of
- * [Core.EnforceScope.StringScope] class.
+ * [Enforcement.EnforceScope.StringScope] class.
  */
 private fun Arb.Companion.stringScope() = arbitrary {
     val message = string().bind()
-    Core.EnforceScope().StringScope(message)
+    Enforcement.EnforceScope().StringScope(message)
 }
 
 /**
@@ -125,7 +127,7 @@ class CoreTest : FreeSpec({
     beforeAny {
         Core.random = Random.Default
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
-        Core.skipChecks = false
+        Enforcement.skipChecks = false
         Core.Dice.random = Random.Default
         Core.EvolutionLogger.level = Core.EvolutionLogger.DEFAULT_LEVEL
     }
@@ -173,22 +175,22 @@ class CoreTest : FreeSpec({
         "cannot be set to a non-positive integer" {
             Core.maxProgramDepth shouldBe Core.DEFAULT_MAX_PROGRAM_DEPTH
             checkAll(Arb.nonPositiveInt()) { depth ->
-                shouldThrow<EnforcementException> {
+                shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
                     depth.also { Core.maxProgramDepth = it }
-                }.infringements.forEach { it shouldBeOfClass IntRequirementException::class }
+                }.infringements.forEach { it shouldBeOfClass cl.ravenhill.enforcer.IntRequirementException::class }
             }
         }
     }
 
     "The skip checks flag" - {
         "has a default value of false" {
-            Core.skipChecks shouldBe false
+            Enforcement.skipChecks shouldBe false
         }
 
         "can be set to true" {
-            Core.skipChecks shouldBe false
-            Core.skipChecks = true
-            Core.skipChecks shouldBe true
+            Enforcement.skipChecks shouldBe false
+            Enforcement.skipChecks = true
+            Enforcement.skipChecks shouldBe true
         }
     }
 
@@ -313,8 +315,8 @@ class CoreTest : FreeSpec({
 
                     "be true for two scopes with the same message" {
                         checkAll(Arb.string()) { message ->
-                            val scope1 = Core.EnforceScope().StringScope(message)
-                            val scope2 = Core.EnforceScope().StringScope(message)
+                            val scope1 = Enforcement.EnforceScope().StringScope(message)
+                            val scope2 = Enforcement.EnforceScope().StringScope(message)
                             scope1 shouldBe scope2
                         }
                     }
@@ -324,8 +326,8 @@ class CoreTest : FreeSpec({
                             assume {
                                 message1 shouldNotBe message2
                             }
-                            val scope1 = Core.EnforceScope().StringScope(message1)
-                            val scope2 = Core.EnforceScope().StringScope(message2)
+                            val scope1 = Enforcement.EnforceScope().StringScope(message1)
+                            val scope2 = Enforcement.EnforceScope().StringScope(message2)
                             scope1 shouldNotBe scope2
                         }
                     }
@@ -340,9 +342,9 @@ class CoreTest : FreeSpec({
 
             "should be able to create a string scope from a string" {
                 checkAll(Arb.string()) { message ->
-                    val scope = Core.EnforceScope()
-                    val expectedScope = Core.EnforceScope().StringScope(message)
-                    lateinit var strScope: Core.EnforceScope.StringScope
+                    val scope = Enforcement.EnforceScope()
+                    val expectedScope = Enforcement.EnforceScope().StringScope(message)
+                    lateinit var strScope: Enforcement.EnforceScope.StringScope
                     with(scope) {
                         strScope = message.invoke { true }
                     }
@@ -353,10 +355,10 @@ class CoreTest : FreeSpec({
         }
 
         "If `skipChecks` is true then no exceptions should be thrown" {
-            Core.skipChecks = true
+            Enforcement.skipChecks = true
             checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement(Arb.boolean())))) { pairs ->
-                shouldNotThrow<EnforcementException> {
-                    Core.enforce {
+                shouldNotThrow<cl.ravenhill.enforcer.EnforcementException> {
+                    Enforcement.enforce {
                         pairs.forEach { (message, req) ->
                             message.invoke { Any() must req }
                         }
@@ -367,10 +369,10 @@ class CoreTest : FreeSpec({
 
         "If `skipChecks` is false then" - {
             "if all requirements are met then no exceptions should be thrown" {
-                Core.skipChecks = false
+                Enforcement.skipChecks = false
                 checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement()))) { messages ->
-                    shouldNotThrow<EnforcementException> {
-                        Core.enforce {
+                    shouldNotThrow<cl.ravenhill.enforcer.EnforcementException> {
+                        Enforcement.enforce {
                             messages.forEach { (message, req) ->
                                 message.invoke { Any() must req }
                             }
@@ -380,7 +382,7 @@ class CoreTest : FreeSpec({
             }
 
             "if any requirement is not met then an exception should be thrown" {
-                Core.skipChecks = false
+                Enforcement.skipChecks = false
                 checkAll(
                     Arb.list(
                         Arb.pair(
@@ -390,8 +392,8 @@ class CoreTest : FreeSpec({
                     )
                 ) { pairs ->
                     assume(pairs.any { !it.second.validator(true) })
-                    shouldThrow<EnforcementException> {
-                        Core.enforce {
+                    shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
+                        Enforcement.enforce {
                             pairs.forEach { (message, req) ->
                                 message.invoke { Any() must req }
                             }

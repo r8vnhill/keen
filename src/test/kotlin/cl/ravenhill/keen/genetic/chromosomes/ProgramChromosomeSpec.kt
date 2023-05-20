@@ -1,7 +1,7 @@
 //package cl.ravenhill.keen.genetic.chromosomes
 //
-//import cl.ravenhill.keen.IntRequirementException
-//import cl.ravenhill.keen.EnforcementException
+//import cl.ravenhill.enforcer.IntRequirementException
+//import cl.ravenhill.enforcer.EnforcementException
 //import cl.ravenhill.keen.genetic.genes.ProgramGene
 //import cl.ravenhill.keen.prog.functions
 //import cl.ravenhill.keen.prog.functions.addition

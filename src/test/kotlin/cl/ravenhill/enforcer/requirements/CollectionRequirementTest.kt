@@ -6,12 +6,20 @@
  * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-package cl.ravenhill.keen.requirements
 
-import cl.ravenhill.keen.CollectionRequirementException
+package cl.ravenhill.enforcer.requirements
+
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.CollectionRequirementException
 import cl.ravenhill.keen.any
-import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -50,7 +58,7 @@ class CollectionRequirementTest : FreeSpec({
     "Generating an exception should return a CollectionRequirementException" {
         checkAll(Arb.requirement(), Arb.string()) { requirement, description ->
             with(requirement.generateException(description)) {
-                shouldBeInstanceOf<CollectionRequirementException>()
+                shouldBeInstanceOf<cl.ravenhill.enforcer.CollectionRequirementException>()
                 message shouldBe "Unfulfilled constraint: $description"
             }
         }

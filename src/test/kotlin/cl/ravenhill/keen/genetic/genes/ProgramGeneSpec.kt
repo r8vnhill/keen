@@ -1,8 +1,8 @@
 //package cl.ravenhill.keen.genetic.genes
 //
 //import cl.ravenhill.keen.Core
-//import cl.ravenhill.keen.IntRequirementException
-//import cl.ravenhill.keen.EnforcementException
+//import cl.ravenhill.enforcer.IntRequirementException
+//import cl.ravenhill.enforcer.EnforcementException
 //import cl.ravenhill.keen.prog.functions
 //import cl.ravenhill.keen.prog.functions.Add
 //import cl.ravenhill.keen.prog.functions.add

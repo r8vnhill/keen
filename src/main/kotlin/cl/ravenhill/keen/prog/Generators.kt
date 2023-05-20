@@ -2,11 +2,11 @@ package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
-import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.util.trees.Tree
 import cl.ravenhill.keen.util.trees.generate
 

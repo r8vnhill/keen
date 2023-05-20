@@ -1,10 +1,10 @@
 package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
-import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
 import java.util.Objects
 
 

@@ -9,12 +9,12 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import cl.ravenhill.keen.requirements.PairRequirement.BeStrictlyOrdered
+import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
 import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.keen.util.IntToInt
 import java.util.Objects

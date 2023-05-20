@@ -9,11 +9,11 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.Core.Dice
-import cl.ravenhill.keen.Core.enforce
+import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.probability
-import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.util.roundUpToMultipleOf
 import java.util.Objects
 

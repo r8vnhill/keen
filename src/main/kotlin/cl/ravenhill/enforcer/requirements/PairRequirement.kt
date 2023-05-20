@@ -1,6 +1,12 @@
-package cl.ravenhill.keen.requirements
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-import cl.ravenhill.keen.PairRequirementException
+package cl.ravenhill.enforcer.requirements
 
 
 /**
@@ -17,7 +23,8 @@ import cl.ravenhill.keen.PairRequirementException
 sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
 
     // Inherit documentation from Requirement
-    override fun generateException(description: String) = PairRequirementException { description }
+    override fun generateException(description: String) =
+        cl.ravenhill.enforcer.PairRequirementException { description }
 
     /**
      * [BeStrictlyOrdered] is a [PairRequirement] that requires that the first element in a [Pair]

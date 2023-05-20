@@ -1,8 +1,8 @@
 //package cl.ravenhill.keen.genetic.chromosomes
 //
-//import cl.ravenhill.keen.DoubleRequirementException
-//import cl.ravenhill.keen.PairRequirementException
-//import cl.ravenhill.keen.EnforcementException
+//import cl.ravenhill.enforcer.DoubleRequirementException
+//import cl.ravenhill.enforcer.PairRequirementException
+//import cl.ravenhill.enforcer.EnforcementException
 //import cl.ravenhill.keen.shouldBeOfClass
 //import cl.ravenhill.keen.util.isNotNan
 //import io.kotest.assertions.throwables.shouldThrow

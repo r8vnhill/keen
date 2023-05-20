@@ -9,9 +9,7 @@
 
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.keen.EnforcementException
-import cl.ravenhill.keen.IntRequirementException
-import cl.ravenhill.keen.UnfulfilledRequirementException
+import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.keen.any
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldBeOfClass
@@ -19,14 +17,11 @@ import cl.ravenhill.keen.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.Matcher
-import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.comparables.shouldBeGreaterThan
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
@@ -248,7 +243,7 @@ class CollectionsTest : FreeSpec({
                     ass.shouldNotBeEmpty()
                     ass shouldAny { it.size != ass.first().size }
                 }
-                shouldThrow<EnforcementException> {
+                shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
                     ass.transpose()
                 }.infringements.first() shouldBeOfClass UnfulfilledRequirementException::class
             }
@@ -297,11 +292,11 @@ class CollectionsTest : FreeSpec({
                 assume {
                     n shouldBeGreaterThan list.size
                 }
-                val ex = shouldThrow<EnforcementException> {
+                val ex = shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
                     list.dropFirst(n)
                 }
                 with(ex.infringements.first()) {
-                    shouldBeInstanceOf<IntRequirementException>()
+                    shouldBeInstanceOf<cl.ravenhill.enforcer.IntRequirementException>()
                     message shouldBe unfulfilledConstraint("Size [$n] should be in range [0, ${n}]")
                 }
             }
@@ -338,15 +333,15 @@ class CollectionsTest : FreeSpec({
                 Arb.negativeInt(),
                 Arb.negativeInt()
             ) { list, i, j ->
-                val ex = shouldThrow<EnforcementException> {
+                val ex = shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
                     list.swap(i, j)
                 }
                 with(ex.infringements) {
                     assertSoftly {
                         size shouldBe 2
-                        first().shouldBeOfClass(IntRequirementException::class)
+                        first().shouldBeOfClass(cl.ravenhill.enforcer.IntRequirementException::class)
                         first().message shouldBe "Unfulfilled constraint: i [$i] should be in range [0, ${list.size})"
-                        last().shouldBeOfClass(IntRequirementException::class)
+                        last().shouldBeOfClass(cl.ravenhill.enforcer.IntRequirementException::class)
                         last().message shouldBe "Unfulfilled constraint: j [$j] should be in range [0, ${list.size})"
                     }
                 }

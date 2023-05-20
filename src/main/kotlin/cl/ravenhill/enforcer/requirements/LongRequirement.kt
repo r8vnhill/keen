@@ -6,10 +6,18 @@
  * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
+/*
+ * "Keen" (c) by R8V.
+ * "Keen" is licensed under a
+ * Creative Commons Attribution 4.0 International License.
+ * You should have received a copy of the license along with this
+ * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ */
 
-package cl.ravenhill.keen.requirements
 
-import cl.ravenhill.keen.LongRequirementException
+package cl.ravenhill.enforcer.requirements
+
+import cl.ravenhill.enforcer.LongRequirementException
 
 
 /**
@@ -27,7 +35,8 @@ sealed interface LongRequirement : Requirement<Long> {
      * @param description The description to use in the generated exception.
      * @return A new instance of [LongRequirementException] using the provided [description].
      */
-    override fun generateException(description: String) = LongRequirementException { description }
+    override fun generateException(description: String) =
+        cl.ravenhill.enforcer.LongRequirementException { description }
 
     /**
      * A [BeEqualTo] requirement checks whether a given Long value is equal to an expected value.
