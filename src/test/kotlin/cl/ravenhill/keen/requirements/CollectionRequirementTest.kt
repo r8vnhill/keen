@@ -11,28 +11,41 @@ package cl.ravenhill.keen.requirements
 
 import cl.ravenhill.keen.CollectionRequirementException
 import cl.ravenhill.keen.any
+import cl.ravenhill.keen.requirements.CollectionRequirement.BeEmpty
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.result.shouldBeFailure
-import io.kotest.matchers.result.shouldBeSuccess
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.choice
+import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 
-/**
- * Creates an arbitrary for testing the requirement that a collection should be empty.
- */
-private fun Arb.Companion.beEmpty() = arbitrary { CollectionRequirement.BeEmpty }
+/***************************************************************************************************
+ * This file defines CollectionRequirementTest, a suite of tests for validating collection
+ * requirements.
+ * It uses the FreeSpec style from the Kotlin testing library, Kotest.
+ * The tests verify that an unfulfilled collection requirement generates a
+ * CollectionRequirementException, and that the validate function correctly handles empty
+ * collections according to the specified requirements.
+ * The file also includes helper methods to generate arbitrary collection requirements for use in
+ * these tests.
+ **************************************************************************************************/
 
 /**
- * Creates an arbitrary for generating a requirement.
+ * A suite of tests for validating collection requirements.
+ *
+ * @see CollectionRequirement
+ * @see CollectionRequirement.BeEmpty
+ * @see CollectionRequirementException
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
  */
-private fun Arb.Companion.requirement() = arbitrary { choice(beEmpty()).bind() }
-
 class CollectionRequirementTest : FreeSpec({
     "Generating an exception should return a CollectionRequirementException" {
         checkAll(Arb.requirement(), Arb.string()) { requirement, description ->
@@ -43,27 +56,20 @@ class CollectionRequirementTest : FreeSpec({
         }
     }
 
-    "Validating that a collection is empty should" - {
-        "return a success if the collection is empty" {
-            checkAll(Arb.beEmpty(), Arb.string()) { requirement, description ->
-                with(requirement.validate(emptyList<Any>(), description)) {
-                    shouldBeSuccess()
-                    getOrNull() shouldBe emptyList<Any>()
-                }
-            }
+    "Validating that a collection is empty should return" - {
+        "[true] if the collection is empty" {
+            BeEmpty.validator(emptyList<Any>()).shouldBeTrue()
         }
 
-        "return a failure if the collection is not empty" {
-            checkAll(
-                Arb.beEmpty(),
-                Arb.string(),
-                Arb.list(Arb.any(), 1..100)
-            ) { requirement, description, value ->
-                with(requirement.validate(value, description)) {
-                    shouldBeFailure()
-                    exceptionOrNull() shouldBe requirement.generateException(description)
-                }
+        "[false] if the collection is not empty" {
+            checkAll(Arb.list(Arb.any(), 1..100)) { list ->
+                BeEmpty.validator(list).shouldBeFalse()
             }
         }
     }
 })
+
+/**
+ * Creates an arbitrary for generating a requirement.
+ */
+private fun Arb.Companion.requirement() = arbitrary { element(BeEmpty).bind() }
