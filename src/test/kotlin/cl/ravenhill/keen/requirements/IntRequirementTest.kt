@@ -15,6 +15,7 @@ import cl.ravenhill.keen.requirements.IntRequirement.BeInRange
 import cl.ravenhill.keen.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.unfulfilledConstraint
 import cl.ravenhill.keen.util.IntToInt
+import cl.ravenhill.keen.util.toRange
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -23,6 +24,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.nonPositiveInt
@@ -63,22 +65,22 @@ class IntRequirementTest : FreeSpec({
     "A [BeInRange] requirement" - {
         "can be converted to a [String]" {
             checkAll(
-                Arb.intToIntBeInRangeData(Arb.orderedPair(Arb.int(), Arb.int()))
-            ) { (range, requirement) ->
+                Arb.beInRangeData(Arb.orderedPair(Arb.int(), Arb.int()))
+            ) { (range, _, requirement) ->
                 requirement.toString() shouldBe "BeInRange { range: $range }"
             }
         }
 
         "can be created from" - {
             "an [IntToInt]" {
-                checkAll(Arb.intToIntBeInRangeData()) { (range, requirement) ->
-                    requirement.range shouldBe range
+                checkAll(Arb.orderedPair(Arb.int())) { range ->
+                    BeInRange(range).range shouldBe range
                 }
             }
 
             "an [IntRange]" {
-                checkAll(Arb.intRangeBeInRangeData()) { (range, requirement) ->
-                    requirement.range shouldBe range
+                checkAll(Arb.intRange()) { range ->
+                    BeInRange(range).range shouldBe (range.first to range.last)
                 }
             }
         }
@@ -94,6 +96,20 @@ class IntRequirementTest : FreeSpec({
                 }
             }
         }
+
+        "when _validating_ that a value is in range should return" - {
+            "[true] if it is in range" {
+                checkAll(Arb.beInRangeData()) { (_, value, requirement) ->
+                    requirement.validator(value).shouldBeTrue()
+                }
+            }
+
+            "[false] if it is not in range" {
+                checkAll(Arb.beInRangeData(insideRange = false)) { (_, value, requirement) ->
+                    requirement.validator(value).shouldBeFalse()
+                }
+            }
+        }
     }
 })
 
@@ -104,43 +120,41 @@ class IntRequirementTest : FreeSpec({
  * @return An [Arb] instance that generates [IntRequirement]s.
  */
 private fun Arb.Companion.intRequirement() = arbitrary {
-    element(BePositive, intToIntBeInRangeData().bind().requirement).bind()
+    element(BePositive, beInRangeData().bind().requirement).bind()
 }
 
 /**
  * Generates an arbitrary instance of [BeInRangeData].
  *
- * This function uses the provided `range` generator to create a range of integer values,
- * represented as a [IntToInt], and then wraps this range in a [BeInRangeData] object.
- * If no `range` generator is provided, the function defaults to generating a range of
- * two arbitrary integers.
+ * This function uses the provided `arbRange` to create a range of integer values, represented as an
+ * [IntToInt], and then wraps this range and a generated value in a [BeInRangeData] object.
+ * If no `arbRange` is provided, the function defaults to generating a range of two arbitrary
+ * integers.
+ * The generated value can be either inside or outside the range, depending on the `insideRange`
+ * parameter.
  *
  * @receiver The `Arb.Companion` object.
- * @param range An [Arb] instance that generates [IntToInt]s.
+ * @param arbRange An [Arb] instance that generates [IntToInt]s.
  * Defaults to generating a range of two arbitrary integers.
+ * @param insideRange Whether the generated value should be inside the generated range.
+ * Defaults to `true`.
  * @return An [Arb] instance that generates [BeInRangeData]s.
  */
-private fun Arb.Companion.intToIntBeInRangeData(
-    range: Arb<IntToInt> = Arb.orderedPair(Arb.int(), Arb.int(), true)
+@OptIn(ExperimentalStdlibApi::class)
+private fun Arb.Companion.beInRangeData(
+    arbRange: Arb<IntToInt> = Arb.orderedPair(Arb.int(-1_000_000, 1_000_000), true),
+    insideRange: Boolean = true
 ) = arbitrary {
-    BeInRangeData(range.bind())
-}
-
-/**
- * Generates an arbitrary instance of [BeInRangeData].
- *
- * This function uses the provided `range` generator to create a range of integer values,
- * represented as an [IntRange], and then wraps this range in a [BeInRangeData] object.
- *
- * @receiver The `Arb.Companion` object.
- * @param range An [Arb] instance that generates [IntRange]s.
- * Defaults to an arbitrary [IntRange].
- * @return An [Arb] instance that generates [BeInRangeData]s.
- */
-private fun Arb.Companion.intRangeBeInRangeData(
-    range: Arb<IntRange> = Arb.intRange()
-) = arbitrary {
-    BeInRangeData(range.bind())
+    val range = arbRange.bind()
+    val value = if (insideRange) {
+        int(range.first..range.second)
+    } else {
+        choice(
+            int(Int.MIN_VALUE..<range.first),
+            int(range.second + 1..Int.MAX_VALUE)
+        )
+    }.bind()
+    BeInRangeData(range, value)
 }
 
 /**
@@ -157,33 +171,25 @@ private fun Arb.Companion.intRangeBeInRangeData(
  * @return An [Arb] instance that generates [IntRange]s.
  */
 private fun Arb.Companion.intRange(gen: Arb<Int> = Arb.int()) = arbitrary {
-    val (first, last) = Arb.orderedPair(gen, gen, true).bind()
-    first..last
+    orderedPair(gen, true).bind().toRange()
 }
 
 /**
  * Data class that encapsulates a range of integer values, represented as a [IntToInt],
- * and a corresponding [BeInRange] requirement.
+ * a value of type Int and a corresponding [BeInRange] requirement.
  *
- * The class provides a convenient way to package a range of values together with the
- * associated [BeInRange] requirement that uses this range.
- *
- * @property range The range of values that are allowed, represented as a [IntToInt].
- * @property requirement A [BeInRange] requirement.
+ * The class provides a convenient way to package a range of values together with a
+ * generated value, and the associated [BeInRange] requirement that uses this range.
  *
  * @constructor Creates a [BeInRangeData] instance with a range of integer values specified as an
- * [IntToInt].
- * @param range The [IntToInt] of allowed values.
+ * [IntToInt], and a generated value of type Int.
+ * @param range The [IntToInt] representing the range of allowed values.
+ * @param value The generated value of type Int that may or may not be inside the `range`.
  * @param requirement The [BeInRange] requirement for this data. Defaults to [BeInRange] of the
  * specified range.
  */
-data class BeInRangeData(val range: IntToInt, val requirement: BeInRange = BeInRange(range)) {
-
-    /**
-     * Creates a [BeInRangeData] instance with a range of integer values specified as an
-     * [IntRange].
-     *
-     * @param range The [IntRange] of allowed values.
-     */
-    constructor(range: IntRange) : this(range.first to range.last, BeInRange(range))
-}
+data class BeInRangeData(
+    val range: IntToInt,
+    val value: Int,
+    val requirement: BeInRange = BeInRange(range)
+)

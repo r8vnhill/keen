@@ -171,6 +171,30 @@ fun <T : Comparable<T>> Arb.Companion.orderedPair(
 }
 
 /**
+ * Generates a pair of values in ascending or descending order from a single [Arb] instance.
+ *
+ * This function delegates to the [orderedPair] function that takes two separate [Arb] instances.
+ * The same [Arb] instance `gen` is used for both values of the pair, which means that it generates
+ * pairs of values from the same distribution.
+ *
+ * If `strict` is true, it ensures that the pair consists of distinct values.
+ * If `reverted` is true, the pair is in descending order.
+ *
+ * @receiver The `Arb.Companion` object.
+ * @param gen An [Arb] instance that generates [T] values.
+ * @param strict Whether the pair should be strictly ordered (i.e., both values are distinct).
+ * Defaults to `false`.
+ * @param reverted Whether the generated pair should be in descending order.
+ * Defaults to `false`.
+ * @return An [Arb] instance that generates ordered pairs of [T] values.
+ */
+fun <T : Comparable<T>> Arb.Companion.orderedPair(
+    gen: Arb<T>,
+    strict: Boolean = false,
+    reverted: Boolean = false
+) = orderedPair(gen, gen, strict, reverted)
+
+/**
  * Generates a triple of values in ascending or descending order based on the `reverted` parameter.
  *
  * This function binds three values from the provided arbitrary generators `a`, `b`, and `c`.

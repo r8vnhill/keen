@@ -10,14 +10,15 @@
 package cl.ravenhill.keen.requirements
 
 import cl.ravenhill.keen.DoubleRequirementException
+import cl.ravenhill.keen.orderedPair
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.unfulfilledConstraint
 import cl.ravenhill.keen.util.contains
-import cl.ravenhill.keen.orderedPair
 import cl.ravenhill.keen.util.real
 import cl.ravenhill.keen.util.toRange
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -337,9 +338,11 @@ class DoubleRequirementTest : FreeSpec({
 
         "should throw an exception if the tolerance is negative" {
             checkAll(Arb.real(), Arb.negativeReal()) { expected, tolerance ->
-                shouldThrow<IllegalArgumentException> {
+                shouldThrowWithMessage<IllegalArgumentException>(
+                    "The tolerance must be non-negative."
+                ) {
                     BeEqualTo(expected, tolerance)
-                }.message shouldBe "The tolerance must be non-negative."
+                }
             }
         }
 
