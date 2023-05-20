@@ -7,10 +7,11 @@
  */
 
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.keen.requirements
 
 import cl.ravenhill.any
 import cl.ravenhill.enforcer.CollectionRequirementException
+import cl.ravenhill.enforcer.requirements.CollectionRequirement
 import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -38,7 +39,8 @@ import io.kotest.property.checkAll
 /**
  * A suite of tests for validating collection requirements.
  *
- * @see Arb.Companion.requirement
+ * @see CollectionRequirement
+ * @see CollectionRequirement.BeEmpty
  * @see CollectionRequirementException
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
@@ -70,8 +72,5 @@ class CollectionRequirementTest : FreeSpec({
 
 /**
  * Creates an arbitrary for generating a requirement.
- *
- * @see CollectionRequirement.BeEmpty
  */
-private fun Arb.Companion.requirement(): Arb<CollectionRequirement> =
-    arbitrary { element(BeEmpty).bind() }
+private fun Arb.Companion.requirement() = arbitrary { element(BeEmpty).bind() }

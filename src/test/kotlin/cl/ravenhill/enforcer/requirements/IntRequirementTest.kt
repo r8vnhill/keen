@@ -17,12 +17,12 @@
 
 package cl.ravenhill.enforcer.requirements
 
-import cl.ravenhill.keen.orderedPair
+import cl.ravenhill.orderedPair
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
 import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.unfulfilledConstraint
-import cl.ravenhill.keen.util.IntToInt
-import cl.ravenhill.keen.util.toRange
+import cl.ravenhill.utils.IntToInt
+import cl.ravenhill.utils.toRange
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse

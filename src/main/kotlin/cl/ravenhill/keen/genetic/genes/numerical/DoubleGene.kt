@@ -8,7 +8,7 @@ import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.enforcer.requirements.PairRequirement.BeFinite
 import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
-import cl.ravenhill.keen.util.DoubleToDouble
+import cl.ravenhill.utils.DoubleToDouble
 import java.util.Objects
 import kotlin.random.asJavaRandom
 

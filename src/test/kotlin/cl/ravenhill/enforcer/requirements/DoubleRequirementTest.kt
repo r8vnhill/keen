@@ -6,24 +6,16 @@
  * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-/*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
 
 package cl.ravenhill.enforcer.requirements
 
-import cl.ravenhill.keen.orderedPair
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.orderedPair
+import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
-import cl.ravenhill.keen.util.contains
-import cl.ravenhill.keen.util.real
-import cl.ravenhill.keen.util.toRange
+import cl.ravenhill.utils.contains
+import cl.ravenhill.utils.toRange
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec

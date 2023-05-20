@@ -8,8 +8,8 @@
 
 package cl.ravenhill.enforcer.requirements
 
-import cl.ravenhill.keen.util.DoubleToDouble
-import cl.ravenhill.keen.util.contains
+import cl.ravenhill.utils.DoubleToDouble
+import cl.ravenhill.utils.contains
 import kotlin.math.abs
 
 /**

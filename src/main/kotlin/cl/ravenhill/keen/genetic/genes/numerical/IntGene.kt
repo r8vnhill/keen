@@ -11,7 +11,7 @@ package cl.ravenhill.keen.genetic.genes.numerical
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import cl.ravenhill.keen.util.IntToInt
+import cl.ravenhill.utils.IntToInt
 import java.util.Objects
 
 /**

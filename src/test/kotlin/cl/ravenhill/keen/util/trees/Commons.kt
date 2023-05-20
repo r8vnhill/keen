@@ -9,7 +9,7 @@
 
 package cl.ravenhill.keen.util.trees
 
-import cl.ravenhill.keen.orderedPair
+import cl.ravenhill.orderedPair
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int

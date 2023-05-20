@@ -16,7 +16,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
 import cl.ravenhill.keen.util.Filterable
-import cl.ravenhill.keen.util.IntToInt
+import cl.ravenhill.utils.IntToInt
 import java.util.Objects
 
 

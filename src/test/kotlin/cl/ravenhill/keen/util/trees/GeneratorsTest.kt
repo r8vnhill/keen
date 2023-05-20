@@ -9,10 +9,10 @@
 
 package cl.ravenhill.keen.util.trees
 
-import cl.ravenhill.keen.any
+import cl.ravenhill.any
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
-import cl.ravenhill.keen.orderedPair
+import cl.ravenhill.orderedPair
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.ints.shouldBeLessThanOrEqual

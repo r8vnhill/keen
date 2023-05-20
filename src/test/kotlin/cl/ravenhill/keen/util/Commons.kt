@@ -69,14 +69,3 @@ infix fun <T> Iterable<T>.shouldAny(predicate: (T) -> Boolean) = should(Matcher 
         { "Iterable should have at least one element that matches the predicate" },
         { "Iterable should not have any elements that match the predicate" })
 })
-
-/**
- * Returns an arbitrary generator for [Double] values within the given [range], excluding NaN and
- * infinite values.
- */
-fun Arb.Companion.real(
-    range: ClosedFloatingPointRange<Double> = Double.MIN_VALUE..Double.MAX_VALUE
-) = arbitrary {
-    double(range).next()
-}
-

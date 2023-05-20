@@ -14,7 +14,7 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.util.Filterable
-import cl.ravenhill.keen.util.DoubleToDouble
+import cl.ravenhill.utils.DoubleToDouble
 import java.util.Objects
 
 

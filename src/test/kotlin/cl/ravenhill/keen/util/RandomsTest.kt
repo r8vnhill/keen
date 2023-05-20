@@ -1,10 +1,11 @@
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.any
 import cl.ravenhill.enforcer.UnfulfilledRequirementException
-import cl.ravenhill.keen.any
-import cl.ravenhill.keen.orderedPair
-import cl.ravenhill.keen.orderedTriple
 import cl.ravenhill.keen.random
+import cl.ravenhill.orderedPair
+import cl.ravenhill.orderedTriple
+import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow

@@ -18,7 +18,7 @@
 package cl.ravenhill.enforcer.requirements
 
 import cl.ravenhill.enforcer.UnfulfilledRequirementException
-import cl.ravenhill.keen.any
+import cl.ravenhill.any
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.result.shouldBeFailure
 import io.kotest.matchers.result.shouldBeSuccess

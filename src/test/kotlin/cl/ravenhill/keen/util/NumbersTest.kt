@@ -8,102 +8,20 @@
 
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.keen.orderedPair
-import cl.ravenhill.keen.orderedTriple
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.Matcher
-import io.kotest.matchers.MatcherResult
-import io.kotest.matchers.comparables.shouldBeLessThan
-import io.kotest.matchers.doubles.shouldNotBeNaN
-import io.kotest.matchers.ints.shouldBeLessThan
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNot
-import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.RandomSource
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.math.sqrt
 
-// region : -== SHOULD ASSERTIONS ==-
-// region : -== INT ==-
-/**
- * Creates a matcher that checks if an integer value is within a specified range.
- *
- * @param range The range of integers to check against.
- * @return A matcher that validates if the given value is within the specified range.
- */
-private fun beInRange(range: IntToInt) = Matcher { value: Int ->
-    MatcherResult(
-        value in range,
-        { "$value should be in $range" },
-        { "$value should not be in $range" }
-    )
-}
-
-/**
- * Asserts that the integer is within the specified range (inclusive).
- *
- * @param range the range to check against
- *
- * @throws AssertionError if the integer is not within the range
- */
-private infix fun Int.shouldBeInRange(range: IntToInt) = should(beInRange(range))
-
-/**
- * Asserts that the integer is not within the specified range (inclusive).
- *
- * @param range the range to check against
- *
- * @throws AssertionError if the integer is within the range
- */
-private infix fun Int.shouldNotBeIn(range: IntToInt) = shouldNot(beInRange(range))
-// endregion INT
-
-// region : -== DOUBLE ==-
-/**
- * Asserts that the [Double] is within the specified ``range`` (inclusive).
- */
-private infix fun Double.shouldBeInRange(range: DoubleToDouble) = should(Matcher { value ->
-    MatcherResult(
-        value in range,
-        { "$value should be in $range" },
-        { "$value should not be in $range" }
-    )
-})
-
-/**
- * Asserts that the [Double] is not within the specified ``range`` (inclusive).
- */
-private infix fun Double.shouldNotBeIn(range: DoubleToDouble) = should(Matcher { value ->
-    MatcherResult(
-        value !in range,
-        { "$value should not be in $range" },
-        { "$value should be in $range" }
-    )
-})
-// endregion DOUBLE
-// endregion SHOULD ASSERTIONS
-
 // region : -== ARBITRARY GENERATORS ==-
-/**
- * Returns an [Arb] that generates [Triple]<Int, Int, Int> instances, where the three integers are
- * guaranteed to be in ascending order.
- *
- * This is useful for testing functions that expect input in ascending order.
- */
-private fun Arb.Companion.orderedIntTriple() = arbitrary {
-    val ns = Arb.list(Arb.int(), 3..3).bind().sorted()
-    Triple(ns[0], ns[1], ns[2])
-}
-
 /**
  * Generates an [Arb]itrary [Pair] of [Int]s, where the first element is a positive integer and the
  * second element is a positive divisor of the first element.
@@ -127,15 +45,6 @@ private fun Arb.Companion.nonDivisiblePair() = arbitrary { rs ->
         .take(1)
         .first()
     number to nonDivisor
-}
-
-/**
- * Returns an [Arb] that generates [Triple]<Double, Double, Double> instances, where the three
- * doubles are guaranteed to be in ascending order.
- * This is useful for testing functions that expect input in ascending order.
- */
-private fun Arb.Companion.orderedDoubleTriple() = arbitrary {
-    orderedTriple(Arb.double(), Arb.double(), Arb.double()).bind()
 }
 
 /**
@@ -224,69 +133,6 @@ inline fun <T> iterateOverElements(vararg elements: T, action: (T) -> Unit) =
 // endregion AUXILIARY FUNCTIONS
 
 class NumbersTest : FreeSpec({
-    "An integer pair range" - {
-        "contains an integer within the range" {
-            checkAll(Arb.orderedIntTriple()) { (lo, mid, hi) ->
-                mid shouldBeInRange (lo to hi)
-            }
-        }
-
-        "does not contain an integer outside the range" {
-            checkAll(Arb.orderedIntTriple()) { (lo, mid, hi) ->
-                assume {
-                    iterateOverElements(lo to mid, mid to hi) {
-                        it.first shouldBeLessThan it.second
-                    }
-                }
-                lo shouldNotBeIn (mid to hi)
-                hi shouldNotBeIn (lo to mid)
-            }
-        }
-
-        "can be converted to an [IntRange]" {
-            checkAll(Arb.orderedPair(Arb.int(), Arb.int())) { range ->
-                with(range.toRange()) {
-                    shouldBeInstanceOf<IntRange>()
-                    start shouldBe range.first
-                    endInclusive shouldBe range.second
-                }
-            }
-        }
-    }
-
-    "A [Double] [Pair] range" - {
-        "contains a [Double] within the range" {
-            checkAll(Arb.orderedDoubleTriple()) { (lo, mid, hi) ->
-                assume {
-                    iterateOverElements(lo, mid, hi) { it.shouldNotBeNaN() }
-                    lo.shouldBeFinite()
-                }
-                mid shouldBeInRange (lo to hi)
-            }
-        }
-
-        "does not contain a [Double] outside the range" {
-            checkAll(Arb.orderedDoubleTriple()) { (lo, mid, hi) ->
-                assume {
-                    lo shouldBeLessThan mid
-                    mid shouldBeLessThan hi
-                }
-                lo shouldNotBeIn (mid to hi)
-                hi shouldNotBeIn (lo to mid)
-            }
-        }
-
-        "can be converted to a [ClosedFloatingPointRange]" {
-            checkAll(Arb.orderedPair(Arb.double(), Arb.double())) { range ->
-                with(range.toRange()) {
-                    shouldBeInstanceOf<ClosedFloatingPointRange<Double>>()
-                    start shouldBe range.first
-                    endInclusive shouldBe range.second
-                }
-            }
-        }
-    }
-
     "Rounding a number to the next multiple of another number" - {
         "the number is a multiple of the other number" - {
             "return the same number" {

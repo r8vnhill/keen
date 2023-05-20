@@ -10,9 +10,10 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.enforcer.UnfulfilledRequirementException
-import cl.ravenhill.keen.any
+import cl.ravenhill.any
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldBeOfClass
+import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow

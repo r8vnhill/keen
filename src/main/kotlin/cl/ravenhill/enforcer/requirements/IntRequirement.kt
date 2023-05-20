@@ -8,9 +8,8 @@
 
 package cl.ravenhill.enforcer.requirements
 
-import cl.ravenhill.keen.util.IntToInt
-import cl.ravenhill.keen.util.contains
-
+import cl.ravenhill.utils.IntToInt
+import cl.ravenhill.utils.contains
 /**
  * Represents a requirement that can be applied to an integer value.
  *
