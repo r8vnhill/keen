@@ -14,7 +14,7 @@ import cl.ravenhill.keen.IntRequirementException
 import cl.ravenhill.keen.any
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.unfulfilledConstraint
-import cl.ravenhill.keen.util.orderedPair
+import cl.ravenhill.keen.orderedPair
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.ints.shouldBeLessThanOrEqual

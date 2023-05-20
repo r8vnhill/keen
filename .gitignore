@@ -153,3 +153,6 @@ gradle-app.setting
 .idea
 
 *.html
+
+# Ignore Java Heap Profile (HPROF) files that are created when heap dumps are enabled for debugging
+*.hprof

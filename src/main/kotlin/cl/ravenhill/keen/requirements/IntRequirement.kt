@@ -32,9 +32,13 @@ sealed interface IntRequirement : Requirement<Int> {
      * [IntToInt].
      * @property range The range of values that are allowed.
      */
-    open class BeInRange(
-        private val range: IntToInt
-    ) : IntRequirement {
+    open class BeInRange(val range: IntToInt) : IntRequirement {
+
+        init {
+            require(range.first <= range.second) {
+                "The first value in the range [${range.first}] must be less than or equal to the second value [${range.second}]."
+            }
+        }
 
         /**
          * Creates a [BeInRange] requirement with a range of integer values specified as an
@@ -46,6 +50,9 @@ sealed interface IntRequirement : Requirement<Int> {
 
         /// Documentation inherited from [Requirement].
         override val validator = { value: Int -> value in range }
+
+        /// Documentation inherited from [Any].
+        override fun toString() = "BeInRange { range: $range }"
     }
 
     /**
@@ -60,19 +67,16 @@ sealed interface IntRequirement : Requirement<Int> {
      *
      * @property max The maximum allowed value.
      */
-    class BeAtMost(
-        max: Int
-    ) : BeInRange(Int.MIN_VALUE to max)
+    class BeAtMost(max: Int) : BeInRange(Int.MIN_VALUE to max)
 
     /**
      * Represents a requirement that an integer value must be equal to a specified value.
      *
      * @property expected The expected value.
      */
-    class BeEqualTo(
-        private val expected: Int
-    ) : IntRequirement {
+    class BeEqualTo(private val expected: Int) : IntRequirement {
 
+        /// Documentation inherited from [Requirement].
         override val validator = { value: Int -> value == expected }
     }
 }

@@ -5,6 +5,8 @@ import cl.ravenhill.keen.EnforcementException
 import cl.ravenhill.keen.IntRequirementException
 import cl.ravenhill.keen.UnfulfilledRequirementException
 import cl.ravenhill.keen.any
+import cl.ravenhill.keen.orderedPair
+import cl.ravenhill.keen.orderedTriple
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly

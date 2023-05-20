@@ -14,7 +14,7 @@ import cl.ravenhill.keen.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.keen.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.unfulfilledConstraint
 import cl.ravenhill.keen.util.contains
-import cl.ravenhill.keen.util.orderedPair
+import cl.ravenhill.keen.orderedPair
 import cl.ravenhill.keen.util.real
 import cl.ravenhill.keen.util.toRange
 import io.kotest.assertions.throwables.shouldThrow

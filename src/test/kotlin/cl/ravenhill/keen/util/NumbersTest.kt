@@ -8,6 +8,8 @@
 
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.keen.orderedPair
+import cl.ravenhill.keen.orderedTriple
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
