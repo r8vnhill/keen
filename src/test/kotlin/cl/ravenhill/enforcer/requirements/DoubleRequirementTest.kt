@@ -9,6 +9,7 @@
 
 package cl.ravenhill.enforcer.requirements
 
+import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.orderedPair
@@ -33,6 +34,133 @@ import io.kotest.property.arbitrary.negativeDouble
 import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
+
+class DoubleRequirementTest : FreeSpec({
+    "Generating an exception should return a [DoubleRequirementException]" {
+        checkAll(Arb.doubleRequirement(), Arb.string()) { requirement, description ->
+            with(requirement.generateException(description)) {
+                shouldBeInstanceOf<DoubleRequirementException>()
+                message shouldBe unfulfilledConstraint(description)
+            }
+        }
+    }
+
+    "A [BeInRange] requirement" - {
+        "can be created from" - {
+            "a pair of doubles" {
+                checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
+                    val requirement = BeInRange(first to last)
+                    requirement.range shouldBe (first to last)
+                }
+            }
+
+            "a range" {
+                checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
+                    val requirement = BeInRange(first..last)
+                    requirement.range shouldBe (first to last)
+                }
+            }
+        }
+
+        "should throw an exception when the first value is greater than the second" {
+            checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
+                shouldThrow<IllegalArgumentException> {
+                    BeInRange(last to first)
+                }.message shouldBe "The first value in the range must be less than or equal to the second value."
+            }
+        }
+
+        "when _validating_ that a [Double] is in range should return" - {
+            "[true] if it is in range" {
+                checkAll(
+                    Arb.restrictedToRange(Arb.beInRange()) { Arb.real(it) }
+                ) { (requirement, value) ->
+                    requirement.validator(value).shouldBeTrue()
+                }
+            }
+
+            "[false] if it is not in range" {
+                checkAll(
+                    Arb.restrictedToOutsideRange(Arb.beInRange(-1.0..1.0), Arb.real()),
+                ) { (requirement, value) ->
+                    requirement.validator(value).shouldBeFalse()
+                }
+            }
+        }
+
+        "can be converted to a string" {
+            checkAll(Arb.beInRange()) { requirement ->
+                requirement.toString() shouldBe "BeInRange { range: ${requirement.range} }"
+            }
+        }
+    }
+
+    "A [BeEqualTo] requirement" - {
+        "can be created with" - {
+            "an expected value and a default tolerance" {
+                checkAll(Arb.real()) { expected ->
+                    val requirement = BeEqualTo(expected)
+                    requirement.expected shouldBe expected
+                    requirement.tolerance shouldBe 1e-8
+                }
+            }
+
+            "an expected value and a tolerance" {
+                checkAll(Arb.real(), Arb.nonNegativeReal()) { expected, tolerance ->
+                    val requirement = BeEqualTo(expected, tolerance)
+                    requirement.expected shouldBe expected
+                    requirement.tolerance shouldBe tolerance
+                }
+            }
+        }
+
+        "should throw an exception if the tolerance is negative" {
+            checkAll(Arb.real(), Arb.negativeReal()) { expected, tolerance ->
+                shouldThrowWithMessage<IllegalArgumentException>(
+                    "The tolerance must be non-negative."
+                ) {
+                    BeEqualTo(expected, tolerance)
+                }
+            }
+        }
+
+        "can be converted to a string" {
+            checkAll(Arb.real(), Arb.nonNegativeReal()) { expected, tolerance ->
+                val requirement = BeEqualTo(expected, tolerance)
+                requirement.toString() shouldBe "BeEqualTo { expected: $expected, tolerance: $tolerance }"
+            }
+        }
+
+        "when validating that a double is equal to the expected value should return a" - {
+            "[Success] if the double is equal to the expected value" {
+                checkAll(
+                    Arb.beEqualToValue(Arb.beEqualTo()) { expected: Double, tolerance: Double ->
+                        Arb.real(expected - tolerance..expected + tolerance)
+                    },
+                    Arb.string()
+                ) { (requirement, value), description ->
+                    with(requirement.validate(value, description)) {
+                        shouldBeSuccess()
+                        getOrNull() shouldBe value
+                    }
+                }
+            }
+
+            "[Failure] if the double is not equal to the expected value" {
+                checkAll(
+                    Arb.notBeEqualToValue(Arb.beEqualTo(Arb.real(-1e-100..1e-100))) { Arb.real(it) },
+                    Arb.string()
+                ) { (requirement, value), description ->
+                    with(requirement.validate(value, description)) {
+                        shouldBeFailure()
+                        exceptionOrNull() shouldBe requirement.generateException(description)
+                    }
+                }
+            }
+        }
+    }
+})
+
 
 /**
  * Type alias for a range of `Double` values.
@@ -255,129 +383,3 @@ private fun Arb.Companion.notBeEqualToValue(
 }
 // endregion REQUIREMENTS
 // endregion ARBITRARY GENERATORS
-
-class DoubleRequirementTest : FreeSpec({
-    "Generating an exception should return a [DoubleRequirementException]" {
-        checkAll(Arb.doubleRequirement(), Arb.string()) { requirement, description ->
-            with(requirement.generateException(description)) {
-                shouldBeInstanceOf<cl.ravenhill.enforcer.DoubleRequirementException>()
-                message shouldBe unfulfilledConstraint(description)
-            }
-        }
-    }
-
-    "A [BeInRange] requirement" - {
-        "can be created from" - {
-            "a pair of doubles" {
-                checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
-                    val requirement = BeInRange(first to last)
-                    requirement.range shouldBe (first to last)
-                }
-            }
-
-            "a range" {
-                checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
-                    val requirement = BeInRange(first..last)
-                    requirement.range shouldBe (first to last)
-                }
-            }
-        }
-
-        "should throw an exception when the first value is greater than the second" {
-            checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
-                shouldThrow<IllegalArgumentException> {
-                    BeInRange(last to first)
-                }.message shouldBe "The first value in the range must be less than or equal to the second value."
-            }
-        }
-
-        "when _validating_ that a [Double] is in range should return" - {
-            "[true] if it is in range" {
-                checkAll(
-                    Arb.restrictedToRange(Arb.beInRange()) { Arb.real(it) }
-                ) { (requirement, value) ->
-                    requirement.validator(value).shouldBeTrue()
-                }
-            }
-
-            "[false] if it is not in range" {
-                checkAll(
-                    Arb.restrictedToOutsideRange(Arb.beInRange(-1.0..1.0), Arb.real()),
-                ) { (requirement, value) ->
-                    requirement.validator(value).shouldBeFalse()
-                }
-            }
-        }
-
-        "can be converted to a string" {
-            checkAll(Arb.beInRange()) { requirement ->
-                requirement.toString() shouldBe "BeInRange { range: ${requirement.range} }"
-            }
-        }
-    }
-
-    "A [BeEqualTo] requirement" - {
-        "can be created with" - {
-            "an expected value and a default tolerance" {
-                checkAll(Arb.real()) { expected ->
-                    val requirement = BeEqualTo(expected)
-                    requirement.expected shouldBe expected
-                    requirement.tolerance shouldBe 1e-8
-                }
-            }
-
-            "an expected value and a tolerance" {
-                checkAll(Arb.real(), Arb.nonNegativeReal()) { expected, tolerance ->
-                    val requirement = BeEqualTo(expected, tolerance)
-                    requirement.expected shouldBe expected
-                    requirement.tolerance shouldBe tolerance
-                }
-            }
-        }
-
-        "should throw an exception if the tolerance is negative" {
-            checkAll(Arb.real(), Arb.negativeReal()) { expected, tolerance ->
-                shouldThrowWithMessage<IllegalArgumentException>(
-                    "The tolerance must be non-negative."
-                ) {
-                    BeEqualTo(expected, tolerance)
-                }
-            }
-        }
-
-        "can be converted to a string" {
-            checkAll(Arb.real(), Arb.nonNegativeReal()) { expected, tolerance ->
-                val requirement = BeEqualTo(expected, tolerance)
-                requirement.toString() shouldBe "BeEqualTo { expected: $expected, tolerance: $tolerance }"
-            }
-        }
-
-        "when validating that a double is equal to the expected value should return a" - {
-            "[Success] if the double is equal to the expected value" {
-                checkAll(
-                    Arb.beEqualToValue(Arb.beEqualTo()) { expected: Double, tolerance: Double ->
-                        Arb.real(expected - tolerance..expected + tolerance)
-                    },
-                    Arb.string()
-                ) { (requirement, value), description ->
-                    with(requirement.validate(value, description)) {
-                        shouldBeSuccess()
-                        getOrNull() shouldBe value
-                    }
-                }
-            }
-
-            "[Failure] if the double is not equal to the expected value" {
-                checkAll(
-                    Arb.notBeEqualToValue(Arb.beEqualTo(Arb.real(-1e-100..1e-100))) { Arb.real(it) },
-                    Arb.string()
-                ) { (requirement, value), description ->
-                    with(requirement.validate(value, description)) {
-                        shouldBeFailure()
-                        exceptionOrNull() shouldBe requirement.generateException(description)
-                    }
-                }
-            }
-        }
-    }
-})

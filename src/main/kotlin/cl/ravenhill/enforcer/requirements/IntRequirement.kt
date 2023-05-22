@@ -67,14 +67,20 @@ sealed interface IntRequirement : Requirement<Int> {
      *
      * @property min The minimum allowed value.
      */
-    class BeAtLeast(min: Int) : BeInRange(min to Int.MAX_VALUE)
+    class BeAtLeast(min: Int) : BeInRange(min to Int.MAX_VALUE) {
+        /// Documentation inherited from [Any].
+        override fun toString() = "BeAtLeast { min: ${range.first} }"
+    }
 
     /**
      * Represents a requirement that an integer value must be at most a specified value.
      *
      * @property max The maximum allowed value.
      */
-    class BeAtMost(max: Int) : BeInRange(Int.MIN_VALUE to max)
+    class BeAtMost(max: Int) : BeInRange(Int.MIN_VALUE to max) {
+        /// Documentation inherited from [Any].
+        override fun toString() = "BeAtMost { max: ${range.second} }"
+    }
 
     /**
      * Represents a requirement that an integer value must be equal to a specified value.
