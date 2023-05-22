@@ -30,7 +30,7 @@ import kotlin.properties.Delegates
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Chromosome<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<Gene<DNA, G>> {
+interface Chromosome<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<G> {
 
     val genes: List<G>
 

@@ -1,0 +1,38 @@
+package cl.ravenhill.keen.problems.gp.stacktrace
+
+/***************************************************************************************************
+ * This file is instrumental for testing a genetic algorithm intended for automatic crash
+ * reproduction.
+ *
+ * Two parameterless functions are included in this file.
+ * The first function is designed to consistently generate an IllegalArgumentException, while the
+ * second function merely prints a non-exception-throwing message.
+ * These functions are used as test cases, facilitating the genetic algorithm's exploration and
+ * understanding of different crash scenarios, specifically those that do not involve parameter
+ * interactions.
+ **************************************************************************************************/
+
+
+/**
+ * Function that throws an IllegalArgumentException.
+ */
+fun throwException() {
+    throw IllegalArgumentException("This function always throws an exception!")
+}
+
+/**
+ * Function that prints a message and doesn't throw any exceptions.
+ */
+fun printMessage() {
+    println("Hello, this function does not throw an exception!")
+}
+
+/**
+ * A list of function references named ``functions0``.
+ *
+ * This includes two parameterless functions: [throwException] and [printMessage].
+ *
+ * These functions serve as test scenarios for the genetic algorithm in automatic crash
+ * reproduction.
+ */
+val functions0 = listOf(::throwException, ::printMessage)

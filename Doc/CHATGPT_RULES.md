@@ -58,3 +58,26 @@ Your answer should be formatted as follows:
 
 Always use line breaks after the end of a sentence, and use two line breaks after the end of a
 paragraph to maintain readability.
+
+### 9. Usage examples
+
+When providing examples usages on the docstring comments, you should follow the following syntax
+
+```kotlin
+/**
+ * Documentation.
+ *
+ * ## Examples
+ * ### Example 1: Details
+ * ```
+ * // example 1 code
+ * ```
+ * ### Example 2: Details
+ * ```
+ * // example 2 code
+ * ```
+ * @tags
+ */
+fun foo(params) {
+  elements.forEach(action)
+```

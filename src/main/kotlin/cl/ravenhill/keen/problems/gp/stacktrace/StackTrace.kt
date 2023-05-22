@@ -17,11 +17,48 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.TargetFitness
+import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticPrinter
+import java.io.OutputStream
+import java.io.PrintStream
+import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
 private typealias Statement = Pair<KFunction<*>, Map<KParameter, Any>>
+
+/**
+ * Runs a block of code with stdout turned off.
+ * Restores stdout after execution.
+ *
+ * ## Examples
+ * ### Example 1: Hiding standard output of a println
+ * ```kotlin
+ * runWithStdoutOff {
+ *     println("You won't see this message in the console")
+ * }
+ * println("You will see this message in the console")
+ * ```
+ * In this example, the `println` inside the `runWithStdoutOff` function won't print anything to the
+ * console, but the one after it will.
+ *
+ * @param block A block of code to run with stdout turned off.
+ */
+fun runWithStdoutOff(block: () -> Unit) {
+    val originalOut = System.out // Save the original stdout
+    // Redirect stdout to a null OutputStream
+    System.setOut(PrintStream(object : OutputStream() {
+        override fun write(b: Int) {
+            // Do nothing
+        }
+    }))
+    try {
+        block() // Execute the given block
+    } finally {
+        System.setOut(originalOut) // Restore stdout
+    }
+}
 
 class Tracer<T : Throwable>(
     val statements: List<KFunction<*>>,
@@ -37,26 +74,32 @@ class Tracer<T : Throwable>(
         }
     }) {
         limits = listOf(TargetFitness(5.0))
+        statistics = listOf(StatisticCollector(), StatisticPrinter(10))
     }
     private val inputFactory = InputFactory()
 
     fun run() {
-
+        val result = engine.evolve()
+        println(engine.statistics.first())
     }
 
     fun fitness(
-        statements: Genotype<Statement, StatementGene>
+        genotype: Genotype<Statement, StatementGene>
     ): Double {
         var fitness = 0.0
         lateinit var stack: Array<StackTraceElement>
+        val statements = genotype.chromosomes.first()
         try {
-            statements.forEach { it[0]() }
+            runWithStdoutOff {
+                statements.forEach { it() }
+            }
             return 0.0
-        } catch (e: Throwable) {
-            stack = e.stackTrace
-            if (targetException == e::class) {
+        } catch (targetException: InvocationTargetException) {
+            val ex = targetException.targetException
+            stack = ex.stackTrace
+            if (this.targetException == ex::class) {
                 fitness += 2
-                if (targetMessage.isEmpty() || targetMessage in (e.message ?: "")) {
+                if (targetMessage.isEmpty() || targetMessage in (ex.message ?: "")) {
                     fitness++
                 }
             }
@@ -77,15 +120,11 @@ class Tracer<T : Throwable>(
     }
 
     companion object {
-        inline fun <reified T, reified E : Throwable> create(
+        inline fun <reified E : Throwable> create(
+            functions: List<KFunction<*>>,
             targetMessage: String = "",
             functionName: String = ""
-        ) = Tracer(
-            T::class.members.filterIsInstance<KFunction<*>>(),
-            E::class,
-            targetMessage,
-            functionName
-        )
+        ) = Tracer(functions, E::class, targetMessage, functionName)
     }
 
     fun execute(statements: List<Statement>) {
@@ -100,26 +139,28 @@ class StatementGene(override val dna: Statement) : Gene<Statement, StatementGene
 
     operator fun invoke() = dna.first.callBy(dna.second)
 
-    override fun withDna(dna: Statement): StatementGene {
-        TODO("Not yet implemented")
-    }
+    override fun withDna(dna: Statement) = StatementGene(dna)
+
+    override fun toString() =
+        dna.first.name + dna.second.values.joinToString(", ", "(", ")")
 }
 
 
 class StatementChromosome(override val genes: List<StatementGene>) :
-        Chromosome<Statement, StatementGene> {
+    Chromosome<Statement, StatementGene> {
 
-    override fun withGenes(genes: List<StatementGene>): Chromosome<Statement, StatementGene> {
-        TODO("Not yet implemented")
-    }
+    override fun withGenes(genes: List<StatementGene>) = StatementChromosome(genes)
+
+    override fun toString() = genes.joinToString("\n")
 
     class Factory(override var size: Int, val geneFactory: () -> StatementGene) :
-            Chromosome.AbstractFactory<Statement, StatementGene>() {
+        Chromosome.AbstractFactory<Statement, StatementGene>() {
         @OptIn(ExperimentalStdlibApi::class)
         override fun make() = StatementChromosome((0..<size).map { geneFactory() })
     }
 }
-fun main() {
-    val tracer = Tracer.create<Tracer<Throwable>, Throwable>()
 
+fun main() {
+    val tracer = Tracer.create<IllegalArgumentException>(functions0)
+    tracer.run()
 }

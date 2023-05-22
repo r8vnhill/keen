@@ -34,11 +34,11 @@ class InputFactory {
      * A map that associates each input type with a constructor function that generates a terminal
      * of that type.
      */
-    private val typeConstructors: MutableMap<KType, () -> Terminal<out Any>> = mutableMapOf(
-        Int::class.createType() to { EphemeralConstant { Core.random.nextInt() } },
-        Double::class.createType() to { EphemeralConstant { Core.random.nextDouble() } },
-        Boolean::class.createType() to { EphemeralConstant { Core.random.nextBoolean() } },
-        Char::class.createType() to { EphemeralConstant { Core.random.nextChar() } })
+    private val typeConstructors: MutableMap<KType, () -> Any> = mutableMapOf(
+        Int::class.createType() to { Core.random.nextInt() },
+        Double::class.createType() to { Core.random.nextDouble() },
+        Boolean::class.createType() to { Core.random.nextBoolean() },
+        Char::class.createType() to { Core.random.nextChar() })
 
     /**
      * Sets the constructor function for the specified input type.
