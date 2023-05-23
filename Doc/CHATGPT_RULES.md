@@ -81,3 +81,5 @@ When providing examples usages on the docstring comments, you should follow the 
 fun foo(params) {
   elements.forEach(action)
 ```
+
+Note that the examples must be placed before the @tags.

@@ -6,14 +6,6 @@
  * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-/*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
 
 package cl.ravenhill.enforcer.requirements
 
@@ -33,13 +25,7 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.choice
-import io.kotest.property.arbitrary.element
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.nonPositiveInt
-import io.kotest.property.arbitrary.positiveInt
-import io.kotest.property.arbitrary.string
+import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 
 class IntRequirementTest : FreeSpec({
@@ -74,9 +60,7 @@ class IntRequirementTest : FreeSpec({
 
     "A [BeInRange] requirement" - {
         "can be converted to a [String]" {
-            checkAll(
-                Arb.beInRangeData(Arb.orderedPair(Arb.int(), Arb.int()))
-            ) { (range, _, requirement) ->
+            checkAll(Arb.beInRangeData()) { (range, _, requirement) ->
                 requirement.toString() shouldBe "BeInRange { range: $range }"
             }
         }
@@ -124,50 +108,14 @@ class IntRequirementTest : FreeSpec({
 
     "A [BeAtMost] requirement" - {
         "can be converted to a [String]" {
-            checkAll(
-                Arb.beInRangeData(Arb.orderedPair(Arb.int(), Arb.int()))
-            ) { (range, _, requirement) ->
-                requirement.toString() shouldBe "BeAtMost { range: $range }"
+            checkAll(Arb.beAtMostData()) { (most, _, requirement) ->
+                requirement.toString() shouldBe "BeAtMost { max: $most }"
             }
         }
 
-        "can be created from" - {
-            "an [IntToInt]" {
-                checkAll(Arb.orderedPair(Arb.int())) { range ->
-                    BeAtMost(range).range shouldBe range
-                }
-            }
-
-            "an [IntRange]" {
-                checkAll(Arb.intRange()) { range ->
-                    BeAtMost(range).range shouldBe (range.first to range.last)
-                }
-            }
-        }
-
-        "should throw an exception when created from an [IntToInt] with a start value greater than the end value" {
-            checkAll(
-                Arb.orderedPair(Arb.int(), Arb.int(), strict = true, reverted = true)
-            ) { range ->
-                shouldThrowWithMessage<IllegalArgumentException>(
-                    "The first value in the range [${range.first}] must be less than or equal to the second value [${range.second}]."
-                ) {
-                    BeAtMost(range)
-                }
-            }
-        }
-
-        "when _validating_ that a value is at most the end of the range should return" - {
-            "[true] if it is at most the end of the range" {
-                checkAll(Arb.beInRangeData()) { (_, value, requirement) ->
-                    requirement.validator(value).shouldBeTrue()
-                }
-            }
-
-            "[false] if it is not at most the end of the range" {
-                checkAll(Arb.beInRangeData(insideRange = false)) { (_, value, requirement) ->
-                    requirement.validator(value).shouldBeFalse()
-                }
+        "can be created with a maximum value" {
+            checkAll(Arb.int()) { most ->
+                BeAtMost(most).most shouldBe most
             }
         }
     }
@@ -184,44 +132,54 @@ private fun Arb.Companion.intRequirement() = arbitrary {
 }
 
 /**
- * Generates an arbitrary instance of [BeInRangeData].
+ * Generates an [Arb] of [BeInRangeData] given an [Arb]<[Int]> and a boolean value indicating
+ * whether the generated test value should be inside the range.
  *
- * This function uses the provided `arbRange` to create a range of integer values, represented as an
- * [IntToInt], and then wraps this range and a generated value in a [BeInRangeData] object.
- * If no `arbRange` is provided, the function defaults to generating a range of two arbitrary
- * integers.
- * The generated value can be either inside or outside the range, depending on the `insideRange`
- * parameter.
- *
- * @receiver The `Arb.Companion` object.
- * @param arbRange An [Arb] instance that generates [IntToInt]s.
- * Defaults to generating a range of two arbitrary integers.
- * @param insideRange Whether the generated value should be inside the generated range.
+ * @param value An [Arb]<[Int]> used to generate the range of values and the test value. Defaults to [Arb.int()].
+ * @param insideRange A boolean value indicating whether the generated test value should be inside
+ * the range.
+ * If `true`, the test value will be in the range [lo, hi].
+ * If `false`, the test value will be either lower than `lo` or higher than `hi`.
  * Defaults to `true`.
- * @return An [Arb] instance that generates [BeInRangeData]s.
+ *
+ * @param value An [Arb]<[Int]> used to generate the range of values and the test value.
+ * Defaults to [Arb.int()].
+ * @param insideRange A boolean value indicating whether the generated test value should be inside
+ * the range.
+ * If `true`, the test value will be in the range [lo, hi]. If `false`, the test value will be
+ * either lower than `lo` or higher than `hi`.
+ * Defaults to `true`.
  */
-@OptIn(ExperimentalStdlibApi::class)
 private fun Arb.Companion.beInRangeData(
-    arbRange: Arb<Triple<Int, Int, Int>> = Arb.orderedTriple(Arb.int()),
+    value: Arb<Int> = Arb.int(),
     insideRange: Boolean = true
 ) = arbitrary {
-    val (lo, mi, hi) = arbRange.bind()
+    val (lo, mid, hi) = orderedTriple(value, strict = !insideRange).bind()
     if (insideRange) {
-        BeInRangeData(lo to hi, mi)
+        BeInRangeData(lo to hi, mid)
     } else {
-        hoo
+        if (boolean().bind()) {
+            BeInRangeData(lo to mid, hi)
+        } else {
+            BeInRangeData(mid to hi, lo)
+        }
     }
-    val value = if (insideRange) {
-        int(range.first..range.second)
-    } else {
-        choice(
-            int(Int.MIN_VALUE..<range.first),
-            int(range.second + 1..Int.MAX_VALUE)
-        )
-    }.bind()
-    BeInRangeData(range, value)
 }
 
+/**
+ * Generates an [Arb] of [BeAtMostData] given an [Arb]<[Int]> and a boolean value indicating
+ * whether the generated test value should be below or equal to the maximum value.
+ *
+ * @param value An [Arb]<[Int]> used to generate the maximum permissible value and the test value.
+ *              Defaults to [Arb.int()].
+ * @param below A boolean value indicating whether the generated test value should be below
+ * (`true`) or equal to (`false`) the maximum value.
+ * If `true`, the test value will be less than the maximum value.
+ * If `false`, the test value will be equal to the maximum value.
+ *
+ * @return An [Arb] of [BeAtMostData] containing the maximum permissible value and the generated
+ * test value.
+ */
 private fun Arb.Companion.beAtMostData(
     value: Arb<Int> = Arb.int(),
     below: Boolean = true
@@ -266,9 +224,7 @@ data class BeInRangeData(
     val range: IntToInt,
     val test: Int,
     val requirement: BeInRange = BeInRange(range)
-) {
-    fun toBeAtMostData() = BeAtMostData(range.second, test)
-}
+)
 
 /**
  * This data class is used for testing the [BeAtMost] requirement.

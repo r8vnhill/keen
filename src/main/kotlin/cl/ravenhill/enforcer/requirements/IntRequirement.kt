@@ -10,6 +10,7 @@ package cl.ravenhill.enforcer.requirements
 
 import cl.ravenhill.utils.IntToInt
 import cl.ravenhill.utils.contains
+
 /**
  * Represents a requirement that can be applied to an integer value.
  *
@@ -75,9 +76,12 @@ sealed interface IntRequirement : Requirement<Int> {
     /**
      * Represents a requirement that an integer value must be at most a specified value.
      *
-     * @property max The maximum allowed value.
+     * @param max The maximum allowed value.
+     * @property most The maximum allowed value.
      */
     class BeAtMost(max: Int) : BeInRange(Int.MIN_VALUE to max) {
+        val most: Int get() = range.second
+
         /// Documentation inherited from [Any].
         override fun toString() = "BeAtMost { max: ${range.second} }"
     }
