@@ -35,21 +35,21 @@ sealed interface LongRequirement : Requirement<Long> {
      * @param description The description to use in the generated exception.
      * @return A new instance of [LongRequirementException] using the provided [description].
      */
-    override fun generateException(description: String) =
-        cl.ravenhill.enforcer.LongRequirementException { description }
+    override fun generateException(description: String) = LongRequirementException { description }
 
     /**
      * A [BeEqualTo] requirement checks whether a given Long value is equal to an expected value.
      *
      * @param expected The expected value to compare with.
      */
-    class BeEqualTo(
-        private val expected: Long
-    ) : LongRequirement {
+    class BeEqualTo(val expected: Long) : LongRequirement {
 
         /**
          * The validator function for this requirement.
          */
         override val validator = { value: Long -> value == expected }
+
+        /// Documentation inherited from [Any].
+        override fun toString() = "BeEqualTo { expected: $expected }"
     }
 }

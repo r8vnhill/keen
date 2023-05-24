@@ -1,6 +1,6 @@
 # ChatGPT Rules
 
-This is the `<n>`th chat about `<topic>`.
+This is the `<n>`th chat about Keen, a Genetic Algorithm library for Kotlin.
 
 ## Rules
 
@@ -71,15 +71,15 @@ When providing examples usages on the docstring comments, you should follow the 
  * ### Example 1: Details
  * ```
  * // example 1 code
- * ```
- * ### Example 2: Details
- * ```
- * // example 2 code
- * ```
- * @tags
- */
+   * ```
+   * ### Example 2: Details
+   * ```
+   * // example 2 code
+   * ```
+   * @tags
+   */
 fun foo(params) {
-  elements.forEach(action)
+    elements.forEach(action)
 ```
 
 Note that the examples must be placed before the @tags.

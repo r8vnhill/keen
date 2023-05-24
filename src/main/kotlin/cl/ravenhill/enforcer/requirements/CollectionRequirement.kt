@@ -8,6 +8,8 @@
 
 package cl.ravenhill.enforcer.requirements
 
+import cl.ravenhill.enforcer.CollectionRequirementException
+
 /**
  * Represents a constraint that can be applied to a collection.
  *
@@ -16,9 +18,9 @@ package cl.ravenhill.enforcer.requirements
  * @version 2.0.0
  */
 sealed interface CollectionRequirement : Requirement<Collection<*>> {
-    // Inherit documentation from Requirement
+    /// Inherit documentation from [Requirement]
     override fun generateException(description: String) =
-        cl.ravenhill.enforcer.CollectionRequirementException { description }
+        CollectionRequirementException { description }
 
     /**
      * Constraint that checks if a collection is not empty.

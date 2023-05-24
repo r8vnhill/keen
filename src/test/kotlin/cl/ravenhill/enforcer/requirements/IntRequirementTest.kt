@@ -305,7 +305,7 @@ private fun Arb.Companion.beAtLeastData(
  * @property requirement The [BeAtLeast] requirement that encapsulates the [least] value, which
  * the [test] value should meet.
  */
-data class BeAtLeastData(
+private data class BeAtLeastData(
     val least: Int,
     val test: Int,
     val requirement: BeAtLeast = BeAtLeast(least)
@@ -345,7 +345,7 @@ private fun Arb.Companion.beAtMostData(
  * @property requirement The [BeAtMost] requirement that encapsulates the [most] value, which
  * the [test] value should meet.
  */
-data class BeAtMostData(
+private data class BeAtMostData(
     val most: Int,
     val test: Int,
     val requirement: BeAtMost = BeAtMost(most)
@@ -389,7 +389,7 @@ private fun Arb.Companion.beEqualToData(
  * @property requirement The [BeEqualTo] requirement that encapsulates the [value], which
  * the [test] value should meet.
  */
-data class BeEqualToData(
+private data class BeEqualToData(
     val value: Int,
     val test: Int,
     val requirement: BeEqualTo = BeEqualTo(value)
