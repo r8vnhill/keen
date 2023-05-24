@@ -19,6 +19,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
+import cl.ravenhill.utils.runWithStdoutOff
 import java.io.OutputStream
 import java.io.PrintStream
 import java.lang.reflect.InvocationTargetException
@@ -27,38 +28,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
 private typealias Statement = Pair<KFunction<*>, Map<KParameter, Any>>
-
-/**
- * Runs a block of code with stdout turned off.
- * Restores stdout after execution.
- *
- * ## Examples
- * ### Example 1: Hiding standard output of a println
- * ```kotlin
- * runWithStdoutOff {
- *     println("You won't see this message in the console")
- * }
- * println("You will see this message in the console")
- * ```
- * In this example, the `println` inside the `runWithStdoutOff` function won't print anything to the
- * console, but the one after it will.
- *
- * @param block A block of code to run with stdout turned off.
- */
-fun runWithStdoutOff(block: () -> Unit) {
-    val originalOut = System.out // Save the original stdout
-    // Redirect stdout to a null OutputStream
-    System.setOut(PrintStream(object : OutputStream() {
-        override fun write(b: Int) {
-            // Do nothing
-        }
-    }))
-    try {
-        block() // Execute the given block
-    } finally {
-        System.setOut(originalOut) // Restore stdout
-    }
-}
 
 class Tracer<T : Throwable>(
     val statements: List<KFunction<*>>,

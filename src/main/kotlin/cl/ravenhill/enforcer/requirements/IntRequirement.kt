@@ -8,6 +8,7 @@
 
 package cl.ravenhill.enforcer.requirements
 
+import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.utils.IntToInt
 import cl.ravenhill.utils.contains
 
@@ -22,7 +23,7 @@ sealed interface IntRequirement : Requirement<Int> {
 
     /// Documentation inherited from [Requirement].
     override fun generateException(description: String) =
-        cl.ravenhill.enforcer.IntRequirementException { description }
+        IntRequirementException { description }
 
     /**
      * Represents a requirement that an integer value must be positive.
@@ -66,9 +67,12 @@ sealed interface IntRequirement : Requirement<Int> {
     /**
      * Represents a requirement that an integer value must be at least a specified value.
      *
-     * @property min The minimum allowed value.
+     * @param min The minimum allowed value.
+     * @property least The minimum allowed value.
      */
     class BeAtLeast(min: Int) : BeInRange(min to Int.MAX_VALUE) {
+        val least: Int get() = range.first
+
         /// Documentation inherited from [Any].
         override fun toString() = "BeAtLeast { min: ${range.first} }"
     }
@@ -91,9 +95,12 @@ sealed interface IntRequirement : Requirement<Int> {
      *
      * @property expected The expected value.
      */
-    class BeEqualTo(private val expected: Int) : IntRequirement {
+    class BeEqualTo(val expected: Int) : IntRequirement {
 
         /// Documentation inherited from [Requirement].
         override val validator = { value: Int -> value == expected }
+
+        /// Documentation inherited from [Any].
+        override fun toString() = "BeEqualTo { expected: $expected }"
     }
 }
