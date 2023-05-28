@@ -21,7 +21,7 @@ package cl.ravenhill.keen.util
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Copyable<T> {
+interface Copyable<out T> {
 
     /**
      * Creates a deep copy of the object.
@@ -57,7 +57,7 @@ interface Verifiable {
  * @version 2.0.0
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-interface Clearable<T> {
+interface Clearable<out T> {
 
     /**
      * Clears the object.
@@ -82,7 +82,7 @@ interface Clearable<T> {
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Filterable<T> {
+interface Filterable<in T> {
     val filter: (T) -> Boolean
 }
 

@@ -20,8 +20,7 @@ import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import cl.ravenhill.utils.runWithStdoutOff
-import java.io.OutputStream
-import java.io.PrintStream
+import java.lang.ArithmeticException
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -130,6 +129,10 @@ class StatementChromosome(override val genes: List<StatementGene>) :
 }
 
 fun main() {
-    val tracer = Tracer.create<IllegalArgumentException>(functions0)
-    tracer.run()
+    val tracer1 = Tracer.create<NullPointerException>(functions0)
+    tracer1.run()
+    val tracer2 = Tracer.create<ArithmeticException>(functions0)
+    tracer2.run()
+    val tracer3 = Tracer.create<IllegalArgumentException>(functions0, "Input string must not be blank.")
+    tracer3.run()
 }

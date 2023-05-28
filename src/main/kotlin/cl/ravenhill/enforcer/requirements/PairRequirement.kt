@@ -8,6 +8,9 @@
 
 package cl.ravenhill.enforcer.requirements
 
+import cl.ravenhill.enforcer.PairRequirementException
+import kotlin.reflect.KClass
+
 
 /**
  * A [PairRequirement] is a [Requirement] that specifies constraints on a [Pair] of values of types
@@ -22,9 +25,8 @@ package cl.ravenhill.enforcer.requirements
  */
 sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
 
-    // Inherit documentation from Requirement
-    override fun generateException(description: String) =
-        cl.ravenhill.enforcer.PairRequirementException { description }
+    /// Documentation inherited from [Requirement].
+    override fun generateException(description: String) = PairRequirementException { description }
 
     /**
      * [BeStrictlyOrdered] is a [PairRequirement] that requires that the first element in a [Pair]
@@ -32,7 +34,12 @@ sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
      * type [A].
      */
     class BeStrictlyOrdered<A : Comparable<A>> : PairRequirement<A, A> {
+        /// Documentation inherited from [Requirement].
         override val validator = { value: Pair<A, A> -> value.first < value.second }
+
+
+        /// Documentation inherited from [Any].
+        override fun toString() = "BeStrictlyOrdered<~>"
     }
 
     /**
@@ -44,3 +51,4 @@ sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
             { value: Pair<Double, Double> -> value.first.isFinite() && value.second.isFinite() }
     }
 }
+
