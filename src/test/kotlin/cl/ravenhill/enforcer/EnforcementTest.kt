@@ -15,10 +15,18 @@ import io.kotest.matchers.collections.shouldBeEmpty
 
 class EnforcementTest : FreeSpec({
     "The [Enforcement.Scope]" - {
-        "has a list of [Result]s that" - {
-            "is empty by default" {
-                Enforcement.Scope().results.shouldBeEmpty()
+        with(Enforcement.Scope()) {
+            "has a list of" - {
+                "[Result]s that is empty by default" {
+                    results.shouldBeEmpty()
+                }
+                "[Failure]s that is empty by default" {
+                    failures.shouldBeEmpty()
+                }
+            }
+            "has a [StringScope] that" - {
+                "can be created"
             }
         }
     }
-}
+})

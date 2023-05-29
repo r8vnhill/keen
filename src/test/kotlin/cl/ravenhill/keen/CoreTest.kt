@@ -261,7 +261,7 @@ class CoreTest : FreeSpec({
                             reqs.forEach { Any() must it }
                         }
                         scope.outerScope.results.size shouldBe reqs.size
-                        scope.outerScope.errors.size shouldBe reqs.size
+                        scope.outerScope.failures.size shouldBe reqs.size
                     }
                 }
 
@@ -287,7 +287,7 @@ class CoreTest : FreeSpec({
                             reqs.forEach { Any() mustNot it }
                         }
                         scope.outerScope.results.size shouldBe reqs.size
-                        scope.outerScope.errors.size shouldBe reqs.size
+                        scope.outerScope.failures.size shouldBe reqs.size
                     }
                 }
 
@@ -303,7 +303,7 @@ class CoreTest : FreeSpec({
                     checkAll(Arb.stringScope(), Arb.list(Arb.constant(false))) { scope, falses ->
                         falses.forEach { scope.requirement { it } }
                         scope.outerScope.results.size shouldBe falses.size
-                        scope.outerScope.errors.size shouldBe falses.size
+                        scope.outerScope.failures.size shouldBe falses.size
                     }
                 }
 

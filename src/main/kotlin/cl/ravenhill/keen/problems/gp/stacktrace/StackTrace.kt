@@ -68,10 +68,10 @@ class Tracer<T : Throwable>(
                 statements.forEach { it() }
             }
             return 0.0
-        } catch (targetException: InvocationTargetException) {
-            val ex = targetException.targetException
+        } catch (invocationException: InvocationTargetException) {
+            val ex = invocationException.targetException
             stack = ex.stackTrace
-            if (this.targetException == ex::class) {
+            if (targetException == ex::class) {
                 fitness += 2
                 if (targetMessage.isEmpty() || targetMessage in (ex.message ?: "")) {
                     fitness++

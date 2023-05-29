@@ -31,6 +31,26 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 
+/**
+ * This class contains unit tests for the PairRequirement subclasses and related functions.
+ *
+ * Tests are organized as a free spec, with each major test category defined as a string.
+ *
+ * ## Test Categories
+ *
+ * 1. Generating an exception: Tests that invoking `generateException` on a PairRequirement
+ *    instance produces a PairRequirementException with the expected message.
+ * 2. BeStrictlyOrdered requirement: Tests that a BeStrictlyOrdered instance
+ *    - can be converted to a string representation correctly.
+ *    - correctly validates whether a pair of elements is strictly ordered.
+ * 3. BeFinite requirement: Tests that a BeFinite instance
+ *    - can be converted to a string representation correctly.
+ *    - correctly validates whether a pair of elements is finite.}
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
 class PairRequirementTest : FreeSpec({
     "Generating an exception should return a [PairRequirementException]" {
         checkAll(Arb.pairRequirement(), Arb.string()) { requirement, description ->
@@ -90,27 +110,12 @@ class PairRequirementTest : FreeSpec({
     }
 })
 
+/**
+ * This function provides an arbitrary generator of [PairRequirement] instances.
+ */
 private fun Arb.Companion.pairRequirement() = arbitrary {
     element(
         BeStrictlyOrdered<Int>(),
         BeFinite
     ).bind()
 }
-
-private fun Arb.Companion.beStrictlyOrderedData(
-    gen: Arb<Int> = Arb.int(),
-    strictlyOrdered: Boolean = true
-) = arbitrary {
-    BeStrictlyOrderedData(
-        orderedPair(
-            gen,
-            strict = strictlyOrdered,
-            reverted = !strictlyOrdered
-        ).bind()
-    )
-}
-
-data class BeStrictlyOrderedData<T : Comparable<T>>(
-    val test: Pair<T, T>,
-    val requirement: PairRequirement<T, T> = BeStrictlyOrdered()
-)

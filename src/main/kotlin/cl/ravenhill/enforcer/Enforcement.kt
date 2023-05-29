@@ -22,7 +22,7 @@ object Enforcement {
      */
     fun enforce(builder: Scope.() -> Unit) {
         if (skipChecks) return
-        Scope().apply(builder).errors.let { errors ->
+        Scope().apply(builder).failures.let { errors ->
             if (errors.isNotEmpty()) {
                 throw EnforcementException(errors)
             }
@@ -47,7 +47,7 @@ object Enforcement {
         val results: List<Result<*>>
             get() = _results
 
-        val errors: List<Throwable>
+        val failures: List<Throwable>
             get() = _results.filter { it.isFailure }.map { it.exceptionOrNull()!! }
 
         /**
