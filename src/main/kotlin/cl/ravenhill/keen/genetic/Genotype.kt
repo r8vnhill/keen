@@ -39,6 +39,11 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
         enforce { "The chromosomes list must not be empty" { chromosomes mustNot BeEmpty } }
     }
 
+    /**
+     * Creates a new [Genotype] instance with the given ``chromosomes``.
+     */
+    constructor(vararg chromosomes: Chromosome<DNA, G>) : this(chromosomes.toList())
+
     val size: Int = chromosomes.size
 
     // Inherit documentation from Verifyable

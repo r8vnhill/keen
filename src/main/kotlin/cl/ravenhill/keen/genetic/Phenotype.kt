@@ -2,7 +2,7 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.isNotNan
-import java.util.*
+import java.util.Objects
 
 /**
  * Represents a phenotype, which is a combination of a genotype (collection of genetic data)
@@ -12,6 +12,7 @@ import java.util.*
  * @property genotype The genotype associated with the phenotype.
  * @property generation The generation in which the phenotype occurred.
  * @property fitness The fitness associated with the phenotype. Defaults to `Double.NaN`.
+ * @property size The size of the genotype.
  *
  * @constructor Creates a new [Phenotype] instance with the given [genotype], [generation] and
  * [fitness].
@@ -20,11 +21,13 @@ import java.util.*
  * @version 2.0.0
  * @since 1.0.0
  */
-class Phenotype<DNA, G: Gene<DNA, G>>(
+class Phenotype<DNA, G : Gene<DNA, G>>(
     val genotype: Genotype<DNA, G>,
     val generation: Int,
     val fitness: Double = Double.NaN
 ) : GeneticMaterial<DNA, G>, Comparable<Phenotype<DNA, G>> {
+
+    val size: Int = genotype.size
 
     // Inherit documentation from Verifyable
     override fun verify(): Boolean = genotype.verify() && fitness.isNotNan()
@@ -56,6 +59,16 @@ class Phenotype<DNA, G: Gene<DNA, G>>(
      */
     fun withFitness(fitness: Double) = Phenotype(genotype, generation, fitness)
 
+    /**
+     * Creates a new [Phenotype] instance with the given genotype and fitness values.
+     * The generation of the new phenotype will be the same as the current one.
+     *
+     * @param candidate The genotype of the new phenotype.
+     * @param fitness The fitness value of the new phenotype.
+     * @return A new [Phenotype] instance with the given genotype and fitness values.
+     */
+    fun withGenotype(candidate: Genotype<DNA, G>, fitness: Double) =
+        Phenotype(candidate, generation, fitness)
 
     // Inherit documentation from GeneticMaterial
     override fun flatten() = genotype.flatten()

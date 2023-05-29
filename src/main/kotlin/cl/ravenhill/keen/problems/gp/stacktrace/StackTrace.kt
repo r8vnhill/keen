@@ -1,9 +1,6 @@
-/*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- * work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+/**
+ * Copyright (c) 2023, R8V.
+ * BSD Zero Clause License.
  */
 
 
@@ -13,10 +10,13 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
+import cl.ravenhill.keen.evolution.EvolutionInterceptor
+import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
@@ -29,7 +29,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
-private typealias Statement = Pair<KFunction<*>, Map<KParameter, Any>>
+private typealias Instruction = Pair<KFunction<*>, Map<KParameter, Any?>>
 
 class Tracer<T : Throwable>(
     val functions: List<KFunction<*>>,
@@ -37,37 +37,56 @@ class Tracer<T : Throwable>(
     val targetMessage: String = "",
     val targetFunction: String = ""
 ) {
-    private val engine = engine(::fitness, genotype {
+    val engine = engine(::fitness, genotype {
         chromosome {
-            StatementChromosome.Factory(5) {
-                StatementGene(generateInstruction(), this@Tracer)
+            InstructionChromosome.Factory(5) {
+                InstructionGene(generateInstruction(), this@Tracer)
             }
         }
     }) {
-        populationSize = 2
-        alterers = listOf(Mutator(0.3),SinglePointCrossover(0.5))
+        populationSize = 4
+        alterers = listOf(Mutator(0.3), SinglePointCrossover(0.5))
         limits = listOf(TargetFitness(5.0))
         statistics = listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
+//        interceptor = EvolutionInterceptor.after { evResult ->
+//            minimize(evResult)
+//        }
     }
     private val inputFactory = InputFactory()
 
     fun run() {
         val result = engine.evolve()
-        println(engine.statistics.first())
-        (engine.statistics.last() as StatisticPlotter).displayFitness()
+        val program = minimize(result).population
+            .groupBy { it.fitness }
+            .maxBy { it.key }.value
+            .minBy { it.flatten().size }
+        println(program)
+    }
+
+    private fun minimize(
+        result: EvolutionResult<Instruction, InstructionGene>
+    ): EvolutionResult<Instruction, InstructionGene> = result.map {
+        for (i in 1..it.genotype.first().size) {
+            val candidate = Genotype(InstructionChromosome(it.genotype.first().take(i)))
+            val candidateFitness = fitness(candidate)
+            if (candidateFitness >= it.fitness) {
+                return@map it.withGenotype(candidate, candidateFitness)
+            }
+        }
+        it
     }
 
     fun fitness(
-        genotype: Genotype<Statement, StatementGene>
+        genotype: Genotype<Instruction, InstructionGene>
     ): Double {
         var fitness = 0.0
         lateinit var stack: Array<StackTraceElement>
         val statements = genotype.chromosomes.first()
-        try {
+        return try {
             runWithStdoutOff {
                 statements.forEach { it() }
             }
-            return 0.0
+            0.0
         } catch (invocationException: InvocationTargetException) {
             val ex = invocationException.targetException
             stack = ex.stackTrace
@@ -80,11 +99,11 @@ class Tracer<T : Throwable>(
             if (targetFunction.isEmpty() || stack.any { it.methodName == targetFunction }) {
                 fitness += 2
             }
+            fitness
         }
-        return fitness
     }
 
-    fun generateInstruction(): Statement {
+    fun generateInstruction(): Instruction {
         val instruction = functions.random(Core.random)
         val params = mutableMapOf<KParameter, Any>()
         instruction.parameters.forEach { param ->
@@ -101,7 +120,7 @@ class Tracer<T : Throwable>(
         ) = Tracer(functions, E::class, targetMessage, functionName)
     }
 
-    fun execute(statements: List<Statement>) {
+    fun execute(statements: List<Instruction>) {
         val results = mutableListOf<Any?>()
         statements.forEach { (function, params) ->
             results.add(function.callBy(params))
@@ -109,32 +128,31 @@ class Tracer<T : Throwable>(
     }
 }
 
-class StatementGene(override val dna: Statement, val tracer: Tracer<*>) : Gene<Statement, StatementGene> {
+class InstructionGene(override val dna: Instruction, val tracer: Tracer<*>) :
+        Gene<Instruction, InstructionGene> {
 
     operator fun invoke() = dna.first.callBy(dna.second)
 
-    override fun withDna(dna: Statement) = StatementGene(dna, tracer)
+    override fun withDna(dna: Instruction) = InstructionGene(dna, tracer)
 
-    override fun generator(): Statement {
-        return tracer.generateInstruction()
-    }
+    override fun generator() = tracer.generateInstruction()
 
     override fun toString() =
         dna.first.name + dna.second.values.joinToString(", ", "(", ")")
 }
 
 
-class StatementChromosome(override val genes: List<StatementGene>) :
-        AbstractChromosome<Statement, StatementGene>(genes) {
+class InstructionChromosome(override val genes: List<InstructionGene>) :
+        AbstractChromosome<Instruction, InstructionGene>(genes) {
 
-    override fun withGenes(genes: List<StatementGene>) = StatementChromosome(genes)
+    override fun withGenes(genes: List<InstructionGene>) = InstructionChromosome(genes)
 
     override fun toString() = genes.joinToString("\n")
 
-    class Factory(override var size: Int, val geneFactory: () -> StatementGene) :
-            Chromosome.AbstractFactory<Statement, StatementGene>() {
+    class Factory(override var size: Int, val geneFactory: () -> InstructionGene) :
+            Chromosome.AbstractFactory<Instruction, InstructionGene>() {
         @OptIn(ExperimentalStdlibApi::class)
-        override fun make() = StatementChromosome((0..<size).map { geneFactory() })
+        override fun make() = InstructionChromosome((0..<size).map { geneFactory() })
     }
 }
 
@@ -148,4 +166,5 @@ fun main() {
     val tracer4 =
         Tracer.create<IllegalArgumentException>(functions0, functionName = "throwException1")
     tracer4.run()
+    (tracer4.engine.statistics.last() as StatisticPlotter).displayFitness()
 }

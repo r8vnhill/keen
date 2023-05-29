@@ -19,7 +19,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionInterceptor<DNA, G: Gene<DNA, G>>(
+class EvolutionInterceptor<DNA, G : Gene<DNA, G>>(
     val before: (EvolutionStart<DNA, G>) -> EvolutionStart<DNA, G>,
     val after: (EvolutionResult<DNA, G>) -> EvolutionResult<DNA, G>
 ) {
@@ -27,8 +27,16 @@ class EvolutionInterceptor<DNA, G: Gene<DNA, G>>(
         /**
          * Returns an [EvolutionInterceptor] that does nothing.
          */
-        fun <DNA, G: Gene<DNA, G>> identity() = EvolutionInterceptor(
+        fun <DNA, G : Gene<DNA, G>> identity() = EvolutionInterceptor(
             { before: EvolutionStart<DNA, G> -> before }
         ) { end: EvolutionResult<DNA, G> -> end }
+
+        fun <DNA, G : Gene<DNA, G>> after(
+            function: (EvolutionResult<DNA, G>) -> EvolutionResult<DNA, G>
+        ): EvolutionInterceptor<DNA, G> {
+            return EvolutionInterceptor(
+                { before: EvolutionStart<DNA, G> -> before }
+            ) { end: EvolutionResult<DNA, G> -> function(end) }
+        }
     }
 }

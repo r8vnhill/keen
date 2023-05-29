@@ -51,9 +51,19 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
      */
     operator fun next() = EvolutionStart(population, generation + 1, true)
 
-    override fun compareTo(other: EvolutionResult<DNA, G>): Int =
-        optimizer.comparator.compare(this.best, other.best)
+    /**
+     * Creates a new [EvolutionResult] with the population transformed by the provided function.
+     *
+     * @param function A function to transform each phenotype in the population.
+     * @return A new [EvolutionResult] with the transformed population.
+     */
+    fun map(function: (Phenotype<DNA, G>) -> Phenotype<DNA, G>) =
+        EvolutionResult(optimizer, population.map(function), generation)
 
+    /// Documentation inherited from [Comparable].
+    override fun compareTo(other: EvolutionResult<DNA, G>) =
+        optimizer.comparator.compare(this.best, other.best)
+    /// Documentation inherited from [Any].
     override fun toString() = "EvolutionResult { generation: $generation, best: $best }"
 }
 
