@@ -71,13 +71,13 @@ When providing examples usages on the docstring comments, you should follow the 
  * ### Example 1: Details
  * ```
  * // example 1 code
-   * ```
-   * ### Example 2: Details
-   * ```
-   * // example 2 code
-   * ```
-   * @tags
-   */
+ * ```
+ * ### Example 2: Details
+ * ```
+ * // example 2 code
+ * ```
+ * @tags
+ */
 fun foo(params) {
     elements.forEach(action)
 ```
