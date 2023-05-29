@@ -56,11 +56,11 @@ private fun Arb.Companion.requirement(success: Arb<Boolean> = Arb.constant(true)
 
 /**
  * Helper function that creates an instance of `Arb` for generating instances of
- * [Enforcement.EnforceScope.StringScope] class.
+ * [Enforcement.Scope.StringScope] class.
  */
 private fun Arb.Companion.stringScope() = arbitrary {
     val message = string().bind()
-    Enforcement.EnforceScope().StringScope(message)
+    Enforcement.Scope().StringScope(message)
 }
 
 /**
@@ -316,8 +316,8 @@ class CoreTest : FreeSpec({
 
                     "be true for two scopes with the same message" {
                         checkAll(Arb.string()) { message ->
-                            val scope1 = Enforcement.EnforceScope().StringScope(message)
-                            val scope2 = Enforcement.EnforceScope().StringScope(message)
+                            val scope1 = Enforcement.Scope().StringScope(message)
+                            val scope2 = Enforcement.Scope().StringScope(message)
                             scope1 shouldBe scope2
                         }
                     }
@@ -327,8 +327,8 @@ class CoreTest : FreeSpec({
                             assume {
                                 message1 shouldNotBe message2
                             }
-                            val scope1 = Enforcement.EnforceScope().StringScope(message1)
-                            val scope2 = Enforcement.EnforceScope().StringScope(message2)
+                            val scope1 = Enforcement.Scope().StringScope(message1)
+                            val scope2 = Enforcement.Scope().StringScope(message2)
                             scope1 shouldNotBe scope2
                         }
                     }
@@ -343,9 +343,9 @@ class CoreTest : FreeSpec({
 
             "should be able to create a string scope from a string" {
                 checkAll(Arb.string()) { message ->
-                    val scope = Enforcement.EnforceScope()
-                    val expectedScope = Enforcement.EnforceScope().StringScope(message)
-                    lateinit var strScope: Enforcement.EnforceScope.StringScope
+                    val scope = Enforcement.Scope()
+                    val expectedScope = Enforcement.Scope().StringScope(message)
+                    lateinit var strScope: Enforcement.Scope.StringScope
                     with(scope) {
                         strScope = message.invoke { true }
                     }

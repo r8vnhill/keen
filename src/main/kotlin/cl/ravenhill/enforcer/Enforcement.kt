@@ -20,11 +20,11 @@ object Enforcement {
      * @param builder The builder that contains the contract.
      * @throws EnforcementException If the contract is not fulfilled.
      */
-    fun enforce(builder: EnforceScope.() -> Unit) {
+    fun enforce(builder: Scope.() -> Unit) {
         if (skipChecks) return
-        EnforceScope().apply(builder).errors.let { errors ->
+        Scope().apply(builder).errors.let { errors ->
             if (errors.isNotEmpty()) {
-                throw cl.ravenhill.enforcer.EnforcementException(errors)
+                throw EnforcementException(errors)
             }
         }
     }
@@ -42,7 +42,7 @@ object Enforcement {
      * @since 2.0.0
      * @version 2.0.0
      */
-    class EnforceScope {
+    class Scope {
         private val _results: MutableList<Result<*>> = mutableListOf()
         val results: List<Result<*>>
             get() = _results
@@ -71,8 +71,8 @@ object Enforcement {
             /**
              * Property that returns the outer `EnforceScope` instance.
              */
-            internal val outerScope: EnforceScope
-                get() = this@EnforceScope
+            internal val outerScope: Scope
+                get() = this@Scope
 
             /**
              * Infix function that validates that the current value satisfies the specified

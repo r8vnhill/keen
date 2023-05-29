@@ -29,7 +29,7 @@ import java.io.PrintStream
  *
  * @param block A block of code to run with stdout turned off.
  */
-fun runWithStdoutOff(block: () -> Unit) {
+inline fun runWithStdoutOff(block: () -> Unit) {
     val originalOut = System.out // Save the original stdout
     // Redirect stdout to a null OutputStream
     System.setOut(PrintStream(object : OutputStream() {

@@ -17,6 +17,10 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.TargetFitness
+import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
+import cl.ravenhill.keen.operators.mutator.InversionMutator
+import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.SwapMutator
 import cl.ravenhill.keen.util.statistics.StatisticCollector
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import cl.ravenhill.utils.runWithStdoutOff
@@ -41,8 +45,10 @@ class Tracer<T : Throwable>(
             }
         }
     }) {
+        populationSize = 2
+        alterers = listOf(SwapMutator(0.5), Mutator(0.1), SinglePointCrossover(0.5))
         limits = listOf(TargetFitness(5.0))
-        statistics = listOf(StatisticCollector(), StatisticPrinter(10))
+        statistics = listOf(StatisticCollector(), StatisticPrinter(20))
     }
     private val inputFactory = InputFactory()
 
@@ -129,10 +135,10 @@ class StatementChromosome(override val genes: List<StatementGene>) :
 }
 
 fun main() {
-    val tracer1 = Tracer.create<NullPointerException>(functions0)
-    tracer1.run()
-    val tracer2 = Tracer.create<ArithmeticException>(functions0)
-    tracer2.run()
+//    val tracer1 = Tracer.create<NullPointerException>(functions0)
+//    tracer1.run()
+//    val tracer2 = Tracer.create<ArithmeticException>(functions0)
+//    tracer2.run()
     val tracer3 = Tracer.create<IllegalArgumentException>(functions0, "Input string must not be blank.")
     tracer3.run()
 }
