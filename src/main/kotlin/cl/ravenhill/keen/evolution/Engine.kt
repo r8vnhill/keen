@@ -29,8 +29,8 @@ import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.Pretty
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import cl.ravenhill.keen.util.statistics.Statistic
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticSummary
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
@@ -59,7 +59,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
     val limits: List<Limit>,
     val survivorSelector: Selector<DNA, G>,
     val optimizer: PhenotypeOptimizer<DNA, G>,
-    val statistics: List<Statistic<DNA, G>>,
+    val statistics: List<StatisticCollector<DNA, G>>,
     val evaluator: EvaluationExecutor<DNA, G>,
     val interceptor: EvolutionInterceptor<DNA, G>
 ) : Evolver<DNA, G>, Pretty {
@@ -387,7 +387,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             }.let { field = value }
         // endregion    ----------------------------------------------------------------------------
 
-        var statistics: List<Statistic<DNA, G>> = listOf(StatisticCollector())
+        var statistics: List<StatisticCollector<DNA, G>> = listOf(StatisticSummary())
 
         fun build() = Engine(
             genotype = genotype,

@@ -13,7 +13,7 @@ import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
 import cl.ravenhill.keen.operators.mutator.InversionMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticSummary
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import tech.tablesaw.api.DoubleColumn
@@ -71,7 +71,7 @@ fun main() {
         limits = listOf(GenerationCount(200))
         alterers = listOf(InversionMutator(0.06), PartiallyMappedCrossover(0.3))
         optimizer = FitnessMinimizer()
-        statistics = listOf(StatisticCollector(), StatisticPrinter(30), StatisticPlotter())
+        statistics = listOf(StatisticSummary(), StatisticPrinter(30), StatisticPlotter())
         evaluator = evaluator {
             coroutines()
         }

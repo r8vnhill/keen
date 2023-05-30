@@ -13,7 +13,7 @@ import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticSummary
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 import kotlin.math.abs
@@ -57,7 +57,7 @@ fun main() {
         alterers = listOf(Mutator(0.06), SingleNodeCrossover(0.2))
         optimizer = FitnessMinimizer()
         statistics =
-            listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
+            listOf(StatisticSummary(), StatisticPrinter(10), StatisticPlotter())
     }
     // Run the genetic algorithm and display results
     val result = engine.evolve()

@@ -11,7 +11,7 @@ import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.selector.TournamentSelector
-import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticSummary
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import cl.ravenhill.keen.util.statistics.StatisticPrinter
 
@@ -34,7 +34,7 @@ fun count(genotype: Genotype<Boolean, BoolGene>) = genotype.flatten().count { it
  * The engine is then configured with several operators including mutation, crossover, and
  * tournament selection.
  * The engine also has a generation count and a target fitness limit, as well as several statistics
- * collectors, including a [StatisticCollector], [StatisticPrinter], and [StatisticPlotter].
+ * collectors, including a [StatisticSummary], [StatisticPrinter], and [StatisticPlotter].
  *
  * Finally, the engine is run and the statistics are printed to the console. The [StatisticPlotter]
  * is used to display a graph of the fitness values over time.
@@ -52,7 +52,7 @@ fun main() {
             listOf(Mutator(probability = 0.03), SinglePointCrossover(probability = 0.2))
         limits = listOf(GenerationCount(100), TargetFitness(50.0))
         statistics =
-            listOf(StatisticCollector(), StatisticPrinter(1), StatisticPlotter())
+            listOf(StatisticSummary(), StatisticPrinter(1), StatisticPlotter())
     }
     engine.evolve()
     println(engine.statistics.first())

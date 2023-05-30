@@ -18,7 +18,7 @@ import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticSummary
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 
 /**
@@ -78,7 +78,7 @@ private fun fitnessFn(genotype: Genotype<Boolean, BoolGene>) =
  * [Mutator] and [SinglePointCrossover].
  * It also sets the limit to 20 steady generations, meaning that the algorithm stops after 20
  * generations with no improvement in the fitness of the best solution.
- * The statistics of the genetic algorithm are collected using [StatisticCollector] and plotted
+ * The statistics of the genetic algorithm are collected using [StatisticSummary] and plotted
  * using [StatisticPlotter].
  *
  * Finally, the main function prints the statistics of the genetic algorithm, displays the items
@@ -92,7 +92,7 @@ fun main() {
         populationSize = 10
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(20))
-        statistics = listOf(StatisticCollector(), StatisticPlotter())
+        statistics = listOf(StatisticSummary(), StatisticPlotter())
     }
     val result = engine.evolve()
     println(engine.statistics.first())

@@ -10,7 +10,7 @@ import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticSummary
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 import kotlin.math.cos
 import kotlin.math.ln
@@ -44,7 +44,7 @@ fun main() {
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.03), MeanCrossover(0.3))
         limits = listOf(SteadyGenerations(20))
-        statistics = listOf(StatisticCollector(), StatisticPlotter())
+        statistics = listOf(StatisticSummary(), StatisticPlotter())
     }
     engine.evolve()
     println(engine.statistics.first())

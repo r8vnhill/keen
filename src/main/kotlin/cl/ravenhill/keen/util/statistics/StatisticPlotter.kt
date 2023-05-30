@@ -17,7 +17,7 @@ import tech.tablesaw.plotly.traces.ScatterTrace
  * @version 1.0.0
  * @since 1.0.0
  */
-class StatisticPlotter<DNA, G: Gene<DNA, G>> : AbstractStatistic<DNA, G>() {
+class StatisticPlotter<DNA, G: Gene<DNA, G>> : AbstractStatisticCollector<DNA, G>() {
 
     /**
      * Displays a plot of the fitness of the population throughout evolution.

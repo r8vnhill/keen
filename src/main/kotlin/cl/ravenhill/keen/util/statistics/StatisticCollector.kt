@@ -1,49 +1,56 @@
-/*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
 package cl.ravenhill.keen.util.statistics
 
+import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.evolution.EvolutionResult
+import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
-
+import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
 /**
- * A collector of statistics to be used in the evolutionary algorithm.
+ * Type alias for a list of [StatisticCollector] instances.
+ */
+typealias StatisticCollectors<DNA, G> = List<StatisticCollector<DNA, G>>
+
+/**
+ * A generic interface for a statistic in an evolutionary algorithm.
  *
- * @param DNA  The type of the gene's value.
+ * @property evolutionResult the current result of the evolution.
+ * @property population the current population of the evolution.
+ * @property optimizer the optimizer used to create new phenotypes.
+ * @property survivorSelectionTime the time taken for survivor selection in each generation.
+ * @property offspringSelectionTime the time taken for offspring selection in each generation.
+ * @property alterTime the time taken for the alteration phase in each generation.
+ * @property evolutionTime the total time taken for the evolution so far.
+ * @property generationTimes the time taken for each generation so far.
+ * @property bestFitness the best fitness value in each generation.
+ * @property worstFitness the worst fitness value in each generation.
+ * @property averageFitness the average fitness value in each generation.
+ * @property fittest the fittest phenotype in the current generation.
+ * @property steadyGenerations the number of steady generations so far.
+ * @property generation the current generation.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.0.0
- * @version 1.0.0
+ * @version 2.0.0
  */
-class StatisticCollector<DNA, G: Gene<DNA, G>> : AbstractStatistic<DNA, G>() {
-    override fun toString() = """
-        ------------ Statistics Collector -------------
-        -------------- Selection Times ----------------
-        |--> Offspring Selection
-        |   |--> Average: ${offspringSelectionTime.average()} ms
-        |   |--> Max: ${offspringSelectionTime.maxOrNull()} ms
-        |   |--> Min: ${offspringSelectionTime.minOrNull()} ms
-        |--> Survivor Selection
-        |   |--> Average: ${survivorSelectionTime.average()} ms
-        |   |--> Max: ${survivorSelectionTime.maxOrNull()} ms
-        |   |--> Min: ${survivorSelectionTime.minOrNull()} ms
-        --------------- Alteration Times --------------
-        |--> Average: ${alterTime.average()} ms
-        |--> Max: ${alterTime.maxOrNull()} ms
-        |--> Min: ${alterTime.minOrNull()} ms
-        -------------- Evolution Results --------------
-        |--> Total time: $evolutionTime ms
-        |--> Average generation time: ${generationTimes.average()} ms
-        |--> Max generation time: ${generationTimes.maxOrNull()} ms
-        |--> Min generation time: ${generationTimes.minOrNull()} ms
-        |--> Generation: $generation
-        |--> Steady generations: $steadyGenerations
-        |--> Fittest: ${population.firstOrNull().toString().replace("\n", "; ")}
-        |--> Best fitness: ${bestFitness.lastOrNull()}
-        """.trimIndent()
+interface StatisticCollector<DNA, G: Gene<DNA, G>> {
+    var evolutionResult: EvolutionResult<DNA, G>
+    var population: Population<DNA, G>
+    var optimizer: PhenotypeOptimizer<DNA, G>
+    val survivorSelectionTime: MutableList<Long>
+    val offspringSelectionTime: MutableList<Long>
+    val alterTime: MutableList<Long>
+    var evolutionTime: Long
+    val generationTimes: MutableList<Long>
+    var bestFitness: MutableList<Double>
+    var worstFitness: MutableList<Double>
+    var averageFitness: MutableList<Double>
+    val fittest: Phenotype<DNA, G>?
+    var steadyGenerations: Int
+    var generation: Int
+
+    /**
+     * Called whenever the result of the evolution is updated.
+     */
+    fun onResultUpdated()
 }

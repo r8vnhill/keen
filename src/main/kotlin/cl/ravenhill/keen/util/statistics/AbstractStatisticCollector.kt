@@ -32,7 +32,7 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
  * @property steadyGenerations The number of generations without improvement.
  * @property generation The current generation.
  */
-abstract class AbstractStatistic<DNA, G: Gene<DNA, G>> : Statistic<DNA, G> {
+abstract class AbstractStatisticCollector<DNA, G: Gene<DNA, G>> : StatisticCollector<DNA, G> {
     private var _fittest: Phenotype<DNA, G>? = null
     override var evolutionResult: EvolutionResult<DNA, G> =
         EvolutionResult(FitnessMaximizer(), listOf(), 0)

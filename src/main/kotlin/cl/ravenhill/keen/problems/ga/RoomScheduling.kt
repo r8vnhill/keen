@@ -19,7 +19,7 @@ import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticSummary
 import cl.ravenhill.keen.util.statistics.StatisticPlotter
 
 /**
@@ -102,7 +102,7 @@ fun main() {
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
-        statistics = listOf(StatisticCollector(), StatisticPlotter())
+        statistics = listOf(StatisticSummary(), StatisticPlotter())
     }
     // Evolve the population and get the best result.
     val result = engine.evolve()
