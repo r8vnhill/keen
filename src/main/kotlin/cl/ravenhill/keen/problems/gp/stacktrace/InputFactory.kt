@@ -7,20 +7,25 @@
 package cl.ravenhill.keen.problems.gp.stacktrace
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Terminal
 import cl.ravenhill.keen.util.nextChar
+import cl.ravenhill.keen.util.nextString
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 
 
-/**
+/***************************************************************************************************
  * A factory class for generating inputs of different types.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 2.0.0
- * @since 2.0.0
- */
+ * This class provides functionality to generate inputs of various types. It includes a map that associates
+ * each input type with a constructor function that generates a terminal of that type. Additionally, it
+ * allows registering custom constructor functions for specific input types.
+ *
+ * @property types The list of KTypes of input types.
+ * @property typeConstructors A map that associates each input type with a constructor function that generates
+ *                           a terminal of that type.
+ * @throws IllegalArgumentException If no constructor is found for the specified input type.
+ **************************************************************************************************/
 class InputFactory {
     /**
      * The list of KTypes of input types.
@@ -35,7 +40,22 @@ class InputFactory {
         Int::class.createType() to { Core.random.nextInt() },
         Double::class.createType() to { Core.random.nextDouble() },
         Boolean::class.createType() to { Core.random.nextBoolean() },
-        Char::class.createType() to { Core.random.nextChar() })
+        Char::class.createType() to { Core.random.nextChar() },
+        String::class.createType() to { Core.random.nextString() })
+
+    /**
+     * Gets the constructor function for the specified input type.
+     *
+     * @param type The KType of the input type.
+     * @return The constructor function for the specified input type.
+     * @throws IllegalArgumentException If no constructor is found for the specified input type.
+     */
+    operator fun get(type: KType): () -> Any? {
+        if (type.isMarkedNullable) {
+            return { null }
+        }
+        return typeConstructors[type] ?: throw IllegalArgumentException("No constructor for type $type.")
+    }
 
     /**
      * Sets the constructor function for the specified input type.
@@ -48,9 +68,10 @@ class InputFactory {
     }
 
     /**
-     * Generates a random input of any registered type.
+     * Generates a sequence of randomly generated input objects for the specified type.
      *
-     * @return A randomly generated input object.
+     * @param type The KType of the input.
+     * @return A sequence of randomly generated input objects.
      */
     fun random(type: KType): Sequence<Any?> = generateSequence {
         typeConstructors[type]?.invoke()

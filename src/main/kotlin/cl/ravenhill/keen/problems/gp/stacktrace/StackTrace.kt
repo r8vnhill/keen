@@ -10,6 +10,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
+import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Genotype
@@ -48,19 +49,17 @@ class Tracer<T : Throwable>(
         alterers = listOf(Mutator(0.3), SinglePointCrossover(0.5))
         limits = listOf(TargetFitness(5.0))
         statistics = listOf(StatisticCollector(), StatisticPrinter(10), StatisticPlotter())
-//        interceptor = EvolutionInterceptor.after { evResult ->
-//            minimize(evResult)
-//        }
     }
     private val inputFactory = InputFactory()
 
-    fun run() {
+    fun run(): Engine<Instruction, InstructionGene> {
         val result = engine.evolve()
         val program = minimize(result).population
             .groupBy { it.fitness }
             .maxBy { it.key }.value
             .minBy { it.flatten().size }
         println(program)
+        return engine
     }
 
     private fun minimize(
@@ -105,9 +104,9 @@ class Tracer<T : Throwable>(
 
     fun generateInstruction(): Instruction {
         val instruction = functions.random(Core.random)
-        val params = mutableMapOf<KParameter, Any>()
+        val params = mutableMapOf<KParameter, Any?>()
         instruction.parameters.forEach { param ->
-            params[param] = inputFactory.random(param.type)
+            params[param] = inputFactory[param.type].invoke()
         }
         return instruction to params
     }
@@ -128,7 +127,7 @@ class Tracer<T : Throwable>(
     }
 }
 
-class InstructionGene(override val dna: Instruction, val tracer: Tracer<*>) :
+class InstructionGene(override val dna: Instruction, private val tracer: Tracer<*>) :
         Gene<Instruction, InstructionGene> {
 
     operator fun invoke() = dna.first.callBy(dna.second)
@@ -163,8 +162,11 @@ fun main() {
 //    tracer2.run()
 //    val tracer3 = Tracer.create<IllegalArgumentException>(functions0, "Input string must not be blank.")
 //    tracer3.run()
-    val tracer4 =
-        Tracer.create<IllegalArgumentException>(functions0, functionName = "throwException1")
-    tracer4.run()
-    (tracer4.engine.statistics.last() as StatisticPlotter).displayFitness()
+//    val tracer4 =
+//        Tracer.create<IllegalArgumentException>(functions0, functionName = "throwException1")
+//    tracer4.run()
+//    (tracer4.engine.statistics.last() as StatisticPlotter).displayFitness()
+    val tracer5 = Tracer.create<IllegalArgumentException>(functions1)
+    val eng = tracer5.run()
+    (eng.statistics.last() as StatisticPlotter).displayFitness()
 }
