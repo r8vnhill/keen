@@ -8,6 +8,8 @@
 package cl.ravenhill.keen.util
 
 import org.apache.commons.math3.util.Precision
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /***************************************************************************************************
  * This file contains a collection of Kotlin extension functions, which provide additional
@@ -27,6 +29,22 @@ infix fun Int.roundUpToMultipleOf(i: Int): Int {
     if (remainder == 0) return this
     return this + i - remainder
 }
+
+/**
+ * This extension function calculates the ceiling of a [Double] and converts it to an [Int].
+ *
+ * The ceiling of a number is the smallest integer that is greater than or equal to the number.
+ * For example, the ceiling of 2.3 is 3, and the ceiling of -2.3 is -2.
+ */
+fun Double.ceil() = ceil(this).toInt()
+
+/**
+ * This extension function calculates the floor of a [Double] and converts it to an [Int].
+ *
+ * The floor of a number is the largest integer that is less than or equal to the number.
+ * For example, the floor of 2.3 is 2, and the floor of -2.3 is -3.
+ */
+fun Double.floor() = floor(this).toInt()
 
 /**
  * Returns true if this double is not NaN.

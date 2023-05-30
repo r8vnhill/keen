@@ -1,6 +1,7 @@
-/*Copyright (c) 2023, R8V.
-BSD Zero Clause License.
-
+/**
+ * Copyright (c) 2023, R8V.
+ * BSD Zero Clause License.
+ */
 
 package cl.ravenhill.keen.util.logging
 

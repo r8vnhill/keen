@@ -40,6 +40,7 @@ class Tracer<T : Throwable>(
     private val targetException: KClass<T>,
     private val targetMessage: String,
     private val targetFunction: String,
+    private val populationSize: Int,
     private val statCollectors: List<StatisticCollector<Instruction, InstructionGene>>
 ) {
     val engine = engine(::fitness, genotype {
@@ -49,7 +50,7 @@ class Tracer<T : Throwable>(
             }
         }
     }) {
-        populationSize = 4
+        populationSize = 8
         alterers = listOf(Mutator(0.3), SinglePointCrossover(0.5))
         limits = listOf(TargetFitness(5.0))
         statistics = this@Tracer.statCollectors
@@ -62,7 +63,6 @@ class Tracer<T : Throwable>(
             .groupBy { it.fitness }
             .maxBy { it.key }.value
             .minBy { it.flatten().size }
-        println(program)
         return MinimalCrashReproduction(program)
     }
 
@@ -117,7 +117,8 @@ class Tracer<T : Throwable>(
             functions: List<KFunction<*>>,
             targetMessage: String = "",
             functionName: String = "",
+            populationSize: Int = 4,
             statCollectors: List<StatisticCollector<Instruction, InstructionGene>> = emptyList()
-        ) = Tracer(functions, E::class, targetMessage, functionName, statCollectors)
+        ) = Tracer(functions, E::class, targetMessage, functionName, populationSize, statCollectors)
     }
 }

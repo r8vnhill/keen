@@ -62,7 +62,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
             // recombine the selected parents and count the number of individuals that were recombined
             val recombined = generateSequence {
                 crossover(parents.random(Core.random).map { it.genotype })
-            }.take(population.size / numOut).flatten().map {
+            }.take(population.size / numOut).flatten().map { // FIXME: this doesn't always maintain population size
                 Phenotype(it, generation)
             }.toList()
             // return the resulting population and count

@@ -5,8 +5,10 @@
 
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.RandomSource
 import io.kotest.property.arbitrary.arbitrary
@@ -16,6 +18,8 @@ import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.assume
 import io.kotest.property.checkAll
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.sqrt
 
 // region : -== ARBITRARY GENERATORS ==-
@@ -148,6 +152,46 @@ class NumbersTest : FreeSpec({
                             number + nonDivisor - number % nonDivisor
                 }
             }
+        }
+    }
+
+    "Calculating the ceiling of a [Double] should" - {
+        "return the ceiling of a real number" {
+            checkAll(Arb.real()) { n ->
+                n.ceil() shouldBe ceil(n).toInt()
+            }
+        }
+
+        "return 0 if the number is a NaN" {
+            Double.NaN.ceil() shouldBe 0
+        }
+
+        "return the ceiling of a positive infinity" {
+            Double.POSITIVE_INFINITY.ceil() shouldBe Int.MAX_VALUE
+        }
+
+        "return the ceiling of a negative infinity" {
+            Double.NEGATIVE_INFINITY.ceil() shouldBe Int.MIN_VALUE
+        }
+    }
+
+    "Calculating the floor of a [Double] should" - {
+        "return the floor of a real number" {
+            checkAll(Arb.real()) { n ->
+                n.floor() shouldBe floor(n).toInt()
+            }
+        }
+
+        "return 0 if the number is a NaN" {
+            Double.NaN.floor() shouldBe 0
+        }
+
+        "return the floor of a positive infinity" {
+            Double.POSITIVE_INFINITY.floor() shouldBe Int.MAX_VALUE
+        }
+
+        "return the floor of a negative infinity" {
+            Double.NEGATIVE_INFINITY.floor() shouldBe Int.MIN_VALUE
         }
     }
 

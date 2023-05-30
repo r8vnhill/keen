@@ -17,7 +17,7 @@ object Enforcement {
      * @param builder The builder that contains the contract.
      * @throws EnforcementException If the contract is not fulfilled.
      */
-    fun enforce(builder: Scope.() -> Unit) {
+    inline fun enforce(builder: Scope.() -> Unit) {
         if (skipChecks) return
         Scope().apply(builder).failures.let { errors ->
             if (errors.isNotEmpty()) {

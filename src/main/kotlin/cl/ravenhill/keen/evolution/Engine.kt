@@ -27,6 +27,8 @@ import cl.ravenhill.keen.operators.CompositeAlterer
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.Pretty
+import cl.ravenhill.keen.util.ceil
+import cl.ravenhill.keen.util.floor
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import cl.ravenhill.keen.util.statistics.StatisticCollector
@@ -240,7 +242,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         val initTime = clock.millis()
         return offspringSelector(
             population,
-            (offspringFraction * populationSize).roundToInt(),
+            (offspringFraction * populationSize).ceil(),
             optimizer
         ).also {
             statistics.stream().parallel()
@@ -260,7 +262,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         val initTime = clock.millis()
         return survivorSelector(
             population,
-            ((1 - offspringFraction) * populationSize).roundToInt(),
+            ((1 - offspringFraction) * populationSize).floor(),
             optimizer
         ).also {
             statistics.stream().parallel()
@@ -274,8 +276,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param population the population to alter.
      * @param evolution the current state of the evolution.
      * @return the altered population.
-     *
-     * @see CompletableFuture.thenApplyAsync
      */
     private fun alter(
         population: Population<DNA, G>,
