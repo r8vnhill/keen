@@ -11,13 +11,11 @@ import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.evolution.Engine
-import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
@@ -32,12 +30,27 @@ import kotlin.reflect.KParameter
 
 private typealias Instruction = Pair<KFunction<*>, Map<KParameter, Any?>>
 
+typealias MCR = MinimalCrashReproduction
+data class MinimalCrashReproduction(
+    val functions: List<KFunction<*>>,
+    val targetException: KClass<out Throwable>,
+    val targetMessage: String = "",
+    val targetFunction: String = "",
+    val program: List<Instruction>
+) {
+    override fun toString(): String {
+        return "MinimalCrashReproduction(functions=$functions, targetException=$targetException, targetMessage='$targetMessage', targetFunction='$targetFunction', program=$program)"
+    }
+}
+
 class Tracer<T : Throwable>(
     val functions: List<KFunction<*>>,
     val targetException: KClass<T>,
     val targetMessage: String = "",
     val targetFunction: String = ""
 ) {
+    lateinit var mcr: Map<KFunction<*>, Map<KParameter, Any?>>
+
     val engine = engine(::fitness, genotype {
         chromosome {
             InstructionChromosome.Factory(5) {
@@ -80,10 +93,10 @@ class Tracer<T : Throwable>(
     ): Double {
         var fitness = 0.0
         lateinit var stack: Array<StackTraceElement>
-        val statements = genotype.chromosomes.first()
+        val instructions = genotype.chromosomes.first()
         return try {
             runWithStdoutOff {
-                statements.forEach { it() }
+                instructions.forEach { it() }
             }
             0.0
         } catch (invocationException: InvocationTargetException) {
@@ -166,7 +179,11 @@ fun main() {
 //        Tracer.create<IllegalArgumentException>(functions0, functionName = "throwException1")
 //    tracer4.run()
 //    (tracer4.engine.statistics.last() as StatisticPlotter).displayFitness()
-    val tracer5 = Tracer.create<IllegalArgumentException>(functions1)
+    val tracer5 = Tracer.create<IllegalArgumentException>(
+        functions1 + functions0,
+        "Input number must be positive."
+    )
     val eng = tracer5.run()
+    eng.statistics.filterIsInstance<StatisticCollector<*, *>>().first().display()
     (eng.statistics.last() as StatisticPlotter).displayFitness()
 }

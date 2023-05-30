@@ -64,4 +64,6 @@ abstract class AbstractStatistic<DNA, G: Gene<DNA, G>> : Statistic<DNA, G> {
         _fittest = population.first()
         generation = evolutionResult.generation
     }
+
+    fun display() = println(toString())
 }

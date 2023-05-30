@@ -95,17 +95,6 @@ fun isNonNullString(input: String?): Boolean {
 }
 
 /**
- * Checks if the input index is valid for the given list.
- *
- * @param list The list to check the index for.
- * @param index The index to check.
- * @return True if the index is valid for the list, false otherwise.
- */
-//fun isValidIndex(list: List<Any>, index: Int): Boolean {
-//    return index >= 0 && index < list.size
-//}
-
-/**
  * Checks if the input number is not zero.
  *
  * @param divisor The number to check.
