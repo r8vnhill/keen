@@ -31,6 +31,12 @@ fun Random.nextChar(
     filter: (Char) -> Boolean = { true }
 ) = generateSequence { range.random(this) }.filter(filter).first()
 
+fun Random.nextString(
+    length: Int = nextInt(1, 10),
+    range: CharRange = Char.MIN_VALUE..Char.MAX_VALUE,
+    filter: (Char) -> Boolean = { true }
+) = List(length) { nextChar(range, filter) }.joinToString("")
+
 /**
  * Returns a list of randomly selected indices, using the given pick probability.
  *

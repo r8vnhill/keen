@@ -43,14 +43,8 @@ fun throwException2() {
 
 /**
  * This function always throws an IllegalArgumentException with the specific message.
- *
- * Note that despite its name, this function does not take any arguments or perform any checks.
- * Instead, it is designed to consistently throw an exception, simulating scenarios in which an
- * exception is thrown regardless of the input or internal state.
- * It's intended to be used in test scenarios where consistent exception-throwing behavior is
- * required.
  */
-fun checkPositiveNumber() {
+fun positiveNumberIAE() {
     throw IllegalArgumentException("Input number must be positive.")
 }
 
@@ -131,7 +125,7 @@ val functions0 = listOf(
     ::throwException0,
     ::throwException1,
     ::throwException2,
-    ::checkPositiveNumber,
+    ::positiveNumberIAE,
     ::checkNonBlankString,
     ::checkNonEmptyList,
     ::divideByZero,
