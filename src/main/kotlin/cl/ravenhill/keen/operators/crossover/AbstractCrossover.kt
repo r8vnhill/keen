@@ -5,8 +5,10 @@
 
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
@@ -14,8 +16,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.neq
 import cl.ravenhill.keen.util.subsets
@@ -48,23 +49,31 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
-    // Documentation inherited from [Alterer] interface
+    /// Documentation inherited from [Alterer] interface
     override fun invoke(
         population: Population<DNA, G>,
         generation: Int
     ): AltererResult<DNA, G> {
-        // check if probability is non-zero and there are at least 2 individuals in the population
+        // check if the probability is non-zero, and there are at least 2 individuals in the
+        // population
         return if (probability neq 0.0 && population.size >= 2) {
-            // select a subset of individuals to recombine using the provided probability and other parameters
+            // select a subset of individuals to recombine using the provided probability and other
+            // parameters
             val indices = Core.random.indices(probability, population.size)
             if (indices.size < numIn) return AltererResult(population)
             val parents = Core.random.subsets(population, numIn, exclusivity)
-            // recombine the selected parents and count the number of individuals that were recombined
+            // recombine the selected parents and count the number of individuals that were
+            // recombined
             val recombined = generateSequence {
                 crossover(parents.random(Core.random).map { it.genotype })
-            }.take(population.size / numOut).flatten().map { // FIXME: this doesn't always maintain population size
-                Phenotype(it, generation)
-            }.toList()
+            }
+                // Ceiling division to ensure that we generate enough individuals to maintain or
+                // exceed the original population size.
+                .take((population.size / numOut.toDouble()).ceil())
+                .flatten().map {
+                    Phenotype(it, generation)
+                }.toList()
+                .take(population.size) // Truncate the list to the original population size
             // return the resulting population and count
             AltererResult(recombined, recombined.size)
         } else {

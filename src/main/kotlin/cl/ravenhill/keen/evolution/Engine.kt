@@ -36,8 +36,6 @@ import cl.ravenhill.keen.util.statistics.StatisticSummary
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
-import java.util.concurrent.CompletableFuture
-import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 /**
@@ -220,10 +218,9 @@ class Engine<DNA, G : Gene<DNA, G>>(
     private fun evaluate(evolution: EvolutionStart<DNA, G>, force: Boolean = false) =
         evaluator(evolution.population, force).also {
             enforce {
-                "Evaluated population size [${it.size}] doesn't " +
-                        "match expected population size [$populationSize]" {
-                            populationSize must IntRequirement.BeEqualTo(it.size)
-                        }
+                "Evaluated population size [${it.size}] doesn't match expected population size [$populationSize]" {
+                    populationSize must IntRequirement.BeEqualTo(it.size)
+                }
                 "There are unevaluated phenotypes" {
                     requirement { it.all { phenotype -> phenotype.isEvaluated() } }
                 }

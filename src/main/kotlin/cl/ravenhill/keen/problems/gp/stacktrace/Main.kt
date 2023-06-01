@@ -81,7 +81,7 @@ private fun example5(
     val tracer = Tracer.create<IllegalArgumentException>(
         functions1 + functions0,
         "Input number must be positive.",
-//        populationSize = 8,
+        populationSize = 8,
         statCollectors = statCollectors
     )
     val mcr = tracer.run()

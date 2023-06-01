@@ -45,7 +45,7 @@ fun throwException2() {
  * This function always throws an IllegalArgumentException with the specific message.
  */
 fun positiveNumberIAE() {
-    throw IllegalArgumentException("Input number must be positive.")
+    throw IllegalArgumentException("The input number must be positive.")
 }
 
 

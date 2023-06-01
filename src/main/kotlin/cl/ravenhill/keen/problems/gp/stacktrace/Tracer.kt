@@ -15,6 +15,7 @@ import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.statistics.StatisticCollector
+import cl.ravenhill.keen.util.statistics.StatisticCollectors
 import cl.ravenhill.utils.runWithStdoutOff
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
@@ -30,6 +31,8 @@ import kotlin.reflect.KParameter
  * @param targetMessage The target message for fitness evaluation.
  * @param targetFunction The target function name for fitness evaluation.
  * @param statCollectors A list of statistic collectors for evolution.
+ *
+ * @property engine The genetic programming engine.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -50,7 +53,7 @@ class Tracer<T : Throwable>(
             }
         }
     }) {
-        populationSize = 8
+        populationSize = this@Tracer.populationSize
         alterers = listOf(Mutator(0.3), SinglePointCrossover(0.5))
         limits = listOf(TargetFitness(5.0))
         statistics = this@Tracer.statCollectors
@@ -64,19 +67,6 @@ class Tracer<T : Throwable>(
             .maxBy { it.key }.value
             .minBy { it.flatten().size }
         return MinimalCrashReproduction(program)
-    }
-
-    private fun minimize(
-        result: EvolutionResult<Instruction, InstructionGene>
-    ): EvolutionResult<Instruction, InstructionGene> = result.map {
-        for (i in 1..it.genotype.first().size) {
-            val candidate = Genotype(InstructionChromosome(it.genotype.first().take(i)))
-            val candidateFitness = fitness(candidate)
-            if (candidateFitness >= it.fitness) {
-                return@map it.withGenotype(candidate, candidateFitness)
-            }
-        }
-        it
     }
 
     fun fitness(genotype: Genotype<Instruction, InstructionGene>) =
@@ -112,13 +102,110 @@ class Tracer<T : Throwable>(
         return instruction to params
     }
 
+    /**
+     * This method aims to minimize the genotype size while maintaining or improving its fitness.
+     * It performs two stages of minimization on the evolution result's genotypes.
+     *
+     * 1. In the first stage, it iteratively removes the last instruction from the genotype and
+     * checks if the fitness of the genotype either remains the same or improves. If it does,
+     * it replaces the old genotype with the new minimized one. This is done from the start of
+     * the genotype until no more instructions can be removed without degrading fitness.
+     *
+     * 2. In the second stage, it does a similar process, but this time it removes instructions
+     * from the start of the genotype. Again, this is done until no more instructions can be
+     * removed without degrading fitness.
+     *
+     * @param result The [EvolutionResult] whose genotype we want to minimize.
+     * @return An [EvolutionResult] with minimized genotype without degrading fitness.
+     */
+    private fun minimize(
+        result: EvolutionResult<Instruction, InstructionGene>
+    ): EvolutionResult<Instruction, InstructionGene> = result.trimEnd().trimStart()
+
+    // region : -== TRIMMING METHODS (CODE DUPLICATION ON PURPOSE) ==-
+    /**
+     * This extension function performs a genotype size minimization on the end (last elements)
+     * of the genotype within the given [EvolutionResult].
+     *
+     * @return An [EvolutionResult] where the genotype has been trimmed from the end while
+     * maintaining or improving fitness.
+     */
+    private fun EvolutionResult<Instruction, InstructionGene>.trimEnd() = map {
+        // Iteratively remove the last instruction from the genotype
+        for (i in 1..it.genotype.first().size) {
+            val candidate = Genotype(InstructionChromosome(it.genotype.first().take(i)))
+            val candidateFitness = fitness(candidate)
+            // If fitness is maintained or improved, replace the genotype with the new minimized one
+            if (candidateFitness >= it.fitness) {
+                return@map it.withGenotype(candidate, candidateFitness)
+            }
+        }
+        it
+    }
+
+    /**
+     * This extension function performs a genotype size minimization on the start (first elements)
+     * of the genotype within the given [EvolutionResult].
+     *
+     * @return An [EvolutionResult] where the genotype has been trimmed from the start while
+     * maintaining or improving fitness.
+     */
+    private fun EvolutionResult<Instruction, InstructionGene>.trimStart() = map {
+        // Iteratively remove the first instruction from the genotype
+        for (i in it.genotype.first().size downTo 1) {
+            val candidate = Genotype(InstructionChromosome(it.genotype.first().drop(i)))
+            val candidateFitness = fitness(candidate)
+            // If fitness is maintained or improved, replace the genotype with the new minimized one
+            if (candidateFitness >= it.fitness) {
+                return@map it.withGenotype(candidate, candidateFitness)
+            }
+        }
+        it
+    }
+    // endregion TRIMMING METHODS (CODE DUPLICATION ON PURPOSE)
+
+    /**
+     * Companion object for [Tracer].
+     */
     companion object {
+        /**
+         * Factory function for creating a [Tracer] instance with a specific exception type.
+         *
+         * [Tracer] is a tool for finding the minimal crash reproduction of a given exception.
+         * It handles exception stack traces, searching for a specific message and function, and
+         * storing statistics.
+         *
+         * ## Examples
+         * ### Example 1: Creating a Tracer for IllegalArgumentException
+         * ```
+         * val functions = listOf(::checkPositiveNumber, ::checkNonNullString, ::checkNonZeroDivisor)
+         * val tracer = create<IllegalArgumentException>(functions, "Input number must be positive.")
+         * ```
+         *
+         * @param functions A list of [KFunction] references which the [Tracer] can use to generate
+         * individuals.
+         * @param targetMessage The specific exception message that the [Tracer] will try to
+         * produce.
+         * Defaults to an empty string.
+         * @param functionName The specific function name where the exception is expected to be
+         * thrown.
+         * Defaults to an empty string.
+         * @param populationSize The size of the population for each generation of the genetic
+         * programming problem.
+         * Defaults to 4.
+         * @param statCollectors A list of [StatisticCollector] instances for collecting statistics
+         * over the course of the genetic algorithm's execution.
+         * Defaults to an empty list.
+         * @return A new [Tracer] instance parameterized with the specified [E] exception type.
+         *
+         * @param E The reified type of the [Throwable] (exception) that the [Tracer] will handle.
+         */
         inline fun <reified E : Throwable> create(
             functions: List<KFunction<*>>,
             targetMessage: String = "",
             functionName: String = "",
             populationSize: Int = 4,
-            statCollectors: List<StatisticCollector<Instruction, InstructionGene>> = emptyList()
+            statCollectors: StatisticCollectors<Instruction, InstructionGene> = emptyList()
         ) = Tracer(functions, E::class, targetMessage, functionName, populationSize, statCollectors)
     }
 }
