@@ -33,6 +33,7 @@ import kotlin.reflect.KParameter
  * @param statCollectors A list of statistic collectors for evolution.
  *
  * @property engine The genetic programming engine.
+ * @property inputFactory The input factory.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -58,7 +59,7 @@ class Tracer<T : Throwable>(
         limits = listOf(TargetFitness(5.0))
         statistics = this@Tracer.statCollectors
     }
-    private val inputFactory = InputFactory()
+    val inputFactory = InputFactory()
 
     fun run(): MinimalCrashReproduction {
         val result = engine.evolve()

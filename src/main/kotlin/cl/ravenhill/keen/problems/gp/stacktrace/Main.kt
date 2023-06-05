@@ -88,8 +88,20 @@ private fun example5(
     return mcr to tracer
 }
 
+private fun example6(
+    statCollectors: StatisticCollectors<Instruction, InstructionGene> = listOf(StatisticPlotter())
+): Pair<MCR, Tracer<ArrayIndexOutOfBoundsException>> {
+    val tracer = Tracer.create<ArrayIndexOutOfBoundsException>(
+        functions1 + functions0 + functions2,
+        "Index must be less than array size.",
+        statCollectors = statCollectors
+    )
+    val mcr = tracer.run()
+    return mcr to tracer
+}
+
 fun main() {
-    val (mcr, tracer) = example5()
+    val (mcr, tracer) = example6()
     println(mcr)
     (tracer.engine.statistics.first() as StatisticPlotter).displayFitness()
 }

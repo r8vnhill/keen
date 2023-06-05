@@ -128,7 +128,6 @@ class CoreTest : FreeSpec({
     beforeAny {
         Core.random = Random.Default
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
-        Enforcement.skipChecks = false
         Core.Dice.random = Random.Default
         Core.EvolutionLogger.level = Core.EvolutionLogger.DEFAULT_LEVEL
     }
@@ -180,18 +179,6 @@ class CoreTest : FreeSpec({
                     depth.also { Core.maxProgramDepth = it }
                 }.infringements.forEach { it shouldBeOfClass cl.ravenhill.enforcer.IntRequirementException::class }
             }
-        }
-    }
-
-    "The skip checks flag" - {
-        "has a default value of false" {
-            Enforcement.skipChecks shouldBe false
-        }
-
-        "can be set to true" {
-            Enforcement.skipChecks shouldBe false
-            Enforcement.skipChecks = true
-            Enforcement.skipChecks shouldBe true
         }
     }
 

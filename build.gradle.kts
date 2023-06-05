@@ -54,8 +54,6 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
     // Kotest library for writing property-based tests in Kotlin
     testImplementation("io.kotest:kotest-property:5.5.5")
-    // Kotest library for running tests with JUnit 5 in Kotlin/JVM
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.5")
     // Library for testing code that uses System.exit() in Java/Kotlin
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
     // Dokka plugin for generating documentation in HTML format

@@ -328,7 +328,7 @@ private fun Arb.Companion.beAtMostData(
     value: Arb<Int> = Arb.int(),
     below: Boolean = true
 ) = arbitrary {
-    orderedPair(value, strict = !below, reverted = !below).bind().let { (a, b) ->
+    orderedPair(value, strict = !below, reverted = below).bind().let { (a, b) ->
         BeAtMostData(a, b)
     }
 }

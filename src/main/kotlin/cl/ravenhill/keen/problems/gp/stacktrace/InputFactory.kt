@@ -12,6 +12,7 @@ import cl.ravenhill.keen.util.nextChar
 import cl.ravenhill.keen.util.nextString
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.withNullability
 
 
 /**
@@ -41,7 +42,8 @@ class InputFactory {
         Double::class.createType() to { Core.random.nextDouble() },
         Boolean::class.createType() to { Core.random.nextBoolean() },
         Char::class.createType() to { Core.random.nextChar() },
-        String::class.createType() to { Core.random.nextString() })
+        String::class.createType() to { Core.random.nextString() }
+    )
 
     /**
      * Gets the constructor function for the specified input type.
@@ -52,9 +54,12 @@ class InputFactory {
      */
     operator fun get(type: KType): () -> Any? {
         if (type.isMarkedNullable) {
-            return { null }
+            if (Core.random.nextBoolean()) {
+                return { null }
+            }
         }
-        return typeConstructors[type] ?: throw IllegalArgumentException("No constructor for type $type.")
+        return typeConstructors[type.withNullability(false)]
+            ?: throw IllegalArgumentException("No constructor for type $type.")
     }
 
     /**
@@ -63,7 +68,7 @@ class InputFactory {
      * @param type The KType of the input type.
      * @param constructor The constructor function that generates a terminal of the input type.
      */
-    operator fun set(type: KType, constructor: () -> Terminal<out Any>) {
+    operator fun set(type: KType, constructor: () -> Any) {
         typeConstructors[type] = constructor
     }
 
