@@ -61,33 +61,35 @@ class Engine<DNA, G : Gene<DNA, G>>(
     val optimizer: PhenotypeOptimizer<DNA, G>,
     val statistics: List<StatisticCollector<DNA, G>>,
     val evaluator: EvaluationExecutor<DNA, G>,
-    val interceptor: EvolutionInterceptor<DNA, G>
+    val interceptor: EvolutionInterceptor<DNA, G>,
 ) : Evolver<DNA, G>, Pretty {
 
     // region : PROPERTIES  ------------------------------------------------------------------------
-    var population: Population<DNA, G> by Delegates.observable(listOf()) { _, _, _ ->
-        runBlocking { statistics.asFlow().collect { it.population = population } }
-    }
-    private var evolutionResult: EvolutionResult<DNA, G>
-            by Delegates.observable(EvolutionResult(optimizer, listOf(), 0)) { _, _, new ->
-                runBlocking { statistics.asFlow().collect { it.evolutionResult = new } }
-            }
+    var population: Population<DNA, G> by Delegates.observable(
+        initialValue = listOf(),
+        onChange = { _, _, _ -> statistics.forEach { it.population = population } })
+
+    private var evolutionResult: EvolutionResult<DNA, G> by Delegates.observable(
+        initialValue = EvolutionResult(optimizer, listOf(), 0),
+        onChange = { _, _, new -> statistics.forEach { it.evolutionResult = new } })
 
     var generation: Int = 0
         private set
 
-    var steadyGenerations by Delegates.observable(0) { _, _, new ->
-        runBlocking { statistics.asFlow().collect { it.steadyGenerations = new } }
-    }
+    var steadyGenerations by Delegates.observable(
+        initialValue = 0,
+        onChange = { _, _, new -> statistics.forEach { it.steadyGenerations = new } })
         private set
 
-    var bestFitness: Double by Delegates.observable(Double.NaN) { _, old, new ->
-        if (old == new) {
-            steadyGenerations++
-        } else {
-            steadyGenerations = 0
-        }
-    }
+    var bestFitness: Double by Delegates.observable(
+        initialValue = Double.NaN,
+        onChange = { _, old, new ->
+            if (old == new) {
+                steadyGenerations++
+            } else {
+                steadyGenerations = 0
+            }
+        })
         private set
 
     /**
@@ -276,7 +278,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      */
     private fun alter(
         population: Population<DNA, G>,
-        evolution: EvolutionStart<DNA, G>
+        evolution: EvolutionStart<DNA, G>,
     ): AltererResult<DNA, G> {
         debug { "Altering offspring." }
         val initTime = clock.millis()
@@ -333,7 +335,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      */
     class Builder<DNA, G : Gene<DNA, G>>(
         private val fitnessFunction: (Genotype<DNA, G>) -> Double,
-        private val genotype: Genotype.Factory<DNA, G>
+        private val genotype: Genotype.Factory<DNA, G>,
     ) {
         // region : Evolution parameters -----------------------------------------------------------
         var populationSize = 50

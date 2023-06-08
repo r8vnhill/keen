@@ -92,7 +92,7 @@ private fun example6(
     statCollectors: StatisticCollectors<Instruction, InstructionGene> = listOf(StatisticPlotter())
 ): Pair<MCR, Tracer<ArrayIndexOutOfBoundsException>> {
     val tracer = Tracer.create<ArrayIndexOutOfBoundsException>(
-        functions1 + functions0 + functions2,
+        functions0 + functions1 + functions2,
         "Index must be less than array size.",
         statCollectors = statCollectors
     )
