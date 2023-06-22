@@ -6,16 +6,16 @@
 
 package cl.ravenhill.keen.problems.gp.stacktrace
 
-import cl.ravenhill.keen.util.statistics.StatisticCollector
-import cl.ravenhill.keen.util.statistics.StatisticCollectors
-import cl.ravenhill.keen.util.statistics.StatisticPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionListener
+import cl.ravenhill.keen.util.listeners.Listeners
+import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 
 /**
  * This function demonstrates the use of the [Tracer] class in the Keen library to evolve a program
  * that raises a [NullPointerException].
  *
  * The function takes in an optional parameter `statCollector`, which defaults to a list containing a
- * [StatisticPlotter] instance.
+ * [EvolutionPlotter] instance.
  * The [Tracer] is then initialized with the input `statCollector` and is used to run the genetic
  * algorithm.
  *
@@ -29,12 +29,12 @@ import cl.ravenhill.keen.util.statistics.StatisticPlotter
  * (tracer.engine.statistics.first() as StatisticPlotter).displayFitness()
  * ```
  *
- * @param statCollector The list of [StatisticCollector] instances to be used by the `Tracer`.
- * Defaults to a list containing a [StatisticPlotter] instance.
+ * @param statCollector The list of [EvolutionListener] instances to be used by the `Tracer`.
+ * Defaults to a list containing a [EvolutionPlotter] instance.
  * @return A pair of [MCR] and `Tracer<NullPointerException>` instances.
  */
 private fun example1(
-    statCollector: StatisticCollectors<Instruction, InstructionGene> = listOf(StatisticPlotter())
+    statCollector: Listeners<Instruction, InstructionGene> = listOf(EvolutionPlotter())
 ): Pair<MCR, Tracer<NullPointerException>> {
     val tracer = Tracer.create<NullPointerException>(functions0, statCollectors = statCollector)
     val mcr = tracer.run()
@@ -42,7 +42,7 @@ private fun example1(
 }
 
 private fun example2(
-    statCollector: StatisticCollectors<Instruction, InstructionGene> = listOf(StatisticPlotter())
+    statCollector: Listeners<Instruction, InstructionGene> = listOf(EvolutionPlotter())
 ): Pair<MCR, Tracer<ArithmeticException>> {
     val tracer =
         Tracer.create<ArithmeticException>(functions0 + functions1, statCollectors = statCollector)
@@ -51,7 +51,7 @@ private fun example2(
 }
 
 private fun example3(
-    statCollectors: StatisticCollectors<Instruction, InstructionGene> = listOf(StatisticPlotter())
+    statCollectors: Listeners<Instruction, InstructionGene> = listOf(EvolutionPlotter())
 ): Pair<MCR, Tracer<IllegalArgumentException>> {
     val tracer = Tracer.create<IllegalArgumentException>(
         functions0 + functions1,
@@ -63,7 +63,7 @@ private fun example3(
 }
 
 private fun example4(
-    statCollectors: StatisticCollectors<Instruction, InstructionGene> = listOf(StatisticPlotter())
+    statCollectors: Listeners<Instruction, InstructionGene> = listOf(EvolutionPlotter())
 ): Pair<MCR, Tracer<IllegalArgumentException>> {
     val tracer =
         Tracer.create<IllegalArgumentException>(
@@ -76,7 +76,7 @@ private fun example4(
 }
 
 private fun example5(
-    statCollectors: StatisticCollectors<Instruction, InstructionGene> = listOf(StatisticPlotter())
+    statCollectors: Listeners<Instruction, InstructionGene> = listOf(EvolutionPlotter())
 ): Pair<MCR, Tracer<IllegalArgumentException>> {
     val tracer = Tracer.create<IllegalArgumentException>(
         functions1 + functions0,
@@ -89,7 +89,7 @@ private fun example5(
 }
 
 private fun example6(
-    statCollectors: StatisticCollectors<Instruction, InstructionGene> = listOf(StatisticPlotter())
+    statCollectors: Listeners<Instruction, InstructionGene> = listOf(EvolutionPlotter())
 ): Pair<MCR, Tracer<ArrayIndexOutOfBoundsException>> {
     val tracer = Tracer.create<ArrayIndexOutOfBoundsException>(
         functions0 + functions1 + functions2,
@@ -103,5 +103,5 @@ private fun example6(
 fun main() {
     val (mcr, tracer) = example6()
     println(mcr)
-    (tracer.engine.statistics.first() as StatisticPlotter).displayFitness()
+    (tracer.engine.listeners.first() as EvolutionPlotter).displayFitness()
 }

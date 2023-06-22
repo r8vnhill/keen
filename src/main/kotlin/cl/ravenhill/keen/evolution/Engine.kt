@@ -29,13 +29,15 @@ import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.Pretty
 import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.floor
+import cl.ravenhill.keen.util.listeners.EvolutionListener
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import cl.ravenhill.keen.util.statistics.StatisticCollector
-import cl.ravenhill.keen.util.statistics.StatisticSummary
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
 /**
@@ -59,7 +61,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
     val limits: List<Limit>,
     val survivorSelector: Selector<DNA, G>,
     val optimizer: PhenotypeOptimizer<DNA, G>,
-    val statistics: List<StatisticCollector<DNA, G>>,
+    val listeners: List<EvolutionListener<DNA, G>>,
     val evaluator: EvaluationExecutor<DNA, G>,
     val interceptor: EvolutionInterceptor<DNA, G>,
 ) : Evolver<DNA, G>, Pretty {
@@ -67,18 +69,23 @@ class Engine<DNA, G : Gene<DNA, G>>(
     // region : PROPERTIES  ------------------------------------------------------------------------
     var population: Population<DNA, G> by Delegates.observable(
         initialValue = listOf(),
-        onChange = { _, _, _ -> statistics.forEach { it.population = population } })
-
+        onChange = { _, _, _ -> listeners.forEach { it.population = population } })
+        private set
+    // TODO: Records para poder hacer un mejor seguimiento de la evolución [R8V]
     private var evolutionResult: EvolutionResult<DNA, G> by Delegates.observable(
         initialValue = EvolutionResult(optimizer, listOf(), 0),
-        onChange = { _, _, new -> statistics.forEach { it.evolutionResult = new } })
+        onChange = { _, _, new -> listeners.forEach { it.evolutionResult = new } })
 
-    var generation: Int = 0
+    var generation: Int by Delegates.observable(
+        initialValue = 0,
+        onChange = { prop, old, new ->
+            listeners.forEach { it.onGenerationShift(prop, old, new) }
+        })
         private set
 
     var steadyGenerations by Delegates.observable(
         initialValue = 0,
-        onChange = { _, _, new -> statistics.forEach { it.steadyGenerations = new } })
+        onChange = { _, _, new -> listeners.forEach { it.steadyGenerations = new } })
         private set
 
     var bestFitness: Double by Delegates.observable(
@@ -95,7 +102,8 @@ class Engine<DNA, G : Gene<DNA, G>>(
     /**
      * The fittest individual of the current generation.
      */
-    private var fittest: Phenotype<DNA, G>? by Delegates.observable(null) { _, _, _ ->
+    private
+    var fittest: Phenotype<DNA, G>? by Delegates.observable(null) { _, _, _ ->
     }
 
     /**
@@ -114,7 +122,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         val initTime = clock.millis()
         info { "Starting evolution process." }
         var evolution =
-            EvolutionStart.empty<DNA, G>().apply { debug { "Started an empty evolution." } }
+            EvolutionState.empty<DNA, G>().apply { debug { "Started an empty evolution." } }
         var result = EvolutionResult(optimizer, evolution.population, generation)
         debug { "Optimizer: ${result.optimizer}" }
 //        debug { "Best: ${result.best}" }
@@ -126,7 +134,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             bestFitness = result.best.fitness
             evolution = result.next()
         }
-        statistics.stream().parallel()
+        listeners.stream().parallel()
             .forEach { it.evolutionTime = clock.millis() - initTime }
         info { "Evolution process finished" }
         return result
@@ -142,14 +150,14 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param start the starting state of the evolution at this generation.
      * @return  the result of advancing the population by one generation.
      *
-     * @see evolutionStart
+     * @see startEvolution
      * @see evaluate
      * @see selectOffspring
      * @see selectSurvivors
      * @see alter
      * @see EvolutionResult
      */
-    fun evolve(start: EvolutionStart<DNA, G>) = runBlocking {
+    fun evolve(start: EvolutionState<DNA, G>) = runBlocking {
         val initTime = clock.millis()
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
@@ -157,7 +165,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         val interceptedStart = interceptor.before(start)
         // (2) The population is created from the starting state
         trace { "Creating population." }
-        val evolution = evolutionStart(interceptedStart)
+        val evolution = startEvolution(interceptedStart)
         // (3) The population's fitness is evaluated
         trace { "Evaluating population." }
         val evaluatedPopulation = evaluate(evolution)
@@ -175,30 +183,30 @@ class Engine<DNA, G : Gene<DNA, G>>(
         val nextPopulation = survivors + alteredOffspring.population
         // (8) The next population is evaluated
         trace { "Evaluating next population." }
-        val pop = evaluate(EvolutionStart(nextPopulation, generation), true)
+        val pop = evaluate(EvolutionState(nextPopulation, generation), true)
         evolutionResult = EvolutionResult(optimizer, pop, ++generation)
         fittest = evolutionResult.best
         // (9) The result of the evolution is post-processed
         trace { "Post-processing evolution result." }
         val afterResult = interceptor.after(evolutionResult)
-        statistics.asFlow().collect { it.generationTimes.add(clock.millis() - initTime) }
+        listeners.asFlow().collect { it.generationTimes.add(clock.millis() - initTime) }
         afterResult
     }
 
     /**
      * Creates the initial population of the evolution.
      *
-     * @param start the starting state of the evolution at this generation.
+     * @param state the starting state of the evolution at this generation.
      * @return the initial population of the evolution.
      */
-    private fun evolutionStart(start: EvolutionStart<DNA, G>) =
-        if (start.population.isEmpty()) {
+    private fun startEvolution(state: EvolutionState<DNA, G>) =
+        if (state.population.isEmpty()) {
             info { "Initial population is empty, creating a new one." }
-            val generation = start.generation
+            val generation = state.generation
             val individuals =
-                start.population.asSequence() + generateSequence { genotype.make() }
+                state.population.asSequence() + generateSequence { genotype.make() }
                     .map { Phenotype(it, generation) }
-            EvolutionStart(
+            EvolutionState(
                 individuals.take(populationSize).toList(),
                 generation
             ).also {
@@ -207,7 +215,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             }
         } else {
             debug { "Initial population is not empty, using it." }
-            start
+            state
         }
 
     /**
@@ -217,7 +225,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param force if true, the fitness will be evaluated even if it has already been evaluated.
      * @return the evaluated population.
      */
-    private fun evaluate(evolution: EvolutionStart<DNA, G>, force: Boolean = false) =
+    private fun evaluate(evolution: EvolutionState<DNA, G>, force: Boolean = false) =
         evaluator(evolution.population, force).also {
             enforce {
                 "Evaluated population size [${it.size}] doesn't match expected population size [$populationSize]" {
@@ -244,7 +252,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             (offspringFraction * populationSize).ceil(),
             optimizer
         ).also {
-            statistics.stream().parallel()
+            listeners.stream().parallel()
                 .forEach { it.offspringSelectionTime.add(clock.millis() - initTime) }
             debug { "Selected offspring." }
         }
@@ -264,7 +272,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             ((1 - offspringFraction) * populationSize).floor(),
             optimizer
         ).also {
-            statistics.stream().parallel()
+            listeners.stream().parallel()
                 .forEach { it.survivorSelectionTime.add(clock.millis() - initTime) }
         }
     }
@@ -278,13 +286,13 @@ class Engine<DNA, G : Gene<DNA, G>>(
      */
     private fun alter(
         population: Population<DNA, G>,
-        evolution: EvolutionStart<DNA, G>,
+        evolution: EvolutionState<DNA, G>,
     ): AltererResult<DNA, G> {
         debug { "Altering offspring." }
         val initTime = clock.millis()
         return alterer(population, evolution.generation)
             .also {
-                statistics.stream().parallel()
+                listeners.stream().parallel()
                     .forEach { stat -> stat.alterTime.add(clock.millis() - initTime) }
             }
 
@@ -355,7 +363,8 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
         // region : -== EXECUTION ==-
         var evaluator =
-            EvaluationExecutor.Factory<DNA, G>().apply { creator = { SequentialEvaluator(it) } }
+            EvaluationExecutor.Factory<DNA, G>()
+                .apply { creator = { SequentialEvaluator(it) } }
         // endregion EXECUTION
 
         // region : Alterers -----------------------------------------------------------------------
@@ -386,7 +395,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             }.let { field = value }
         // endregion    ----------------------------------------------------------------------------
 
-        var statistics: List<StatisticCollector<DNA, G>> = listOf(StatisticSummary())
+        var statistics: List<EvolutionListener<DNA, G>> = listOf(EvolutionSummary())
 
         fun build() = Engine(
             genotype = genotype,
@@ -398,7 +407,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             limits = limits,
             survivorSelector = survivorSelector,
             optimizer = optimizer,
-            statistics = statistics,
+            listeners = statistics,
             evaluator = evaluator.creator(fitnessFunction),
             interceptor = interceptor
         )

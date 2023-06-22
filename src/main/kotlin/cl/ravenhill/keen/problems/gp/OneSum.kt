@@ -8,14 +8,14 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
-import cl.ravenhill.keen.operators.crossover.pointbased.SingleNodeCrossover
+import cl.ravenhill.keen.operators.crossover.pointbased.SubtreeCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticSummary
-import cl.ravenhill.keen.util.statistics.StatisticPlotter
-import cl.ravenhill.keen.util.statistics.StatisticPrinter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import kotlin.math.abs
 
 
@@ -54,14 +54,14 @@ fun main() {
     }) {
         populationSize = 100
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
-        alterers = listOf(Mutator(0.06), SingleNodeCrossover(0.2))
+        alterers = listOf(Mutator(0.06), SubtreeCrossover(0.2))
         optimizer = FitnessMinimizer()
         statistics =
-            listOf(StatisticSummary(), StatisticPrinter(10), StatisticPlotter())
+            listOf(EvolutionSummary(), EvolutionPrinter(10), EvolutionPlotter())
     }
     // Run the genetic algorithm and display results
     val result = engine.evolve()
-    println(engine.statistics.first())
+    println(engine.listeners.first())
     println(result)
-    (engine.statistics.last() as StatisticPlotter).displayFitness()// { if (it == 0.0) 0.0 else ln(it) }
+    (engine.listeners.last() as EvolutionPlotter).displayFitness()// { if (it == 0.0) 0.0 else ln(it) }
 }

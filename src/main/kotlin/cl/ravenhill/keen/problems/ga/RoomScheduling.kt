@@ -19,8 +19,8 @@ import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticSummary
-import cl.ravenhill.keen.util.statistics.StatisticPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 
 /**
  * Represents a meeting with a start and end time.
@@ -102,12 +102,12 @@ fun main() {
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
-        statistics = listOf(StatisticSummary(), StatisticPlotter())
+        statistics = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     // Evolve the population and get the best result.
     val result = engine.evolve()
     // Print the statistics of the genetic algorithm.
-    println(engine.statistics.first())
+    println(engine.listeners.first())
     // Create a schedule based on the best genotype.
     val schedule = MutableList(result.best.genotype.size) { mutableListOf<Meeting>() }
     meetings.forEachIndexed { index, meeting ->
@@ -119,5 +119,5 @@ fun main() {
         println("Room $index: $room")
     }
     // Display a plot of the fitness values over time.
-    (engine.statistics.last() as StatisticPlotter).displayFitness()
+    (engine.listeners.last() as EvolutionPlotter).displayFitness()
 }

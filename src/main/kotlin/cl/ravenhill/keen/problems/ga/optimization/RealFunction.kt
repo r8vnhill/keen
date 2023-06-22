@@ -10,8 +10,8 @@ import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticSummary
-import cl.ravenhill.keen.util.statistics.StatisticPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import kotlin.math.cos
 import kotlin.math.ln
 import kotlin.math.sin
@@ -44,9 +44,9 @@ fun main() {
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.03), MeanCrossover(0.3))
         limits = listOf(SteadyGenerations(20))
-        statistics = listOf(StatisticSummary(), StatisticPlotter())
+        statistics = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     engine.evolve()
-    println(engine.statistics.first())
-    (engine.statistics.last() as StatisticPlotter).displayFitness()
+    println(engine.listeners.first())
+    (engine.listeners.last() as EvolutionPlotter).displayFitness()
 }

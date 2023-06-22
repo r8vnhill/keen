@@ -1,15 +1,17 @@
-package cl.ravenhill.keen.util.statistics
+package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import kotlin.reflect.KProperty
 
 /**
- * Type alias for a list of [StatisticCollector] instances.
+ * Type alias for a list of [EvolutionListener] instances.
  */
-typealias StatisticCollectors<DNA, G> = List<StatisticCollector<DNA, G>>
+typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
 
 /**
  * A generic interface for a statistic in an evolutionary algorithm.
@@ -33,7 +35,8 @@ typealias StatisticCollectors<DNA, G> = List<StatisticCollector<DNA, G>>
  * @since 1.0.0
  * @version 2.0.0
  */
-interface StatisticCollector<DNA, G: Gene<DNA, G>> {
+interface EvolutionListener<DNA, G : Gene<DNA, G>> {
+    var evolution: EvolutionRecord<DNA, G>
     var evolutionResult: EvolutionResult<DNA, G>
     var population: Population<DNA, G>
     var optimizer: PhenotypeOptimizer<DNA, G>
@@ -53,4 +56,18 @@ interface StatisticCollector<DNA, G: Gene<DNA, G>> {
      * Called whenever the result of the evolution is updated.
      */
     fun onResultUpdated()
+
+    /**
+     * Called whenever the evolution process is over (the termination criteria is met).
+     */
+    fun onEvolutionEnded() {
+        // Do nothing
+    }
+
+    /**
+     * Called 
+     */
+    fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) {
+        // Do nothing
+    }
 }

@@ -9,14 +9,14 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
-import cl.ravenhill.keen.operators.crossover.pointbased.SingleNodeCrossover
+import cl.ravenhill.keen.operators.crossover.pointbased.SubtreeCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Variable
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticSummary
-import cl.ravenhill.keen.util.statistics.StatisticPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import kotlin.math.ln
 import kotlin.math.pow
 
@@ -48,12 +48,12 @@ fun main() {
     ) {
         populationSize = 300
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
-        alterers = listOf(SingleNodeCrossover(0.2), Mutator(0.1))
+        alterers = listOf(SubtreeCrossover(0.2), Mutator(0.1))
         optimizer = FitnessMinimizer()
-        statistics = listOf(StatisticSummary(), StatisticPlotter())
+        statistics = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     val result = engine.evolve()
-    println(engine.statistics.first())
+    println(engine.listeners.first())
     println(result)
-    (engine.statistics.last() as StatisticPlotter).displayFitness { if (it < 0.0) 0.0 else ln(it) }
+    (engine.listeners.last() as EvolutionPlotter).displayFitness { if (it < 0.0) 0.0 else ln(it) }
 }

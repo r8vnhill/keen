@@ -13,9 +13,9 @@ import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
 import cl.ravenhill.keen.operators.mutator.InversionMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticSummary
-import cl.ravenhill.keen.util.statistics.StatisticPlotter
-import cl.ravenhill.keen.util.statistics.StatisticPrinter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import tech.tablesaw.api.DoubleColumn
 import tech.tablesaw.plotly.Plot
 import tech.tablesaw.plotly.components.Figure
@@ -71,15 +71,15 @@ fun main() {
         limits = listOf(GenerationCount(200))
         alterers = listOf(InversionMutator(0.06), PartiallyMappedCrossover(0.3))
         optimizer = FitnessMinimizer()
-        statistics = listOf(StatisticSummary(), StatisticPrinter(30), StatisticPlotter())
+        statistics = listOf(EvolutionSummary(), EvolutionPrinter(30), EvolutionPlotter())
         evaluator = evaluator {
             coroutines()
         }
     }
     val result = engine.evolve()
-    println(engine.statistics.first())
+    println(engine.listeners.first())
     println(result)
-    (engine.statistics.last() as StatisticPlotter).displayFitness()
+    (engine.listeners.last() as EvolutionPlotter).displayFitness()
     val x = DoubleColumn.create("x",
         result.best.genotype.flatten().map { it.first.toDouble() })
     val y = DoubleColumn.create(

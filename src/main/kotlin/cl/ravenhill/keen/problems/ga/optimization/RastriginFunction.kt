@@ -20,8 +20,8 @@ import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.statistics.StatisticSummary
-import cl.ravenhill.keen.util.statistics.StatisticPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import kotlin.math.cos
 
 private const val A = 10.0
@@ -78,9 +78,9 @@ fun main() {
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.03), MeanCrossover(0.3, geneRate = 0.5))
         limits = listOf(SteadyGenerations(50))
-        statistics = listOf(StatisticSummary(), StatisticPlotter())
+        statistics = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     engine.evolve()
-    println(engine.statistics[0])
-    (engine.statistics[1] as StatisticPlotter).displayFitness()
+    println(engine.listeners[0])
+    (engine.listeners[1] as EvolutionPlotter).displayFitness()
 }

@@ -47,9 +47,9 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
         get() = population.maxWith(optimizer.comparator)
 
     /**
-     * Returns a new [EvolutionStart] object for the next generation.
+     * Returns a new [EvolutionState] object for the next generation.
      */
-    operator fun next() = EvolutionStart(population, generation + 1, true)
+    operator fun next() = EvolutionState(population, generation + 1, true)
 
     /**
      * Creates a new [EvolutionResult] with the population transformed by the provided function.
@@ -77,13 +77,13 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
  *
  * @param DNA The type of the phenotype.
  *
- * @constructor Creates a new [EvolutionStart] object.
+ * @constructor Creates a new [EvolutionState] object.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionStart<DNA, G : Gene<DNA, G>>(
+class EvolutionState<DNA, G : Gene<DNA, G>>(
     val population: List<Phenotype<DNA, G>>,
     val generation: Int,
     val isDirty: Boolean = true
@@ -101,12 +101,12 @@ class EvolutionStart<DNA, G : Gene<DNA, G>>(
 
     companion object {
         /**
-         * Creates an empty [EvolutionStart] object.
+         * Creates an empty [EvolutionState] object.
          *
          * @param DNA The type of the phenotype.
          *
-         * @return An empty [EvolutionStart] object.
+         * @return An empty [EvolutionState] object.
          */
-        fun <DNA, G : Gene<DNA, G>> empty(): EvolutionStart<DNA, G> = EvolutionStart(listOf(), 1)
+        fun <DNA, G : Gene<DNA, G>> empty(): EvolutionState<DNA, G> = EvolutionState(listOf(), 1)
     }
 }

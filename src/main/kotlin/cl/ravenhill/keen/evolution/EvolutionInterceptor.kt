@@ -5,7 +5,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
  * The EvolutionInterceptor class allows for customization of the evolutionary process by enabling
- * updates to the [EvolutionStart] object before the evolution starts, and updates to the
+ * updates to the [EvolutionState] object before the evolution starts, and updates to the
  * [EvolutionResult] object after the evolution ends.
  *
  * @param DNA The type of the DNA.
@@ -20,7 +20,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 1.0.0
  */
 class EvolutionInterceptor<DNA, G : Gene<DNA, G>>(
-    val before: (EvolutionStart<DNA, G>) -> EvolutionStart<DNA, G>,
+    val before: (EvolutionState<DNA, G>) -> EvolutionState<DNA, G>,
     val after: (EvolutionResult<DNA, G>) -> EvolutionResult<DNA, G>
 ) {
     companion object {
@@ -28,14 +28,14 @@ class EvolutionInterceptor<DNA, G : Gene<DNA, G>>(
          * Returns an [EvolutionInterceptor] that does nothing.
          */
         fun <DNA, G : Gene<DNA, G>> identity() = EvolutionInterceptor(
-            { before: EvolutionStart<DNA, G> -> before }
+            { before: EvolutionState<DNA, G> -> before }
         ) { end: EvolutionResult<DNA, G> -> end }
 
         fun <DNA, G : Gene<DNA, G>> after(
             function: (EvolutionResult<DNA, G>) -> EvolutionResult<DNA, G>
         ): EvolutionInterceptor<DNA, G> {
             return EvolutionInterceptor(
-                { before: EvolutionStart<DNA, G> -> before }
+                { before: EvolutionState<DNA, G> -> before }
             ) { end: EvolutionResult<DNA, G> -> function(end) }
         }
     }

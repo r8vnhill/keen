@@ -14,8 +14,8 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.util.statistics.StatisticCollector
-import cl.ravenhill.keen.util.statistics.StatisticCollectors
+import cl.ravenhill.keen.util.listeners.EvolutionListener
+import cl.ravenhill.keen.util.listeners.Listeners
 import cl.ravenhill.utils.runWithStdoutOff
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
@@ -45,7 +45,7 @@ class Tracer<T : Throwable>(
     private val targetMessage: String,
     private val targetFunction: String,
     private val populationSize: Int,
-    private val statCollectors: List<StatisticCollector<Instruction, InstructionGene>>
+    private val statCollectors: List<EvolutionListener<Instruction, InstructionGene>>
 ) {
     val engine = engine(::fitness, genotype {
         chromosome {
@@ -194,7 +194,7 @@ class Tracer<T : Throwable>(
          * @param populationSize The size of the population for each generation of the genetic
          * programming problem.
          * Defaults to 4.
-         * @param statCollectors A list of [StatisticCollector] instances for collecting statistics
+         * @param statCollectors A list of [EvolutionListener] instances for collecting statistics
          * over the course of the genetic algorithm's execution.
          * Defaults to an empty list.
          * @return A new [Tracer] instance parameterized with the specified [E] exception type.
@@ -206,7 +206,7 @@ class Tracer<T : Throwable>(
             targetMessage: String = "",
             functionName: String = "",
             populationSize: Int = 4,
-            statCollectors: StatisticCollectors<Instruction, InstructionGene> = emptyList()
+            statCollectors: Listeners<Instruction, InstructionGene> = emptyList()
         ) = Tracer(functions, E::class, targetMessage, functionName, populationSize, statCollectors)
     }
 }

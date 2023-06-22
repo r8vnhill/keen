@@ -18,8 +18,8 @@ import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.util.statistics.StatisticSummary
-import cl.ravenhill.keen.util.statistics.StatisticPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 
 /**
  * The maximum weight that the knapsack can hold.
@@ -78,8 +78,8 @@ private fun fitnessFn(genotype: Genotype<Boolean, BoolGene>) =
  * [Mutator] and [SinglePointCrossover].
  * It also sets the limit to 20 steady generations, meaning that the algorithm stops after 20
  * generations with no improvement in the fitness of the best solution.
- * The statistics of the genetic algorithm are collected using [StatisticSummary] and plotted
- * using [StatisticPlotter].
+ * The statistics of the genetic algorithm are collected using [EvolutionSummary] and plotted
+ * using [EvolutionPlotter].
  *
  * Finally, the main function prints the statistics of the genetic algorithm, displays the items
  * selected by the best solution, and displays a plot of the fitness of the population over the
@@ -92,14 +92,14 @@ fun main() {
         populationSize = 10
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(20))
-        statistics = listOf(StatisticSummary(), StatisticPlotter())
+        statistics = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     val result = engine.evolve()
-    println(engine.statistics.first())
+    println(engine.listeners.first())
     println("Selected: ${
         result.best.flatten()
             .mapIndexedNotNull { index, b -> if (b) items[index] else null }
             .joinToString { (value, weight) -> "($value, $weight)" }
     }")
-    (engine.statistics.last() as StatisticPlotter).displayFitness()
+    (engine.listeners.last() as EvolutionPlotter).displayFitness()
 }

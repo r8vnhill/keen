@@ -6,7 +6,7 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.util.statistics
+package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -20,7 +20,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 1.0.0
  * @version 1.0.0
  */
-class StatisticSummary<DNA, G: Gene<DNA, G>> : AbstractStatisticCollector<DNA, G>() {
+class EvolutionSummary<DNA, G: Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>() {
     override fun toString() = """
         ------------ Statistics Collector -------------
         -------------- Selection Times ----------------

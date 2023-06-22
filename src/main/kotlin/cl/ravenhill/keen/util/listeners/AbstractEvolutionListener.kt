@@ -6,7 +6,7 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.util.statistics
+package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.EvolutionResult
@@ -32,7 +32,7 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
  * @property steadyGenerations The number of generations without improvement.
  * @property generation The current generation.
  */
-abstract class AbstractStatisticCollector<DNA, G: Gene<DNA, G>> : StatisticCollector<DNA, G> {
+abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListener<DNA, G> {
     private var _fittest: Phenotype<DNA, G>? = null
     override var evolutionResult: EvolutionResult<DNA, G> =
         EvolutionResult(FitnessMaximizer(), listOf(), 0)

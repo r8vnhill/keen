@@ -1,4 +1,4 @@
-package cl.ravenhill.keen.util.statistics
+package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -13,7 +13,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @version 1.0.0
  * @since 1.0.0
  */
-class StatisticPrinter<DNA, G: Gene<DNA, G>>(private val every: Int) : AbstractStatisticCollector<DNA, G>() {
+class EvolutionPrinter<DNA, G: Gene<DNA, G>>(private val every: Int) : AbstractEvolutionListener<DNA, G>() {
 
     override fun onResultUpdated() {
         super.onResultUpdated()
