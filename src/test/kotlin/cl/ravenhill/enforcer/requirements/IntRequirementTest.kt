@@ -11,6 +11,7 @@ import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtMost
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeNegative
 import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.orderedPair
 import cl.ravenhill.orderedTriple
@@ -28,6 +29,8 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.negativeInt
+import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.arbitrary.string
@@ -58,6 +61,26 @@ class IntRequirementTest : FreeSpec({
             "[false] if it is not positive" {
                 checkAll(Arb.nonPositiveInt()) { value ->
                     BePositive.validator(value).shouldBeFalse()
+                }
+            }
+        }
+    }
+
+    "A [BeNegative] requirement" - {
+        "can be converted to a [String]" {
+            BeNegative.toString() shouldBe "BeNegative"
+        }
+
+        "when _validating_ that a value is positive should return" - {
+            "[true] if it is negative" {
+                checkAll(Arb.negativeInt()) { value ->
+                    BeNegative.validator(value).shouldBeTrue()
+                }
+            }
+
+            "[false] if it is not negative" {
+                checkAll(Arb.nonNegativeInt()) { value ->
+                    BeNegative.validator(value).shouldBeFalse()
                 }
             }
         }

@@ -46,6 +46,8 @@ dependencies {
     api("tech.tablesaw:tablesaw-jsplot:0.43.1")
     // Simple logging facade for Java
     implementation("org.slf4j:slf4j-simple:2.0.5")
+    // JSON serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     // Kotest library for writing data-driven tests in Kotlin
     testImplementation("io.kotest:kotest-framework-datatest:5.5.5")
     // Kotest library for writing assertions in Kotlin

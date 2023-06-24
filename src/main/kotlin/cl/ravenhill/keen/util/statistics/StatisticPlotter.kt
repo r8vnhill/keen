@@ -1,7 +1,6 @@
-package cl.ravenhill.keen.util.listeners
+package cl.ravenhill.keen.util.statistics
 
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import tech.tablesaw.api.DoubleColumn
 import tech.tablesaw.plotly.Plot
 import tech.tablesaw.plotly.components.Figure
@@ -18,7 +17,7 @@ import tech.tablesaw.plotly.traces.ScatterTrace
  * @version 1.0.0
  * @since 1.0.0
  */
-class EvolutionPlotter<DNA, G: Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>() {
+class StatisticPlotter<DNA, G: Gene<DNA, G>> : AbstractStatisticCollector<DNA, G>() {
 
     /**
      * Displays a plot of the fitness of the population throughout evolution.

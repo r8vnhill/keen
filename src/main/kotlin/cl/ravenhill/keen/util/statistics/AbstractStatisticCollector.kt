@@ -6,13 +6,12 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-package cl.ravenhill.keen.util.listeners
+package cl.ravenhill.keen.util.statistics
 
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
@@ -33,7 +32,7 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
  * @property steadyGenerations The number of generations without improvement.
  * @property generation The current generation.
  */
-abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListener<DNA, G> {
+abstract class AbstractStatisticCollector<DNA, G: Gene<DNA, G>> : StatisticCollector<DNA, G> {
     private var _fittest: Phenotype<DNA, G>? = null
     override var evolutionResult: EvolutionResult<DNA, G> =
         EvolutionResult(FitnessMaximizer(), listOf(), 0)
@@ -55,9 +54,6 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
         get() = _fittest
     override var steadyGenerations: Int = 0
     override var generation: Int = 0
-    override var evolution: EvolutionRecord<DNA, G>
-        get() = TODO("Not yet implemented")
-        set(value) {}
 
     override fun onResultUpdated() {
         optimizer = evolutionResult.optimizer

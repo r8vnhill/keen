@@ -9,6 +9,8 @@ package cl.ravenhill.enforcer
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import io.kotest.property.checkAll
 
 class EnforcementTest : FreeSpec({
     beforeEach {
@@ -38,9 +40,18 @@ class EnforcementTest : FreeSpec({
                 }
             }
             "has a [StringScope] that" - {
-                "can be created"
+                "can be created with a message" {
+                    checkAll<String> { msg ->
+                        StringScope(msg).message shouldBe msg
+                    }
+                }
+                "can access its outer scope" {
+                    checkAll<String, String> { msg1, msg2 ->
+                        StringScope(msg1).outerScope shouldBeSameInstanceAs
+                                StringScope(msg2).outerScope
+                    }
+                }
             }
         }
     }
-
 })

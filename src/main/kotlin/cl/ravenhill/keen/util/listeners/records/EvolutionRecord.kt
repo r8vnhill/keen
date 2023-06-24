@@ -11,5 +11,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class EvolutionRecord<DNA, G : Gene<DNA, G>>(
-    val generations: MutableList<GenerationRecord<DNA, G>> = mutableListOf(),
+    val generations: MutableList<GenerationRecord> = mutableListOf(),
 )

@@ -31,6 +31,10 @@ sealed interface IntRequirement : Requirement<Int> {
         override val validator = { value: Int -> value > 0 }
     }
 
+    data object BeNegative : IntRequirement {
+        override val validator = { value: Int -> value < 0 }
+    }
+
     /**
      * Represents a requirement that an integer value must be within a specified [range].
      *
