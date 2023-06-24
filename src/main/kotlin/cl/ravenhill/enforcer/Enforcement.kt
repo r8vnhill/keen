@@ -110,16 +110,6 @@ object Enforcement {
             )
 
             /// Documentation inherited from [Any].
-            override fun equals(other: Any?) = when {
-                other === this -> true
-                other is StringScope -> message == other.message
-                else -> false
-            }
-
-            /// Documentation inherited from [Any].
-            override fun hashCode() = Objects.hash(StringScope::class, message)
-
-            /// Documentation inherited from [Any].
             override fun toString() = "StringScope(message='$message')"
         }
     }
