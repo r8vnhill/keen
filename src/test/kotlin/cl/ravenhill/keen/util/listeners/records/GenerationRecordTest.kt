@@ -14,6 +14,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.checkAll
@@ -22,8 +23,8 @@ import io.kotest.property.checkAll
 class GenerationRecordTest : FreeSpec({
     "A [GenerationRecord] " - {
         "can be created with a generation number" {
-            checkAll(Arb.nonNegativeInt()) { generation ->
-                GenerationRecord(generation) shouldBe GenerationRecord(generation)
+            checkAll(Arb.generationRecord()) { generation ->
+                generation.toGenerationRecord() shouldBe GenerationRecord(generation.generation)
             }
         }
 
@@ -38,3 +39,31 @@ class GenerationRecordTest : FreeSpec({
         }
     }
 })
+
+/**
+ * Provides an arbitrary (Arb) instance that generates a [GenerationRecordData] object.
+ *
+ * The provided Arb object generates a GenerationRecordData object, which contains a non-negative
+ * integer representing the generation number. This is useful when you need an arbitrary
+ * generation record for testing or other purposes.
+ *
+ * @return An Arb instance that generates a [GenerationRecordData] object.
+ */
+fun Arb.Companion.generationRecord() = arbitrary {
+    GenerationRecordData(nonNegativeInt().bind())
+}
+
+/**
+ * A data class that represents a generation record.
+ *
+ * @property generation The generation number.
+ */
+data class GenerationRecordData(val generation: Int) {
+    /**
+     * Converts this [GenerationRecordData] object into a [GenerationRecord] object.
+     *
+     * This function creates a new GenerationRecord object with the same generation number
+     * as this GenerationRecordData object.
+     */
+    fun toGenerationRecord() = GenerationRecord(generation)
+}
