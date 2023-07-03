@@ -33,7 +33,7 @@ dependencies {
     // Kotlin standard library with extensions for JDK 8
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20-RC")
     // Library for writing asynchronous code using coroutines in Kotlin
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     // Library for working with date and time in Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     // Library for working with reflection in Kotlin
@@ -48,6 +48,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.5")
     // JSON serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("io.kotest.extensions:kotest-property-datetime:1.1.0")
     // Kotest library for writing data-driven tests in Kotlin
     testImplementation("io.kotest:kotest-framework-datatest:5.5.5")
     // Kotest library for writing assertions in Kotlin
@@ -59,7 +60,7 @@ dependencies {
     // Library for testing code that uses System.exit() in Java/Kotlin
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
     // Dokka plugin for generating documentation in HTML format
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.10")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.20-dev-213")
 }
 
 java {

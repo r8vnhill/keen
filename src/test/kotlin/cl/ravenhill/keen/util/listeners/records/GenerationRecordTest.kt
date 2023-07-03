@@ -11,20 +11,24 @@ import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.reflection.shouldBeLateInit
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.checkAll
+import io.kotest.property.kotlinx.datetime.datetime
+import kotlinx.datetime.LocalDateTime
 
 
 class GenerationRecordTest : FreeSpec({
-    "A [GenerationRecord] " - {
+    "A [GenerationRecord]" - {
         "can be created with a generation number" {
-            checkAll(Arb.generationRecord()) { generation ->
-                generation.toGenerationRecord() shouldBe GenerationRecord(generation.generation)
+            checkAll(Arb.generationRecord()) { record ->
+                record.toGenerationRecord() shouldBe GenerationRecord(record.generation)
             }
         }
 
@@ -35,6 +39,26 @@ class GenerationRecordTest : FreeSpec({
                 }.shouldHaveInfringement<IntRequirementException>(
                     unfulfilledConstraint("The generation number [$generation] must be positive")
                 )
+            }
+        }
+
+        "should have an initial time that" - {
+            "is late initialized" {
+                checkAll(Arb.generationRecord()) { data ->
+                    val record = data.toGenerationRecord()
+                    record::initTime.shouldBeLateInit()
+                    shouldThrowWithMessage<UninitializedPropertyAccessException>("lateinit property initTime has not been initialized") {
+                        record.initTime
+                    }
+                }
+            }
+
+            "can be initialized" {
+                checkAll(Arb.generationRecord()) { data ->
+                    val record = data.toGenerationRecord()
+                    record.initTime = data.initTime
+                    record.initTime shouldBe data.initTime
+                }
             }
         }
     }
@@ -50,7 +74,7 @@ class GenerationRecordTest : FreeSpec({
  * @return An Arb instance that generates a [GenerationRecordData] object.
  */
 fun Arb.Companion.generationRecord() = arbitrary {
-    GenerationRecordData(nonNegativeInt().bind())
+    GenerationRecordData(nonNegativeInt().bind(), datetime().bind())
 }
 
 /**
@@ -58,7 +82,7 @@ fun Arb.Companion.generationRecord() = arbitrary {
  *
  * @property generation The generation number.
  */
-data class GenerationRecordData(val generation: Int) {
+data class GenerationRecordData(val generation: Int, val initTime: LocalDateTime) {
     /**
      * Converts this [GenerationRecordData] object into a [GenerationRecord] object.
      *
