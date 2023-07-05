@@ -75,7 +75,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
     private var evolutionResult: EvolutionResult<DNA, G> by Delegates.observable(
         initialValue = EvolutionResult(optimizer, listOf(), 0),
         onChange = { _, _, new -> listeners.forEach { it.evolutionResult = new } })
-
     var generation: Int by Delegates.observable(
         initialValue = 0,
         onChange = { prop, old, new ->
@@ -119,6 +118,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see [evolve]
      */
     override fun evolve(): EvolutionResult<DNA, G> {
+        listeners.forEach { it.onGenerationStarted(generation) }
         val initTime = clock.millis()
         info { "Starting evolution process." }
         var evolution =
@@ -158,6 +158,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see EvolutionResult
      */
     fun evolve(start: EvolutionState<DNA, G>) = runBlocking {
+        listeners.forEach { it.onGenerationStarted(generation) }
         val initTime = clock.millis()
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)

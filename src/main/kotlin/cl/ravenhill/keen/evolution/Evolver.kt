@@ -14,13 +14,13 @@ import java.io.Serializable
  * genetic material of type `DNA` from an initial state to a final state.
  *
  * @param DNA the type of genetic material that will be evolved
+ * @param G the type of [Gene] that will be used to evolve the genetic material
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
  * @since 2.0.0
  */
 interface Evolver<DNA, G: Gene<DNA, G>> {
-
     /**
      * The entry point of the evolution process.
      *

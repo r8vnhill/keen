@@ -7,12 +7,13 @@ package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeNegative
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class GenerationRecord(val generation: Int) {
-    lateinit var initTime: LocalDateTime
+    lateinit var initTime: Instant
 
     init {
         enforce {

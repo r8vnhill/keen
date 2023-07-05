@@ -5,6 +5,7 @@ import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
+import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import kotlin.reflect.KProperty
 
@@ -51,6 +52,7 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     val fittest: Phenotype<DNA, G>?
     var steadyGenerations: Int
     var generation: Int
+    val currentGeneration: GenerationRecord
 
     /**
      * Called whenever the result of the evolution is updated.
@@ -68,6 +70,10 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
      * Called 
      */
     fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) {
+        // Do nothing
+    }
+
+    fun onGenerationStarted(generation: Int) {
         // Do nothing
     }
 }

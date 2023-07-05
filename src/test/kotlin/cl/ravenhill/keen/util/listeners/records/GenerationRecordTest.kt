@@ -21,6 +21,8 @@ import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.checkAll
 import io.kotest.property.kotlinx.datetime.datetime
+import io.kotest.property.kotlinx.datetime.instant
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 
 
@@ -74,7 +76,7 @@ class GenerationRecordTest : FreeSpec({
  * @return An Arb instance that generates a [GenerationRecordData] object.
  */
 fun Arb.Companion.generationRecord() = arbitrary {
-    GenerationRecordData(nonNegativeInt().bind(), datetime().bind())
+    GenerationRecordData(nonNegativeInt().bind(), instant().bind())
 }
 
 /**
@@ -82,7 +84,7 @@ fun Arb.Companion.generationRecord() = arbitrary {
  *
  * @property generation The generation number.
  */
-data class GenerationRecordData(val generation: Int, val initTime: LocalDateTime) {
+data class GenerationRecordData(val generation: Int, val initTime: Instant) {
     /**
      * Converts this [GenerationRecordData] object into a [GenerationRecord] object.
      *

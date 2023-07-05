@@ -13,6 +13,7 @@ import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
+import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
@@ -58,6 +59,8 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     override var evolution: EvolutionRecord<DNA, G>
         get() = TODO("Not yet implemented")
         set(value) {}
+    protected lateinit var _currentGeneration: GenerationRecord
+    override val currentGeneration: GenerationRecord = _currentGeneration
 
     override fun onResultUpdated() {
         optimizer = evolutionResult.optimizer
