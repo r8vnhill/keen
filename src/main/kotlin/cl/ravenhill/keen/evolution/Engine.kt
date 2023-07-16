@@ -156,7 +156,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
      */
     fun evolve(start: EvolutionState<DNA, G>) = runBlocking {
         listeners.forEach { it.onGenerationStarted(generation) }
-        val initTime = clock.millis()
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
         trace { "Pre-processing evolution start." }
@@ -187,7 +186,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
         // (9) The result of the evolution is post-processed
         trace { "Post-processing evolution result." }
         val afterResult = interceptor.after(evolutionResult)
-        listeners.asFlow().collect { it.generationTimes.add(clock.millis() - initTime) }
         listeners.forEach { it.onGenerationFinished() }
         afterResult
     }

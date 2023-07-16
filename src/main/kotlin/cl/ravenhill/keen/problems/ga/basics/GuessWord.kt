@@ -48,11 +48,11 @@ fun main() {
         survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(TargetFitness(TARGET.length.toDouble()))
-        listeners = listOf(EvolutionPrinter(every = 1), EvolutionSummary(), EvolutionPlotter())
+        listeners = listOf(EvolutionPrinter(every = 1), EvolutionSummary()/*, EvolutionPlotter()*/)
     }
     val evolvedPopulation = engine.evolve()
     println("Solution found in ${evolvedPopulation.generation} generations")
     println("Solution: ${evolvedPopulation.best.genotype}")
     println("With fitness: ${evolvedPopulation.best.fitness}")
-    (engine.listeners.last() as EvolutionPlotter).displayFitness()
+    println("${engine.listeners[1]}")
 }

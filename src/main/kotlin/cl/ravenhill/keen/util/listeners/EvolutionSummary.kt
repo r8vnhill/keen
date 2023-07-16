@@ -41,9 +41,9 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         |--> Min: ${alterTime.minOrNull()} ms
         -------------- Evolution Results --------------
         |--> Total time: $evolutionTime ms
-        |--> Average generation time: ${generationTimes.average()} ms
-        |--> Max generation time: ${generationTimes.maxOrNull()} ms
-        |--> Min generation time: ${generationTimes.minOrNull()} ms
+        |--> Average generation time: ${evolution.generationTimes.average()} ms
+        |--> Max generation time: ${evolution.generationTimes.maxOrNull()} ms
+        |--> Min generation time: ${evolution.generationTimes.minOrNull()} ms
         |--> Generation: $generation
         |--> Steady generations: $steadyGenerations
         |--> Fittest: ${population.firstOrNull().toString().replace("\n", "; ")}
@@ -58,6 +58,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     }
 
     override fun onGenerationFinished() {
-        _currentGeneration.endTime = timeSource.markNow()
+        _currentGeneration.duration = _currentGeneration.initTime.elapsedNow()
+        evolution.generations += _currentGeneration
     }
 }

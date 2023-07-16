@@ -24,9 +24,9 @@ class EvolutionPrinter<DNA, G: Gene<DNA, G>>(private val every: Int) : AbstractE
 
     override fun toString(): String {
         return """ === Generation $generation ===
-        |--> Average generation time: ${generationTimes.average()} ms
-        |--> Max generation time: ${generationTimes.maxOrNull()} ms
-        |--> Min generation time: ${generationTimes.minOrNull()} ms
+        |--> Average generation time: ${evolution.generationTimes.average()} ms
+        |--> Max generation time: ${evolution.generationTimes.maxOrNull()} ms
+        |--> Min generation time: ${evolution.generationTimes.minOrNull()} ms
         |--> Steady generations: $steadyGenerations
         |--> Best fitness: ${bestFitness.lastOrNull()}
         |--> Worst fitness: ${worstFitness.lastOrNull()}

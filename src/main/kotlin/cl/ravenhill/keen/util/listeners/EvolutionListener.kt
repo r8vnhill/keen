@@ -26,7 +26,6 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
  * @property offspringSelectionTime the time taken for offspring selection in each generation.
  * @property alterTime the time taken for the alteration phase in each generation.
  * @property evolutionTime the total time taken for the evolution so far.
- * @property generationTimes the time taken for each generation so far.
  * @property bestFitness the best fitness value in each generation.
  * @property worstFitness the worst fitness value in each generation.
  * @property averageFitness the average fitness value in each generation.
@@ -47,7 +46,6 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     val offspringSelectionTime: MutableList<Long>
     val alterTime: MutableList<Long>
     var evolutionTime: Long
-    val generationTimes: MutableList<Long>
     var bestFitness: MutableList<Double>
     var worstFitness: MutableList<Double>
     var averageFitness: MutableList<Double>

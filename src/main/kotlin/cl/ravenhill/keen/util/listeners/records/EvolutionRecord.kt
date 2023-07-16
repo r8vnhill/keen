@@ -10,6 +10,8 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import kotlinx.serialization.Serializable
 
 @Serializable
-class EvolutionRecord<DNA, G : Gene<DNA, G>>(
+data class EvolutionRecord<DNA, G : Gene<DNA, G>>(
     val generations: MutableList<GenerationRecord> = mutableListOf(),
-)
+) {
+    val generationTimes: List<Long> get() = generations.map { it.duration.inWholeMilliseconds }
+}
