@@ -10,7 +10,7 @@ package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
-import kotlinx.datetime.Clock
+import kotlin.time.ExperimentalTime
 
 
 /**
@@ -22,6 +22,7 @@ import kotlinx.datetime.Clock
  * @since 1.0.0
  * @version 1.0.0
  */
+@OptIn(ExperimentalTime::class)
 class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>() {
     override fun toString() = """
         ------------ Statistics Collector -------------
@@ -49,9 +50,14 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         |--> Best fitness: ${bestFitness.lastOrNull()}
         """.trimIndent()
 
+    @ExperimentalTime
     override fun onGenerationStarted(generation: Int) {
         _currentGeneration = GenerationRecord(generation).apply {
-            initTime = Clock.System.now()
+            initTime = timeSource.markNow()
         }
+    }
+
+    override fun onGenerationFinished() {
+        _currentGeneration.endTime = timeSource.markNow()
     }
 }

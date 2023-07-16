@@ -102,7 +102,7 @@ fun main() {
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
-        statistics = listOf(EvolutionSummary(), EvolutionPlotter())
+        listeners = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     // Evolve the population and get the best result.
     val result = engine.evolve()

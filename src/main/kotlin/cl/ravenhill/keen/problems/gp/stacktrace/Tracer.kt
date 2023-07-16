@@ -57,7 +57,7 @@ class Tracer<T : Throwable>(
         populationSize = this@Tracer.populationSize
         alterers = listOf(Mutator(0.3), SinglePointCrossover(0.5))
         limits = listOf(TargetFitness(5.0))
-        statistics = this@Tracer.statCollectors
+        listeners = this@Tracer.statCollectors
     }
     val inputFactory = InputFactory()
 

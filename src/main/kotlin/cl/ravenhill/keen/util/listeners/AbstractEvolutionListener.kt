@@ -16,6 +16,8 @@ import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
 /**
  * Calculates statistics about a population.
@@ -60,7 +62,9 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
         get() = TODO("Not yet implemented")
         set(value) {}
     protected lateinit var _currentGeneration: GenerationRecord
-    override val currentGeneration: GenerationRecord = _currentGeneration
+    override val currentGeneration: GenerationRecord get() = _currentGeneration
+    @ExperimentalTime
+    override var timeSource: TimeSource = TimeSource.Monotonic
 
     override fun onResultUpdated() {
         optimizer = evolutionResult.optimizer

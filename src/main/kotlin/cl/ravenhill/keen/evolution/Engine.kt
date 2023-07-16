@@ -36,8 +36,6 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
 /**
@@ -118,7 +116,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see [evolve]
      */
     override fun evolve(): EvolutionResult<DNA, G> {
-        listeners.forEach { it.onGenerationStarted(generation) }
         val initTime = clock.millis()
         info { "Starting evolution process." }
         var evolution =
@@ -191,6 +188,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         trace { "Post-processing evolution result." }
         val afterResult = interceptor.after(evolutionResult)
         listeners.asFlow().collect { it.generationTimes.add(clock.millis() - initTime) }
+        listeners.forEach { it.onGenerationFinished() }
         afterResult
     }
 
@@ -340,7 +338,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * Default value is 0.6.
      * @property alterers The alterers that will be used to alter the population.
      * Default value is an empty list.
-     * @property statistics The statistics collectors used to collect data during the evolution.
+     * @property listeners The statistics collectors used to collect data during the evolution.
      */
     class Builder<DNA, G : Gene<DNA, G>>(
         private val fitnessFunction: (Genotype<DNA, G>) -> Double,
@@ -396,7 +394,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             }.let { field = value }
         // endregion    ----------------------------------------------------------------------------
 
-        var statistics: List<EvolutionListener<DNA, G>> = listOf(EvolutionSummary())
+        var listeners: List<EvolutionListener<DNA, G>> = listOf(EvolutionSummary())
 
         fun build() = Engine(
             genotype = genotype,
@@ -408,7 +406,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             limits = limits,
             survivorSelector = survivorSelector,
             optimizer = optimizer,
-            listeners = statistics,
+            listeners = listeners,
             evaluator = evaluator.creator(fitnessFunction),
             interceptor = interceptor
         )

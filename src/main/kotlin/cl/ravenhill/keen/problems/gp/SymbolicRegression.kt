@@ -50,7 +50,7 @@ fun main() {
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
         alterers = listOf(SubtreeCrossover(0.2), Mutator(0.1))
         optimizer = FitnessMinimizer()
-        statistics = listOf(EvolutionSummary(), EvolutionPlotter())
+        listeners = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     val result = engine.evolve()
     println(engine.listeners.first())

@@ -8,6 +8,8 @@ import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import kotlin.reflect.KProperty
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
 /**
  * Type alias for a list of [EvolutionListener] instances.
@@ -53,6 +55,8 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     var steadyGenerations: Int
     var generation: Int
     val currentGeneration: GenerationRecord
+    @ExperimentalTime
+    var timeSource: TimeSource
 
     /**
      * Called whenever the result of the evolution is updated.
@@ -74,6 +78,10 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     }
 
     fun onGenerationStarted(generation: Int) {
+        // Do nothing
+    }
+
+    fun onGenerationFinished() {
         // Do nothing
     }
 }

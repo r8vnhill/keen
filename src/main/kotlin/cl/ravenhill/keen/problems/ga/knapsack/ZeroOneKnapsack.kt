@@ -92,7 +92,7 @@ fun main() {
         populationSize = 10
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(SteadyGenerations(20))
-        statistics = listOf(EvolutionSummary(), EvolutionPlotter())
+        listeners = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     val result = engine.evolve()
     println(engine.listeners.first())

@@ -5,7 +5,7 @@ val projectVersion: String by project
 
 plugins {
     // Configures Kotlin to compile to the JVM
-    kotlin("jvm") version "1.8.20"
+    kotlin("jvm") version "1.9.0"
     // Enables publishing artifacts to Maven repositories
     `maven-publish`
     // Enables signing published artifacts

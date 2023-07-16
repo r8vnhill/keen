@@ -78,7 +78,7 @@ fun main() {
         optimizer = FitnessMinimizer()
         alterers = listOf(Mutator(0.03), MeanCrossover(0.3, geneRate = 0.5))
         limits = listOf(SteadyGenerations(50))
-        statistics = listOf(EvolutionSummary(), EvolutionPlotter())
+        listeners = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     engine.evolve()
     println(engine.listeners[0])

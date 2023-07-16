@@ -12,6 +12,7 @@ import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
 
 /***************************************************************************************************
  * A program that evolves a string of characters to match a target string using a genetic algorithm.
@@ -47,7 +48,7 @@ fun main() {
         survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(TargetFitness(TARGET.length.toDouble()))
-        statistics = listOf(EvolutionPrinter(every = 1), EvolutionPlotter())
+        listeners = listOf(EvolutionPrinter(every = 1), EvolutionSummary(), EvolutionPlotter())
     }
     val evolvedPopulation = engine.evolve()
     println("Solution found in ${evolvedPopulation.generation} generations")

@@ -4,6 +4,8 @@
  */
 
 
+@file:OptIn(ExperimentalTime::class, ExperimentalTime::class)
+
 package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.enforcer.EnforcementException
@@ -24,8 +26,12 @@ import io.kotest.property.kotlinx.datetime.datetime
 import io.kotest.property.kotlinx.datetime.instant
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 
 
+@OptIn(ExperimentalTime::class)
 class GenerationRecordTest : FreeSpec({
     "A [GenerationRecord]" - {
         "can be created with a generation number" {
@@ -76,7 +82,7 @@ class GenerationRecordTest : FreeSpec({
  * @return An Arb instance that generates a [GenerationRecordData] object.
  */
 fun Arb.Companion.generationRecord() = arbitrary {
-    GenerationRecordData(nonNegativeInt().bind(), instant().bind())
+    GenerationRecordData(nonNegativeInt().bind(), TimeSource.Monotonic.markNow())
 }
 
 /**
@@ -84,7 +90,7 @@ fun Arb.Companion.generationRecord() = arbitrary {
  *
  * @property generation The generation number.
  */
-data class GenerationRecordData(val generation: Int, val initTime: Instant) {
+data class GenerationRecordData(val generation: Int, val initTime: TimeMark) {
     /**
      * Converts this [GenerationRecordData] object into a [GenerationRecord] object.
      *

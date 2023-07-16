@@ -56,7 +56,7 @@ fun main() {
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
         alterers = listOf(Mutator(0.06), SubtreeCrossover(0.2))
         optimizer = FitnessMinimizer()
-        statistics =
+        listeners =
             listOf(EvolutionSummary(), EvolutionPrinter(10), EvolutionPlotter())
     }
     // Run the genetic algorithm and display results

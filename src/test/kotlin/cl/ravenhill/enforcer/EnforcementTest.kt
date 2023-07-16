@@ -7,6 +7,7 @@
 package cl.ravenhill.enforcer
 
 import cl.ravenhill.enforcer.requirements.Requirement
+import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -18,6 +19,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.nonNegativeInt
+import io.kotest.property.arbitrary.pair
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 
@@ -35,6 +37,21 @@ class EnforcementTest : FreeSpec({
             Enforcement.skipChecks shouldBe false
             Enforcement.skipChecks = true
             Enforcement.skipChecks shouldBe true
+        }
+    }
+
+    "Enforcing a requirement" - {
+        "performs no checks if the skip checks flag is set to true" {
+            Enforcement.skipChecks = true
+            checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement()))) { strings ->
+                Enforcement.enforce {
+                    shouldNotThrowAny {
+                        strings.forEach { (msg, req) ->
+                            msg.invoke { must(req) }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -81,11 +98,17 @@ class EnforcementTest : FreeSpec({
                 }
 
                 "the predicate is true for some iterations and false for others" {
-                    checkAll<String> {
+                    checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement()))) { enforced ->
                         val scope = Enforcement.Scope()
-                        with(scope.StringScope(it)) {
-                            repeat(100) {
-
+                        with(scope) {
+                            enforced.forEach { (msg, req) ->
+                                msg.invoke { must(req) }
+                            }
+                        }
+                        enforced.map { it.second }.zip(scope.results).forEach { (req, res) ->
+                            when (req) {
+                                trueRequirement -> res.shouldBeSuccess()
+                                else -> res.shouldBeFailure()
                             }
                         }
                     }

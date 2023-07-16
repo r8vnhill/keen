@@ -51,7 +51,7 @@ fun main() {
         alterers =
             listOf(Mutator(probability = 0.03), SinglePointCrossover(probability = 0.2))
         limits = listOf(GenerationCount(100), TargetFitness(50.0))
-        statistics =
+        listeners =
             listOf(EvolutionSummary(), EvolutionPrinter(1), EvolutionPlotter())
     }
     engine.evolve()

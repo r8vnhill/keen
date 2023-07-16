@@ -71,7 +71,7 @@ fun main() {
         limits = listOf(GenerationCount(200))
         alterers = listOf(InversionMutator(0.06), PartiallyMappedCrossover(0.3))
         optimizer = FitnessMinimizer()
-        statistics = listOf(EvolutionSummary(), EvolutionPrinter(30), EvolutionPlotter())
+        listeners = listOf(EvolutionSummary(), EvolutionPrinter(30), EvolutionPlotter())
         evaluator = evaluator {
             coroutines()
         }
