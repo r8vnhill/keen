@@ -33,7 +33,6 @@ import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
 import kotlin.properties.Delegates
@@ -69,6 +68,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         initialValue = listOf(),
         onChange = { _, _, _ -> listeners.forEach { it.population = population } })
         private set
+
     // TODO: Records para poder hacer un mejor seguimiento de la evolución [R8V]
     private var evolutionResult: EvolutionResult<DNA, G> by Delegates.observable(
         initialValue = EvolutionResult(optimizer, listOf(), 0),
@@ -122,7 +122,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
             EvolutionState.empty<DNA, G>().apply { debug { "Started an empty evolution." } }
         var result = EvolutionResult(optimizer, evolution.population, generation)
         debug { "Optimizer: ${result.optimizer}" }
-//        debug { "Best: ${result.best}" }
         while (limits.none { it(this) }) { // While none of the limits are met
             result = evolve(evolution).apply {
                 debug { "Generation: $generation" }
@@ -196,8 +195,9 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param state the starting state of the evolution at this generation.
      * @return the initial population of the evolution.
      */
-    private fun startEvolution(state: EvolutionState<DNA, G>) =
-        if (state.population.isEmpty()) {
+    private fun startEvolution(state: EvolutionState<DNA, G>): EvolutionState<DNA, G> {
+        return if (state.population.isEmpty()) {
+            listeners.forEach { it.onInitializationStarted() }
             info { "Initial population is empty, creating a new one." }
             val generation = state.generation
             val individuals =
@@ -209,11 +209,13 @@ class Engine<DNA, G : Gene<DNA, G>>(
             ).also {
                 info { "Created a new population." }
                 debug { "Generation: ${it.generation}" }
+                listeners.forEach { it.onInitializationFinished() }
             }
         } else {
             debug { "Initial population is not empty, using it." }
             state
         }
+    }
 
     /**
      * Evaluates the fitness of the population.

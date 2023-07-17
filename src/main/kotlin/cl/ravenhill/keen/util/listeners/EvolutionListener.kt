@@ -68,9 +68,6 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
         // Do nothing
     }
 
-    /**
-     * Called 
-     */
     fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) {
         // Do nothing
     }
@@ -80,6 +77,14 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     }
 
     fun onGenerationFinished() {
+        // Do nothing
+    }
+
+    fun onInitializationStarted() {
+        // Do nothing
+    }
+
+    fun onInitializationFinished() {
         // Do nothing
     }
 }

@@ -25,7 +25,8 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
 class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>() {
     override fun toString() = """
-        ------------ Statistics Collector -------------
+        ------------ Evolution Summary ---------------
+        |--> Initialization time: ${evolution.initializationDuration.inWholeMilliseconds} ms
         -------------- Selection Times ----------------
         |--> Offspring Selection
         |   |--> Average: ${offspringSelectionTime.average()} ms
@@ -60,5 +61,13 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     override fun onGenerationFinished() {
         _currentGeneration.duration = _currentGeneration.initTime.elapsedNow()
         evolution.generations += _currentGeneration
+    }
+
+    override fun onInitializationStarted() {
+        evolution.initializationStartTime = timeSource.markNow()
+    }
+
+    override fun onInitializationFinished() {
+        evolution.initializationDuration = evolution.initializationStartTime.elapsedNow()
     }
 }
