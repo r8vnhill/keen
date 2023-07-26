@@ -224,8 +224,12 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param force if true, the fitness will be evaluated even if it has already been evaluated.
      * @return the evaluated population.
      */
-    private fun evaluate(evolution: EvolutionState<DNA, G>, force: Boolean = false) =
-        evaluator(evolution.population, force).also {
+    private fun evaluate(
+        evolution: EvolutionState<DNA, G>,
+        force: Boolean = false,
+    ): Population<DNA, G> {
+        listeners.forEach { it.onEvaluationStarted() }
+        return evaluator(evolution.population, force).also {
             enforce {
                 "Evaluated population size [${it.size}] doesn't match expected population size [$populationSize]" {
                     populationSize must IntRequirement.BeEqualTo(it.size)
@@ -235,6 +239,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
                 }
             }
         }
+    }
 
 
     /**

@@ -70,4 +70,14 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     override fun onInitializationFinished() {
         evolution.initializationDuration = evolution.initializationStartTime.elapsedNow()
     }
+
+    // TODO Evaluation times
+    override fun onEvaluationStarted() {
+        _currentGeneration.evaluation.startTime = timeSource.markNow()
+    }
+
+    override fun onEvaluationFinished() {
+        _currentGeneration.evaluation.duration =
+            _currentGeneration.evaluation.startTime.elapsedNow()
+    }
 }

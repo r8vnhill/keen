@@ -64,27 +64,19 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     /**
      * Called whenever the evolution process is over (the termination criteria is met).
      */
-    fun onEvolutionEnded() {
-        // Do nothing
-    }
+    fun onEvolutionEnded() { /* Do nothing */ }
 
-    fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) {
-        // Do nothing
-    }
+    fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) { /* Do nothing */ }
 
-    fun onGenerationStarted(generation: Int) {
-        // Do nothing
-    }
+    fun onGenerationStarted(generation: Int) { /* Do nothing */ }
 
-    fun onGenerationFinished() {
-        // Do nothing
-    }
+    fun onGenerationFinished() { /* Do nothing */ }
 
-    fun onInitializationStarted() {
-        // Do nothing
-    }
+    fun onInitializationStarted() { /* Do nothing */ }
 
-    fun onInitializationFinished() {
-        // Do nothing
-    }
+    fun onInitializationFinished() { /* Do nothing */ }
+
+    fun onEvaluationStarted() { /* Do nothing */ }
+
+    fun onEvaluationFinished() { /* Do nothing */ }
 }
