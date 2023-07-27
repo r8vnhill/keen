@@ -17,21 +17,29 @@ import kotlin.time.TimeSource
 typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
 
 /**
- * A generic interface for a statistic in an evolutionary algorithm.
+ * Interface for a listener that monitors the evolution process in a genetic algorithm.
  *
- * @property evolutionResult the current result of the evolution.
- * @property population the current population of the evolution.
- * @property optimizer the optimizer used to create new phenotypes.
- * @property survivorSelectionTime the time taken for survivor selection in each generation.
- * @property offspringSelectionTime the time taken for offspring selection in each generation.
- * @property alterTime the time taken for the alteration phase in each generation.
- * @property evolutionTime the total time taken for the evolution so far.
- * @property bestFitness the best fitness value in each generation.
- * @property worstFitness the worst fitness value in each generation.
- * @property averageFitness the average fitness value in each generation.
- * @property fittest the fittest phenotype in the current generation.
- * @property steadyGenerations the number of steady generations so far.
- * @property generation the current generation.
+ * The [EvolutionListener] provides hooks for various points in the evolution process,
+ * allowing for fine-grained monitoring and recording of various statistics and state.
+ *
+ * @property evolution The current state of the evolution.
+ * @property evolutionResult The result of the evolution after each generation.
+ * @property population The current population of candidate solutions.
+ * @property optimizer The phenotype optimizer used in the evolution.
+ * @property survivorSelectionTime The list of times taken for survivor selection across
+ *          generations.
+ * @property offspringSelectionTime The list of times taken for offspring selection across
+ *          generations.
+ * @property alterTime The list of times taken for the alteration phase across generations.
+ * @property evolutionTime The total time taken for the evolution so far.
+ * @property bestFitness The list of best fitness values across generations.
+ * @property worstFitness The list of worst fitness values across generations.
+ * @property averageFitness The list of average fitness values across generations.
+ * @property fittest The fittest phenotype in the current generation.
+ * @property steadyGenerations The number of generations with no improvement.
+ * @property generation The current generation.
+ * @property currentGeneration The [GenerationRecord] for the current generation.
+ * @property timeSource The source of time measurement.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.0.0

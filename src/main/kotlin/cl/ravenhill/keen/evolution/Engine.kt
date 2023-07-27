@@ -230,6 +230,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
     ): Population<DNA, G> {
         listeners.forEach { it.onEvaluationStarted() }
         return evaluator(evolution.population, force).also {
+            listeners.forEach { it.onEvaluationFinished() }
             enforce {
                 "Evaluated population size [${it.size}] doesn't match expected population size [$populationSize]" {
                     populationSize must IntRequirement.BeEqualTo(it.size)

@@ -27,6 +27,16 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     override fun toString() = """
         ------------ Evolution Summary ---------------
         |--> Initialization time: ${evolution.initializationDuration.inWholeMilliseconds} ms
+        ------------- Evaluation Times ----------------
+        |--> Average: ${
+            evolution.generations.map { it.evaluation.duration.inWholeMilliseconds }.average()
+        } ms
+        |--> Max: ${
+            evolution.generations.maxOfOrNull { it.evaluation.duration.inWholeMilliseconds }
+        } ms
+        |--> Min: ${
+            evolution.generations.minOfOrNull { it.evaluation.duration.inWholeMilliseconds }
+        } ms
         -------------- Selection Times ----------------
         |--> Offspring Selection
         |   |--> Average: ${offspringSelectionTime.average()} ms
@@ -71,7 +81,6 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         evolution.initializationDuration = evolution.initializationStartTime.elapsedNow()
     }
 
-    // TODO Evaluation times
     override fun onEvaluationStarted() {
         _currentGeneration.evaluation.startTime = timeSource.markNow()
     }

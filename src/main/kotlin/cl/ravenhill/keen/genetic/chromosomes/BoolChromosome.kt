@@ -13,6 +13,7 @@ import cl.ravenhill.keen.probability
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.util.roundUpToMultipleOf
 import java.util.Objects
+import kotlin.properties.Delegates
 
 /**
  * A chromosome representing a binary sequence of genes, with each gene being either `true` or
@@ -112,7 +113,7 @@ class BoolChromosome(
      */
     class Factory : Chromosome.AbstractFactory<Boolean, BoolGene>() {
 
-        var truesProbability: Double = Double.NaN
+        var truesProbability: Double by Delegates.notNull()
 
         // Documentation inherited from [Chromosome.Factory].
         override fun make() = BoolChromosome(size, truesProbability, executor)
