@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
 
 /***************************************************************************************************
@@ -113,13 +114,17 @@ fun <E> MutableList<E>.dropFirst(n: Int): List<E> {
 /**
  * Swaps the elements at the given indices in the receiver.
  */
+@ExperimentalStdlibApi
 fun <E> MutableList<E>.swap(i: Int, j: Int) {
     enforce {
+        "The list must not be empty" { this@swap mustNot BeEmpty }
+    }
+    enforce {
         "i [$i] should be in range [0, ${this@swap.size})" {
-            i must BeInRange(0 until this@swap.size)
+            i must BeInRange(0..<this@swap.size)
         }
         "j [$j] should be in range [0, ${this@swap.size})" {
-            j must BeInRange(0 until this@swap.size)
+            j must BeInRange(0..<this@swap.size)
         }
     }
     if (i == j) return

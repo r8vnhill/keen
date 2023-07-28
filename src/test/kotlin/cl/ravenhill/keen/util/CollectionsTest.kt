@@ -8,8 +8,11 @@ package cl.ravenhill.keen.util
 
 import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.any
+import cl.ravenhill.enforcer.CollectionRequirementException
+import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldBeOfClass
+import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
@@ -171,6 +174,7 @@ private fun <T> Arb.Companion.matrix(gen: Arb<T>) = arbitrary {
 // endregion COLLECTIONS
 // endregion GENERATORS
 
+@ExperimentalStdlibApi
 class CollectionsTest : FreeSpec({
     "An array can be transformed into an incremental array" {
         checkAll(Arb.list(Arb.real(0.0..100_000.0))) { ds ->
@@ -241,7 +245,7 @@ class CollectionsTest : FreeSpec({
                     ass.shouldNotBeEmpty()
                     ass shouldAny { it.size != ass.first().size }
                 }
-                shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
+                shouldThrow<EnforcementException> {
                     ass.transpose()
                 }.infringements.first() shouldBeOfClass UnfulfilledRequirementException::class
             }
@@ -290,7 +294,7 @@ class CollectionsTest : FreeSpec({
                 assume {
                     n shouldBeGreaterThan list.size
                 }
-                val ex = shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
+                val ex = shouldThrow<EnforcementException> {
                     list.dropFirst(n)
                 }
                 with(ex.infringements.first()) {
@@ -325,13 +329,25 @@ class CollectionsTest : FreeSpec({
             }
         }
 
+        "throw an exception if" - {
+            "the list is empty" {
+                checkAll(Arb.int(), Arb.int()) { i, j ->
+                    shouldThrow<EnforcementException> {
+                        mutableListOf<Any>().swap(i, j)
+                    }.shouldHaveInfringement<CollectionRequirementException>(
+                        unfulfilledConstraint("The list must not be empty")
+                    )
+                }
+            }
+        }
+
         "throw an exception if the indices are negative" {
             checkAll(
                 Arb.mutableList(Arb.any()),
                 Arb.negativeInt(),
                 Arb.negativeInt()
             ) { list, i, j ->
-                val ex = shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
+                val ex = shouldThrow<EnforcementException> {
                     list.swap(i, j)
                 }
                 with(ex.infringements) {

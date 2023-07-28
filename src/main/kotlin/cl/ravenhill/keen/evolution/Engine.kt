@@ -26,7 +26,6 @@ import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.operators.CompositeAlterer
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
-import cl.ravenhill.keen.util.Pretty
 import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.floor
 import cl.ravenhill.keen.util.listeners.EvolutionListener
@@ -61,7 +60,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
     val listeners: List<EvolutionListener<DNA, G>>,
     val evaluator: EvaluationExecutor<DNA, G>,
     val interceptor: EvolutionInterceptor<DNA, G>,
-) : Evolver<DNA, G>, Pretty {
+) : Evolver<DNA, G> {
 
     // region : PROPERTIES  ------------------------------------------------------------------------
     var population: Population<DNA, G> by Delegates.observable(

@@ -7,6 +7,8 @@
 package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.any
+import cl.ravenhill.enforcer.EnforcementException
+import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
 import cl.ravenhill.orderedPair
@@ -76,7 +78,7 @@ class GeneratorsTest : FreeSpec({
                     Arb.positiveInt(),
                     Arb.condition()
                 ) { minHeight, maxHeight, condition ->
-                    shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
+                    shouldThrow<EnforcementException> {
                         Tree.generate(
                             emptyList<Leaf<Any>>(),
                             emptyList(),
@@ -87,7 +89,7 @@ class GeneratorsTest : FreeSpec({
                             { intermediate, children ->
                                 intermediateFactory(intermediate, children)
                             })
-                    }.shouldHaveInfringement<cl.ravenhill.enforcer.IntRequirementException>(
+                    }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint("There should be at least one intermediate or leaf node.")
                     )
                 }
@@ -101,7 +103,7 @@ class GeneratorsTest : FreeSpec({
                     Arb.positiveInt(),
                     Arb.condition()
                 ) { leaves, intermediates, minHeight, maxHeight, condition ->
-                    shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
+                    shouldThrow<EnforcementException> {
                         Tree.generate(
                             leaves,
                             intermediates,
@@ -112,7 +114,7 @@ class GeneratorsTest : FreeSpec({
                             { intermediate, children ->
                                 intermediateFactory(intermediate, children)
                             })
-                    }.shouldHaveInfringement<cl.ravenhill.enforcer.IntRequirementException>(
+                    }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint("The minimum height must be positive.")
                     )
                 }
@@ -126,7 +128,7 @@ class GeneratorsTest : FreeSpec({
                     Arb.nonPositiveInt(),
                     Arb.condition()
                 ) { leaves, intermediates, minHeight, maxHeight, condition ->
-                    shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
+                    shouldThrow<EnforcementException> {
                         Tree.generate(
                             leaves,
                             intermediates,
@@ -137,7 +139,7 @@ class GeneratorsTest : FreeSpec({
                             { intermediate, children ->
                                 intermediateFactory(intermediate, children)
                             })
-                    }.shouldHaveInfringement<cl.ravenhill.enforcer.IntRequirementException>(
+                    }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint("The maximum height must be positive.")
                     )
                 }
@@ -150,7 +152,7 @@ class GeneratorsTest : FreeSpec({
                     Arb.orderedPair(Arb.positiveInt(), Arb.positiveInt()),
                     Arb.condition()
                 ) { leaves, intermediates, (maxHeight, minHeight), condition ->
-                    shouldThrow<cl.ravenhill.enforcer.EnforcementException> {
+                    shouldThrow<EnforcementException> {
                         Tree.generate(
                             leaves,
                             intermediates,
@@ -161,7 +163,7 @@ class GeneratorsTest : FreeSpec({
                             { intermediate, children ->
                                 intermediateFactory(intermediate, children)
                             })
-                    }.shouldHaveInfringement<cl.ravenhill.enforcer.IntRequirementException>(
+                    }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint("The maximum height [$maxHeight] must be greater than the minimum height [$minHeight].")
                     )
                 }

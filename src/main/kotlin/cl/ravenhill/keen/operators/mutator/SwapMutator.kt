@@ -24,6 +24,7 @@ import cl.ravenhill.keen.util.swap
  *
  * @constructor Creates a new [SwapMutator] with the given [probability]
  */
+@ExperimentalStdlibApi
 class SwapMutator<DNA, G: Gene<DNA, G>>(probability: Double = 0.2) : Mutator<DNA, G>(probability) {
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,

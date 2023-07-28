@@ -1,5 +1,6 @@
 package cl.ravenhill.keen
 
+import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.keen.util.logging.Logger
 import io.kotest.matchers.Matcher
@@ -69,7 +70,7 @@ infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(Matcher 
  * @throws AssertionError if the [EnforcementException.infringements] list does not contain an
  * [UnfulfilledRequirementException] of type [T] with the specified [message].
  */
-inline fun <reified T> cl.ravenhill.enforcer.EnforcementException.shouldHaveInfringement(message: String)
+inline fun <reified T> EnforcementException.shouldHaveInfringement(message: String)
         where T : UnfulfilledRequirementException = should(
     if (infringements.none { it is T }) {
         Matcher { value ->
