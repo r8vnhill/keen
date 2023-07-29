@@ -1,47 +1,47 @@
-/*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
- */
-
 package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import kotlin.time.ExperimentalTime
 
-
 /**
- * A collector of statistics to be used in the evolutionary algorithm.
+ * An implementation of [EvolutionListener] that collects various statistics from an evolutionary
+ * algorithm run and provides a comprehensive summary.
  *
- * @param DNA  The type of the gene's value.
+ * It collects and calculates various metrics such as initialization time, evaluation times,
+ * selection times, alteration times, and evolution results.
+ * These metrics are captured for every generation and can be used to track and analyze the
+ * performance of the genetic algorithm over time.
+ *
+ * @param DNA The type of the gene's value.
+ * @param G The type of the gene.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @since 1.0.0
- * @version 1.0.0
+ * @since 2.0.0
+ * @version 2.0.0
  */
 @OptIn(ExperimentalTime::class)
 class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>() {
-    override fun toString() = """
+
+    /**
+     * Returns a string representation of the evolution summary, formatted for display.
+     */
+    override fun toString(): String {
+        val generations = evolution.generations
+        return """
         ------------ Evolution Summary ---------------
-        |--> Initialization time: ${evolution.initializationDuration.inWholeMilliseconds} ms
+        |--> Initialization time: ${evolution.initialization.duration} ms
         ------------- Evaluation Times ----------------
-        |--> Average: ${
-            evolution.generations.map { it.evaluation.duration.inWholeMilliseconds }.average()
-        } ms
-        |--> Max: ${
-            evolution.generations.maxOfOrNull { it.evaluation.duration.inWholeMilliseconds }
-        } ms
-        |--> Min: ${
-            evolution.generations.minOfOrNull { it.evaluation.duration.inWholeMilliseconds }
-        } ms
+        |--> Average: ${generations.map { it.evaluation.duration.inWholeMilliseconds }.average()} ms
+        |--> Max: ${generations.maxOfOrNull { it.evaluation.duration.inWholeMilliseconds }} ms
+        |--> Min: ${generations.minOfOrNull { it.evaluation.duration.inWholeMilliseconds }} ms
         -------------- Selection Times ----------------
         |--> Offspring Selection
-        |   |--> Average: ${offspringSelectionTime.average()} ms
-        |   |--> Max: ${offspringSelectionTime.maxOrNull()} ms
-        |   |--> Min: ${offspringSelectionTime.minOrNull()} ms
+        |   |--> Average: ${
+            generations.map { it.offspringSelection.duration.inWholeMilliseconds }.average()
+        } ms
+        |   |--> Max: ${generations.maxOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }} ms
+        |   |--> Min: ${generations.minOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }} ms
         |--> Survivor Selection
         |   |--> Average: ${survivorSelectionTime.average()} ms
         |   |--> Max: ${survivorSelectionTime.maxOrNull()} ms
@@ -60,7 +60,11 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         |--> Fittest: ${population.firstOrNull().toString().replace("\n", "; ")}
         |--> Best fitness: ${bestFitness.lastOrNull()}
         """.trimIndent()
+    }
 
+    /**
+     * Called when a new generation starts, marks the start time of the generation.
+     */
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int) {
         _currentGeneration = GenerationRecord(generation).apply {
@@ -68,25 +72,56 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         }
     }
 
+    /**
+     * Called when the current generation finishes, records the duration of the generation.
+     */
     override fun onGenerationFinished() {
         _currentGeneration.duration = _currentGeneration.initTime.elapsedNow()
         evolution.generations += _currentGeneration
     }
 
+    /**
+     * Called when the initialization of the population starts, marks the start time.
+     */
     override fun onInitializationStarted() {
-        evolution.initializationStartTime = timeSource.markNow()
+        evolution.initialization.startTime = timeSource.markNow()
     }
 
+    /**
+     * Called when the initialization of the population finishes, records the duration.
+     */
     override fun onInitializationFinished() {
-        evolution.initializationDuration = evolution.initializationStartTime.elapsedNow()
+        evolution.initialization.duration =
+            evolution.initialization.startTime.elapsedNow()
     }
 
+    /**
+     * Called when the evaluation of the population starts, marks the start time.
+     */
     override fun onEvaluationStarted() {
         _currentGeneration.evaluation.startTime = timeSource.markNow()
     }
 
+    /**
+     * Called when the evaluation of the population finishes, records the duration.
+     */
     override fun onEvaluationFinished() {
         _currentGeneration.evaluation.duration =
             _currentGeneration.evaluation.startTime.elapsedNow()
+    }
+
+    /**
+     * Called when the offspring selection process starts, marks the start time.
+     */
+    override fun onOffspringSelectionStarted() {
+        _currentGeneration.offspringSelection.startTime = timeSource.markNow()
+    }
+
+    /**
+     * Called when the offspring selection process finishes, records the duration.
+     */
+    override fun onOffspringSelectionFinished() {
+        _currentGeneration.offspringSelection.duration =
+            _currentGeneration.offspringSelection.startTime.elapsedNow()
     }
 }

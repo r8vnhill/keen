@@ -36,6 +36,7 @@ import kotlin.time.TimeMark
 @OptIn(ExperimentalTime::class)
 @Serializable
 data class GenerationRecord(val generation: Int) {
+    val offspringSelection = SelectionRecord()
     lateinit var initTime: TimeMark
     var duration: Duration by Delegates.notNull()
     val evaluation = EvaluationRecord()
@@ -48,6 +49,12 @@ data class GenerationRecord(val generation: Int) {
 
     @Serializable
     class EvaluationRecord {
+        lateinit var startTime: TimeMark
+        var duration: Duration by Delegates.notNull()
+    }
+
+    @Serializable
+    class SelectionRecord {
         lateinit var startTime: TimeMark
         var duration: Duration by Delegates.notNull()
     }

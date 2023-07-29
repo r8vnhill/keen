@@ -46,7 +46,6 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
  * @version 2.0.0
  */
 interface EvolutionListener<DNA, G : Gene<DNA, G>> {
-    var evolution: EvolutionRecord<DNA, G>
     var evolutionResult: EvolutionResult<DNA, G>
     var population: Population<DNA, G>
     var optimizer: PhenotypeOptimizer<DNA, G>
@@ -87,4 +86,7 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     fun onEvaluationStarted() { /* Do nothing */ }
 
     fun onEvaluationFinished() { /* Do nothing */ }
+    fun onOffspringSelectionStarted() { /* Do nothing */ }
+
+    fun onOffspringSelectionFinished() { /* Do nothing */ }
 }

@@ -10,6 +10,7 @@ package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.keen.genetic.genes.Gene
 import kotlinx.serialization.Serializable
+import kotlin.properties.Delegates
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeMark
@@ -18,7 +19,12 @@ import kotlin.time.TimeMark
 data class EvolutionRecord<DNA, G : Gene<DNA, G>>(
     val generations: MutableList<GenerationRecord> = mutableListOf(),
 ) {
-    var initializationDuration: Duration = Duration.INFINITE
-    lateinit var initializationStartTime: TimeMark
+    val initialization = InitializationRecord()
     val generationTimes: List<Long> get() = generations.map { it.duration.inWholeMilliseconds }
+
+    @Serializable
+    class InitializationRecord {
+        lateinit var startTime: TimeMark
+        var duration: Duration by Delegates.notNull()
+    }
 }

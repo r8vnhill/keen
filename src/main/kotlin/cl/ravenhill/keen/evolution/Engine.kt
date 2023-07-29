@@ -129,8 +129,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             bestFitness = result.best.fitness
             evolution = result.next()
         }
-        listeners.stream().parallel()
-            .forEach { it.evolutionTime = clock.millis() - initTime }
+        listeners.forEach { it.evolutionTime = clock.millis() - initTime }
         info { "Evolution process finished" }
         return result
     }
@@ -249,16 +248,15 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @return the offspring.
      */
     private fun selectOffspring(population: Population<DNA, G>): Population<DNA, G> {
+        listeners.forEach { it.onOffspringSelectionStarted() }
         debug { "Selecting offspring." }
-        val initTime = clock.millis()
         return offspringSelector(
             population,
             (offspringFraction * populationSize).ceil(),
             optimizer
         ).also {
-            listeners.stream().parallel()
-                .forEach { it.offspringSelectionTime.add(clock.millis() - initTime) }
             debug { "Selected offspring." }
+            listeners.forEach { it.onOffspringSelectionFinished() }
         }
     }
 
