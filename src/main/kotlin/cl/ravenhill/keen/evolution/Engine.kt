@@ -267,15 +267,16 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @return the survivors.
      */
     private fun selectSurvivors(population: List<Phenotype<DNA, G>>): Population<DNA, G> {
+        listeners.forEach { it.onSurvivorSelectionStarted() }
         debug { "Selecting survivors." }
-        val initTime = clock.millis()
         return survivorSelector(
             population,
             ((1 - offspringFraction) * populationSize).floor(),
             optimizer
         ).also {
-            listeners.stream().parallel()
-                .forEach { it.survivorSelectionTime.add(clock.millis() - initTime) }
+            listeners.forEach {
+                it.onSurvivorSelectionFinished()
+            }
         }
     }
 

@@ -12,34 +12,44 @@ import kotlin.properties.Delegates
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeMark
-
 /**
- * Represents a generation in a genetic algorithm run, including timing and generation number.
+ * Represents a generation in a genetic algorithm run, including timing, generation number and
+ * different stages of the genetic algorithm.
  *
- * This data class holds details about a generation of a genetic algorithm.
- * It stores the generation number and timing details, such as when the evaluation for this
- * generation started, the total duration of the generation, and the time at which this generation
- * was initiated.
+ * This data class encapsulates all information pertaining to a single generation during the
+ * execution of a genetic algorithm.
+ * It stores the generation number and timing details, including the starting time of the evaluation
+ * phase, the total duration of the entire generation, and the time at which the generation was
+ * initiated.
  *
- * @property generation The generation number.
- * @property evaluationStartTime The time at which the evaluation for this generation started.
- * @property duration The total duration of the generation.
- *                    It must be initialized before being used.
- * @property initTime The time at which this generation was initiated.
+ * Each generation in the genetic algorithm typically consists of evaluation and selection stages.
+ * The [EvaluationRecord] and [SelectionRecord] inner classes represent these stages and also extend
+ * the [AbstractRecord] to include timing information.
  *
- * @constructor Creates a new [GenerationRecord] object and validates that the generation number
+ * @property generation The generation number, which must be a positive integer.
+ * @property duration The total duration of the generation, which must be initialized before being
+ *                    accessed.
+ * @property startTime The time at which the initiation of this generation occurred.
+ * @property evaluation The record of the evaluation phase of the genetic algorithm for this
+ *                      generation.
+ * @property survivorSelection The record of the survivor selection phase of the genetic algorithm
+ *                             for this generation.
+ * @property offspringSelection The record of the offspring selection phase of the genetic algorithm
+ *                              for this generation.
+ *
+ * @constructor Creates a new [GenerationRecord] instance and validates that the generation number
  *              is positive.
  *
  * @since 2.0.0
  * @version 2.0.0
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
 @OptIn(ExperimentalTime::class)
 @Serializable
-data class GenerationRecord(val generation: Int) {
-    val offspringSelection = SelectionRecord()
-    lateinit var initTime: TimeMark
-    var duration: Duration by Delegates.notNull()
+data class GenerationRecord(val generation: Int): AbstractRecord() {
     val evaluation = EvaluationRecord()
+    val survivorSelection = SelectionRecord()
+    val offspringSelection = SelectionRecord()
 
     init {
         enforce {
@@ -47,15 +57,18 @@ data class GenerationRecord(val generation: Int) {
         }
     }
 
+    /**
+     * This class represents the evaluation phase of a generation in a genetic algorithm.
+     * It extends [AbstractRecord], meaning it also includes start time and duration properties.
+     */
     @Serializable
-    class EvaluationRecord {
-        lateinit var startTime: TimeMark
-        var duration: Duration by Delegates.notNull()
-    }
+    class EvaluationRecord : AbstractRecord()
 
+    /**
+     * This class represents a selection phase (either survivor or offspring selection) of a
+     * generation in a genetic algorithm.
+     * It extends [AbstractRecord], meaning it also includes start time and duration properties.
+     */
     @Serializable
-    class SelectionRecord {
-        lateinit var startTime: TimeMark
-        var duration: Duration by Delegates.notNull()
-    }
+    class SelectionRecord : AbstractRecord()
 }

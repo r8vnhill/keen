@@ -22,10 +22,6 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.checkAll
-import io.kotest.property.kotlinx.datetime.datetime
-import io.kotest.property.kotlinx.datetime.instant
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
@@ -54,9 +50,9 @@ class GenerationRecordTest : FreeSpec({
             "is late initialized" {
                 checkAll(Arb.generationRecord()) { data ->
                     val record = data.toGenerationRecord()
-                    record::initTime.shouldBeLateInit()
+                    record::startTime.shouldBeLateInit()
                     shouldThrowWithMessage<UninitializedPropertyAccessException>("lateinit property initTime has not been initialized") {
-                        record.initTime
+                        record.startTime
                     }
                 }
             }
@@ -64,8 +60,8 @@ class GenerationRecordTest : FreeSpec({
             "can be initialized" {
                 checkAll(Arb.generationRecord()) { data ->
                     val record = data.toGenerationRecord()
-                    record.initTime = data.initTime
-                    record.initTime shouldBe data.initTime
+                    record.startTime = data.initTime
+                    record.startTime shouldBe data.initTime
                 }
             }
         }

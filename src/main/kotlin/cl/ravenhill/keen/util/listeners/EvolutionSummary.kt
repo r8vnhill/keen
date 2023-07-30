@@ -43,9 +43,15 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         |   |--> Max: ${generations.maxOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }} ms
         |   |--> Min: ${generations.minOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }} ms
         |--> Survivor Selection
-        |   |--> Average: ${survivorSelectionTime.average()} ms
-        |   |--> Max: ${survivorSelectionTime.maxOrNull()} ms
-        |   |--> Min: ${survivorSelectionTime.minOrNull()} ms
+        |   |--> Average: ${
+            generations.map { it.survivorSelection.duration.inWholeMilliseconds }.average()
+        } ms
+        |   |--> Max: ${
+            generations.maxOfOrNull { it.survivorSelection.duration.inWholeMilliseconds }
+        } ms
+        |   |--> Min: ${
+            generations.minOfOrNull { it.survivorSelection.duration.inWholeMilliseconds }
+        } ms
         --------------- Alteration Times --------------
         |--> Average: ${alterTime.average()} ms
         |--> Max: ${alterTime.maxOrNull()} ms
@@ -68,7 +74,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int) {
         _currentGeneration = GenerationRecord(generation).apply {
-            initTime = timeSource.markNow()
+            startTime = timeSource.markNow()
         }
     }
 
@@ -76,7 +82,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      * Called when the current generation finishes, records the duration of the generation.
      */
     override fun onGenerationFinished() {
-        _currentGeneration.duration = _currentGeneration.initTime.elapsedNow()
+        _currentGeneration.duration = _currentGeneration.startTime.elapsedNow()
         evolution.generations += _currentGeneration
     }
 
@@ -123,5 +129,14 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     override fun onOffspringSelectionFinished() {
         _currentGeneration.offspringSelection.duration =
             _currentGeneration.offspringSelection.startTime.elapsedNow()
+    }
+
+    override fun onSurvivorSelectionStarted() {
+        _currentGeneration.survivorSelection.startTime = timeSource.markNow()
+    }
+
+    override fun onSurvivorSelectionFinished() {
+        _currentGeneration.survivorSelection.duration =
+            _currentGeneration.survivorSelection.startTime.elapsedNow()
     }
 }

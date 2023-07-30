@@ -47,8 +47,8 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     override var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
     override var evolutionTime: Long = Long.MAX_VALUE
     override val alterTime: MutableList<Long> = mutableListOf()
-    override var offspringSelectionTime: MutableList<Long> = mutableListOf()
-    override val survivorSelectionTime: MutableList<Long> = mutableListOf()
+    var offspringSelectionTime: MutableList<Long> = mutableListOf()
+    val survivorSelectionTime: MutableList<Long> = mutableListOf()
     override var bestFitness: MutableList<Double> = mutableListOf()
     override var worstFitness: MutableList<Double> = mutableListOf()
     override var averageFitness: MutableList<Double> = mutableListOf()

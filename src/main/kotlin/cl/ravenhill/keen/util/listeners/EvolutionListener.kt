@@ -4,7 +4,6 @@ import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import kotlin.reflect.KProperty
@@ -17,19 +16,20 @@ import kotlin.time.TimeSource
 typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
 
 /**
- * Interface for a listener that monitors the evolution process in a genetic algorithm.
+ * Interface for a listener that monitors and responds to different stages of the evolution process
+ * in a genetic algorithm.
  *
- * The [EvolutionListener] provides hooks for various points in the evolution process,
- * allowing for fine-grained monitoring and recording of various statistics and state.
+ * The [EvolutionListener] interface is designed to provide hooks for various phases and events in
+ * the genetic evolution process, enabling monitoring, logging, or custom handling of different
+ * aspects of the algorithm. These hooks allow for detailed insights into the evolution's progress
+ * and performance metrics.
  *
- * @property evolution The current state of the evolution.
+ * Implementing classes can use these hooks to track metrics, report progress, or modify behavior at
+ * different stages.
+ *
  * @property evolutionResult The result of the evolution after each generation.
  * @property population The current population of candidate solutions.
  * @property optimizer The phenotype optimizer used in the evolution.
- * @property survivorSelectionTime The list of times taken for survivor selection across
- *          generations.
- * @property offspringSelectionTime The list of times taken for offspring selection across
- *          generations.
  * @property alterTime The list of times taken for the alteration phase across generations.
  * @property evolutionTime The total time taken for the evolution so far.
  * @property bestFitness The list of best fitness values across generations.
@@ -49,8 +49,6 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     var evolutionResult: EvolutionResult<DNA, G>
     var population: Population<DNA, G>
     var optimizer: PhenotypeOptimizer<DNA, G>
-    val survivorSelectionTime: MutableList<Long>
-    val offspringSelectionTime: MutableList<Long>
     val alterTime: MutableList<Long>
     var evolutionTime: Long
     var bestFitness: MutableList<Double>
@@ -60,33 +58,102 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     var steadyGenerations: Int
     var generation: Int
     val currentGeneration: GenerationRecord
+
     @ExperimentalTime
     var timeSource: TimeSource
 
     /**
      * Called whenever the result of the evolution is updated.
      */
-    fun onResultUpdated()
+    fun onResultUpdated() {
+        // Intentionally left blank
+    }
 
     /**
-     * Called whenever the evolution process is over (the termination criteria is met).
+     * Called when the evolution process has ended (e.g., when the termination criteria are met).
      */
-    fun onEvolutionEnded() { /* Do nothing */ }
+    fun onEvolutionEnded() {
+        // Intentionally left blank
+    }
 
-    fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) { /* Do nothing */ }
+    /**
+     * Called when the generation value has changed.
+     * @param prop The property that has changed.
+     * @param old The old generation value.
+     * @param new The new generation value.
+     */
+    fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) {
+        // Intentionally left blank
+    }
 
-    fun onGenerationStarted(generation: Int) { /* Do nothing */ }
+    /**
+     * Called when a new generation has started.
+     * @param generation The generation number.
+     */
+    fun onGenerationStarted(generation: Int) {
+        // Intentionally left blank
+    }
 
-    fun onGenerationFinished() { /* Do nothing */ }
+    /**
+     * Called when the current generation has finished.
+     */
+    fun onGenerationFinished() {
+        // Intentionally left blank
+    }
 
-    fun onInitializationStarted() { /* Do nothing */ }
+    /**
+     * Called when the initialization phase has started.
+     */
+    fun onInitializationStarted() {
+        // Intentionally left blank
+    }
 
-    fun onInitializationFinished() { /* Do nothing */ }
+    /**
+     * Called when the initialization phase has finished.
+     */
+    fun onInitializationFinished() {
+        // Intentionally left blank
+    }
 
-    fun onEvaluationStarted() { /* Do nothing */ }
+    /**
+     * Called when the evaluation phase has started.
+     */
+    fun onEvaluationStarted() {
+        // Intentionally left blank
+    }
 
-    fun onEvaluationFinished() { /* Do nothing */ }
-    fun onOffspringSelectionStarted() { /* Do nothing */ }
+    /**
+     * Called when the evaluation phase has finished.
+     */
+    fun onEvaluationFinished() {
+        // Intentionally left blank
+    }
 
-    fun onOffspringSelectionFinished() { /* Do nothing */ }
+    /**
+     * Called when the offspring selection phase has started.
+     */
+    fun onOffspringSelectionStarted() {
+        // Intentionally left blank
+    }
+
+    /**
+     * Called when the offspring selection phase has finished.
+     */
+    fun onOffspringSelectionFinished() {
+        // Intentionally left blank
+    }
+
+    /**
+     * Called when the survivor selection phase has started.
+     */
+    fun onSurvivorSelectionStarted() {
+        // Intentionally left blank
+    }
+
+    /**
+     * Called when the survivor selection phase has finished.
+     */
+    fun onSurvivorSelectionFinished() {
+        // Intentionally left blank
+    }
 }
