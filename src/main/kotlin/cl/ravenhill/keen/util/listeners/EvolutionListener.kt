@@ -30,7 +30,6 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
  * @property evolutionResult The result of the evolution after each generation.
  * @property population The current population of candidate solutions.
  * @property optimizer The phenotype optimizer used in the evolution.
- * @property alterTime The list of times taken for the alteration phase across generations.
  * @property evolutionTime The total time taken for the evolution so far.
  * @property bestFitness The list of best fitness values across generations.
  * @property worstFitness The list of worst fitness values across generations.
@@ -49,7 +48,6 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     var evolutionResult: EvolutionResult<DNA, G>
     var population: Population<DNA, G>
     var optimizer: PhenotypeOptimizer<DNA, G>
-    val alterTime: MutableList<Long>
     var evolutionTime: Long
     var bestFitness: MutableList<Double>
     var worstFitness: MutableList<Double>
@@ -154,6 +152,14 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
      * Called when the survivor selection phase has finished.
      */
     fun onSurvivorSelectionFinished() {
+        // Intentionally left blank
+    }
+
+    fun onAlterationStarted() {
+        // Intentionally left blank
+    }
+
+    fun onAlterationFinished() {
         // Intentionally left blank
     }
 }

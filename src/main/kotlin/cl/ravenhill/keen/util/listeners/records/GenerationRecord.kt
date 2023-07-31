@@ -44,12 +44,12 @@ import kotlin.time.TimeMark
  * @version 2.0.0
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
-@OptIn(ExperimentalTime::class)
 @Serializable
 data class GenerationRecord(val generation: Int): AbstractRecord() {
+    val alteration = AlterationRecord()
     val evaluation = EvaluationRecord()
-    val survivorSelection = SelectionRecord()
     val offspringSelection = SelectionRecord()
+    val survivorSelection = SelectionRecord()
 
     init {
         enforce {
@@ -71,4 +71,7 @@ data class GenerationRecord(val generation: Int): AbstractRecord() {
      */
     @Serializable
     class SelectionRecord : AbstractRecord()
+
+    @Serializable
+    class AlterationRecord : AbstractRecord()
 }

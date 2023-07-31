@@ -291,12 +291,12 @@ class Engine<DNA, G : Gene<DNA, G>>(
         population: Population<DNA, G>,
         evolution: EvolutionState<DNA, G>,
     ): AltererResult<DNA, G> {
+        listeners.forEach { it.onAlterationStarted() }
         debug { "Altering offspring." }
-        val initTime = clock.millis()
         return alterer(population, evolution.generation)
             .also {
-                listeners.stream().parallel()
-                    .forEach { stat -> stat.alterTime.add(clock.millis() - initTime) }
+                debug { "Altered offspring." }
+                listeners.forEach { it.onAlterationFinished() }
             }
 
     }

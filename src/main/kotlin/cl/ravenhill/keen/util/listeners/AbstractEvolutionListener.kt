@@ -27,9 +27,6 @@ import kotlin.time.TimeSource
  * @property population The population to calculate statistics from.
  * @property optimizer The optimizer used to calculate the fitness.
  * @property evolutionTime The time it took to evolve the population.
- * @property alterTime The time it took to alter the population.
- * @property offspringSelectionTime The time it took to select the offspring.
- * @property survivorSelectionTime The time it took to select the survivors.
  * @property fittest The fittest phenotype.
  * @property bestFitness The best fitness.
  * @property steadyGenerations The number of generations without improvement.
@@ -46,9 +43,6 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     override var population: Population<DNA, G> = listOf()
     override var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
     override var evolutionTime: Long = Long.MAX_VALUE
-    override val alterTime: MutableList<Long> = mutableListOf()
-    var offspringSelectionTime: MutableList<Long> = mutableListOf()
-    val survivorSelectionTime: MutableList<Long> = mutableListOf()
     override var bestFitness: MutableList<Double> = mutableListOf()
     override var worstFitness: MutableList<Double> = mutableListOf()
     override var averageFitness: MutableList<Double> = mutableListOf()

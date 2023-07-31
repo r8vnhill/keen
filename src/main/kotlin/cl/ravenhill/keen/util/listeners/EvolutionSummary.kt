@@ -40,8 +40,12 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         |   |--> Average: ${
             generations.map { it.offspringSelection.duration.inWholeMilliseconds }.average()
         } ms
-        |   |--> Max: ${generations.maxOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }} ms
-        |   |--> Min: ${generations.minOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }} ms
+        |   |--> Max: ${
+            generations.maxOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }
+        } ms
+        |   |--> Min: ${
+            generations.minOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }
+        } ms
         |--> Survivor Selection
         |   |--> Average: ${
             generations.map { it.survivorSelection.duration.inWholeMilliseconds }.average()
@@ -53,9 +57,9 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
             generations.minOfOrNull { it.survivorSelection.duration.inWholeMilliseconds }
         } ms
         --------------- Alteration Times --------------
-        |--> Average: ${alterTime.average()} ms
-        |--> Max: ${alterTime.maxOrNull()} ms
-        |--> Min: ${alterTime.minOrNull()} ms
+        |--> Average: ${generations.map { it.alteration.duration.inWholeMilliseconds }.average()} ms
+        |--> Max: ${generations.maxOfOrNull { it.alteration.duration.inWholeMilliseconds }} ms
+        |--> Min: ${generations.minOfOrNull { it.alteration.duration.inWholeMilliseconds }} ms
         -------------- Evolution Results --------------
         |--> Total time: $evolutionTime ms
         |--> Average generation time: ${evolution.generationTimes.average()} ms
@@ -131,12 +135,33 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
             _currentGeneration.offspringSelection.startTime.elapsedNow()
     }
 
+    /**
+     * Called when the survivor selection process starts, marks the start time.
+     */
     override fun onSurvivorSelectionStarted() {
         _currentGeneration.survivorSelection.startTime = timeSource.markNow()
     }
 
+    /**
+     * Called when the survivor selection process finishes, records the duration.
+     */
     override fun onSurvivorSelectionFinished() {
         _currentGeneration.survivorSelection.duration =
             _currentGeneration.survivorSelection.startTime.elapsedNow()
+    }
+
+    /**
+     * Called when the alteration of the population starts, marks the start time.
+     */
+    override fun onAlterationStarted() {
+        _currentGeneration.alteration.startTime = timeSource.markNow()
+    }
+
+    /**
+     * Called when the alteration of the population finishes, records the duration.
+     */
+    override fun onAlterationFinished() {
+        _currentGeneration.alteration.duration =
+            _currentGeneration.alteration.startTime.elapsedNow()
     }
 }
