@@ -51,6 +51,7 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     override var steadyGenerations: Int = 0
     override var generation: Int = 0
     protected var evolution: EvolutionRecord<DNA, G> = EvolutionRecord()
+    @Suppress("PropertyName")
     protected lateinit var _currentGeneration: GenerationRecord
     override val currentGeneration: GenerationRecord get() = _currentGeneration
     @ExperimentalTime

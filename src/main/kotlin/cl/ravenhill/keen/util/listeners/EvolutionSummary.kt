@@ -62,9 +62,15 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         |--> Min: ${generations.minOfOrNull { it.alteration.duration.inWholeMilliseconds }} ms
         -------------- Evolution Results --------------
         |--> Total time: $evolutionTime ms
-        |--> Average generation time: ${evolution.generationTimes.average()} ms
-        |--> Max generation time: ${evolution.generationTimes.maxOrNull()} ms
-        |--> Min generation time: ${evolution.generationTimes.minOrNull()} ms
+        |--> Average generation time: ${
+            generations.map { it.duration.inWholeMilliseconds }.average()
+        } ms
+        |--> Max generation time: ${
+            generations.maxOfOrNull { it.duration.inWholeMilliseconds }
+        } ms
+        |--> Min generation time: ${
+            generations.minOfOrNull { it.duration.inWholeMilliseconds }
+        } ms
         |--> Generation: $generation
         |--> Steady generations: $steadyGenerations
         |--> Fittest: ${population.firstOrNull().toString().replace("\n", "; ")}

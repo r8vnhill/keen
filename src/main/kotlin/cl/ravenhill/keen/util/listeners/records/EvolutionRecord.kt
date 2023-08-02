@@ -36,11 +36,6 @@ import kotlin.time.TimeMark
  *                          process is defined and may include information like the initial
  *                          population, parameters of the evolution process, etc.
  *
- * @property generationTimes This is a read-only property that provides the durations of all the
- *                           generations in the evolution process in milliseconds.
- *                           It is derived by mapping the `duration` of each [GenerationRecord] in
- *                           `generations` to its equivalent duration in milliseconds.
- *
  * @constructor Creates an empty [EvolutionRecord] with an empty list of [generations] and a new
  *              [InitializationRecord].
  */
@@ -49,7 +44,6 @@ data class EvolutionRecord<DNA, G : Gene<DNA, G>>(
     val generations: MutableList<GenerationRecord> = mutableListOf(),
 ) : AbstractRecord() {
     val initialization = InitializationRecord()
-    val generationTimes: List<Long> get() = generations.map { it.duration.inWholeMilliseconds }
 
     /**
      * This class represents a record of the initialization phase of the evolution process.

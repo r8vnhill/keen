@@ -13,7 +13,8 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @version 1.0.0
  * @since 1.0.0
  */
-class EvolutionPrinter<DNA, G: Gene<DNA, G>>(private val every: Int) : AbstractEvolutionListener<DNA, G>() {
+class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
+        AbstractEvolutionListener<DNA, G>() {
 
     override fun onResultUpdated() {
         super.onResultUpdated()
@@ -24,9 +25,15 @@ class EvolutionPrinter<DNA, G: Gene<DNA, G>>(private val every: Int) : AbstractE
 
     override fun toString(): String {
         return """ === Generation $generation ===
-        |--> Average generation time: ${evolution.generationTimes.average()} ms
-        |--> Max generation time: ${evolution.generationTimes.maxOrNull()} ms
-        |--> Min generation time: ${evolution.generationTimes.minOrNull()} ms
+        |--> Average generation time: ${
+            evolution.generations.map { it.duration.inWholeMilliseconds }.average()
+        } ms
+        |--> Max generation time: ${
+            evolution.generations.maxOfOrNull { it.duration.inWholeMilliseconds }
+        } ms
+        |--> Min generation time: ${
+            evolution.generations.minOfOrNull { it.duration.inWholeMilliseconds }
+        } ms
         |--> Steady generations: $steadyGenerations
         |--> Best fitness: ${bestFitness.lastOrNull()}
         |--> Worst fitness: ${worstFitness.lastOrNull()}
