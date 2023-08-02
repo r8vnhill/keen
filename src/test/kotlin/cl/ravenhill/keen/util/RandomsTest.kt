@@ -72,6 +72,13 @@ class RandomsTest : FreeSpec({
                 filter(char) shouldBe true
             }
         }
+
+        "return a character in range [0, xFFFF] if no range is given" {
+            checkAll(Arb.random()) { rng ->
+                val char = rng.nextChar()
+                char shouldBeInRange '\u0000'..'\uFFFF'
+            }
+        }
     }
 
     "Generating random indices" - {
