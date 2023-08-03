@@ -162,4 +162,12 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     fun onAlterationFinished() {
         // Intentionally left blank
     }
+
+    fun onEvolutionStart() {
+        // Intentionally left blank
+    }
+
+    fun onEvolutionFinished() {
+        // Intentionally left blank
+    }
 }

@@ -2,7 +2,7 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.UnfulfilledRequirementException
-import cl.ravenhill.keen.util.logging.Logger
+import cl.ravenhill.kuro.Logger
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should

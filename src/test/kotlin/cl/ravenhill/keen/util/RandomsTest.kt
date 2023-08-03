@@ -73,10 +73,49 @@ class RandomsTest : FreeSpec({
             }
         }
 
-        "return a character in range [0, xFFFF] if no range is given" {
+        "return a character in range [0, 0xFFFF] if no range is given" {
             checkAll(Arb.random()) { rng ->
                 val char = rng.nextChar()
                 char shouldBeInRange '\u0000'..'\uFFFF'
+            }
+        }
+    }
+
+    "Generating a random string" - {
+        "with default values should" - {
+            "return a string of random length between 1 and 10" {
+                checkAll(Arb.random()) { rng ->
+                    val string = rng.nextString()
+                    string.length shouldBeInRange 1..10
+                }
+            }
+
+            "return a string with all characters in range [0, 0xFFFF]" {
+                checkAll(Arb.random()) { rng ->
+                    val string = rng.nextString()
+                    string.forEach { it shouldBeInRange '\u0000'..'\uFFFF' }
+                }
+            }
+        }
+
+        "with a given length should return a string of the given length" {
+            checkAll(Arb.positiveInt(100), Arb.random()) { length, rng ->
+                val string = rng.nextString(length)
+                string.length shouldBe length
+            }
+        }
+
+        "with a given range should return a string with characters in the given range" {
+            checkAll(Arb.charRange(), Arb.random()) { range, rng ->
+                val string = rng.nextString(range = range)
+                string.forEach { it shouldBeInRange range }
+            }
+        }
+
+        "with a given filter should return a string with characters that satisfy the filter" {
+            checkAll(Arb.filter(), Arb.random()) { filter, rng ->
+                val string = rng.nextString(filter = filter)
+                string.forEach { filter(it) shouldBe true }
             }
         }
     }

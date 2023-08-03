@@ -10,9 +10,9 @@ import cl.ravenhill.keen.Core.maxProgramDepth
 import cl.ravenhill.keen.Core.random
 import cl.ravenhill.keen.evolution.Evolver
 import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.util.logging.Level
-import cl.ravenhill.keen.util.logging.logger
-import cl.ravenhill.keen.util.logging.stdoutChannel
+import cl.ravenhill.kuro.Level
+import cl.ravenhill.kuro.logger
+import cl.ravenhill.kuro.stdoutChannel
 import kotlin.random.Random
 
 /***************************************************************************************************

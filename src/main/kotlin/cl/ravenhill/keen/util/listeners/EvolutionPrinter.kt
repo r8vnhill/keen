@@ -1,6 +1,8 @@
 package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.records.GenerationRecord
+import kotlin.time.ExperimentalTime
 
 
 /**
@@ -20,6 +22,22 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
         super.onResultUpdated()
         if (evolutionResult.generation % every == 0) {
             println(toString())
+        }
+    }
+
+    /**
+     * Called when the current generation finishes, records the duration of the generation.
+     */
+    @ExperimentalTime
+    override fun onGenerationFinished() {
+        _currentGeneration.duration = _currentGeneration.startTime.elapsedNow()
+        evolution.generations += _currentGeneration
+    }
+
+    @ExperimentalTime
+    override fun onGenerationStarted(generation: Int) {
+        _currentGeneration = GenerationRecord(generation).apply {
+            startTime = timeSource.markNow()
         }
     }
 

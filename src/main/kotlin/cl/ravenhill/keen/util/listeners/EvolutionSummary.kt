@@ -61,7 +61,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         |--> Max: ${generations.maxOfOrNull { it.alteration.duration.inWholeMilliseconds }} ms
         |--> Min: ${generations.minOfOrNull { it.alteration.duration.inWholeMilliseconds }} ms
         -------------- Evolution Results --------------
-        |--> Total time: $evolutionTime ms
+        |--> Total time: ${evolution.duration.inWholeMilliseconds} ms
         |--> Average generation time: ${
             generations.map { it.duration.inWholeMilliseconds }.average()
         } ms
@@ -71,7 +71,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         |--> Min generation time: ${
             generations.minOfOrNull { it.duration.inWholeMilliseconds }
         } ms
-        |--> Generation: $generation
+        |--> Generation: ${evolution.generations.last().generation}
         |--> Steady generations: $steadyGenerations
         |--> Fittest: ${population.firstOrNull().toString().replace("\n", "; ")}
         |--> Best fitness: ${bestFitness.lastOrNull()}
@@ -169,5 +169,19 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     override fun onAlterationFinished() {
         _currentGeneration.alteration.duration =
             _currentGeneration.alteration.startTime.elapsedNow()
+    }
+
+    /**
+     * Called when the evolution starts, marks the start time.
+     */
+    override fun onEvolutionStart() {
+        evolution.startTime = timeSource.markNow()
+    }
+
+    /**
+     * Called when the evolution finishes, records the duration.
+     */
+    override fun onEvolutionFinished() {
+        evolution.duration = evolution.startTime.elapsedNow()
     }
 }

@@ -4,11 +4,11 @@ import cl.ravenhill.any
 import cl.ravenhill.enforcer.Enforcement
 import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.enforcer.requirements.Requirement
-import cl.ravenhill.keen.util.logging.Level
-import cl.ravenhill.keen.util.logging.Logger
-import cl.ravenhill.keen.util.logging.StdoutChannel
-import cl.ravenhill.keen.util.logging.bufferedOutputChannel
-import cl.ravenhill.keen.util.logging.logger
+import cl.ravenhill.kuro.Level
+import cl.ravenhill.kuro.Logger
+import cl.ravenhill.kuro.StdoutChannel
+import cl.ravenhill.kuro.bufferedOutputChannel
+import cl.ravenhill.kuro.logger
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec

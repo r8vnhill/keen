@@ -115,6 +115,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see [evolve]
      */
     override fun evolve(): EvolutionResult<DNA, G> {
+        listeners.forEach { it.onEvolutionStart() }
         val initTime = clock.millis()
         info { "Starting evolution process." }
         var evolution =
@@ -131,7 +132,9 @@ class Engine<DNA, G : Gene<DNA, G>>(
         }
         listeners.forEach { it.evolutionTime = clock.millis() - initTime }
         info { "Evolution process finished" }
-        return result
+        return result.also {
+            listeners.forEach { it.onEvolutionFinished() }
+        }
     }
 
     /**
