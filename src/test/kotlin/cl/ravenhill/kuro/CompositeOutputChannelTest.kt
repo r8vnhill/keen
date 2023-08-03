@@ -7,9 +7,6 @@
 package cl.ravenhill.kuro
 
 import cl.ravenhill.keen.shouldBeOfClass
-import cl.ravenhill.keen.util.logging.bufferedOutputChannel
-import cl.ravenhill.keen.util.logging.compositeOutputChannel
-import cl.ravenhill.keen.util.logging.outputChannel
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain

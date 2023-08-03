@@ -7,9 +7,6 @@
 package cl.ravenhill.kuro
 
 import cl.ravenhill.keen.shouldBeEqualIgnoringBreaks
-import cl.ravenhill.keen.util.logging.`check that trying to add a child channel returns a failure`
-import cl.ravenhill.keen.util.logging.fileOutputChannel
-import cl.ravenhill.keen.util.logging.filename
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.file.shouldExist
 import io.kotest.matchers.file.shouldNotExist

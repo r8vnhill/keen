@@ -5,7 +5,6 @@
 
 package cl.ravenhill.kuro
 
-import cl.ravenhill.keen.util.logging.`check that trying to add a child channel returns a failure`
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec

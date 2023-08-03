@@ -84,7 +84,6 @@ class Logger private constructor(val name: String) : Clearable<Logger> {
     override fun toString() = "Logger(name='$name', level=$level, outputChannel=$compositeChannel)"
 
     companion object {
-        data object
         /**
          * A map of all active loggers with their names as keys and instances of [Logger] as values.
          * `internal` for testing, should not be accessed directly
