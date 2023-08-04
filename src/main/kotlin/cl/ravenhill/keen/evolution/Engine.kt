@@ -155,7 +155,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see EvolutionResult
      */
     fun evolve(start: EvolutionState<DNA, G>) = runBlocking {
-        listeners.forEach { it.onGenerationStarted(generation) }
+        listeners.forEach { it.onGenerationStarted(generation, listOf<Phenotype<DNA, G>>()) }
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
         trace { "Pre-processing evolution start." }
@@ -186,7 +186,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         // (9) The result of the evolution is post-processed
         trace { "Post-processing evolution result." }
         val afterResult = interceptor.after(evolutionResult)
-        listeners.forEach { it.onGenerationFinished() }
+        listeners.forEach { it.onGenerationFinished(pop) }
         afterResult
     }
 

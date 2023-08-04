@@ -1,7 +1,9 @@
 package cl.ravenhill.keen.util.listeners
 
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
+import cl.ravenhill.keen.util.listeners.records.GenerationRecord
+import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
 import tech.tablesaw.api.DoubleColumn
 import tech.tablesaw.plotly.Plot
 import tech.tablesaw.plotly.components.Figure
@@ -18,7 +20,7 @@ import tech.tablesaw.plotly.traces.ScatterTrace
  * @version 1.0.0
  * @since 1.0.0
  */
-class EvolutionPlotter<DNA, G: Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>() {
+class EvolutionPlotter<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>() {
 
     /**
      * Displays a plot of the fitness of the population throughout evolution.
@@ -44,12 +46,23 @@ class EvolutionPlotter<DNA, G: Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>
      * @return A triple of the best, worst, and average fitness traces.
      */
     private fun fitnessScatterTraces(
-        before: (Double) -> Double
+        before: (Double) -> Double,
     ): Triple<ScatterTrace, ScatterTrace, ScatterTrace> {
+        val generations = evolution.generations
         // Create columns for the best, worst, and average fitness.
-        val bestColumn = DoubleColumn.create("Best fitness", bestFitness.map { before(it) })
-        val worstColumn = DoubleColumn.create("Worst fitness", worstFitness.map { before(it) })
-        val averageColumn = DoubleColumn.create("Average fitness", averageFitness.map { before(it) })
+        val bestColumn = DoubleColumn.create(
+            "Best fitness",
+            generations.map { it.population.resulting.first().fitness }.map(before)
+        )
+        val worstColumn = DoubleColumn.create("Worst fitness", generations.map {
+            it.population.resulting.last().fitness
+        }.map(before))
+        val averageColumn =
+            DoubleColumn.create("Average fitness", generations.map {
+                it.population.resulting.map { p ->
+                    p.fitness
+                }.average()
+            }.map(before))
         // Create a column for the generation number.
         val generationColumn = DoubleColumn.create("Generation", (0..generation).toList())
         // Create traces for the best, worst, and average fitness.
@@ -67,5 +80,20 @@ class EvolutionPlotter<DNA, G: Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>
             .build()
         // Return a triple of the best, worst, and average fitness traces.
         return Triple(bestFitnessScatter, worstFitnessScatter, averageFitnessScatter)
+    }
+
+    override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
+        _currentGeneration = GenerationRecord(generation)
+    }
+
+    override fun onGenerationFinished(population: Population<DNA, G>) {
+        val sorted = optimizer.sort(population)
+        _currentGeneration.population.resulting = List(sorted.size) {
+            PhenotypeRecord(
+                sorted[it].genotype.toString(),
+                sorted[it].fitness
+            )
+        }
+        evolution.generations += _currentGeneration
     }
 }

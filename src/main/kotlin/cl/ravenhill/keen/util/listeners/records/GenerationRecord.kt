@@ -7,11 +7,10 @@ package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeNegative
+import cl.ravenhill.keen.util.listeners.records.GenerationRecord.EvaluationRecord
+import cl.ravenhill.keen.util.listeners.records.GenerationRecord.SelectionRecord
 import kotlinx.serialization.Serializable
-import kotlin.properties.Delegates
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
-import kotlin.time.TimeMark
+
 /**
  * Represents a generation in a genetic algorithm run, including timing, generation number and
  * different stages of the genetic algorithm.
@@ -45,11 +44,12 @@ import kotlin.time.TimeMark
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
 @Serializable
-data class GenerationRecord(val generation: Int): AbstractRecord() {
+data class GenerationRecord(val generation: Int) : AbstractTimedRecord() {
     val alteration = AlterationRecord()
     val evaluation = EvaluationRecord()
     val offspringSelection = SelectionRecord()
     val survivorSelection = SelectionRecord()
+    val population = PopulationRecord()
 
     init {
         enforce {
@@ -62,16 +62,21 @@ data class GenerationRecord(val generation: Int): AbstractRecord() {
      * It extends [AbstractRecord], meaning it also includes start time and duration properties.
      */
     @Serializable
-    class EvaluationRecord : AbstractRecord()
+    class EvaluationRecord : AbstractTimedRecord()
 
     /**
      * This class represents a selection phase (either survivor or offspring selection) of a
      * generation in a genetic algorithm.
-     * It extends [AbstractRecord], meaning it also includes start time and duration properties.
+     * It extends [AbstractTimedRecord], meaning it also includes start time and duration properties.
      */
     @Serializable
-    class SelectionRecord : AbstractRecord()
+    class SelectionRecord : AbstractTimedRecord()
 
     @Serializable
-    class AlterationRecord : AbstractRecord()
+    class AlterationRecord : AbstractTimedRecord()
+
+    @Serializable
+    class PopulationRecord : AbstractRecord() {
+        lateinit var resulting: List<PhenotypeRecord>
+    }
 }

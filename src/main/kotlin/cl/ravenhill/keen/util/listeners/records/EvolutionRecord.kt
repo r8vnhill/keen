@@ -42,7 +42,7 @@ import kotlin.time.TimeMark
 @Serializable
 data class EvolutionRecord<DNA, G : Gene<DNA, G>>(
     val generations: MutableList<GenerationRecord> = mutableListOf(),
-) : AbstractRecord() {
+) : AbstractTimedRecord() {
     val initialization = InitializationRecord()
 
     /**
@@ -52,5 +52,5 @@ data class EvolutionRecord<DNA, G : Gene<DNA, G>>(
      * the initialization phase is defined.
      */
     @Serializable
-    class InitializationRecord : AbstractRecord()
+    class InitializationRecord : AbstractTimedRecord()
 }

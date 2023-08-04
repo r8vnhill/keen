@@ -1,7 +1,9 @@
 package cl.ravenhill.keen.util.listeners
 
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
+import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
 import kotlin.time.ExperimentalTime
 
 /**
@@ -73,8 +75,8 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         } ms
         |--> Generation: ${evolution.generations.last().generation}
         |--> Steady generations: $steadyGenerations
-        |--> Fittest: ${population.firstOrNull().toString().replace("\n", "; ")}
-        |--> Best fitness: ${bestFitness.lastOrNull()}
+        |--> Fittest: ${generations.last().population.resulting.first().genotype}
+        |--> Best fitness: ${generations.last().population.resulting.first().fitness}
         """.trimIndent()
     }
 
@@ -82,17 +84,22 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      * Called when a new generation starts, marks the start time of the generation.
      */
     @ExperimentalTime
-    override fun onGenerationStarted(generation: Int) {
+    override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
         _currentGeneration = GenerationRecord(generation).apply {
             startTime = timeSource.markNow()
+
         }
     }
 
     /**
      * Called when the current generation finishes, records the duration of the generation.
      */
-    override fun onGenerationFinished() {
+    override fun onGenerationFinished(population: Population<DNA, G>) {
         _currentGeneration.duration = _currentGeneration.startTime.elapsedNow()
+        val sorted = optimizer.sort(population)
+        _currentGeneration.population.resulting = List(sorted.size) {
+            PhenotypeRecord("${population[it].genotype}", population[it].fitness)
+        }
         evolution.generations += _currentGeneration
     }
 

@@ -31,7 +31,9 @@ import kotlin.time.TimeMark
  *                    it will throw an exception.
  */
 @Serializable
-abstract class AbstractRecord {
+abstract class AbstractRecord
+
+abstract class AbstractTimedRecord: AbstractRecord() {
     @OptIn(ExperimentalTime::class)
     lateinit var startTime: TimeMark
     var duration: Duration by Delegates.notNull()

@@ -16,7 +16,6 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * [PhenotypeOptimizer] that prioritizes the minimum of two values.
  */
 class FitnessMinimizer<DNA, G: Gene<DNA, G>> : PhenotypeOptimizer<DNA, G> {
-
     override fun compare(p1: Phenotype<*, *>, p2: Phenotype<*, *>) = p2.fitness compareTo p1.fitness
 
     override fun toString() = "FitnessMinimizer"
