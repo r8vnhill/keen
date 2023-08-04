@@ -5,6 +5,7 @@ import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
+import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import kotlin.reflect.KProperty
 import kotlin.time.ExperimentalTime
@@ -30,10 +31,6 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
  * @property evolutionResult The result of the evolution after each generation.
  * @property population The current population of candidate solutions.
  * @property optimizer The phenotype optimizer used in the evolution.
- * @property evolutionTime The total time taken for the evolution so far.
- * @property bestFitness The list of best fitness values across generations.
- * @property worstFitness The list of worst fitness values across generations.
- * @property averageFitness The list of average fitness values across generations.
  * @property fittest The fittest phenotype in the current generation.
  * @property steadyGenerations The number of generations with no improvement.
  * @property generation The current generation.
@@ -48,10 +45,6 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     var evolutionResult: EvolutionResult<DNA, G>
     var population: Population<DNA, G>
     var optimizer: PhenotypeOptimizer<DNA, G>
-    var evolutionTime: Long
-    var bestFitness: MutableList<Double>
-    var worstFitness: MutableList<Double>
-    var averageFitness: MutableList<Double>
     val fittest: Phenotype<DNA, G>?
     var steadyGenerations: Int
     var generation: Int
@@ -169,5 +162,28 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
 
     fun onEvolutionFinished() {
         // Intentionally left blank
+    }
+
+    companion object {
+        fun computeSteadyGenerations(
+            lastGeneration: GenerationRecord,
+            currentGeneration: GenerationRecord,
+        ) = lastGeneration.population.resulting.let { previous ->
+            if (previous.first().fitness == currentGeneration.population.resulting.first().fitness) {
+                lastGeneration.steady + 1
+            } else {
+                0
+            }
+        }
+
+        fun <DNA, G : Gene<DNA, G>> computePopulation(
+            optimizer: PhenotypeOptimizer<DNA, G>,
+            population: Population<DNA, G>,
+        ): List<PhenotypeRecord> {
+            val sorted = optimizer.sort(population)
+            return List(sorted.size) {
+                PhenotypeRecord("${sorted[it].genotype}", sorted[it].fitness)
+            }
+        }
     }
 }

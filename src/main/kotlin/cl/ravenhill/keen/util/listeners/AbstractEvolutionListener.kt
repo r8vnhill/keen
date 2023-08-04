@@ -26,9 +26,7 @@ import kotlin.time.TimeSource
  *
  * @property population The population to calculate statistics from.
  * @property optimizer The optimizer used to calculate the fitness.
- * @property evolutionTime The time it took to evolve the population.
  * @property fittest The fittest phenotype.
- * @property bestFitness The best fitness.
  * @property steadyGenerations The number of generations without improvement.
  * @property generation The current generation.
  */
@@ -42,15 +40,12 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
         }
     override var population: Population<DNA, G> = listOf()
     override var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
-    override var evolutionTime: Long = Long.MAX_VALUE
-    override var bestFitness: MutableList<Double> = mutableListOf()
-    override var worstFitness: MutableList<Double> = mutableListOf()
-    override var averageFitness: MutableList<Double> = mutableListOf()
     override val fittest: Phenotype<DNA, G>?
         get() = _fittest
     override var steadyGenerations: Int = 0
     override var generation: Int = 0
     protected var evolution: EvolutionRecord<DNA, G> = EvolutionRecord()
+    protected val generations get() = evolution.generations
     @Suppress("PropertyName")
     protected lateinit var _currentGeneration: GenerationRecord
     override val currentGeneration: GenerationRecord get() = _currentGeneration
@@ -60,9 +55,6 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     override fun onResultUpdated() {
         optimizer = evolutionResult.optimizer
         population = optimizer.sort(evolutionResult.population)
-        bestFitness += population.first().fitness
-        worstFitness += population.last().fitness
-        averageFitness += population.map { it.fitness }.average()
         _fittest = population.first()
         generation = evolutionResult.generation
     }

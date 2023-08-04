@@ -116,7 +116,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
      */
     override fun evolve(): EvolutionResult<DNA, G> {
         listeners.forEach { it.onEvolutionStart() }
-        val initTime = clock.millis()
         info { "Starting evolution process." }
         var evolution =
             EvolutionState.empty<DNA, G>().apply { debug { "Started an empty evolution." } }
@@ -130,7 +129,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
             bestFitness = result.best.fitness
             evolution = result.next()
         }
-        listeners.forEach { it.evolutionTime = clock.millis() - initTime }
         info { "Evolution process finished" }
         return result.also {
             listeners.forEach { it.onEvolutionFinished() }
@@ -196,7 +194,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param state the starting state of the evolution at this generation.
      * @return the initial population of the evolution.
      */
-    private fun startEvolution(state: EvolutionState<DNA, G>): EvolutionState<DNA, G> {
+    fun startEvolution(state: EvolutionState<DNA, G>): EvolutionState<DNA, G> {
         return if (state.population.isEmpty()) {
             listeners.forEach { it.onInitializationStarted() }
             info { "Initial population is empty, creating a new one." }
@@ -225,7 +223,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param force if true, the fitness will be evaluated even if it has already been evaluated.
      * @return the evaluated population.
      */
-    private fun evaluate(
+    fun evaluate(
         evolution: EvolutionState<DNA, G>,
         force: Boolean = false,
     ): Population<DNA, G> {
@@ -250,7 +248,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param population the evaluated population.
      * @return the offspring.
      */
-    private fun selectOffspring(population: Population<DNA, G>): Population<DNA, G> {
+    fun selectOffspring(population: Population<DNA, G>): Population<DNA, G> {
         listeners.forEach { it.onOffspringSelectionStarted() }
         debug { "Selecting offspring." }
         return offspringSelector(
@@ -269,7 +267,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param population the evaluated population.
      * @return the survivors.
      */
-    private fun selectSurvivors(population: List<Phenotype<DNA, G>>): Population<DNA, G> {
+    fun selectSurvivors(population: List<Phenotype<DNA, G>>): Population<DNA, G> {
         listeners.forEach { it.onSurvivorSelectionStarted() }
         debug { "Selecting survivors." }
         return survivorSelector(
@@ -290,7 +288,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param evolution the current state of the evolution.
      * @return the altered population.
      */
-    private fun alter(
+    fun alter(
         population: Population<DNA, G>,
         evolution: EvolutionState<DNA, G>,
     ): AltererResult<DNA, G> {

@@ -7,18 +7,24 @@ import kotlin.time.ExperimentalTime
 
 
 /**
- * A statistic printer that prints out the evolutionary results at a given interval.
+ * The `EvolutionPrinter` class provides functionality to print out results of an evolutionary
+ * process periodically. This is useful for tracking the progress of the genetic algorithm,
+ * including the duration of generations, and the fitness of populations within each generation.
  *
- * @param every The interval at which to print out the evolutionary results.
- * @param DNA The type of the entities being evolved.
+ * @param every The interval (in terms of generations) at which the evolutionary results should be printed.
+ * @param DNA The type parameter representing the entities being evolved.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 1.0.0
+ * @version 2.0.0
  * @since 1.0.0
  */
 class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
         AbstractEvolutionListener<DNA, G>() {
 
+    /**
+     * Updates the result of evolution and checks if the generation meets the interval for printing.
+     * If so, the evolutionary results are printed.
+     */
     override fun onResultUpdated() {
         super.onResultUpdated()
         if (evolutionResult.generation % every == 0) {
@@ -27,14 +33,29 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
     }
 
     /**
-     * Called when the current generation finishes, records the duration of the generation.
+     * Invoked when the current generation finishes its execution. This method records the duration of
+     * the generation, sorts the population and updates the steady generations count. It also adds the
+     * current generation to the list of processed generations.
      */
     @ExperimentalTime
     override fun onGenerationFinished(population: Population<DNA, G>) {
         _currentGeneration.duration = _currentGeneration.startTime.elapsedNow()
         evolution.generations += _currentGeneration
+        // Sort population and set resulting
+        _currentGeneration.population.resulting =
+            EvolutionListener.computePopulation(optimizer, population)
+        // Calculate steady generations
+        generations.lastOrNull()?.let { lastGeneration ->
+            EvolutionListener.computeSteadyGenerations(lastGeneration, _currentGeneration)
+        }
+        // Add current generation to the list of generations
+        _currentGeneration.also { evolution.generations += it }
     }
 
+    /**
+     * Invoked when a new generation starts. It creates a new GenerationRecord instance and
+     * marks the start time of the generation.
+     */
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
         _currentGeneration = GenerationRecord(generation).apply {
@@ -53,11 +74,13 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
         |--> Min generation time: ${
             evolution.generations.minOfOrNull { it.duration.inWholeMilliseconds }
         } ms
-        |--> Steady generations: $steadyGenerations
-        |--> Best fitness: ${bestFitness.lastOrNull()}
-        |--> Worst fitness: ${worstFitness.lastOrNull()}
-        |--> Average fitness: ${averageFitness.lastOrNull()}
-        |--> Fittest: ${population.firstOrNull()}
+        |--> Steady generations: ${generations.last().steady}
+        |--> Best fitness: ${generations.last().population.resulting.first().fitness}
+        |--> Worst fitness: ${generations.last().population.resulting.last().fitness}
+        |--> Average fitness: ${
+            generations.last().population.resulting.map { it.fitness }.average()
+        }
+        |--> Fittest: ${generations.last().population.resulting.first().genotype}
         |<<<>>>""".trimMargin()
     }
 }

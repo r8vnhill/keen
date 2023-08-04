@@ -16,6 +16,7 @@ import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import kotlin.math.PI
@@ -48,6 +49,7 @@ fun main() {
         limits = listOf(SteadyGenerations(100))
         listeners = listOf(
             EvolutionPlotter(),
+            EvolutionPrinter(10),
             EvolutionSummary()
         )
     }

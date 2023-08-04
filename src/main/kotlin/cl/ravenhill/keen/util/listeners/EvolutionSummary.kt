@@ -7,16 +7,18 @@ import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
 import kotlin.time.ExperimentalTime
 
 /**
- * An implementation of [EvolutionListener] that collects various statistics from an evolutionary
- * algorithm run and provides a comprehensive summary.
+ * This class is an implementation of [EvolutionListener] that captures and reports statistics
+ * related to the execution of a genetic algorithm.
  *
- * It collects and calculates various metrics such as initialization time, evaluation times,
- * selection times, alteration times, and evolution results.
- * These metrics are captured for every generation and can be used to track and analyze the
- * performance of the genetic algorithm over time.
+ * [EvolutionSummary] is designed to monitor the performance of the algorithm over the course
+ * of its execution, providing comprehensive and detailed insights on various parameters like
+ * initialization time, evaluation time, selection times, alteration times, and results of the evolution.
  *
- * @param DNA The type of the gene's value.
- * @param G The type of the gene.
+ * This class can be used in any context where tracking and reporting the performance of the
+ * genetic algorithm is required for analysis and fine-tuning.
+ *
+ * @param DNA represents the type of the gene's value.
+ * @param G specifies the type of the gene.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -29,7 +31,6 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      * Returns a string representation of the evolution summary, formatted for display.
      */
     override fun toString(): String {
-        val generations = evolution.generations
         return """
         ------------ Evolution Summary ---------------
         |--> Initialization time: ${evolution.initialization.duration} ms
@@ -74,20 +75,24 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
             generations.minOfOrNull { it.duration.inWholeMilliseconds }
         } ms
         |--> Generation: ${evolution.generations.last().generation}
-        |--> Steady generations: $steadyGenerations
+        |--> Steady generations: ${evolution.generations.last().steady}
         |--> Fittest: ${generations.last().population.resulting.first().genotype}
         |--> Best fitness: ${generations.last().population.resulting.first().fitness}
         """.trimIndent()
     }
 
     /**
-     * Called when a new generation starts, marks the start time of the generation.
+     * This method is invoked at the start of each new generation in the evolution process.
+     * It records the start time of the generation which will be used to calculate the
+     * duration of the generation when it finishes.
+     *
+     * @param generation The number of the generation that is starting.
+     * @param population The population of the generation that is starting.
      */
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
         _currentGeneration = GenerationRecord(generation).apply {
             startTime = timeSource.markNow()
-
         }
     }
 
@@ -95,12 +100,18 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      * Called when the current generation finishes, records the duration of the generation.
      */
     override fun onGenerationFinished(population: Population<DNA, G>) {
+        // Calculate duration
         _currentGeneration.duration = _currentGeneration.startTime.elapsedNow()
+        // Sort population and set resulting
         val sorted = optimizer.sort(population)
         _currentGeneration.population.resulting = List(sorted.size) {
-            PhenotypeRecord("${population[it].genotype}", population[it].fitness)
+            PhenotypeRecord("${sorted[it].genotype}", sorted[it].fitness)
         }
-        evolution.generations += _currentGeneration
+        generations.lastOrNull()?.let { lastGeneration ->
+            EvolutionListener.computeSteadyGenerations(lastGeneration, _currentGeneration)
+        }
+        // Add current generation to the list of generations
+        _currentGeneration.also { evolution.generations += it }
     }
 
     /**
