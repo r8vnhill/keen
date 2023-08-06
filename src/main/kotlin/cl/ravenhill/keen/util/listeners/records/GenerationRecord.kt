@@ -10,7 +10,6 @@ import cl.ravenhill.enforcer.requirements.IntRequirement.BeNegative
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.EvaluationRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.SelectionRecord
 import kotlinx.serialization.Serializable
-import kotlin.properties.Delegates
 
 /**
  * A comprehensive representation of a generation in the execution of a genetic algorithm. This class
@@ -40,7 +39,13 @@ data class GenerationRecord(val generation: Int) : AbstractTimedRecord() {
     val offspringSelection = SelectionRecord()
     val survivorSelection = SelectionRecord()
     val population = PopulationRecord()
-    var steady:Int = 0
+    var steady: Int = 0
+        set(value) {
+            enforce {
+                "The generation number [$value] must be positive" { value mustNot BeNegative }
+            }
+            field = value
+        }
 
     init {
         enforce {

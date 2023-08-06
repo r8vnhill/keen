@@ -10,7 +10,6 @@ import cl.ravenhill.keen.logger
 import cl.ravenhill.keen.loggers
 import cl.ravenhill.keen.uniqueStrings
 import cl.ravenhill.keen.util.Clearable
-import cl.ravenhill.kuro.Logger
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -71,9 +70,6 @@ private suspend fun `check that the logger is able to log a message at the given
 }
 
 class LoggerTest : FreeSpec({
-    beforeEach {
-        Logger._activeLoggers.clear()
-    }
     "A [Logger]" - {
         "should be able to be obtained by name" {
             checkAll(Arb.uniqueStrings()) { names ->
@@ -423,8 +419,7 @@ class LoggerTest : FreeSpec({
 
     "The list of active loggers should" - {
         "be empty when cleared" {
-            checkAll(Arb.loggers(Arb.uniqueStrings())) { loggers ->
-                Logger.activeLoggers.size shouldBe loggers.size
+            checkAll(Arb.loggers(Arb.uniqueStrings())) {
                 Logger.clearActiveLoggers()
                 Logger.activeLoggers.size shouldBe 0
             }

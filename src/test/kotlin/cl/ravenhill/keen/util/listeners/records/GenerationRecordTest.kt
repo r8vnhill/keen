@@ -13,6 +13,7 @@ import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.reflection.shouldBeLateInit
@@ -51,7 +52,7 @@ class GenerationRecordTest : FreeSpec({
                 checkAll(Arb.generationRecord()) { data ->
                     val record = data.toGenerationRecord()
                     record::startTime.shouldBeLateInit()
-                    shouldThrowWithMessage<UninitializedPropertyAccessException>("lateinit property initTime has not been initialized") {
+                    shouldThrowWithMessage<UninitializedPropertyAccessException>("lateinit property startTime has not been initialized") {
                         record.startTime
                     }
                 }
@@ -63,6 +64,56 @@ class GenerationRecordTest : FreeSpec({
                     record.startTime = data.initTime
                     record.startTime shouldBe data.initTime
                 }
+            }
+        }
+
+        "should have a steady generation number that" - {
+            "is initialized to 0" {
+                checkAll(Arb.generationRecord()) { data ->
+                    val record = data.toGenerationRecord()
+                    record.steady shouldBe 0
+                }
+            }
+
+            "can be set to a non-negative integer" {
+                checkAll(Arb.generationRecord(), Arb.nonNegativeInt()) { data, steady ->
+                    val record = data.toGenerationRecord()
+                    record.steady shouldBe 0
+                    record.steady = steady
+                    record.steady shouldBe steady
+                }
+            }
+
+            "should throw an exception if the generation number is negative" {
+                checkAll(Arb.generationRecord(), Arb.negativeInt()) { data, steady ->
+                    val record = data.toGenerationRecord()
+                    shouldThrowUnit<EnforcementException> {
+                        record.steady = steady
+                    }.shouldHaveInfringement<IntRequirementException>(
+                        unfulfilledConstraint("The generation number [$steady] must be positive")
+                    )
+                }
+            }
+        }
+
+        "should have a [PopulationRecord] that" - {
+            "have a resulting population that" - {
+                "is late initialized" {
+                    checkAll(Arb.generationRecord()) { data ->
+                        val record = data.toGenerationRecord()
+                        shouldThrowWithMessage<UninitializedPropertyAccessException>("lateinit property resulting has not been initialized") {
+                            record.population.resulting
+                        }
+                    }
+                }
+                // TODO: Implement when Arb.population is implemented.
+//                "can be initialized" {
+//                    checkAll(Arb.generationRecord(), Arb.populationRecord()) { data, population ->
+//                        val record = data.toGenerationRecord()
+//                        record.population = population
+//                        record.population shouldBe population
+//                    }
+//                }
             }
         }
     }
