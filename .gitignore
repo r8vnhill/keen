@@ -156,3 +156,6 @@ gradle-app.setting
 
 # Ignore Java Heap Profile (HPROF) files that are created when heap dumps are enabled for debugging
 *.hprof
+
+# Ignore JSON files
+*.json
