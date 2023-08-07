@@ -4,8 +4,6 @@
  */
 
 
-@file:OptIn(ExperimentalTime::class, ExperimentalTime::class)
-
 package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.enforcer.EnforcementException
@@ -16,6 +14,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.reflection.shouldBeLateInit
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -28,7 +27,6 @@ import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
 
-@OptIn(ExperimentalTime::class)
 class GenerationRecordTest : FreeSpec({
     "A [GenerationRecord]" - {
         "can be created with a generation number" {
@@ -47,7 +45,7 @@ class GenerationRecordTest : FreeSpec({
             }
         }
 
-        "should have an initial time that" - {
+        "should have an ``initial time`` that" - {
             "is late initialized" {
                 checkAll(Arb.generationRecord()) { data ->
                     val record = data.toGenerationRecord()
@@ -98,12 +96,10 @@ class GenerationRecordTest : FreeSpec({
 
         "should have a [PopulationRecord] that" - {
             "have a resulting population that" - {
-                "is late initialized" {
+                "is initialized as an empty list" {
                     checkAll(Arb.generationRecord()) { data ->
                         val record = data.toGenerationRecord()
-                        shouldThrowWithMessage<UninitializedPropertyAccessException>("lateinit property resulting has not been initialized") {
-                            record.population.resulting
-                        }
+                        record.population.resulting.shouldBeEmpty()
                     }
                 }
                 // TODO: Implement when Arb.population is implemented.

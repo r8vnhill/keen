@@ -63,8 +63,10 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
         }
     }
 
-    override fun toString(): String {
-        return """ === Generation $generation ===
+    override fun toString(): String = if (evolution.generations.isEmpty()) {
+        "No generations have been processed yet."
+    } else {
+        """ === Generation $generation ===
         |--> Average generation time: ${
             evolution.generations.map { it.duration.inWholeMilliseconds }.average()
         } ms

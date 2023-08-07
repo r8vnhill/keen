@@ -12,6 +12,9 @@ import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.listeners.serializers.JsonEvolutionSerializer
+import java.io.File
+import kotlin.time.ExperimentalTime
 
 /***************************************************************************************************
  * A program that evolves a string of characters to match a target string using a genetic algorithm.
@@ -39,6 +42,7 @@ private fun matches(genotype: Genotype<Char, CharGene>) = genotype.flatten()
 /**
  * Runs the genetic algorithm to evolve a string of characters that matches the target string.
  */
+@ExperimentalTime
 fun main() {
     val engine = engine(::matches, genotype {
         chromosome { chars { size = TARGET.length } }
@@ -47,11 +51,12 @@ fun main() {
         survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(TargetFitness(TARGET.length.toDouble()))
-        listeners = listOf(EvolutionPrinter(every = 1), EvolutionSummary()/*, EvolutionPlotter()*/)
+        listeners = listOf(EvolutionPrinter(every = 1), EvolutionSummary(), JsonEvolutionSerializer())
     }
     val evolvedPopulation = engine.evolve()
     println("Solution found in ${evolvedPopulation.generation} generations")
     println("Solution: ${evolvedPopulation.best.genotype}")
     println("With fitness: ${evolvedPopulation.best.fitness}")
     println("${engine.listeners[1]}")
+    (engine.listeners.last() as JsonEvolutionSerializer).saveToFile(File("evolution.json"))
 }

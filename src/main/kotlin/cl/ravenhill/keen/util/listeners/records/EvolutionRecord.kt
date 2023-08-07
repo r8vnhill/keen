@@ -9,11 +9,10 @@
 package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.records.EvolutionRecord.InitializationRecord
 import kotlinx.serialization.Serializable
-import kotlin.properties.Delegates
-import kotlin.time.Duration
+import kotlinx.serialization.Transient
 import kotlin.time.ExperimentalTime
-import kotlin.time.TimeMark
 
 /**
  * This class represents a record of an evolutionary process, which can be serialized for later use

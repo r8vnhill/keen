@@ -80,6 +80,6 @@ data class GenerationRecord(val generation: Int) : AbstractTimedRecord() {
      */
     @Serializable
     class PopulationRecord : AbstractRecord() {
-        lateinit var resulting: List<PhenotypeRecord>
+        var resulting: List<PhenotypeRecord> = listOf()
     }
 }
