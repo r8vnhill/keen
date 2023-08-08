@@ -11,9 +11,9 @@ plugins {
     // Enables signing published artifacts
     signing
     // Enables generating documentation
-    id("org.jetbrains.dokka") version "1.7.20"
+    id("org.jetbrains.dokka") version "1.8.20"
     // Enables checking Kotlin code style
-    id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
+    id("org.jlleitschuh.gradle.ktlint") version "11.5.1"
     // Enables Kotlin serialization
     kotlin("plugin.serialization") version "1.9.0"
 }
@@ -32,9 +32,9 @@ repositories {
 
 dependencies {
     // region : -== KOTLIN STD LIB ==-
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20-RC")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     // endregion KOTLIN STD LIB
 
@@ -46,12 +46,12 @@ dependencies {
     api("tech.tablesaw:tablesaw-core:0.43.1")
     @Suppress("VulnerableLibrariesLocal")
     api("tech.tablesaw:tablesaw-jsplot:0.43.1")
-    implementation("org.slf4j:slf4j-simple:2.0.5")
+    implementation("org.slf4j:slf4j-simple:2.0.7")
     // endregion PLOTTING
 
     // region : -== TESTING ==-
-    implementation("io.kotest.extensions:kotest-property-datetime:1.1.0")
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
+    testImplementation("io.kotest.extensions:kotest-property-datetime:1.1.0")
     testImplementation("io.kotest:kotest-assertions-core:5.5.5")
     testImplementation("io.kotest:kotest-framework-datatest:5.5.5")
     testImplementation("io.kotest:kotest-property:5.5.5")
@@ -59,7 +59,7 @@ dependencies {
     // endregion TESTING
 
     // region : -== DOKKA ==-
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.20-dev-213")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.20")
     // endregion DOKKA
 }
 
