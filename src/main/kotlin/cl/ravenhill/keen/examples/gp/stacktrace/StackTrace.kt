@@ -46,7 +46,6 @@ class InstructionChromosome(override val genes: List<InstructionGene>) :
 
     class Factory(override var size: Int, val geneFactory: () -> InstructionGene) :
             Chromosome.AbstractFactory<Instruction, InstructionGene>() {
-        @OptIn(ExperimentalStdlibApi::class)
         override fun make() = InstructionChromosome((0..<size).map { geneFactory() })
     }
 }
