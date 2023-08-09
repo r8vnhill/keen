@@ -62,3 +62,5 @@ Examples of @tags include @param, @return, @throws, etc.
 ### 8. Author and version
 
 When documenting a class, object or interface, you should always include the @author, @since and @version tags.
+
+Never include example in classes that end with "Test"

@@ -25,6 +25,19 @@ import io.kotest.property.checkAll
 import kotlin.time.TimeSource
 
 
+/**
+ * Test class for validating functionalities of [GenerationRecord].
+ *
+ * `GenerationRecord` represents a record of a particular generation in an evolutionary algorithm,
+ * storing essential data about that generation such as its number, start time, steady state and the
+ * associated population.
+ * This test ensures that the basic functionalities of the record like creation, initialization, and
+ * validations are working as intended.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
 class GenerationRecordTest : FreeSpec({
     "A [GenerationRecord]" - {
         "can be created with a generation number" {

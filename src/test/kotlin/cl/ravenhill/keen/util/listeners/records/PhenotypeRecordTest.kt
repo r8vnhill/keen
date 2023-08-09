@@ -14,6 +14,13 @@ import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 
 
+/**
+ * Test class for validating functionalities of [PhenotypeRecord].
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
 class PhenotypeRecordTest : FreeSpec({
     "A [PhenotypeRecord]" - {
         "can be created with a genotype and fitness" {

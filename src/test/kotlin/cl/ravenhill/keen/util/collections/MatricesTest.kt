@@ -25,9 +25,14 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 
+/**
+ * Test class for various matrix related functionalities.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
 class MatricesTest : FreeSpec({
-
-
     "Transposing a list of lists should" - {
         "return an empty list if the list is empty" {
             emptyList<List<Any>>().transpose() shouldBe emptyList()

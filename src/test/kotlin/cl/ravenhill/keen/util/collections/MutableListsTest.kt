@@ -9,16 +9,12 @@ import cl.ravenhill.any
 import cl.ravenhill.enforcer.CollectionRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
-import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.keen.random
-import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.addIfAbsent
 import cl.ravenhill.keen.util.dropFirst
 import cl.ravenhill.keen.util.mutableList
-import cl.ravenhill.keen.util.shouldAny
 import cl.ravenhill.keen.util.swap
-import cl.ravenhill.keen.util.transpose
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
@@ -42,8 +38,20 @@ import io.kotest.property.arbitrary.set
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
+/**
+ * A test suite for validating operations on mutable lists.
+ *
+ * This test suite is aimed at checking:
+ * - Behavior when adding an element to a list if it's absent.
+ * - Removing the first n elements from a list.
+ * - Swapping two elements inside a list.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
 @ExperimentalStdlibApi
-class CollectionsTest : FreeSpec({
+class MutableListsTest : FreeSpec({
 
     "Adding an element if absent should" - {
         "Add the element if it's not present" {

@@ -11,31 +11,31 @@ import kotlin.reflect.KProperty
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
+
 /**
- * Type alias for a list of [EvolutionListener] instances.
+ * Represents a list of [EvolutionListener] instances.
  */
 typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
 
 /**
- * Interface for a listener that monitors and responds to different stages of the evolution process
- * in a genetic algorithm.
+ * An interface for monitoring and responding to the various stages of the
+ * genetic algorithm's evolution process.
  *
- * The [EvolutionListener] interface is designed to provide hooks for various phases and events in
- * the genetic evolution process, enabling monitoring, logging, or custom handling of different
- * aspects of the algorithm. These hooks allow for detailed insights into the evolution's progress
- * and performance metrics.
+ * It offers hooks at different phases of the evolution, enabling
+ * enhanced monitoring, logging, or custom behaviors. It's an essential tool for
+ * gaining deep insights into the evolution's progress and metrics.
  *
- * Implementing classes can use these hooks to track metrics, report progress, or modify behavior at
- * different stages.
+ * Classes implementing this interface can use these hooks for a variety of purposes
+ * such as metrics tracking, progress reporting, or behavior modifications.
  *
- * @property evolutionResult The result of the evolution after each generation.
- * @property population The current population of candidate solutions.
- * @property optimizer The phenotype optimizer used in the evolution.
- * @property fittest The fittest phenotype in the current generation.
- * @property steadyGenerations The number of generations with no improvement.
- * @property generation The current generation.
- * @property currentGeneration The [GenerationRecord] for the current generation.
- * @property timeSource The source of time measurement.
+ * @property evolutionResult Result after each evolution generation.
+ * @property population Current set of candidate solutions.
+ * @property optimizer Optimizer utilized during evolution.
+ * @property fittest Most adapted phenotype in the current generation.
+ * @property steadyGenerations Count of generations without improvements.
+ * @property generation Current generation number.
+ * @property currentGeneration Details of the current generation.
+ * @property timeSource Time measurement source.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.0.0
@@ -56,16 +56,12 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     /**
      * Called whenever the result of the evolution is updated.
      */
-    fun onResultUpdated() {
-        // Intentionally left blank
-    }
+    fun onResultUpdated() = Unit
 
     /**
      * Called when the evolution process has ended (e.g., when the termination criteria are met).
      */
-    fun onEvolutionEnded() {
-        // Intentionally left blank
-    }
+    fun onEvolutionEnded() = Unit
 
     /**
      * Called when the generation value has changed.
@@ -73,98 +69,101 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
      * @param old The old generation value.
      * @param new The new generation value.
      */
-    fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) {
-        // Intentionally left blank
-    }
+    fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) = Unit
 
     /**
      * Called when a new generation has started.
      * @param generation The generation number.
      */
-    fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        // Intentionally left blank
-    }
+    fun onGenerationStarted(generation: Int, population: Population<DNA, G>) = Unit
 
     /**
      * Called when the current generation has finished.
      */
-    fun onGenerationFinished(population: Population<DNA, G>) {
-        // Intentionally left blank
-    }
+    fun onGenerationFinished(population: Population<DNA, G>) = Unit
 
     /**
      * Called when the initialization phase has started.
      */
-    fun onInitializationStarted() {
-        // Intentionally left blank
-    }
+    fun onInitializationStarted() = Unit
 
     /**
      * Called when the initialization phase has finished.
      */
-    fun onInitializationFinished() {
-        // Intentionally left blank
-    }
+    fun onInitializationFinished() = Unit
 
     /**
      * Called when the evaluation phase has started.
      */
-    fun onEvaluationStarted() {
-        // Intentionally left blank
-    }
+    fun onEvaluationStarted() = Unit
 
     /**
      * Called when the evaluation phase has finished.
      */
-    fun onEvaluationFinished() {
-        // Intentionally left blank
-    }
+    fun onEvaluationFinished() = Unit
 
     /**
      * Called when the offspring selection phase has started.
      */
-    fun onOffspringSelectionStarted() {
-        // Intentionally left blank
-    }
+    fun onOffspringSelectionStarted() = Unit
 
     /**
      * Called when the offspring selection phase has finished.
      */
-    fun onOffspringSelectionFinished() {
-        // Intentionally left blank
-    }
+    fun onOffspringSelectionFinished() = Unit
 
     /**
      * Called when the survivor selection phase has started.
      */
-    fun onSurvivorSelectionStarted() {
-        // Intentionally left blank
-    }
+    fun onSurvivorSelectionStarted() = Unit
 
     /**
      * Called when the survivor selection phase has finished.
      */
-    fun onSurvivorSelectionFinished() {
-        // Intentionally left blank
-    }
+    fun onSurvivorSelectionFinished() = Unit
 
-    fun onAlterationStarted() {
-        // Intentionally left blank
-    }
+    /**
+     * Called when the alteration phase begins.
+     *
+     * Alteration typically involves operations like mutation and crossover. This hook can be
+     * used to track or modify any activities at the onset of the alteration process.
+     */
+    fun onAlterationStarted() = Unit
 
-    fun onAlterationFinished() {
-        // Intentionally left blank
-    }
+    /**
+     * Called when the alteration phase has concluded.
+     *
+     * This hook can be used to capture any metrics or insights about the alterations performed
+     * during the generation, such as mutation rates or successful crossovers.
+     */
+    fun onAlterationFinished() = Unit
 
-    fun onEvolutionStart() {
-        // Intentionally left blank
-    }
+    /**
+     * Called at the commencement of the entire evolution process.
+     *
+     * Useful for any setup or initial logging operations that need to be performed right
+     * before the evolution begins.
+     */
+    fun onEvolutionStart() = Unit
 
-    fun onEvolutionFinished() {
-        // Intentionally left blank
-    }
+    /**
+     * Called at the end of the entire evolution process.
+     *
+     * Suitable for final logging, cleanup, or any post-processing activities required after
+     * the evolution concludes.
+     */
+    fun onEvolutionFinished() = Unit
 
     companion object {
+
+        /**
+         * Computes the number of steady generations based on the last and current generation.
+         *
+         * @param lastGeneration The previous generation record.
+         * @param currentGeneration The current generation record.
+         * @return Returns incremented steady count if the fitness of the fittest individual remains the same,
+         * otherwise, returns 0.
+         */
         fun computeSteadyGenerations(
             lastGeneration: GenerationRecord,
             currentGeneration: GenerationRecord,
@@ -176,6 +175,15 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
             }
         }
 
+        /**
+         * Computes the population's phenotype records based on the optimizer and the given population.
+         *
+         * This method sorts the population based on the optimizer and returns a list of phenotype records.
+         *
+         * @param optimizer The phenotype optimizer used for sorting.
+         * @param population The current population of candidate solutions.
+         * @return A list of phenotype records after sorting the population.
+         */
         fun <DNA, G : Gene<DNA, G>> computePopulation(
             optimizer: PhenotypeOptimizer<DNA, G>,
             population: Population<DNA, G>,
@@ -187,3 +195,4 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
         }
     }
 }
+

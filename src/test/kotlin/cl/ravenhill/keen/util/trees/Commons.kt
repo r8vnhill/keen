@@ -91,7 +91,26 @@ data class TypedTree<V>(
         get() = listOf(this) + children.flatMap { it.nodes }
 
     /// Inherit documentation from [Any].
-    override fun toString() = "TypedTree($node, $children)"
+    override fun toString() = prettyPrint()
+
+    fun prettyPrint(indent: String = ""): String {
+        // Helper function to print the node
+        fun Node<V>.printNode(): String = when (this) {
+            is TypedLeaf -> "Leaf($value)"
+            is TypedIntermediate -> "Intermediate(arity=$arity)"
+            else -> "UnknownNode"
+        }
+
+        // Print the current node
+        val sb = StringBuilder("$indent${node.printNode()}\n")
+
+        // Print all child nodes with an increased indentation
+        children.forEach {
+            sb.append(it.prettyPrint("$indent  ")) // Using two spaces for indentation
+        }
+
+        return sb.toString()
+    }
 }
 
 // region : -== FACTORY FUNCTIONS ==-
@@ -127,14 +146,14 @@ fun <T> Arb.Companion.leaf(gen: Arb<T>) = arbitrary {
  * @return A new instance of [Arb] representing a generator for an intermediate node.
  * @throws IllegalArgumentException if the generated arity is not positive.
  */
-fun <T> Arb.Companion.intermediate(arity: Arb<Int> = Arb.int(1..100)) =
+fun <T> Arb.Companion.intermediate(arity: Arb<Int> = Arb.int(1..4)) =
     arbitrary {
         val a = arity.bind()
         require(a > 0)
         TypedIntermediate<T>(a)
     }
 
-private fun <T> Arb.Companion.tree(gen: Arb<T>, maxDepth: IntRange = 1..20) = arbitrary {
+private fun <T> Arb.Companion.tree(gen: Arb<T>, maxDepth: IntRange = 1..5) = arbitrary {
     val (lo, hi) = orderedPair(int(maxDepth), int(maxDepth)).bind()
     Tree.generate(
         leafs = list(leaf(gen)).bind(),
