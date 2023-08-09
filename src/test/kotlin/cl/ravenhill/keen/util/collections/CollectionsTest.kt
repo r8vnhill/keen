@@ -15,11 +15,8 @@ import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.addIfAbsent
 import cl.ravenhill.keen.util.dropFirst
-import cl.ravenhill.keen.util.duplicates
-import cl.ravenhill.keen.util.get
 import cl.ravenhill.keen.util.mutableList
 import cl.ravenhill.keen.util.shouldAny
-import cl.ravenhill.keen.util.sub
 import cl.ravenhill.keen.util.swap
 import cl.ravenhill.keen.util.transpose
 import cl.ravenhill.unfulfilledConstraint
@@ -36,7 +33,6 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
-import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.negativeInt
@@ -48,70 +44,6 @@ import io.kotest.property.checkAll
 
 @ExperimentalStdlibApi
 class CollectionsTest : FreeSpec({
-
-
-    "Subtracting a list by an integer should return a list with each element subtracted by the integer" {
-        checkAll(Arb.list(Arb.double(), 0..10_000), Arb.double()) { list, d ->
-            (list sub d) shouldBe list.map { it - d }
-        }
-    }
-
-    "Finding duplicate elements in a list" - {
-        "should return an empty map if there are no duplicates" {
-            checkAll(Arb.uniqueList()) { list ->
-                list.duplicates shouldBe emptyMap()
-            }
-        }
-
-        "should return a map with the duplicates and their indices" {
-            checkAll(Arb.list(Arb.double(), 0..10_000)) { list ->
-                assertSoftly {
-                    list.duplicates.forEach { (e, indices) ->
-                        indices.forEach {
-                            list[it] shouldBe e
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    "Accessing the elements at the given indices on a list should return a list with those elements" {
-        checkAll(Arb.listIndexPairs()) { (index, list) ->
-            list[index] shouldBe index.map { list[it] }
-        }
-    }
-
-    "Transposing a list of lists should" - {
-        "return an empty list if the list is empty" {
-            emptyList<List<Any>>().transpose() shouldBe emptyList()
-        }
-
-        "return a list of lists with the elements at the same indices" {
-            checkAll(Arb.matrix(Arb.any())) { matrix ->
-                val transposed = matrix.transpose()
-                assertSoftly {
-                    transposed.forEachIndexed { i, list ->
-                        list.forEachIndexed { j, e ->
-                            e shouldBe matrix[j][i]
-                        }
-                    }
-                }
-            }
-        }
-
-        "throw an exception if the lists are not of the same size" {
-            checkAll(Arb.list(Arb.list(Arb.any()))) { ass ->
-                assume {
-                    ass.shouldNotBeEmpty()
-                    ass shouldAny { it.size != ass.first().size }
-                }
-                shouldThrow<EnforcementException> {
-                    ass.transpose()
-                }.infringements.first() shouldBeOfClass UnfulfilledRequirementException::class
-            }
-        }
-    }
 
     "Adding an element if absent should" - {
         "Add the element if it's not present" {
@@ -353,50 +285,6 @@ private fun <E> Arb.Companion.mutableCollection(gen: Arb<E>, range: IntRange = 0
 }
 // endregion MUTABLE COLLECTIONS
 
-/**
- * Returns an arbitrary list of unique integers within the given range.
- *
- * @param maxSize The maximum size of the list.
- * Default is 10,000.
- * @param range The range of integers to choose from.
- * Default is Int.MIN_VALUE..Int.MAX_VALUE.
- * @return An arbitrary list of unique integers within the given range.
- * @throws IllegalArgumentException if [maxSize] is greater than the size of the given [range].
- */
-private fun Arb.Companion.uniqueList(
-    maxSize: Int = 10_000,
-    range: IntRange = Int.MIN_VALUE..Int.MAX_VALUE,
-) = arbitrary { rs ->
-    val size = positiveInt(maxSize).bind()
-    require(size <= range.last.toLong() - range.first) { "List size must be less than or equal to the range size" }
-    val set = mutableSetOf<Int>()
-    while (set.size < size) {
-        set.add((range).random(rs.random))
-    }
-    set.toList()
-}
-
-/**
- * Generates a pair of a list and a set of random indices for that list.
- * The size of the set of indices is also randomly generated, and cannot be larger
- * than the size of the list.
- */
-private fun Arb.Companion.listIndexPairs() = arbitrary {
-    val list = list(any(), 1..100).bind()
-    val size = int(list.indices).bind()
-    val indices = set(int(list.indices), size..size).bind().toList()
-    indices to list
-}
-
-/**
- * Returns an [Arb] that generates a matrix with random elements of type [T].
- * The number of rows and columns of the matrix are randomly generated between 1 and 100.
- */
-private fun <T> Arb.Companion.matrix(gen: Arb<T>) = arbitrary {
-    val rows = int(1..50).bind()
-    val cols = int(1..50).bind()
-    List(rows) { List(cols) { gen.bind() } }
-}
 // endregion COLLECTIONS
 
 private fun <T> Arb.Companion.indices(

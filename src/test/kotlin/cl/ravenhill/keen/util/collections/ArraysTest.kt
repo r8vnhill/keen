@@ -16,6 +16,13 @@ import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 
 
+/**
+ * A test suite for validating various operations on arrays.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
 class ArraysTest : FreeSpec({
     "An array can be transformed into an incremental array" {
         checkAll(Arb.list(Arb.real(0.0..100_000.0))) { ds ->
