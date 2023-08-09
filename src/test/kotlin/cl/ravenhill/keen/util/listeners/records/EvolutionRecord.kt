@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.util.listeners.records
 
-import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.util.mutableList
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -15,7 +15,17 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.checkAll
 
 
+/**
+ * Test suite for the [EvolutionRecord] class.
+ *
+ * This suite aims to verify the behavior and properties of the `EvolutionRecord` class,
+ * ensuring its correct instantiation and associated functionalities.
+ *
+ * It currently focuses on verifying that an instance of `EvolutionRecord` can be properly
+ * created when given a generation number.
+ */
 class EvolutionRecordTest : FreeSpec({
+
     "An [EvolutionRecord]" - {
         "can be created with a generation number" {
             checkAll(Arb.evolutionRecord()) { record ->
@@ -25,17 +35,15 @@ class EvolutionRecordTest : FreeSpec({
     }
 })
 
+/**
+ * Produces arbitrary instances of [EvolutionRecord] for testing purposes.
+ *
+ * This utility function generates randomized instances of the `EvolutionRecord` class.
+ * It can be used in property-based testing scenarios where multiple random instances
+ * of a given class are required.
+ *
+ * @return An arbitrary [EvolutionRecord] instance.
+ */
 private fun Arb.Companion.evolutionRecord() = arbitrary {
-    EvolutionRecord<Any, AnyGene>(mutableList(generationRecord()).bind())
-}
-
-private class AnyGene: Gene<Any, AnyGene> {
-    inner class IllegalOperationException(message: String): Exception(message)
-
-    override val dna: Any
-        get() = throw IllegalOperationException("This operation should not be called")
-
-    override fun withDna(dna: Any): AnyGene {
-        throw IllegalOperationException("This operation should not be called")
-    }
+    EvolutionRecord<Nothing, NothingGene>(mutableList(generationRecord()).bind())
 }

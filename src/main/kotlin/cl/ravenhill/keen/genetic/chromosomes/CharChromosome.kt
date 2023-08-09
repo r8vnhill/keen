@@ -28,10 +28,10 @@ import java.util.*
  * @version 2.0.0
  */
 class CharChromosome(
-    override val genes: List<CharGene>,
+    genes: List<CharGene>,
     val range: CharRange,
     private val filter: (Char) -> Boolean = { true }
-) : Chromosome<Char, CharGene> {
+) : AbstractChromosome<Char, CharGene>(genes) {
 
 
     /**

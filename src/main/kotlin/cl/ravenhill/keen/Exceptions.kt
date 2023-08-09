@@ -44,3 +44,26 @@ class InvalidStateException(state: String, lazyMessage: () -> String) :
     override fun hashCode() = Objects.hash(InvalidStateException::class, message)
 }
 
+/**
+ * Represents an exception indicating that a specific operation is not allowed or supported.
+ *
+ * Use this exception when you need to signal that an operation isn't permitted
+ * in the given context or under the current state of the application.
+ * Its design allows for a lazy-evaluated message, optimizing for performance by constructing
+ * the message only when throwing the exception.
+ *
+ * Typically, you'd use this exception to give clear, specific errors
+ * when you encounter unsupported operations in classes or methods.
+ *
+ * @param lazyMessage A lambda function providing a detailed error message
+ *                    about the specific reason for the exception.
+ *                    The system only evaluates and constructs this message upon throwing the
+ *                    exception.
+ *
+ * @constructor Creates an `IllegalOperationException` with a prefixed message "Illegal operation:"
+ *              and appends the detailed reason provided by the `lazyMessage`.
+ */
+class IllegalOperationException(lazyMessage: () -> String) :
+        KeenException("Illegal operation:", lazyMessage)
+
+
