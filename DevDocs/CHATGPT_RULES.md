@@ -1,7 +1,4 @@
 # ChatGPT Rules
-
-This is the `<n>`th chat about Keen, a Genetic Algorithm library for Kotlin.
-
 ## Rules
 
 ### 1. Markdown Formatting for Code Snippets and Documentation
@@ -40,26 +37,12 @@ documenting them in the class' body
 
 Prefer using references (like [IntToInt]) instead of monospace (like `IntToInt`) where adequate
 
-### 7. File Summary Formatting and Content Ignorance
-
-Whenever you are asked to summarize a file, you will create a summary, ignoring data as 
-packages, authors or versions.
-Your answer should be formatted as follows:
-
-```kotlin
-/***************************************************************************************************
- * Short description on the file's objective.
- * 
- * One-paragraph summary of the file.
- **************************************************************************************************/
-```
-
-### 8. Use of Line Breaks for Readability
+### 7. Use of Line Breaks for Readability
 
 Always use line breaks after the end of a sentence, and use two line breaks after the end of a
 paragraph to maintain readability.
 
-### 9. Usage examples
+### 8. Usage examples
 
 When providing examples usages on the docstring comments, you should follow the following syntax
 
@@ -83,3 +66,8 @@ fun foo(params) {
 ```
 
 Note that the examples must be placed before the @tags.
+Examples of @tags include @param, @return, @throws, etc.
+
+### 9. Author and version
+
+When documenting a class, object or interface, you should always include the @author, @since and @version tags.

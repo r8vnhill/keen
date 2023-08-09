@@ -1,10 +1,9 @@
-/**
+/*
  * Copyright (c) 2023, R8V.
  * BSD Zero Clause License.
  */
 
-
-package cl.ravenhill.keen.util
+package cl.ravenhill.keen.util.collections
 
 import cl.ravenhill.any
 import cl.ravenhill.enforcer.CollectionRequirementException
@@ -14,7 +13,15 @@ import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.real
+import cl.ravenhill.keen.util.addIfAbsent
+import cl.ravenhill.keen.util.dropFirst
+import cl.ravenhill.keen.util.duplicates
+import cl.ravenhill.keen.util.get
+import cl.ravenhill.keen.util.mutableList
+import cl.ravenhill.keen.util.shouldAny
+import cl.ravenhill.keen.util.sub
+import cl.ravenhill.keen.util.swap
+import cl.ravenhill.keen.util.transpose
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
@@ -39,21 +46,9 @@ import io.kotest.property.arbitrary.set
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
-
 @ExperimentalStdlibApi
 class CollectionsTest : FreeSpec({
-    "An array can be transformed into an incremental array" {
-        checkAll(Arb.list(Arb.real(0.0..100_000.0))) { ds ->
-            val array = ds.toDoubleArray()
-            val copy = array.copyOf()
-            array.incremental()
-            assertSoftly {
-                array.forEachIndexed { i, d ->
-                    d shouldEq copy.sumFirst(i + 1)
-                }
-            }
-        }
-    }
+
 
     "Subtracting a list by an integer should return a list with each element subtracted by the integer" {
         checkAll(Arb.list(Arb.double(), 0..10_000), Arb.double()) { list, d ->
@@ -307,11 +302,6 @@ class CollectionsTest : FreeSpec({
     }
 })
 
-
-/**
- * Returns the sum of the first [n] elements of this [DoubleArray].
- */
-private fun DoubleArray.sumFirst(n: Int) = this.take(n).sum()
 
 // region : -== GENERATORS ==-
 // region : -== COLLECTIONS ==-
