@@ -43,8 +43,6 @@ import io.kotest.property.checkAll
  * - Ensuring appropriate exceptions are thrown under various conditions such as absence of leaf
  *   nodes, non-positive minimum height, non-positive maximum height, and when the maximum height is
  *   less than the minimum height.
- *
- * @sample GeneratorsTest This class is instantiated and executed as a test suite.
  */
 class GeneratorsTest : FreeSpec({
     "Generating a [Tree] using the recursive method should" - {

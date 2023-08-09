@@ -15,22 +15,25 @@ import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BoolGene
+import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import kotlin.math.abs
+import kotlin.math.log10
 
 /**
  * The maximum weight that the knapsack can hold.
  */
-private const val MAX_WEIGHT = 30
+private const val MAX_WEIGHT = 110
 
 /**
  * The possible items that can be put in the knapsack.
  */
 private val items =
-    listOf(4 to 12, 2 to 1, 2 to 2, 1 to 1, 10 to 4, 2 to 2, 1 to 2, 2 to 1, 5 to 15, 5 to 10)
+    listOf(11 to 1, 21 to 11, 31 to 21, 33 to 23, 43 to 33, 53 to 43, 55 to 45, 65 to 55)
 
 /**
  * The fitness function for the 0-1 knapsack problem.
@@ -41,11 +44,16 @@ private val items =
  * @param genotype The genotype to calculate the fitness for.
  * @return The fitness of the genotype.
  */
-private fun fitnessFn(genotype: Genotype<Boolean, BoolGene>) =
-    (genotype.flatten() zip items)
-        .sumOf { (isInBag, item) -> if (isInBag) item.first else 0 }
-        .let { if (it > MAX_WEIGHT) it - MAX_WEIGHT else it }
-        .toDouble()
+private fun fitnessFn(genotype: Genotype<Boolean, BoolGene>): Double {
+    val profit = (genotype.flatten() zip items).sumOf { (isInBag, item) ->
+        if (isInBag) item.first else 0
+    }
+    val weight = (genotype.flatten() zip items).sumOf { (isInBag, item) ->
+        if (isInBag) item.second else 0
+    }
+    val penalty = if (weight > MAX_WEIGHT) abs(weight - MAX_WEIGHT) else 0
+    return (profit - penalty).toDouble()
+}
 
 /**
  * Implements a genetic algorithm to solve the 0-1 knapsack problem.
@@ -89,9 +97,9 @@ fun main() {
     val engine = engine(::fitnessFn, genotype {
         chromosome { booleans { size = items.size; truesProbability = 0.5 } }
     }) {
-        populationSize = 10
+        populationSize = 50
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
-        limits = listOf(SteadyGenerations(20))
+        limits = listOf(GenerationCount(100))
         listeners = listOf(EvolutionSummary(), EvolutionPlotter())
     }
     val result = engine.evolve()
