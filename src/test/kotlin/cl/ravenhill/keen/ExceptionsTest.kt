@@ -77,4 +77,11 @@ class ExceptionsTest : FreeSpec({
             }
         }
     }
+
+    "An [IllegalOperationException] can be created with a message" {
+        checkAll<String> { message ->
+            val exception = IllegalOperationException { message }
+            exception.message shouldBe "Illegal operation: $message"
+        }
+    }
 })
