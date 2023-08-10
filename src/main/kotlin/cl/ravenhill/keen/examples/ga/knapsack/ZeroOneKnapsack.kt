@@ -16,13 +16,11 @@ import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.limits.GenerationCount
-import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import kotlin.math.abs
-import kotlin.math.log10
 
 /**
  * The maximum weight that the knapsack can hold.

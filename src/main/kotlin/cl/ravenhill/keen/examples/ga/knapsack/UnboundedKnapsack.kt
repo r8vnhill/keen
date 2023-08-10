@@ -11,15 +11,35 @@ import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.random.Random
 
 /**
  * The maximum weight that the knapsack can hold.
  */
 private const val MAX_WEIGHT = 15
+
+fun generator1(weights: List<Int>) = List(weights.size) { weights[it] }
+
+
+fun generator2(weights: List<Int>) = weights.foldIndexed(emptyList<Int>()) { index, acc, w ->
+    acc + listOf(max(1 + acc.last(), w * acc.last() / weights[index - 1]))
+}
+
+fun generator3(weights: List<Int>) = weights.foldIndexed(emptyList<Int>()) { index, acc, w ->
+    acc + listOf(w * acc.last() / weights[index - 1] + index - 1)
+}
+
+fun items(weights: List<Int>, generator: (List<Int>) -> List<Int>) =
+    List(weights.size) { Random.nextInt(100) }.sorted().let { w ->
+        weights zip generator(w).map { it }
+    }
+
+private val weights: List<Int> = List(50) { Random.nextInt(100) }.sorted()
 
 /**
  * The possible items that can be put in the knapsack.

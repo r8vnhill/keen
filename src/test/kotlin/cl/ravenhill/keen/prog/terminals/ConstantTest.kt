@@ -80,5 +80,24 @@ class ConstantTest : FreeSpec({
                 }
             }
         }
+
+        "should have 0 arity" {
+            checkAll(Arb.any()) {
+                Constant(it).arity shouldBe 0
+            }
+        }
+
+        "should return its value when invoked" {
+            checkAll(Arb.any()) { a ->
+                Constant(a).invoke(emptyList()) shouldBe a
+            }
+        }
+
+        "should be able to create a new instance with the same value" {
+            checkAll(Arb.any()) { a ->
+                val constant = Constant(a)
+                constant.create() shouldBe constant
+            }
+        }
     }
 })

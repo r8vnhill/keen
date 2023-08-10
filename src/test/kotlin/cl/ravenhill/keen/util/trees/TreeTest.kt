@@ -15,6 +15,7 @@ import io.kotest.property.arbitrary.long
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
+// TODO: Complete this test class.
 class TreeTest : FreeSpec({
     /**
      * Represents a leaf node containing an integer value of 1.
