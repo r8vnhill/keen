@@ -12,7 +12,7 @@ import cl.ravenhill.keen.util.Verifiable
  * @version 2.0.0
  * @since 2.0.0
  */
-interface GeneticMaterial<DNA, G: Gene<DNA, G>> : Verifiable {
+interface GeneticMaterial<DNA, G : Gene<DNA, G>> : Verifiable {
 
     /**
      * Flattens the genetic material into a list of values.

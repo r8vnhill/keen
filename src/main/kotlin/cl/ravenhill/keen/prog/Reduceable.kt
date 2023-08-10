@@ -12,7 +12,7 @@ import cl.ravenhill.keen.util.trees.Node
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Reduceable<T>: Node<Reduceable<T>> {
+interface Reduceable<T> : Node<Reduceable<T>> {
 
     /**
      * Reduces the operation to a single value.

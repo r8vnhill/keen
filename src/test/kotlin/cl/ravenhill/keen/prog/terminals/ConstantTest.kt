@@ -3,7 +3,6 @@
  * BSD Zero Clause License.
  */
 
-
 package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.any
@@ -15,7 +14,6 @@ import io.kotest.matchers.types.shouldNotHaveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.assume
 import io.kotest.property.checkAll
-
 
 class ConstantTest : FreeSpec({
     "A [Constant]" - {

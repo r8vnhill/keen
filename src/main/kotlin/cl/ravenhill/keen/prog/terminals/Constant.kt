@@ -3,7 +3,6 @@
  * BSD Zero Clause License.
  */
 
-
 package cl.ravenhill.keen.prog.terminals
 
 import java.util.Objects
@@ -19,9 +18,6 @@ import java.util.Objects
  * @constructor creates a new constant node with the given value
  */
 class Constant<T>(private val value: T) : Terminal<T> {
-    /// Inherited documentation from Terminal<T>
-    override val arity: Int = 0
-
     /**
      * Returns the constant value this node holds.
      *
@@ -37,15 +33,15 @@ class Constant<T>(private val value: T) : Terminal<T> {
      */
     override fun create() = Constant(value)
 
-    /// Inherited documentation from Any
+    /* Inherited documentation from Any */
     override fun toString(): String = value.toString()
 
-    /// Inherited documentation from Any
+    /* Inherited documentation from Any */
     override fun equals(other: Any?): Boolean = when (other) {
         is Constant<*> -> value == other.value
         else -> false
     }
 
-    /// Inherited documentation from Any
+    /* Inherited documentation from Any */
     override fun hashCode(): Int = Objects.hash(Constant::class, value)
 }

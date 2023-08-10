@@ -1,7 +1,6 @@
 @file:Suppress("SpellCheckingInspection", "RedundantSuppression")
 
-// Obtains the version from the ``gradle.properties`` file.
-val projectVersion: String by project
+val projectVersion: String by project // Obtains the version from the ``gradle.properties`` file.
 
 plugins {
     // Configures Kotlin to compile to the JVM
@@ -12,10 +11,9 @@ plugins {
     signing
     // Enables generating documentation
     id("org.jetbrains.dokka") version "1.8.20"
-    // Enables checking Kotlin code style
-    id("org.jlleitschuh.gradle.ktlint") version "11.5.1"
     // Enables Kotlin serialization
     kotlin("plugin.serialization") version "1.9.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.1"
 }
 
 // These two lines set the group and version of the project, which are used in the Maven coordinates
@@ -61,6 +59,10 @@ dependencies {
     // region : -== DOKKA ==-
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.8.20")
     // endregion DOKKA
+
+    // region : -== DETEKT ==-
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
+    // endregion DETEKT
 }
 
 java {
@@ -83,6 +85,11 @@ kotlin {
 tasks.test {
     // Configures the test task to use JUnit 5
     useJUnitPlatform()
+}
+
+detekt {
+    // Configures the detekt task to use the default detekt configuration
+    config.from(files("conf/detekt.yml"))
 }
 
 publishing {

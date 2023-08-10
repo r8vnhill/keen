@@ -5,10 +5,10 @@
 
 package cl.ravenhill.keen.util.trees
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.SelfReferential
 
 /**
@@ -68,7 +68,7 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
 
     /**
      * Returns a new tree with the specified ``node`` replacing the subtree rooted at the given
-     * ``range``].
+     * ``range``.
      */
     fun replaceSubtree(range: IntRange, node: T): T {
         val newNodes = mutableListOf<T>().apply {
@@ -91,12 +91,13 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
             // Take the required number of children from the top of the stack.
             val children = stack.take(it.arity)
             // Remove the children from the stack.
-            stack.removeAll(children)
+            stack.removeAll(children.toSet())
             // Create a new node with the given value and children.
             val node = createNode(it.value, children)
             enforce {
-                "The arity of the tree [${it.arity}] does not match the arity of the node " +
-                        "[${node.children.size}]." { node.children.size must BeEqualTo(it.arity) }
+                "The arity of the tree [${it.arity}] does not match the arity of the node [${node.children.size}]." {
+                    node.children.size must BeEqualTo(it.arity)
+                }
             }
             // Add the new node to the stack.
             stack.add(node)

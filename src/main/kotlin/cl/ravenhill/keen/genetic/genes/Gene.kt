@@ -26,7 +26,7 @@ import cl.ravenhill.keen.util.SelfReferential
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Gene<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, SelfReferential<G> {
+interface Gene<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, SelfReferential<G> {
 
     val dna: DNA
 
@@ -36,7 +36,7 @@ interface Gene<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, SelfReferential<
     fun mutate(): G = withDna(generator())
 
     /**
-     * Generates a new random value for this gene.}
+     * Generates a new random value for this gene.
      */
     fun generator(): DNA = dna
 
@@ -48,6 +48,6 @@ interface Gene<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, SelfReferential<
      */
     fun withDna(dna: DNA): G
 
-    /// Documentation inherited from [GeneticMaterial]
+    // / Documentation inherited from [GeneticMaterial]
     override fun flatten() = listOf(dna)
 }

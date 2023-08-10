@@ -29,6 +29,7 @@ class Program<V>(
 ) : Tree<Reduceable<V>, Program<V>>, Copyable<Program<V>> {
     // Inherit documentation from Tree.
     override val arity: Int = reduceable.arity
+
     // Inherit documentation from Tree.
     override val value = reduceable
 
@@ -38,7 +39,6 @@ class Program<V>(
     // Inherit documentation from Tree.
     override fun createNode(value: Reduceable<V>, children: List<Program<V>>) =
         Program(value, children)
-
 
     // Inherit documentation from Tree.
     override val nodes: List<Program<V>>

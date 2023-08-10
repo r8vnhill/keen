@@ -3,7 +3,6 @@ package cl.ravenhill.keen.prog.terminals
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.util.trees.Leaf
 
-
 /**
  * Represents a terminal operation in a tree-based genetic programming system.
  * Terminals are operations that return a value and do not have any child nodes.

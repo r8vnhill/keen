@@ -3,7 +3,6 @@
  * BSD Zero Clause License.
  */
 
-
 // Receivers are mostly used to provide a DSL-like syntax for the user.
 // Some of them are not used, but they are required to provide the DSL syntax.
 @file:Suppress("UnusedReceiverParameter")
@@ -13,6 +12,7 @@ package cl.ravenhill.keen.builders
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.CoroutineConstructor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
 /***************************************************************************************************
@@ -85,8 +85,9 @@ class ConstructorScope<G : Gene<*, *>> {
  * `creator` property.
  * @return A [ConstructorExecutor] instance.
  */
-fun <DNA, G : Gene<DNA, G>> ChromosomeScope<DNA>.constructorExecutor(init: ConstructorScope<G>.() -> Unit) =
-    ConstructorScope<G>().apply(init).creator(Unit)
+fun <DNA, G : Gene<DNA, G>> ChromosomeScope<DNA>.constructorExecutor(
+    init: ConstructorScope<G>.() -> Unit,
+) = ConstructorScope<G>().apply(init).creator(Unit)
 
 /**
  * A function that configures a [ConstructorScope] to use a [SequentialConstructor] instance as the
@@ -135,7 +136,7 @@ fun <DNA, G : Gene<DNA, G>> ConstructorScope<G>.sequential() {
  * the `scope` and `parallelismLevel` properties.
  */
 fun <DNA, G : Gene<DNA, G>> ConstructorScope<G>.coroutines(
-    init: CoroutineConstructor.Factory<G>.() -> Unit = {}
+    init: CoroutineConstructor.Factory<G>.() -> Unit = {},
 ) {
     factory = CoroutineConstructor.Factory<G>().apply(init)
 }
