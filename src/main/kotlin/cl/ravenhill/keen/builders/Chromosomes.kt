@@ -68,9 +68,11 @@ class ChromosomeScope<DNA>
  * @param G The type of gene that the chromosomes contain.
  */
 fun <DNA, G : Gene<DNA, G>> GenotypeScope<DNA, G>.chromosome(
-    lazyFactory: ChromosomeScope<DNA>.() -> Chromosome.Factory<DNA, G>
+    lazyFactory: ChromosomeScope<DNA>.() -> Chromosome.Factory<DNA, G>,
 ) = chromosomes.add(ChromosomeScope<DNA>().lazyFactory())
 
+infix fun <DNA, G : Gene<DNA, G>> ChromosomeScope<DNA>.of(factory: Chromosome.Factory<DNA, G>) =
+    factory
 
 /**
  * Creates a new [BoolChromosome.Factory] with the given [builder] block.
