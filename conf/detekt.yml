@@ -53,7 +53,7 @@ output-reports:
 comments:
   active: true
   AbsentOrWrongFileLicense:
-    active: false
+    active: true
     licenseTemplateFile: 'license.template'
     licenseTemplateIsRegex: false
   CommentOverPrivateFunction:
@@ -68,13 +68,8 @@ comments:
   KDocReferencesNonPublicProperty:
     active: false
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
-  OutdatedDocumentation:
-    active: false
-    matchTypeParameters: true
-    matchDeclarationsOrder: true
-    allowParamOnConstructorProperties: false
   UndocumentedPublicClass:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
     searchInNestedClass: true
     searchInInnerClass: true
@@ -82,18 +77,13 @@ comments:
     searchInInnerInterface: true
     searchInProtectedClass: false
   UndocumentedPublicFunction:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
     searchProtectedFunction: false
   UndocumentedPublicProperty:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
     searchProtectedProperty: false
-  CommentSpacing:
-    active: false
-    ignorePattern: '^\s*[*]{1,2}/?$'
-    ignoreEmptyLines: true
-    ignoreLinesWithWords: ['TODO', 'FIXME']
 
 coroutines:
   active: true
@@ -597,7 +587,7 @@ style:
     max: 2
     excludeGuardClauses: false
   TrailingWhitespace:
-    active: false
+    active: true
   TrimMultilineRawString:
     active: false
     trimmingMethods:

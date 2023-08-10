@@ -7,6 +7,7 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.IllegalOperationException
+import cl.ravenhill.keen.genetic.genes.NothingGene.dna
 
 
 /**
@@ -22,7 +23,7 @@ import cl.ravenhill.keen.IllegalOperationException
  * @property dna Accessing this property will always throw [IllegalOperationException],
  *               indicating that the `NothingGene` does not possess DNA.
  */
-class NothingGene : Gene<Nothing, NothingGene> {
+data object NothingGene : Gene<Nothing, NothingGene> {
 
     /**
      * Always throws [IllegalOperationException] due to the inherent lack of DNA in a `NothingGene`.
@@ -34,11 +35,10 @@ class NothingGene : Gene<Nothing, NothingGene> {
         get() = throw IllegalOperationException { "A NothingGene has no DNA" }
 
     /**
-     * Always throws [IllegalOperationException] as assigning DNA to a `NothingGene` is not supported.
+     * Inaccessible due to the inherent lack of DNA in a `NothingGene`.
      *
-     * @param dna A non-existent DNA value, which results in an exception being thrown.
-     * @return Never returns a value; always throws an exception.
-     * @throws IllegalOperationException Indicates that a `NothingGene` cannot be assigned DNA.
+     * The exception will never be thrown, as the ``withDna`` method cannot be called with a
+     * [Nothing] value.
      */
     override fun withDna(dna: Nothing): NothingGene {
         throw IllegalOperationException { "A NothingGene cannot have DNA" }
