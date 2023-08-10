@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023, R8V.
+ * BSD Zero Clause License.
+ */
 package cl.ravenhill.keen.genetic.genes
 
 /**
@@ -5,8 +9,8 @@ package cl.ravenhill.keen.genetic.genes
  *
  * @param DNA The type of the value of the gene (e.g. [Int], [Double], etc).
  */
-interface ComparableGene<DNA, G> : Gene<DNA, G>
-        where DNA : Comparable<DNA>, G : ComparableGene<DNA, G> {
+interface ComparableGene<DNA, G> :
+    Gene<DNA, G> where DNA : Comparable<DNA>, G : ComparableGene<DNA, G> {
 
     /**
      * Compares this gene to the given one.
