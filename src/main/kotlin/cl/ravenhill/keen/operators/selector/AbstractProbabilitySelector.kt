@@ -5,11 +5,11 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeEqualTo
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
@@ -38,13 +38,13 @@ private const val SERIAL_INDEX_THRESHOLD = 35
  * @version 2.0.0
  */
 abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val sorted: Boolean) :
-        AbstractSelector<DNA, G>() {
+    AbstractSelector<DNA, G>() {
 
-    /// Documentation inherited from [Selector]
+    /* Documentation inherited from [Selector] */
     override fun select(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>
+        optimizer: PhenotypeOptimizer<DNA, G>,
     ): Population<DNA, G> {
         // Sort the population if necessary
         val pop = if (sorted) {
@@ -78,7 +78,7 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
     abstract fun probabilities(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>
+        optimizer: PhenotypeOptimizer<DNA, G>,
     ): DoubleArray
 
     /**

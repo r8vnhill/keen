@@ -3,7 +3,6 @@
  * BSD Zero Clause License.
  */
 
-
 package cl.ravenhill.keen.util.listeners.serializers
 
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -11,7 +10,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import kotlin.time.ExperimentalTime
-
 
 /**
  * A serializer for evolution processes with JSON formatting.
@@ -41,7 +39,8 @@ import kotlin.time.ExperimentalTime
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
 @ExperimentalTime
-class JsonEvolutionSerializer<DNA, G : Gene<DNA, G>> : AbstractEvolutionSerializer<DNA, G>() {
+class JsonEvolutionSerializer<DNA, G : Gene<DNA, G>>(private val spaces: Int = 4) :
+    AbstractEvolutionSerializer<DNA, G>() {
 
     private val json = Json {
         prettyPrint = true
@@ -53,18 +52,21 @@ class JsonEvolutionSerializer<DNA, G : Gene<DNA, G>> : AbstractEvolutionSerializ
      * @return A string representation of the serialized evolution process in JSON format.
      */
     override fun toString() = "{\n" +
-            indentText(
-                "\"initialization\": ${json.encodeToString(evolution.initialization)},\n",
-                4
-            ) + indentText("\"generations\": ${json.encodeToString(generations)}\n", 4) +
-            "}"
+        indentText(
+            "\"initialization\": ${json.encodeToString(evolution.initialization)},\n",
+            4
+        ) + indentText("\"generations\": ${json.encodeToString(generations)}\n", spaces) +
+        "}"
 
     /**
      * Saves the serialized evolution process to a file in JSON format.
+     * If any intermediate directories in the file path don't exist, they will be created automatically.
      *
      * @param file The target file where the serialized JSON will be written.
+     *             If the file already exists, it will be overwritten.
      */
     fun saveToFile(file: File) {
+        file.parentFile?.mkdirs() // Ensure all intermediate directories are created
         file.writeText(toString())
     }
 }

@@ -35,44 +35,44 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         ------------ Evolution Summary ---------------
         |--> Initialization time: ${evolution.initialization.duration} ms
         ------------- Evaluation Times ----------------
-        |--> Average: ${generations.map { it.evaluation.duration.inWholeMilliseconds }.average()} ms
-        |--> Max: ${generations.maxOfOrNull { it.evaluation.duration.inWholeMilliseconds }} ms
-        |--> Min: ${generations.minOfOrNull { it.evaluation.duration.inWholeMilliseconds }} ms
+        |--> Average: ${generations.map { it.evaluation.duration }.average()} ms
+        |--> Max: ${generations.maxOfOrNull { it.evaluation.duration }} ms
+        |--> Min: ${generations.minOfOrNull { it.evaluation.duration }} ms
         -------------- Selection Times ----------------
         |--> Offspring Selection
         |   |--> Average: ${
-            generations.map { it.offspringSelection.duration.inWholeMilliseconds }.average()
+            generations.map { it.offspringSelection.duration }.average()
         } ms
         |   |--> Max: ${
-            generations.maxOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }
+            generations.maxOfOrNull { it.offspringSelection.duration }
         } ms
         |   |--> Min: ${
-            generations.minOfOrNull { it.offspringSelection.duration.inWholeMilliseconds }
+            generations.minOfOrNull { it.offspringSelection.duration }
         } ms
         |--> Survivor Selection
         |   |--> Average: ${
-            generations.map { it.survivorSelection.duration.inWholeMilliseconds }.average()
+            generations.map { it.survivorSelection.duration }.average()
         } ms
         |   |--> Max: ${
-            generations.maxOfOrNull { it.survivorSelection.duration.inWholeMilliseconds }
+            generations.maxOfOrNull { it.survivorSelection.duration }
         } ms
         |   |--> Min: ${
-            generations.minOfOrNull { it.survivorSelection.duration.inWholeMilliseconds }
+            generations.minOfOrNull { it.survivorSelection.duration }
         } ms
         --------------- Alteration Times --------------
-        |--> Average: ${generations.map { it.alteration.duration.inWholeMilliseconds }.average()} ms
-        |--> Max: ${generations.maxOfOrNull { it.alteration.duration.inWholeMilliseconds }} ms
-        |--> Min: ${generations.minOfOrNull { it.alteration.duration.inWholeMilliseconds }} ms
+        |--> Average: ${generations.map { it.alteration.duration }.average()} ms
+        |--> Max: ${generations.maxOfOrNull { it.alteration.duration }} ms
+        |--> Min: ${generations.minOfOrNull { it.alteration.duration }} ms
         -------------- Evolution Results --------------
-        |--> Total time: ${evolution.duration.inWholeMilliseconds} ms
+        |--> Total time: ${evolution.duration} ms
         |--> Average generation time: ${
-            generations.map { it.duration.inWholeMilliseconds }.average()
+            generations.map { it.duration }.average()
         } ms
         |--> Max generation time: ${
-            generations.maxOfOrNull { it.duration.inWholeMilliseconds }
+            generations.maxOfOrNull { it.duration }
         } ms
         |--> Min generation time: ${
-            generations.minOfOrNull { it.duration.inWholeMilliseconds }
+            generations.minOfOrNull { it.duration }
         } ms
         |--> Generation: ${evolution.generations.last().generation}
         |--> Steady generations: ${evolution.generations.last().steady}
@@ -101,7 +101,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     override fun onGenerationFinished(population: Population<DNA, G>) {
         // Calculate duration
-        _currentGeneration.duration = _currentGeneration.startTime.elapsedNow()
+        _currentGeneration.duration = _currentGeneration.startTime.elapsedNow().inWholeNanoseconds
         // Sort population and set resulting
         val sorted = optimizer.sort(population)
         _currentGeneration.population.resulting = List(sorted.size) {
@@ -126,7 +126,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     override fun onInitializationFinished() {
         evolution.initialization.duration =
-            evolution.initialization.startTime.elapsedNow()
+            evolution.initialization.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -141,7 +141,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     override fun onEvaluationFinished() {
         _currentGeneration.evaluation.duration =
-            _currentGeneration.evaluation.startTime.elapsedNow()
+            _currentGeneration.evaluation.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -156,7 +156,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     override fun onOffspringSelectionFinished() {
         _currentGeneration.offspringSelection.duration =
-            _currentGeneration.offspringSelection.startTime.elapsedNow()
+            _currentGeneration.offspringSelection.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -171,7 +171,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     override fun onSurvivorSelectionFinished() {
         _currentGeneration.survivorSelection.duration =
-            _currentGeneration.survivorSelection.startTime.elapsedNow()
+            _currentGeneration.survivorSelection.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -186,7 +186,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     override fun onAlterationFinished() {
         _currentGeneration.alteration.duration =
-            _currentGeneration.alteration.startTime.elapsedNow()
+            _currentGeneration.alteration.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -200,6 +200,6 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      * Called when the evolution finishes, records the duration.
      */
     override fun onEvolutionFinished() {
-        evolution.duration = evolution.startTime.elapsedNow()
+        evolution.duration = evolution.startTime.elapsedNow().inWholeNanoseconds
     }
 }

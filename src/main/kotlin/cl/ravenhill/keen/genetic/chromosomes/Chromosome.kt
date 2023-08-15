@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023, R8V.
+ * BSD Zero Clause License.
+ */
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
@@ -30,17 +34,17 @@ import kotlin.properties.Delegates
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Chromosome<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<G> {
+interface Chromosome<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<G> {
 
     val genes: List<G>
 
     val size: Int
         get() = genes.size
 
-    /// Documentation inherited from [Verifiable].
+    /* Documentation inherited from [Verifiable]. */
     override fun verify() = genes.isNotEmpty() && genes.all { it.verify() }
 
-    /// Documentation inherited from [Iterable].
+    /* Documentation inherited from [Iterable]. */
     override fun iterator() = genes.iterator()
 
     /**
@@ -53,7 +57,7 @@ interface Chromosome<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<G
      */
     fun withGenes(genes: List<G>): Chromosome<DNA, G>
 
-    /// Documentation inherited from [GeneticMaterial].
+    /* Documentation inherited from [GeneticMaterial]. */
     override fun flatten(): List<DNA> = genes.fold(mutableListOf()) { acc, gene ->
         acc.apply { addAll(gene.flatten()) }
     }
@@ -86,10 +90,10 @@ interface Chromosome<DNA, G: Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<G
      * The default implementation uses a [SequentialConstructor] object.
      */
     abstract class AbstractFactory<DNA, G : Gene<DNA, G>> : Factory<DNA, G> {
-        /// Documentation inherited from [Factory].
+        /* Documentation inherited from [Factory]. */
         override var size: Int by Delegates.notNull()
 
-        /// Documentation inherited from [Factory].
+        /* Documentation inherited from [Factory]. */
         override var executor: ConstructorExecutor<G> = SequentialConstructor()
     }
 }

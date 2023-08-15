@@ -6,10 +6,10 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.genes.Gene
 import java.util.Objects
 
 /***************************************************************************************************
@@ -52,7 +52,7 @@ interface Alterer<DNA, G : Gene<DNA, G>> : GeneticOperator<DNA, G> {
      */
     override operator fun invoke(
         population: Population<DNA, G>,
-        generation: Int
+        generation: Int,
     ): AltererResult<DNA, G>
 }
 
@@ -72,7 +72,7 @@ interface Alterer<DNA, G : Gene<DNA, G>> : GeneticOperator<DNA, G> {
  * @version 2.0.0
  */
 abstract class AbstractAlterer<DNA, G : Gene<DNA, G>>(final override val probability: Double) :
-        Alterer<DNA, G> {
+    Alterer<DNA, G> {
     init {
         enforce {
             "The alteration probability [$probability] must be between 0.0 and 1.0" {
@@ -94,7 +94,7 @@ abstract class AbstractAlterer<DNA, G : Gene<DNA, G>>(final override val probabi
  */
 class AltererResult<DNA, G : Gene<DNA, G>>(
     val population: Population<DNA, G>,
-    val alterations: Int = 0
+    val alterations: Int = 0,
 ) : GeneticOperationResult<DNA> {
     init {
         enforce {

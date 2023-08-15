@@ -29,7 +29,7 @@ import java.util.Objects
  * @version 2.0.0
  */
 class CharGene(override val dna: Char, val range: CharRange, val filter: (Char) -> Boolean) :
-        ComparableGene<Char, CharGene> {
+    ComparableGene<Char, CharGene> {
 
     // Documentation inherited from Gene
     override fun generator() = Core.random.nextChar(range, filter)

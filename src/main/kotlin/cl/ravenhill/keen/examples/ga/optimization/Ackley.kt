@@ -3,7 +3,6 @@
  * BSD Zero Clause License.
  */
 
-
 package cl.ravenhill.keen.examples.ga.optimization
 
 import cl.ravenhill.keen.builders.chromosome
@@ -18,28 +17,35 @@ import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.listeners.serializers.JsonEvolutionSerializer
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.exp
 import kotlin.math.pow
 import kotlin.math.sqrt
+import kotlin.time.ExperimentalTime
 
 private fun ackley(genotype: Genotype<Double, DoubleGene>): Double {
     val (x, y) = genotype.flatten()
     return -20 * exp(-0.2 * sqrt(0.5 * (x.pow(2) + y.pow(2)))) -
-            exp(0.5 * (cos(2 * PI * x) + cos(2 * PI * y))) + exp(1.0) + 20.0
+        exp(0.5 * (cos(2 * PI * x) + cos(2 * PI * y))) + exp(1.0) + 20.0
 }
 
+@ExperimentalTime
 fun main() {
-    val engine = engine(::ackley, genotype {
-        chromosome {
-            doubles {
-                size = 2
-                range = -5.0 to 5.0
+    val serializer = JsonEvolutionSerializer<Double, DoubleGene>()
+    val engine = engine(
+        ::ackley,
+        genotype {
+            chromosome {
+                doubles {
+                    size = 2
+                    range = -5.0 to 5.0
+                }
             }
         }
-    }) {
+    ) {
         populationSize = 500
         optimizer = FitnessMinimizer()
         alterers = listOf(
@@ -50,6 +56,7 @@ fun main() {
         listeners = listOf(
             EvolutionPlotter(),
             EvolutionPrinter(10),
+            serializer,
             EvolutionSummary()
         )
     }

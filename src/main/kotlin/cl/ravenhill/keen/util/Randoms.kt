@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023, R8V.
+ * BSD Zero Clause License.
+ */
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.enforcer.Enforcement.enforce
@@ -28,14 +32,49 @@ import kotlin.random.Random
  */
 fun Random.nextChar(
     range: CharRange = Char.MIN_VALUE..Char.MAX_VALUE,
-    filter: (Char) -> Boolean = { true }
+    filter: (Char) -> Boolean = { true },
 ) = generateSequence { range.random(this) }.filter(filter).first()
 
+/**
+ * Generates a random string with characters within a specified range and optionally applies a
+ * character filter.
+ *
+ * ## Examples
+ * ### Example 1: Generate a random string of length 5
+ * ```
+ * val randomString = Random.Default.nextString(5)
+ * ```
+ *
+ * ### Example 2: Generate a random string with alphanumeric characters only
+ * ```
+ * val alphanumRange = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+ * val randomAlphanum = Random.Default.nextString(range = alphanumRange)
+ * ```
+ *
+ * ### Example 3: Generate a random string excluding vowels
+ * ```
+ * val withoutVowels = Random.Default.nextString(
+ *   filter = { it !in listOf(
+ *     'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'
+ *   )
+ * })
+ * ```
+ * @param length The desired length of the generated string.
+ *               Defaults to a random integer between 1 and 10.
+ * @param range The range of characters to choose from when generating the string.
+ *              Defaults to the full range of the [Char] type.
+ * @param filter An optional filter function which can be used to refine the set of characters to be
+ *               included in the string.
+ *               Defaults to include all characters.
+ * @return A randomly generated string of the specified length, using characters from the provided
+ *         range and adhering to the specified filter.
+ */
 fun Random.nextString(
     length: Int = nextInt(1, 10),
     range: CharRange = Char.MIN_VALUE..Char.MAX_VALUE,
-    filter: (Char) -> Boolean = { true }
+    filter: (Char) -> Boolean = { true },
 ) = List(length) { nextChar(range, filter) }.joinToString("")
+
 
 /**
  * Returns a list of randomly selected indices, using the given pick probability.
@@ -155,7 +194,7 @@ fun <T> Random.subsets(
     elements: List<T>,
     size: Int,
     exclusive: Boolean,
-    limit: Int = Int.MAX_VALUE
+    limit: Int = Int.MAX_VALUE,
 ): List<List<T>> {
     validateSubsetsInput(elements, size, exclusive, limit)
     // Create an empty list to hold the subsets.
@@ -192,7 +231,7 @@ fun <T> Random.subsets(
 private fun <T> Random.createNonExclusiveSubset(
     elements: List<T>,
     remainingElements: MutableList<T>,
-    size: Int
+    size: Int,
 ) = List(size) {
     // The first of the subset is always the first unused element.
     if (it == 0) {

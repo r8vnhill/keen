@@ -8,10 +8,9 @@ package cl.ravenhill.keen.operators.selector
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.eq
-import cl.ravenhill.keen.util.sub
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.sub
 import kotlin.math.min
-
 
 /**
  * A selector that chooses individuals from a population using a roulette wheel selection mechanism.
@@ -32,15 +31,15 @@ import kotlin.math.min
  * @since 1.0.0
  * @version 2.0.0
  */
-class RouletteWheelSelector<DNA, G: Gene<DNA, G>>(
-    sorted: Boolean = false
+class RouletteWheelSelector<DNA, G : Gene<DNA, G>>(
+    sorted: Boolean = false,
 ) : AbstractProbabilitySelector<DNA, G>(sorted) {
 
-    /// Documentation inherited from [AbstractProbabilitySelector]
+    /* Documentation inherited from [AbstractProbabilitySelector] */
     override fun probabilities(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>
+        optimizer: PhenotypeOptimizer<DNA, G>,
     ): DoubleArray {
         // Subtract the minimum fitness from all fitness values to ensure they are all positive.
         // This prevents negative fitness values from causing problems later on when computing the
@@ -60,7 +59,7 @@ class RouletteWheelSelector<DNA, G: Gene<DNA, G>>(
         }
     }
 
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any] */
     override fun toString() = "RouletteWheelSelector(sorted=$sorted)"
 }
 
@@ -74,5 +73,5 @@ class RouletteWheelSelector<DNA, G: Gene<DNA, G>>(
  * @param G The type of the genes that make up the individuals.
  * @return A list of the fitness values of all the individuals in this population.
  */
-private val <DNA, G: Gene<DNA, G>> Population<DNA, G>.fitness: List<Double>
+private val <DNA, G : Gene<DNA, G>> Population<DNA, G>.fitness: List<Double>
     get() = this.map { it.fitness }

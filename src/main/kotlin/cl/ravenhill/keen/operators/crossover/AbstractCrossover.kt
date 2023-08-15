@@ -71,7 +71,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
                 // exceed the original population size.
                 .take((population.size / numOut.toDouble()).ceil())
                 .flatten().map {
-                    Phenotype(it, generation)
+                    Phenotype(it)
                 }.toList()
                 .take(population.size) // Truncate the list to the original population size
             // return the resulting population and count

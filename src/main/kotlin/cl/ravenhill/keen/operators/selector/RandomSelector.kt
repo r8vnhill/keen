@@ -39,7 +39,7 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
  * @since 2.0.0
  * @version 2.0.0
  */
-class RandomSelector<DNA, G: Gene<DNA, G>> : AbstractProbabilitySelector<DNA, G>(false) {
+class RandomSelector<DNA, G : Gene<DNA, G>> : AbstractProbabilitySelector<DNA, G>(false) {
     /**
      * Computes the selection probabilities for each individual in the population.
      *

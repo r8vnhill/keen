@@ -12,7 +12,6 @@ import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.eq
 
-
 /**
  * The mutator operator is responsible for mutating the [Genotype] of the [Phenotype]s in the
  * [Population].
@@ -33,8 +32,10 @@ import cl.ravenhill.keen.util.eq
  * @param DNA The type of the DNA
  * @constructor Creates a new [Mutator] with the given [probability]
  */
-open class Mutator<DNA, G : Gene<DNA, G>>(probability: Double) :
-        AbstractAlterer<DNA, G>(probability) {
+open class Mutator<DNA, G : Gene<DNA, G>>(
+    probability: Double,
+    protected val geneProbability: Double = 0.5,
+) : AbstractAlterer<DNA, G>(probability) {
 
     /**
      * Mutates a population.
@@ -45,11 +46,11 @@ open class Mutator<DNA, G : Gene<DNA, G>>(probability: Double) :
      */
     override fun invoke(
         population: Population<DNA, G>,
-        generation: Int
+        generation: Int,
     ): AltererResult<DNA, G> {
         if (probability eq 0.0) return AltererResult(population)
         val result = population.map {
-            mutatePhenotype(it, generation)
+            mutatePhenotype(it)
         }
         return AltererResult(
             result.map { it.mutated },
@@ -63,9 +64,8 @@ open class Mutator<DNA, G : Gene<DNA, G>>(probability: Double) :
      */
     internal fun mutatePhenotype(
         phenotype: Phenotype<DNA, G>,
-        generation: Int
     ) = mutateGenotype(phenotype.genotype).map {
-        Phenotype(it, generation)
+        Phenotype(it)
     }
 
     /**
@@ -73,7 +73,7 @@ open class Mutator<DNA, G : Gene<DNA, G>>(probability: Double) :
      * number of mutations.
      */
     internal fun mutateGenotype(
-        genotype: Genotype<DNA, G>
+        genotype: Genotype<DNA, G>,
     ): MutatorResult<DNA, G, Genotype<DNA, G>> {
         val result = genotype.chromosomes.map { mutateChromosome(it) }
         return MutatorResult(
@@ -87,7 +87,7 @@ open class Mutator<DNA, G : Gene<DNA, G>>(probability: Double) :
      * number of mutations.
      */
     internal open fun mutateChromosome(
-        chromosome: Chromosome<DNA, G>
+        chromosome: Chromosome<DNA, G>,
     ): MutatorResult<DNA, G, Chromosome<DNA, G>> {
         val result = chromosome.genes.map { mutateGene(it) }
         return MutatorResult(
@@ -112,15 +112,16 @@ open class Mutator<DNA, G : Gene<DNA, G>>(probability: Double) :
      *     gene is returned, otherwise 0 mutations are performed and a copy of the original
      *     gene is returned.
      */
-    internal fun mutateGene(gene: G) =
-        if (probability eq 0.0)
-            MutatorResult(gene)
-        else if (probability eq 1.0 || Dice.probability() < probability)
+    internal open fun mutateGene(gene: G) = when {
+        geneProbability eq 0.0 -> MutatorResult(gene)
+        geneProbability eq 1.0 || Dice.probability() < geneProbability ->
             MutatorResult(gene.mutate(), 1)
-        else MutatorResult(gene)
+
+        else -> MutatorResult(gene)
+    }
 
     override fun toString() = "Mutator { " +
-            "probability: $probability }"
+        "probability: $probability }"
 }
 
 /**
@@ -133,7 +134,7 @@ open class Mutator<DNA, G : Gene<DNA, G>>(probability: Double) :
  * number of [mutations] performed (default 0).
  */
 data class MutatorResult<DNA, G, T>(val mutated: T, val mutations: Int = 0)
-        where T : GeneticMaterial<DNA, G>, G : Gene<DNA, G> {
+    where T : GeneticMaterial<DNA, G>, G : Gene<DNA, G> {
 
     /**
      * Applies the given [transform] function to the [mutated] object and returns the

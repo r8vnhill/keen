@@ -5,7 +5,6 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import kotlin.time.ExperimentalTime
 
-
 /**
  * The `EvolutionPrinter` class provides functionality to print out results of an evolutionary
  * process periodically. This is useful for tracking the progress of the genetic algorithm,
@@ -19,7 +18,7 @@ import kotlin.time.ExperimentalTime
  * @since 1.0.0
  */
 class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
-        AbstractEvolutionListener<DNA, G>() {
+    AbstractEvolutionListener<DNA, G>() {
 
     /**
      * Updates the result of evolution and checks if the generation meets the interval for printing.
@@ -39,7 +38,7 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
      */
     @ExperimentalTime
     override fun onGenerationFinished(population: Population<DNA, G>) {
-        _currentGeneration.duration = _currentGeneration.startTime.elapsedNow()
+        _currentGeneration.duration = _currentGeneration.startTime.elapsedNow().inWholeNanoseconds
         evolution.generations += _currentGeneration
         // Sort population and set resulting
         _currentGeneration.population.resulting =
@@ -68,13 +67,13 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
     } else {
         """ === Generation $generation ===
         |--> Average generation time: ${
-            evolution.generations.map { it.duration.inWholeMilliseconds }.average()
+            evolution.generations.map { it.duration }.average()
         } ms
         |--> Max generation time: ${
-            evolution.generations.maxOfOrNull { it.duration.inWholeMilliseconds }
+            evolution.generations.maxOfOrNull { it.duration }
         } ms
         |--> Min generation time: ${
-            evolution.generations.minOfOrNull { it.duration.inWholeMilliseconds }
+            evolution.generations.minOfOrNull { it.duration }
         } ms
         |--> Steady generations: ${generations.last().steady}
         |--> Best fitness: ${generations.last().population.resulting.first().fitness}
@@ -83,6 +82,7 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
             generations.last().population.resulting.map { it.fitness }.average()
         }
         |--> Fittest: ${generations.last().population.resulting.first().genotype}
-        |<<<>>>""".trimMargin()
+        |<<<>>>
+        """.trimMargin()
     }
 }

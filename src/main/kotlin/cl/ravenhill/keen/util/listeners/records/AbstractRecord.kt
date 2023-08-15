@@ -3,14 +3,13 @@
  * BSD Zero Clause License.
  */
 
-
 package cl.ravenhill.keen.util.listeners.records
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 import kotlin.time.TimeMark
-import kotlin.time.TimeSource.Monotonic.markNow
 
 /**
  * An abstract representation of a record that can be serialized.
@@ -36,5 +35,6 @@ abstract class AbstractRecord
 abstract class AbstractTimedRecord : AbstractRecord() {
     @Transient
     lateinit var startTime: TimeMark
-    var duration: Duration = Duration.ZERO
+
+    var duration: Long = Duration.ZERO.toLong(DurationUnit.NANOSECONDS)
 }

@@ -1,10 +1,14 @@
+/*
+ * Copyright (c) 2023, R8V.
+ * BSD Zero Clause License.
+ */
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 import java.util.Objects
 
 
@@ -33,7 +37,7 @@ import java.util.Objects
  * @since 1.0.0
  */
 class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>) :
-        GeneticMaterial<DNA, G>, Iterable<Chromosome<DNA, G>> {
+    GeneticMaterial<DNA, G>, Iterable<Chromosome<DNA, G>> {
 
     init {
         enforce { "The chromosomes list must not be empty" { chromosomes mustNot BeEmpty } }
@@ -117,6 +121,6 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
 
         // Inherit documentation from Any
         override fun toString() = "GenotypeBuilder { " +
-                "chromosomes: $chromosomes }"
+            "chromosomes: $chromosomes }"
     }
 }

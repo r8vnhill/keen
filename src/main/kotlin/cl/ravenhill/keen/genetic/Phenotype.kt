@@ -10,12 +10,10 @@ import java.util.Objects
  * A phenotype can be evaluated and compared to other phenotypes.
  *
  * @property genotype The genotype associated with the phenotype.
- * @property generation The generation in which the phenotype occurred.
  * @property fitness The fitness associated with the phenotype. Defaults to `Double.NaN`.
  * @property size The size of the genotype.
  *
- * @constructor Creates a new [Phenotype] instance with the given [genotype], [generation] and
- * [fitness].
+ * @constructor Creates a new [Phenotype] instance with the given [genotype] and [fitness].
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
@@ -23,7 +21,6 @@ import java.util.Objects
  */
 class Phenotype<DNA, G : Gene<DNA, G>>(
     val genotype: Genotype<DNA, G>,
-    val generation: Int,
     val fitness: Double = Double.NaN
 ) : GeneticMaterial<DNA, G>, Comparable<Phenotype<DNA, G>> {
 
@@ -57,7 +54,7 @@ class Phenotype<DNA, G : Gene<DNA, G>>(
      * @param fitness The fitness value of the phenotype.
      * @return A new [Phenotype] instance with the given fitness value.
      */
-    fun withFitness(fitness: Double) = Phenotype(genotype, generation, fitness)
+    fun withFitness(fitness: Double) = Phenotype(genotype, fitness)
 
     /**
      * Creates a new [Phenotype] instance with the given genotype and fitness values.
@@ -68,7 +65,7 @@ class Phenotype<DNA, G : Gene<DNA, G>>(
      * @return A new [Phenotype] instance with the given genotype and fitness values.
      */
     fun withGenotype(candidate: Genotype<DNA, G>, fitness: Double) =
-        Phenotype(candidate, generation, fitness)
+        Phenotype(candidate, fitness)
 
     // Inherit documentation from GeneticMaterial
     override fun flatten() = genotype.flatten()

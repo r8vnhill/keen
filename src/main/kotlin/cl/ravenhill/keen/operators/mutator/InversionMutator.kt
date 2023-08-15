@@ -26,7 +26,7 @@ import cl.ravenhill.keen.util.eq
  */
 class InversionMutator<DNA, G: Gene<DNA, G>>(probability: Double) : Mutator<DNA, G>(probability) {
 
-    /// Documentation inherited from [Mutator]
+    /* Documentation inherited from [Mutator] */
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
     ) = if (probability eq 0.0 || chromosome.size < 2) {

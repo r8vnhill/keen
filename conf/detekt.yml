@@ -503,30 +503,14 @@ style:
     active: true
     maxJumpCount: 1
   MagicNumber:
-    active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/*.kts']
-    ignoreNumbers:
-      - '-1'
-      - '0'
-      - '1'
-      - '2'
-    ignoreHashCodeFunction: true
-    ignorePropertyDeclaration: false
-    ignoreLocalVariableDeclaration: false
-    ignoreConstantDeclaration: true
-    ignoreCompanionObjectPropertyDeclaration: true
-    ignoreAnnotation: false
-    ignoreNamedArgument: true
-    ignoreEnums: false
-    ignoreRanges: false
-    ignoreExtensionFunctions: true
+    active: false
   MandatoryBracesLoops:
     active: false
   MaxChainedCallsOnSameLine:
     active: false
     maxChainedCalls: 5
   MaxLineLength:
-    active: true
+    active: false
     maxLineLength: 120
     excludePackageStatements: true
     excludeImportStatements: true

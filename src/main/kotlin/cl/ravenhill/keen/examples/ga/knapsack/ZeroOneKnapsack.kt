@@ -6,7 +6,6 @@
  *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
  */
 
-
 package cl.ravenhill.keen.examples.ga.knapsack
 
 import cl.ravenhill.keen.builders.booleans
@@ -92,9 +91,12 @@ private fun fitnessFn(genotype: Genotype<Boolean, BoolGene>): Double {
  * generations.
  */
 fun main() {
-    val engine = engine(::fitnessFn, genotype {
-        chromosome { booleans { size = items.size; truesProbability = 0.5 } }
-    }) {
+    val engine = engine(
+        ::fitnessFn,
+        genotype {
+            chromosome { booleans { size = items.size; truesProbability = 0.5 } }
+        }
+    ) {
         populationSize = 50
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(GenerationCount(100))
@@ -102,10 +104,12 @@ fun main() {
     }
     val result = engine.evolve()
     println(engine.listeners.first())
-    println("Selected: ${
-        result.best.flatten()
-            .mapIndexedNotNull { index, b -> if (b) items[index] else null }
-            .joinToString { (value, weight) -> "($value, $weight)" }
-    }")
+    println(
+        "Selected: ${
+            result.best.flatten()
+                .mapIndexedNotNull { index, b -> if (b) items[index] else null }
+                .joinToString { (value, weight) -> "($value, $weight)" }
+        }"
+    )
     (engine.listeners.last() as EvolutionPlotter).displayFitness()
 }

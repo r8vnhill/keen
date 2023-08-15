@@ -201,7 +201,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             val generation = state.generation
             val individuals =
                 state.population.asSequence() + generateSequence { genotype.make() }
-                    .map { Phenotype(it, generation) }
+                    .map { Phenotype(it) }
             EvolutionState(
                 individuals.take(populationSize).toList(),
                 generation

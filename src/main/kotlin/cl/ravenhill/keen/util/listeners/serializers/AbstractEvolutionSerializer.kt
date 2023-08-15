@@ -3,7 +3,6 @@
  * BSD Zero Clause License.
  */
 
-
 package cl.ravenhill.keen.util.listeners.serializers
 
 import cl.ravenhill.keen.Population
@@ -14,12 +13,9 @@ import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
 import kotlin.time.ExperimentalTime
 
-
 @ExperimentalTime
 abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
-        AbstractEvolutionListener<DNA, G>() {
-
-
+    AbstractEvolutionListener<DNA, G>() {
 
     /**
      * This method is invoked at the start of each new generation in the evolution process.
@@ -41,7 +37,7 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
      */
     override fun onGenerationFinished(population: Population<DNA, G>) {
         // Calculate duration
-        _currentGeneration.duration = _currentGeneration.startTime.elapsedNow()
+        _currentGeneration.duration = _currentGeneration.startTime.elapsedNow().inWholeNanoseconds
         // Sort population and set resulting
         val sorted = optimizer.sort(population)
         _currentGeneration.population.resulting = List(sorted.size) {
@@ -66,7 +62,7 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
      */
     override fun onInitializationFinished() {
         evolution.initialization.duration =
-            evolution.initialization.startTime.elapsedNow()
+            evolution.initialization.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -81,7 +77,7 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
      */
     override fun onEvaluationFinished() {
         _currentGeneration.evaluation.duration =
-            _currentGeneration.evaluation.startTime.elapsedNow()
+            _currentGeneration.evaluation.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -96,7 +92,7 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
      */
     override fun onOffspringSelectionFinished() {
         _currentGeneration.offspringSelection.duration =
-            _currentGeneration.offspringSelection.startTime.elapsedNow()
+            _currentGeneration.offspringSelection.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -111,7 +107,7 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
      */
     override fun onSurvivorSelectionFinished() {
         _currentGeneration.survivorSelection.duration =
-            _currentGeneration.survivorSelection.startTime.elapsedNow()
+            _currentGeneration.survivorSelection.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -126,7 +122,7 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
      */
     override fun onAlterationFinished() {
         _currentGeneration.alteration.duration =
-            _currentGeneration.alteration.startTime.elapsedNow()
+            _currentGeneration.alteration.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
@@ -140,6 +136,6 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
      * Called when the evolution finishes, records the duration.
      */
     override fun onEvolutionFinished() {
-        evolution.duration = evolution.startTime.elapsedNow()
+        evolution.duration = evolution.startTime.elapsedNow().inWholeNanoseconds
     }
 }
