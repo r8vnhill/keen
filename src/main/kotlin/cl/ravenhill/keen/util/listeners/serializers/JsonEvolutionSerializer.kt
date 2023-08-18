@@ -52,6 +52,7 @@ class JsonEvolutionSerializer<DNA, G : Gene<DNA, G>>(private val spaces: Int = 4
      * @return A string representation of the serialized evolution process in JSON format.
      */
     override fun toString() = "{\n" +
+        "\"duration\": ${json.encodeToString(evolution.duration)},\n" +
         indentText(
             "\"initialization\": ${json.encodeToString(evolution.initialization)},\n",
             4

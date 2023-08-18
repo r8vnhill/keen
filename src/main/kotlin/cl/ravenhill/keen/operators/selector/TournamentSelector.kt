@@ -1,15 +1,14 @@
-/**
+/*
  * Copyright (c) 2023, R8V.
  * BSD Zero Clause License.
  */
-
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -34,17 +33,17 @@ import java.util.Objects
  * @version 2.0.0
  */
 class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
-        AbstractSelector<DNA, G>() {
+    AbstractSelector<DNA, G>() {
 
     init {
         enforce { "The sample size must be positive" { sampleSize must BePositive } }
     }
 
-    /// Documentation inherited from [Selector]
+    /* Documentation inherited from [Selector]  */
     override fun select(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>
+        optimizer: PhenotypeOptimizer<DNA, G>,
     ): Population<DNA, G> = runBlocking {
         (0 until count).asFlow().map {
             generateSequence { population[Core.random.nextInt(population.size)] }
@@ -53,7 +52,7 @@ class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
         }.toList()
     }
 
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any]   */
     override fun equals(other: Any?) = when {
         other === this -> true
         other !is TournamentSelector<*, *> -> false
@@ -62,9 +61,9 @@ class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
         else -> true
     }
 
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any]   */
     override fun toString() = "TournamentSelector { sampleSize: $sampleSize }"
 
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any]   */
     override fun hashCode() = Objects.hash(TournamentSelector::class, sampleSize)
 }

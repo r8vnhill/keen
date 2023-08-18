@@ -25,7 +25,6 @@ private const val MAX_WEIGHT = 15
 
 fun generator1(weights: List<Int>) = List(weights.size) { weights[it] }
 
-
 fun generator2(weights: List<Int>) = weights.foldIndexed(emptyList<Int>()) { index, acc, w ->
     acc + listOf(max(1 + acc.last(), w * acc.last() / weights[index - 1]))
 }
@@ -61,7 +60,9 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>, KnapsackGene>): Double 
     val weight = items.sumOf { it.second }
     return value - if (!genotype.verify()) {
         abs(MAX_WEIGHT - weight).toDouble() * 50
-    } else 0.0
+    } else {
+        0.0
+    }
 }
 
 /**
@@ -71,13 +72,13 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>, KnapsackGene>): Double 
  * @property dna The pair of integers represented by this gene.
  */
 class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>, KnapsackGene> {
-    /// Documentation inherited from [Gene]
+    // / Documentation inherited from [Gene]
     override fun generator() = items.random(Core.random)
 
-    /// Documentation inherited from [Gene]
+    // / Documentation inherited from [Gene]
     override fun withDna(dna: Pair<Int, Int>) = KnapsackGene(dna)
 
-    /// Documentation inherited from [Any]
+    // / Documentation inherited from [Any]
     override fun toString() = "(${dna.first}, ${dna.second})"
 }
 
@@ -87,9 +88,9 @@ class KnapsackGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>, Knap
  * @property genes The list of genes making up the chromosome.
  */
 class KnapsackChromosome(override val genes: List<KnapsackGene>) :
-        Chromosome<Pair<Int, Int>, KnapsackGene> {
+    Chromosome<Pair<Int, Int>, KnapsackGene> {
 
-    /// Documentation inherited from [Chromosome]
+    // / Documentation inherited from [Chromosome]
     override fun withGenes(genes: List<KnapsackGene>) =
         KnapsackChromosome(genes.map { KnapsackGene((it.dna)) })
 
@@ -98,7 +99,7 @@ class KnapsackChromosome(override val genes: List<KnapsackGene>) :
      */
     override fun verify() = genes.sumOf { it.dna.second } <= MAX_WEIGHT
 
-    /// Documentation inherited from [Any]
+    // / Documentation inherited from [Any]
     override fun toString() = genes.joinToString(", ", "[", "]")
 
     /**
@@ -108,8 +109,8 @@ class KnapsackChromosome(override val genes: List<KnapsackGene>) :
      * @property geneFactory The factory function for creating genes to use in the chromosome.
      */
     class Factory(override var size: Int, private val geneFactory: () -> KnapsackGene) :
-            Chromosome.AbstractFactory<Pair<Int, Int>, KnapsackGene>() {
-        /// Documentation inherited from [Chromosome.Factory]
+        Chromosome.AbstractFactory<Pair<Int, Int>, KnapsackGene>() {
+        // / Documentation inherited from [Chromosome.Factory]
         override fun make() = KnapsackChromosome((0 until size).map { geneFactory() })
     }
 }
@@ -146,11 +147,14 @@ class KnapsackChromosome(override val genes: List<KnapsackGene>) :
  * the population, which can make it slow for large problem sizes.
  */
 fun main() {
-    val engine = engine(::fitnessFn, genotype {
-        chromosome {
-            KnapsackChromosome.Factory(15) { KnapsackGene(items.random(Core.random)) }
+    val engine = engine(
+        ::fitnessFn,
+        genotype {
+            chromosome {
+                KnapsackChromosome.Factory(15) { KnapsackGene(items.random(Core.random)) }
+            }
         }
-    }) {
+    ) {
         populationSize = 100
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.2))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))

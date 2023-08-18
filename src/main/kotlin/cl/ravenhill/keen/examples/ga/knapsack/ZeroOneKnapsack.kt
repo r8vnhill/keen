@@ -1,11 +1,7 @@
 /*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, R8V.
+ * BSD Zero Clause License.
  */
-
 package cl.ravenhill.keen.examples.ga.knapsack
 
 import cl.ravenhill.keen.builders.booleans
@@ -16,21 +12,22 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
+import cl.ravenhill.keen.operators.mutator.BitFlipMutator
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
-import kotlin.math.abs
 
 /**
  * The maximum weight that the knapsack can hold.
  */
-private const val MAX_WEIGHT = 110
+private const val MAX_WEIGHT = 1
 
 /**
  * The possible items that can be put in the knapsack.
  */
 private val items =
-    listOf(11 to 1, 21 to 11, 31 to 21, 33 to 23, 43 to 33, 53 to 43, 55 to 45, 65 to 55)
+    listOf(11 to 1)
 
 /**
  * The fitness function for the 0-1 knapsack problem.
@@ -48,7 +45,7 @@ private fun fitnessFn(genotype: Genotype<Boolean, BoolGene>): Double {
     val weight = (genotype.flatten() zip items).sumOf { (isInBag, item) ->
         if (isInBag) item.second else 0
     }
-    val penalty = if (weight > MAX_WEIGHT) abs(weight - MAX_WEIGHT) else 0
+    val penalty = if (weight > MAX_WEIGHT) weight - MAX_WEIGHT else 0
     return (profit - penalty).toDouble()
 }
 
@@ -98,9 +95,9 @@ fun main() {
         }
     ) {
         populationSize = 50
-        alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
+        alterers = listOf(BitFlipMutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(GenerationCount(100))
-        listeners = listOf(EvolutionSummary(), EvolutionPlotter())
+        listeners = listOf(EvolutionSummary(), EvolutionPrinter(5), EvolutionPlotter())
     }
     val result = engine.evolve()
     println(engine.listeners.first())

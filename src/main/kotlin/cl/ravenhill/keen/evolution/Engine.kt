@@ -76,7 +76,8 @@ class Engine<DNA, G : Gene<DNA, G>>(
         initialValue = 0,
         onChange = { prop, old, new ->
             listeners.forEach { it.onGenerationShift(prop, old, new) }
-        })
+        }
+    )
         private set
 
     var steadyGenerations by Delegates.observable(
@@ -304,16 +305,16 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
     override fun toString() =
         "Engine { " +
-                "populationSize: $populationSize, " +
-                "genotype: $genotype, " +
-                "selector: $selector, " +
-                "alterer: $alterer, " +
-                "optimizer: $optimizer, " +
-                "survivorSelector: $survivorSelector, " +
-                "evaluator: $evaluator, " +
-                "interceptor: $interceptor, " +
-                "limits: $limits " +
-                "}"
+            "populationSize: $populationSize, " +
+            "genotype: $genotype, " +
+            "selector: $selector, " +
+            "alterer: $alterer, " +
+            "optimizer: $optimizer, " +
+            "survivorSelector: $survivorSelector, " +
+            "evaluator: $evaluator, " +
+            "interceptor: $interceptor, " +
+            "limits: $limits " +
+            "}"
 
     /**
      * Builder for the [Engine] class.
