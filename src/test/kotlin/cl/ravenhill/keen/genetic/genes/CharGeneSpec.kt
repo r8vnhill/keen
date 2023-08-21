@@ -15,7 +15,6 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-
 class CharGeneSpec : WordSpec({
 
     "Comparing" should {

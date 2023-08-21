@@ -1,8 +1,9 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.CharGene
-import cl.ravenhill.keen.genetic.genes.Gene
-import java.util.*
+import cl.ravenhill.keen.util.nextChar
+import java.util.Objects
 
 
 /**
@@ -30,7 +31,7 @@ import java.util.*
 class CharChromosome(
     genes: List<CharGene>,
     val range: CharRange,
-    private val filter: (Char) -> Boolean = { true }
+    private val filter: (Char) -> Boolean = { true },
 ) : AbstractChromosome<Char, CharGene>(genes) {
 
 
@@ -46,8 +47,11 @@ class CharChromosome(
     constructor(
         size: Int,
         filter: (Char) -> Boolean = { true },
-        range: CharRange = ' '..'z'
-    ) : this(List(size) { CharGene.create(range, filter) }, range = ' '..'z')
+        range: CharRange = ' '..'z',
+    ) : this(
+        List(size) { CharGene(Core.random.nextChar(range, filter), range, filter) },
+        range = range
+    )
 
     // Documentation inherited from Chromosome
     override fun withGenes(genes: List<CharGene>) = CharChromosome(genes, range, filter)

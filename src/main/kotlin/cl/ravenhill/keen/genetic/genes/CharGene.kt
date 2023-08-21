@@ -4,7 +4,6 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.nextChar
 import java.util.Objects
 
-
 /**
  * A gene that represents a character value.
  *
@@ -37,7 +36,13 @@ class CharGene(override val dna: Char, val range: CharRange, val filter: (Char) 
     // Documentation inherited from Gene
     override fun withDna(dna: Char) = CharGene(dna, range, filter)
 
-    // region : TYPE CONVERSIONS
+    /**
+     * Verifies if the given DNA sequence is within the specified range and satisfies the filter
+     * criteria.
+     */
+    override fun verify() = dna in range && filter(dna)
+
+    // region : -===================== TYPE CONVERSIONS ===========================================-
     /**
      * Converts the gene to a 16-bit integer ([Char])
      */
@@ -50,7 +55,7 @@ class CharGene(override val dna: Char, val range: CharRange, val filter: (Char) 
 
     // Documentation inherited from Any
     override fun toString() = "$dna"
-    // endregion
+    // endregion TYPE CONVERSIONS
 
     // Documentation inherited from Any
     override fun equals(other: Any?) = when {
