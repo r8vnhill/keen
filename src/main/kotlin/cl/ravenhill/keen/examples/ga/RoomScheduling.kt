@@ -17,7 +17,7 @@ import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
@@ -100,7 +100,7 @@ fun main() {
         // Set the parameters for the genetic algorithm.
         populationSize = 100
         optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
+        alterers = listOf(RandomMutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
         listeners = listOf(EvolutionSummary(), EvolutionPlotter())
     }

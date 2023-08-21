@@ -13,7 +13,7 @@ import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.listeners.Listeners
 import cl.ravenhill.utils.runWithStdoutOff
@@ -55,7 +55,7 @@ class Tracer<T : Throwable>(
         }
     }) {
         populationSize = this@Tracer.populationSize
-        alterers = listOf(Mutator(0.3), SinglePointCrossover(0.5))
+        alterers = listOf(RandomMutator(0.3), SinglePointCrossover(0.5))
         limits = listOf(TargetFitness(5.0))
         listeners = this@Tracer.statCollectors
     }

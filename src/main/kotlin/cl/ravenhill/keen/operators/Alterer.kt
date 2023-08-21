@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2023, R8V.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
  * BSD Zero Clause License.
  */
 

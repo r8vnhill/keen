@@ -8,7 +8,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
@@ -49,7 +49,7 @@ fun main() {
     }) {
         populationSize = 500
         survivorSelector = RouletteWheelSelector()
-        alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
+        alterers = listOf(RandomMutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(TargetFitness(TARGET.length.toDouble()))
         listeners = listOf(EvolutionPrinter(every = 1), EvolutionSummary(), JsonEvolutionSerializer())
     }

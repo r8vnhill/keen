@@ -10,7 +10,7 @@ import cl.ravenhill.keen.genetic.genes.ProgramGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SubtreeCrossover
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Variable
@@ -48,7 +48,7 @@ fun main() {
     ) {
         populationSize = 300
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
-        alterers = listOf(SubtreeCrossover(0.2), Mutator(0.1))
+        alterers = listOf(SubtreeCrossover(0.2), RandomMutator(0.1))
         optimizer = FitnessMinimizer()
         listeners = listOf(EvolutionSummary(), EvolutionPlotter())
     }

@@ -9,7 +9,7 @@ import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.util.eq
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
@@ -63,7 +63,7 @@ fun main() {
         }
     }) {
         populationSize = 1000
-        alterers = listOf(Mutator(0.1), SinglePointCrossover(0.3))
+        alterers = listOf(RandomMutator(0.1), SinglePointCrossover(0.3))
         optimizer = FitnessMinimizer()
         limits = listOf(SteadyGenerations(10), GenerationCount(1000))
         listeners = listOf(EvolutionSummary(), EvolutionPlotter())

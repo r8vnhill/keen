@@ -13,7 +13,7 @@ import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.BitFlipMutator
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
@@ -77,7 +77,7 @@ private fun fitnessFn(genotype: Genotype<Boolean, BoolGene>): Double {
  * The main function uses the engine function provided by the Keen library to set up and run the
  * genetic algorithm.
  * It initializes the genetic algorithm with a population size of 10 and applies two alterers:
- * [Mutator] and [SinglePointCrossover].
+ * [RandomMutator] and [SinglePointCrossover].
  * It also sets the limit to 20 steady generations, meaning that the algorithm stops after 20
  * generations with no improvement in the fitness of the best solution.
  * The statistics of the genetic algorithm are collected using [EvolutionSummary] and plotted

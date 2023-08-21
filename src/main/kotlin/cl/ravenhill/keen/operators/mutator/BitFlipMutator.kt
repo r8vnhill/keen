@@ -1,11 +1,14 @@
 /*
- * Copyright (c) 2023, R8V.
+ * Copyright (c) 2023, Ignacio Slater M.
  * BSD Zero Clause License.
  */
 
 package cl.ravenhill.keen.operators.mutator
 
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.eq
@@ -40,8 +43,29 @@ import cl.ravenhill.keen.util.eq
  * @since 2.0.0
  * @version 2.0.0
  */
-class BitFlipMutator<G : Gene<Boolean, G>>(probability: Double, geneProbability: Double = 0.5) :
-    Mutator<Boolean, G>(probability) {
+class BitFlipMutator<G : Gene<Boolean, G>>(
+    override val probability: Double,
+    private val geneProbability: Double = 0.5,
+) :
+    Mutator<Boolean, G> {
+
+    init {
+        enforce {
+            "The mutation probability must be between 0.0 and 1.0" {
+                probability must BeInRange(0.0..1.0)
+            }
+        }
+    }
+
+    override fun mutateChromosome(
+        chromosome: Chromosome<Boolean, G>,
+    ): MutatorResult<Boolean, G, Chromosome<Boolean, G>> {
+        val result = chromosome.genes.map { mutateGene(it) }
+        return MutatorResult(
+            chromosome.withGenes(result.map { it.mutated }),
+            result.sumOf { it.mutations }
+        )
+    }
 
     /**
      * Mutates a given gene based on the defined `probability` and `geneProbability`.
@@ -50,7 +74,7 @@ class BitFlipMutator<G : Gene<Boolean, G>>(probability: Double, geneProbability:
      * @return Returns a `MutatorResult` that contains the mutated gene and the
      *         number of mutations applied.
      */
-    override fun mutateGene(gene: G) = when {
+    private fun mutateGene(gene: G) = when {
         probability eq 0.0 -> MutatorResult(gene)
         geneProbability eq 1.0 || Core.Dice.probability() < geneProbability ->
             MutatorResult(gene.withDna(!gene.dna), 1)

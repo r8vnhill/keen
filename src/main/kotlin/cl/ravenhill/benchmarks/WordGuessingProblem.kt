@@ -15,7 +15,7 @@ import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.util.listeners.serializers.JsonEvolutionSerializer
 import cl.ravenhill.kuro.Level
@@ -92,7 +92,7 @@ internal fun createWordGuessingEngine(
     ) {
         populationSize = 500
         this.selector = selector
-        alterers = listOf(Mutator(0.06), SinglePointCrossover(0.2))
+        alterers = listOf(RandomMutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(TargetFitness(target.length.toDouble()), GenerationCount(1000))
         listeners = listOf(serializer)
     }

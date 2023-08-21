@@ -13,7 +13,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
@@ -49,7 +49,7 @@ fun main() {
         populationSize = 500
         optimizer = FitnessMinimizer()
         alterers = listOf(
-            Mutator(0.03),
+            RandomMutator(0.03),
             MeanCrossover(0.3, geneRate = 0.5)
         )
         limits = listOf(SteadyGenerations(100))

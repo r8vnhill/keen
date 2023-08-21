@@ -9,7 +9,7 @@ import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
@@ -49,7 +49,7 @@ fun main() {
         populationSize = 50
         selector = TournamentSelector(sampleSize = 2)
         alterers =
-            listOf(Mutator(probability = 0.03), SinglePointCrossover(probability = 0.2))
+            listOf(RandomMutator(probability = 0.03), SinglePointCrossover(probability = 0.2))
         limits = listOf(GenerationCount(100), TargetFitness(50.0))
         listeners =
             listOf(EvolutionSummary(), EvolutionPrinter(1), EvolutionPlotter())

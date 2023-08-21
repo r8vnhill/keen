@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * BSD Zero Clause License.
+ */
+
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
@@ -5,7 +10,6 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.eq
-
 
 /**
  * The inversion mutator is a simple mutation operator, which inverts the order of a given
@@ -24,7 +28,7 @@ import cl.ravenhill.keen.util.eq
  * @since 1.3.0
  * @version 2.0.0
  */
-class InversionMutator<DNA, G: Gene<DNA, G>>(probability: Double) : Mutator<DNA, G>(probability) {
+class InversionMutator<DNA, G : Gene<DNA, G>>(override val probability: Double) : Mutator<DNA, G> {
 
     /* Documentation inherited from [Mutator] */
     override fun mutateChromosome(
