@@ -1,6 +1,8 @@
 # Keen | Kotlin Evolutionary Computation Framework
 
 [![](https://jitpack.io/v/r8vnhill/keen.svg)](https://jitpack.io/#r8vnhill/keen)
+[![License](https://img.shields.io/badge/License-BSD_2--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
+
 ![Keen logo](logos/TransparentBg.png)
 
 Keen is a framework for Kotlin that leverages evolutionary algorithms to solve optimization problems.
