@@ -1,9 +1,8 @@
 package cl.ravenhill.keen.operators.mutator
 
-import cl.ravenhill.keen.Core.Dice
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.int
 import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.neq
 import cl.ravenhill.keen.util.swap
@@ -24,15 +23,18 @@ import cl.ravenhill.keen.util.swap
  *
  * @constructor Creates a new [SwapMutator] with the given [probability]
  */
-@ExperimentalStdlibApi
-class SwapMutator<DNA, G : Gene<DNA, G>>(override val probability: Double = 0.2) : Mutator<DNA, G> {
+class SwapMutator<DNA, G : Gene<DNA, G>>(
+    override val probability: Double = 0.2,
+    private val chromosomeProbability: Double = 0.5,
+    private val geneProbability: Double = 0.5
+) : Mutator<DNA, G> {
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
-    ) = if (probability neq 0.0 && chromosome.size > 1) {
+    ) = if (chromosomeProbability neq 0.0 && chromosome.size > 1) {
         val genes = chromosome.genes.toMutableList()
-        val indices = Dice.random.indices(probability, genes.size)
+        val indices = Core.random.indices(geneProbability, genes.size)
         val mutations = indices
-            .map { genes.swap(it, Dice.int(genes.size)) }
+            .map { genes.swap(it, Core.random.nextInt(genes.size)) }
             .count()
         MutatorResult(chromosome.withGenes(genes), mutations)
     } else {

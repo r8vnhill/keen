@@ -46,8 +46,7 @@ import cl.ravenhill.keen.util.eq
 class BitFlipMutator<G : Gene<Boolean, G>>(
     override val probability: Double,
     private val geneProbability: Double = 0.5,
-) :
-    Mutator<Boolean, G> {
+) : Mutator<Boolean, G> {
 
     init {
         enforce {

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * BSD Zero Clause License.
+ */
+
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.enforcer.Enforcement.enforce
@@ -105,7 +110,7 @@ fun <E> MutableCollection<E>.addIfAbsent(element: E) = !this.contains(element) &
  */
 fun <E> MutableList<E>.dropFirst(n: Int): List<E> {
     enforce {
-        "Size [$n] should be in range [0, ${n}]" { n must BeInRange(0..size) }
+        "Size [$n] should be in range [0, $n]" { n must BeInRange(0..size) }
     }
     return (0 until n).map { removeFirst() }
 }
@@ -114,7 +119,6 @@ fun <E> MutableList<E>.dropFirst(n: Int): List<E> {
 /**
  * Swaps the elements at the given indices in the receiver.
  */
-@ExperimentalStdlibApi
 fun <E> MutableList<E>.swap(i: Int, j: Int) {
     enforce {
         "The list must not be empty" { this@swap mustNot BeEmpty }

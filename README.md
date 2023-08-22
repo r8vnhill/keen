@@ -152,3 +152,13 @@ fun main() {
     (engine.statistics.last() as StatisticPlotter).displayFitness()
 }
 ```
+
+## Acknowledgements
+
+This project has benefited from the support provided by JetBrains. We're immensely grateful for their backing.
+
+<div style="text-align: center;">
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo." width="100">
+</div>
+
+A big thank you to [JetBrains](https://jb.gg/OpenSourceSupport) for their open-source support.
