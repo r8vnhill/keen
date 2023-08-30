@@ -1,12 +1,12 @@
 package cl.ravenhill.keen.prog
 
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
-import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.util.trees.Tree
 import cl.ravenhill.keen.util.trees.generate
 
@@ -20,9 +20,11 @@ import cl.ravenhill.keen.util.trees.generate
  * a minimum program length, and a maximum program length, and returns a program.
  */
 typealias GenerationMethod<T> = (
-    terminals: List<Terminal<T>>, functions: List<Fun<T>>, min: Int, max: Int
+    terminals: List<Terminal<T>>,
+    functions: List<Fun<T>>,
+    min: Int,
+    max: Int,
 ) -> Program<T>
-
 
 /**
  * Generates a random program using a random method from a list of generation methods.
@@ -40,7 +42,7 @@ fun <T> generateProgramWith(
     terminals: List<Terminal<T>>,
     functions: List<Fun<T>>,
     min: Int,
-    max: Int
+    max: Int,
 ): Program<T> {
     enforce { "The list of generation methods must not be empty" { methods mustNot BeEmpty } }
     return methods.random(Core.random).invoke(terminals, functions, min, max)
@@ -57,7 +59,10 @@ fun <T> generateProgramWith(
  * @return a random program as a breadth-first tree.
  */
 fun <T> generateProgramGrowing(
-    terminals: List<Terminal<T>>, functions: List<Fun<T>>, min: Int, max: Int
+    terminals: List<Terminal<T>>,
+    functions: List<Fun<T>>,
+    min: Int,
+    max: Int,
 ): Program<T> {
     val condition = { h: Int, d: Int ->
         d == h || d >= min && Dice.probability() < terminals.size.toDouble() / (terminals.size + functions.size)
@@ -76,7 +81,10 @@ fun <T> generateProgramGrowing(
  * @return a random program as a breadth-first tree.
  */
 fun <T> generateProgramFull(
-    terminals: List<Terminal<T>>, functions: List<Fun<T>>, min: Int, max: Int
+    terminals: List<Terminal<T>>,
+    functions: List<Fun<T>>,
+    min: Int,
+    max: Int,
 ): Program<T> {
     val condition = { height: Int, depth: Int ->
         depth == height
@@ -104,7 +112,7 @@ fun <T> generateProgram(
     terminals: List<Terminal<T>>,
     min: Int,
     max: Int,
-    condition: (Int, Int) -> Boolean
+    condition: (Int, Int) -> Boolean,
 ) = Tree.generate(terminals, functions, min, max, condition, ::Program) { f, c ->
     Program(f, c)
 }

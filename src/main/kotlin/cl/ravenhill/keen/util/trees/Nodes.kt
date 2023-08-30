@@ -1,12 +1,7 @@
 /*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- * work.
- * If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.keen.util.trees
 
@@ -51,7 +46,7 @@ interface Node<T> {
  * @since 2.0.0
  */
 interface Intermediate<T> : Node<T> {
-    /// Documentation inherited from [Node]
+    /* Documentation inherited from [Node] */
     override val arity: Int
 }
 

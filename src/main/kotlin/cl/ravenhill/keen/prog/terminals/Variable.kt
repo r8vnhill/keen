@@ -1,8 +1,11 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.prog.terminals
 
-import cl.ravenhill.keen.prog.Reduceable
 import java.util.Objects
-
 
 /**
  * This class represents a variable with a name and an index that points to an argument in a list.

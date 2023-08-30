@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
@@ -27,8 +32,11 @@ import java.util.Objects
  * @since 1.0.0
  * @version 2.0.0
  */
-class CharGene(override val dna: Char, val range: CharRange, val filter: (Char) -> Boolean) :
-    ComparableGene<Char, CharGene> {
+class CharGene(
+    override val dna: Char,
+    val range: CharRange = ' '..'z',
+    val filter: (Char) -> Boolean = { true },
+) : ComparableGene<Char, CharGene> {
 
     // Documentation inherited from Gene
     override fun generator() = Core.random.nextChar(range, filter)
@@ -67,20 +75,4 @@ class CharGene(override val dna: Char, val range: CharRange, val filter: (Char) 
 
     // Documentation inherited from Any
     override fun hashCode() = Objects.hash(CharGene::class, dna)
-
-    companion object {
-        /**
-         * Creates a new gene with a random value generated from the specified [range] and [filter]
-         * constraints.
-         *
-         * @param range The range of valid characters for the gene.
-         *  Defaults to `' '..'z'`.
-         * @param filter A filter function that specifies additional constraints on the gene value.
-         *  Defaults to a function that always returns `true`.
-         *
-         * @return A new [CharGene] instance with a randomly generated value.
-         */
-        fun create(range: CharRange = ' '..'z', filter: (Char) -> Boolean = { true }) =
-            CharGene(Core.random.nextChar(range, filter), range, filter)
-    }
 }

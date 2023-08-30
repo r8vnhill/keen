@@ -1,10 +1,10 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.indices
 
 /**
@@ -93,9 +93,9 @@ typealias PMX<DNA, G> = PartiallyMappedCrossover<DNA, G>
  * @version 2.0.0
  */
 class PartiallyMappedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
-        AbstractPermutationCrossover<DNA, G>(probability) {
+    AbstractPermutationCrossover<DNA, G>(probability) {
 
-    /// Documentation inherited from [AbstractPermutationCrossover]
+    // / Documentation inherited from [AbstractPermutationCrossover]
     override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
         enforce {
             "Partially mapped crossover requires exactly two chromosomes" {
@@ -124,7 +124,7 @@ class PartiallyMappedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
         genes1: MutableList<G>,
         genes2: MutableList<G>,
         lo: Int,
-        hi: Int
+        hi: Int,
     ): Pair<List<G>, List<G>> {
         // Extract the crossing regions from the genes using the provided indices
         val crossSection1 = genes1.subList(lo, hi)
@@ -149,7 +149,7 @@ class PartiallyMappedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
         crossSection1: List<G>,
         crossSection2: List<G>,
         lo: Int,
-        hi: Int
+        hi: Int,
     ) {
         // Iterate over all the genes in the parent genes lists
         for (i in genes1.indices) {

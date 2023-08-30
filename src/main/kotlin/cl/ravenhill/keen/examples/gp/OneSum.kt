@@ -12,12 +12,11 @@ import cl.ravenhill.keen.operators.crossover.pointbased.SubtreeCrossover
 import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
-import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import kotlin.math.abs
-
 
 /**
  * Returns a fitness function that computes the absolute difference between the sum of the
@@ -27,10 +26,11 @@ import kotlin.math.abs
  * @return a fitness function that computes the absolute difference between the sum of the
  *  generated program and the target integer value.
  */
-private fun fitness(target: Int): (Genotype<Program<Double>, ProgramGene<Double>>) -> Double = { gt ->
-    val program = gt.flatten().first()
-    abs(program() - target)
-}
+private fun fitness(target: Int): (Genotype<Program<Double>, ProgramGene<Double>>) -> Double =
+    { gt ->
+        val program = gt.flatten().first()
+        abs(program() - target)
+    }
 
 /**
  * Finds a program that can generate a target number by adding ones.
@@ -43,15 +43,18 @@ private fun fitness(target: Int): (Genotype<Program<Double>, ProgramGene<Double>
  */
 fun main() {
     // Set up the genetic algorithm engine
-    val engine = engine(fitness(20), genotype {
-        chromosome {
-            program {
-                size = 1
-                function("+", 2) { it[0] + it[1] }
-                terminal { EphemeralConstant { 1.0 } }
+    val engine = engine(
+        fitness(20),
+        genotype {
+            chromosome {
+                program {
+                    size = 1
+                    function("+", 2) { it[0] + it[1] }
+                    terminal { EphemeralConstant { 1.0 } }
+                }
             }
         }
-    }) {
+    ) {
         populationSize = 100
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
         alterers = listOf(RandomMutator(0.06), SubtreeCrossover(0.2))
@@ -63,5 +66,5 @@ fun main() {
     val result = engine.evolve()
     println(engine.listeners.first())
     println(result)
-    (engine.listeners.last() as EvolutionPlotter).displayFitness()// { if (it == 0.0) 0.0 else ln(it) }
+    (engine.listeners.last() as EvolutionPlotter).displayFitness() // { if (it == 0.0) 0.0 else ln(it) }
 }

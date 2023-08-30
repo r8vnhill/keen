@@ -1,11 +1,16 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.operators.crossover.permutation
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.indices
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -79,8 +84,10 @@ typealias OX<DNA, G> = OrderedCrossover<DNA, G>
  * @since 1.2.0
  * @version 2.0.0
  */
-class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRate: Double = 1.0) :
-        AbstractPermutationCrossover<DNA, G>(probability, chromosomeRate = chromosomeRate) {
+class OrderedCrossover<DNA, G : Gene<DNA, G>>(
+    probability: Double,
+    chromosomeProbability: Double = 1.0,
+) : AbstractPermutationCrossover<DNA, G>(probability, chromosomeRate = chromosomeProbability) {
 
     /**
      * Performs ordered crossover on a list of chromosomes.
@@ -117,7 +124,7 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRat
         parents: Pair<List<G>, List<G>>,
         start: Int,
         end: Int,
-        size: Int
+        size: Int,
     ): List<G> {
         // Takes a sublist of genes from the first parent to be inserted into the second parent.
         val sublist = parents.first.subList(start, end + 1)
@@ -134,7 +141,7 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(probability: Double, chromosomeRat
         return offspring
     }
 
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any] */
     override fun toString() =
         "OrderedCrossover(probability=$probability, chromosomeRate=$chromosomeRate)"
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen
 
 import cl.ravenhill.enforcer.EnforcementException
@@ -8,21 +13,13 @@ import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.boolean
-import io.kotest.property.arbitrary.byte
-import io.kotest.property.arbitrary.char
-import io.kotest.property.arbitrary.choice
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.float
-import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.set
-import io.kotest.property.arbitrary.short
 import io.kotest.property.arbitrary.string
 import kotlin.random.Random
 import kotlin.reflect.KClass
 
-// region : -== SHOULD ASSERTIONS ==-
+// region : -====================== SHOULD ASSERTIONS =============================================-
 /**
  * A helper function that returns a Matcher instance that matches if the given value is an instance
  * of the given class.
@@ -37,13 +34,15 @@ import kotlin.reflect.KClass
  * @param kClass The class to match against.
  * @return A Matcher instance that matches if the given value is an instance of the given class.
  */
-infix fun Any.shouldBeOfClass(kClass: KClass<*>) = should(Matcher { value ->
-    MatcherResult(
-        kClass == value::class,
-        { "$value should be an instance of $kClass" },
-        { "$value should not be an instance of $kClass" }
-    )
-})
+infix fun Any.shouldBeOfClass(kClass: KClass<*>) = should(
+    Matcher { value ->
+        MatcherResult(
+            kClass == value::class,
+            { "$value should be an instance of $kClass" },
+            { "$value should not be an instance of $kClass" }
+        )
+    }
+)
 
 /**
  * A custom assertion that compares two strings while ignoring differences in line breaks.
@@ -51,16 +50,18 @@ infix fun Any.shouldBeOfClass(kClass: KClass<*>) = should(Matcher { value ->
  * @param expected The expected string to compare against.
  * @throws AssertionError If the strings are not equal.
  */
-infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(Matcher { value ->
-    val normalizedValue = value.replace("\r\n", "\n").replace("\r", "\n")
-    val normalizedExpected = "$expected\n".replace("\r\n", "\n").replace("\r", "\n")
+infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(
+    Matcher { value ->
+        val normalizedValue = value.replace("\r\n", "\n").replace("\r", "\n")
+        val normalizedExpected = "$expected\n".replace("\r\n", "\n").replace("\r", "\n")
 
-    MatcherResult(
-        normalizedValue == normalizedExpected,
-        { "$value should be equal to $expected ignoring line breaks" },
-        { "$value should not be equal to $expected ignoring line breaks" }
-    )
-})
+        MatcherResult(
+            normalizedValue == normalizedExpected,
+            { "$value should be equal to $expected ignoring line breaks" },
+            { "$value should not be equal to $expected ignoring line breaks" }
+        )
+    }
+)
 
 /**
  * Enforces that an [UnfulfilledRequirementException] is present in the
@@ -71,7 +72,7 @@ infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(Matcher 
  * [UnfulfilledRequirementException] of type [T] with the specified [message].
  */
 inline fun <reified T> EnforcementException.shouldHaveInfringement(message: String)
-        where T : UnfulfilledRequirementException = should(
+    where T : UnfulfilledRequirementException = should(
     if (infringements.none { it is T }) {
         Matcher { value ->
             MatcherResult(
@@ -87,15 +88,16 @@ inline fun <reified T> EnforcementException.shouldHaveInfringement(message: Stri
                 filtered.any { it.message == message },
                 {
                     "$value should have an infringement of type ${T::class.simpleName} with message: $message. " +
-                            "Actual: $filtered"
+                        "Actual: $filtered"
                 },
                 {
                     "$value should not have an infringement of type ${T::class.simpleName} with message: $message. " +
-                            "Actual: $filtered"
+                        "Actual: $filtered"
                 }
             )
         }
-    })
+    }
+)
 // endregion SHOULD ASSERTIONS
 
 // region : -== ARBITRARY GENERATORS ==-

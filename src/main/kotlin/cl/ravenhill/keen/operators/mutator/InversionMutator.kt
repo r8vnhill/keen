@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2023, Ignacio Slater M.
- * BSD Zero Clause License.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.mutator
@@ -9,7 +9,6 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.probability
-import cl.ravenhill.keen.util.eq
 
 /**
  * The inversion mutator is a simple mutation operator, which inverts the order of a given
@@ -28,51 +27,35 @@ import cl.ravenhill.keen.util.eq
  * @since 1.3.0
  * @version 2.0.0
  */
-class InversionMutator<DNA, G : Gene<DNA, G>>(override val probability: Double) : Mutator<DNA, G> {
+class InversionMutator<DNA, G : Gene<DNA, G>>(
+    override val probability: Double,
+    private val chromosomeProbability: Double = 0.5,
+    private val geneProbability: Double = 0.5,
+) : Mutator<DNA, G> {
 
     /* Documentation inherited from [Mutator] */
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
-    ) = if (probability eq 0.0 || chromosome.size < 2) {
-        // If the mutation probability is 0 or the chromosome is too small, return the original
-        // chromosome
-        MutatorResult(chromosome, 0)
-    } else {
+    ) = if (Core.random.nextDouble() < chromosomeProbability && chromosome.size > 1) {
         val genes = chromosome.genes.toMutableList()
         var start = 0
         var end = chromosome.size - 1
         for (i in 0 until chromosome.size) {
-            if (Core.Dice.probability() < probability) {
+            if (Core.Dice.probability() < geneProbability) {
                 start = i
                 break
             }
         }
         for (i in start until chromosome.size) {
-            if (Core.Dice.probability() > probability) {
+            if (Core.Dice.probability() > geneProbability) {
                 end = i
                 break
             }
         }
         invert(genes, start, end)
         MutatorResult(chromosome.withGenes(genes), 1)
-    }
-
-    private fun getRandomIndices(size: Int, probability: Double): Pair<Int, Int> {
-        var start = 0
-        var end = size - 1
-        for (i in 0 until size) {
-            if (Core.Dice.probability() < probability) {
-                start = i
-                break
-            }
-        }
-        for (i in start until size) {
-            if (Core.Dice.probability() > probability) {
-                end = i
-                break
-            }
-        }
-        return start to end
+    } else {
+        MutatorResult(chromosome, 0)
     }
 
     /**

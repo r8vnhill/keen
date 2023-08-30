@@ -1,14 +1,13 @@
 /*
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.keen.examples.gp.stacktrace
 
 import cl.ravenhill.keen.util.listeners.EvolutionListener
-import cl.ravenhill.keen.util.listeners.Listeners
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import cl.ravenhill.keen.util.listeners.Listeners
 
 /**
  * This function demonstrates the use of the [Tracer] class in the Keen library to evolve a program

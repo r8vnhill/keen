@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.examples.gp
 
 import cl.ravenhill.keen.Core
@@ -14,14 +19,13 @@ import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.prog.terminals.Variable
-import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import kotlin.math.ln
 import kotlin.math.pow
 
-private fun fitness(inputs: List<Double>):
-            (Genotype<Program<Double>, ProgramGene<Double>>) -> Double = { gt ->
+private fun fitness(inputs: List<Double>) = { gt: Genotype<Program<Double>, ProgramGene<Double>> ->
     val program = gt.flatten().first()
     inputs.map { input ->
         val expected = input.pow(4) + input.pow(3) + input.pow(2) + input
