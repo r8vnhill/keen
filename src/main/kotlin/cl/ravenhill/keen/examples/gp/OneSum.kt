@@ -11,6 +11,7 @@ import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SubtreeCrossover
 import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.prog.Program
+import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
@@ -49,6 +50,7 @@ fun main() {
             chromosome {
                 program {
                     size = 1
+                    Fun<Double>("+", 2) { it[0] + it[1] }
                     function("+", 2) { it[0] + it[1] }
                     terminal { EphemeralConstant { 1.0 } }
                 }

@@ -1,7 +1,8 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
+
 
 package cl.ravenhill.keen.genetic.genes.numerical
 
@@ -18,7 +19,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 1.0.0
  * @version 2.0.0
  */
-interface NumberGene<DNA : Number, G: NumberGene<DNA, G>> : Gene<DNA, G> {
+interface NumberGene<DNA : Number, G : NumberGene<DNA, G>> : Gene<DNA, G> {
     val filter: (DNA) -> Boolean
 
     /**
@@ -39,10 +40,11 @@ interface NumberGene<DNA : Number, G: NumberGene<DNA, G>> : Gene<DNA, G> {
      */
     fun toInt(): Int
 
-    /// Documentation inherited from [Gene]
+    // / Documentation inherited from [Gene]
     override fun mutate() =
         withDna(
             generateSequence { generator() }
                 .filter(filter)
-                .first())
+                .first()
+        )
 }
