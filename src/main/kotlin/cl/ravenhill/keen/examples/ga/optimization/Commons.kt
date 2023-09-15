@@ -34,12 +34,12 @@ import cl.ravenhill.utils.DoubleToDouble
  * ### Example 1: Optimizing the Beale function
  * ```
  * val bealeFunction: (Genotype<Double, DoubleGene>) -> Double = { /*...*/ }
- * val engine = createEngine(bealeFunction, -4.5 to 4.5)
+ * val engine = createEngine(::bealeFunction, -4.5 to 4.5)
  * ```
  * ### Example 2: Optimizing the Ackley function
  * ```
  * val ackleyFunction: (Genotype<Double, DoubleGene>) -> Double = { /*...*/ }
- * val engine = createEngine(ackleyFunction, -5.0 to 5.0)
+ * val engine = createEngine(::ackleyFunction, -5.0 to 5.0)
  * ```
  *
  * @param fitnessFunc The fitness function to be optimized.
@@ -47,9 +47,9 @@ import cl.ravenhill.utils.DoubleToDouble
  * @return A configured [Engine] instance.
  * @property DoubleToDouble Represents a mapping from a Double to another Double. Typically used to define a range.
  *
- * @author YourName
- * @since 1.0.0
- * @version 1.0.1
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @since 2.0.0
+ * @version 2.0.0
  */
 fun createEngine(
     fitnessFunc: (Genotype<Double, DoubleGene>) -> Double,
