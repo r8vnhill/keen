@@ -1,9 +1,6 @@
 /*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic.chromosomes.numerical
@@ -16,7 +13,6 @@ import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.utils.DoubleToDouble
 import java.util.Objects
-
 
 /**
  * A chromosome that contains a list of [DoubleGene]s.
@@ -67,19 +63,22 @@ class DoubleChromosome(
             constructorExecutor(size) {
                 DoubleGene(Core.random.nextDouble(range.first, range.second), range)
             }
-        }, range, filter)
+        },
+        range,
+        filter
+    )
 
-    /// Documentation inherited from [Chromosome]
+    /* Documentation inherited from [Chromosome] */
     override fun withGenes(genes: List<DoubleGene>) = DoubleChromosome(genes, range, filter)
 
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any] */
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is DoubleChromosome -> false
         else -> genes == other.genes
     }
 
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any] */
     override fun hashCode() = Objects.hash(DoubleChromosome::class, genes, range)
 
     /**
@@ -94,13 +93,13 @@ class DoubleChromosome(
         lateinit var range: DoubleToDouble
         var filter: (Double) -> Boolean = { true }
 
-        /// Documentation inherited from [Chromosome.Factory]
+        /* Documentation inherited from [Chromosome.Factory] */
         override fun make() = DoubleChromosome(size, range, filter, executor)
 
-        /// Documentation inherited from [Any]
+        /* Documentation inherited from [Any] */
         override fun toString() = "DoubleChromosome.Builder { " +
-                "size: $size, " +
-                "range: $range, " +
-                "executor: $executor }"
+            "size: $size, " +
+            "range: $range, " +
+            "executor: $executor }"
     }
 }

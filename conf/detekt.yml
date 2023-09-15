@@ -654,3 +654,13 @@ style:
     active: true
     excludeImports:
       - 'java.util.*'
+
+complexity:
+  LongParameterList:
+    active: false
+  CognitiveComplexMethod:
+    active: true
+  ReplaceSafeCallChainWithRun:
+    active: true
+  StringLiteralDuplication:
+    active: true

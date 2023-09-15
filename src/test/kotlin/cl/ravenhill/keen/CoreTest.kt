@@ -1,128 +1,32 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen
 
-import cl.ravenhill.any
-import cl.ravenhill.enforcer.Enforcement
-import cl.ravenhill.enforcer.UnfulfilledRequirementException
-import cl.ravenhill.enforcer.requirements.Requirement
 import cl.ravenhill.kuro.Level
 import cl.ravenhill.kuro.Logger
 import cl.ravenhill.kuro.StdoutChannel
 import cl.ravenhill.kuro.bufferedOutputChannel
 import cl.ravenhill.kuro.logger
-import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.string.shouldNotBeBlank
 import io.kotest.matchers.string.shouldNotBeEmpty
-import io.kotest.matchers.types.haveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.boolean
-import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.nonPositiveInt
-import io.kotest.property.arbitrary.pair
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.arbitrary.string
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
-
-
-/**
- * A helper function that creates an [Arb] instance that generates instances of [Requirement] for
- * testing.
- *
- * @param success Whether the generated [Requirement] instances should be successful.
- * Default is true.
- * @return An [Arb] instance that generates instances of [Requirement] for testing.
- */
-private fun Arb.Companion.requirement(success: Arb<Boolean> = Arb.constant(true)) = arbitrary {
-    val successBool = success.bind()
-    object : Requirement<Any> {
-        override val validator: (Any) -> Boolean
-            get() = { successBool }
-
-        override fun generateException(description: String) =
-            object : UnfulfilledRequirementException({ description }) {}
-    }
-}
-
-/**
- * Helper function that creates an instance of `Arb` for generating instances of
- * [Enforcement.Scope.StringScope] class.
- */
-private fun Arb.Companion.stringScope() = arbitrary {
-    val message = string().bind()
-    Enforcement.Scope().StringScope(message)
-}
-
-/**
- * Returns an arbitrary `Level` from a list of predefined log levels:
- * - [Level.Trace]
- * - [Level.Debug]
- * - [Level.Info]
- * - [Level.Warn]
- * - [Level.Error]
- * - [Level.Fatal]
- */
-private fun Arb.Companion.level() = arbitrary {
-    element(
-        Level.Trace(),
-        Level.Debug(),
-        Level.Info(),
-        Level.Warn(),
-        Level.Error(),
-        Level.Fatal()
-    ).bind()
-}
-
-/**
- * Suspends the current coroutine and checks that the logger can log a message at the given logging
- * level.
- * This function generates random messages using [Arb.Companion.string] and random logging levels
- * using [Arb.Companion.level].
- * The generated message is logged using the given [method] and the output is checked against the
- * expected format.
- * If the logging level is the same as the given [logMethodLevel], the output should match the
- * expected format.
- * If the logging level is different from the given [logMethodLevel], the output should be empty.
- *
- * @param logMethodLevel The logging level to use for this test.
- * @param method The method to use for logging the message.
- *
- * @throws AssertionError If the output does not match the expected format or is not empty when it
- * should be.
- */
-suspend fun `check that the logger can log a message`(
-    logMethodLevel: Level,
-    method: (message: () -> String) -> Unit
-) {
-    checkAll(Arb.string(), Arb.level()) { message, level ->
-        assume {
-            message.shouldNotBeBlank()
-            message.shouldNotBeEmpty()
-        }
-        Core.EvolutionLogger.logger = logger("TestLogger") {
-            bufferedOutputChannel()
-            this.level = level
-        }
-        method { message }
-        val output = Core.EvolutionLogger.logger.compositeChannel.first().toString()
-        if (level <= logMethodLevel) {
-            output shouldMatch logPattern("$logMethodLevel")
-        } else {
-            output shouldBe ""
-        }
-        Logger.clearActiveLoggers()
-    }
-}
 
 class CoreTest : FreeSpec({
     beforeAny {
@@ -308,3 +212,65 @@ class CoreTest : FreeSpec({
         }
     }
 })
+
+
+/**
+ * Returns an arbitrary `Level` from a list of predefined log levels:
+ * - [Level.Trace]
+ * - [Level.Debug]
+ * - [Level.Info]
+ * - [Level.Warn]
+ * - [Level.Error]
+ * - [Level.Fatal]
+ */
+private fun Arb.Companion.level() = arbitrary {
+    element(
+        Level.Trace(),
+        Level.Debug(),
+        Level.Info(),
+        Level.Warn(),
+        Level.Error(),
+        Level.Fatal()
+    ).bind()
+}
+
+/**
+ * Suspends the current coroutine and checks that the logger can log a message at the given logging
+ * level.
+ * This function generates random messages using [Arb.Companion.string] and random logging levels
+ * using [Arb.Companion.level].
+ * The generated message is logged using the given [method] and the output is checked against the
+ * expected format.
+ * If the logging level is the same as the given [logMethodLevel], the output should match the
+ * expected format.
+ * If the logging level is different from the given [logMethodLevel], the output should be empty.
+ *
+ * @param logMethodLevel The logging level to use for this test.
+ * @param method The method to use for logging the message.
+ *
+ * @throws AssertionError If the output does not match the expected format or is not empty when it
+ * should be.
+ */
+suspend fun `check that the logger can log a message`(
+    logMethodLevel: Level,
+    method: (message: () -> String) -> Unit,
+) {
+    checkAll(Arb.string(), Arb.level()) { message, level ->
+        assume {
+            message.shouldNotBeBlank()
+            message.shouldNotBeEmpty()
+        }
+        Core.EvolutionLogger.logger = logger("TestLogger") {
+            bufferedOutputChannel()
+            this.level = level
+        }
+        method { message }
+        val output = Core.EvolutionLogger.logger.compositeChannel.first().toString()
+        if (level <= logMethodLevel) {
+            output shouldMatch logPattern("$logMethodLevel")
+        } else {
+            output shouldBe ""
+        }
+        Logger.clearActiveLoggers()
+    }
+}

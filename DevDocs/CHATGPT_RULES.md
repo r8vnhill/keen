@@ -1,4 +1,4 @@
-# ChatGPT Rules
+ # ChatGPT Rules
 
 This chat is about keen, an evolutionary computation framework for kotlin
 ## Rules

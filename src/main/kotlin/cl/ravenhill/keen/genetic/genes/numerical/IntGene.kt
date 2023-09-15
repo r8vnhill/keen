@@ -1,10 +1,8 @@
 /*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
+
 
 package cl.ravenhill.keen.genetic.genes.numerical
 
@@ -38,7 +36,7 @@ import java.util.Objects
  */
 class IntGene(
     override val dna: Int,
-    val range: IntToInt,
+    val range: IntToInt = Int.MIN_VALUE to Int.MAX_VALUE,
     override val filter: (Int) -> Boolean = { true }
 ) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene> {
     // region : Properties
@@ -48,39 +46,39 @@ class IntGene(
     // endregion
 
     // region : NumberGene Interface Implementation
-    /// Documentation inherited from [NumberGene]
+    /* Documentation inherited from [NumberGene]    */
     override fun average(genes: List<IntGene>) = withDna(
         genes.fold(dna.toDouble() / (genes.size + 1)) { acc, gene ->
             acc + gene.toDouble() / (genes.size + 1)
         }.toInt()
     )
 
-    /// Documentation inherited from [NumberGene]
+    /* Documentation inherited from [NumberGene]    */
     override fun toDouble() = dna.toDouble()
 
-    /// Documentation inherited from [NumberGene]
+    /* Documentation inherited from [NumberGene]    */
     override fun toInt() = dna
     // endregion
 
     // region : Gene Interface Implementation
-    /// Documentation inherited from [Gene]
+    /* Documentation inherited from [Gene]  */
     override fun generator() = Core.random.nextInt(start, end)
 
-    /// Documentation inherited from [Gene]
+    /* Documentation inherited from [Gene]  */
     override fun withDna(dna: Int) = IntGene(dna, start to end, filter)
     // endregion
 
     // region : Verifiable Interface Implementation
-    /// Documentation inherited from [Verifiable]
+    /* Documentation inherited from [Verifiable]    */
     @Suppress("ConvertTwoComparisonsToRangeCheck")
     override fun verify() = dna >= start && dna < end && filter(dna)
     // endregion
 
     // region : Any Interface Implementation
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any]   */
     override fun toString() = "$dna"
 
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any]   */
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is IntGene -> false
@@ -88,7 +86,7 @@ class IntGene(
         else -> dna == other.dna
     }
 
-    /// Documentation inherited from [Any]
+    /* Documentation inherited from [Any]   */
     override fun hashCode() = Objects.hash(IntGene::class, dna)
     // endregion
 }

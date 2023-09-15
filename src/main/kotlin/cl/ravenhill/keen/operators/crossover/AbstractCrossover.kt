@@ -1,6 +1,6 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.crossover
@@ -22,7 +22,6 @@ import cl.ravenhill.keen.util.neq
 import cl.ravenhill.keen.util.subsets
 import cl.ravenhill.keen.util.transpose
 
-
 /**
  * An abstract class for performing crossover operations on individuals within a population.
  * Subclasses must implement the [crossoverChromosomes] method for actual crossover functionality.
@@ -38,7 +37,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     private val numOut: Int = 2,
     private val numIn: Int = 2,
     private val exclusivity: Boolean = false,
-    protected val chromosomeRate: Double = 1.0
+    protected val chromosomeRate: Double = 1.0,
 ) : AbstractAlterer<DNA, G>(probability), Crossover<DNA, G> {
 
     init {
@@ -49,10 +48,10 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
-    /// Documentation inherited from [Alterer] interface
+    // / Documentation inherited from [Alterer] interface
     override fun invoke(
         population: Population<DNA, G>,
-        generation: Int
+        generation: Int,
     ): AltererResult<DNA, G> {
         // check if the probability is non-zero, and there are at least 2 individuals in the
         // population
@@ -86,9 +85,9 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     override fun crossover(inGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
         enforce {
             "The number of inputs [${inGenotypes.size}] must be equal to the number of inputs " +
-                    "specified in the constructor [$numIn]" {
-                        inGenotypes.size must BeEqualTo(numIn)
-                    }
+                "specified in the constructor [$numIn]" {
+                    inGenotypes.size must BeEqualTo(numIn)
+                }
             "All inputs must have the same genotype length" {
                 inGenotypes.map { it.size }.distinct().size must BeEqualTo(1)
             }
@@ -113,7 +112,6 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
-
     /**
      * Performs crossover on a list of chromosomes to create new individuals.
      *
@@ -123,6 +121,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
      * @param chromosomes The list of chromosomes to recombine
      * @return The list of chromosomes produced by the crossover operation
      */
-    protected abstract fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>):
-            List<Chromosome<DNA, G>>
+    protected abstract fun crossoverChromosomes(
+        chromosomes: List<Chromosome<DNA, G>>,
+    ): List<Chromosome<DNA, G>>
 }

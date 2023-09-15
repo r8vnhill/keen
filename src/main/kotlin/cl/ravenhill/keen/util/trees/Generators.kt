@@ -141,15 +141,15 @@ fun <V, L, I, T> Tree.Companion.generate(
  * @return the root node of the generated tree, which is of type [T].
  */
 
-private fun <V, T : Tree<V, T>, I : Intermediate<V>, L : Leaf<V>> Tree.Companion.generateRecursive(
+private fun <V, T, I, L> Tree.Companion.generateRecursive(
     intermediates: List<I>,
     leafs: List<L>,
     depth: Int,
     maxHeight: Int,
-    condition: (Int, Int) -> Boolean,
+    condition: (maxHeight: Int, depth: Int) -> Boolean,
     leafFactory: (L) -> T,
     intermediateFactory: (I, List<T>) -> T,
-): T {
+): T where L : Leaf<V>, I : Intermediate<V>, T : Tree<V, T> {
     // Create an empty list to store children of the current node
     val children = mutableListOf<T>()
     // Decide whether to create a leaf or an intermediate node based on the condition
