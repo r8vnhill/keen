@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.genetic.genes.numerical
 
+import cl.ravenhill.keen.Core
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -13,8 +14,10 @@ import io.kotest.matchers.types.shouldNotHaveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.long
 import io.kotest.property.assume
 import io.kotest.property.checkAll
+import kotlin.random.Random
 
 class IntGeneTest : FreeSpec({
     "An [IntGene]" - {
@@ -83,6 +86,28 @@ class IntGeneTest : FreeSpec({
                         assume { g1 shouldNotBe g2 }
                         g1 shouldNotHaveSameHashCodeAs g2
                     }
+                }
+            }
+        }
+
+        "can generate a random value" {
+            with(Arb) {
+                checkAll(intGene(int()), long()) { gene, seed ->
+                    Core.random = Random(seed)
+                    val rng = Random(seed)
+                    val expected = rng.nextInt(gene.range.first, gene.range.second)
+                    gene.mutate() shouldBe IntGene(expected, gene.range)
+                }
+            }
+        }
+
+        "can create a copy with a different value" {
+            with(Arb) {
+                checkAll(intGene(int()), int()) { gene, i ->
+                    val copy = gene.withDna(i)
+                    copy.dna shouldBe i
+                    copy.range shouldBe gene.range
+                    copy.filter shouldBe gene.filter
                 }
             }
         }
