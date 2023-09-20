@@ -66,22 +66,22 @@ class IntGeneTest : FreeSpec({
                     }
                 }
             }
+        }
 
-            "hash code should" - {
-                "be consistent with equality" {
-                    checkAll<Int> { i ->
-                        val g1 = IntGene(i)
-                        val g2 = IntGene(i)
-                        g1 shouldHaveSameHashCodeAs g2
-                    }
+        "hash code should" - {
+            "be consistent with equality" {
+                checkAll<Int> { i ->
+                    val g1 = IntGene(i)
+                    val g2 = IntGene(i)
+                    g1 shouldHaveSameHashCodeAs g2
                 }
+            }
 
-                "be different for different genes" {
-                    with(Arb) {
-                        checkAll(intGene(int()), intGene(int())) { g1, g2 ->
-                            assume { g1 shouldNotBe g2 }
-                            g1 shouldNotHaveSameHashCodeAs g2
-                        }
+            "be different for different genes" {
+                with(Arb) {
+                    checkAll(intGene(int()), intGene(int())) { g1, g2 ->
+                        assume { g1 shouldNotBe g2 }
+                        g1 shouldNotHaveSameHashCodeAs g2
                     }
                 }
             }
