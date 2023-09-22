@@ -1,6 +1,6 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic.chromosomes
@@ -23,9 +23,9 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @version 2.0.0
  */
 abstract class AbstractChromosome<DNA, G : Gene<DNA, G>>(override val genes: List<G>) :
-        Chromosome<DNA, G> {
+    Chromosome<DNA, G> {
 
-    /// Documentation inherited from [Verifiable]
+    /* Documentation inherited from [Verifiable] */
     override fun verify() = genes.all { it.verify() }
 
     /**
