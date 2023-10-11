@@ -1,12 +1,11 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.enforcer
 
 import cl.ravenhill.enforcer.requirements.Requirement
-import java.util.Objects
 
 object Enforcement {
     var skipChecks = false
@@ -109,7 +108,7 @@ object Enforcement {
                 }
             )
 
-            /// Documentation inherited from [Any].
+            // / Documentation inherited from [Any].
             override fun toString() = "StringScope(message='$message')"
         }
     }

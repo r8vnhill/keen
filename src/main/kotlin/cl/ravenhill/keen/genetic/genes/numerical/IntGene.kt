@@ -3,13 +3,13 @@
  * 2-Clause BSD License.
  */
 
-
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import cl.ravenhill.utils.IntToInt
+import cl.ravenhill.utils.toRange
 import java.util.Objects
 
 /**
@@ -36,13 +36,21 @@ import java.util.Objects
  */
 class IntGene(
     override val dna: Int,
-    val range: IntToInt = Int.MIN_VALUE to Int.MAX_VALUE,
-    override val filter: (Int) -> Boolean = { true }
+    val range: IntRange = Int.MIN_VALUE..Int.MAX_VALUE,
+    override val filter: (Int) -> Boolean = { true },
 ) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene> {
+
+    @Deprecated("IntToInt is to be removed to use more idiomatic stdlib ranges")
+    constructor(
+        dna: Int,
+        range: IntToInt,
+        filter: (Int) -> Boolean = { true },
+    ) : this(dna, range.toRange(), filter)
+
     // region : Properties
     val start = range.first
 
-    val end = range.second
+    val end = range.last
     // endregion
 
     // region : NumberGene Interface Implementation
@@ -70,19 +78,17 @@ class IntGene(
 
     // region : Verifiable Interface Implementation
     /* Documentation inherited from [Verifiable]    */
-    @Suppress("ConvertTwoComparisonsToRangeCheck")
-    override fun verify() = dna >= start && dna < end && filter(dna)
+    override fun verify() = dna in range && filter(dna)
     // endregion
 
     // region : Any Interface Implementation
     /* Documentation inherited from [Any]   */
-    override fun toString() = "$dna"
+    override fun toString() = "IntGene(dna=$dna, range=$range)"
 
     /* Documentation inherited from [Any]   */
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is IntGene -> false
-        other::class != IntGene::class -> false
         else -> dna == other.dna
     }
 

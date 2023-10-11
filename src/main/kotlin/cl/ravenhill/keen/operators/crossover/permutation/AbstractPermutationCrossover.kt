@@ -1,12 +1,16 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.util.duplicates
-
 
 /**
  * A _Permutation Crossover_ operator is a crossover operator that works with a list of
@@ -31,7 +35,7 @@ abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
     chromosomeRate: Double = 1.0
 ) : AbstractCrossover<DNA, G>(probability, numOut, numIn, exclusivity, chromosomeRate) {
 
-    /// Documentation inherited from [AbstractCrossover]
+    /* Documentation inherited from [AbstractCrossover] */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         enforce {
             for (chromosome in chromosomes) {

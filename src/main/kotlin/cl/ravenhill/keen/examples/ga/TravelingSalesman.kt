@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.examples.ga
 
 import cl.ravenhill.keen.Core
@@ -12,10 +17,10 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
 import cl.ravenhill.keen.operators.mutator.InversionMutator
-import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import tech.tablesaw.api.DoubleColumn
 import tech.tablesaw.plotly.Plot
 import tech.tablesaw.plotly.components.Figure
@@ -36,8 +41,8 @@ private fun fitnessFn(genotype: Genotype<Pair<Int, Int>, RoutePointGene>): Doubl
 }
 
 private infix fun Pair<Int, Int>.distanceTo(other: Pair<Int, Int>) = sqrt(
-    (this.first - other.first).toDouble().pow(2)
-            + (this.second - other.second).toDouble().pow(2)
+    (this.first - other.first).toDouble().pow(2) +
+        (this.second - other.second).toDouble().pow(2)
 )
 
 class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>, RoutePointGene> {
@@ -50,7 +55,7 @@ class RoutePointGene(override val dna: Pair<Int, Int>) : Gene<Pair<Int, Int>, Ro
 }
 
 class RouteChromosome(override val genes: List<RoutePointGene>) :
-        Chromosome<Pair<Int, Int>, RoutePointGene> {
+    Chromosome<Pair<Int, Int>, RoutePointGene> {
 
     override fun withGenes(genes: List<RoutePointGene>) =
         RouteChromosome(genes.map { RoutePointGene(it.dna) })
@@ -64,9 +69,12 @@ class RouteChromosome(override val genes: List<RoutePointGene>) :
 }
 
 fun main() {
-    val engine = engine(::fitnessFn, genotype {
-        chromosome { RouteChromosome.Factory() }
-    }) {
+    val engine = engine(
+        ::fitnessFn,
+        genotype {
+            chromosome { RouteChromosome.Factory() }
+        }
+    ) {
         populationSize = 1000
         limits = listOf(GenerationCount(200))
         alterers = listOf(InversionMutator(0.06), PartiallyMappedCrossover(0.3))
@@ -80,11 +88,14 @@ fun main() {
     println(engine.listeners.first())
     println(result)
     (engine.listeners.last() as EvolutionPlotter).displayFitness()
-    val x = DoubleColumn.create("x",
-        result.best.genotype.flatten().map { it.first.toDouble() })
+    val x = DoubleColumn.create(
+        "x",
+        result.best.genotype.flatten().map { it.first.toDouble() }
+    )
     val y = DoubleColumn.create(
         "y",
-        result.best.genotype.flatten().map { it.second.toDouble() })
+        result.best.genotype.flatten().map { it.second.toDouble() }
+    )
     val scatterX = ScatterTrace.builder(x, y)
         .mode(ScatterTrace.Mode.LINE)
         .marker(
@@ -101,7 +112,7 @@ fun main() {
     )
 }
 
-val points = listOf(
+private val points = listOf(
     100 to 160,
     20 to 40,
     60 to 20,
