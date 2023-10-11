@@ -9,6 +9,7 @@ import cl.ravenhill.keen.Core
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.ints.shouldBeInRange
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldHaveSameHashCodeAs
@@ -17,6 +18,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.long
 import io.kotest.property.assume
 import io.kotest.property.checkAll
@@ -138,6 +140,15 @@ class IntGeneTest : FreeSpec({
                 }
             }
         }
+
+        "can be averaged" {
+            with(Arb) {
+                checkAll(intGene(int()), list(intGene(int(-100..100)))) { gene, genes ->
+                    val expected = (genes + gene).map { it.dna }.average().toInt()
+                    gene.average(genes).dna shouldBeInRange expected - 1..expected + 1
+                }
+            }
+        }
     }
 })
 
@@ -196,6 +207,20 @@ private fun Arb.Companion.intOutOfRange(range: IntRange) = arbitrary {
 private fun Arb.Companion.intGeneOutOfRange(range: IntRange) =
     arbitrary { IntGene(intOutOfRange(range).bind(), range) }
 
+/**
+ * Produces an arbitrary `IntGene` that can be verified with a specified filter.
+ *
+ * The generated `IntGene` is accompanied by a filter which can be used to verify if the integer value it holds
+ * satisfies a certain condition. It's important to note that this function does not guarantee the produced
+ * `IntGene` will always satisfy the filter, but rather provides a mechanism to check if it does.
+ *
+ * @param filter A lambda function that can be used to verify the integer value held by the generated `IntGene`.
+ * @return An arbitrary of type `IntGene` which can be verified using the specified filter.
+ */
 private fun Arb.Companion.intGeneWithFilter(filter: (Int) -> Boolean) = arbitrary {
     IntGene(int().bind(), filter = filter)
+}
+
+private fun Int.shouldBeCloseTo(expected: Int, tolerance: Int) {
+    this shouldBe (expected - tolerance)..(expected + tolerance)
 }
