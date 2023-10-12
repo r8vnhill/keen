@@ -220,7 +220,3 @@ private fun Arb.Companion.intGeneOutOfRange(range: IntRange) =
 private fun Arb.Companion.intGeneWithFilter(filter: (Int) -> Boolean) = arbitrary {
     IntGene(int().bind(), filter = filter)
 }
-
-private fun Int.shouldBeCloseTo(expected: Int, tolerance: Int) {
-    this shouldBe (expected - tolerance)..(expected + tolerance)
-}
