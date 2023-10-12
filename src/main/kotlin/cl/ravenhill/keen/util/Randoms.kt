@@ -1,7 +1,8 @@
 /*
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
+
 package cl.ravenhill.keen.util
 
 import cl.ravenhill.enforcer.Enforcement.enforce
@@ -75,6 +76,23 @@ fun Random.nextString(
     filter: (Char) -> Boolean = { true },
 ) = List(length) { nextChar(range, filter) }.joinToString("")
 
+/**
+ * Generates a random integer within the inclusive range specified by [range].
+ *
+ * This function extends the capabilities of the standard random `nextInt` function by including both
+ * the start and the end of the range in the possible outputs.
+ *
+ * ## Examples
+ * ### Example 1: Get a random integer between 1 and 5 (inclusive)
+ * ```
+ * val random = Random()
+ * val result = random.nextIntInclusive(1..5)
+ * ```
+ *
+ * @param range An `IntRange` specifying the inclusive range within which a random integer will be generated.
+ * @return A randomly generated integer that lies within the inclusive boundaries of the specified range.
+ */
+fun Random.nextIntInclusive(range: IntRange) = nextInt(range.first, range.last) + 1
 
 /**
  * Returns a list of randomly selected indices, using the given pick probability.

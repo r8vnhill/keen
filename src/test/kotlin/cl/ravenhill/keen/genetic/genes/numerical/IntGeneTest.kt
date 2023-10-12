@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.util.nextIntInclusive
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -28,8 +29,8 @@ class IntGeneTest : FreeSpec({
     "An [IntGene]" - {
         "can be converted to" - {
             "an [Int]" {
-                checkAll(Arb.int(), Arb.int(), Arb.int()) { i, i2, i3 ->
-                    IntGene(i, i2..i3).toInt() shouldBe i
+                checkAll<Int> { i ->
+                    IntGene(i).toInt() shouldBe i
                 }
             }
 
@@ -101,7 +102,7 @@ class IntGeneTest : FreeSpec({
                 checkAll(intGene(int()), long()) { gene, seed ->
                     Core.random = Random(seed)
                     val rng = Random(seed)
-                    val expected = rng.nextInt(gene.range.first, gene.range.last)
+                    val expected = rng.nextIntInclusive(gene.range)
                     gene.mutate() shouldBe IntGene(expected, gene.range)
                 }
             }
@@ -143,7 +144,7 @@ class IntGeneTest : FreeSpec({
 
         "can be averaged" {
             with(Arb) {
-                checkAll(intGene(int()), list(intGene(int(-100..100)))) { gene, genes ->
+                checkAll(intGene(int(-100, 100)), list(intGene(int(-100..100)))) { gene, genes ->
                     val expected = (genes + gene).map { it.dna }.average().toInt()
                     gene.average(genes).dna shouldBeInRange expected - 1..expected + 1
                 }
