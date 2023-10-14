@@ -7,6 +7,7 @@ import cl.ravenhill.orderedPair
 import cl.ravenhill.orderedTriple
 import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
+import cl.ravenhill.utils.toRange
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -34,7 +35,6 @@ import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
-
 /**
  * Returns an [Arb] that generates random [CharRange] objects.
  */
@@ -50,11 +50,13 @@ private fun Arb.Companion.charRange() = arbitrary {
  * The returned function has the signature `(Char) -> Boolean`.
  */
 private fun Arb.Companion.filter() = arbitrary {
-    element({ _: Char -> true },
+    element(
+        { _: Char -> true },
         { c: Char -> c.isLetter() },
         { c: Char -> c.isDigit() },
         { c: Char -> c.isUpperCase() },
-        { c: Char -> c.isLowerCase() }).bind()
+        { c: Char -> c.isLowerCase() }
+    ).bind()
 }
 
 class RandomsTest : FreeSpec({
@@ -116,6 +118,18 @@ class RandomsTest : FreeSpec({
             checkAll(Arb.filter(), Arb.random()) { filter, rng ->
                 val string = rng.nextString(filter = filter)
                 string.forEach { filter(it) shouldBe true }
+            }
+        }
+    }
+
+    "Generating a random integer in a given range should return an integer in the given range" {
+        with(Arb) {
+            checkAll(
+                orderedPair(int(), int(), strict = true),
+                random()
+            ) { orderedPair, randomGenerator ->
+                val range = orderedPair.toRange()
+                randomGenerator.nextIntInRange(range) shouldBeInRange range
             }
         }
     }
@@ -269,7 +283,6 @@ class RandomsTest : FreeSpec({
                 }
             }
 
-
             "the elements list is too small" {
                 checkAll(
                     Arb.list(Arb.any(), 1..100), Arb.positiveInt(), Arb.boolean(), Arb.random()
@@ -301,10 +314,13 @@ class RandomsTest : FreeSpec({
                     }
                     with(ex.infringements.first()) {
                         shouldBeInstanceOf<UnfulfilledRequirementException>()
-                        message shouldBe unfulfilledConstraint("The number of elements [${elements.size}] must be a multiple of the subset size [$size] when using exclusive subsets.")
+                        message shouldBe unfulfilledConstraint(
+                            "The number of elements [${elements.size}] must be a " +
+                                "multiple of the subset size [$size] when using exclusive " +
+                                "subsets."
+                        )
                     }
                 }
-
             }
 
             "the limit is non-positive" {
@@ -327,13 +343,15 @@ class RandomsTest : FreeSpec({
 /**
  * Asserts that the integer is a multiple of the given number.
  */
-private infix fun Int.shouldNotBeMultipleOf(n: Int) = should(Matcher { value ->
-    MatcherResult(
-        value % n != 0,
-        { "$value should not be a multiple of $n" },
-        { "$value should be a multiple of $n" }
-    )
-})
+private infix fun Int.shouldNotBeMultipleOf(n: Int) = should(
+    Matcher { value ->
+        MatcherResult(
+            value % n != 0,
+            { "$value should not be a multiple of $n" },
+            { "$value should be a multiple of $n" }
+        )
+    }
+)
 
 /**
  * Generates a pair consisting of a random list and a random index within the list.
@@ -341,7 +359,7 @@ private infix fun Int.shouldNotBeMultipleOf(n: Int) = should(Matcher { value ->
 private fun <E> Arb.Companion.listAndIndex(
     listGen: Arb<E>,
     range: IntRange = 0..100,
-    indexGen: (List<E>) -> Arb<Int> = { Arb.int(0..it.size) }
+    indexGen: (List<E>) -> Arb<Int> = { Arb.int(0..it.size) },
 ) = arbitrary {
     val list = list(listGen, range).bind()
     val index = indexGen(list).bind()

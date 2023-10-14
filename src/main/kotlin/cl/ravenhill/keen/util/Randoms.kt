@@ -77,22 +77,41 @@ fun Random.nextString(
 ) = List(length) { nextChar(range, filter) }.joinToString("")
 
 /**
- * Generates a random integer within the inclusive range specified by [range].
+ * Generates a random integer within the specified [range], excluding the end value.
  *
- * This function extends the capabilities of the standard random `nextInt` function by including both
- * the start and the end of the range in the possible outputs.
+ * This function extends the capabilities of the standard random `nextInt` by ensuring the generated
+ * integer lies within the given range without including the last value.
  *
  * ## Examples
- * ### Example 1: Get a random integer between 1 and 5 (inclusive)
+ * ### Example 1: Get a random integer between 1 (inclusive) and 5 (exclusive)
  * ```
  * val random = Random()
- * val result = random.nextIntInclusive(1..5)
+ * val result = random.nextIntInRange(1..4)
  * ```
  *
- * @param range An `IntRange` specifying the inclusive range within which a random integer will be generated.
- * @return A randomly generated integer that lies within the inclusive boundaries of the specified range.
+ * @param range An `IntRange` specifying the range within which a random integer will be generated.
+ * @return A randomly generated integer that lies within the boundaries of the specified range excluding the last value.
  */
-fun Random.nextIntInclusive(range: IntRange) = nextInt(range.first, range.last) + 1
+fun Random.nextIntInRange(range: IntRange) = nextInt(range.first, range.last)
+
+/**
+ * Generates a random double value within the specified [range], including the end value.
+ *
+ * This function extends the standard random `nextDouble` to ensure the generated double value
+ * lies within the given range, and it includes the end value.
+ *
+ * ## Examples
+ * ### Example 1: Get a random double between 1.0 (inclusive) and 5.0 (inclusive)
+ * ```
+ * val random = Random()
+ * val result = random.nextDoubleInRange(1.0..5.0)
+ * ```
+ *
+ * @param range A `ClosedFloatingPointRange<Double>` specifying the inclusive range within which a random double will be generated.
+ * @return A randomly generated double value that lies within the inclusive boundaries of the specified range.
+ */
+fun Random.nextDoubleInRange(range: ClosedFloatingPointRange<Double>) =
+    nextDouble(range.start, range.endInclusive)
 
 /**
  * Returns a list of randomly selected indices, using the given pick probability.

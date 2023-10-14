@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.util.nextIntInclusive
+import cl.ravenhill.keen.util.nextIntInRange
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -102,7 +102,7 @@ class IntGeneTest : FreeSpec({
                 checkAll(intGene(int()), long()) { gene, seed ->
                     Core.random = Random(seed)
                     val rng = Random(seed)
-                    val expected = rng.nextIntInclusive(gene.range)
+                    val expected = rng.nextIntInRange(gene.range)
                     gene.mutate() shouldBe IntGene(expected, gene.range)
                 }
             }

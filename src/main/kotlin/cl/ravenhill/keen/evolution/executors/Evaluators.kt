@@ -1,16 +1,16 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.evolution.executors
 
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -85,7 +85,7 @@ interface EvaluationExecutor<DNA, G : Gene<DNA, G>> : KeenExecutor {
      * @property creator A function that creates an instance of the [EvaluationExecutor] interface.
      */
     open class Factory<DNA, G : Gene<DNA, G>> :
-            KeenExecutor.Factory<((Genotype<DNA, G>) -> Double), EvaluationExecutor<DNA, G>> {
+        KeenExecutor.Factory<((Genotype<DNA, G>) -> Double), EvaluationExecutor<DNA, G>> {
         override lateinit var creator: ((Genotype<DNA, G>) -> Double) -> EvaluationExecutor<DNA, G>
     }
 }

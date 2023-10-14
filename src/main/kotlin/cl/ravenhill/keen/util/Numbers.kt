@@ -1,7 +1,8 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
+
 
 @file:Suppress("ConvertTwoComparisonsToRangeCheck")
 
@@ -23,11 +24,12 @@ import kotlin.math.floor
 /**
  * Rounds up this integer to the next multiple of the given integer.
  */
-infix fun Int.roundUpToMultipleOf(i: Int): Int {
-    if (i == 0) return this
-    val remainder = this % i
-    if (remainder == 0) return this
-    return this + i - remainder
+infix fun Int.roundUpToMultipleOf(i: Int): Int = when (i) {
+    0 -> this
+    else -> when (val remainder = this % i) {
+        0 -> this
+        else -> this + i - remainder
+    }
 }
 
 /**

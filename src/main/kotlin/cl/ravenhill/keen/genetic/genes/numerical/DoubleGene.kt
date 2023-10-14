@@ -1,16 +1,19 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.genetic.genes.numerical
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.enforcer.requirements.PairRequirement.BeFinite
-import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
+import cl.ravenhill.keen.util.nextDoubleInRange
 import cl.ravenhill.utils.DoubleToDouble
+import cl.ravenhill.utils.toRange
 import java.util.Objects
-import kotlin.random.asJavaRandom
 
 /**
  * A gene that stores a 64-bit floating point number value.
@@ -33,61 +36,62 @@ import kotlin.random.asJavaRandom
  */
 class DoubleGene(
     override val dna: Double,
-    val range: DoubleToDouble,
-    override val filter: (Double) -> Boolean = { true }
+    val range: ClosedFloatingPointRange<Double> = -Double.MAX_VALUE..Double.MAX_VALUE,
+    override val filter: (Double) -> Boolean = { true },
 ) : NumberGene<Double, DoubleGene>, ComparableGene<Double, DoubleGene> {
+
+    val start = range.start
+    val end = range.endInclusive
 
     init {
         enforce {
-            "The range [$range] must be ordered" { range must BeStrictlyOrdered() }
-            "The range [$range] must be finite" { range must BeFinite }
-            "The value [$dna] must be in range [$range]" { dna must BeInRange(range) }
+//            "The range [$range] must be ordered" { range must BeStrictlyOrdered() }
+//            "The range [$range] must be finite" { range must BeFinite }
+//            "The value [$dna] must be in range [$range]" { dna must BeInRange(range) }
         }
     }
 
-    /**
-     * The lower bound of the range (inclusive).
-     */
-    private val start = range.first
+    @Deprecated(
+        "Use the constructor that receives a range instead",
+        ReplaceWith("DoubleGene(dna, range.toRange(), filter)")
+    )
+    constructor(dna: Double, range: DoubleToDouble, filter: (Double) -> Boolean = { true }) :
+        this(dna, range.toRange(), filter = filter)
 
-    /**
-     * The upper bound of the range (exclusive).
-     */
-    private val end = range.second
-
-    /// Documentation inherited from [NumberGene]
+    // / Documentation inherited from [NumberGene]
     override fun average(genes: List<DoubleGene>): DoubleGene {
         enforce { "The list of genes must not be empty" { genes mustNot BeEmpty } }
         return withDna((dna + genes.sumOf { it.dna }) / (genes.size + 1))
     }
 
-    /// Documentation inherited from [NumberGene]
+    // / Documentation inherited from [NumberGene]
     override fun toDouble() = dna
 
-    /// Documentation inherited from [NumberGene]
+    // / Documentation inherited from [NumberGene]
     override fun toInt() = dna.toInt()
 
-    /// Documentation inherited from [Gene]
-    override fun generator() = Core.random.asJavaRandom().nextDouble() * (end - start) + start
+    // / Documentation inherited from [Gene]
+    override fun generator() = Core.random.nextDoubleInRange(range)
 
-    /// Documentation inherited from [Gene]
+    // / Documentation inherited from [Gene]
     override fun withDna(dna: Double) = DoubleGene(dna, range)
 
-    /// Documentation inherited from [Verifiable]
-    override fun verify() = dna < range.second && dna >= range.first
+    // / Documentation inherited from [Verifiable]
+    override fun verify() = dna in range && filter(dna)
 
-    /// Documentation inherited from [Any]
-    override fun toString() = "$dna"
+    // / Documentation inherited from [Any]
+    override fun toString() = "DoubleGene(dna=$dna, range=$range)"
 
-    /// Documentation inherited from [Any]
+    // / Documentation inherited from [Any]
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is DoubleGene -> false
         other::class != this::class -> false
-        else -> dna == other.dna
-                && range == other.range
+        else ->
+            dna == other.dna &&
+                range == other.range
     }
 
-    /// Documentation inherited from [Any]
+    // / Documentation inherited from [Any]
     override fun hashCode() = Objects.hash(DoubleGene::class, dna, range)
 }

@@ -8,7 +8,7 @@ package cl.ravenhill.keen.genetic.genes.numerical
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import cl.ravenhill.keen.util.nextIntInclusive
+import cl.ravenhill.keen.util.nextIntInRange
 import cl.ravenhill.utils.IntToInt
 import cl.ravenhill.utils.toRange
 import java.util.Objects
@@ -71,7 +71,7 @@ class IntGene(
 
     // region : Gene Interface Implementation
     /* Documentation inherited from [Gene]  */
-    override fun generator() = Core.random.nextIntInclusive(range)
+    override fun generator() = Core.random.nextIntInRange(range)
 
     /* Documentation inherited from [Gene]  */
     override fun withDna(dna: Int) = IntGene(dna, range, filter)

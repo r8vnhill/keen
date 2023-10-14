@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.genetic.genes
 
+import cl.ravenhill.keen.genetic.TestGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.checkAll
@@ -40,20 +41,4 @@ class GeneTest : FreeSpec({
         }
     }
 })
-
-/**
- * Represents a test implementation of the [Gene] interface with [Int] as its DNA type.
- *
- * @property dna The genetic material represented by an integer value.
- */
-private class TestGene(override val dna: Int) : Gene<Int, TestGene> {
-
-    /**
-     * Creates a new instance of [TestGene] with the provided DNA.
-     *
-     * @param dna The genetic material for the new gene instance.
-     * @return A new [TestGene] instance with the specified DNA.
-     */
-    override fun withDna(dna: Int) = TestGene(dna)
-}
 

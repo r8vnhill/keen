@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.examples.ga
 
 import cl.ravenhill.keen.builders.chromosome
@@ -11,9 +16,9 @@ import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.util.eq
-import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import kotlin.math.abs
 import kotlin.math.ln
 
@@ -34,7 +39,6 @@ private fun absDiff(genotype: Genotype<Int, IntGene>) =
         .let { factors -> abs(TARGET.toLong() - factors.fold(1L) { acc, i -> acc * i }) }
         .toDouble()
 
-
 /**
  * This genetic algorithm solves the fundamental theorem of arithmetic, which states that every
  * positive integer greater than 1 can be uniquely represented as a product of prime numbers.
@@ -50,18 +54,25 @@ private fun absDiff(genotype: Genotype<Int, IntGene>) =
  */
 fun main() {
     // Set up the genetic algorithm
-    val engine = engine(::absDiff, genotype {
-        chromosome {
-            ints {
-                size = 10; range = 1 to 200; filter = { it in candidateFactors }
+    val engine = engine(
+        ::absDiff,
+        genotype {
+            chromosome {
+                ints {
+                    size = 10;
+                    range = 1 to 200;
+                    filter = { it in candidateFactors }
+                }
+            }
+            chromosome {
+                ints {
+                    size = 1;
+                    range = 1 to 200;
+                    filter = { it in candidateFactors }
+                }
             }
         }
-        chromosome {
-            ints {
-                size = 1; range = 1 to 200; filter = { it in candidateFactors }
-            }
-        }
-    }) {
+    ) {
         populationSize = 1000
         alterers = listOf(RandomMutator(0.1), SinglePointCrossover(0.3))
         optimizer = FitnessMinimizer()
@@ -71,10 +82,12 @@ fun main() {
     // Run the genetic algorithm and output the results
     val result = engine.evolve()
     println("Statistics: ${engine.listeners.first()}")
-    println(buildString {
-        append("$TARGET = ")
-        append(result.best.genotype.flatten().filter { it > 1 }.joinToString(" * "))
-    })
+    println(
+        buildString {
+            append("$TARGET = ")
+            append(result.best.genotype.flatten().filter { it > 1 }.joinToString(" * "))
+        }
+    )
     (engine.listeners[1] as EvolutionPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }
 }
 
