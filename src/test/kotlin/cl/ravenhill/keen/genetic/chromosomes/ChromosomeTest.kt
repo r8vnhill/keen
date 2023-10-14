@@ -8,19 +8,23 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.keen.genetic.TestGene
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 class ChromosomeTest : FreeSpec({
     "A [Chromosome]" - {
         "can be created with a list of genes" {
             with(Arb) {
-                checkAll(list(int())) { dnas ->
-                    val genes = dnas.map { TestGene(it) }
+                checkAll(list(int())) { dnaList ->
+                    val genes = dnaList.map { TestGene(it) }
                     val chromosome = TestChromosome(genes)
                     assertSoftly {
                         for (i in genes.indices) {
@@ -67,6 +71,21 @@ class ChromosomeTest : FreeSpec({
             with(Arb) {
                 checkAll(testChromosome(int())) { chromosome ->
                     chromosome.flatten() shouldBe chromosome.genes.map { it.dna }
+                }
+            }
+        }
+
+        "can verify if a given gene sequence is valid when" - {
+            with(Arb) {
+                "the list of genes is not empty" {
+                    checkAll(testChromosome(int())) { chromosome ->
+                        assume { chromosome.genes.shouldNotBeEmpty() }
+                        chromosome.verify().shouldBeTrue()
+                    }
+                }
+
+                "the list of genes is empty" {
+                    TestChromosome(listOf()).verify().shouldBeFalse()
                 }
             }
         }
