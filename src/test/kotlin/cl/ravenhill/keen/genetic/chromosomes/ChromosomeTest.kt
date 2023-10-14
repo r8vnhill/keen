@@ -10,6 +10,7 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
@@ -32,15 +33,41 @@ class ChromosomeTest : FreeSpec({
 
         "can return its size" {
             with(Arb) {
-                checkAll(list(int())) { dnas ->
-                    val genes = dnas.map { TestGene(it) }
-                    val chromosome = TestChromosome(genes)
-                    chromosome.size shouldBe genes.size
+                checkAll(testChromosome(int())) { chromosome ->
+                    chromosome.size shouldBe chromosome.genes.size
+                }
+            }
+        }
+
+        "iterator can be accessed" {
+            with(Arb) {
+                checkAll(testChromosome(int())) { chromosome ->
+                    assertSoftly {
+                        chromosome.iterator().withIndex().forEach { (i, gene) ->
+                            gene.dna shouldBe chromosome[i].dna
+                        }
+                    }
+                }
+            }
+        }
+
+        "can access genes by index" {
+            with(Arb) {
+                checkAll(testChromosome(int())) { chromosome ->
+                    assertSoftly {
+                        chromosome.genes.forEachIndexed { i, gene ->
+                            chromosome[i].dna shouldBe gene.dna
+                        }
+                    }
                 }
             }
         }
     }
 })
+
+private fun Arb.Companion.testChromosome(i: Arb<Int>) = arbitrary {
+    TestChromosome(list(i).bind().map { TestGene(it) })
+}
 
 /**
  * Represents a chromosome containing a list of [TestGene] instances.
