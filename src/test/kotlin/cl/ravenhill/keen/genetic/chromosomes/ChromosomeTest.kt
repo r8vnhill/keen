@@ -62,6 +62,14 @@ class ChromosomeTest : FreeSpec({
                 }
             }
         }
+
+        "can be flattened" {
+            with(Arb) {
+                checkAll(testChromosome(int())) { chromosome ->
+                    chromosome.flatten() shouldBe chromosome.genes.map { it.dna }
+                }
+            }
+        }
     }
 })
 
