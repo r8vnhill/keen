@@ -52,7 +52,7 @@ sealed class BoolGene : Gene<Boolean, BoolGene> {
      *
      * @property dna Overrides the inherited DNA property with a `true` value.
      */
-    object True : BoolGene() {
+    data object True : BoolGene() {
         override val dna = true
     }
 
@@ -61,7 +61,7 @@ sealed class BoolGene : Gene<Boolean, BoolGene> {
      *
      * @property dna Overrides the inherited DNA property with a `false` value.
      */
-    object False : BoolGene() {
+    data object False : BoolGene() {
         override val dna = false
     }
 }

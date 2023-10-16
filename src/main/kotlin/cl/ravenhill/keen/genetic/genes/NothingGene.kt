@@ -34,7 +34,7 @@ data object NothingGene : Gene<Nothing, NothingGene> {
         get() = throw IllegalOperationException { "A NothingGene has no DNA" }
 
     /**
-     * Inaccessible due to the inherent lack of DNA in a `NothingGene`.
+     * Absurd method; inaccessible due to the inherent lack of DNA in a `NothingGene`.
      *
      * The exception will never be thrown, as the ``withDna`` method cannot be called with a
      * [Nothing] value.

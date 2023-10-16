@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.genetic.genes.NothingGene
-
 
 /**
  * Represents a chromosome composed exclusively of `NothingGene` elements.
@@ -24,7 +22,7 @@ import cl.ravenhill.keen.genetic.genes.NothingGene
  * @property genes A list of `NothingGene` elements that form the chromosome.
  */
 class NothingChromosome(genes: List<NothingGene>) :
-        AbstractChromosome<Nothing, NothingGene>(genes) {
+    AbstractChromosome<Nothing, NothingGene>(genes) {
 
     /**
      * Returns a new `NothingChromosome` instance with the provided genes.

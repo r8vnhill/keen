@@ -1,16 +1,16 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.probability
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.util.roundUpToMultipleOf
 import java.util.Objects
 import kotlin.properties.Delegates
@@ -32,10 +32,12 @@ import kotlin.properties.Delegates
  * @since 1.0.0
  * @version 2.0.0
  */
-class BoolChromosome(
-    genes: List<BoolGene>,
+data class BoolChromosome(
+    override val genes: List<BoolGene>,
     private val truesProbability: Double
 ) : AbstractChromosome<Boolean, BoolGene>(genes) {
+
+    constructor(genes: List<BoolGene>) : this(genes, 0.5)
 
     /**
      * Secondary constructor for creating a new [BoolChromosome] of the specified size.
@@ -62,9 +64,11 @@ class BoolChromosome(
                 }
             }.let {
                 size
-            }) {
+            }
+        ) {
             if (Dice.probability() < truesProbability) BoolGene.True else BoolGene.False
-        }, truesProbability
+        },
+        truesProbability
     )
 
     // Documentation inherited from [Verifiable].
@@ -104,7 +108,6 @@ class BoolChromosome(
         .joinToString(separator = "|")
         .padStart(genes.size.roundUpToMultipleOf(8), '0')
 
-
     /**
      * Factory for [BoolChromosome]s.
      *
@@ -123,4 +126,3 @@ class BoolChromosome(
             "BoolChromosome.Factory { size: $size, truesProbability: $truesProbability }"
     }
 }
-

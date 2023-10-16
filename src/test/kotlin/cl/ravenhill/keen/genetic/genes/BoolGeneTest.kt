@@ -6,14 +6,13 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.boolGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
-import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.long
 import io.kotest.property.checkAll
 import kotlin.random.Random
@@ -40,8 +39,8 @@ class BoolGeneTest : FreeSpec({
             }
 
             "a [String]" {
-                BoolGene.True.toString() shouldBe "true"
-                BoolGene.False.toString() shouldBe "false"
+                BoolGene.True.toString() shouldBe "True"
+                BoolGene.False.toString() shouldBe "False"
             }
         }
 
@@ -68,8 +67,3 @@ class BoolGeneTest : FreeSpec({
         }
     }
 })
-
-/**
- * Generates an arbitrary [BoolGene] value, either [BoolGene.True] or [BoolGene.False].
- */
-private fun Arb.Companion.boolGene() = arbitrary { element(BoolGene.True, BoolGene.False).bind() }

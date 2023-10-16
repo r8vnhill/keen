@@ -25,9 +25,6 @@ import cl.ravenhill.keen.genetic.genes.Gene
 abstract class AbstractChromosome<DNA, G : Gene<DNA, G>>(override val genes: List<G>) :
     Chromosome<DNA, G> {
 
-    /* Documentation inherited from [Verifiable] */
-    override fun verify() = genes.all { it.verify() }
-
     /**
      * Returns a string representation of the chromosome, consisting of a comma-separated list
      * of the genes' string representations enclosed in square brackets.
