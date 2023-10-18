@@ -15,6 +15,7 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
+import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.utils.IntToInt
 import java.util.Objects
@@ -42,9 +43,16 @@ import java.util.Objects
  */
 class IntChromosome(
     genes: List<IntGene>,
-    val range: IntToInt,
+    val ranges: List<IntRange>,
     override val filter: (Int) -> Boolean
 ) : AbstractChromosome<Int, IntGene>(genes), Filterable<Int> {
+
+
+    constructor(genes: List<IntGene>, range: IntToInt, filter: (Int) -> Boolean) : this(
+        genes,
+        List(genes.size) { range.first..range.second },
+        filter
+    )
 
     /**
      * Creates a new [IntChromosome] from a given [size], [range] and a [predicate]
@@ -70,7 +78,7 @@ class IntChromosome(
     }, range, predicate)
 
     /// Documentation inherited from [Chromosome]
-    override fun withGenes(genes: List<IntGene>) = IntChromosome(genes, range, filter)
+    override fun withGenes(genes: List<IntGene>) = IntChromosome(genes, ranges, filter)
 
     // region : equals, hashCode and toString
     /// Documentation inherited from [Any]

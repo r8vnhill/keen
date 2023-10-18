@@ -1,5 +1,8 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement
+import cl.ravenhill.enforcer.requirements.IntRequirement.*
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.util.nextChar
@@ -24,16 +27,26 @@ import java.util.Objects
  * @constructor Creates a new `CharChromosome` instance with the specified list of [genes], [range],
  *  and [filter].
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 1.0.0
  * @version 2.0.0
  */
-class CharChromosome(
-    genes: List<CharGene>,
-    val range: CharRange,
-    private val filter: (Char) -> Boolean = { true },
-) : AbstractChromosome<Char, CharGene>(genes) {
+class CharChromosome(genes: List<CharGene>, val ranges: List<CharRange>, val filter: (Char) -> Boolean) :
+    AbstractChromosome<Char, CharGene>(genes) {
 
+    init {
+        enforce {
+            "The number of ranges must be equal to the number of genes." {
+                ranges.size must BeEqualTo(genes.size)
+            }
+        }
+    }
+
+    constructor(genes: List<CharGene>, range: CharRange, filter: (Char) -> Boolean = { true }) : this(
+        genes,
+        List(genes.size) { range },
+        filter
+    )
 
     /**
      * Creates a new `CharChromosome` instance with a random set of [CharGene] instances.
@@ -46,15 +59,15 @@ class CharChromosome(
      */
     constructor(
         size: Int,
-        filter: (Char) -> Boolean = { true },
         range: CharRange = ' '..'z',
+        filter: (Char) -> Boolean = { true },
     ) : this(
         List(size) { CharGene(Core.random.nextChar(range, filter), range, filter) },
         range = range
     )
 
     // Documentation inherited from Chromosome
-    override fun withGenes(genes: List<CharGene>) = CharChromosome(genes, range, filter)
+    override fun withGenes(genes: List<CharGene>) = CharChromosome(genes, ranges, filter)
 
     // Documentation inherited from Verifiable
     override fun verify() = genes.all { filter(it.dna) }
@@ -92,7 +105,7 @@ class CharChromosome(
         /**
          * Creates a new [CharChromosome] instance with the current factory settings.
          */
-        override fun make() = CharChromosome(size, filter, range)
+        override fun make() = CharChromosome(size, range, filter)
 
         // Documentation inherited from Any
         override fun toString() = "CharChromosome.Builder { size: $size }"

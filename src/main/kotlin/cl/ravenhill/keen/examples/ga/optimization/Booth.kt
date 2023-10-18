@@ -42,7 +42,7 @@ private fun booth(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().l
  * @version 2.0.0
  */
 fun main() {
-    val engine = createEngine(::booth, -10.0 to 10.0)
+    val engine = createEngine(::booth, -10.0..10.0, -10.0..10.0)
     val result = engine.evolve()
     println("Result: $result")
     engine.listeners.last().let { "$it" }.let(::println)

@@ -13,13 +13,14 @@ import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
+import cl.ravenhill.keen.operators.crossover.combination.AverageCrossover
 import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.utils.DoubleToDouble
+import cl.ravenhill.utils.toRange
 
 /**
  * Creates and returns an evolutionary computation engine for optimizing a given fitness function.
@@ -61,7 +62,7 @@ fun createEngine(
             chromosome {
                 doubles {
                     this.size = 2
-                    this.range = range
+                    this.ranges = listOf(range.toRange(), range.toRange())
                 }
             }
         }
@@ -70,7 +71,7 @@ fun createEngine(
         optimizer = FitnessMinimizer()
         alterers = listOf(
             RandomMutator(0.03),
-            MeanCrossover(0.3, geneRate = 0.5)
+            AverageCrossover(0.3, geneRate = 0.5)
         )
         limits = listOf(SteadyGenerations(100))
         listeners = listOf(
@@ -79,4 +80,32 @@ fun createEngine(
             EvolutionSummary()
         )
     }
+}
+
+fun createEngine(
+    fitnessFunc: (Genotype<Double, DoubleGene>) -> Double,
+    vararg ranges: ClosedFloatingPointRange<Double>,
+) = engine(
+    fitnessFunc,
+    genotype {
+        chromosome {
+            doubles {
+                this.size = 2
+                this.ranges = ranges.toList()
+            }
+        }
+    }
+) {
+    populationSize = 500
+    optimizer = FitnessMinimizer()
+    alterers = listOf(
+        RandomMutator(0.03),
+        AverageCrossover(0.3, geneRate = 0.5)
+    )
+    limits = listOf(SteadyGenerations(100))
+    listeners = listOf(
+        EvolutionPlotter(),
+        EvolutionPrinter(10),
+        EvolutionSummary()
+    )
 }

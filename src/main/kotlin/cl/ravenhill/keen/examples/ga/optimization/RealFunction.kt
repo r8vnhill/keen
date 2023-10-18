@@ -7,7 +7,7 @@ import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
+import cl.ravenhill.keen.operators.crossover.combination.AverageCrossover
 import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
@@ -38,11 +38,11 @@ private fun fitnessFunction(genotype: Genotype<Double, DoubleGene>) = genotype.f
  */
 fun main() {
     val engine = engine(::fitnessFunction, genotype {
-        chromosome { doubles { size = 1; range = (-2.0 * Math.PI) to (2 * Math.PI) } }
+        chromosome { doubles { size = 1; ranges = listOf((-2.0 * Math.PI)..(2 * Math.PI)) } }
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()
-        alterers = listOf(RandomMutator(0.03), MeanCrossover(0.3))
+        alterers = listOf(RandomMutator(0.03), AverageCrossover(0.3))
         limits = listOf(SteadyGenerations(20))
         listeners = listOf(EvolutionSummary(), EvolutionPlotter())
     }

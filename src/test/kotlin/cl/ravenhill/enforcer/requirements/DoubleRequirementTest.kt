@@ -285,7 +285,7 @@ private fun Arb.Companion.restrictedToRange(
     value: (ClosedFloatingPointRange<Double>) -> Arb<Double>
 ) = arbitrary {
     val req = requirement.bind()
-    req to value(req.range.toRange()).bind()
+    req to value(req.range).bind()
 }
 
 

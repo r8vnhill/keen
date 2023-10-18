@@ -5,8 +5,10 @@
 
 package cl.ravenhill.enforcer.requirements
 
+import cl.ravenhill.utils.DoubleRange
 import cl.ravenhill.utils.DoubleToDouble
 import cl.ravenhill.utils.contains
+import cl.ravenhill.utils.toRange
 import kotlin.math.abs
 
 /**
@@ -27,13 +29,7 @@ sealed interface DoubleRequirement : Requirement<Double> {
      *
      * @property range The range of acceptable [Double] values, as a [DoubleToDouble] pair.
      */
-    class BeInRange(val range: DoubleToDouble) : DoubleRequirement {
-
-        init {
-            require(range.first <= range.second) {
-                "The first value in the range must be less than or equal to the second value."
-            }
-        }
+    class BeInRange(val range: DoubleRange) : DoubleRequirement {
 
         /**
          * A secondary constructor that allows for the range to be specified as a
@@ -41,7 +37,11 @@ sealed interface DoubleRequirement : Requirement<Double> {
          *
          * @param range The range of acceptable [Double] values, as a [ClosedFloatingPointRange].
          */
-        constructor(range: ClosedFloatingPointRange<Double>) : this(range.start to range.endInclusive)
+        constructor(range: DoubleToDouble) : this(range.toRange()) {
+            require(range.first <= range.second) {
+                "The first value in the range must be less than or equal to the second value."
+            }
+        }
 
         /// Documentation inherited from [Requirement]
         override val validator = { value: Double -> value in range }

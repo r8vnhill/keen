@@ -46,7 +46,7 @@ private fun beale(genotype: Genotype<Double, DoubleGene>): Double {
  * @version 2.0.0
  */
 fun main() {
-    val engine = createEngine(::beale, -4.5 to 4.5)
+    val engine = createEngine(::beale, -4.5..4.5, -4.5..4.5)
     val result = engine.evolve()
     println("Result: $result")
     engine.listeners.last().let { "$it" }.let(::println)

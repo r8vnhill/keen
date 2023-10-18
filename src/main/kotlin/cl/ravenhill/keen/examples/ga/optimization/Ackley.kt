@@ -7,6 +7,7 @@ package cl.ravenhill.keen.examples.ga.optimization
 
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
+import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.exp
@@ -44,8 +45,8 @@ private fun ackley(genotype: Genotype<Double, DoubleGene>): Double {
  * @version 2.0.0
  */
 fun main() {
-    val engine = createEngine(::ackley, -5.0 to 5.0)
+    val engine = createEngine(::ackley, -5.0..5.0, -5.0..5.0)
     engine.evolve()
     println(engine.listeners.last())
-//    (engine.listeners.first() as EvolutionPlotter).displayFitness()
+    (engine.listeners.first() as EvolutionPlotter).displayFitness()
 }

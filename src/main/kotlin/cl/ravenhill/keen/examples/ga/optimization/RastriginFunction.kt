@@ -17,7 +17,7 @@ import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.crossover.combination.MeanCrossover
+import cl.ravenhill.keen.operators.crossover.combination.AverageCrossover
 import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
@@ -72,11 +72,13 @@ private fun rastriginFunction(x: Genotype<Double, DoubleGene>) =
  */
 fun main() {
     val engine = engine(::rastriginFunction, genotype {
-        chromosome { doubles { size = N; range = -R to R } }
+        chromosome {
+            doubles { size = N; ranges = List(N) { -R..R } }
+        }
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()
-        alterers = listOf(RandomMutator(0.03), MeanCrossover(0.3, geneRate = 0.5))
+        alterers = listOf(RandomMutator(0.03), AverageCrossover(0.3, geneRate = 0.5))
         limits = listOf(SteadyGenerations(50))
         listeners = listOf(EvolutionSummary(), EvolutionPlotter())
     }

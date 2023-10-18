@@ -11,6 +11,7 @@ import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.util.Filterable
+import cl.ravenhill.utils.DoubleRange
 import cl.ravenhill.utils.DoubleToDouble
 import java.util.Objects
 
@@ -37,9 +38,36 @@ import java.util.Objects
  */
 class DoubleChromosome(
     genes: List<DoubleGene>,
-    val range: Pair<Double, Double>,
-    override val filter: (Double) -> Boolean
+    val ranges: List<ClosedFloatingPointRange<Double>>,
+    override val filter: (Double) -> Boolean,
+    private val constructorExecutor: ConstructorExecutor<DoubleGene>
 ) : AbstractChromosome<Double, DoubleGene>(genes), Filterable<Double> {
+
+
+    @Deprecated("Use the constructor that receives a range instead.")
+    constructor(
+        genes: List<DoubleGene>,
+        range: Pair<Double, Double>,
+        filter: (Double) -> Boolean,
+        constructorExecutor: ConstructorExecutor<DoubleGene>
+    ) : this(
+        genes,
+        List(genes.size) { range.first..range.second },
+        filter,
+        constructorExecutor
+    )
+
+    constructor(
+        genes: List<DoubleGene>,
+        range: ClosedFloatingPointRange<Double>,
+        filter: (Double) -> Boolean,
+        constructorExecutor: ConstructorExecutor<DoubleGene>
+    ) : this(
+        genes,
+        List(genes.size) { range },
+        filter,
+        constructorExecutor
+    )
 
     /**
      * Creates a new [DoubleChromosome] from a given [size], [range] and a [filter]
@@ -65,11 +93,23 @@ class DoubleChromosome(
             }
         },
         range,
-        filter
+        filter,
+        constructorExecutor
+    )
+
+    constructor(
+        ranges: List<DoubleRange>,
+        filter: (Double) -> Boolean,
+        constructorExecutor: ConstructorExecutor<DoubleGene>
+    ) : this(
+        ranges.map { DoubleGene(Core.random.nextDouble(it.start, it.endInclusive), it) },
+        ranges,
+        filter,
+        constructorExecutor
     )
 
     /* Documentation inherited from [Chromosome] */
-    override fun withGenes(genes: List<DoubleGene>) = DoubleChromosome(genes, range, filter)
+    override fun withGenes(genes: List<DoubleGene>) = DoubleChromosome(genes, ranges, filter, constructorExecutor)
 
     /* Documentation inherited from [Any] */
     override fun equals(other: Any?) = when {
@@ -79,27 +119,27 @@ class DoubleChromosome(
     }
 
     /* Documentation inherited from [Any] */
-    override fun hashCode() = Objects.hash(DoubleChromosome::class, genes, range)
+    override fun hashCode() = Objects.hash(DoubleChromosome::class, genes, ranges)
 
     /**
      * This class represents a factory for generating instances of [DoubleChromosome].
      *
-     * @property range the range of values for the genes in the chromosome.
+     * @property ranges the range of values for the genes in the chromosome.
      * @property size the size of the chromosome.
      * @property filter a filter function to apply to each gene.
      */
     class Factory : Chromosome.AbstractFactory<Double, DoubleGene>() {
 
-        lateinit var range: DoubleToDouble
+        lateinit var ranges: List<ClosedFloatingPointRange<Double>>
         var filter: (Double) -> Boolean = { true }
 
         /* Documentation inherited from [Chromosome.Factory] */
-        override fun make() = DoubleChromosome(size, range, filter, executor)
+        override fun make() = DoubleChromosome(ranges, filter, executor)
 
         /* Documentation inherited from [Any] */
         override fun toString() = "DoubleChromosome.Builder { " +
-            "size: $size, " +
-            "range: $range, " +
-            "executor: $executor }"
+                "size: $size, " +
+                "range: $ranges, " +
+                "executor: $executor }"
     }
 }

@@ -34,7 +34,13 @@ typealias IntToInt = Pair<Int, Int>
 /**
  * A typealias for a pair of doubles that represent a range.
  */
+@Deprecated("Prefer using a ClosedFloatingPointRange instead.")
 typealias DoubleToDouble = Pair<Double, Double>
+
+/**
+ * A typealias for a closed range of doubles.
+ */
+typealias DoubleRange = ClosedFloatingPointRange<Double>
 
 /**
  * Returns true if the given [Int] is within the range represented by this [Pair] of [Int] values

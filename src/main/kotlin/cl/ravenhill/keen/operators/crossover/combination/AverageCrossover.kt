@@ -18,7 +18,7 @@ import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
  * @param chromosomeRate The rate of chromosomes that will undergo crossover.
  * @param geneRate The rate of genes that will undergo crossover within each chromosome.
  *
- * @constructor Creates a [MeanCrossover] instance with the given crossover rates and probability.
+ * @constructor Creates a [AverageCrossover] instance with the given crossover rates and probability.
  *
  * @see NumberGene
  *
@@ -26,7 +26,7 @@ import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
  * @since 1.0.0
  * @version 2.0.0
  */
-class MeanCrossover<DNA : Number, G : NumberGene<DNA, G>>(
+class AverageCrossover<DNA : Number, G : NumberGene<DNA, G>>(
     probability: Double,
     chromosomeRate: Double = 1.0,
     geneRate: Double = 1.0
