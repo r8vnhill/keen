@@ -23,7 +23,7 @@ import kotlin.random.Random
 
 class CharGeneTest : FreeSpec({
     "A [CharGene]" - {
-        "can be converted to " - {
+        "can be converted to    " - {
             "a [Char]" {
                 with(Arb) {
                     checkAll(char()) { c ->

@@ -44,14 +44,14 @@ class DoubleRequirementTest : FreeSpec({
             "a pair of doubles" {
                 checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
                     val requirement = BeInRange(first to last)
-                    requirement.range shouldBe (first to last)
+                    requirement.range shouldBe first..last
                 }
             }
 
             "a range" {
                 checkAll(Arb.orderedPair(Arb.real(), Arb.real())) { (first, last) ->
                     val requirement = BeInRange(first..last)
-                    requirement.range shouldBe (first to last)
+                    requirement.range shouldBe first..last
                 }
             }
         }

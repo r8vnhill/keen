@@ -7,16 +7,18 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.keen.*
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.boolChromosome
+import cl.ravenhill.keen.boolGene
 import cl.ravenhill.keen.genetic.genes.BoolGene
+import cl.ravenhill.keen.shouldHaveInfringement
+import cl.ravenhill.keen.shouldNotBeInRange
 import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.doubles.shouldBeGreaterThan
+import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.list
@@ -36,7 +38,10 @@ class BoolChromosomeTest : FreeSpec({
                     }
                 }
 
-                ("a size and a probability then the chromosome should have the specified size " + "and the genes should be randomly generated according to the given probability") {
+                (
+                    "a size and a probability then the chromosome should have the specified " +
+                        "size and the genes should be randomly generated according to the given probability"
+                    ) {
                     checkAll(positiveInt(100), real(0.0..1.0), long()) { size, probability, seed ->
                         Core.random = Random(seed)
                         val randomGenerator = Random(seed)
@@ -82,6 +87,40 @@ class BoolChromosomeTest : FreeSpec({
             }
         }
 
-        "can create a new chromosome with the given genes"
+        "can create a new chromosome with the given genes" {
+            with(Arb) {
+                checkAll(boolChromosome(), list(boolGene())) { chromosome, genes ->
+                    chromosome.withGenes(genes).genes shouldBe genes
+                }
+            }
+        }
+
+        "can be converted to" - {
+            "a binary string" - {
+                withData(
+                    "" to BoolChromosome(emptyList()),
+                    "00000000" to BoolChromosome(listOf(BoolGene.False)),
+                    "00000001" to BoolChromosome(listOf(BoolGene.True)),
+                    "00000101|10100101" to BoolChromosome(
+                        listOf(
+                            BoolGene.False,
+                            BoolGene.True,
+                            BoolGene.False,
+                            BoolGene.True,
+                            BoolGene.True,
+                            BoolGene.False,
+                            BoolGene.True,
+                            BoolGene.False,
+                            BoolGene.False,
+                            BoolGene.True,
+                            BoolGene.False,
+                            BoolGene.True,
+                        )
+                    )
+                ) { (expected: String, chromosome: BoolChromosome) ->
+                    chromosome.toBinaryString() shouldBe expected
+                }
+            }
+        }
     }
 })

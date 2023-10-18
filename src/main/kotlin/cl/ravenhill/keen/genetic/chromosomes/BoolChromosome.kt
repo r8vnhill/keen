@@ -13,7 +13,6 @@ import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.roundUpToMultipleOf
-import java.util.Objects
 import kotlin.properties.Delegates
 
 /**
@@ -42,13 +41,15 @@ data class BoolChromosome(
      * @param size The number of genes in the chromosome.
      * @param truesProbability The probability that a gene will be `true`.
      */
-    constructor(size: Int, truesProbability: Double) : this(List(size) {
-        if (Core.random.nextDouble() > truesProbability) {
-            BoolGene.True
-        } else {
-            BoolGene.False
+    constructor(size: Int, truesProbability: Double) : this(
+        List(size) {
+            if (Core.random.nextDouble() > truesProbability) {
+                BoolGene.True
+            } else {
+                BoolGene.False
+            }
         }
-    }) {
+    ) {
         enforce {
             "The probability of a gene being true must be in the range [0.0, 1.0]" {
                 truesProbability must BeInRange(0.0..1.0)
@@ -93,18 +94,6 @@ data class BoolChromosome(
     // Documentation inherited from [Chromosome].
     override fun withGenes(genes: List<BoolGene>) = BoolChromosome(genes)
 
-    // Documentation inherited from [Any].
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is BoolChromosome -> false
-        other::class != BoolChromosome::class -> false
-        genes != other.genes -> false
-        else -> true
-    }
-
-    // Documentation inherited from [Any].
-    override fun hashCode() = Objects.hash(BoolChromosome::class, genes)
-
     /**
      * Returns a string representation of the chromosome in binary format.
      * Each gene is represented by a bit: [BoolGene.True] is represented as '1' and [BoolGene.False]
@@ -114,10 +103,18 @@ data class BoolChromosome(
      *
      * @return a string representation of the chromosome in binary format.
      */
-    override fun toString() = genes.map { if (it == BoolGene.True) "1" else "0" }
-        .chunked(4) { it.joinToString(separator = "") }
-        .joinToString(separator = "|")
-        .padStart(genes.size.roundUpToMultipleOf(8), '0')
+    fun toBinaryString(): String {
+        // Calculate the required size, rounding up to a multiple of 8.
+        val size = genes.size.roundUpToMultipleOf(8)
+
+        // Create padding zeros to ensure the size is a multiple of 8.
+        val paddingZeros = List(size - genes.size) { "0" }
+
+        // Convert genes to binary string and chunk them in groups of 8.
+        return (paddingZeros + genes.map { if (it == BoolGene.True) "1" else "0" })
+            .chunked(8) { it.joinToString(separator = "") }
+            .joinToString(separator = "|")
+    }
 
     /**
      * Factory for [BoolChromosome]s.
