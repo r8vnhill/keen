@@ -36,8 +36,7 @@ class BoolChromosomeTest : FreeSpec({
                     }
                 }
 
-                ("a size and a probability then the chromosome should have the specified size and the genes should " +
-                        "be randomly generated according to the given probability") {
+                ("a size and a probability then the chromosome should have the specified size " + "and the genes should be randomly generated according to the given probability") {
                     checkAll(positiveInt(100), real(0.0..1.0), long()) { size, probability, seed ->
                         Core.random = Random(seed)
                         val randomGenerator = Random(seed)

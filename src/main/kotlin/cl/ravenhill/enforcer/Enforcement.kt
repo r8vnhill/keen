@@ -7,11 +7,39 @@ package cl.ravenhill.enforcer
 
 import cl.ravenhill.enforcer.requirements.Requirement
 
+/**
+ * Provides utility methods and inner classes for enforcing contracts.
+ *
+ * `Enforcement` simplifies contract validation by offering a declarative syntax
+ * and meaningful error messages.
+ *
+ * @property skipChecks A flag indicating if contract validation should be skipped.
+ *                      If set to `true`, contract enforcement will be bypassed.
+ *                      Use with caution; this might be useful for scenarios like testing,
+ *                      but might have implications if misused in production.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
 object Enforcement {
     var skipChecks = false
 
     /**
      * Enforces the contract of the given builder.
+     *
+     * ## Example: Enforcing a contract
+     *
+     * ```kotlin
+     *  data class Person(val name: String, val age: Int) {
+     *      init {
+     *          enforce {
+     *              "Name must not be empty" { name mustNot BeEmpty }
+     *              "Age must be greater than 0" { age must BePositive }
+     *          }
+     *      }
+     *  }
+     * ```
      *
      * @param builder The builder that contains the contract.
      * @throws EnforcementException If the contract is not fulfilled.
@@ -34,6 +62,7 @@ object Enforcement {
      * of a [Requirement] instance.
      *
      * @property results The list of results of evaluating the contract.
+     * @property failures The list of exceptions thrown by the contract.
      *
      * @since 2.0.0
      * @version 2.0.0
@@ -60,7 +89,7 @@ object Enforcement {
         /**
          * A scope for defining a [Requirement] for a contract clause.
          *
-         * @property message The message key for the clause.
+         * @property message The message key associated with the clause.
          */
         inner class StringScope(val message: String) {
 
@@ -108,7 +137,9 @@ object Enforcement {
                 }
             )
 
-            // / Documentation inherited from [Any].
+            /**
+             * Represents the clause as a string using its message key.
+             */
             override fun toString() = "StringScope(message='$message')"
         }
     }

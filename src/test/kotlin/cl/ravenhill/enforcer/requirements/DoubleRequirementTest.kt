@@ -1,8 +1,7 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.enforcer.requirements
 
@@ -12,8 +11,6 @@ import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.orderedPair
 import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
-import cl.ravenhill.utils.contains
-import cl.ravenhill.utils.toRange
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
@@ -158,7 +155,6 @@ class DoubleRequirementTest : FreeSpec({
     }
 })
 
-
 /**
  * Type alias for a range of `Double` values.
  *
@@ -287,7 +283,6 @@ private fun Arb.Companion.restrictedToRange(
     val req = requirement.bind()
     req to value(req.range).bind()
 }
-
 
 /**
  * Generates arbitrary values outside a specified range defined by a requirement.
