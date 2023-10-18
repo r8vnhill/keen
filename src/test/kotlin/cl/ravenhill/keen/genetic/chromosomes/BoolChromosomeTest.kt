@@ -123,4 +123,26 @@ class BoolChromosomeTest : FreeSpec({
             }
         }
     }
+
+    "A BoolChromosome factory" - {
+        "can create a new chromosome with the given probability" {
+            with(Arb) {
+                checkAll(positiveInt(100), real(0.0..1.0), long()) { size, probability, seed ->
+                    Core.random = Random(seed)
+                    val randomGenerator = Random(seed)
+                    val expected = List(size) {
+                        if (randomGenerator.nextDouble() < probability) {
+                            BoolGene.True
+                        } else {
+                            BoolGene.False
+                        }
+                    }
+                    BoolChromosome.Factory().apply {
+                        this.truesProbability = probability
+                        this.size = size
+                    }.make() shouldBe BoolChromosome(expected)
+                }
+            }
+        }
+    }
 })

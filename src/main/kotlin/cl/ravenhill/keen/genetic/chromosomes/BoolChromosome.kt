@@ -8,10 +8,8 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.BoolGene
-import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.roundUpToMultipleOf
 import kotlin.properties.Delegates
 
@@ -84,7 +82,7 @@ data class BoolChromosome(
                 size
             }
         ) {
-            if (Dice.probability() < truesProbability) BoolGene.True else BoolGene.False
+            if (Core.random.nextDouble() < truesProbability) BoolGene.True else BoolGene.False
         }
     )
 
@@ -131,6 +129,6 @@ data class BoolChromosome(
 
         // Documentation inherited from [Any].
         override fun toString() =
-            "BoolChromosome.Factory { size: $size, truesProbability: $truesProbability }"
+            "BoolChromosome.Factory(size=$size, truesProbability=$truesProbability)"
     }
 }
