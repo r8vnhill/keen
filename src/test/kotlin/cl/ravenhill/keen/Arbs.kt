@@ -7,6 +7,7 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
+import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -69,6 +70,21 @@ fun Arb.Companion.charRange(lo: Char = Char.MIN_VALUE, hi: Char = Char.MAX_VALUE
         require(lo < hi)
         lo..hi
     }
+
+/**
+ * Generates an arbitrary [IntChromosome] instance.
+ *
+ * This function creates an arbitrary [IntChromosome] populated with genes
+ * derived from the [intGene()] function within a range of 0 to 100.
+ *
+ * @receiver The companion object of the [Arb] class, which provides factory methods
+ *           for creating arbitrary instances of various types.
+ *
+ * @return An arbitrary instance of [IntChromosome] with genes in the specified range.
+ */
+fun Arb.Companion.intChromosome() = arbitrary {
+    IntChromosome(list(intGene(), 0..100).bind())
+}
 
 /**
  * Creates an arbitrary generator for an `IntGene` using the provided arbitrary generator for

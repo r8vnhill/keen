@@ -5,8 +5,12 @@
 
 package cl.ravenhill.keen.examples.ga.optimization
 
+import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
+import cl.ravenhill.keen.operators.selector.RandomSelector
+import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
+import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import kotlin.math.PI
 import kotlin.math.cos
@@ -45,8 +49,23 @@ private fun ackley(genotype: Genotype<Double, DoubleGene>): Double {
  * @version 2.0.0
  */
 fun main() {
-    val engine = createEngine(::ackley, -5.0..5.0, -5.0..5.0)
-    engine.evolve()
-    println(engine.listeners.last())
-    (engine.listeners.first() as EvolutionPlotter).displayFitness()
+    lateinit var engine: Engine<Double, DoubleGene>
+    println("=== Random selector ===")
+    repeat(2) {
+        engine = createEngine(::ackley, -5.0..5.0, -5.0..5.0, selector = RandomSelector())
+        engine.evolve()
+    }
+    println(engine.listeners.first())
+    println("=== Tournament selector ===")
+    repeat(2) {
+        engine = createEngine(::ackley, -5.0..5.0, -5.0..5.0, selector = TournamentSelector(3))
+        engine.evolve()
+    }
+    println(engine.listeners.first())
+    println("=== Roulette wheel selector ===")
+    repeat(2) {
+        engine = createEngine(::ackley, -5.0..5.0, -5.0..5.0, selector = RouletteWheelSelector())
+        engine.evolve()
+    }
+    println(engine.listeners.first())
 }

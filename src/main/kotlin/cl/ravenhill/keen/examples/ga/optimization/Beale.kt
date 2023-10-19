@@ -5,8 +5,11 @@
 
 package cl.ravenhill.keen.examples.ga.optimization
 
+import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
+import cl.ravenhill.keen.operators.selector.RandomSelector
+import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import kotlin.math.pow
 
 /**
@@ -29,7 +32,7 @@ import kotlin.math.pow
 private fun beale(genotype: Genotype<Double, DoubleGene>): Double {
     val (x, y) = genotype.flatten()
     return (1.5 - x + x * y).pow(2) + (2.25 - x + x * y.pow(2)).pow(2) +
-        (2.625 - x + x * y.pow(3)).pow(2)
+            (2.625 - x + x * y.pow(3)).pow(2)
 }
 
 /**
@@ -46,8 +49,23 @@ private fun beale(genotype: Genotype<Double, DoubleGene>): Double {
  * @version 2.0.0
  */
 fun main() {
-    val engine = createEngine(::beale, -4.5..4.5, -4.5..4.5)
-    val result = engine.evolve()
-    println("Result: $result")
-    engine.listeners.last().let { "$it" }.let(::println)
+    lateinit var engine: Engine<Double, DoubleGene>
+    println("========= Random selector =========")
+    repeat(2) {
+        engine = createEngine(::beale, -4.5..4.5, -4.5..4.5, selector = RandomSelector())
+        engine.evolve()
+    }
+    println(engine.listeners.first())
+    println("========= Tournament selector =========")
+    repeat(2) {
+         engine = createEngine(::beale, -4.5..4.5, -4.5..4.5)
+        engine.evolve()
+    }
+    println(engine.listeners.first())
+    println("========= Roulette wheel selector =========")
+    repeat(2) {
+        engine = createEngine(::beale, -4.5..4.5, -4.5..4.5, selector = RouletteWheelSelector())
+        engine.evolve()
+    }
+    println(engine.listeners.first())
 }

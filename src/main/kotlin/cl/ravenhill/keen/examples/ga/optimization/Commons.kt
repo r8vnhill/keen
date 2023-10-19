@@ -15,6 +15,8 @@ import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.AverageCrossover
 import cl.ravenhill.keen.operators.mutator.RandomMutator
+import cl.ravenhill.keen.operators.selector.Selector
+import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
@@ -85,6 +87,7 @@ fun createEngine(
 fun createEngine(
     fitnessFunc: (Genotype<Double, DoubleGene>) -> Double,
     vararg ranges: ClosedFloatingPointRange<Double>,
+    selector: Selector<Double, DoubleGene> = TournamentSelector(3)
 ) = engine(
     fitnessFunc,
     genotype {
@@ -98,14 +101,14 @@ fun createEngine(
 ) {
     populationSize = 500
     optimizer = FitnessMinimizer()
+    this.selector = selector
     alterers = listOf(
         RandomMutator(0.03),
         AverageCrossover(0.3, geneRate = 0.5)
     )
-    limits = listOf(SteadyGenerations(100))
+    limits = listOf(SteadyGenerations(50))
     listeners = listOf(
+        EvolutionSummary(),
         EvolutionPlotter(),
-        EvolutionPrinter(10),
-        EvolutionSummary()
     )
 }

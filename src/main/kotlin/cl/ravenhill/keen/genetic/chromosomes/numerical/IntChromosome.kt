@@ -36,20 +36,14 @@ import java.util.Objects
  * @since 1.0.0
  * @version 2.0.0
  */
-data class IntChromosome(override val genes: List<IntGene>) :
-    AbstractChromosome<Int, IntGene>(genes), Filterable<Int> {
+data class IntChromosome(override val genes: List<IntGene>) : AbstractChromosome<Int, IntGene>(genes) {
 
-    val ranges: List<IntRange>
-
-    override val filter: (Int) -> Boolean
-
-    constructor(genes: List<IntGene>, ranges: List<IntRange>, filter: (Int) -> Boolean) : super(
+    @Deprecated("Prefer using the primary constructor and/or the chromosome factory")
+    constructor(genes: List<IntGene>, ranges: List<IntRange>, filter: (Int) -> Boolean) : this(
         genes
-    ) {
-        this.ranges = ranges
-        this.filter = filter
-    }
+    )
 
+    @Deprecated("Prefer using the primary constructor and/or the chromosome factory")
     constructor(genes: List<IntGene>, range: IntToInt, filter: (Int) -> Boolean) : this(
         genes,
         List(genes.size) { range.first..range.second },
@@ -64,6 +58,7 @@ data class IntChromosome(override val genes: List<IntGene>) :
      * @param predicate The filter to apply to the genes.
      * @param constructorExecutor The executor to use for creating the genes.
      */
+    @Deprecated("Prefer using the primary constructor and/or the chromosome factory")
     constructor(
         size: Int,
         range: IntToInt,
@@ -84,22 +79,7 @@ data class IntChromosome(override val genes: List<IntGene>) :
     )
 
     // / Documentation inherited from [Chromosome]
-    override fun withGenes(genes: List<IntGene>) = IntChromosome(genes, ranges, filter)
-
-    // region : equals, hashCode and toString
-    // Documentation inherited from [Any]
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is IntChromosome -> false
-        else -> genes == other.genes
-    }
-
-    // / Documentation inherited from [Any]
-    override fun hashCode() = Objects.hash(IntChromosome::class, genes)
-
-    // / Documentation inherited from [Any]
-    override fun toString() = "${genes.map { it.dna }}"
-    // endregion
+    override fun withGenes(genes: List<IntGene>) = IntChromosome(genes)
 
     /**
      * A [Chromosome.Factory] for [IntChromosome]s.

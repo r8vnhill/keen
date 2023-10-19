@@ -5,8 +5,11 @@
 
 package cl.ravenhill.keen.examples.ga.optimization
 
+import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
+import cl.ravenhill.keen.operators.selector.RandomSelector
+import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import kotlin.math.pow
 
 /**
@@ -42,8 +45,23 @@ private fun booth(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().l
  * @version 2.0.0
  */
 fun main() {
-    val engine = createEngine(::booth, -10.0..10.0, -10.0..10.0)
-    val result = engine.evolve()
-    println("Result: $result")
-    engine.listeners.last().let { "$it" }.let(::println)
+    lateinit var engine: Engine<Double, DoubleGene>
+    println("========= Random selector =========")
+    repeat(2) {
+        engine = createEngine(::booth, -10.0..10.0, -10.0..10.0, selector = RandomSelector())
+        engine.evolve()
+    }
+    println(engine.listeners.first())
+    println("========= Tournament selector =========")
+    repeat(2) {
+        engine = createEngine(::booth, -10.0..10.0, -10.0..10.0)
+        engine.evolve()
+    }
+    println(engine.listeners.first())
+    println("========= Roulette wheel selector =========")
+    repeat(2) {
+        engine = createEngine(::booth, -10.0..10.0, -10.0..10.0, selector = RouletteWheelSelector())
+        engine.evolve()
+    }
+    println(engine.listeners.first())
 }

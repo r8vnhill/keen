@@ -1,38 +1,34 @@
-/*
- * Copyright (c) 2023, Ignacio Slater M.
- * 2-Clause BSD License.
- */
-
 package cl.ravenhill.keen.examples.ga.optimization
 
-import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
-import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import kotlin.math.pow
 
-private fun bukinN6(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
-    100 * (y - 0.01 * x.pow(2) + 1).pow(2) + 0.01 * (x + 10).pow(2)
+private fun himmelblau(g: Genotype<Double, DoubleGene>) = g.flatten().let { (x, y) ->
+    (x.pow(2) + y - 11).pow(2) + (x + y.pow(2) - 7).pow(2)
 }
 
 fun main() {
-    lateinit var engine: Engine<Double, DoubleGene>
+    lateinit var engine: cl.ravenhill.keen.evolution.Engine<Double, DoubleGene>
     println("========= Random selector =========")
     repeat(2) {
-        engine = createEngine(::bukinN6, -15.0..-5.0, -3.0..3.0)
+        engine = createEngine(::himmelblau, -10.0..10.0, -10.0..10.0)
         engine.evolve()
     }
     println(engine.listeners.first())
+    println("Error: ${engine.bestFitness}")
     println("========= Tournament selector =========")
     repeat(2) {
-        engine = createEngine(::bukinN6, -15.0..-5.0, -3.0..3.0)
+        engine = createEngine(::himmelblau, -10.0..10.0, -10.0..10.0)
         engine.evolve()
     }
     println(engine.listeners.first())
+    println("Error: ${engine.bestFitness}")
     println("========= Roulette wheel selector =========")
     repeat(2) {
-        engine = createEngine(::bukinN6, -15.0..-5.0, -3.0..3.0)
+        engine = createEngine(::himmelblau, -10.0..10.0, -10.0..10.0)
         engine.evolve()
     }
     println(engine.listeners.first())
+    println("Error: ${engine.bestFitness}")
 }

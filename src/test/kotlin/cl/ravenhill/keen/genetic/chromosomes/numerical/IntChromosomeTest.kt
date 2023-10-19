@@ -5,10 +5,12 @@
 
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
+import cl.ravenhill.keen.intChromosome
 import cl.ravenhill.keen.intGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 
@@ -21,6 +23,14 @@ class IntChromosomeTest : FreeSpec({
                         IntChromosome(genes).genes shouldBe genes
                     }
                 }
+            }
+        }
+    }
+
+    "can create a new one with the given genes" {
+        with(Arb) {
+            checkAll(intChromosome(), list(intGene())) { c, genes ->
+                c.withGenes(genes).genes shouldBe genes
             }
         }
     }

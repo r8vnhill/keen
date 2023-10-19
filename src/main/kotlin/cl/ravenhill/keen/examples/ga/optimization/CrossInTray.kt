@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.examples.ga.optimization
 
+import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import kotlin.math.*
@@ -9,8 +10,26 @@ private fun crossInTray(genotype: Genotype<Double, DoubleGene>) = genotype.flatt
 }
 
 fun main() {
-    val engine = createEngine(::crossInTray, -10.0..10.0, -10.0..10.0)
-    val result = engine.evolve()
-    println("Result: $result")
-    engine.listeners.last().let { "$it" }.let(::println)
+    lateinit var engine: Engine<Double, DoubleGene>
+    println()
+    println("========= Random selector =========")
+    repeat(2) {
+        engine = createEngine(::crossInTray, -10.0..10.0, -10.0..10.0)
+        engine.evolve()
+    }
+    println(engine.listeners.first())
+    println()
+    println("========= Tournament selector =========")
+    repeat(2) {
+        engine = createEngine(::crossInTray, -10.0..10.0, -10.0..10.0)
+        engine.evolve()
+    }
+    println(engine.listeners.first())
+    println()
+    println("========= Roulette wheel selector =========")
+    repeat(2) {
+        engine = createEngine(::crossInTray, -10.0..10.0, -10.0..10.0)
+        engine.evolve()
+    }
+    println(engine.listeners.first())
 }
