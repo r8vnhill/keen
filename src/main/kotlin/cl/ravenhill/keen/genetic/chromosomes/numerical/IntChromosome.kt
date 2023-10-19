@@ -36,11 +36,19 @@ import java.util.Objects
  * @since 1.0.0
  * @version 2.0.0
  */
-class IntChromosome(
-    genes: List<IntGene>,
-    val ranges: List<IntRange>,
-    override val filter: (Int) -> Boolean,
-) : AbstractChromosome<Int, IntGene>(genes), Filterable<Int> {
+data class IntChromosome(override val genes: List<IntGene>) :
+    AbstractChromosome<Int, IntGene>(genes), Filterable<Int> {
+
+    val ranges: List<IntRange>
+
+    override val filter: (Int) -> Boolean
+
+    constructor(genes: List<IntGene>, ranges: List<IntRange>, filter: (Int) -> Boolean) : super(
+        genes
+    ) {
+        this.ranges = ranges
+        this.filter = filter
+    }
 
     constructor(genes: List<IntGene>, range: IntToInt, filter: (Int) -> Boolean) : this(
         genes,
@@ -79,7 +87,7 @@ class IntChromosome(
     override fun withGenes(genes: List<IntGene>) = IntChromosome(genes, ranges, filter)
 
     // region : equals, hashCode and toString
-    // / Documentation inherited from [Any]
+    // Documentation inherited from [Any]
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is IntChromosome -> false

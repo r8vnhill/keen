@@ -9,10 +9,12 @@ import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.CharGene
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.char
 import io.kotest.property.arbitrary.element
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 
 /**
@@ -67,3 +69,18 @@ fun Arb.Companion.charRange(lo: Char = Char.MIN_VALUE, hi: Char = Char.MAX_VALUE
         require(lo < hi)
         lo..hi
     }
+
+/**
+ * Creates an arbitrary generator for an `IntGene` using the provided arbitrary generator for
+ * integers.
+ *
+ * @param i The arbitrary generator for integers which will be bound to the `IntGene`.
+ * @return An arbitrary generator that produces instances of `IntGene`.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+fun Arb.Companion.intGene(i: Arb<Int> = int()) = arbitrary {
+    IntGene(i.bind())
+}

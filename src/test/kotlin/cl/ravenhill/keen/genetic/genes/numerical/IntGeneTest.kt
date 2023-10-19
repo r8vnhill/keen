@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.intGene
 import cl.ravenhill.keen.util.nextIntInRange
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -152,21 +153,6 @@ class IntGeneTest : FreeSpec({
         }
     }
 })
-
-/**
- * Creates an arbitrary generator for an `IntGene` using the provided arbitrary generator for
- * integers.
- *
- * @param i The arbitrary generator for integers which will be bound to the `IntGene`.
- * @return An arbitrary generator that produces instances of `IntGene`.
- *
- * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @since 2.0.0
- * @version 2.0.0
- */
-private fun Arb.Companion.intGene(i: Arb<Int>) = arbitrary {
-    IntGene(i.bind())
-}
 
 /**
  * Produces an arbitrary `IntGene` with values bounded within the specified integer range.
