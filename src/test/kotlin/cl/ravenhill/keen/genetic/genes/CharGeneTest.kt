@@ -6,6 +6,8 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.charGene
+import cl.ravenhill.keen.charRange
 import cl.ravenhill.keen.util.nextChar
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -31,6 +33,7 @@ class CharGeneTest : FreeSpec({
                     }
                 }
             }
+
             "an [Int]" {
                 with(Arb) {
                     checkAll(char()) { c ->
@@ -38,6 +41,7 @@ class CharGeneTest : FreeSpec({
                     }
                 }
             }
+
             "a [String]" {
                 with(Arb) {
                     checkAll(char()) { c ->
@@ -151,27 +155,7 @@ class CharGeneTest : FreeSpec({
     }
 })
 
-/**
- * Generates an [Arb] (Arbitrary) of [CharRange] between the given bounds `lo` and `hi`.
- *
- * @param lo The lower bound of the character range, defaulting to the smallest possible Char value.
- * @param hi The upper bound of the character range, defaulting to the largest possible Char value.
- * @return An arbitrary of CharRange.
- */
-private fun Arb.Companion.charRange(lo: Char = Char.MIN_VALUE, hi: Char = Char.MAX_VALUE) =
-    arbitrary {
-        lo..hi
-    }
 
-/**
- * Generates an [Arb] (Arbitrary) of [CharGene] from the given character arbitrary.
- *
- * @param c The arbitrary source of characters to construct the CharGene.
- * @return An arbitrary of CharGene.
- */
-private fun Arb.Companion.charGene(c: Arb<Char>) = arbitrary {
-    CharGene(c.bind())
-}
 
 /**
  * Generates an [Arb] (Arbitrary) of [CharGene] that lies within the specified range arbitrary.

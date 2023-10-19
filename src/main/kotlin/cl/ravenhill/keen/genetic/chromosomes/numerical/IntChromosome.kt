@@ -1,25 +1,20 @@
 /*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
-import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.utils.IntToInt
 import java.util.Objects
-
 
 /**
  * A chromosome that contains a list of [IntGene]s.
@@ -32,7 +27,7 @@ import java.util.Objects
  * A gene is considered valid if its value is within the range and satisfies the predicate.
  *
  * @param genes The list of genes that this chromosome will contain.
- * @property range A pair of [Int]s that represents the range of the genes (``a to b``).
+ * @property ranges The ranges of possible values for each gene.
  * @property filter The filter to apply to the genes.
  *
  * @constructor Creates a new [IntChromosome] with the given [genes], [range], and [filter].
@@ -44,9 +39,8 @@ import java.util.Objects
 class IntChromosome(
     genes: List<IntGene>,
     val ranges: List<IntRange>,
-    override val filter: (Int) -> Boolean
+    override val filter: (Int) -> Boolean,
 ) : AbstractChromosome<Int, IntGene>(genes), Filterable<Int> {
-
 
     constructor(genes: List<IntGene>, range: IntToInt, filter: (Int) -> Boolean) : this(
         genes,
@@ -66,32 +60,36 @@ class IntChromosome(
         size: Int,
         range: IntToInt,
         predicate: (Int) -> Boolean,
-        constructorExecutor: ConstructorExecutor<IntGene>
-    ) : this(constructorExecutor(size) {
-        enforce { "The range must be ordered" { range must BeStrictlyOrdered() } }
-        IntGene(
-            generateSequence { Core.random.nextInt(range.first, range.second) }
-                .filter(predicate)
-                .first(),
-            range.first to range.second, predicate
-        )
-    }, range, predicate)
+        constructorExecutor: ConstructorExecutor<IntGene>,
+    ) : this(
+        constructorExecutor(size) {
+            enforce { "The range must be ordered" { range must BeStrictlyOrdered() } }
+            IntGene(
+                generateSequence { Core.random.nextInt(range.first, range.second) }
+                    .filter(predicate)
+                    .first(),
+                range.first to range.second,
+                predicate
+            )
+        },
+        range, predicate
+    )
 
-    /// Documentation inherited from [Chromosome]
+    // / Documentation inherited from [Chromosome]
     override fun withGenes(genes: List<IntGene>) = IntChromosome(genes, ranges, filter)
 
     // region : equals, hashCode and toString
-    /// Documentation inherited from [Any]
+    // / Documentation inherited from [Any]
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is IntChromosome -> false
         else -> genes == other.genes
     }
 
-    /// Documentation inherited from [Any]
+    // / Documentation inherited from [Any]
     override fun hashCode() = Objects.hash(IntChromosome::class, genes)
 
-    /// Documentation inherited from [Any]
+    // / Documentation inherited from [Any]
     override fun toString() = "${genes.map { it.dna }}"
     // endregion
 
@@ -109,13 +107,13 @@ class IntChromosome(
 
         lateinit var range: IntToInt
 
-        /// Documentation inherited from [Chromosome.Factory]
+        // / Documentation inherited from [Chromosome.Factory]
         override fun make() = IntChromosome(size, range, filter, executor)
 
         override fun toString() = "IntChromosome.Builder { " +
-                "size: $size, " +
-                "range: $range," +
-                "filter: $filter," +
-                "executor: $executor }"
+            "size: $size, " +
+            "range: $range," +
+            "filter: $filter," +
+            "executor: $executor }"
     }
 }
