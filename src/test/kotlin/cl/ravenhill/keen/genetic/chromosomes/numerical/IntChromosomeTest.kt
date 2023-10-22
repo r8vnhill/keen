@@ -10,7 +10,6 @@ import cl.ravenhill.keen.intGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 
@@ -34,6 +33,4 @@ class IntChromosomeTest : FreeSpec({
             }
         }
     }
-
-
 })

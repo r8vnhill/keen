@@ -1,7 +1,8 @@
 /*
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
+
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.enforcer.Enforcement.enforce
@@ -31,6 +32,7 @@ import java.util.Objects
  *     `Genotype`.
  *     This list can be iterated over to access individual `Chromosome` objects, or it can be
  *     manipulated as a whole using the various methods provided by the `Genotype` class.
+ * @property size The number of chromosomes in the genotype.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
@@ -38,10 +40,6 @@ import java.util.Objects
  */
 class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>) :
     GeneticMaterial<DNA, G>, Iterable<Chromosome<DNA, G>> {
-
-    init {
-        enforce { "The chromosomes list must not be empty" { chromosomes mustNot BeEmpty } }
-    }
 
     /**
      * Creates a new [Genotype] instance with the given ``chromosomes``.

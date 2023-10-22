@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.doubleGene
 import cl.ravenhill.keen.util.nextDoubleInRange
 import cl.ravenhill.keen.util.shouldEq
 import cl.ravenhill.real
@@ -156,16 +157,6 @@ class DoubleGeneTest : FreeSpec({
         }
     }
 })
-
-/**
- * Creates an arbitrary gene instance containing a double value from the provided arbitrary double source.
- *
- * @param d An arbitrary source of double values.
- * @return An arbitrary gene instance with a double value.
- */
-private fun Arb.Companion.doubleGene(d: Arb<Double>) = arbitrary {
-    DoubleGene(d.bind())
-}
 
 /**
  * Creates an arbitrary gene instance containing a double value within the specified range.

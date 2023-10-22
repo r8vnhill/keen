@@ -7,13 +7,19 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.CharGene
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.char
+import io.kotest.property.arbitrary.choice
+import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
@@ -72,10 +78,35 @@ fun Arb.Companion.charRange(lo: Char = Char.MIN_VALUE, hi: Char = Char.MAX_VALUE
     }
 
 /**
+ * Generates an arbitrary [DoubleChromosome] instance.
+ *
+ * This function creates an arbitrary [DoubleChromosome] populated with genes
+ * derived from the [doubleGene] function within a range of 0 to 100.
+ *
+ * @receiver The companion object of the [Arb] class, which provides factory methods
+ *           for creating arbitrary instances of various types.
+ *
+ * @return An arbitrary instance of [DoubleChromosome] with genes in the specified range.
+ */
+fun Arb.Companion.doubleChromosome() = arbitrary {
+    DoubleChromosome(list(doubleGene(), 0..100).bind())
+}
+
+/**
+ * Creates an arbitrary gene instance containing a double value from the provided arbitrary double source.
+ *
+ * @param d An arbitrary source of double values.
+ * @return An arbitrary gene instance with a double value.
+ */
+fun Arb.Companion.doubleGene(d: Arb<Double> = double()) = arbitrary {
+    DoubleGene(d.bind())
+}
+
+/**
  * Generates an arbitrary [IntChromosome] instance.
  *
  * This function creates an arbitrary [IntChromosome] populated with genes
- * derived from the [intGene()] function within a range of 0 to 100.
+ * derived from the [intGene] function within a range of 0 to 100.
  *
  * @receiver The companion object of the [Arb] class, which provides factory methods
  *           for creating arbitrary instances of various types.
