@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -37,7 +39,7 @@ data class DoubleChromosome(
 ) : AbstractChromosome<Double, DoubleGene>(genes) {
 
     @Deprecated("To be removed in 2.0.0-A.2; use primary constructor instead.", ReplaceWith("DoubleChromosome(genes)"))
-    constructor(ranges: List<DoubleRange>, filter: (Double) -> Boolean = {true}) : this(
+    constructor(ranges: List<DoubleRange>, filter: (Double) -> Boolean = { true }) : this(
         ranges.map { DoubleGene(Core.random.nextDouble(it.start, it.endInclusive), it) }
     )
 
@@ -57,7 +59,30 @@ data class DoubleChromosome(
         var filter: (Double) -> Boolean = { true }
 
         /* Documentation inherited from [Chromosome.Factory] */
-        override fun make() = DoubleChromosome(ranges)
+        override fun make() = if (ranges.size == 1) {
+            DoubleChromosome(
+                List(size) {
+                    DoubleGene(
+                        Core.random.nextDouble(ranges[0].start, ranges[0].endInclusive),
+                        ranges[0]
+                    )
+                }
+            )
+        } else {
+            enforce {
+                "The number ofranges must be equal to the size of the chromosome." {
+                    ranges.size must IntRequirement.BeEqualTo(size)
+                }
+            }
+             DoubleChromosome(
+                List(size) {
+                    DoubleGene(
+                        Core.random.nextDouble(ranges[it].start, ranges[it].endInclusive),
+                        ranges[it]
+                    )
+                }
+            )
+        }
 
         /* Documentation inherited from [Any] */
         override fun toString() = "DoubleChromosome.Factory(ranges=$ranges, filter=$filter)"

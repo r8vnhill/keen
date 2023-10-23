@@ -44,7 +44,7 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
         get() = _fittest
     override var steadyGenerations: Int = 0
     override var generation: Int = 0
-    protected var evolution: EvolutionRecord<DNA, G> = EvolutionRecord()
+    override var evolution: EvolutionRecord<DNA, G> = EvolutionRecord()
     protected val generations get() = evolution.generations
     @Suppress("PropertyName")
     protected lateinit var _currentGeneration: GenerationRecord

@@ -17,7 +17,6 @@ import cl.ravenhill.keen.util.nextChar
  * and the same [range] and [filter] as the original.
  *
  * @property genes The list of character genes that make up the chromosome.
- * @property ranges The ranges of possible character values for each gene.
  * @property filter The function used to filter the possible character values for each gene.
  *  Defaults to a function that accepts all character values.
  *
@@ -31,48 +30,6 @@ import cl.ravenhill.keen.util.nextChar
 data class CharChromosome(override val genes: List<CharGene>) :
     AbstractChromosome<Char, CharGene>(genes) {
 
-    val ranges: List<CharRange> by lazy { genes.map { it.range } }
-    val filters: List<(Char) -> Boolean> by lazy { genes.map { it.filter } }
-
-    constructor(genes: List<CharGene>, ranges: List<CharRange>, filter: (Char) -> Boolean) : this(
-        genes
-    ) {
-        enforce {
-            "The number of ranges must be equal to the number of genes" {
-                ranges.size must BeEqualTo(genes.size)
-            }
-        }
-    }
-
-    constructor (
-        genes: List<CharGene>,
-        range: CharRange,
-        filter: (Char) -> Boolean =
-            { true },
-    ) : this(
-        genes,
-        List(genes.size) { range },
-        filter
-    )
-
-    /**
-     * Creates a new `CharChromosome` instance with a random set of [CharGene] instances.
-     *
-     * @param size The size of the new chromosome.
-     * @param filter The function used to filter the possible character values for each gene.
-     *  Defaults to a function that accepts all character values.
-     * @param range The range of possible character values for each gene.
-     *  Defaults to ``' '..'z'``.
-     */
-    constructor(
-        size: Int,
-        range: CharRange = ' '..'z',
-        filter: (Char) -> Boolean = { true },
-    ) : this(
-        List(size) { CharGene(Core.random.nextChar(range, filter), range, filter) },
-        range = range
-    )
-
     // Documentation inherited from Chromosome
     override fun withGenes(genes: List<CharGene>) = CharChromosome(genes)
 
@@ -81,7 +38,7 @@ data class CharChromosome(override val genes: List<CharGene>) :
      * Each gene's DNA value is concatenated without any spaces or separators.
      *
      * @return A string representation of the chromosome's gene sequence.
-     * @see Gene
+     * @see CharGene
      */
     fun toSimpleString() = genes.joinToString("") { it.dna.toString() }
 
@@ -92,35 +49,23 @@ data class CharChromosome(override val genes: List<CharGene>) :
      *  Defaults to `1`.
      * @property range The range of possible character values for each gene.
      * Defaults to ``' '..'z'``.
-     * @property filter The function used to filter the possible character values for each gene.
-     * Defaults to a function that accepts all character values.
      */
     class Factory : Chromosome.AbstractFactory<Char, CharGene>() {
-        var ranges: List<CharRange> = listOf(' '..'z')
-
-        @Deprecated("Use filters instead", ReplaceWith("filters"))
-        var filter: (Char) -> Boolean = { true }
-        var filters: List<(Char) -> Boolean> = listOf { true }
+        var ranges: MutableList<CharRange> = mutableListOf()
+        var filters: MutableList<(Char) -> Boolean> = mutableListOf()
 
         /**
          * Creates a new [CharChromosome] instance with the current factory settings.
          */
         override fun make(): CharChromosome {
-            enforce {
-                if (ranges.size != 1) {
-                    "The number of ranges must be either 1 or equal to the number of genes" {
-                        ranges.size must BeEqualTo(size)
-                    }
-                    "The number of filters must be either 1 or equal to the number of genes" {
-                        filters.size must BeEqualTo(size)
-                    }
-                }
+            enforceConstraints()
+            when (ranges.size) {
+                0 -> ranges = MutableList(size) { ' '..'z' }
+                1 -> ranges = MutableList(size) { ranges.first() }
             }
-            if (ranges.size == 1) {
-                ranges = List(size) { ranges.first() }
-            }
-            if (filters.size == 1) {
-                filters = List(size) { filters.first() }
+            when (filters.size) {
+                0 -> filters = MutableList(size) { { _: Char -> true } }
+                1 -> filters = MutableList(size) { filters.first() }
             }
             return CharChromosome(
                 List(size) {
@@ -131,6 +76,21 @@ data class CharChromosome(override val genes: List<CharGene>) :
                     )
                 }
             )
+        }
+
+        private fun enforceConstraints() {
+            enforce {
+                if (ranges.size > 1) {
+                    "When creating a chromosome with more than one range, the number of ranges must be equal to the number of genes" {
+                        ranges.size must BeEqualTo(size)
+                    }
+                }
+                if (filters.size > 1) {
+                    "When creating a chromosome with more than one filter, the number of filters must be equal to the number of genes" {
+                        filters.size must BeEqualTo(size)
+                    }
+                }
+            }
         }
 
         // Documentation inherited from Any

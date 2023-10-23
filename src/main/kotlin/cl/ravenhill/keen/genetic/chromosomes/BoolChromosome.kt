@@ -126,9 +126,5 @@ data class BoolChromosome(
 
         // Documentation inherited from [Chromosome.Factory].
         override fun make() = BoolChromosome(size, truesProbability, executor)
-
-        // Documentation inherited from [Any].
-        override fun toString() =
-            "BoolChromosome.Factory(size=$size, truesProbability=$truesProbability)"
     }
 }

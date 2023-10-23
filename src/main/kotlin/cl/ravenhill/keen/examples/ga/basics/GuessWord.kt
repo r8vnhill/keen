@@ -51,7 +51,7 @@ fun main() {
         survivorSelector = RouletteWheelSelector()
         alterers = listOf(RandomMutator(0.06), SinglePointCrossover(0.2))
         limits = listOf(TargetFitness(TARGET.length.toDouble()))
-        listeners = listOf(EvolutionPrinter(every = 1), EvolutionSummary(), JsonEvolutionSerializer())
+        listeners += EvolutionSummary()
     }
     val evolvedPopulation = engine.evolve()
     println("Solution found in ${evolvedPopulation.generation} generations")

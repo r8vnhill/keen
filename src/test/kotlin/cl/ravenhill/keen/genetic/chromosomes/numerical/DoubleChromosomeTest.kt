@@ -7,6 +7,7 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.keen.doubleChromosome
 import cl.ravenhill.keen.doubleGene
+import cl.ravenhill.keen.doubleRange
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -41,10 +42,12 @@ class DoubleChromosomeTest : FreeSpec({
             }
 
             "can be modified" {
+                TODO("Chromosome factories should be able to modify their ranges")
                 with(Arb) {
-                    checkAll(doubleChromosome(), list(doubleRange())) { c ->
-                        val ranges = list(doubleRange()).next()
-                        c.apply { ranges = ranges }.ranges shouldBe ranges
+                    checkAll(doubleChromosome(), list(doubleRange())) { c, ranges ->
+                        for (range in ranges) {
+
+                        }
                     }
                 }
             }

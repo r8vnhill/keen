@@ -400,7 +400,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             }.let { field = value }
         // endregion    ----------------------------------------------------------------------------
 
-        var listeners: List<EvolutionListener<DNA, G>> = listOf(EvolutionSummary())
+        var listeners = mutableListOf<EvolutionListener<DNA, G>>()
 
         fun build() = Engine(
             genotype = genotype,

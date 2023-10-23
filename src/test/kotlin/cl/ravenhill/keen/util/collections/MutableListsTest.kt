@@ -9,11 +9,11 @@ import cl.ravenhill.any
 import cl.ravenhill.enforcer.CollectionRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.keen.mutableList
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.addIfAbsent
 import cl.ravenhill.keen.util.dropFirst
-import cl.ravenhill.keen.util.mutableList
 import cl.ravenhill.keen.util.swap
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly

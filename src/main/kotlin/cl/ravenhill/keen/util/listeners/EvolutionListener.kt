@@ -4,6 +4,7 @@ import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Phenotype
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
@@ -194,5 +195,7 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
             }
         }
     }
+
+    var evolution: EvolutionRecord<DNA, G>
 }
 
