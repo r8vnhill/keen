@@ -53,7 +53,7 @@ data class DoubleChromosome(
      */
     class Factory : Chromosome.AbstractFactory<Double, DoubleGene>() {
 
-        lateinit var ranges: List<ClosedFloatingPointRange<Double>>
+        var ranges = mutableListOf<DoubleRange>()
         var filter: (Double) -> Boolean = { true }
 
         /* Documentation inherited from [Chromosome.Factory] */

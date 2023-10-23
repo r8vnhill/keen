@@ -73,7 +73,7 @@ private fun rastriginFunction(x: Genotype<Double, DoubleGene>) =
 fun main() {
     val engine = engine(::rastriginFunction, genotype {
         chromosome {
-            doubles { size = N; ranges = List(N) { -R..R } }
+            doubles { size = N; ranges += List(N) { -R..R } }
         }
     }) {
         populationSize = 500

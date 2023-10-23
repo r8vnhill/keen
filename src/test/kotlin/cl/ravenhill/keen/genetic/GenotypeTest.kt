@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.intChromosome
+import cl.ravenhill.keen.intGenotype
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -32,10 +33,29 @@ class GenotypeTest : FreeSpec({
 
         "size can be read" {
             with(Arb) {
-                checkAll(list(intChromosome())) { chromosomes ->
-                    Genotype(chromosomes).size shouldBe chromosomes.size
+                checkAll(intGenotype()) { genotype ->
+                    genotype.size shouldBe genotype.chromosomes.size
                 }
             }
+        }
+
+        "can verify itself when" - {
+            "all chromosomes are valid then it should return true" {
+                with(Arb) {
+                    checkAll(intGenotype()) { genotype ->
+                        genotype.verify() shouldBe true
+                    }
+                }
+            }
+
+//            "at least one chromosome is invalid then it should return false" {
+//                with(Arb) {
+//                    checkAll(list(intChromosome())) { chromosomes ->
+//                        val invalidChromosome = chromosomes.random().withGenes(emptyList())
+//                        Genotype(chromosomes + invalidChromosome).verify() shouldBe false
+//                    }
+//                }
+//            }
         }
     }
 })

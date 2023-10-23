@@ -64,7 +64,7 @@ fun createEngine(
             chromosome {
                 doubles {
                     this.size = 2
-                    this.ranges = listOf(range.toRange(), range.toRange())
+//                    this.ranges = listOf(range.toRange(), range.toRange())
                 }
             }
         }
@@ -94,7 +94,7 @@ fun createEngine(
         chromosome {
             doubles {
                 this.size = 2
-                this.ranges = ranges.toList()
+//                this.ranges = ranges.toList()
             }
         }
     }

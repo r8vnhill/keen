@@ -38,7 +38,7 @@ private fun fitnessFunction(genotype: Genotype<Double, DoubleGene>) = genotype.f
  */
 fun main() {
     val engine = engine(::fitnessFunction, genotype {
-        chromosome { doubles { size = 1; ranges = listOf((-2.0 * Math.PI)..(2 * Math.PI)) } }
+        chromosome { doubles { size = 1; ranges += (-2.0 * Math.PI)..(2 * Math.PI) } }
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()

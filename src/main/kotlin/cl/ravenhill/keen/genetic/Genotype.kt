@@ -49,7 +49,7 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
     val size: Int = chromosomes.size
 
     // Inherit documentation from Verifyable
-    override fun verify() = chromosomes.isNotEmpty() && chromosomes.all { it.verify() }
+    override fun verify() = chromosomes.all { it.verify() }
 
     // Inherit documentation from GeneticMaterial
     override fun flatten() =

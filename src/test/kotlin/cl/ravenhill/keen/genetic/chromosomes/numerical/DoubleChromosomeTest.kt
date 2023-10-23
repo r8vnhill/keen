@@ -35,8 +35,10 @@ class DoubleChromosomeTest : FreeSpec({
     }
 
     "A [DoubleChromosome.Factory]" - {
-        "when creating a new one with" - {
-            TODO()
+        "have a list of ranges that" - {
+            "is empty by default" {
+                DoubleChromosome.Factory().ranges.isEmpty() shouldBe true
+            }
         }
     }
 })
