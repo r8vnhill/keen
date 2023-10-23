@@ -39,6 +39,15 @@ class DoubleChromosomeTest : FreeSpec({
             "is empty by default" {
                 DoubleChromosome.Factory().ranges.isEmpty() shouldBe true
             }
+
+            "can be modified" {
+                with(Arb) {
+                    checkAll(doubleChromosome(), list(doubleRange())) { c ->
+                        val ranges = list(doubleRange()).next()
+                        c.apply { ranges = ranges }.ranges shouldBe ranges
+                    }
+                }
+            }
         }
     }
 })

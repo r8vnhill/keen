@@ -14,6 +14,8 @@ import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import cl.ravenhill.orderedPair
+import cl.ravenhill.utils.toRange
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.char
@@ -98,6 +100,10 @@ fun Arb.Companion.doubleChromosome() = arbitrary {
  */
 fun Arb.Companion.doubleGene(d: Arb<Double> = double()) = arbitrary {
     DoubleGene(d.bind())
+}
+
+fun Arb.Companion.doubleRange() = arbitrary {
+    orderedPair(double()).bind().toRange()
 }
 
 /**
