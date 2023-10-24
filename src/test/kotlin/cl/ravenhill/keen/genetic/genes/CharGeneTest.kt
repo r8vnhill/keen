@@ -7,7 +7,7 @@ package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.charGene
-import cl.ravenhill.keen.charRange
+import cl.ravenhill.keen.arbs.charRange
 import cl.ravenhill.keen.util.nextChar
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe

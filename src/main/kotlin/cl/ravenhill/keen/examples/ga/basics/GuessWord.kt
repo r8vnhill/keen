@@ -10,7 +10,6 @@ import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
-import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.listeners.serializers.JsonEvolutionSerializer
 import java.io.File
@@ -44,9 +43,12 @@ private fun matches(genotype: Genotype<Char, CharGene>) = genotype.flatten()
  */
 @ExperimentalTime
 fun main() {
-    val engine = engine(::matches, genotype {
-        chromosome { chars { size = TARGET.length } }
-    }) {
+    val engine = engine(
+        ::matches,
+        genotype {
+            chromosome { chars { size = TARGET.length } }
+        }
+    ) {
         populationSize = 500
         survivorSelector = RouletteWheelSelector()
         alterers = listOf(RandomMutator(0.06), SinglePointCrossover(0.2))

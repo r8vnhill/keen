@@ -10,6 +10,8 @@ import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.*
 import cl.ravenhill.keen.arbs.charChromosome
 import cl.ravenhill.keen.arbs.charGene
+import cl.ravenhill.keen.arbs.charRange
+import cl.ravenhill.keen.arbs.mutableList
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.util.nextChar
 import cl.ravenhill.unfulfilledConstraint
@@ -66,7 +68,6 @@ class CharChromosomeTest : FreeSpec({
                         ranges.forEach { factory.ranges += it }
                         factory.ranges shouldHaveSize ranges.size
                         factory.ranges shouldBe ranges
-
                     }
                 }
 
@@ -112,13 +113,9 @@ class CharChromosomeTest : FreeSpec({
         "when creating a chromosome" - {
             with(Arb) {
                 "without an explicit range should default all genes to range ' '..'z'" {
-                    checkAll(int(1..100)) { size ->
-                        val factory = CharChromosome.Factory()
-                        factory.size = size
-                        factory.make().genes.forEach {
-                            it.range shouldBe ' '..'z'
-                        }
-                    }
+                    `each gene should have the specified range`(
+                        ' '..'z'
+                    ) { CharChromosome.Factory() }
                 }
 
                 "with a single range should set the range for all genes to the given range" {
@@ -182,7 +179,11 @@ class CharChromosomeTest : FreeSpec({
                             factory.size = size
                             shouldThrow<EnforcementException> {
                                 factory.make()
-                            }.shouldHaveInfringement<IntRequirementException>(unfulfilledConstraint("When creating a chromosome with more than one range, the number of ranges must be equal to the number of genes"))
+                            }.shouldHaveInfringement<IntRequirementException>(
+                                unfulfilledConstraint(
+                                    "When creating a chromosome with more than one range, the number of ranges must be equal to the number of genes"
+                                )
+                            )
                         }
                     }
 
@@ -194,7 +195,12 @@ class CharChromosomeTest : FreeSpec({
                             factory.size = size
                             shouldThrow<EnforcementException> {
                                 factory.make()
-                            }.shouldHaveInfringement<IntRequirementException>(unfulfilledConstraint("When creating a chromosome with more than one filter, the number of filters must be equal to the number of genes"))
+                            }.shouldHaveInfringement<IntRequirementException>(
+                                unfulfilledConstraint(
+                                    "When creating a chromosome with more than one filter, the " +
+                                        "number of filters must be equal to the number of genes"
+                                )
+                            )
                         }
                     }
                 }
@@ -202,3 +208,4 @@ class CharChromosomeTest : FreeSpec({
         }
     }
 })
+

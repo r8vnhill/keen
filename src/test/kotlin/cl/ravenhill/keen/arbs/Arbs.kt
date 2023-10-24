@@ -3,35 +3,14 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen
+package cl.ravenhill.keen.arbs
 
-import cl.ravenhill.keen.arbs.intChromosome
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
-import cl.ravenhill.orderedPair
-import cl.ravenhill.utils.toRange
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
-import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.list
-
-/**
- * Generates an [Arb] (Arbitrary) of [CharRange] between the given bounds `lo` and `hi`.
- *
- * @param lo The lower bound of the character range, defaulting to the smallest possible Char value.
- * @param hi The upper bound of the character range, defaulting to the largest possible Char value.
- * @return An arbitrary of CharRange.
- */
-fun Arb.Companion.charRange(lo: Char = Char.MIN_VALUE, hi: Char = Char.MAX_VALUE) =
-    arbitrary {
-        require(lo < hi)
-        lo..hi
-    }
-
-fun Arb.Companion.doubleRange() = arbitrary {
-    orderedPair(double()).bind().toRange()
-}
 
 /**
  * Provides an arbitrary generator for a [Genotype] using the [Arb] companion object.

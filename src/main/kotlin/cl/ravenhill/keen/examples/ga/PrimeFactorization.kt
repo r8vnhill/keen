@@ -77,7 +77,7 @@ fun main() {
         alterers = listOf(RandomMutator(0.1), SinglePointCrossover(0.3))
         optimizer = FitnessMinimizer()
         limits = listOf(SteadyGenerations(10), GenerationCount(1000))
-        listeners = listOf(EvolutionSummary(), EvolutionPlotter())
+        listeners += listOf(EvolutionSummary(), EvolutionPlotter())
     }
     // Run the genetic algorithm and output the results
     val result = engine.evolve()

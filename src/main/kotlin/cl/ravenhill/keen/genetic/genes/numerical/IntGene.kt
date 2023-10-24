@@ -8,6 +8,7 @@ package cl.ravenhill.keen.genetic.genes.numerical
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
+import cl.ravenhill.keen.util.Ranged
 import cl.ravenhill.keen.util.nextIntInRange
 import cl.ravenhill.utils.IntToInt
 import cl.ravenhill.utils.toRange
@@ -37,9 +38,9 @@ import java.util.Objects
  */
 class IntGene(
     override val dna: Int,
-    val range: IntRange = Int.MIN_VALUE..Int.MAX_VALUE,
+    override val range: IntRange = Int.MIN_VALUE..Int.MAX_VALUE,
     override val filter: (Int) -> Boolean = { true },
-) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene> {
+) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene>, Ranged<Int> {
 
     @Deprecated("IntToInt is to be removed to use more idiomatic stdlib ranges")
     constructor(

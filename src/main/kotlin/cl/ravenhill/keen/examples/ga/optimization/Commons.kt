@@ -22,7 +22,6 @@ import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.utils.DoubleToDouble
-import cl.ravenhill.utils.toRange
 
 /**
  * Creates and returns an evolutionary computation engine for optimizing a given fitness function.
@@ -76,7 +75,7 @@ fun createEngine(
             AverageCrossover(0.3, geneRate = 0.5)
         )
         limits = listOf(SteadyGenerations(100))
-        listeners = listOf(
+        listeners += listOf(
             EvolutionPlotter(),
             EvolutionPrinter(10),
             EvolutionSummary()
@@ -107,7 +106,7 @@ fun createEngine(
         AverageCrossover(0.3, geneRate = 0.5)
     )
     limits = listOf(SteadyGenerations(50))
-    listeners = listOf(
+    listeners += listOf(
         EvolutionSummary(),
         EvolutionPlotter(),
     )

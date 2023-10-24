@@ -100,3 +100,22 @@ interface Filterable<in T> {
  * @param T The type of the implementing class, which must be a subtype of `SelfReferential<T>`.
  */
 interface SelfReferential<T : SelfReferential<T>>
+
+/**
+ * Represents an entity that has a specified range of comparable values.
+ *
+ * The interface defines a property, [range], which represents a closed range of
+ * values. Classes or objects implementing this interface are typically ones
+ * that operate within a defined set of bounds or limits.
+ *
+ * @param T The type of values within the range. Must be a subtype of [Comparable].
+ *
+ * @property range The defined closed range of values for the entity.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+interface Ranged<T : Comparable<T>> {
+    val range: ClosedRange<T>
+}

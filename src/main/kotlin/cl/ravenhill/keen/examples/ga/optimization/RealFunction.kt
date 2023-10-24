@@ -44,7 +44,7 @@ fun main() {
         optimizer = FitnessMinimizer()
         alterers = listOf(RandomMutator(0.03), AverageCrossover(0.3))
         limits = listOf(SteadyGenerations(20))
-        listeners = listOf(EvolutionSummary(), EvolutionPlotter())
+        listeners += listOf(EvolutionSummary(), EvolutionPlotter())
     }
     engine.evolve()
     println(engine.listeners.first())

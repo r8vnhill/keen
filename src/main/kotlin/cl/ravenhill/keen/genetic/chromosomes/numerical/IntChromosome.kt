@@ -6,15 +6,14 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement
 import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.utils.IntToInt
-import java.util.Objects
 
 /**
  * A chromosome that contains a list of [IntGene]s.
@@ -36,7 +35,8 @@ import java.util.Objects
  * @since 1.0.0
  * @version 2.0.0
  */
-data class IntChromosome(override val genes: List<IntGene>) : AbstractChromosome<Int, IntGene>(genes) {
+data class IntChromosome(override val genes: List<IntGene>) :
+    AbstractChromosome<Int, IntGene>(genes) {
 
     @Deprecated("Prefer using the primary constructor and/or the chromosome factory")
     constructor(genes: List<IntGene>, ranges: List<IntRange>, filter: (Int) -> Boolean) : this(
@@ -75,7 +75,8 @@ data class IntChromosome(override val genes: List<IntGene>) : AbstractChromosome
                 predicate
             )
         },
-        range, predicate
+        range,
+        predicate
     )
 
     // / Documentation inherited from [Chromosome]
@@ -90,18 +91,56 @@ data class IntChromosome(override val genes: List<IntGene>) : AbstractChromosome
      * @constructor Creates a new [IntChromosome.Factory].
      */
     class Factory : Chromosome.AbstractFactory<Int, IntGene>() {
+        var ranges = mutableListOf<IntRange>()
+        var filters = mutableListOf<(Int) -> Boolean>()
 
+        @Deprecated("Use the list version instead", ReplaceWith("ranges += range"))
         var filter: (Int) -> Boolean = { true }
 
+        @Deprecated("Use the list version instead", ReplaceWith("ranges += range"))
         lateinit var range: IntToInt
 
         // / Documentation inherited from [Chromosome.Factory]
-        override fun make() = IntChromosome(size, range, filter, executor)
+        override fun make(): IntChromosome {
+            enforceConstraints()
+            when (ranges.size) {
+                0 -> ranges = MutableList(size) { Int.MIN_VALUE..Int.MAX_VALUE }
+                1 -> ranges = MutableList(size) { ranges.first() }
+            }
+            when (filters.size) {
+                0 -> filters = MutableList(size) { { _: Int -> true } }
+                1 -> filters = MutableList(size) { filters.first() }
+            }
+            return IntChromosome(
+                List(size) {
+                    IntGene(
+                        Core.random.nextInt(ranges[it].first, ranges[it].last),
+                        ranges[it],
+                        filters[it]
+                    )
+                }
+            )
+        }
 
-        override fun toString() = "IntChromosome.Builder { " +
-            "size: $size, " +
-            "range: $range," +
-            "filter: $filter," +
-            "executor: $executor }"
+        private fun enforceConstraints() {
+            enforce {
+                if (ranges.size > 1) {
+                    (
+                        "When creating a chromosome with more than one range, the number of ranges " +
+                            "must be equal to the number of genes"
+                        ) {
+                        ranges.size must IntRequirement.BeEqualTo(size)
+                    }
+                }
+                if (filters.size > 1) {
+                    (
+                        "When creating a chromosome with more than one filter, the number of " +
+                            "filters must be equal to the number of genes"
+                        ) {
+                        filters.size must IntRequirement.BeEqualTo(size)
+                    }
+                }
+            }
+        }
     }
 }

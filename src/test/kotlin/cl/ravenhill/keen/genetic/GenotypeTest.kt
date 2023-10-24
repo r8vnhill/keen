@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.arbs.intChromosome
-import cl.ravenhill.keen.intGenotype
+import cl.ravenhill.keen.arbs.intGenotype
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb

@@ -80,7 +80,7 @@ fun main() {
         optimizer = FitnessMinimizer()
         alterers = listOf(RandomMutator(0.03), AverageCrossover(0.3, geneRate = 0.5))
         limits = listOf(SteadyGenerations(50))
-        listeners = listOf(EvolutionSummary(), EvolutionPlotter())
+        listeners += listOf(EvolutionSummary(), EvolutionPlotter())
     }
     engine.evolve()
     println(engine.listeners[0])

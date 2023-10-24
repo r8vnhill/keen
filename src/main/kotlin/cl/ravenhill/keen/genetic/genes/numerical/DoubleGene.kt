@@ -10,6 +10,7 @@ import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
+import cl.ravenhill.keen.util.Ranged
 import cl.ravenhill.keen.util.nextDoubleInRange
 import cl.ravenhill.utils.DoubleToDouble
 import cl.ravenhill.utils.toRange
@@ -36,9 +37,9 @@ import java.util.Objects
  */
 class DoubleGene(
     override val dna: Double,
-    val range: ClosedFloatingPointRange<Double> = -Double.MAX_VALUE..Double.MAX_VALUE,
+    override val range: ClosedFloatingPointRange<Double> = -Double.MAX_VALUE..Double.MAX_VALUE,
     override val filter: (Double) -> Boolean = { true },
-) : NumberGene<Double, DoubleGene>, ComparableGene<Double, DoubleGene> {
+) : NumberGene<Double, DoubleGene>, ComparableGene<Double, DoubleGene>, Ranged<Double> {
 
     val start = range.start
     val end = range.endInclusive
