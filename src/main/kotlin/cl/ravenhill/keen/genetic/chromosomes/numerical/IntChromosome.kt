@@ -13,6 +13,7 @@ import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import cl.ravenhill.keen.util.MutableRangedCollection
 import cl.ravenhill.utils.IntToInt
 
 /**
@@ -39,7 +40,7 @@ data class IntChromosome(override val genes: List<IntGene>) :
     AbstractChromosome<Int, IntGene>(genes) {
 
     @Deprecated("Prefer using the primary constructor and/or the chromosome factory")
-    constructor(genes: List<IntGene>, ranges: List<IntRange>, filter: (Int) -> Boolean) : this(
+    constructor(genes: List<IntGene>, ranges: List<ClosedRange<Int>>, filter: (Int) -> Boolean) : this(
         genes
     )
 
@@ -90,8 +91,8 @@ data class IntChromosome(override val genes: List<IntGene>) :
      *
      * @constructor Creates a new [IntChromosome.Factory].
      */
-    class Factory : Chromosome.AbstractFactory<Int, IntGene>() {
-        var ranges = mutableListOf<IntRange>()
+    class Factory : Chromosome.AbstractFactory<Int, IntGene>(), MutableRangedCollection<Int> {
+        override var ranges = mutableListOf<ClosedRange<Int>>()
         var filters = mutableListOf<(Int) -> Boolean>()
 
         @Deprecated("Use the list version instead", ReplaceWith("ranges += range"))
@@ -114,7 +115,7 @@ data class IntChromosome(override val genes: List<IntGene>) :
             return IntChromosome(
                 List(size) {
                     IntGene(
-                        Core.random.nextInt(ranges[it].first, ranges[it].last),
+                        Core.random.nextInt(ranges[it].start, ranges[it].endInclusive),
                         ranges[it],
                         filters[it]
                     )

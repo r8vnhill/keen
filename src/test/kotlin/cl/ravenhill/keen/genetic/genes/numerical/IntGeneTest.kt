@@ -114,8 +114,8 @@ class IntGeneTest : FreeSpec({
                 checkAll(intGene(int()), int()) { gene, i ->
                     val copy = gene.withDna(i)
                     copy.dna shouldBe i
-                    copy.range.first shouldBe gene.range.first
-                    copy.range.last shouldBe gene.range.last
+                    copy.range.start shouldBe gene.range.start
+                    copy.range.endInclusive shouldBe gene.range.endInclusive
                     copy.filter shouldBe gene.filter
                 }
             }

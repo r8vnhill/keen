@@ -69,3 +69,4 @@ fun IntToInt.toRange() = first..second
  * defined by the [DoubleToDouble] function.
  */
 fun DoubleToDouble.toRange() = first..second
+

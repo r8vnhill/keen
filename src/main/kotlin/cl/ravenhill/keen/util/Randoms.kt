@@ -32,9 +32,9 @@ import kotlin.random.Random
  *  found if no [filter] is specified.
  */
 fun Random.nextChar(
-    range: CharRange = Char.MIN_VALUE..Char.MAX_VALUE,
+    range: ClosedRange<Char> = Char.MIN_VALUE..Char.MAX_VALUE,
     filter: (Char) -> Boolean = { true },
-) = generateSequence { range.random(this) }.filter(filter).first()
+) = generateSequence { (range.start..range.endInclusive).random(this) }.filter(filter).first()
 
 /**
  * Generates a random string with characters within a specified range and optionally applies a
@@ -92,7 +92,7 @@ fun Random.nextString(
  * @param range An `IntRange` specifying the range within which a random integer will be generated.
  * @return A randomly generated integer that lies within the boundaries of the specified range excluding the last value.
  */
-fun Random.nextIntInRange(range: IntRange) = nextInt(range.first, range.last)
+fun Random.nextIntInRange(range: ClosedRange<Int>) = nextInt(range.start, range.endInclusive)
 
 /**
  * Generates a random double value within the specified [range], including the end value.

@@ -10,6 +10,7 @@ import cl.ravenhill.utils.DoubleRange
 import cl.ravenhill.utils.toRange
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.char
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
 
@@ -20,10 +21,12 @@ import io.kotest.property.arbitrary.int
  * @param hi The upper bound of the character range, defaulting to the largest possible Char value.
  * @return An arbitrary of CharRange.
  */
-fun Arb.Companion.charRange(lo: Char = Char.MIN_VALUE, hi: Char = Char.MAX_VALUE) =
+fun Arb.Companion.charRange(
+    lo: Char = Char.MIN_VALUE,
+    hi: Char = Char.MAX_VALUE,
+): Arb<ClosedRange<Char>> =
     arbitrary {
-        require(lo < hi)
-        lo..hi
+        range(char(lo..hi), char(lo..hi)).bind()
     }
 
 /**
@@ -48,4 +51,23 @@ fun Arb.Companion.doubleRange() = arbitrary {
  */
 fun Arb.Companion.intRange() = arbitrary {
     orderedPair(int()).bind().toRange()
+}
+
+fun <T: Comparable<T>> Arb.Companion.range(generator: Arb<T>) = arbitrary {
+    range(generator, generator).bind()
+}
+
+fun <T : Comparable<T>> Arb.Companion.range(
+    a: Arb<T>,
+    b: Arb<T>,
+    reverted: Boolean = false
+) = arbitrary {
+    val i = a.bind()
+    var j = b.bind()
+
+    while (i == j) {
+        j = b.bind() // Re-bind `j` until it is different from `i` if `strict` is `true`
+    }
+
+    if ((i < j && !reverted) || (i > j && reverted)) i..j else j..i
 }

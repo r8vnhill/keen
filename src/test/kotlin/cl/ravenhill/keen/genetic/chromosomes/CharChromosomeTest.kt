@@ -7,13 +7,17 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
-import cl.ravenhill.keen.*
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.`each gene should pass the specified filter`
 import cl.ravenhill.keen.arbs.charChromosome
 import cl.ravenhill.keen.arbs.charGene
 import cl.ravenhill.keen.arbs.charRange
 import cl.ravenhill.keen.arbs.mutableList
+import cl.ravenhill.keen.`each gene should have the specified range`
 import cl.ravenhill.keen.genetic.genes.CharGene
+import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.nextChar
+import cl.ravenhill.keen.`validate all genes against single range`
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -21,7 +25,10 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.*
+import io.kotest.property.arbitrary.char
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.long
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
@@ -119,23 +126,12 @@ class CharChromosomeTest : FreeSpec({
                 }
 
                 "with a single range should set the range for all genes to the given range" {
-                    checkAll(charRange(), int(1..100)) { range, size ->
-                        val factory = CharChromosome.Factory()
-                        factory.ranges += range
-                        factory.size = size
-                        factory.make().genes.forEach {
-                            it.range shouldBe range
-                        }
-                    }
+                    `validate all genes against single range`(Arb.charRange()) { CharChromosome.Factory() }
                 }
 
                 "without an explicit filter should default all genes to the filter { true }" {
-                    checkAll(int(1..100), char()) { size, c ->
-                        val factory = CharChromosome.Factory()
-                        factory.size = size
-                        factory.make().genes.forEach {
-                            it.filter(c) shouldBe true
-                        }
+                    `each gene should pass the specified filter`(char()) {
+                        CharChromosome.Factory()
                     }
                 }
 
@@ -208,4 +204,3 @@ class CharChromosomeTest : FreeSpec({
         }
     }
 })
-

@@ -163,9 +163,9 @@ class CharGeneTest : FreeSpec({
  * @param range The arbitrary source of character ranges.
  * @return An arbitrary of CharGene with values from the provided range.
  */
-private fun Arb.Companion.charGeneWithRange(range: Arb<CharRange>) = arbitrary {
+private fun Arb.Companion.charGeneWithRange(range: Arb<ClosedRange<Char>>) = arbitrary {
     val r = range.bind()
-    val c = char(r).bind()
+    val c = char(r.start..r.endInclusive).bind()
     CharGene(c, r)
 }
 
@@ -185,10 +185,10 @@ private fun Arb.Companion.charGeneWithFilter(filter: (Char) -> Boolean) = arbitr
  * @param range The character range to exclude.
  * @return An arbitrary of characters not in the provided range.
  */
-private fun Arb.Companion.charOutOfRange(range: CharRange) = arbitrary {
+private fun Arb.Companion.charOutOfRange(range: ClosedRange<Char>) = arbitrary {
     choice(
-        char(Char.MIN_VALUE..<range.first),
-        char((range.last + 1)..Char.MAX_VALUE)
+        char(Char.MIN_VALUE..<range.start),
+        char((range.endInclusive + 1)..Char.MAX_VALUE)
     ).bind()
 }
 
@@ -198,7 +198,7 @@ private fun Arb.Companion.charOutOfRange(range: CharRange) = arbitrary {
  * @param range The arbitrary source of character ranges to exclude.
  * @return An arbitrary of CharGene with values not in the provided range.
  */
-private fun Arb.Companion.charGeneOutOfRange(range: Arb<CharRange>) = arbitrary {
+private fun Arb.Companion.charGeneOutOfRange(range: Arb<ClosedRange<Char>>) = arbitrary {
     val r = range.bind()
     val c = charOutOfRange(r).bind()
     CharGene(c, r)

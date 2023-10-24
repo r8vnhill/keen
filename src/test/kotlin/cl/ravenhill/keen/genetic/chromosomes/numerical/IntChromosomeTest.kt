@@ -9,6 +9,8 @@ import cl.ravenhill.keen.arbs.intChromosome
 import cl.ravenhill.keen.arbs.intGene
 import cl.ravenhill.keen.arbs.intRange
 import cl.ravenhill.keen.`each gene should have the specified range`
+import cl.ravenhill.keen.`each gene should pass the specified filter`
+import cl.ravenhill.keen.`validate all genes against single range`
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -95,21 +97,18 @@ class IntChromosomeTest : FreeSpec({
         }
 
         "when creating a new chromosome" - {
-            with(Arb) {
-                "without an explicit range should default all genes to the entire range of Int" {
-                    `each gene should have the specified range`(
-                        Int.MIN_VALUE..Int.MAX_VALUE
-                    ) { IntChromosome.Factory() }
-                }
+            "without an explicit range should default all genes to the entire range of Int" {
+                `each gene should have the specified range`(
+                    Int.MIN_VALUE..Int.MAX_VALUE
+                ) { IntChromosome.Factory() }
+            }
 
-                "with a single range should default all genes to that range" {
-                    checkAll(int(1..100), intRange()) { size, range ->
-                        val factory = IntChromosome.Factory()
-                        factory.size = size
-                        factory.ranges += range
-                        factory.make().genes.forEach { it.range shouldBe range }
-                    }
-                }
+            "with a single range should default all genes to that range" {
+                `validate all genes against single range`(Arb.intRange()) { IntChromosome.Factory() }
+            }
+
+            "without an explicit filter should default all genes to accept all values" {
+                `each gene should pass the specified filter`(Arb.int()) { IntChromosome.Factory() }
             }
         }
     }

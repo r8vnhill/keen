@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.keen.util.Ranged
 import cl.ravenhill.keen.util.nextChar
 import java.util.Objects
@@ -35,9 +36,9 @@ import java.util.Objects
  */
 class CharGene(
     override val dna: Char,
-    override val range: CharRange = ' '..'z',
-    val filter: (Char) -> Boolean = { true },
-) : ComparableGene<Char, CharGene>, Ranged<Char> {
+    override val range: ClosedRange<Char> = ' '..'z',
+    override val filter: (Char) -> Boolean = { true },
+) : ComparableGene<Char, CharGene>, Ranged<Char>, Filterable<Char> {
 
     // Documentation inherited from Gene
     override fun generator() = Core.random.nextChar(range, filter)

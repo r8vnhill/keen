@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.util
 
 /***************************************************************************************************
@@ -118,4 +123,19 @@ interface SelfReferential<T : SelfReferential<T>>
  */
 interface Ranged<T : Comparable<T>> {
     val range: ClosedRange<T>
+}
+
+/**
+ * Represents an entity that consists of a collection of specified ranges of comparable values.
+ *
+ * The interface defines a property, [ranges], which represents a list of closed ranges.
+ * Classes or objects implementing this interface are typically ones that operate with multiple
+ * bounds or limits, each defined by its own range.
+ *
+ * @param T The type of values within each range. Must be a subtype of [Comparable].
+ *
+ * @property ranges The list of defined closed ranges for the entity.
+ */
+interface MutableRangedCollection<T : Comparable<T>> {
+    var ranges: MutableList<ClosedRange<T>>
 }
