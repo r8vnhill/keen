@@ -7,18 +7,19 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
-import cl.ravenhill.keen.`validate genes with specified range and factory`
-import cl.ravenhill.keen.`each gene should pass the specified filter`
 import cl.ravenhill.keen.arbs.charChromosome
 import cl.ravenhill.keen.arbs.charGene
 import cl.ravenhill.keen.arbs.charRange
 import cl.ravenhill.keen.arbs.mutableList
+import cl.ravenhill.keen.`assert chromosome enforces range to gene count equality`
 import cl.ravenhill.keen.`each gene should have the specified range`
+import cl.ravenhill.keen.`each gene should pass the specified filter`
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.nextChar
 import cl.ravenhill.keen.`validate all genes against single filter`
 import cl.ravenhill.keen.`validate all genes against single range`
+import cl.ravenhill.keen.`validate genes with specified range and factory`
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -145,27 +146,16 @@ class CharChromosomeTest : FreeSpec({
                         charRange(),
                         { rng, ranges, index ->
                             CharGene(rng.nextChar(ranges[index]), ranges[index])
-                        }) {
+                        }
+                    ) {
                         CharChromosome.Factory()
                     }
                 }
 
                 "should throw an exception when" - {
                     "the number of ranges is greater than 1 and different from the number of genes" {
-                        checkAll(list(charRange(), 2..100), int(2..100)) { ranges, size ->
-                            assume {
-                                ranges.size shouldNotBe size
-                            }
-                            val factory = CharChromosome.Factory()
-                            ranges.forEach { factory.ranges += it }
-                            factory.size = size
-                            shouldThrow<EnforcementException> {
-                                factory.make()
-                            }.shouldHaveInfringement<IntRequirementException>(
-                                unfulfilledConstraint(
-                                    "When creating a chromosome with more than one range, the number of ranges must be equal to the number of genes"
-                                )
-                            )
+                        `assert chromosome enforces range to gene count equality`(charRange()) {
+                            CharChromosome.Factory()
                         }
                     }
 

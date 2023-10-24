@@ -36,7 +36,6 @@ class IntChromosomeTest : FreeSpec({
             }
         }
 
-
         "can create a new one with the given genes" {
             with(Arb) {
                 checkAll(intChromosome(), list(intGene())) { c, genes ->
