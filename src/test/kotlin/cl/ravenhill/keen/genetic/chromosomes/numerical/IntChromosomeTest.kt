@@ -8,10 +8,13 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 import cl.ravenhill.keen.arbs.intChromosome
 import cl.ravenhill.keen.arbs.intGene
 import cl.ravenhill.keen.arbs.intRange
+import cl.ravenhill.keen.`assert chromosome enforces range to gene count equality`
 import cl.ravenhill.keen.`each gene should have the specified range`
 import cl.ravenhill.keen.`each gene should pass the specified filter`
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.`validate all genes against single filter`
 import cl.ravenhill.keen.`validate all genes against single range`
+import cl.ravenhill.keen.`validate genes with specified range and factory`
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -32,12 +35,13 @@ class IntChromosomeTest : FreeSpec({
                 }
             }
         }
-    }
 
-    "can create a new one with the given genes" {
-        with(Arb) {
-            checkAll(intChromosome(), list(intGene())) { c, genes ->
-                c.withGenes(genes).genes shouldBe genes
+
+        "can create a new one with the given genes" {
+            with(Arb) {
+                checkAll(intChromosome(), list(intGene())) { c, genes ->
+                    c.withGenes(genes).genes shouldBe genes
+                }
             }
         }
     }
@@ -117,6 +121,27 @@ class IntChromosomeTest : FreeSpec({
                     Arb.int(),
                     { true }
                 ) { IntChromosome.Factory() }
+            }
+
+            "with valid ranges and filters should create a chromosome with the given ranges and filters" {
+                `validate genes with specified range and factory`(
+                    Arb.intRange(),
+                    { rng, ranges, index ->
+                        IntGene(
+                            rng.nextInt(ranges[index].start, ranges[index].endInclusive),
+                            ranges[index]
+                        )
+                    },
+                    { IntChromosome.Factory() }
+                )
+            }
+
+            "should throw an exception when" - {
+                "the number of ranges is greater than 1 and different from the number of genes" {
+                    `assert chromosome enforces range to gene count equality`(Arb.intRange()) {
+                        IntChromosome.Factory()
+                    }
+                }
             }
         }
     }

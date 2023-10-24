@@ -5,18 +5,24 @@
 
 package cl.ravenhill.keen
 
+import cl.ravenhill.enforcer.EnforcementException
+import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.keen.util.MutableFilterCollection
 import cl.ravenhill.keen.util.MutableRangedCollection
 import cl.ravenhill.keen.util.Ranged
+import cl.ravenhill.unfulfilledConstraint
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.next
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -176,6 +182,20 @@ suspend fun <T, G, F> `validate all genes against single filter`(
     }
 }
 
+/**
+ * Validates genes against the specified ranges and ensures they match
+ * the expected output from the provided gene factory.
+ *
+ * @param arb An arb instance that generates a sequence of closed ranges of type `T`.
+ * @param geneFactory A function that, given a random seed, a list of ranges, and an index,
+ *                    produces a gene of type `G`.
+ * @param factoryBuilder A lambda that builds a chromosome factory of type `F`.
+ *
+ * @param T Represents the comparable type within the closed range.
+ * @param G Represents the type of the gene. The gene should be filterable and ranged.
+ * @param F Represents the type of the chromosome factory which should support a mutable
+ *          collection of ranges.
+ */
 suspend fun <T, G, F> `validate genes with specified range and factory`(
     arb: Arb<ClosedRange<T>>,
     geneFactory: (Random, List<ClosedRange<T>>, Int) -> G,
@@ -195,6 +215,47 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
                 gene.range shouldBe ranges[index]
                 gene shouldBe geneFactory(rng, ranges, index)
             }
+        }
+    }
+}
+
+/**
+ * This function ensures that when creating a chromosome with more than one range,
+ * the number of specified ranges must match the number of genes. If this constraint is violated,
+ * an [EnforcementException] is thrown with an appropriate error message detailing the constraint.
+ *
+ * @param T The type parameter which needs to be comparable and represents the type within the closed range.
+ * @param G The gene type parameter. The gene should implement both the Filterable and Ranged interfaces.
+ * @param F The chromosome factory type parameter. It should support a mutable collection of ranges.
+ *
+ * @param arb An Arb instance generating a list of closed ranges.
+ * @param factoryBuilder A lambda function that returns a chromosome factory instance.
+ *
+ * @throws EnforcementException If the number of ranges does not match the number of genes.
+ */
+suspend fun <T, G, F> `assert chromosome enforces range to gene count equality`(
+    arb: Arb<ClosedRange<T>>,
+    factoryBuilder: () -> F,
+) where
+      T : Comparable<T>,
+      G : Gene<T, G>, G : Filterable<T>, G : Ranged<T>,
+      F : Chromosome.Factory<T, G>, F : MutableRangedCollection<T> {
+    with(Arb) {
+        checkAll(list(arb, 2..100), int(2..100)) { ranges, size ->
+            assume {
+                ranges.size shouldNotBe size
+            }
+            val factory = factoryBuilder()
+            ranges.forEach { factory.ranges += it }
+            factory.size = size
+            shouldThrow<EnforcementException> {
+                factory.make()
+            }.shouldHaveInfringement<IntRequirementException>(
+                unfulfilledConstraint(
+                    "When creating a chromosome with more than one range, the number of ranges " +
+                        "must be equal to the number of genes"
+                )
+            )
         }
     }
 }
