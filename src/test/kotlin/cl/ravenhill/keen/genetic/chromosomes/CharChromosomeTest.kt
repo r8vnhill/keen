@@ -17,6 +17,7 @@ import cl.ravenhill.keen.`each gene should have the specified range`
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.nextChar
+import cl.ravenhill.keen.`validate all genes against single filter`
 import cl.ravenhill.keen.`validate all genes against single range`
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
@@ -136,17 +137,8 @@ class CharChromosomeTest : FreeSpec({
                 }
 
                 "with a single filter should set the filter for all genes to the given filter" {
-                    checkAll(int(1..100), char()) { size, c ->
-                        val factory = CharChromosome.Factory()
-                        factory.filters += { char: Char -> char in 'a'..'z' }
-                        factory.size = size
-                        factory.make().genes.forEach {
-                            if (c in 'a'..'z') {
-                                it.filter(c) shouldBe true
-                            } else {
-                                it.filter(c) shouldBe false
-                            }
-                        }
+                    `validate all genes against single filter`(char(), { true }) {
+                        CharChromosome.Factory()
                     }
                 }
 

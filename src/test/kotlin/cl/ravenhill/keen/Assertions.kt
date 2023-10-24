@@ -8,6 +8,7 @@ package cl.ravenhill.keen
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.Filterable
+import cl.ravenhill.keen.util.MutableFilterCollection
 import cl.ravenhill.keen.util.MutableRangedCollection
 import cl.ravenhill.keen.util.Ranged
 import io.kotest.matchers.shouldBe
@@ -70,7 +71,8 @@ suspend fun <T, G> `each gene should have the specified range`(
     factoryBuilder: () -> Chromosome.Factory<T, G>,
 ) where T : Comparable<T>, G : Gene<T, G>, G : Ranged<T> {
     validateGenes(factoryBuilder = factoryBuilder) {
-        it.range shouldBe range
+        it.range.start shouldBe range.start
+        it.range.endInclusive shouldBe range.endInclusive
     }
 }
 
@@ -106,6 +108,49 @@ suspend fun <T, G, F> `validate all genes against single range`(
             factory.make().genes.forEach {
                 it.range.start shouldBe range.start
                 it.range.endInclusive shouldBe range.endInclusive
+            }
+        }
+    }
+}
+
+/**
+ * Validates that every gene produced by the provided factory meets the conditions of a specified filter.
+ *
+ * This function uses property-based testing to ensure that for a range of randomly generated items of type [T]
+ * and varying chromosome sizes, all genes produced by the factory are consistent with the behavior of the
+ * specified filter. Specifically, it ensures that if a randomly generated item satisfies the filter, then
+ * the filter of each gene should also return `true` for that item, and vice versa.
+ *
+ * The function makes use of the [Arb] class to generate random values and uses the `checkAll` method to
+ * test the property over a combination of sizes and random values.
+ *
+ * @param T The type of items to be tested against the filter.
+ * @param G The type of gene which has filtering capability.
+ * @param F The type of factory that produces chromosomes having genes of type [G].
+ *
+ * @param arb An [Arb] instance used to generate random values of type [T].
+ * @param filter A filter function that takes an item of type [T] and returns a `Boolean`
+ *               indicating whether the item satisfies a certain condition.
+ * @param factoryBuilder A lambda function that returns an instance of [F].
+ *
+ * @throws AssertionError If any of the property checks fail.
+ */
+suspend fun <T, G, F> `validate all genes against single filter`(
+    arb: Arb<T>,
+    filter: (T) -> Boolean,
+    factoryBuilder: () -> F,
+) where T : Comparable<T>, G : Gene<T, G>, G : Filterable<T>, F : Chromosome.Factory<T, G>, F : MutableFilterCollection<T> {
+    with(Arb) {
+        checkAll(int(1..100), arb) { size, x ->
+            val factory = factoryBuilder()
+            factory.filters += filter
+            factory.size = size
+            factory.make().genes.forEach {
+                if (filter(x)) {
+                    it.filter(x) shouldBe true
+                } else {
+                    it.filter(x) shouldBe false
+                }
             }
         }
     }

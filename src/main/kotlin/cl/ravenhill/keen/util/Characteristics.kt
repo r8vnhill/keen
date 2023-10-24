@@ -92,6 +92,26 @@ interface Filterable<in T> {
 }
 
 /**
+ * Represents a collection that supports the addition, removal, and modification of filters.
+ *
+ * This interface defines a collection of filter functions that can be used to determine
+ * whether specific conditions are met for items of type [T]. The filters in the collection
+ * can be added, removed, or modified at runtime due to its mutable nature.
+ *
+ * For example, a [MutableFilterCollection] for `Int` type could store filters that determine
+ * if an integer is even, odd, positive, etc.
+ *
+ * @param T The type of items the filters will be applied to.
+ *
+ * @property filters A mutable list of filter functions. Each filter is a function
+ *                   that takes an item of type [T] and returns a `Boolean` indicating
+ *                   whether the item satisfies the filter's condition.
+ */
+interface MutableFilterCollection<T> {
+    var filters: MutableList<(T) -> Boolean>
+}
+
+/**
  * An interface for self-referential generic interfaces.
  *
  * This interface provides a generic type parameter `T`, which must be a subtype of `SelfReferential<T>`.

@@ -4,6 +4,7 @@ import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.CharGene
+import cl.ravenhill.keen.util.MutableFilterCollection
 import cl.ravenhill.keen.util.MutableRangedCollection
 import cl.ravenhill.keen.util.nextChar
 
@@ -51,9 +52,13 @@ data class CharChromosome(override val genes: List<CharGene>) :
      * @property range The range of possible character values for each gene.
      * Defaults to ``' '..'z'``.
      */
-    class Factory : Chromosome.AbstractFactory<Char, CharGene>(), MutableRangedCollection<Char> {
+    class Factory :
+        Chromosome.AbstractFactory<Char, CharGene>(),
+        MutableRangedCollection<Char>,
+        MutableFilterCollection<Char> {
+
         override var ranges = mutableListOf<ClosedRange<Char>>()
-        var filters: MutableList<(Char) -> Boolean> = mutableListOf()
+        override var filters: MutableList<(Char) -> Boolean> = mutableListOf()
 
         /**
          * Creates a new [CharChromosome] instance with the current factory settings.
