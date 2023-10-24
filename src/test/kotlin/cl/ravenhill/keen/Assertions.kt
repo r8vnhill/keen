@@ -14,9 +14,26 @@ import cl.ravenhill.keen.util.Ranged
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.next
 import io.kotest.property.checkAll
+import kotlin.random.Random
 
+/**
+ * Validates genes of a chromosome by applying a specified validation function on each gene.
+ *
+ * This function creates a factory for chromosomes using the provided `factoryBuilder` function,
+ * then constructs chromosomes of various sizes within the provided size range (default is 1 to 100),
+ * and finally applies the `validate` function on each gene of the chromosome.
+ *
+ * @param sizeRange The range of chromosome sizes for which to run validations, default is from 1 to 100.
+ * @param factoryBuilder A lambda function that returns an instance of `Chromosome.Factory<T, G>`.
+ * @param validate A lambda function that contains the validation logic to be applied on each gene.
+ *
+ * @param T The type of the gene's value.
+ * @param G The type of the gene. This gene type should be compatible with `Gene<T, G>`.
+ */
 private suspend fun <T, G> validateGenes(
     sizeRange: Arb<Int> = Arb.int(1..100),
     factoryBuilder: () -> Chromosome.Factory<T, G>,
@@ -139,7 +156,10 @@ suspend fun <T, G, F> `validate all genes against single filter`(
     arb: Arb<T>,
     filter: (T) -> Boolean,
     factoryBuilder: () -> F,
-) where T : Comparable<T>, G : Gene<T, G>, G : Filterable<T>, F : Chromosome.Factory<T, G>, F : MutableFilterCollection<T> {
+) where
+      T : Comparable<T>,
+      G : Gene<T, G>, G : Filterable<T>,
+      F : Chromosome.Factory<T, G>, F : MutableFilterCollection<T> {
     with(Arb) {
         checkAll(int(1..100), arb) { size, x ->
             val factory = factoryBuilder()
@@ -151,6 +171,29 @@ suspend fun <T, G, F> `validate all genes against single filter`(
                 } else {
                     it.filter(x) shouldBe false
                 }
+            }
+        }
+    }
+}
+
+suspend fun <T, G, F> `validate genes with specified range and factory`(
+    arb: Arb<ClosedRange<T>>,
+    geneFactory: (Random, List<ClosedRange<T>>, Int) -> G,
+    factoryBuilder: () -> F,
+) where
+      T : Comparable<T>,
+      G : Gene<T, G>, G : Filterable<T>, G : Ranged<T>,
+      F : Chromosome.Factory<T, G>, F : MutableRangedCollection<T> {
+    with(Arb) {
+        checkAll(list(arb), long()) { ranges, seed ->
+            Core.random = Random(seed)
+            val rng = Random(seed)
+            val factory = factoryBuilder()
+            factory.ranges = ranges.toMutableList()
+            factory.size = ranges.size
+            factory.make().genes.forEachIndexed { index, gene ->
+                gene.range shouldBe ranges[index]
+                gene shouldBe geneFactory(rng, ranges, index)
             }
         }
     }

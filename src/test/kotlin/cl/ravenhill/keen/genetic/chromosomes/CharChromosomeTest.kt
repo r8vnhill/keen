@@ -7,7 +7,7 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
-import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.`validate genes with specified range and factory`
 import cl.ravenhill.keen.`each gene should pass the specified filter`
 import cl.ravenhill.keen.arbs.charChromosome
 import cl.ravenhill.keen.arbs.charGene
@@ -29,10 +29,8 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.char
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.long
 import io.kotest.property.assume
 import io.kotest.property.checkAll
-import kotlin.random.Random
 
 class CharChromosomeTest : FreeSpec({
     "A [CharChromosome]" - {
@@ -143,16 +141,12 @@ class CharChromosomeTest : FreeSpec({
                 }
 
                 "with valid ranges and filters should create a chromosome with the given ranges and filters" {
-                    checkAll(list(charRange()), long()) { ranges, seed ->
-                        Core.random = Random(seed)
-                        val rng = Random(seed)
-                        val factory = CharChromosome.Factory()
-                        ranges.forEach { factory.ranges += it }
-                        factory.size = ranges.size
-                        factory.make().genes.forEachIndexed { index, gene ->
-                            gene.range shouldBe ranges[index]
-                            gene shouldBe CharGene(rng.nextChar(ranges[index]), ranges[index])
-                        }
+                    `validate genes with specified range and factory`(
+                        charRange(),
+                        { rng, ranges, index ->
+                            CharGene(rng.nextChar(ranges[index]), ranges[index])
+                        }) {
+                        CharChromosome.Factory()
                     }
                 }
 

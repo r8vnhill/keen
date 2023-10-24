@@ -50,17 +50,17 @@ fun Arb.Companion.doubleRange() = arbitrary {
  * @return An arbitrary of [IntRange].
  */
 fun Arb.Companion.intRange() = arbitrary {
-    orderedPair(int()).bind().toRange()
+    range(int(), int()).bind()
 }
 
-fun <T: Comparable<T>> Arb.Companion.range(generator: Arb<T>) = arbitrary {
+fun <T : Comparable<T>> Arb.Companion.range(generator: Arb<T>) = arbitrary {
     range(generator, generator).bind()
 }
 
 fun <T : Comparable<T>> Arb.Companion.range(
     a: Arb<T>,
     b: Arb<T>,
-    reverted: Boolean = false
+    reverted: Boolean = false,
 ) = arbitrary {
     val i = a.bind()
     var j = b.bind()

@@ -10,6 +10,7 @@ import cl.ravenhill.keen.arbs.intGene
 import cl.ravenhill.keen.arbs.intRange
 import cl.ravenhill.keen.`each gene should have the specified range`
 import cl.ravenhill.keen.`each gene should pass the specified filter`
+import cl.ravenhill.keen.`validate all genes against single filter`
 import cl.ravenhill.keen.`validate all genes against single range`
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -109,6 +110,13 @@ class IntChromosomeTest : FreeSpec({
 
             "without an explicit filter should default all genes to accept all values" {
                 `each gene should pass the specified filter`(Arb.int()) { IntChromosome.Factory() }
+            }
+
+            "with a single filter should default all genes to that filter" {
+                `validate all genes against single filter`(
+                    Arb.int(),
+                    { true }
+                ) { IntChromosome.Factory() }
             }
         }
     }
