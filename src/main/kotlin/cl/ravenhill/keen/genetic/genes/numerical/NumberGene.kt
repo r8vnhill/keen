@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.Filterable
 
 /**
  * Represents a gene that stores a number value of type [DNA].
@@ -18,8 +19,8 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 1.0.0
  * @version 2.0.0
  */
-interface NumberGene<DNA : Number, G : NumberGene<DNA, G>> : Gene<DNA, G> {
-    val filter: (DNA) -> Boolean
+interface NumberGene<DNA : Number, G : NumberGene<DNA, G>> : Gene<DNA, G>, Filterable<DNA> {
+    override val filter: (DNA) -> Boolean
 
     /**
      * Computes the average value of this gene and the given list of genes.

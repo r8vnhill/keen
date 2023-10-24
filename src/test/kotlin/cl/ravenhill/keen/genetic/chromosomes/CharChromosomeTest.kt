@@ -9,15 +9,18 @@ import cl.ravenhill.keen.arbs.charChromosome
 import cl.ravenhill.keen.arbs.charGene
 import cl.ravenhill.keen.arbs.charRange
 import cl.ravenhill.keen.arbs.mutableList
-import cl.ravenhill.keen.`assert chromosome enforces range to gene count equality`
-import cl.ravenhill.keen.`each gene should have the specified range`
-import cl.ravenhill.keen.`each gene should pass the specified filter`
-import cl.ravenhill.keen.`ensure chromosome filter count matches gene count`
+import cl.ravenhill.keen.assertions.`assert chromosome enforces range to gene count equality`
+import cl.ravenhill.keen.assertions.`chromosome should reflect input genes`
+import cl.ravenhill.keen.assertions.`each gene should have the specified range`
+import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
+import cl.ravenhill.keen.assertions.`ensure chromosome filter count matches gene count`
+import cl.ravenhill.keen.assertions.`factory should retain assigned ranges`
+import cl.ravenhill.keen.assertions.`validate all genes against single filter`
+import cl.ravenhill.keen.assertions.`validate all genes against single range`
+import cl.ravenhill.keen.assertions.`validate factory range assignment`
+import cl.ravenhill.keen.assertions.`validate genes with specified range and factory`
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.util.nextChar
-import cl.ravenhill.keen.`validate all genes against single filter`
-import cl.ravenhill.keen.`validate all genes against single range`
-import cl.ravenhill.keen.`validate genes with specified range and factory`
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -29,11 +32,9 @@ import io.kotest.property.checkAll
 class CharChromosomeTest : FreeSpec({
     "A [CharChromosome]" - {
         "when creating a new one with" - {
-            with(Arb) {
-                "a list of genes then the chromosome should have the same genes" {
-                    checkAll(list(charGene(char()))) { genes ->
-                        CharChromosome(genes).genes shouldBe genes
-                    }
+            "a list of genes then the chromosome should have the same genes" {
+                `chromosome should reflect input genes`(Arb.charGene()) {
+                    CharChromosome(it)
                 }
             }
         }
@@ -57,28 +58,16 @@ class CharChromosomeTest : FreeSpec({
 
     "A chromosome [Factory]" - {
         "should have a list of ranges that" - {
-            with(Arb) {
-                "is empty by default" {
-                    CharChromosome.Factory().ranges.isEmpty() shouldBe true
-                }
+            "is empty by default" {
+                CharChromosome.Factory().ranges.isEmpty() shouldBe true
+            }
 
-                "can be modified" {
-                    checkAll(list(charRange())) { ranges ->
-                        val factory = CharChromosome.Factory()
-                        ranges.forEach { factory.ranges += it }
-                        factory.ranges shouldHaveSize ranges.size
-                        factory.ranges shouldBe ranges
-                    }
-                }
+            "can be modified" {
+                `factory should retain assigned ranges`(Arb.charRange()) { CharChromosome.Factory() }
+            }
 
-                "can be set" {
-                    checkAll(mutableList(charRange())) { ranges ->
-                        val factory = CharChromosome.Factory()
-                        factory.ranges = ranges
-                        factory.ranges shouldHaveSize ranges.size
-                        factory.ranges shouldBe ranges
-                    }
-                }
+            "can be set" {
+                `validate factory range assignment`(Arb.charRange()) { CharChromosome.Factory() }
             }
         }
 

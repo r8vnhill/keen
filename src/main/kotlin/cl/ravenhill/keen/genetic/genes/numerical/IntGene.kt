@@ -41,7 +41,7 @@ class IntGene(
     override val dna: Int,
     override val range: ClosedRange<Int> = Int.MIN_VALUE..Int.MAX_VALUE,
     override val filter: (Int) -> Boolean = { true },
-) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene>, Ranged<Int>, Filterable<Int> {
+) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene>, Ranged<Int> {
 
     @Deprecated("IntToInt is to be removed to use more idiomatic stdlib ranges")
     constructor(

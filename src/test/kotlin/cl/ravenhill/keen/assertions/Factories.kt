@@ -3,18 +3,22 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen
+package cl.ravenhill.keen.assertions
 
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.arbs.mutableList
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.keen.util.MutableFilterCollection
 import cl.ravenhill.keen.util.MutableRangedCollection
 import cl.ravenhill.keen.util.Ranged
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
@@ -25,6 +29,72 @@ import io.kotest.property.arbitrary.next
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
+
+/**
+ * Validates that the factory correctly retains and reproduces the provided ranges.
+ *
+ * This function verifies two main aspects:
+ * 1. After assigning ranges to the factory, the factory's range count should match the input range count.
+ * 2. The actual ranges within the factory should be exactly the same as the input ranges.
+ *
+ * @param T The gene's type parameter which should be comparable.
+ * @param G The type of gene, which has to be both filterable and ranged.
+ * @param F The type of factory for creating chromosomes.
+ *
+ * @param arb An arbitrary generator producing closed ranges of type [T].
+ * @param factoryBuilder A lambda function responsible for producing instances of [F].
+ *
+ * @throws AssertionError If the assigned ranges in the factory do not match the input ranges in both count and content.
+ */
+suspend fun <T, G, F> `factory should retain assigned ranges`(
+    arb: Arb<ClosedRange<T>>,
+    factoryBuilder: () -> F,
+) where
+      T : Comparable<T>,
+      G : Gene<T, G>, G : Filterable<T>, G : Ranged<T>,
+      F : Chromosome.Factory<T, G>, F : MutableRangedCollection<T> {
+    with(Arb) {
+        checkAll(list(arb)) { ranges ->
+            val factory = factoryBuilder()
+            ranges.forEach { factory.ranges += it }
+            factory.ranges shouldHaveSize ranges.size
+            factory.ranges shouldBe ranges
+        }
+    }
+}
+
+/**
+ * Verifies that the factory correctly assigns and reproduces the provided ranges.
+ *
+ * This function checks:
+ * 1. When ranges are assigned to the factory, the size of the factory's ranges matches the size of the provided list.
+ * 2. The factory's assigned ranges should be identical to the provided list of ranges.
+ *
+ * @param T The type parameter of the gene which should be comparable.
+ * @param G The gene type that must be filterable and ranged.
+ * @param F The factory type for creating chromosomes.
+ *
+ * @param arb An arbitrary generator producing closed ranges of type [T].
+ * @param factoryBuilder A lambda function to produce instances of [F].
+ *
+ * @throws AssertionError If the factory's ranges do not match the provided list of ranges in terms of both size and content.
+ */
+suspend fun <T, G, F> `validate factory range assignment`(
+    arb: Arb<ClosedRange<T>>,
+    factoryBuilder: () -> F,
+) where
+      T : Comparable<T>,
+      G : Gene<T, G>, G : Filterable<T>, G : Ranged<T>,
+      F : Chromosome.Factory<T, G>, F : MutableRangedCollection<T> {
+    with(Arb) {
+        checkAll(mutableList(arb)) { ranges ->
+            val factory = factoryBuilder()
+            factory.ranges = ranges
+            factory.ranges shouldHaveSize ranges.size
+            factory.ranges shouldBe ranges
+        }
+    }
+}
 
 /**
  * Validates genes of a chromosome by applying a specified validation function on each gene.
@@ -205,11 +275,11 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
       G : Gene<T, G>, G : Filterable<T>, G : Ranged<T>,
       F : Chromosome.Factory<T, G>, F : MutableRangedCollection<T> {
     with(Arb) {
-        checkAll(list(arb), long()) { ranges, seed ->
+        checkAll(mutableList(arb), long()) { ranges, seed ->
             Core.random = Random(seed)
             val rng = Random(seed)
             val factory = factoryBuilder()
-            factory.ranges = ranges.toMutableList()
+            factory.ranges = ranges
             factory.size = ranges.size
             factory.make().genes.forEachIndexed { index, gene ->
                 gene.range shouldBe ranges[index]

@@ -110,7 +110,7 @@ fun Random.nextIntInRange(range: ClosedRange<Int>) = nextInt(range.start, range.
  * @param range A `ClosedFloatingPointRange<Double>` specifying the inclusive range within which a random double will be generated.
  * @return A randomly generated double value that lies within the inclusive boundaries of the specified range.
  */
-fun Random.nextDoubleInRange(range: ClosedFloatingPointRange<Double>) =
+fun Random.nextDoubleInRange(range: ClosedRange<Double>) =
     nextDouble(range.start, range.endInclusive)
 
 /**

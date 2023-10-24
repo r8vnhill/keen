@@ -11,7 +11,8 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
-import cl.ravenhill.utils.DoubleRange
+import cl.ravenhill.keen.util.MutableFilterCollection
+import cl.ravenhill.keen.util.MutableRangedCollection
 
 /**
  * A chromosome that contains a list of [DoubleGene]s.
@@ -38,11 +39,6 @@ data class DoubleChromosome(
     override val genes: List<DoubleGene>,
 ) : AbstractChromosome<Double, DoubleGene>(genes) {
 
-    @Deprecated("To be removed in 2.0.0-A.2; use primary constructor instead.", ReplaceWith("DoubleChromosome(genes)"))
-    constructor(ranges: List<DoubleRange>, filter: (Double) -> Boolean = { true }) : this(
-        ranges.map { DoubleGene(Core.random.nextDouble(it.start, it.endInclusive), it) }
-    )
-
     /* Documentation inherited from [Chromosome] */
     override fun withGenes(genes: List<DoubleGene>) = DoubleChromosome(genes)
 
@@ -53,9 +49,12 @@ data class DoubleChromosome(
      * @property size the size of the chromosome.
      * @property filter a filter function to apply to each gene.
      */
-    class Factory : Chromosome.AbstractFactory<Double, DoubleGene>() {
+    class Factory :
+        Chromosome.AbstractFactory<Double, DoubleGene>(),
+        MutableRangedCollection<Double>,
+        MutableFilterCollection<Double> {
 
-        var ranges = mutableListOf<DoubleRange>()
+        override var ranges = mutableListOf<ClosedRange<Double>>()
         var filter: (Double) -> Boolean = { true }
 
         /* Documentation inherited from [Chromosome.Factory] */
@@ -74,7 +73,7 @@ data class DoubleChromosome(
                     ranges.size must IntRequirement.BeEqualTo(size)
                 }
             }
-             DoubleChromosome(
+            DoubleChromosome(
                 List(size) {
                     DoubleGene(
                         Core.random.nextDouble(ranges[it].start, ranges[it].endInclusive),
@@ -83,6 +82,10 @@ data class DoubleChromosome(
                 }
             )
         }
+
+        override var filters: MutableList<(Double) -> Boolean>
+            get() = TODO("Not yet implemented")
+            set(value) {}
 
         /* Documentation inherited from [Any] */
         override fun toString() = "DoubleChromosome.Factory(ranges=$ranges, filter=$filter)"

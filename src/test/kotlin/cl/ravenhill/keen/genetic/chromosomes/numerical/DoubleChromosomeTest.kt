@@ -8,7 +8,10 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 import cl.ravenhill.keen.arbs.doubleChromosome
 import cl.ravenhill.keen.arbs.doubleGene
 import cl.ravenhill.keen.arbs.doubleRange
+import cl.ravenhill.keen.assertions.`chromosome should reflect input genes`
+import cl.ravenhill.keen.assertions.`factory should retain assigned ranges`
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.list
@@ -17,11 +20,9 @@ import io.kotest.property.checkAll
 class DoubleChromosomeTest : FreeSpec({
     "A [DoubleChromosome]" - {
         "when creating a new one with" - {
-            with(Arb) {
-                "a list of genes then the chromosome should have the same genes" {
-                    checkAll(list(doubleGene())) { genes ->
-                        DoubleChromosome(genes).genes shouldBe genes
-                    }
+            "a list of genes then the chromosome should have the same genes" {
+                `chromosome should reflect input genes`(Arb.doubleGene()) {
+                    DoubleChromosome(it)
                 }
             }
         }
@@ -38,18 +39,15 @@ class DoubleChromosomeTest : FreeSpec({
     "A [DoubleChromosome.Factory]" - {
         "have a list of ranges that" - {
             "is empty by default" {
-                DoubleChromosome.Factory().ranges.isEmpty() shouldBe true
+                DoubleChromosome.Factory().ranges.shouldBeEmpty()
             }
 
             "can be modified" {
-                TODO("Chromosome factories should be able to modify their ranges")
-                with(Arb) {
-                    checkAll(doubleChromosome(), list(doubleRange())) { c, ranges ->
-                        for (range in ranges) {
+                `factory should retain assigned ranges`(Arb.doubleRange()) { DoubleChromosome.Factory() }
+            }
 
-                        }
-                    }
-                }
+            "can be set" {
+                `factory should retain assigned ranges`(Arb.doubleRange()) { DoubleChromosome.Factory() }
             }
         }
     }
