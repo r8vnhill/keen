@@ -81,12 +81,18 @@ data class CharChromosome(override val genes: List<CharGene>) :
         private fun enforceConstraints() {
             enforce {
                 if (ranges.size > 1) {
-                    "When creating a chromosome with more than one range, the number of ranges must be equal to the number of genes" {
+                    (
+                        "When creating a chromosome with more than one range, the number of ranges " +
+                            "must be equal to the number of genes"
+                        ) {
                         ranges.size must BeEqualTo(size)
                     }
                 }
                 if (filters.size > 1) {
-                    "When creating a chromosome with more than one filter, the number of filters must be equal to the number of genes" {
+                    (
+                        "When creating a chromosome with more than one filter, the number of " +
+                            "filters must be equal to the number of genes"
+                        ) {
                         filters.size must BeEqualTo(size)
                     }
                 }
@@ -94,6 +100,7 @@ data class CharChromosome(override val genes: List<CharGene>) :
         }
 
         // Documentation inherited from Any
-        override fun toString() = "CharChromosome.Factory(size=$size, range=$ranges, filter=$filters)"
+        override fun toString() =
+            "CharChromosome.Factory(size=$size, range=$ranges, filter=$filters)"
     }
 }

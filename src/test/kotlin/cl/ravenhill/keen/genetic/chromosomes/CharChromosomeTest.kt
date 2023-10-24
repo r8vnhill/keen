@@ -8,6 +8,8 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.*
+import cl.ravenhill.keen.arbs.charChromosome
+import cl.ravenhill.keen.arbs.charGene
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.util.nextChar
 import cl.ravenhill.unfulfilledConstraint

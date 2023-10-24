@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
-import cl.ravenhill.keen.intChromosome
-import cl.ravenhill.keen.intGene
+import cl.ravenhill.keen.arbs.intChromosome
+import cl.ravenhill.keen.arbs.intGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
