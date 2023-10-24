@@ -5,8 +5,6 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.arbs.charChromosome
 import cl.ravenhill.keen.arbs.charGene
 import cl.ravenhill.keen.arbs.charRange
@@ -14,23 +12,18 @@ import cl.ravenhill.keen.arbs.mutableList
 import cl.ravenhill.keen.`assert chromosome enforces range to gene count equality`
 import cl.ravenhill.keen.`each gene should have the specified range`
 import cl.ravenhill.keen.`each gene should pass the specified filter`
+import cl.ravenhill.keen.`ensure chromosome filter count matches gene count`
 import cl.ravenhill.keen.genetic.genes.CharGene
-import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.nextChar
 import cl.ravenhill.keen.`validate all genes against single filter`
 import cl.ravenhill.keen.`validate all genes against single range`
 import cl.ravenhill.keen.`validate genes with specified range and factory`
-import cl.ravenhill.unfulfilledConstraint
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.char
-import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
-import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 class CharChromosomeTest : FreeSpec({
@@ -160,19 +153,8 @@ class CharChromosomeTest : FreeSpec({
                     }
 
                     "the number of filters is greater than 1 and different from the number of genes" {
-                        checkAll(int(2..100), int(2..100)) { filtersAmount, size ->
-                            assume { filtersAmount shouldNotBe size }
-                            val factory = CharChromosome.Factory()
-                            repeat(filtersAmount) { factory.filters += { _: Char -> true } }
-                            factory.size = size
-                            shouldThrow<EnforcementException> {
-                                factory.make()
-                            }.shouldHaveInfringement<IntRequirementException>(
-                                unfulfilledConstraint(
-                                    "When creating a chromosome with more than one filter, the " +
-                                        "number of filters must be equal to the number of genes"
-                                )
-                            )
+                        `ensure chromosome filter count matches gene count`({ true }) {
+                            CharChromosome.Factory()
                         }
                     }
                 }

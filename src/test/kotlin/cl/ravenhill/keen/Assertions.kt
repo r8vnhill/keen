@@ -221,8 +221,7 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
 
 /**
  * This function ensures that when creating a chromosome with more than one range,
- * the number of specified ranges must match the number of genes. If this constraint is violated,
- * an [EnforcementException] is thrown with an appropriate error message detailing the constraint.
+ * the number of specified ranges must match the number of genes.
  *
  * @param T The type parameter which needs to be comparable and represents the type within the closed range.
  * @param G The gene type parameter. The gene should implement both the Filterable and Ranged interfaces.
@@ -230,8 +229,6 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
  *
  * @param arb An Arb instance generating a list of closed ranges.
  * @param factoryBuilder A lambda function that returns a chromosome factory instance.
- *
- * @throws EnforcementException If the number of ranges does not match the number of genes.
  */
 suspend fun <T, G, F> `assert chromosome enforces range to gene count equality`(
     arb: Arb<ClosedRange<T>>,
@@ -254,6 +251,42 @@ suspend fun <T, G, F> `assert chromosome enforces range to gene count equality`(
                 unfulfilledConstraint(
                     "When creating a chromosome with more than one range, the number of ranges " +
                         "must be equal to the number of genes"
+                )
+            )
+        }
+    }
+}
+
+/**
+ * Validates the enforcement that the number of filters applied to a chromosome
+ * must match the number of genes in the chromosome.
+ *
+ * @param T The type parameter which needs to be comparable.
+ * @param G The gene type parameter.
+ * @param F The chromosome factory type parameter. It should support a mutable collection of filters.
+ *
+ * @param filter The filter to be applied to the chromosome.
+ * @param factoryBuilder A lambda function that returns a chromosome factory instance.
+ *
+ * @throws AssertionError If the code does not throw an exception when the number of filters
+ *                        does not match the number of genes.
+ */
+suspend fun <T, G, F> `ensure chromosome filter count matches gene count`(
+    filter: (T) -> Boolean,
+    factoryBuilder: () -> F,
+) where T : Comparable<T>, G : Gene<T, G>, F : Chromosome.Factory<T, G>, F : MutableFilterCollection<T> {
+    with(Arb) {
+        checkAll(int(2..100), int(2..100)) { filtersAmount, size ->
+            assume { filtersAmount shouldNotBe size }
+            val factory = factoryBuilder()
+            repeat(filtersAmount) { factory.filters += filter }
+            factory.size = size
+            shouldThrow<EnforcementException> {
+                factory.make()
+            }.shouldHaveInfringement<IntRequirementException>(
+                unfulfilledConstraint(
+                    "When creating a chromosome with more than one filter, the " +
+                        "number of filters must be equal to the number of genes"
                 )
             )
         }

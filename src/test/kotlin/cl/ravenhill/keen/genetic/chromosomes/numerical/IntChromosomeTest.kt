@@ -11,6 +11,7 @@ import cl.ravenhill.keen.arbs.intRange
 import cl.ravenhill.keen.`assert chromosome enforces range to gene count equality`
 import cl.ravenhill.keen.`each gene should have the specified range`
 import cl.ravenhill.keen.`each gene should pass the specified filter`
+import cl.ravenhill.keen.`ensure chromosome filter count matches gene count`
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.`validate all genes against single filter`
 import cl.ravenhill.keen.`validate all genes against single range`
@@ -138,6 +139,12 @@ class IntChromosomeTest : FreeSpec({
             "should throw an exception when" - {
                 "the number of ranges is greater than 1 and different from the number of genes" {
                     `assert chromosome enforces range to gene count equality`(Arb.intRange()) {
+                        IntChromosome.Factory()
+                    }
+                }
+
+                "the number of filters is greater than 1 and different from the number of genes" {
+                    `ensure chromosome filter count matches gene count`({ true }) {
                         IntChromosome.Factory()
                     }
                 }
