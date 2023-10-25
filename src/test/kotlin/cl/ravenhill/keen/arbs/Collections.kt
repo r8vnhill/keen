@@ -5,25 +5,10 @@
 
 package cl.ravenhill.keen.arbs
 
-import cl.ravenhill.keen.arbs.genetic.intChromosome
-import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.list
-
-/**
- * Provides an arbitrary generator for a [Genotype] using the [Arb] companion object.
- * The created genotype consists of a single chromosome that is randomly generated using [intChromosome].
- *
- * @return An arbitrary generator for [Genotype].
- * @see Genotype
- * @see IntChromosome
- */
-fun Arb.Companion.intGenotype() = arbitrary {
-    Genotype(list(intChromosome()).bind())
-}
 
 
 /**

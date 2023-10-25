@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.util.optimizer
 
-import cl.ravenhill.keen.arbs.intGenotype
+import cl.ravenhill.keen.arbs.genetic.intGenotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.orderedPair

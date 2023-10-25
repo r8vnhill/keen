@@ -650,10 +650,6 @@ style:
   VarCouldBeVal:
     active: true
     ignoreLateinitVar: false
-  WildcardImport:
-    active: false
-    excludeImports:
-      - 'java.util.*'
 
 complexity:
   LongParameterList:

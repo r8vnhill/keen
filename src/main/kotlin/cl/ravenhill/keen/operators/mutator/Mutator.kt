@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.operators.mutator
 
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.Genotype
@@ -57,9 +59,10 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
      */
     fun mutatePhenotype(
         individual: Individual<DNA, G>,
-    ): MutatorResult<DNA, G, Individual<DNA, G>> = mutateGenotype(individual.genotype).map {
-        Individual(it)
-    }
+    ): MutatorResult<DNA, G, Individual<DNA, G>> =
+        mutateGenotype(individual.genotype).map {
+            Individual(it)
+        }
 
     /**
      * Mutates a given genotype.
@@ -88,7 +91,6 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
     ): MutatorResult<DNA, G, Chromosome<DNA, G>>
 }
 
-
 /**
  * A [MutatorResult] is the result of a mutation operation.
  *
@@ -98,8 +100,18 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
  * @constructor Creates a new [MutatorResult] with the given [mutated] object and the
  * number of [mutations] performed (default 0).
  */
-data class MutatorResult<DNA, G, T>(val mutated: T, val mutations: Int = 0)
-    where T : GeneticMaterial<DNA, G>, G : Gene<DNA, G> {
+data class MutatorResult<DNA, G, T>(
+    val mutated: T,
+    val mutations: Int = 0
+) where T : GeneticMaterial<DNA, G>, G : Gene<DNA, G> {
+
+    init {
+        enforce {
+            "The number of mutations [$mutations] must be non-negative." {
+                mutations must BeAtLeast(0)
+            }
+        }
+    }
 
     /**
      * Applies the given [transform] function to the [mutated] object and returns the

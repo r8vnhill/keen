@@ -7,12 +7,31 @@ package cl.ravenhill.keen.arbs.genetic
 
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.char
+import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.list
+
+/**
+ * Provides an arbitrary generator for creating random [Chromosome] instances of various types.
+ *
+ * This extension function facilitates the generation of random [Chromosome] objects
+ * by making a choice among different chromosome types, including boolean, character, double, and integer chromosomes.
+ *
+ * @receiver Arb.Companion The companion object of the arbitrary type, enabling this to be an extension function.
+ *
+ * @return An [Arb] instance that produces random [Chromosome]s, with the specific type being one of the choices provided.
+ */
+fun Arb.Companion.chromosome() = choice(
+    boolChromosome(),
+    charChromosome(),
+    doubleChromosome(),
+    intChromosome()
+)
 
 /**
  * Provides an arbitrary generator for creating `BoolChromosome` instances with random sizes within a specified range.

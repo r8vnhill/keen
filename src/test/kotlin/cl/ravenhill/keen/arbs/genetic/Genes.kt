@@ -7,19 +7,33 @@ package cl.ravenhill.keen.arbs.genetic
 
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.CharGene
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.char
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.element
-import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.*
+
+/**
+ * Provides an arbitrary generator for creating random [Gene] instances of various primitive types.
+ *
+ * This extension function aids in the generation of random [Gene] objects
+ * by selecting from different primitive gene types, namely boolean, character, double, and integer genes.
+ *
+ * @receiver Arb.Companion The companion object of the arbitrary type, allowing this function to act as an extension.
+ *
+ * @return An [Arb] instance that yields random [Gene]s, with the specific type being one of the choices provided.
+ */
+fun Arb.Companion.gene() = choice(
+    boolGene(),
+    charGene(),
+    doubleGene(),
+    intGene()
+)
 
 /**
  * Generates an arbitrary [BoolGene] value, either [BoolGene.True] or [BoolGene.False].
  */
-fun Arb.Companion.boolGene() = arbitrary { element(BoolGene.True, BoolGene.False).bind() }
+fun Arb.Companion.boolGene() = element(BoolGene.True, BoolGene.False)
 
 /**
  * Generates an [Arb] (Arbitrary) of [CharGene] from the given character arbitrary.
