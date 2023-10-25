@@ -16,7 +16,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  */
 interface IndividualOptimizer<DNA, G : Gene<DNA, G>> {
     val comparator
-        get() = Comparator { p1: Individual<*, *>, p2: Individual<*, *> -> compare(p1, p2) }
+        get() = Comparator(::compare)
 
     /**
      * Compares two phenotypes and returns a negative integer, zero, or a positive integer as the
@@ -33,5 +33,6 @@ interface IndividualOptimizer<DNA, G : Gene<DNA, G>> {
     /**
      * Sorts the given list of phenotypes using this optimizer.
      */
-    fun sort(population: Population<DNA, G>) = population.sortedWith(comparator.reversed())
+    fun sort(population: Population<DNA, G>) =
+        population.sortedWith(comparator.reversed())
 }

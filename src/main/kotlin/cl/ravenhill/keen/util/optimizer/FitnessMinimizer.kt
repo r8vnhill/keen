@@ -1,9 +1,6 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.util.optimizer
@@ -11,12 +8,12 @@ package cl.ravenhill.keen.util.optimizer
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 
-
 /**
  * [IndividualOptimizer] that prioritizes the minimum of two values.
  */
-class FitnessMinimizer<DNA, G: Gene<DNA, G>> : IndividualOptimizer<DNA, G> {
-    override fun compare(p1: Individual<*, *>, p2: Individual<*, *>) = p2.fitness compareTo p1.fitness
+class FitnessMinimizer<DNA, G> : IndividualOptimizer<DNA, G> where G : Gene<DNA, G> {
+    override fun compare(p1: Individual<*, *>, p2: Individual<*, *>) =
+        p2.fitness compareTo p1.fitness
 
     override fun toString() = "FitnessMinimizer"
 }
