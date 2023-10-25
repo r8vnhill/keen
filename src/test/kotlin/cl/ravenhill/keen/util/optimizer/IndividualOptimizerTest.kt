@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.util.optimizer
 
-import cl.ravenhill.keen.arbs.individual
+import cl.ravenhill.keen.arbs.genetic.individual
 import cl.ravenhill.keen.arbs.intGenotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -37,7 +37,7 @@ class IndividualOptimizerTest : FreeSpec({
         }
 
         "can sort a list of individuals" {
-            checkAll(Arb.list(Arb.individual(Arb.intGenotype()))) { individuals ->
+            checkAll(Arb.list(Arb.individual(Arb.intGenotype()), 1..10)) { individuals ->
                 val sorted = TestOptimizer().sort(individuals)
                 sorted.zipWithNext { i1, i2 ->
                     i1.compareTo(i2) shouldBeGreaterThanOrEqualTo 0

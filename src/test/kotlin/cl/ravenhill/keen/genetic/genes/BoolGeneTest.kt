@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.boolGene
+import cl.ravenhill.keen.arbs.genetic.boolGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue

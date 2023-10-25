@@ -1,8 +1,7 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.keen.operators
 
@@ -31,7 +30,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 2.0.0
  * @version 2.0.0
  */
-interface GeneticOperator<DNA, G: Gene<DNA, G>> {
+interface GeneticOperator<DNA, G : Gene<DNA, G>> {
     /**
      * Applies the genetic operator to the specified population of individuals and returns a new
      * population of offspring.

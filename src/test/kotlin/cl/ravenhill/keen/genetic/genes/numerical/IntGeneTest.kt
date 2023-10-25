@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.intGene
+import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.util.nextIntInRange
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse

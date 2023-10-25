@@ -1,7 +1,8 @@
 /*
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
+
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -22,4 +23,9 @@ interface GeneticMaterial<DNA, G : Gene<DNA, G>> : Verifiable {
      * Flattens the genetic material into a list of values.
      */
     fun flatMap(transform: (DNA) -> DNA = { it }): List<DNA>
+
+    /**
+     * Returns a string representation of the genetic material.
+     */
+    fun toSimpleString() = toString()
 }

@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.keen.arbs.individual
+import cl.ravenhill.keen.arbs.genetic.individual
 import cl.ravenhill.keen.arbs.intGenotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene

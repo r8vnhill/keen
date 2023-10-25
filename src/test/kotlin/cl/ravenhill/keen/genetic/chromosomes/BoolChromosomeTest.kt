@@ -8,8 +8,8 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.boolChromosome
-import cl.ravenhill.keen.arbs.boolGene
+import cl.ravenhill.keen.arbs.genetic.boolChromosome
+import cl.ravenhill.keen.arbs.genetic.boolGene
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.shouldNotBeInRange

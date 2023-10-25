@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.doubleGene
+import cl.ravenhill.keen.arbs.genetic.doubleGene
 import cl.ravenhill.keen.util.nextDoubleInRange
 import cl.ravenhill.keen.util.shouldEq
 import cl.ravenhill.real

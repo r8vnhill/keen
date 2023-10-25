@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2023, Ignacio Slater M.
- * BSD Zero Clause License.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators
@@ -10,7 +10,7 @@ import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import java.util.Objects
+import java.util.*
 
 /***************************************************************************************************
  * The code represents an Alterer, a type of genetic operator that alters a population of
@@ -116,7 +116,7 @@ class AltererResult<DNA, G : Gene<DNA, G>>(
 
     // Documentation inherited from Any
     override fun toString() =
-        "AltererResult { population: $population, alterations: $alterations }"
+        "AltererResult(population=${population.map { it.toSimpleString() }}, alterations=$alterations)"
 
     // Documentation inherited from Any
     override fun equals(other: Any?) = when {

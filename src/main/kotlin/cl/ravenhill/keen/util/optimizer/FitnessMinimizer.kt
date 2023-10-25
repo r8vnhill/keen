@@ -14,6 +14,4 @@ import cl.ravenhill.keen.genetic.genes.Gene
 class FitnessMinimizer<DNA, G> : IndividualOptimizer<DNA, G> where G : Gene<DNA, G> {
     override fun compare(p1: Individual<*, *>, p2: Individual<*, *>) =
         p2.fitness compareTo p1.fitness
-
-    override fun toString() = "FitnessMinimizer"
 }

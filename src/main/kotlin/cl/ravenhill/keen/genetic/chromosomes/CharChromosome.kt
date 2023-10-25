@@ -42,7 +42,7 @@ data class CharChromosome(override val genes: List<CharGene>) :
      * @return A string representation of the chromosome's gene sequence.
      * @see CharGene
      */
-    fun toSimpleString() = genes.joinToString("") { it.dna.toString() }
+    override fun toSimpleString() = genes.joinToString("") { it.dna.toString() }
 
     /**
      * A factory for creating [CharChromosome] instances with a random set of genes.

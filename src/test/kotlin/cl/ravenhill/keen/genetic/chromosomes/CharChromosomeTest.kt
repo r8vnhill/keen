@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.arbs.charChromosome
-import cl.ravenhill.keen.arbs.charGene
+import cl.ravenhill.keen.arbs.genetic.charChromosome
+import cl.ravenhill.keen.arbs.genetic.charGene
 import cl.ravenhill.keen.arbs.charRange
 import cl.ravenhill.keen.assertions.chromosomes.`assert chromosome enforces range to gene count equality`
 import cl.ravenhill.keen.assertions.chromosomes.`chromosome should reflect input genes`
