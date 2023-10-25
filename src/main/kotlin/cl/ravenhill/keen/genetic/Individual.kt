@@ -38,9 +38,6 @@ data class Individual<DNA, G : Gene<DNA, G>>(
     override fun compareTo(other: Individual<DNA, G>) =
         this.fitness compareTo other.fitness
 
-    // Inherit documentation from Any
-    override fun toString() = "{ $genotype -> $fitness }"
-
     /**
      * Returns a Boolean indicating whether the fitness of the phenotype has been evaluated.
      *
@@ -73,11 +70,5 @@ data class Individual<DNA, G : Gene<DNA, G>>(
         Individual(candidate, fitness)
 
     // Inherit documentation from GeneticMaterial
-    override fun flatMap(transform: (DNA) -> DNA) = genotype.flatMap()
-
-    // Inherit documentation from Any
-    override fun equals(other: Any?) = other is Individual<*, *> && genotype == other.genotype
-
-    // Inherit documentation from Any
-    override fun hashCode() = Objects.hash(Individual::class, genotype)
+    override fun flatMap(transform: (DNA) -> DNA) = genotype.flatMap(transform)
 }
