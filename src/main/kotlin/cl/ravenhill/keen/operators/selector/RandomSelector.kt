@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 
 
 /**
@@ -54,6 +54,6 @@ class RandomSelector<DNA, G : Gene<DNA, G>> : AbstractProbabilitySelector<DNA, G
     override fun probabilities(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>,
+        optimizer: IndividualOptimizer<DNA, G>,
     ) = DoubleArray(population.size) { 1.0 / population.size }
 }

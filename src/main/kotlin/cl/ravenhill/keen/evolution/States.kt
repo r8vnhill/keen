@@ -5,7 +5,7 @@ import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 
 /***************************************************************************************************
  * This code defines two classes: EvolutionResult and EvolutionStart that represent the result of an
@@ -38,7 +38,7 @@ import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
  * @since 1.0.0
  */
 class EvolutionResult<DNA, G : Gene<DNA, G>>(
-    val optimizer: PhenotypeOptimizer<DNA, G>,
+    val optimizer: IndividualOptimizer<DNA, G>,
     val population: Population<DNA, G>,
     val generation: Int
 ) : Comparable<EvolutionResult<DNA, G>> {

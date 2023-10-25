@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.selector
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.eq
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import cl.ravenhill.keen.util.sub
 import kotlin.math.min
 
@@ -39,7 +39,7 @@ class RouletteWheelSelector<DNA, G : Gene<DNA, G>>(
     override fun probabilities(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>,
+        optimizer: IndividualOptimizer<DNA, G>,
     ): DoubleArray {
         // Subtract the minimum fitness from all fitness values to ensure they are all positive.
         // This prevents negative fitness values from causing problems later on when computing the

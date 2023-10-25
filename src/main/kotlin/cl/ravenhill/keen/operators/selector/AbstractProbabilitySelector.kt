@@ -11,7 +11,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.incremental
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 
 /**
  * The threshold array size below which a linear search will be used instead of binary search.
@@ -44,7 +44,7 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
     override fun select(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>,
+        optimizer: IndividualOptimizer<DNA, G>,
     ): Population<DNA, G> {
         // Sort the population if necessary
         val pop = if (sorted) {
@@ -78,7 +78,7 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
     abstract fun probabilities(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>,
+        optimizer: IndividualOptimizer<DNA, G>,
     ): DoubleArray
 
     /**

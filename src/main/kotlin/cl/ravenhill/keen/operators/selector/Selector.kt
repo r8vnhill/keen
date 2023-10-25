@@ -10,7 +10,7 @@ import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 
 /**
  * A selector is an operator that selects a subset of the population to be used in the next generation.
@@ -31,7 +31,7 @@ interface Selector<DNA, G : Gene<DNA, G>> {
     operator fun invoke(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>
+        optimizer: IndividualOptimizer<DNA, G>
     ): Population<DNA, G>
 }
 
@@ -45,7 +45,7 @@ abstract class AbstractSelector<DNA, G : Gene<DNA, G>> : Selector<DNA, G> {
     final override operator fun invoke(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>
+        optimizer: IndividualOptimizer<DNA, G>
     ): Population<DNA, G> {
         enforce {
             "Population size [${population.size}] must be at least 1" {
@@ -67,6 +67,6 @@ abstract class AbstractSelector<DNA, G : Gene<DNA, G>> : Selector<DNA, G> {
     protected abstract fun select(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>
+        optimizer: IndividualOptimizer<DNA, G>
     ): Population<DNA, G>
 }

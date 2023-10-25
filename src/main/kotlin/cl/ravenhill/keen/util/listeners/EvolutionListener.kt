@@ -7,7 +7,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlin.reflect.KProperty
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
@@ -45,7 +45,7 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
 interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     var evolutionResult: EvolutionResult<DNA, G>
     var population: Population<DNA, G>
-    var optimizer: PhenotypeOptimizer<DNA, G>
+    var optimizer: IndividualOptimizer<DNA, G>
     val fittest: Individual<DNA, G>?
     var steadyGenerations: Int
     var generation: Int
@@ -186,7 +186,7 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
          * @return A list of phenotype records after sorting the population.
          */
         fun <DNA, G : Gene<DNA, G>> computePopulation(
-            optimizer: PhenotypeOptimizer<DNA, G>,
+            optimizer: IndividualOptimizer<DNA, G>,
             population: Population<DNA, G>,
         ): List<PhenotypeRecord> {
             val sorted = optimizer.sort(population)

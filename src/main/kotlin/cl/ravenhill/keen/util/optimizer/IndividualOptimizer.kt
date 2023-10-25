@@ -1,9 +1,6 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.util.optimizer
@@ -13,11 +10,11 @@ import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
- * Generic optimization strategy to determine which of two phenotypes is better.
+ * Generic optimization strategy to determine which of two individuals is better.
  *
  * @property comparator The comparator to use to determine which of two phenotypes is better.
  */
-interface PhenotypeOptimizer<DNA, G: Gene<DNA, G>> {
+interface IndividualOptimizer<DNA, G : Gene<DNA, G>> {
     val comparator
         get() = Comparator { p1: Individual<*, *>, p2: Individual<*, *> -> compare(p1, p2) }
 

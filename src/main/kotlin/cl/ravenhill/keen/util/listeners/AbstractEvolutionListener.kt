@@ -15,7 +15,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
@@ -39,7 +39,7 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
             onResultUpdated()
         }
     override var population: Population<DNA, G> = listOf()
-    override var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
+    override var optimizer: IndividualOptimizer<DNA, G> = FitnessMaximizer()
     override val fittest: Individual<DNA, G>?
         get() = _fittest
     override var steadyGenerations: Int = 0

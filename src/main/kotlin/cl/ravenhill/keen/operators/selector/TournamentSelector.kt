@@ -9,7 +9,7 @@ import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -43,7 +43,7 @@ class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
     override fun select(
         population: Population<DNA, G>,
         count: Int,
-        optimizer: PhenotypeOptimizer<DNA, G>,
+        optimizer: IndividualOptimizer<DNA, G>,
     ): Population<DNA, G> = runBlocking {
         (0 until count).asFlow().map {
             generateSequence { population[Core.random.nextInt(population.size)] }

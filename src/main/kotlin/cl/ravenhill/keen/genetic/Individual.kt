@@ -27,7 +27,7 @@ import java.util.Objects
 data class Individual<DNA, G : Gene<DNA, G>>(
     val genotype: Genotype<DNA, G>,
     val fitness: Double = Double.NaN
-) : GeneticMaterial<DNA, G>, Comparable<Individual<DNA, G>> {
+) : GeneticMaterial<DNA, G>, Comparable<Individual<*, *>> {
 
     val size: Int = genotype.size
 
@@ -35,7 +35,7 @@ data class Individual<DNA, G : Gene<DNA, G>>(
     override fun verify(): Boolean = genotype.verify() && fitness.isNotNan()
 
     // Inherit documentation from Comparable
-    override fun compareTo(other: Individual<DNA, G>) =
+    override fun compareTo(other: Individual<*, *>) =
         this.fitness compareTo other.fitness
 
     /**

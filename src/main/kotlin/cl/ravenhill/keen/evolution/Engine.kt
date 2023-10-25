@@ -30,7 +30,7 @@ import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.floor
 import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
 import kotlin.properties.Delegates
@@ -55,7 +55,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
     val alterer: Alterer<DNA, G>,
     val limits: List<Limit>,
     val survivorSelector: Selector<DNA, G>,
-    val optimizer: PhenotypeOptimizer<DNA, G>,
+    val optimizer: IndividualOptimizer<DNA, G>,
     val listeners: List<EvolutionListener<DNA, G>>,
     val evaluator: EvaluationExecutor<DNA, G>,
     val interceptor: EvolutionInterceptor<DNA, G>,
@@ -360,7 +360,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
                 "Limits cannot be empty" { value mustNot BeEmpty }
             }.let { field = value }
 
-        var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
+        var optimizer: IndividualOptimizer<DNA, G> = FitnessMaximizer()
 
         var interceptor = EvolutionInterceptor.identity<DNA, G>()
         // endregion    ----------------------------------------------------------------------------
