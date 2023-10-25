@@ -55,6 +55,9 @@ data class DoubleChromosome(
         MutableFilterCollection<Double> {
 
         override var ranges = mutableListOf<ClosedRange<Double>>()
+        override var filters = mutableListOf<(Double) -> Boolean>()
+
+        @Deprecated("To be removed; use list of filters instead")
         var filter: (Double) -> Boolean = { true }
 
         /* Documentation inherited from [Chromosome.Factory] */
@@ -82,10 +85,6 @@ data class DoubleChromosome(
                 }
             )
         }
-
-        override var filters: MutableList<(Double) -> Boolean>
-            get() = TODO("Not yet implemented")
-            set(value) {}
 
         /* Documentation inherited from [Any] */
         override fun toString() = "DoubleChromosome.Factory(ranges=$ranges, filter=$filter)"

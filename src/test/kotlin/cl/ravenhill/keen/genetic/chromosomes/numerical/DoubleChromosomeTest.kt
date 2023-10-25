@@ -8,12 +8,14 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 import cl.ravenhill.keen.arbs.doubleChromosome
 import cl.ravenhill.keen.arbs.doubleGene
 import cl.ravenhill.keen.arbs.doubleRange
-import cl.ravenhill.keen.assertions.`chromosome should reflect input genes`
-import cl.ravenhill.keen.assertions.`factory should retain assigned ranges`
+import cl.ravenhill.keen.assertions.chromosomes.`chromosome should reflect input genes`
+import cl.ravenhill.keen.assertions.chromosomes.`factory should retain assigned filters`
+import cl.ravenhill.keen.assertions.chromosomes.`factory should retain assigned ranges`
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 
@@ -48,6 +50,18 @@ class DoubleChromosomeTest : FreeSpec({
 
             "can be set" {
                 `factory should retain assigned ranges`(Arb.doubleRange()) { DoubleChromosome.Factory() }
+            }
+        }
+
+        "should have a list of filters that" - {
+            "is empty by default" {
+                DoubleChromosome.Factory().filters.shouldBeEmpty()
+            }
+
+            "can be modified" {
+                `factory should retain assigned filters`(
+                    Arb.double(),
+                    { true }) { DoubleChromosome.Factory() }
             }
         }
     }

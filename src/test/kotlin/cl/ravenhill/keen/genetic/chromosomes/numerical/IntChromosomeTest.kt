@@ -8,17 +8,18 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 import cl.ravenhill.keen.arbs.intChromosome
 import cl.ravenhill.keen.arbs.intGene
 import cl.ravenhill.keen.arbs.intRange
-import cl.ravenhill.keen.assertions.`assert chromosome enforces range to gene count equality`
-import cl.ravenhill.keen.assertions.`chromosome should reflect input genes`
-import cl.ravenhill.keen.assertions.`each gene should have the specified range`
-import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
-import cl.ravenhill.keen.assertions.`ensure chromosome filter count matches gene count`
-import cl.ravenhill.keen.assertions.`factory should retain assigned ranges`
+import cl.ravenhill.keen.assertions.chromosomes.`assert chromosome enforces range to gene count equality`
+import cl.ravenhill.keen.assertions.chromosomes.`chromosome should reflect input genes`
+import cl.ravenhill.keen.assertions.chromosomes.`each gene should have the specified range`
+import cl.ravenhill.keen.assertions.chromosomes.`each gene should pass the specified filter`
+import cl.ravenhill.keen.assertions.chromosomes.`ensure chromosome filter count matches gene count`
+import cl.ravenhill.keen.assertions.chromosomes.`factory should retain assigned filters`
+import cl.ravenhill.keen.assertions.chromosomes.`factory should retain assigned ranges`
+import cl.ravenhill.keen.assertions.chromosomes.`validate all genes against single filter`
+import cl.ravenhill.keen.assertions.chromosomes.`validate all genes against single range`
+import cl.ravenhill.keen.assertions.chromosomes.`validate factory range assignment`
+import cl.ravenhill.keen.assertions.chromosomes.`validate genes with specified range and factory`
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import cl.ravenhill.keen.assertions.`validate all genes against single filter`
-import cl.ravenhill.keen.assertions.`validate all genes against single range`
-import cl.ravenhill.keen.assertions.`validate factory range assignment`
-import cl.ravenhill.keen.assertions.`validate genes with specified range and factory`
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -71,13 +72,9 @@ class IntChromosomeTest : FreeSpec({
                 }
 
                 "can be modified" {
-                    checkAll(list(intRange())) { ranges ->
-                        val factory = IntChromosome.Factory()
-                        val filters = ranges.map { { _: Int -> true } }
-                        filters.forEach { factory.filters += it }
-                        factory.filters shouldHaveSize filters.size
-                        factory.filters shouldBe filters
-                    }
+                    `factory should retain assigned filters`(
+                        int(),
+                        { true }) { IntChromosome.Factory() }
                 }
 
                 "can be set" {

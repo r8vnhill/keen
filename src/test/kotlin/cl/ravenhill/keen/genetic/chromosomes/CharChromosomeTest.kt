@@ -9,16 +9,17 @@ import cl.ravenhill.keen.arbs.charChromosome
 import cl.ravenhill.keen.arbs.charGene
 import cl.ravenhill.keen.arbs.charRange
 import cl.ravenhill.keen.arbs.mutableList
-import cl.ravenhill.keen.assertions.`assert chromosome enforces range to gene count equality`
-import cl.ravenhill.keen.assertions.`chromosome should reflect input genes`
-import cl.ravenhill.keen.assertions.`each gene should have the specified range`
-import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
-import cl.ravenhill.keen.assertions.`ensure chromosome filter count matches gene count`
-import cl.ravenhill.keen.assertions.`factory should retain assigned ranges`
-import cl.ravenhill.keen.assertions.`validate all genes against single filter`
-import cl.ravenhill.keen.assertions.`validate all genes against single range`
-import cl.ravenhill.keen.assertions.`validate factory range assignment`
-import cl.ravenhill.keen.assertions.`validate genes with specified range and factory`
+import cl.ravenhill.keen.assertions.chromosomes.`assert chromosome enforces range to gene count equality`
+import cl.ravenhill.keen.assertions.chromosomes.`chromosome should reflect input genes`
+import cl.ravenhill.keen.assertions.chromosomes.`each gene should have the specified range`
+import cl.ravenhill.keen.assertions.chromosomes.`each gene should pass the specified filter`
+import cl.ravenhill.keen.assertions.chromosomes.`ensure chromosome filter count matches gene count`
+import cl.ravenhill.keen.assertions.chromosomes.`factory should retain assigned filters`
+import cl.ravenhill.keen.assertions.chromosomes.`factory should retain assigned ranges`
+import cl.ravenhill.keen.assertions.chromosomes.`validate all genes against single filter`
+import cl.ravenhill.keen.assertions.chromosomes.`validate all genes against single range`
+import cl.ravenhill.keen.assertions.chromosomes.`validate factory range assignment`
+import cl.ravenhill.keen.assertions.chromosomes.`validate genes with specified range and factory`
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.util.nextChar
 import io.kotest.core.spec.style.FreeSpec
@@ -78,13 +79,9 @@ class CharChromosomeTest : FreeSpec({
                 }
 
                 "can be modified" {
-                    checkAll(list(charRange())) { ranges ->
-                        val factory = CharChromosome.Factory()
-                        val filters = ranges.map { { _: Char -> true } }
-                        filters.forEach { factory.filters += it }
-                        factory.filters shouldHaveSize filters.size
-                        factory.filters shouldBe filters
-                    }
+                    `factory should retain assigned filters`(
+                        char(),
+                        { true }) { CharChromosome.Factory() }
                 }
 
                 "can be set" {
