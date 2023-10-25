@@ -8,7 +8,7 @@ import kotlin.math.cos
 import kotlin.math.exp
 import kotlin.math.pow
 
-private fun easom(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
+private fun easom(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
     -cos(x) * cos(y) * exp(-(x - PI).pow(2) - (y - PI).pow(2))
 }
 

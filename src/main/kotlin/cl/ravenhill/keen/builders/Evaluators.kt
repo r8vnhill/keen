@@ -11,7 +11,7 @@ import cl.ravenhill.keen.evolution.executors.CoroutineEvaluator
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
@@ -67,7 +67,7 @@ fun <DNA, G : Gene<DNA, G>> evaluator(init: EvaluatorScope<DNA, G>.() -> Unit) =
  * Returns a [CoroutineEvaluator.Factory] instance initialized with custom settings through
  * [init].
  * The [CoroutineEvaluator] instances created by this factory will use coroutines to evaluate
- * fitness functions for [Phenotype] instances in a [Population].
+ * fitness functions for [Individual] instances in a [Population].
  *
  * __Usage:__
  * ```
@@ -93,7 +93,7 @@ fun <DNA, G : Gene<DNA, G>> EvaluatorScope<DNA, G>.coroutines(
  * Sets the ``creator`` property of this [EvaluationExecutor.Factory] instance to create
  * [SequentialEvaluator] instances.
  * The [SequentialEvaluator] instances created by this factory will evaluate fitness functions
- * for [Phenotype] instances in a [Population] sequentially.
+ * for [Individual] instances in a [Population] sequentially.
  *
  * __Usage:__
  * ```

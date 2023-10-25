@@ -44,7 +44,7 @@ private const val N = 2
  * The result is returned as the fitness value of the input genotype.
  */
 private fun rastriginFunction(x: Genotype<Double, DoubleGene>) =
-    A * N + x.flatten().fold(0.0) { acc, gene ->
+    A * N + x.flatMap().fold(0.0) { acc, gene ->
         acc + gene * gene - A * cos(2 * Math.PI * gene)
     }
 

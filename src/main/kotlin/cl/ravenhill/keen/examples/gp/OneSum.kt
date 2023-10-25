@@ -29,7 +29,7 @@ import kotlin.math.abs
  */
 private fun fitness(target: Int): (Genotype<Program<Double>, ProgramGene<Double>>) -> Double =
     { gt ->
-        val program = gt.flatten().first()
+        val program = gt.flatMap().first()
         abs(program() - target)
     }
 
@@ -61,7 +61,7 @@ fun main() {
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
         alterers = listOf(RandomMutator(0.06), SubtreeCrossover(0.2))
         optimizer = FitnessMinimizer()
-        listeners =
+        listeners +=
             listOf(EvolutionSummary(), EvolutionPrinter(10), EvolutionPlotter())
     }
     // Run the genetic algorithm and display results

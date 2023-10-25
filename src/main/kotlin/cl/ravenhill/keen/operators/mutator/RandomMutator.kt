@@ -10,14 +10,14 @@ import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.eq
 
 /**
- * The mutator operator is responsible for mutating the [Genotype] of the [Phenotype]s in the
+ * The mutator operator is responsible for mutating the [Genotype] of the [Individual]s in the
  * [Population].
  * There are two distinct roles for the mutator:
  *

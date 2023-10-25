@@ -36,7 +36,7 @@ class GeneTest : FreeSpec({
         "can be flattened" {
             checkAll<Int> { dna ->
                 val gene = TestGene(dna)
-                gene.flatten() shouldBe listOf(dna)
+                gene.flatMap() shouldBe listOf(dna)
             }
         }
     }

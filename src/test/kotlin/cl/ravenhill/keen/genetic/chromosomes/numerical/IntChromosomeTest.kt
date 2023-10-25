@@ -17,12 +17,12 @@ import cl.ravenhill.keen.assertions.chromosomes.`factory should retain assigned 
 import cl.ravenhill.keen.assertions.chromosomes.`factory should retain assigned ranges`
 import cl.ravenhill.keen.assertions.chromosomes.`validate all genes against single filter`
 import cl.ravenhill.keen.assertions.chromosomes.`validate all genes against single range`
+import cl.ravenhill.keen.assertions.chromosomes.`validate factory filter assignment`
 import cl.ravenhill.keen.assertions.chromosomes.`validate factory range assignment`
 import cl.ravenhill.keen.assertions.chromosomes.`validate genes with specified range and factory`
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
@@ -74,17 +74,15 @@ class IntChromosomeTest : FreeSpec({
                 "can be modified" {
                     `factory should retain assigned filters`(
                         int(),
-                        { true }) { IntChromosome.Factory() }
+                        { true }
+                    ) { IntChromosome.Factory() }
                 }
 
                 "can be set" {
-                    checkAll(list(intRange())) { ranges ->
-                        val factory = IntChromosome.Factory()
-                        val filters = ranges.map { { _: Int -> true } }
-                        factory.filters = filters.toMutableList()
-                        factory.filters shouldHaveSize filters.size
-                        factory.filters shouldBe filters
-                    }
+                    `validate factory filter assignment`(
+                        int(),
+                        { true }
+                    ) { IntChromosome.Factory() }
                 }
             }
         }

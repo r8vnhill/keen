@@ -39,10 +39,10 @@ private val items =
  * @return The fitness of the genotype.
  */
 private fun fitnessFn(genotype: Genotype<Boolean, BoolGene>): Double {
-    val profit = (genotype.flatten() zip items).sumOf { (isInBag, item) ->
+    val profit = (genotype.flatMap() zip items).sumOf { (isInBag, item) ->
         if (isInBag) item.first else 0
     }
-    val weight = (genotype.flatten() zip items).sumOf { (isInBag, item) ->
+    val weight = (genotype.flatMap() zip items).sumOf { (isInBag, item) ->
         if (isInBag) item.second else 0
     }
     val penalty = if (weight > MAX_WEIGHT) weight - MAX_WEIGHT else 0
@@ -97,13 +97,13 @@ fun main() {
         populationSize = 50
         alterers = listOf(BitFlipMutator(0.03), SinglePointCrossover(0.06))
         limits = listOf(GenerationCount(100))
-        listeners = listOf(EvolutionSummary(), EvolutionPrinter(5), EvolutionPlotter())
+        listeners += listOf(EvolutionSummary(), EvolutionPrinter(5), EvolutionPlotter())
     }
     val result = engine.evolve()
     println(engine.listeners.first())
     println(
         "Selected: ${
-            result.best.flatten()
+            result.best.flatMap()
                 .mapIndexedNotNull { index, b -> if (b) items[index] else null }
                 .joinToString { (value, weight) -> "($value, $weight)" }
         }"

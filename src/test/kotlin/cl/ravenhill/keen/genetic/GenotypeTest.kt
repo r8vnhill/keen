@@ -5,12 +5,25 @@
 
 package cl.ravenhill.keen.genetic
 
+import cl.ravenhill.enforcer.EnforcementException
+import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.arbs.intChromosome
 import cl.ravenhill.keen.arbs.intGenotype
+import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import cl.ravenhill.keen.shouldHaveInfringement
+import cl.ravenhill.unfulfilledConstraint
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.ints.shouldNotBeInRange
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 class GenotypeTest : FreeSpec({
@@ -32,30 +45,105 @@ class GenotypeTest : FreeSpec({
         }
 
         "size can be read" {
-            with(Arb) {
-                checkAll(intGenotype()) { genotype ->
-                    genotype.size shouldBe genotype.chromosomes.size
-                }
+            checkAll(Arb.intGenotype()) { genotype ->
+                genotype.size shouldBe genotype.chromosomes.size
             }
         }
 
-        "can verify itself when" - {
-            "all chromosomes are valid then it should return true" {
-                with(Arb) {
-                    checkAll(intGenotype()) { genotype ->
-                        genotype.verify() shouldBe true
+        "verification should" - {
+            "return true when" - {
+                "the list of chromosomes is empty" {
+                    Genotype<Int, IntGene>().verify().shouldBeTrue()
+                }
+
+                "all chromosomes are valid" {
+                    checkAll(Arb.intGenotype()) { genotype ->
+                        genotype.verify().shouldBeTrue()
                     }
                 }
             }
 
-//            "at least one chromosome is invalid then it should return false" {
-//                with(Arb) {
-//                    checkAll(list(intChromosome())) { chromosomes ->
-//                        val invalidChromosome = chromosomes.random().withGenes(emptyList())
-//                        Genotype(chromosomes + invalidChromosome).verify() shouldBe false
-//                    }
-//                }
-//            }
+            "return false when" - {
+                "at least one chromosome is invalid" {
+                    checkAll(Arb.intGenotype()) { genotype ->
+                        val invalidChromosome =
+                            IntChromosome(listOf(IntGene(0, filter = { false })))
+                        Genotype(genotype.chromosomes + listOf(invalidChromosome))
+                            .verify()
+                            .shouldBeFalse()
+                    }
+                }
+            }
+        }
+
+        "can be flattened" {
+            checkAll(Arb.intGenotype()) { genotype ->
+                genotype.flatMap().size shouldBe genotype.chromosomes.sumOf { it.size }
+                genotype.flatMap() shouldBe genotype.chromosomes.flatMap { it.flatMap() }
+            }
+        }
+
+        "when accessing a chromosome by index" - {
+            "should return the chromosome at the given index" {
+                checkAll(Arb.intGenotype()) { genotype ->
+                    genotype.forEachIndexed { index, chromosome ->
+                        genotype[index] shouldBe chromosome
+                    }
+                }
+            }
+
+            "should throw an exception when the index is out of bounds" {
+                checkAll(Arb.intGenotype(), Arb.int()) { genotype, index ->
+                    assume { index shouldNotBeInRange 0..genotype.size }
+                    shouldThrow<EnforcementException> {
+                        genotype[index]
+                    }.shouldHaveInfringement<IntRequirementException>(
+                        unfulfilledConstraint(
+                            "The index [$index] must be in the range [0, ${genotype.size})"
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    "A [Genotype.Factory]" - {
+        "have a list of chromosomes that" - {
+            "is empty by default" {
+                Genotype.Factory<Int, IntGene>().chromosomes.shouldBeEmpty()
+            }
+
+            "can be modified" {
+                checkAll(Arb.int(0..100)) { size ->
+                    val factory = Genotype.Factory<Int, IntGene>()
+                    repeat(size) {
+                        factory.chromosomes += IntChromosome.Factory()
+                    }
+                    factory.chromosomes.size shouldBe size
+                }
+            }
+
+            "can be set" {
+                checkAll(Arb.int(0..100)) { size ->
+                    val factory = Genotype.Factory<Int, IntGene>()
+                    factory.chromosomes = MutableList(size) { IntChromosome.Factory() }
+                    factory.chromosomes.size shouldBe size
+                }
+            }
+        }
+
+        "can create a new genotype" - {
+            "with the given chromosomes" {
+                checkAll(Arb.list(Arb.int(1..10))) { sizes ->
+                    val factory = Genotype.Factory<Int, IntGene>()
+                    factory.chromosomes = sizes.map { size ->
+                        IntChromosome.Factory().apply {
+                            this.size = size
+                        }
+                    }.toMutableList()
+                    factory.make().chromosomes.map { it.size } shouldBe sizes
+                }
+            }
         }
     }
 })

@@ -10,7 +10,7 @@ package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.EvolutionResult
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
@@ -31,7 +31,7 @@ import kotlin.time.TimeSource
  * @property generation The current generation.
  */
 abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListener<DNA, G> {
-    private var _fittest: Phenotype<DNA, G>? = null
+    private var _fittest: Individual<DNA, G>? = null
     override var evolutionResult: EvolutionResult<DNA, G> =
         EvolutionResult(FitnessMaximizer(), listOf(), 0)
         set(value) {
@@ -40,7 +40,7 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
         }
     override var population: Population<DNA, G> = listOf()
     override var optimizer: PhenotypeOptimizer<DNA, G> = FitnessMaximizer()
-    override val fittest: Phenotype<DNA, G>?
+    override val fittest: Individual<DNA, G>?
         get() = _fittest
     override var steadyGenerations: Int = 0
     override var generation: Int = 0

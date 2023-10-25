@@ -21,5 +21,5 @@ interface GeneticMaterial<DNA, G : Gene<DNA, G>> : Verifiable {
     /**
      * Flattens the genetic material into a list of values.
      */
-    fun flatten(): List<DNA>
+    fun flatMap(transform: (DNA) -> DNA = { it }): List<DNA>
 }

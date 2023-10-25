@@ -34,7 +34,7 @@ private const val TARGET = 420
  * and returns this difference as a Double.
  */
 private fun absDiff(genotype: Genotype<Int, IntGene>) =
-    genotype.flatten()
+    genotype.flatMap()
         .map { it.toLong() }
         .let { factors -> abs(TARGET.toLong() - factors.fold(1L) { acc, i -> acc * i }) }
         .toDouble()
@@ -85,7 +85,7 @@ fun main() {
     println(
         buildString {
             append("$TARGET = ")
-            append(result.best.genotype.flatten().filter { it > 1 }.joinToString(" * "))
+            append(result.best.genotype.flatMap().filter { it > 1 }.joinToString(" * "))
         }
     )
     (engine.listeners[1] as EvolutionPlotter).displayFitness { if (it eq 0.0) 0.0 else ln(it) }

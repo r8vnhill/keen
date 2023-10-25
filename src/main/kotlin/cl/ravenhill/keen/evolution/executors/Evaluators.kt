@@ -9,7 +9,7 @@ import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -114,7 +114,7 @@ class SequentialEvaluator<DNA, G : Gene<DNA, G>>(
 }
 
 /**
- * A concurrent evaluator that uses coroutines to evaluate fitness functions for [Phenotype]
+ * A concurrent evaluator that uses coroutines to evaluate fitness functions for [Individual]
  * instances in a [Population].
  *
  * @param function The fitness function that evaluates a [Genotype] and returns a [Double].
@@ -234,12 +234,12 @@ private fun <DNA, G : Gene<DNA, G>> evaluateAndAddToPopulation(
     // If all individuals in the population were evaluated, return a new population with the
     // evaluated individuals.
     if (toEvaluate.size == population.size) {
-        toEvaluate.map { it.phenotype }
+        toEvaluate.map { it.individual }
     } else {
         // Otherwise, add the evaluated individuals to the population and return a new
         // population.
         population.filter { it.isEvaluated() }.toMutableList().apply {
-            addAll(toEvaluate.map { it.phenotype })
+            addAll(toEvaluate.map { it.individual })
         }
     }
 } else {
@@ -248,41 +248,41 @@ private fun <DNA, G : Gene<DNA, G>> evaluateAndAddToPopulation(
 }
 
 /**
- * A helper class that encapsulates the evaluation of a [Phenotype] instance using a fitness
+ * A helper class that encapsulates the evaluation of a [Individual] instance using a fitness
  * [function].
  *
- * @property phenotype The [Phenotype] instance to be evaluated.
- * @property function The fitness function used to calculate the fitness value of the [phenotype].
+ * @property individual The [Individual] instance to be evaluated.
+ * @property function The fitness function used to calculate the fitness value of the [individual].
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
  * @since 2.0.0
  */
 private class PhenotypeEvaluator<DNA, G : Gene<DNA, G>>(
-    phenotype: Phenotype<DNA, G>,
+    individual: Individual<DNA, G>,
     private val function: (Genotype<DNA, G>) -> Double
 ) {
     /**
-     * The fitness value of the [phenotype] calculated by the [function].
+     * The fitness value of the [individual] calculated by the [function].
      */
     private var fitness = Double.NaN
 
     /**
-     * Backing field for the [phenotype] property.
+     * Backing field for the [individual] property.
      */
-    private val _individual = phenotype
+    private val _individual = individual
 
     /**
-     * Returns a [Phenotype] instance with the calculated fitness value.
+     * Returns a [Individual] instance with the calculated fitness value.
      */
-    val phenotype: Phenotype<DNA, G>
+    val individual: Individual<DNA, G>
         get() = _individual.withFitness(fitness)
 
     /**
-     * Evaluates the [phenotype] using the provided [function] to calculate the fitness value.
+     * Evaluates the [individual] using the provided [function] to calculate the fitness value.
      * This method updates the [fitness] property of this instance.
      */
     fun evaluate() {
-        fitness = function(phenotype.genotype)
+        fitness = function(individual.genotype)
     }
 }

@@ -5,7 +5,7 @@ import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import kotlin.math.abs
 import kotlin.math.pow
 
-private fun goldsteinPrice(g: Genotype<Double, DoubleGene>)= g.flatten().let { (x, y) ->
+private fun goldsteinPrice(g: Genotype<Double, DoubleGene>)= g.flatMap().let { (x, y) ->
     (1 + (x + y + 1).pow(2) * (19 - 14 * x + 3 * x.pow(2) - 14 * y + 6 * x * y + 3 * y.pow(2))) *
             (30 + (2 * x - 3 * y).pow(2) * (18 - 32 * x + 12 * x.pow(2) + 48 * y - 36 * x * y + 27 * y.pow(2)))
 }

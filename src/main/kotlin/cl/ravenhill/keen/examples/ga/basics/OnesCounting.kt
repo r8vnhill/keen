@@ -22,7 +22,7 @@ import cl.ravenhill.keen.util.listeners.EvolutionPrinter
  * @param genotype The genotype to count the `true` values in.
  * @return The number of `true` values in the given [genotype] as a [Double].
  */
-fun count(genotype: Genotype<Boolean, BoolGene>) = genotype.flatten().count { it }.toDouble()
+fun count(genotype: Genotype<Boolean, BoolGene>) = genotype.flatMap().count { it }.toDouble()
 
 /**
  * This is an example of using a genetic algorithm to evolve a population of `Boolean` genotypes
@@ -51,7 +51,7 @@ fun main() {
         alterers =
             listOf(RandomMutator(probability = 0.03), SinglePointCrossover(probability = 0.2))
         limits = listOf(GenerationCount(100), TargetFitness(50.0))
-        listeners =
+        listeners +=
             listOf(EvolutionSummary(), EvolutionPrinter(1), EvolutionPlotter())
     }
     engine.evolve()

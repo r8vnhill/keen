@@ -8,7 +8,6 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.keen.genetic.TestGene
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
@@ -70,7 +69,7 @@ class ChromosomeTest : FreeSpec({
         "can be flattened" {
             with(Arb) {
                 checkAll(testChromosome(int())) { chromosome ->
-                    chromosome.flatten() shouldBe chromosome.genes.map { it.dna }
+                    chromosome.flatMap() shouldBe chromosome.genes.map { it.dna }
                 }
             }
         }
@@ -85,7 +84,7 @@ class ChromosomeTest : FreeSpec({
                 }
 
                 "the list of genes is empty" {
-                    TestChromosome(listOf()).verify().shouldBeFalse()
+                    TestChromosome(listOf()).verify().shouldBeTrue()
                 }
             }
         }

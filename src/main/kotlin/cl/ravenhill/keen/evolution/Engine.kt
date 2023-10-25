@@ -17,7 +17,7 @@ import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
@@ -29,7 +29,6 @@ import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.floor
 import cl.ravenhill.keen.util.listeners.EvolutionListener
-import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 import kotlinx.coroutines.runBlocking
@@ -100,7 +99,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * The fittest individual of the current generation.
      */
     private
-    var fittest: Phenotype<DNA, G>? by Delegates.observable(null) { _, _, _ ->
+    var fittest: Individual<DNA, G>? by Delegates.observable(null) { _, _, _ ->
     }
 
     /**
@@ -154,7 +153,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see EvolutionResult
      */
     fun evolve(start: EvolutionState<DNA, G>) = runBlocking {
-        listeners.forEach { it.onGenerationStarted(generation, listOf<Phenotype<DNA, G>>()) }
+        listeners.forEach { it.onGenerationStarted(generation, listOf<Individual<DNA, G>>()) }
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
         trace { "Pre-processing evolution start." }
@@ -202,7 +201,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             val generation = state.generation
             val individuals =
                 state.population.asSequence() + generateSequence { genotype.make() }
-                    .map { Phenotype(it) }
+                    .map { Individual(it) }
             EvolutionState(
                 individuals.take(populationSize).toList(),
                 generation
@@ -268,7 +267,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param population the evaluated population.
      * @return the survivors.
      */
-    fun selectSurvivors(population: List<Phenotype<DNA, G>>): Population<DNA, G> {
+    fun selectSurvivors(population: List<Individual<DNA, G>>): Population<DNA, G> {
         listeners.forEach { it.onSurvivorSelectionStarted() }
         debug { "Selecting survivors." }
         return survivorSelector(

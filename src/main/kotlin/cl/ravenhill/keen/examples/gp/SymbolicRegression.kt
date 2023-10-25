@@ -26,7 +26,7 @@ import kotlin.math.ln
 import kotlin.math.pow
 
 private fun fitness(inputs: List<Double>) = { gt: Genotype<Program<Double>, ProgramGene<Double>> ->
-    val program = gt.flatten().first()
+    val program = gt.flatMap().first()
     inputs.map { input ->
         val expected = input.pow(4) + input.pow(3) + input.pow(2) + input
         val actual = program(input)
@@ -54,7 +54,7 @@ fun main() {
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
         alterers = listOf(SubtreeCrossover(0.2), RandomMutator(0.1))
         optimizer = FitnessMinimizer()
-        listeners = listOf(EvolutionSummary(), EvolutionPlotter())
+        listeners += listOf(EvolutionSummary(), EvolutionPlotter())
     }
     val result = engine.evolve()
     println(engine.listeners.first())

@@ -40,51 +40,6 @@ import cl.ravenhill.utils.IntToInt
 data class IntChromosome(override val genes: List<IntGene>) :
     AbstractChromosome<Int, IntGene>(genes) {
 
-    @Deprecated("Prefer using the primary constructor and/or the chromosome factory")
-    constructor(
-        genes: List<IntGene>,
-        ranges: List<ClosedRange<Int>>,
-        filter: (Int) -> Boolean,
-    ) : this(
-        genes
-    )
-
-    @Deprecated("Prefer using the primary constructor and/or the chromosome factory")
-    constructor(genes: List<IntGene>, range: IntToInt, filter: (Int) -> Boolean) : this(
-        genes,
-        List(genes.size) { range.first..range.second },
-        filter
-    )
-
-    /**
-     * Creates a new [IntChromosome] from a given [size], [range] and a [predicate]
-     *
-     * @param size The size of the chromosome.
-     * @param range The range of the genes.
-     * @param predicate The filter to apply to the genes.
-     * @param constructorExecutor The executor to use for creating the genes.
-     */
-    @Deprecated("Prefer using the primary constructor and/or the chromosome factory")
-    constructor(
-        size: Int,
-        range: IntToInt,
-        predicate: (Int) -> Boolean,
-        constructorExecutor: ConstructorExecutor<IntGene>,
-    ) : this(
-        constructorExecutor(size) {
-            enforce { "The range must be ordered" { range must BeStrictlyOrdered() } }
-            IntGene(
-                generateSequence { Core.random.nextInt(range.first, range.second) }
-                    .filter(predicate)
-                    .first(),
-                range.first to range.second,
-                predicate
-            )
-        },
-        range,
-        predicate
-    )
-
     // / Documentation inherited from [Chromosome]
     override fun withGenes(genes: List<IntGene>) = IntChromosome(genes)
 

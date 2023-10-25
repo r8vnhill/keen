@@ -7,7 +7,7 @@ import kotlin.math.abs
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-private fun eggholder(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
+private fun eggholder(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
     -(y + 47) * sin(sqrt(abs(x / 2 + (y + 47)))) - x * sin(sqrt(abs(x - (y + 47))))
 }
 

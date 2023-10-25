@@ -8,7 +8,6 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.keen.arbs.charChromosome
 import cl.ravenhill.keen.arbs.charGene
 import cl.ravenhill.keen.arbs.charRange
-import cl.ravenhill.keen.arbs.mutableList
 import cl.ravenhill.keen.assertions.chromosomes.`assert chromosome enforces range to gene count equality`
 import cl.ravenhill.keen.assertions.chromosomes.`chromosome should reflect input genes`
 import cl.ravenhill.keen.assertions.chromosomes.`each gene should have the specified range`
@@ -23,7 +22,6 @@ import cl.ravenhill.keen.assertions.chromosomes.`validate genes with specified r
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.util.nextChar
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.char
@@ -85,13 +83,7 @@ class CharChromosomeTest : FreeSpec({
                 }
 
                 "can be set" {
-                    checkAll(mutableList(charRange())) { ranges ->
-                        val factory = CharChromosome.Factory()
-                        val filters = ranges.map { { _: Char -> true } }
-                        factory.filters = filters.toMutableList()
-                        factory.filters shouldHaveSize filters.size
-                        factory.filters shouldBe filters
-                    }
+                    `validate factory range assignment`(charRange()) { CharChromosome.Factory() }
                 }
             }
         }

@@ -54,5 +54,5 @@ interface Gene<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, SelfReferential
     fun withDna(dna: DNA): G
 
     // / Documentation inherited from [GeneticMaterial]
-    override fun flatten() = listOf(dna)
+    override fun flatMap(transform: (DNA) -> DNA) = listOf(dna)
 }

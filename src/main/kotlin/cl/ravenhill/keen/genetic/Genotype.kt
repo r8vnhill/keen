@@ -38,7 +38,7 @@ import java.util.Objects
  * @version 2.0.0
  * @since 1.0.0
  */
-class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>) :
+data class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>) :
     GeneticMaterial<DNA, G>, Iterable<Chromosome<DNA, G>> {
 
     /**
@@ -52,20 +52,8 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
     override fun verify() = chromosomes.all { it.verify() }
 
     // Inherit documentation from GeneticMaterial
-    override fun flatten() =
-        chromosomes.fold(mutableListOf<DNA>()) { acc, chromosome ->
-            acc.apply { addAll(chromosome.flatten()) }
-        }
+    override fun flatMap(transform: (DNA) -> DNA) = chromosomes.flatMap { it.flatMap(transform) }
 
-    /**
-     * Creates a new [Genotype] by duplicating the given list of [Chromosome] objects.
-     */
-    @Deprecated(
-        "Use the copy constructor instead",
-        ReplaceWith("Genotype(chromosomes)", "cl.ravenhill.keen.genetic.Genotype"),
-        level = DeprecationLevel.WARNING
-    )
-    fun duplicate(chromosomes: List<Chromosome<DNA, G>>) = Genotype(chromosomes)
 
     /**
      * Returns the [Chromosome] at the given `index`.
@@ -82,22 +70,6 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
     // Inherit documentation from Iterable
     override fun iterator() = chromosomes.iterator()
 
-    // region : toString, equals, hashCode
-    // Inherit documentation from Any
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is Genotype<*, *> -> false
-        chromosomes != other.chromosomes -> false
-        else -> true
-    }
-
-    // Inherit documentation from Any
-    override fun hashCode() = Objects.hash(Genotype::class, chromosomes)
-
-    // Inherit documentation from Any
-    override fun toString() = " [ ${chromosomes.joinToString(" | ")} ] "
-    // endregion
-
     /**
      * A builder for creating [Genotype] instances with a set of chromosomes.
      *
@@ -112,13 +84,6 @@ class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>)
         /**
          * Creates a new [Genotype] instance with the chromosomes added to the builder.
          */
-        fun make(): Genotype<DNA, G> {
-            enforce { "The chromosomes list must not be empty" { chromosomes mustNot BeEmpty } }
-            return Genotype(chromosomes.map { it.make() })
-        }
-
-        // Inherit documentation from Any
-        override fun toString() = "GenotypeBuilder { " +
-            "chromosomes: $chromosomes }"
+        fun make() = Genotype(chromosomes.map { it.make() })
     }
 }

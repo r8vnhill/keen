@@ -2,7 +2,7 @@ package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.EvolutionResult
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
@@ -46,7 +46,7 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     var evolutionResult: EvolutionResult<DNA, G>
     var population: Population<DNA, G>
     var optimizer: PhenotypeOptimizer<DNA, G>
-    val fittest: Phenotype<DNA, G>?
+    val fittest: Individual<DNA, G>?
     var steadyGenerations: Int
     var generation: Int
     val currentGeneration: GenerationRecord

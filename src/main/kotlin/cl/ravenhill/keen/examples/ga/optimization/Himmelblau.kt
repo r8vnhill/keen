@@ -4,7 +4,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import kotlin.math.pow
 
-private fun himmelblau(g: Genotype<Double, DoubleGene>) = g.flatten().let { (x, y) ->
+private fun himmelblau(g: Genotype<Double, DoubleGene>) = g.flatMap().let { (x, y) ->
     (x.pow(2) + y - 11).pow(2) + (x + y.pow(2) - 7).pow(2)
 }
 

@@ -30,7 +30,7 @@ import kotlin.math.pow
  * @version 2.0.0
  */
 private fun beale(genotype: Genotype<Double, DoubleGene>): Double {
-    val (x, y) = genotype.flatten()
+    val (x, y) = genotype.flatMap()
     return (1.5 - x + x * y).pow(2) + (2.25 - x + x * y.pow(2)).pow(2) +
             (2.625 - x + x * y.pow(3)).pow(2)
 }

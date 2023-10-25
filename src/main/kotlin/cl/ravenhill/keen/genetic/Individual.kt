@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -13,16 +18,16 @@ import java.util.Objects
  * @property fitness The fitness associated with the phenotype. Defaults to `Double.NaN`.
  * @property size The size of the genotype.
  *
- * @constructor Creates a new [Phenotype] instance with the given [genotype] and [fitness].
+ * @constructor Creates a new [Individual] instance with the given [genotype] and [fitness].
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
  * @since 1.0.0
  */
-class Phenotype<DNA, G : Gene<DNA, G>>(
+data class Individual<DNA, G : Gene<DNA, G>>(
     val genotype: Genotype<DNA, G>,
     val fitness: Double = Double.NaN
-) : GeneticMaterial<DNA, G>, Comparable<Phenotype<DNA, G>> {
+) : GeneticMaterial<DNA, G>, Comparable<Individual<DNA, G>> {
 
     val size: Int = genotype.size
 
@@ -30,7 +35,7 @@ class Phenotype<DNA, G : Gene<DNA, G>>(
     override fun verify(): Boolean = genotype.verify() && fitness.isNotNan()
 
     // Inherit documentation from Comparable
-    override fun compareTo(other: Phenotype<DNA, G>) =
+    override fun compareTo(other: Individual<DNA, G>) =
         this.fitness compareTo other.fitness
 
     // Inherit documentation from Any
@@ -49,30 +54,30 @@ class Phenotype<DNA, G : Gene<DNA, G>>(
     fun isNotEvaluated() = !isEvaluated()
 
     /**
-     * Creates a new [Phenotype] instance with the given fitness value.
+     * Creates a new [Individual] instance with the given fitness value.
      *
      * @param fitness The fitness value of the phenotype.
-     * @return A new [Phenotype] instance with the given fitness value.
+     * @return A new [Individual] instance with the given fitness value.
      */
-    fun withFitness(fitness: Double) = Phenotype(genotype, fitness)
+    fun withFitness(fitness: Double) = Individual(genotype, fitness)
 
     /**
-     * Creates a new [Phenotype] instance with the given genotype and fitness values.
+     * Creates a new [Individual] instance with the given genotype and fitness values.
      * The generation of the new phenotype will be the same as the current one.
      *
      * @param candidate The genotype of the new phenotype.
      * @param fitness The fitness value of the new phenotype.
-     * @return A new [Phenotype] instance with the given genotype and fitness values.
+     * @return A new [Individual] instance with the given genotype and fitness values.
      */
     fun withGenotype(candidate: Genotype<DNA, G>, fitness: Double) =
-        Phenotype(candidate, fitness)
+        Individual(candidate, fitness)
 
     // Inherit documentation from GeneticMaterial
-    override fun flatten() = genotype.flatten()
+    override fun flatMap(transform: (DNA) -> DNA) = genotype.flatMap()
 
     // Inherit documentation from Any
-    override fun equals(other: Any?) = other is Phenotype<*, *> && genotype == other.genotype
+    override fun equals(other: Any?) = other is Individual<*, *> && genotype == other.genotype
 
     // Inherit documentation from Any
-    override fun hashCode() = Objects.hash(Phenotype::class, genotype)
+    override fun hashCode() = Objects.hash(Individual::class, genotype)
 }

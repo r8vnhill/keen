@@ -11,7 +11,7 @@ import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
@@ -70,7 +70,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
                 // exceed the original population size.
                 .take((population.size / numOut.toDouble()).ceil())
                 .flatten().map {
-                    Phenotype(it)
+                    Individual(it)
                 }.toList()
                 .take(population.size) // Truncate the list to the original population size
             // return the resulting population and count

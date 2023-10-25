@@ -25,7 +25,7 @@ import kotlin.math.sin
  * The fitness function operates on a genotype consisting of a single chromosome of N double genes,
  * and returns a single fitness value.
  */
-private fun fitnessFunction(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().first()
+private fun fitnessFunction(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().first()
     .let {
         ln(cos(sin(it)) + sin(cos(it)))
     }

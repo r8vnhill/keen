@@ -55,7 +55,7 @@ private val items = listOf(4 to 12, 2 to 1, 2 to 2, 1 to 1, 10 to 4, 0 to 0)
  * @return The fitness of the genotype.
  */
 private fun fitnessFn(genotype: Genotype<Pair<Int, Int>, KnapsackGene>): Double {
-    val items = genotype.flatten()
+    val items = genotype.flatMap()
     val value = items.sumOf { it.first }
     val weight = items.sumOf { it.second }
     return value - if (!genotype.verify()) {
@@ -158,10 +158,10 @@ fun main() {
         populationSize = 100
         alterers = listOf(RandomMutator(0.03), SinglePointCrossover(0.2))
         limits = listOf(SteadyGenerations(20), GenerationCount(100))
-        listeners = listOf(EvolutionPrinter(1), EvolutionPlotter(), EvolutionSummary())
+        listeners += listOf(EvolutionPrinter(1), EvolutionPlotter(), EvolutionSummary())
     }
     val result = engine.evolve()
     println(engine.listeners.last())
-    println(result.best.flatten().filter { it.first != 0 })
+    println(result.best.flatMap().filter { it.first != 0 })
     (engine.listeners[1] as EvolutionPlotter).displayFitness()
 }

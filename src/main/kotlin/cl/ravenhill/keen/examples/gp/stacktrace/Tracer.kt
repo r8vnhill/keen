@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.examples.gp.stacktrace
@@ -47,17 +47,20 @@ class Tracer<T : Throwable>(
     private val populationSize: Int,
     private val statCollectors: List<EvolutionListener<Instruction, InstructionGene>>
 ) {
-    val engine = engine(::fitness, genotype {
-        chromosome {
-            InstructionChromosome.Factory(5) {
-                InstructionGene(generateInstruction(), this@Tracer)
+    val engine = engine(
+        ::fitness,
+        genotype {
+            chromosome {
+                InstructionChromosome.Factory(5) {
+                    InstructionGene(generateInstruction(), this@Tracer)
+                }
             }
         }
-    }) {
+    ) {
         populationSize = this@Tracer.populationSize
         alterers = listOf(RandomMutator(0.3), SinglePointCrossover(0.5))
         limits = listOf(TargetFitness(5.0))
-        listeners = this@Tracer.statCollectors
+        listeners += this@Tracer.statCollectors
     }
     val inputFactory = InputFactory()
 
@@ -66,7 +69,7 @@ class Tracer<T : Throwable>(
         val program = minimize(result).population
             .groupBy { it.fitness }
             .maxBy { it.key }.value
-            .minBy { it.flatten().size }
+            .minBy { it.flatMap().size }
         return MinimalCrashReproduction(program)
     }
 

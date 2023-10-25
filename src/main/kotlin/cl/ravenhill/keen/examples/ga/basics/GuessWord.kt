@@ -34,7 +34,7 @@ private const val TARGET = "Sopaipilla"
  * @param genotype The genotype to compute the fitness of.
  * @return The fitness of the genotype.
  */
-private fun matches(genotype: Genotype<Char, CharGene>) = genotype.flatten()
+private fun matches(genotype: Genotype<Char, CharGene>) = genotype.flatMap()
     .filterIndexed { index, char -> char == TARGET[index] }
     .size.toDouble()
 

@@ -13,6 +13,7 @@ import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.keen.util.MutableFilterCollection
 import cl.ravenhill.keen.util.MutableRangedCollection
 import cl.ravenhill.keen.util.Ranged
+import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -86,7 +87,9 @@ suspend fun <T, G, F> `factory should retain assigned filters`(
             val factory = factoryBuilder()
             repeat(size) { factory.filters += filter }
             factory.filters shouldHaveSize size
-            filter(x).shouldBeTrue()
+            assertSoftly {
+                factory.filters.forEach { it(x).shouldBeTrue() }
+            }
         }
     }
 }
@@ -120,6 +123,26 @@ suspend fun <T, G, F> `validate factory range assignment`(
             factory.ranges = ranges
             factory.ranges shouldHaveSize ranges.size
             factory.ranges shouldBe ranges
+        }
+    }
+}
+
+suspend fun <T, G, F> `validate factory filter assignment`(
+    arb: Arb<T>,
+    filter: (T) -> Boolean,
+    factoryBuilder: () -> F,
+) where
+      T : Comparable<T>,
+      G : Gene<T, G>, G : Filterable<T>,
+      F : Chromosome.Factory<T, G>, F : MutableFilterCollection<T> {
+    with(Arb) {
+        checkAll(int(1..100), arb) { size, x ->
+            val factory = factoryBuilder()
+            factory.filters = MutableList(size) { filter }
+            factory.filters shouldHaveSize size
+            assertSoftly {
+                factory.filters.forEach { it(x).shouldBeTrue() }
+            }
         }
     }
 }
@@ -311,7 +334,7 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
             factory.size = ranges.size
             factory.make().genes.forEachIndexed { index, gene ->
                 gene.range shouldBe ranges[index]
-                gene shouldBe geneFactory(rng, ranges, index)
+                gene.dna shouldBe geneFactory(rng, ranges, index).dna
             }
         }
     }

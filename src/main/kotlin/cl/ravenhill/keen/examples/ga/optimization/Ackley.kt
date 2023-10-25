@@ -11,7 +11,6 @@ import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.operators.selector.RandomSelector
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
-import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.exp
@@ -30,7 +29,7 @@ import kotlin.math.sqrt
  * @return The value of the Ackley function for the given genotype.
  */
 private fun ackley(genotype: Genotype<Double, DoubleGene>): Double {
-    val (x, y) = genotype.flatten()
+    val (x, y) = genotype.flatMap()
     return -20 * exp(-0.2 * sqrt(0.5 * (x.pow(2) + y.pow(2)))) -
         exp(0.5 * (cos(2 * PI * x) + cos(2 * PI * y))) + exp(1.0) + 20.0
 }

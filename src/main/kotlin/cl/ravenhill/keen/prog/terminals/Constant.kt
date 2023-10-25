@@ -1,11 +1,9 @@
 /*
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.prog.terminals
-
-import java.util.Objects
 
 /**
  * A terminal node representing a constant value in a program tree.
@@ -17,7 +15,7 @@ import java.util.Objects
  * @property value the constant value this node holds.
  * @constructor creates a new constant node with the given value
  */
-class Constant<T>(private val value: T) : Terminal<T> {
+data class Constant<T>(val value: T) : Terminal<T> {
     /**
      * Returns the constant value this node holds.
      *
@@ -32,16 +30,4 @@ class Constant<T>(private val value: T) : Terminal<T> {
      * @return a new `Constant` node with the same value as this node
      */
     override fun create() = Constant(value)
-
-    /* Inherited documentation from Any */
-    override fun toString(): String = value.toString()
-
-    /* Inherited documentation from Any */
-    override fun equals(other: Any?): Boolean = when (other) {
-        is Constant<*> -> value == other.value
-        else -> false
-    }
-
-    /* Inherited documentation from Any */
-    override fun hashCode(): Int = Objects.hash(Constant::class, value)
 }

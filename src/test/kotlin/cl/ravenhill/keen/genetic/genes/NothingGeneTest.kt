@@ -35,7 +35,7 @@ class NothingGeneTest : FreeSpec({
             }
 
             "flattening" {
-                `check that an illegal operation exception is thrown` { NothingGene.flatten() }
+                `check that an illegal operation exception is thrown` { NothingGene.flatMap() }
             }
         }
     }

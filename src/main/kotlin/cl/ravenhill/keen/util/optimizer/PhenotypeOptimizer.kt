@@ -9,7 +9,7 @@
 package cl.ravenhill.keen.util.optimizer
 
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
@@ -19,19 +19,19 @@ import cl.ravenhill.keen.genetic.genes.Gene
  */
 interface PhenotypeOptimizer<DNA, G: Gene<DNA, G>> {
     val comparator
-        get() = Comparator { p1: Phenotype<*, *>, p2: Phenotype<*, *> -> compare(p1, p2) }
+        get() = Comparator { p1: Individual<*, *>, p2: Individual<*, *> -> compare(p1, p2) }
 
     /**
      * Compares two phenotypes and returns a negative integer, zero, or a positive integer as the
      * first phenotype is less than, equal to, or greater than the second.
      */
-    operator fun invoke(a: Phenotype<*, *>, b: Phenotype<*, *>): Int = compare(a, b)
+    operator fun invoke(a: Individual<*, *>, b: Individual<*, *>): Int = compare(a, b)
 
     /**
      * Compares two phenotypes and returns a negative integer, zero, or a positive integer as the
      * first phenotype is less than, equal to, or greater than the second.
      */
-    fun compare(p1: Phenotype<*, *>, p2: Phenotype<*, *>): Int
+    fun compare(p1: Individual<*, *>, p2: Individual<*, *>): Int
 
     /**
      * Sorts the given list of phenotypes using this optimizer.

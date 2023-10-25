@@ -3,7 +3,7 @@ package cl.ravenhill.keen.evolution
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
 
@@ -43,7 +43,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
     val generation: Int
 ) : Comparable<EvolutionResult<DNA, G>> {
 
-    val best: Phenotype<DNA, G>
+    val best: Individual<DNA, G>
         get() = population.maxWith(optimizer.comparator)
 
     /**
@@ -57,7 +57,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
      * @param function A function to transform each phenotype in the population.
      * @return A new [EvolutionResult] with the transformed population.
      */
-    fun map(function: (Phenotype<DNA, G>) -> Phenotype<DNA, G>) =
+    fun map(function: (Individual<DNA, G>) -> Individual<DNA, G>) =
         EvolutionResult(optimizer, population.map(function), generation)
 
     /// Documentation inherited from [Comparable].
@@ -84,7 +84,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
  * @since 1.0.0
  */
 class EvolutionState<DNA, G : Gene<DNA, G>>(
-    val population: List<Phenotype<DNA, G>>,
+    val population: List<Individual<DNA, G>>,
     val generation: Int,
     val isDirty: Boolean = true
 ) {

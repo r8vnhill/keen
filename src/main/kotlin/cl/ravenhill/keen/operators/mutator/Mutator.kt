@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.mutator
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.Alterer
@@ -52,13 +52,13 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
     /**
      * Mutates a given phenotype.
      *
-     * @param phenotype The phenotype to be mutated.
+     * @param individual The phenotype to be mutated.
      * @return The mutated phenotype.
      */
     fun mutatePhenotype(
-        phenotype: Phenotype<DNA, G>,
-    ): MutatorResult<DNA, G, Phenotype<DNA, G>> = mutateGenotype(phenotype.genotype).map {
-        Phenotype(it)
+        individual: Individual<DNA, G>,
+    ): MutatorResult<DNA, G, Individual<DNA, G>> = mutateGenotype(individual.genotype).map {
+        Individual(it)
     }
 
     /**

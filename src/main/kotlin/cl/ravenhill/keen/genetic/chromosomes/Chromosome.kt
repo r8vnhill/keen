@@ -16,7 +16,7 @@ import kotlin.properties.Delegates
  *
  * A `Chromosome` is a sequence of [Gene]s, each of which contains a specific value of type [DNA].
  * The `Chromosome` interface extends the [GeneticMaterial] interface and therefore provides a
- * method to [flatten] the chromosome into a list of [DNA] objects.
+ * method to [flatMap] the chromosome into a list of [DNA] objects.
  * It also implements the [Iterable] interface, allowing for easy iteration over the genes in the
  * chromosome.
  *
@@ -43,7 +43,7 @@ interface Chromosome<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<
         get() = genes.size
 
     /* Documentation inherited from [Verifiable]. */
-    override fun verify() = genes.isNotEmpty() && genes.all { it.verify() }
+    override fun verify() = genes.all { it.verify() }
 
     /* Documentation inherited from [Iterable]. */
     override fun iterator() = genes.iterator()
@@ -59,8 +59,8 @@ interface Chromosome<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<
     fun withGenes(genes: List<G>): Chromosome<DNA, G>
 
     /* Documentation inherited from [GeneticMaterial]. */
-    override fun flatten(): List<DNA> = genes.fold(mutableListOf()) { acc, gene ->
-        acc.apply { addAll(gene.flatten()) }
+    override fun flatMap(transform: (DNA) -> DNA): List<DNA> = genes.fold(mutableListOf()) { acc, gene ->
+        acc.apply { addAll(gene.flatMap()) }
     }
 
     /**

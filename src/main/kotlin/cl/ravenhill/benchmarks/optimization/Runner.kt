@@ -12,7 +12,6 @@ import cl.ravenhill.keen.builders.genotype
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.operators.crossover.Crossover
 import cl.ravenhill.keen.operators.crossover.combination.AverageCrossover
 import cl.ravenhill.keen.operators.mutator.RandomMutator
 import cl.ravenhill.keen.operators.selector.RandomSelector
@@ -74,7 +73,7 @@ object Runner {
                     alterationTimes += generations.map { it.alteration.duration / 1000000.0 }
                     evolutionTimes += duration / 1000000000.0
                     totalGenerations += generations.size.toDouble()
-                    fittests += result.best.flatten()
+                    fittests += result.best.flatMap()
                     errors += abs(target - result.best.fitness)
                 }
             }

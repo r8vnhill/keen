@@ -45,9 +45,7 @@ data class DoubleChromosome(
     /**
      * This class represents a factory for generating instances of [DoubleChromosome].
      *
-     * @property ranges the range of values for the genes in the chromosome.
      * @property size the size of the chromosome.
-     * @property filter a filter function to apply to each gene.
      */
     class Factory :
         Chromosome.AbstractFactory<Double, DoubleGene>(),
@@ -57,36 +55,47 @@ data class DoubleChromosome(
         override var ranges = mutableListOf<ClosedRange<Double>>()
         override var filters = mutableListOf<(Double) -> Boolean>()
 
-        @Deprecated("To be removed; use list of filters instead")
-        var filter: (Double) -> Boolean = { true }
-
         /* Documentation inherited from [Chromosome.Factory] */
-        override fun make() = if (ranges.size == 1) {
-            DoubleChromosome(
-                List(size) {
-                    DoubleGene(
-                        Core.random.nextDouble(ranges[0].start, ranges[0].endInclusive),
-                        ranges[0]
-                    )
-                }
-            )
-        } else {
-            enforce {
-                "The number ofranges must be equal to the size of the chromosome." {
-                    ranges.size must IntRequirement.BeEqualTo(size)
-                }
+        override fun make(): DoubleChromosome {
+            enforceConstraints()
+            when (ranges.size) {
+                0 -> ranges = MutableList(size) { -Double.MAX_VALUE..Double.MAX_VALUE }
+                1 -> ranges = MutableList(size) { ranges.first() }
             }
-            DoubleChromosome(
+            when (filters.size) {
+                0 -> filters = MutableList(size) { { _: Double -> true } }
+                1 -> filters = MutableList(size) { filters.first() }
+            }
+            return DoubleChromosome(
                 List(size) {
                     DoubleGene(
                         Core.random.nextDouble(ranges[it].start, ranges[it].endInclusive),
-                        ranges[it]
+                        ranges[it],
+                        filters[it]
                     )
                 }
             )
         }
 
-        /* Documentation inherited from [Any] */
-        override fun toString() = "DoubleChromosome.Factory(ranges=$ranges, filter=$filter)"
+        private fun enforceConstraints() {
+            enforce {
+                if (ranges.size > 1) {
+                    (
+                        "When creating a chromosome with more than one range, the number of ranges " +
+                            "must be equal to the number of genes"
+                        ) {
+                        ranges.size must IntRequirement.BeEqualTo(size)
+                    }
+                }
+                if (filters.size > 1) {
+                    (
+                        "When creating a chromosome with more than one filter, the number of " +
+                            "filters must be equal to the number of genes"
+                        ) {
+                        filters.size must IntRequirement.BeEqualTo(size)
+                    }
+                }
+            }
+        }
     }
 }

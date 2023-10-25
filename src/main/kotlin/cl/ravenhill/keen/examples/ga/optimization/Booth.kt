@@ -27,7 +27,7 @@ import kotlin.math.pow
  * @since 2.0.0
  * @version 2.0.0
  */
-private fun booth(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
+private fun booth(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
     (x + 2 * y - 7).pow(2) + (2 * x + y - 5).pow(2)
 }
 

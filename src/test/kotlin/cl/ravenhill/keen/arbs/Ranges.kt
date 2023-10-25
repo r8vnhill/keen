@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.arbs
 
 import cl.ravenhill.orderedPair
+import cl.ravenhill.real
 import cl.ravenhill.utils.DoubleRange
 import cl.ravenhill.utils.toRange
 import io.kotest.property.Arb
@@ -38,7 +39,7 @@ fun Arb.Companion.charRange(
  * @return An arbitrary of [DoubleRange].
  */
 fun Arb.Companion.doubleRange() = arbitrary {
-    orderedPair(double()).bind().toRange()
+    orderedPair(real()).bind().toRange()
 }
 
 /**

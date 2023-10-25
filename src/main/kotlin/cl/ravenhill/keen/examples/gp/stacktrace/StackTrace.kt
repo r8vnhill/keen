@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.examples.gp.stacktrace
 
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -17,7 +17,7 @@ typealias Instruction = Pair<KFunction<*>, Map<KParameter, Any?>>
 
 typealias MCR = MinimalCrashReproduction
 
-data class MinimalCrashReproduction(val program: Phenotype<Instruction, InstructionGene>) {
+data class MinimalCrashReproduction(val program: Individual<Instruction, InstructionGene>) {
 
     /// Documentation inherited from [Any].
     override fun toString() = program.genotype.toString()
