@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.genetic.GeneticMaterial
+import cl.ravenhill.keen.util.MultiStringFormat
 import cl.ravenhill.keen.util.SelfReferential
 
 /**
@@ -31,7 +32,10 @@ import cl.ravenhill.keen.util.SelfReferential
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Gene<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, SelfReferential<G> {
+interface Gene<DNA, G> :
+    GeneticMaterial<DNA, G>,
+    SelfReferential<G>,
+    MultiStringFormat where G : Gene<DNA, G> {
 
     val dna: DNA
 
@@ -54,5 +58,9 @@ interface Gene<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, SelfReferential
     fun withDna(dna: DNA): G
 
     // / Documentation inherited from [GeneticMaterial]
-    override fun flatMap(transform: (DNA) -> DNA) = listOf(dna)
+    override fun flatMap(transform: (DNA) -> DNA) = listOf(transform(dna))
+
+    override fun toSimpleString() = dna.toString()
+
+    override fun toFullString() = "${this::class.simpleName}(dna=$dna)"
 }

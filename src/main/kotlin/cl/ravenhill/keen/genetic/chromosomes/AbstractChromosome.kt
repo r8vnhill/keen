@@ -7,7 +7,6 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.genetic.genes.Gene
 
-
 /**
  * An implementation of the [Chromosome] interface that provides a basic implementation of the
  * [toString] method.
@@ -31,5 +30,15 @@ abstract class AbstractChromosome<DNA, G : Gene<DNA, G>>(override val genes: Lis
      *
      * Example: [Gene1, Gene2, Gene3].
      */
-    override fun toString() = genes.joinToString(separator = ", ", prefix = "[", postfix = "]")
+    override fun toSimpleString() = genes.joinToString(
+        separator = ", ",
+        prefix = "[",
+        postfix = "]"
+    ) { it.toSimpleString() }
+
+    override fun toString() =
+        "${this::class.simpleName}(genes=${toSimpleString()})"
+
+    override fun toFullString() =
+        "${this::class.simpleName}(genes=${genes.map { it.toFullString() }}"
 }

@@ -7,9 +7,7 @@ package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.IntRequirement
-import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -42,6 +40,13 @@ data class IntChromosome(override val genes: List<IntGene>) :
 
     // / Documentation inherited from [Chromosome]
     override fun withGenes(genes: List<IntGene>) = IntChromosome(genes)
+
+    override fun toSimpleString() =
+        "[ ${genes.joinToString(", ") { it.toSimpleString() }} ]"
+
+    override fun toString(): String {
+        return "IntChromosome(genes=[${genes.joinToString(", ") { it.toSimpleString() }}])"
+    }
 
     /**
      * A [Chromosome.Factory] for [IntChromosome]s.
@@ -91,17 +96,17 @@ data class IntChromosome(override val genes: List<IntGene>) :
             enforce {
                 if (ranges.size > 1) {
                     (
-                        "When creating a chromosome with more than one range, the number of ranges " +
-                            "must be equal to the number of genes"
-                        ) {
+                          "When creating a chromosome with more than one range, the number of ranges " +
+                                "must be equal to the number of genes"
+                          ) {
                         ranges.size must IntRequirement.BeEqualTo(size)
                     }
                 }
                 if (filters.size > 1) {
                     (
-                        "When creating a chromosome with more than one filter, the number of " +
-                            "filters must be equal to the number of genes"
-                        ) {
+                          "When creating a chromosome with more than one filter, the number of " +
+                                "filters must be equal to the number of genes"
+                          ) {
                         filters.size must IntRequirement.BeEqualTo(size)
                     }
                 }

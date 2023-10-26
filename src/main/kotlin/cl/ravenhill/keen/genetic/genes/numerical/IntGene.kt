@@ -37,7 +37,7 @@ import java.util.Objects
  * @since 1.0.0
  * @version 2.0.0
  */
-class IntGene(
+data class IntGene(
     override val dna: Int,
     override val range: ClosedRange<Int> = Int.MIN_VALUE..Int.MAX_VALUE,
     override val filter: (Int) -> Boolean = { true },
@@ -84,18 +84,5 @@ class IntGene(
     override fun verify() = dna in range && filter(dna)
     // endregion
 
-    // region : Any Interface Implementation
-    /* Documentation inherited from [Any]   */
-    override fun toString() = "IntGene(dna=$dna, range=$range)"
-
-    /* Documentation inherited from [Any]   */
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is IntGene -> false
-        else -> dna == other.dna
-    }
-
-    /* Documentation inherited from [Any]   */
-    override fun hashCode() = Objects.hash(IntGene::class, dna)
-    // endregion
+    override fun toSimpleString() = dna.toString()
 }

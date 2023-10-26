@@ -159,3 +159,34 @@ interface Ranged<T : Comparable<T>> {
 interface MutableRangedCollection<T : Comparable<T>> {
     var ranges: MutableList<ClosedRange<T>>
 }
+
+/**
+ * Represents an entity that can be converted to multiple string formats.
+ *
+ * This interface provides methods to obtain both a simple and a full
+ * representation of the implementing object. This allows for flexibility
+ * in how the object's data is presented in different scenarios.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+interface MultiStringFormat {
+
+    /**
+     * Converts the implementing object into its simple string representation.
+     * This representation is typically a brief summary or a concise view of the object.
+     *
+     * @return A simple string representation of the object.
+     */
+    fun toSimpleString(): String
+
+    /**
+     * Converts the implementing object into its full string representation.
+     * This representation typically provides detailed information about the object,
+     * potentially including all of its attributes or properties.
+     *
+     * @return A detailed string representation of the object.
+     */
+    fun toFullString(): String
+}

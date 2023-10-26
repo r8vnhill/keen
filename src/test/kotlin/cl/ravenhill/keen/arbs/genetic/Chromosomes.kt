@@ -8,13 +8,12 @@ package cl.ravenhill.keen.arbs.genetic
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
+import cl.ravenhill.keen.genetic.genes.NothingGene
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.char
-import io.kotest.property.arbitrary.choice
-import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.*
 
 /**
  * Provides an arbitrary generator for creating random [Chromosome] instances of various types.
@@ -30,7 +29,8 @@ fun Arb.Companion.chromosome() = choice(
     boolChromosome(),
     charChromosome(),
     doubleChromosome(),
-    intChromosome()
+    intChromosome(),
+    nothingChromosome()
 )
 
 /**
@@ -86,4 +86,8 @@ fun Arb.Companion.doubleChromosome() = arbitrary {
  */
 fun Arb.Companion.intChromosome() = arbitrary {
     IntChromosome(list(intGene(), 0..100).bind())
+}
+
+fun Arb.Companion.nothingChromosome() = arbitrary {
+    NothingChromosome(list(constant(NothingGene)).bind())
 }

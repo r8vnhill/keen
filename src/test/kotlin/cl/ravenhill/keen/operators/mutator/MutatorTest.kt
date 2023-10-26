@@ -5,19 +5,24 @@
 
 package cl.ravenhill.keen.operators.mutator
 
+import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.arbs.genetic.geneticMaterial
 import cl.ravenhill.keen.arbs.genetic.intGene
+import cl.ravenhill.keen.arbs.genetic.intGenotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
+import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.negativeDouble
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.checkAll
@@ -25,7 +30,38 @@ import io.kotest.property.checkAll
 class MutatorTest : FreeSpec({
 
     "A [Mutator]" - {
-        "when created" - {
+        "when created with a probability" - {
+            "should store the given value" {
+                checkAll(Arb.real(0.0..1.0)) { probability ->
+                    DummyMutator<Nothing, NothingGene>(probability).probability
+                        .shouldBe(probability)
+                }
+            }
+
+            "should throw an exception if the probability is less than 0" {
+                checkAll(Arb.negativeDouble()) { probability ->
+                    shouldThrow<EnforcementException> {
+                        DummyMutator<Nothing, NothingGene>(probability)
+                    }.shouldHaveInfringement<DoubleRequirementException>(
+                        unfulfilledConstraint(
+                            "The mutation probability [$probability] must be in 0.0..1.0"
+                        )
+                    )
+                }
+            }
+        }
+
+        "can mutate a genotype" {
+            // TODO: Generalize genotype
+            checkAll(
+                Arb.intGenotype(),
+                Arb.real(0.0..1.0)
+            ) { genotype, probability ->
+                with(DummyMutator<Int, IntGene>(probability).mutateGenotype(genotype)) {
+                    mutated shouldBe genotype
+                    mutations shouldBe 0
+                }
+            }
         }
     }
 
@@ -100,9 +136,10 @@ class MutatorTest : FreeSpec({
  * @version 2.0.0
  * @since 2.0.0
  */
-private class DummyMutator(probability: Double) :
-    AbstractMutator<Nothing, NothingGene>(probability) {
+private class DummyMutator<DNA, G>(probability: Double) :
+    AbstractMutator<DNA, G>(probability) where G : Gene<DNA, G> {
 
-    override fun mutateChromosome(chromosome: Chromosome<Nothing, NothingGene>) =
+    override fun mutateChromosome(chromosome: Chromosome<DNA, G>) =
         MutatorResult(chromosome)
 }
+

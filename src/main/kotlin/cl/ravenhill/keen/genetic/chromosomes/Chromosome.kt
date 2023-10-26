@@ -9,6 +9,7 @@ import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.MultiStringFormat
 import kotlin.properties.Delegates
 
 /**
@@ -35,7 +36,10 @@ import kotlin.properties.Delegates
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Chromosome<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<G> {
+interface Chromosome<DNA, G> :
+    GeneticMaterial<DNA, G>,
+    Iterable<G>,
+    MultiStringFormat where G : Gene<DNA, G> {
 
     val genes: List<G>
 
@@ -59,9 +63,10 @@ interface Chromosome<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<
     fun withGenes(genes: List<G>): Chromosome<DNA, G>
 
     /* Documentation inherited from [GeneticMaterial]. */
-    override fun flatMap(transform: (DNA) -> DNA): List<DNA> = genes.fold(mutableListOf()) { acc, gene ->
-        acc.apply { addAll(gene.flatMap()) }
-    }
+    override fun flatMap(transform: (DNA) -> DNA): List<DNA> =
+        genes.fold(mutableListOf()) { acc, gene ->
+            acc.apply { addAll(gene.flatMap()) }
+        }
 
     /**
      * Factory interface for creating [Chromosome] objects.
@@ -97,4 +102,10 @@ interface Chromosome<DNA, G : Gene<DNA, G>> : GeneticMaterial<DNA, G>, Iterable<
         /* Documentation inherited from [Factory]. */
         override var executor: ConstructorExecutor<G> = SequentialConstructor()
     }
+
+    /* Documentation inherited from [MultiStringFormat] */
+    override fun toSimpleString() = toString()
+
+    /* Documentation inherited from [MultiStringFormat] */
+    override fun toFullString() = toString()
 }

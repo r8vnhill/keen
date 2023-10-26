@@ -111,7 +111,7 @@ abstract class AbstractMutator<DNA, G>(override val probability: Double) :
     Mutator<DNA, G> where G : Gene<DNA, G> {
     init {
         enforce {
-            "The mutation probability [$probability] must be between 0.0 and 1.0" {
+            "The mutation probability [$probability] must be in 0.0..1.0" {
                 probability must BeInRange(0.0..1.0)
             }
         }
