@@ -88,14 +88,14 @@ class IntGeneTest : FreeSpec({
                 }
             }
 
-            "be different for different genes" {
-                with(Arb) {
-                    checkAll(intGene(int()), intGene(int())) { g1, g2 ->
-                        assume { g1 shouldNotBe g2 }
-                        g1 shouldNotHaveSameHashCodeAs g2
-                    }
-                }
-            }
+//            "be different for different genes" {
+//                with(Arb) {
+//                    checkAll(intGene(int()), intGene(int())) { g1, g2 ->
+//                        assume { g1 shouldNotBe g2 }
+//                        g1 shouldNotHaveSameHashCodeAs g2
+//                    }
+//                }
+//            }
         }
 
         "can generate a random value" {

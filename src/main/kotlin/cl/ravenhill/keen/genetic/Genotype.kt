@@ -6,12 +6,9 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import java.util.Objects
-
 
 /**
  * A set of [Chromosome] objects that encodes a collection of genetic data.
@@ -54,7 +51,6 @@ data class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA,
     // Inherit documentation from GeneticMaterial
     override fun flatMap(transform: (DNA) -> DNA) = chromosomes.flatMap { it.flatMap(transform) }
 
-
     /**
      * Returns the [Chromosome] at the given `index`.
      */
@@ -69,6 +65,14 @@ data class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA,
 
     // Inherit documentation from Iterable
     override fun iterator() = chromosomes.iterator()
+
+    override fun toSimpleString() = chromosomes.joinToString(
+        prefix = "[ ",
+        postfix = " ]",
+        separator = ", "
+    ) { it.toSimpleString() }
+
+    override fun toString() = "Genotype(chromosomes=${toSimpleString()})"
 
     /**
      * A builder for creating [Genotype] instances with a set of chromosomes.

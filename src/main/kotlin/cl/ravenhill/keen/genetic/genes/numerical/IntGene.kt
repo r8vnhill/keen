@@ -8,12 +8,11 @@ package cl.ravenhill.keen.genetic.genes.numerical
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.keen.util.Ranged
 import cl.ravenhill.keen.util.nextIntInRange
 import cl.ravenhill.utils.IntToInt
 import cl.ravenhill.utils.toRange
-import java.util.Objects
+import java.util.*
 
 /**
  * A gene that stores a 32-bit floating point number value.
@@ -85,4 +84,16 @@ data class IntGene(
     // endregion
 
     override fun toSimpleString() = dna.toString()
+
+    override fun equals(other: Any?) = when {
+        other !is IntGene -> false
+        other::class != IntGene::class -> false
+        other.dna != dna -> false
+        other.range.start != range.start -> false
+        other.range.endInclusive != range.endInclusive -> false
+        else -> true
+    }
+
+    override fun hashCode() =
+        Objects.hash(IntGene::class, dna, range.start, range.endInclusive)
 }

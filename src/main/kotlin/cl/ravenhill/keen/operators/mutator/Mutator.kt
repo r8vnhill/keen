@@ -14,6 +14,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.Alterer
 import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.util.eq
@@ -26,10 +27,14 @@ import cl.ravenhill.keen.util.eq
  * Mutation operations modify individual genes based on mutation-specific logic.
  * This is essential for introducing new genetic variations within the population.
  *
+ * @property chromosomeRate The probability of mutation for each chromosome.
+ *
  * @param DNA The type of genetic data the gene represents.
  * @param G The type of gene being mutated, parametrized by its DNA and its own type.
  */
 interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
+
+    val chromosomeRate: Double
 
     /**
      * Performs mutation operations on the entire population.
@@ -44,7 +49,7 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
     ): AltererResult<DNA, G> {
         if (probability eq 0.0) return AltererResult(population)
         val result = population.map {
-            mutatePhenotype(it)
+            mutateIndividual(it)
         }
         return AltererResult(
             result.map { it.mutated },
@@ -58,7 +63,7 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
      * @param individual The phenotype to be mutated.
      * @return The mutated phenotype.
      */
-    fun mutatePhenotype(
+    fun mutateIndividual(
         individual: Individual<DNA, G>,
     ): MutatorResult<DNA, G, Individual<DNA, G>> =
         mutateGenotype(individual.genotype).map {
@@ -107,12 +112,15 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
  * @version 2.0.0
  * @since 2.0.0
  */
-abstract class AbstractMutator<DNA, G>(override val probability: Double) :
-    Mutator<DNA, G> where G : Gene<DNA, G> {
+abstract class AbstractMutator<DNA, G>(
+    probability: Double,
+    override val chromosomeRate: Double = 0.5
+) : AbstractAlterer<DNA, G>(probability), Mutator<DNA, G> where G : Gene<DNA, G> {
+
     init {
         enforce {
-            "The mutation probability [$probability] must be in 0.0..1.0" {
-                probability must BeInRange(0.0..1.0)
+            "The chromosome mutation probability [$chromosomeRate] must be in 0.0..1.0" {
+                chromosomeRate must BeInRange(0.0..1.0)
             }
         }
     }

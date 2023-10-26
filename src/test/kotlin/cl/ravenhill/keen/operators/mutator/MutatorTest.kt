@@ -5,12 +5,14 @@
 
 package cl.ravenhill.keen.operators.mutator
 
-import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.arbs.genetic.geneticMaterial
+import cl.ravenhill.keen.arbs.genetic.individual
 import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.arbs.genetic.intGenotype
+import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.assertions.operations.`should enforce valid mutation probability`
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -20,11 +22,14 @@ import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.negativeDouble
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
+import io.kotest.property.arbitrary.positiveDouble
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 class MutatorTest : FreeSpec({
@@ -38,15 +43,30 @@ class MutatorTest : FreeSpec({
                 }
             }
 
-            "should throw an exception if the probability is less than 0" {
-                checkAll(Arb.negativeDouble()) { probability ->
-                    shouldThrow<EnforcementException> {
-                        DummyMutator<Nothing, NothingGene>(probability)
-                    }.shouldHaveInfringement<DoubleRequirementException>(
-                        unfulfilledConstraint(
-                            "The mutation probability [$probability] must be in 0.0..1.0"
+            "should throw an exception when" - {
+                "the chromosome mutation rate is negative" {
+                    `should enforce valid mutation probability`(
+                        Arb.negativeDouble(),
+                        "chromosome mutation probability"
+                    ) { probability, chromosomeRate ->
+                        DummyMutator<Nothing, NothingGene>(
+                            probability,
+                            chromosomeRate
                         )
-                    )
+                    }
+                }
+
+                "the chromosome mutation rate is greater than 1" {
+                    `should enforce valid mutation probability`(
+                        Arb.positiveDouble(),
+                        "chromosome mutation probability",
+                        { assume { it shouldBeGreaterThan 1.0 } }
+                    ) { probability, chromosomeRate ->
+                        DummyMutator<Nothing, NothingGene>(
+                            probability,
+                            chromosomeRate
+                        )
+                    }
                 }
             }
         }
@@ -60,6 +80,24 @@ class MutatorTest : FreeSpec({
                 with(DummyMutator<Int, IntGene>(probability).mutateGenotype(genotype)) {
                     mutated shouldBe genotype
                     mutations shouldBe 0
+                }
+            }
+        }
+
+        "can mutate an individual" {
+            checkAll(Arb.individual(Arb.intGenotype())) { individual ->
+                with(DummyMutator<Int, IntGene>(0.0).mutateIndividual(individual)) {
+                    mutated shouldBe individual
+                    mutations shouldBe 0
+                }
+            }
+        }
+
+        "can mutate a population" {
+            checkAll(Arb.population()) { population ->
+                with(DummyMutator<Int, IntGene>(1.0)(population, 0)) {
+                    this.population shouldBe population
+                    this.alterations shouldBe 0
                 }
             }
         }
@@ -136,10 +174,9 @@ class MutatorTest : FreeSpec({
  * @version 2.0.0
  * @since 2.0.0
  */
-private class DummyMutator<DNA, G>(probability: Double) :
-    AbstractMutator<DNA, G>(probability) where G : Gene<DNA, G> {
+private class DummyMutator<DNA, G>(probability: Double, chromosomeRate: Double = 0.5) :
+    AbstractMutator<DNA, G>(probability, chromosomeRate) where G : Gene<DNA, G> {
 
     override fun mutateChromosome(chromosome: Chromosome<DNA, G>) =
         MutatorResult(chromosome)
 }
-

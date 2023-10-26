@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2023, Ignacio Slater M.
- * BSD Zero Clause License.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.mutator
@@ -10,7 +10,6 @@ import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.eq
 
 /**
@@ -35,7 +34,7 @@ import cl.ravenhill.keen.util.eq
  *  ```
  *
  * @property probability The global probability of mutation for the entire chromosome.
- * @property geneProbability The probability for each individual gene to be mutated.
+ * @property geneRate The probability for each individual gene to be mutated.
  *                           By default, this is set to 0.5 meaning each gene has a
  *                           50% chance to mutate.
  *
@@ -44,26 +43,31 @@ import cl.ravenhill.keen.util.eq
  * @version 2.0.0
  */
 class BitFlipMutator<G : Gene<Boolean, G>>(
-    override val probability: Double,
-    private val geneProbability: Double = 0.5,
-) : Mutator<Boolean, G> {
+    probability: Double,
+    chromosomeRate: Double = 0.5,
+    val geneRate: Double = 0.5
+) : AbstractMutator<Boolean, G>(probability, chromosomeRate) {
 
     init {
         enforce {
-            "The mutation probability must be between 0.0 and 1.0" {
-                probability must BeInRange(0.0..1.0)
+            "The gene rate [$geneRate] must be in 0.0..1.0" {
+                geneRate must BeInRange(0.0..1.0)
             }
         }
     }
 
     override fun mutateChromosome(
         chromosome: Chromosome<Boolean, G>,
-    ): MutatorResult<Boolean, G, Chromosome<Boolean, G>> {
-        val result = chromosome.genes.map { mutateGene(it) }
-        return MutatorResult(
-            chromosome.withGenes(result.map { it.mutated }),
-            result.sumOf { it.mutations }
-        )
+    ) = when {
+        Core.random.nextDouble() < chromosomeRate -> {
+            val result = chromosome.genes.map { mutateGene(it) }
+            MutatorResult(
+                chromosome.withGenes(result.map { it.mutated }),
+                result.sumOf { it.mutations }
+            )
+        }
+
+        else -> MutatorResult(chromosome)
     }
 
     /**
@@ -73,12 +77,11 @@ class BitFlipMutator<G : Gene<Boolean, G>>(
      * @return Returns a `MutatorResult` that contains the mutated gene and the
      *         number of mutations applied.
      */
-    private fun mutateGene(gene: G) = when {
-        probability eq 0.0 -> MutatorResult(gene)
-        geneProbability eq 1.0 || Core.Dice.probability() < geneProbability ->
+    fun mutateGene(gene: G) = when {
+        geneRate eq 0.0 -> MutatorResult(gene)
+        geneRate eq 1.0 || Core.random.nextDouble() < geneRate ->
             MutatorResult(gene.withDna(!gene.dna), 1)
 
         else -> MutatorResult(gene)
     }
 }
-

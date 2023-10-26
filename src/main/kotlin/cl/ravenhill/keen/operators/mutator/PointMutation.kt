@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.enforcer.Enforcement.enforce
@@ -10,7 +15,8 @@ import cl.ravenhill.keen.util.trees.Tree
 
 class PointMutation<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
     override val probability: Double,
-    val geneProbability: Double
+    override val chromosomeRate: Double = 0.5,
+    val geneProbability: Double = 0.5
 ) : Mutator<DNA, G> {
 
     init {
@@ -34,8 +40,6 @@ class PointMutation<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
         geneProbability eq 0.0 -> MutatorResult(gene)
         geneProbability eq 1.0 || Core.random.nextDouble() < geneProbability -> {
             val dna = gene.dna
-
-
         }
         else -> MutatorResult(gene)
     }

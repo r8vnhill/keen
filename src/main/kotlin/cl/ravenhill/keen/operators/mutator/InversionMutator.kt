@@ -29,14 +29,14 @@ import cl.ravenhill.keen.probability
  */
 class InversionMutator<DNA, G : Gene<DNA, G>>(
     override val probability: Double,
-    private val chromosomeProbability: Double = 0.5,
+    override val chromosomeRate: Double = 0.5,
     private val geneProbability: Double = 0.5,
 ) : Mutator<DNA, G> {
 
     /* Documentation inherited from [Mutator] */
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
-    ) = if (Core.random.nextDouble() < chromosomeProbability && chromosome.size > 1) {
+    ) = if (Core.random.nextDouble() < chromosomeRate && chromosome.size > 1) {
         val genes = chromosome.genes.toMutableList()
         var start = 0
         var end = chromosome.size - 1

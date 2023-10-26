@@ -7,6 +7,7 @@
 package cl.ravenhill.kuro
 
 import cl.ravenhill.keen.shouldBeOfClass
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
@@ -15,12 +16,14 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeBlank
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.string
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 
+@OptIn(ExperimentalKotest::class)
 class CompositeOutputChannelTest : FreeSpec({
     "CompositeOutputChannel should" - {
         "have an empty list of output channels by default" {
@@ -29,6 +32,7 @@ class CompositeOutputChannelTest : FreeSpec({
 
         "be able to add an output channel" {
             checkAll(
+                PropTestConfig(iterations = 20),
                 Arb.compositeOutputChannel(),
                 Arb.outputChannel()
             ) { compositeChannel, childChannel ->

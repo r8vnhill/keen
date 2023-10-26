@@ -7,7 +7,7 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.isNotNan
-import java.util.Objects
+import java.util.*
 
 /**
  * Represents a phenotype, which is a combination of a genotype (collection of genetic data)
@@ -71,4 +71,18 @@ data class Individual<DNA, G : Gene<DNA, G>>(
 
     // Inherit documentation from GeneticMaterial
     override fun flatMap(transform: (DNA) -> DNA) = genotype.flatMap(transform)
+
+    override fun toSimpleString() = "${genotype.toSimpleString()} -> $fitness"
+
+    override fun toString() =
+        "Individual(genotype=${genotype.toSimpleString()}, fitness=$fitness)"
+
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is Individual<*, *> -> false
+        genotype != other.genotype -> false
+        else -> true
+    }
+
+    override fun hashCode() = Objects.hash(Individual::class, genotype)
 }

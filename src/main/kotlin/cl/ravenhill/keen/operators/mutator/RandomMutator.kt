@@ -37,14 +37,15 @@ import cl.ravenhill.keen.util.eq
  * @constructor Creates a new [RandomMutator] with the given [probability]
  */
 class RandomMutator<DNA, G : Gene<DNA, G>>(
-    override val probability: Double,
-    val geneProbability: Double = 0.5,
-) : Mutator<DNA, G> {
+    probability: Double,
+    chromosomeRate: Double = 0.5,
+    val geneRate: Double = 0.5,
+) : AbstractMutator<DNA, G>(probability, chromosomeRate) {
 
     init {
         enforce {
-            "The mutation probability must be between 0.0 and 1.0" {
-                probability must BeInRange(0.0..1.0)
+            "The gene rate [$geneRate] must be in 0.0..1.0" {
+                geneRate must BeInRange(0.0..1.0)
             }
         }
     }
@@ -80,13 +81,10 @@ class RandomMutator<DNA, G : Gene<DNA, G>>(
      *     gene is returned.
      */
     private fun mutateGene(gene: G) = when {
-        geneProbability eq 0.0 -> MutatorResult(gene)
-        geneProbability eq 1.0 || Dice.probability() < geneProbability ->
+        geneRate eq 0.0 -> MutatorResult(gene)
+        geneRate eq 1.0 || Dice.probability() < geneRate ->
             MutatorResult(gene.mutate(), 1)
 
         else -> MutatorResult(gene)
     }
-
-    override fun toString() = "Mutator { " +
-        "probability: $probability }"
 }

@@ -25,12 +25,12 @@ import cl.ravenhill.keen.util.swap
  */
 class SwapMutator<DNA, G : Gene<DNA, G>>(
     override val probability: Double = 0.2,
-    private val chromosomeProbability: Double = 0.5,
+    override val chromosomeRate: Double = 0.5,
     private val geneProbability: Double = 0.5
 ) : Mutator<DNA, G> {
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
-    ) = if (chromosomeProbability neq 0.0 && chromosome.size > 1) {
+    ) = if (chromosomeRate neq 0.0 && chromosome.size > 1) {
         val genes = chromosome.genes.toMutableList()
         val indices = Core.random.indices(geneProbability, genes.size)
         val mutations = indices
