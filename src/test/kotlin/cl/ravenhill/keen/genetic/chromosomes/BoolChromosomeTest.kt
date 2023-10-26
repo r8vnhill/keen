@@ -118,7 +118,7 @@ class BoolChromosomeTest : FreeSpec({
                         )
                     )
                 ) { (expected: String, chromosome: BoolChromosome) ->
-                    chromosome.toBinaryString() shouldBe expected
+                    chromosome.toSimpleString() shouldBe expected
                 }
             }
         }

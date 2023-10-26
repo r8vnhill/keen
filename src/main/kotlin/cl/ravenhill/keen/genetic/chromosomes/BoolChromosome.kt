@@ -101,7 +101,7 @@ data class BoolChromosome(
      *
      * @return a string representation of the chromosome in binary format.
      */
-    fun toBinaryString(): String {
+    override fun toSimpleString(): String {
         // Calculate the required size, rounding up to a multiple of 8.
         val size = genes.size.roundUpToMultipleOf(8)
 
@@ -113,6 +113,11 @@ data class BoolChromosome(
             .chunked(8) { it.joinToString(separator = "") }
             .joinToString(separator = "|")
     }
+
+    override fun toString() = "BoolChromosome(genes=${toSimpleString()})"
+
+    override fun toFullString() =
+        "BoolChromosome(genes=${genes.map { it.toFullString() }})"
 
     /**
      * Factory for [BoolChromosome]s.
