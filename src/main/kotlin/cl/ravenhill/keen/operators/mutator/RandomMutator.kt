@@ -7,14 +7,13 @@ package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.keen.Core.Dice
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.probability
-import cl.ravenhill.keen.util.eq
 
 /**
  * The mutator operator is responsible for mutating the [Genotype] of the [Individual]s in the
@@ -81,9 +80,10 @@ class RandomMutator<DNA, G : Gene<DNA, G>>(
      *     gene is returned.
      */
     private fun mutateGene(gene: G) = when {
-        geneRate eq 0.0 -> MutatorResult(gene)
-        geneRate eq 1.0 || Dice.probability() < geneRate ->
-            MutatorResult(gene.mutate(), 1)
+        Core.random.nextDouble() < geneRate -> {
+            val result = gene.mutate()
+            MutatorResult(result, 1)
+        }
 
         else -> MutatorResult(gene)
     }

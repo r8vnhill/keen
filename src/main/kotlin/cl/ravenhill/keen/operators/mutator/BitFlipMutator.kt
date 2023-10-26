@@ -45,8 +45,8 @@ import cl.ravenhill.keen.util.eq
 class BitFlipMutator<G : Gene<Boolean, G>>(
     probability: Double,
     chromosomeRate: Double = 0.5,
-    val geneRate: Double = 0.5
-) : AbstractMutator<Boolean, G>(probability, chromosomeRate) {
+    override val geneRate: Double = 0.5
+) : AbstractMutator<Boolean, G>(probability, chromosomeRate), GeneMutator<Boolean, G> {
 
     init {
         enforce {
@@ -77,7 +77,7 @@ class BitFlipMutator<G : Gene<Boolean, G>>(
      * @return Returns a `MutatorResult` that contains the mutated gene and the
      *         number of mutations applied.
      */
-    fun mutateGene(gene: G) = when {
+    override fun mutateGene(gene: G) = when {
         geneRate eq 0.0 -> MutatorResult(gene)
         geneRate eq 1.0 || Core.random.nextDouble() < geneRate ->
             MutatorResult(gene.withDna(!gene.dna), 1)
