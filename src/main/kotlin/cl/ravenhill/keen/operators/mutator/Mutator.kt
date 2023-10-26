@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.GeneticMaterial
@@ -89,6 +90,32 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
     fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
     ): MutatorResult<DNA, G, Chromosome<DNA, G>>
+}
+
+/**
+ * Provides a skeletal implementation of the [Mutator] interface to minimize the effort
+ * required to implement mutation operations.
+ *
+ * This abstract class checks and enforces the mutation probability to be between 0.0 and 1.0, ensuring valid
+ * probability values for mutation operations.
+ *
+ * @param DNA The type of genetic data the gene represents.
+ * @param G The type of gene being mutated,  parametrized by its DNA and its own type.
+ * @property probability The probability of mutation, which must be between 0.0 and 1.0.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+abstract class AbstractMutator<DNA, G>(override val probability: Double) :
+    Mutator<DNA, G> where G : Gene<DNA, G> {
+    init {
+        enforce {
+            "The mutation probability [$probability] must be between 0.0 and 1.0" {
+                probability must BeInRange(0.0..1.0)
+            }
+        }
+    }
 }
 
 /**

@@ -3,13 +3,14 @@
  * 2-Clause BSD License.
  */
 
-
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.arbs.genetic.geneticMaterial
 import cl.ravenhill.keen.arbs.genetic.intGene
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
@@ -21,9 +22,12 @@ import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.checkAll
 
-
 class MutatorTest : FreeSpec({
-    "A [Mutator]" - {}
+
+    "A [Mutator]" - {
+        "when created" - {
+        }
+    }
 
     "A [MutatorResult]" - {
         "when created" - {
@@ -83,3 +87,22 @@ class MutatorTest : FreeSpec({
     }
 })
 
+/**
+ * A dummy implementation of the [AbstractMutator] used primarily for testing and demonstration purposes.
+ *
+ * This mutator does not perform any real mutation operations but simply returns the provided chromosome
+ * as it is without modification.
+ *
+ * @property probability The probability of mutation, inherited from [AbstractMutator]. For `DummyMutator`,
+ * it doesn't have any real implication since mutation isn't performed.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+private class DummyMutator(probability: Double) :
+    AbstractMutator<Nothing, NothingGene>(probability) {
+
+    override fun mutateChromosome(chromosome: Chromosome<Nothing, NothingGene>) =
+        MutatorResult(chromosome)
+}
