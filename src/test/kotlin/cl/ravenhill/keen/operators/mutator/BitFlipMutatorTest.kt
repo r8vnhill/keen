@@ -9,6 +9,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.genetic.boolChromosome
 import cl.ravenhill.keen.arbs.genetic.boolGene
 import cl.ravenhill.keen.assertions.operations.`mutator chromosome rate defaults to one half`
+import cl.ravenhill.keen.assertions.operations.`mutator gene rate defaults to one half`
 import cl.ravenhill.keen.assertions.operations.`should enforce valid mutation probability`
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.real
@@ -33,15 +34,8 @@ class BitFlipMutatorTest : FreeSpec({
             }
 
             "without a gene rate defaults to 0.5" {
-                checkAll(
-                    Arb.real(0.0..1.0),
-                    Arb.real(0.0..0.1)
-                ) { probability, chromosomeRate ->
-                    val mutator =
-                        BitFlipMutator<BoolGene>(probability, chromosomeRate)
-                    mutator.probability shouldBe probability
-                    mutator.chromosomeRate shouldBe chromosomeRate
-                    mutator.geneRate shouldBe 0.5
+                `mutator gene rate defaults to one half` { probability, chromosomeRate ->
+                    BitFlipMutator<BoolGene>(probability, chromosomeRate = chromosomeRate)
                 }
             }
 
