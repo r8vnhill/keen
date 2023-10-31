@@ -38,8 +38,8 @@ import cl.ravenhill.keen.probability
 class RandomMutator<DNA, G : Gene<DNA, G>>(
     probability: Double,
     chromosomeRate: Double = 0.5,
-    val geneRate: Double = 0.5,
-) : AbstractMutator<DNA, G>(probability, chromosomeRate) {
+    override val geneRate: Double = 0.5,
+) : AbstractMutator<DNA, G>(probability, chromosomeRate), GeneMutator<DNA, G> {
 
     init {
         enforce {
@@ -79,7 +79,7 @@ class RandomMutator<DNA, G : Gene<DNA, G>>(
      *     gene is returned, otherwise 0 mutations are performed and a copy of the original
      *     gene is returned.
      */
-    private fun mutateGene(gene: G) = when {
+    override fun mutateGene(gene: G) = when {
         Core.random.nextDouble() < geneRate -> {
             val result = gene.mutate()
             MutatorResult(result, 1)

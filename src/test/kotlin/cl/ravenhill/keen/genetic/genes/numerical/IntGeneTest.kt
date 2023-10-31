@@ -44,7 +44,7 @@ class IntGeneTest : FreeSpec({
             "a [String]" {
                 checkAll<Int> { i ->
                     IntGene(i).toString() shouldBe
-                        "IntGene(dna=$i, range=-2147483648..2147483647)"
+                        "IntGene(dna=$i, range=-2147483648..2147483647, filter=(kotlin.Int) -> kotlin.Boolean)"
                 }
             }
         }

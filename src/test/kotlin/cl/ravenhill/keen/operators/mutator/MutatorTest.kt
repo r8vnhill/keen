@@ -12,7 +12,7 @@ import cl.ravenhill.keen.arbs.genetic.individual
 import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.arbs.genetic.intGenotype
 import cl.ravenhill.keen.arbs.genetic.population
-import cl.ravenhill.keen.assertions.operations.`should enforce valid mutation probability`
+import cl.ravenhill.keen.assertions.operations.mutators.`should enforce valid mutation probability`
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene

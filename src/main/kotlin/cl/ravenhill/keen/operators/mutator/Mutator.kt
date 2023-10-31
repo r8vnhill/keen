@@ -119,7 +119,7 @@ abstract class AbstractMutator<DNA, G>(
 
     init {
         enforce {
-            "The chromosome mutation probability [$chromosomeRate] must be in 0.0..1.0" {
+            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0" {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
         }

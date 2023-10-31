@@ -3,47 +3,14 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.assertions.operations
+package cl.ravenhill.keen.assertions.operations.mutators
 
-import cl.ravenhill.enforcer.DoubleRequirementException
-import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.mutator.GeneMutator
-import cl.ravenhill.keen.operators.mutator.Mutator
-import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.real
-import cl.ravenhill.unfulfilledConstraint
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.checkAll
-
-/**
- * Validates that the mutation probability for a chromosome is within the permissible
- * range [0.0, 1.0].
- * Any mutation probability outside this range should throw an `EnforcementException`.
- *
- * @param probabilityArb Arbitrary probability values within [0.0, 1.0] for mutation.
- * @param mutatorBuilder A function that returns a `Mutator` instance given the mutation
- *                       probability and chromosome mutation rate.
- */
-suspend fun <T, G> `should enforce valid mutation probability`(
-    probabilityArb: Arb<Double>,
-    parameterName: String,
-    assumption: (rate: Double) -> Unit = {},
-    mutatorBuilder: (probability: Double, rate: Double) -> Mutator<T, G>
-) where G : Gene<T, G> {
-    checkAll(Arb.real(0.0..1.0), probabilityArb) { probability, rate ->
-        assumption(rate)
-        shouldThrow<EnforcementException> {
-            mutatorBuilder(probability, rate)
-        }.shouldHaveInfringement<DoubleRequirementException>(
-            unfulfilledConstraint(
-                "The $parameterName [$rate] must be in 0.0..1.0"
-            )
-        )
-    }
-}
 
 /**
  * Tests the default behavior of the chromosome mutation rate for a mutator.
@@ -96,6 +63,46 @@ suspend fun <T, G> `mutator gene rate defaults to one half`(
     mutatorBuilder: (probability: Double, chromosomeRate: Double) -> GeneMutator<T, G>
 ) where G : Gene<T, G> {
     validateMutatorDefaults(0.0..1.0, 0.0..1.0, mutatorBuilder, geneExpected = 0.5)
+}
+
+/**
+ * Validates that a gene mutator is correctly initialized with the specified parameters.
+ *
+ * This function tests the behavior of a mutator built using the provided
+ * [mutatorBuilder].
+ * It iterates over a range of valid probabilities (0.0 to 1.0) for both chromosome and
+ * gene rates.
+ * For each combination of these values, the function constructs a mutator and asserts
+ * that its internal properties (probability, chromosome rate, and gene rate) match the
+ * specified values.
+ *
+ * The purpose of this test is to ensure that the mutator's properties are set correctly
+ * and consistently when it is initialized using different valid parameters.
+ *
+ * @param T The type representing the genetic data or information.
+ * @param G The type of gene that the mutator operates on, which holds [T] type data.
+ * @param mutatorBuilder A builder function that returns a [GeneMutator] instance.
+ *        This function takes in three parameters: ``probability``, ``chromosomeRate``,
+ *        and ``geneRate``.
+ *
+ * @throws AssertionError if any of the assertions within the function fail.
+ *
+ * @see GeneMutator
+ * @see Gene
+ */
+suspend fun <T, G> `mutator with valid parameters`(
+    mutatorBuilder: (probability: Double, chromosomeRate: Double, geneRate: Double) -> GeneMutator<T, G>
+) where G : Gene<T, G> {
+    checkAll(
+        Arb.real(0.0..1.0),
+        Arb.real(0.0..1.0),
+        Arb.real(0.0..1.0)
+    ) { probability, chromosomeRate, geneRate ->
+        val mutator = mutatorBuilder(probability, chromosomeRate, geneRate)
+        mutator.probability shouldBe probability
+        mutator.chromosomeRate shouldBe chromosomeRate
+        mutator.geneRate shouldBe geneRate
+    }
 }
 
 /**
