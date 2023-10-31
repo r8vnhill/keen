@@ -5,7 +5,10 @@
 
 package cl.ravenhill.keen.assertions.operations.mutators
 
+import cl.ravenhill.keen.arbs.genetic.boolGene
+import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.mutator.BitFlipMutator
 import cl.ravenhill.keen.operators.mutator.GeneMutator
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -40,4 +43,3 @@ suspend fun <T, G> `validate unchanged gene with zero mutation rate`(
         result.mutations shouldBe 0
     }
 }
-

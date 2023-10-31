@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.operators.mutator
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator chromosome rate defaults to one half`
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator gene rate defaults to one half`
@@ -15,8 +16,14 @@ import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on nega
 import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on negative gene rate`
 import cl.ravenhill.keen.assertions.operations.mutators.`validate unchanged gene with zero mutation rate`
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import cl.ravenhill.keen.util.nextIntInRange
+import cl.ravenhill.real
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.long
+import io.kotest.property.checkAll
+import kotlin.random.Random
 
 class RandomMutatorTest : FreeSpec({
     "A [RandomMutator]" - {
@@ -73,6 +80,22 @@ class RandomMutatorTest : FreeSpec({
             "should make no mutations if the gene rate is 0" {
                 `validate unchanged gene with zero mutation rate`(Arb.intGene()) {
                     RandomMutator(1.0, geneRate = 0.0)
+                }
+            }
+
+            "should always mutate the gene if the gene rate is 1" {
+                checkAll(
+                    Arb.intGene(),
+                    Arb.real(0.0..1.0),
+                    Arb.real(0.0..1.0),
+                    Arb.long()
+                ) { gene, probability, chromosomeRate, seed ->
+                    Core.random = Random(seed)
+                    val rng = Random(seed).also { it.nextDouble() }
+                    val mutator = RandomMutator<Int, IntGene>(probability, chromosomeRate, geneRate = 1.0)
+                    val result = mutator.mutateGene(gene)
+                    result.mutated shouldBe IntGene(rng.nextIntInRange(gene.range), gene.range)
+                    result.mutations shouldBe 1
                 }
             }
         }
