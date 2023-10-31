@@ -67,8 +67,13 @@ class BitFlipMutatorTest : FreeSpec({
             }
 
             "should flip the gene if the gene rate is 1" {
-                checkAll(Arb.boolGene()) { gene ->
-                    val mutator = BitFlipMutator<BoolGene>(0.0, geneRate = 1.0)
+                checkAll(
+                    Arb.boolGene(),
+                    Arb.real(0.0..1.0),
+                    Arb.real(0.0..1.0)
+                ) { gene, probability, chromosomeRate ->
+                    val mutator =
+                        BitFlipMutator<BoolGene>(probability, chromosomeRate, 1.0)
                     val result = mutator.mutateGene(gene)
                     if (gene.dna) {
                         result.mutated shouldBe BoolGene.False

@@ -3,7 +3,6 @@
  * 2-Clause BSD License.
  */
 
-
 package cl.ravenhill.keen.assertions.operations.mutators
 
 import cl.ravenhill.enforcer.DoubleRequirementException
@@ -20,7 +19,6 @@ import io.kotest.property.arbitrary.negativeDouble
 import io.kotest.property.arbitrary.positiveDouble
 import io.kotest.property.assume
 import io.kotest.property.checkAll
-
 
 /**
  * Validates that the mutation probability for a chromosome is within the permissible

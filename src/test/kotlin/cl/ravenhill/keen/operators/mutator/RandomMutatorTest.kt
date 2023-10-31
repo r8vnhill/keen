@@ -26,6 +26,7 @@ import io.kotest.property.checkAll
 import kotlin.random.Random
 
 class RandomMutatorTest : FreeSpec({
+
     "A [RandomMutator]" - {
         "when created" - {
             "without a chromosome probability then it defaults to 0.5" {
@@ -92,10 +93,42 @@ class RandomMutatorTest : FreeSpec({
                 ) { gene, probability, chromosomeRate, seed ->
                     Core.random = Random(seed)
                     val rng = Random(seed).also { it.nextDouble() }
-                    val mutator = RandomMutator<Int, IntGene>(probability, chromosomeRate, geneRate = 1.0)
+                    val mutator = RandomMutator<Int, IntGene>(
+                        probability, chromosomeRate, geneRate = 1.0
+                    )
                     val result = mutator.mutateGene(gene)
-                    result.mutated shouldBe IntGene(rng.nextIntInRange(gene.range), gene.range)
+                    result.mutated shouldBe IntGene(
+                        rng.nextIntInRange(gene.range), gene.range
+                    )
                     result.mutations shouldBe 1
+                }
+            }
+
+            "should mutate the gene according to the probability" {
+                checkAll(
+                    Arb.intGene(),
+                    Arb.real(0.0..1.0),
+                    Arb.real(0.0..1.0),
+                    Arb.real(0.0..1.0),
+                    Arb.long()
+                ) { gene, probability, chromosomeRate, geneRate, seed ->
+                    Core.random = Random(seed)
+                    val rng = Random(seed)
+                    val mutator = RandomMutator<Int, IntGene>(
+                        probability, chromosomeRate, geneRate
+                    )
+                    val result = mutator.mutateGene(gene)
+                    if (rng.nextDouble() < geneRate) {
+                        // Expect a mutation
+                        result.mutated shouldBe IntGene(
+                            rng.nextIntInRange(gene.range), gene.range
+                        )
+                        result.mutations shouldBe 1
+                    } else {
+                        // Expect no mutation
+                        result.mutated shouldBe gene
+                        result.mutations shouldBe 0
+                    }
                 }
             }
         }
