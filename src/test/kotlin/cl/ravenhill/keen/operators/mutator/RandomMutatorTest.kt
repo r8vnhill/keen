@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.operators.mutator
 
+import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator chromosome rate defaults to one half`
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator gene rate defaults to one half`
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator with valid parameters`
@@ -12,8 +13,10 @@ import cl.ravenhill.keen.assertions.operations.mutators.`throw exception if chro
 import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on gene rate greater than one`
 import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on negative chromosome rate`
 import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on negative gene rate`
+import cl.ravenhill.keen.assertions.operations.mutators.`validate unchanged gene with zero mutation rate`
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.property.Arb
 
 class RandomMutatorTest : FreeSpec({
     "A [RandomMutator]" - {
@@ -66,8 +69,12 @@ class RandomMutatorTest : FreeSpec({
             }
         }
 
-        "when mutating a gene" {
-
+        "when mutating a gene" - {
+            "should make no mutations if the gene rate is 0" {
+                `validate unchanged gene with zero mutation rate`(Arb.intGene()) {
+                    RandomMutator(1.0, geneRate = 0.0)
+                }
+            }
         }
     }
 })
