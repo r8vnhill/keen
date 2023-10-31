@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.crossover.combination
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.crossover.AbstractCrossover
+import cl.ravenhill.keen.operators.crossover.AbstractUniformLenghtCrossover
 import cl.ravenhill.keen.probability
 
 /**
@@ -35,7 +35,7 @@ open class CombineCrossover<DNA, G : Gene<DNA, G>>(
     probability: Double,
     chromosomeRate: Double = 1.0,
     val geneRate: Double = 1.0
-) : AbstractCrossover<DNA, G>(probability, 1, chromosomeRate = chromosomeRate) {
+) : AbstractUniformLenghtCrossover<DNA, G>(probability, 1, chromosomeRate = chromosomeRate) {
 
     /**
      * Combines the genes of the given chromosomes using the combiner function.

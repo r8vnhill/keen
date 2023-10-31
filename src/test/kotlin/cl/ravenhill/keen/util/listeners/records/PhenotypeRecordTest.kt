@@ -1,8 +1,7 @@
 /*
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.keen.util.listeners.records
 
@@ -12,7 +11,6 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
-
 
 /**
  * Test class for validating functionalities of [PhenotypeRecord].

@@ -1,8 +1,7 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.keen.util.trees
 
@@ -11,7 +10,6 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
-
 
 // region : -== TREE NODES ==-
 /**
@@ -75,22 +73,21 @@ data class TypedTree<V>(
     val node: Node<V>,
     override val children: List<TypedTree<V>> = emptyList()
 ) : Tree<Node<V>, TypedTree<V>> {
-    /// Inherit documentation from Tree.
+    // / Inherit documentation from Tree.
     override val arity: Int = node.arity
 
-    /// Inherit documentation from Tree.
+    // / Inherit documentation from Tree.
     override val value = node
 
-    /// Inherit documentation from Tree.
+    // / Inherit documentation from Tree.
     override fun createNode(value: Node<V>, children: List<TypedTree<V>>) =
         TypedTree(value, children)
 
-
-    /// Inherit documentation from Tree.
+    // / Inherit documentation from Tree.
     override val nodes: List<TypedTree<V>>
         get() = listOf(this) + children.flatMap { it.nodes }
 
-    /// Inherit documentation from [Any].
+    // / Inherit documentation from [Any].
     override fun toString() = prettyPrint()
 
     fun prettyPrint(indent: String = ""): String {

@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.*
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.Core
@@ -33,7 +33,7 @@ import cl.ravenhill.keen.util.transpose
  * @param exclusivity If true, individuals cannot be selected more than once for a given crossover operation
  * @param chromosomeRate The probability that a given chromosome within an individual will be selected for recombination
  */
-abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
+abstract class AbstractUniformLenghtCrossover<DNA, G : Gene<DNA, G>>(
     probability: Double,
     val numOut: Int = 2,
     val numIn: Int = 2,
@@ -55,7 +55,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
-    // / Documentation inherited from [Alterer] interface
+    /* Documentation inherited from [Alterer] interface.    */
     override fun invoke(
         population: Population<DNA, G>,
         generation: Int,
@@ -91,10 +91,10 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
 
     override fun crossover(inGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
         enforce {
-            "The number of inputs [${inGenotypes.size}] must be equal to the number of inputs " +
-                "specified in the constructor [$numIn]" {
-                    inGenotypes.size must BeEqualTo(numIn)
-                }
+            val inCount = inGenotypes.size
+            "Input count [$inCount] must match constructor-specified count [$numIn]." {
+                inGenotypes.size must BeEqualTo(numIn)
+            }
             "All inputs must have the same genotype length" {
                 inGenotypes.map { it.size }.distinct().size must BeEqualTo(1)
             }
