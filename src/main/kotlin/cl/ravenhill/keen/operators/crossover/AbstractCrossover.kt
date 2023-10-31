@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.DoubleRequirement.*
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.Core
@@ -34,16 +35,22 @@ import cl.ravenhill.keen.util.transpose
  */
 abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     probability: Double,
-    private val numOut: Int = 2,
-    private val numIn: Int = 2,
-    private val exclusivity: Boolean = false,
-    protected val chromosomeRate: Double = 1.0,
+    val numOut: Int = 2,
+    val numIn: Int = 2,
+    val exclusivity: Boolean = false,
+    val chromosomeRate: Double = 1.0,
 ) : AbstractAlterer<DNA, G>(probability), Crossover<DNA, G> {
 
     init {
         enforce {
             "There should be at least 2 inputs to perform a crossover operation" {
                 numIn must BeAtLeast(2)
+            }
+            "The number of outputs should be greater than 0" {
+                numOut must BeAtLeast(1)
+            }
+            "The chromosome crossover probability should be in 0..1" {
+                chromosomeRate must BeInRange(0.0..1.0)
             }
         }
     }

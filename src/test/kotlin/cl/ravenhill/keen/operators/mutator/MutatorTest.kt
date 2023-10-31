@@ -12,13 +12,13 @@ import cl.ravenhill.keen.arbs.genetic.individual
 import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.arbs.genetic.intGenotype
 import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.arbs.real
 import cl.ravenhill.keen.assertions.operations.mutators.`should enforce valid mutation probability`
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.keen.arbs.real
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec

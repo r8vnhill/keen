@@ -7,7 +7,6 @@ package cl.ravenhill.keen.operators.crossover.combination
 
 import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
 
-
 /**
  * A [CombineCrossover] that performs mean crossover on [NumberGene]s in the chromosome.
  * Given a list of chromosomes, this crossover will take the average of the genes in each chromosome
