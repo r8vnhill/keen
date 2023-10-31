@@ -5,8 +5,11 @@
 
 package cl.ravenhill.keen.assertions.operations.mutators
 
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.mutator.ChromosomeMutator
 import cl.ravenhill.keen.operators.mutator.GeneMutator
+import cl.ravenhill.keen.arbs.real
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.checkAll
@@ -37,6 +40,22 @@ suspend fun <T, G> `validate unchanged gene with zero mutation rate`(
         val mutator = mutatorBuilder()
         val result = mutator.mutateGene(gene)
         result.mutated shouldBe gene
+        result.mutations shouldBe 0
+    }
+}
+
+suspend fun <T, G, C> `validate unchanged chromosome with zero mutation rate`(
+    geneArb: Arb<C>,
+    mutatorBuilder: (Double, Double) -> ChromosomeMutator<T, G>
+) where G : Gene<T, G>, C : Chromosome<T, G> {
+    checkAll(
+        geneArb,
+        Arb.real(0.0..1.0),
+        Arb.real(0.0..1.0)
+    ) { chromosome, probability, geneRate ->
+        val mutator = mutatorBuilder(probability, geneRate)
+        val result = mutator.mutateChromosome(chromosome)
+        result.mutated shouldBe chromosome
         result.mutations shouldBe 0
     }
 }

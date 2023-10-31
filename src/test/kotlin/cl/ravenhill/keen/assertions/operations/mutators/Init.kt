@@ -7,7 +7,7 @@ package cl.ravenhill.keen.assertions.operations.mutators
 
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.mutator.GeneMutator
-import cl.ravenhill.real
+import cl.ravenhill.keen.arbs.real
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.checkAll

@@ -6,7 +6,10 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.arbs.genetic.intChromosome
 import cl.ravenhill.keen.arbs.genetic.intGene
+import cl.ravenhill.keen.arbs.probability
+import cl.ravenhill.keen.arbs.real
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator chromosome rate defaults to one half`
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator gene rate defaults to one half`
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator with valid parameters`
@@ -14,10 +17,11 @@ import cl.ravenhill.keen.assertions.operations.mutators.`throw exception if chro
 import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on gene rate greater than one`
 import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on negative chromosome rate`
 import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on negative gene rate`
+import cl.ravenhill.keen.assertions.operations.mutators.`validate unchanged chromosome with zero mutation rate`
 import cl.ravenhill.keen.assertions.operations.mutators.`validate unchanged gene with zero mutation rate`
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import cl.ravenhill.keen.operators.mutator.strategies.RandomMutator
 import cl.ravenhill.keen.util.nextIntInRange
-import cl.ravenhill.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -129,6 +133,48 @@ class RandomMutatorTest : FreeSpec({
                         result.mutated shouldBe gene
                         result.mutations shouldBe 0
                     }
+                }
+            }
+        }
+
+        "when mutating a chromosome" - {
+            "should make no mutations if the chromosome rate is 0" {
+                `validate unchanged chromosome with zero mutation rate`(
+                    Arb.intChromosome()
+                ) { probability, geneRate ->
+                    RandomMutator(probability, 0.0, geneRate)
+                }
+            }
+
+            "should mutate random genes if chromosome rate is 1" {
+                checkAll(
+                    Arb.intChromosome(),
+                    Arb.probability(),
+                    Arb.probability(),
+                    Arb.long()
+                ) { chromosome, probability, geneRate, seed ->
+                    val mutator = RandomMutator<Int, IntGene>(
+                        probability,
+                        1.0,
+                        geneRate
+                    )
+                    Core.random = Random(seed)
+                    val rng = Random(seed).apply { nextDouble() }
+                    val result = mutator.mutateChromosome(chromosome)
+                    var expectedMutations = 0
+                    result.mutated.zip(chromosome.genes).forEach { (mutated, original) ->
+                        if (rng.nextDouble() < geneRate) {
+                            // Expect a mutation
+                            mutated shouldBe IntGene(
+                                rng.nextIntInRange(original.range), original.range
+                            )
+                            expectedMutations++
+                        } else {
+                            // Expect no mutation
+                            mutated shouldBe original
+                        }
+                    }
+                    result.mutations shouldBe expectedMutations
                 }
             }
         }

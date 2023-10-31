@@ -8,7 +8,7 @@ package cl.ravenhill.utils
 
 import cl.ravenhill.orderedPair
 import cl.ravenhill.orderedTriple
-import cl.ravenhill.real
+import cl.ravenhill.keen.arbs.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult

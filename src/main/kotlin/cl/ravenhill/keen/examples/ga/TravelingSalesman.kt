@@ -17,7 +17,7 @@ package cl.ravenhill.keen.examples.ga
 // import cl.ravenhill.keen.genetic.genes.Gene
 // import cl.ravenhill.keen.limits.GenerationCount
 // import cl.ravenhill.keen.operators.crossover.permutation.PartiallyMappedCrossover
-// import cl.ravenhill.keen.operators.mutator.InversionMutator
+// import cl.ravenhill.keen.operators.mutator.strategies.InversionMutator
 // import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 // import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 // import cl.ravenhill.keen.util.listeners.EvolutionSummary

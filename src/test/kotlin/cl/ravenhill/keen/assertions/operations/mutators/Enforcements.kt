@@ -7,10 +7,10 @@ package cl.ravenhill.keen.assertions.operations.mutators
 
 import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.EnforcementException
+import cl.ravenhill.keen.arbs.real
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.real
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.doubles.shouldBeGreaterThan
@@ -106,7 +106,7 @@ suspend fun <T, G> `throw exception on negative chromosome rate`(
 ) where G : Gene<T, G> {
     `should enforce valid mutation probability`(
         Arb.negativeDouble(),
-        "chromosome rate"
+        "chromosome mutation probability"
     ) { probability, rate ->
         mutatorBuilder(probability, rate)
     }
@@ -117,7 +117,7 @@ suspend fun <T, G> `throw exception if chromosome rate exceeds 1`(
 ) where G : Gene<T, G> {
     `should enforce valid mutation probability`(
         Arb.positiveDouble(),
-        "chromosome rate",
+        "chromosome mutation probability",
         { assume { it shouldBeGreaterThan 1.0 } }
     ) { probability, rate ->
         mutatorBuilder(probability, rate)

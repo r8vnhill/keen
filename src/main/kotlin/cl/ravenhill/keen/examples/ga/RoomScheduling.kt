@@ -1,9 +1,6 @@
 /*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.examples.ga
@@ -17,10 +14,10 @@ import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutator.RandomMutator
-import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.operators.mutator.strategies.RandomMutator
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
+import cl.ravenhill.keen.util.listeners.EvolutionSummary
+import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 
 /**
  * Represents a meeting with a start and end time.
@@ -64,7 +61,8 @@ private val meetings =
 private fun fitnessFn(genotype: Genotype<Int, IntGene>): Double {
     // Create a map to represent the rooms, where the key is the room number and the value is
     // a list of meetings in that room.
-    val rooms = meetings.groupBy { genotype.chromosomes[meetings.indexOf(it)].genes[0].dna }
+    val rooms =
+        meetings.groupBy { genotype.chromosomes[meetings.indexOf(it)].genes[0].dna }
     // Calculate the number of conflicts in each room.
     val conflicts = rooms.values.sumOf { meetingList ->
         val table = IntArray(10) // Create an array to represent the time slots in a day.
@@ -90,13 +88,19 @@ private fun fitnessFn(genotype: Genotype<Int, IntGene>): Double {
  */
 fun main() {
     // Create a genetic algorithm engine with the fitness function and genotype for the problem.
-    val engine = engine(::fitnessFn, genotype {
-        repeat(meetings.size) {
-            chromosome {
-                ints { size = 1; range = meetings.indices.first to meetings.indices.last }
+    val engine = engine(
+        ::fitnessFn,
+        genotype {
+            repeat(meetings.size) {
+                chromosome {
+                    ints {
+                        size = 1
+                        ranges += meetings.indices.first..meetings.indices.last
+                    }
+                }
             }
         }
-    }) {
+    ) {
         // Set the parameters for the genetic algorithm.
         populationSize = 100
         optimizer = FitnessMinimizer()

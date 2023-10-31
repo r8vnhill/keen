@@ -1,8 +1,15 @@
-package cl.ravenhill.keen.operators.mutator
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
+package cl.ravenhill.keen.operators.mutator.strategies
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.MutatorResult
 import cl.ravenhill.keen.util.indices
 import cl.ravenhill.keen.util.neq
 import cl.ravenhill.keen.util.swap

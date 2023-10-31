@@ -8,7 +8,7 @@ package cl.ravenhill.keen.util.collections
 
 import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.shouldEq
-import cl.ravenhill.real
+import cl.ravenhill.keen.arbs.real
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.property.Arb

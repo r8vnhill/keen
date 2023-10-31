@@ -5,10 +5,9 @@
 
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.real
+import cl.ravenhill.keen.arbs.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.RandomSource
 import io.kotest.property.arbitrary.arbitrary

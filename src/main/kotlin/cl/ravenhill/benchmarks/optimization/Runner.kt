@@ -13,7 +13,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.operators.crossover.combination.AverageCrossover
-import cl.ravenhill.keen.operators.mutator.RandomMutator
+import cl.ravenhill.keen.operators.mutator.strategies.RandomMutator
 import cl.ravenhill.keen.operators.selector.RandomSelector
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selector.Selector

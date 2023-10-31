@@ -10,7 +10,7 @@ import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.keen.random
 import cl.ravenhill.orderedPair
 import cl.ravenhill.orderedTriple
-import cl.ravenhill.real
+import cl.ravenhill.keen.arbs.real
 import cl.ravenhill.unfulfilledConstraint
 import cl.ravenhill.utils.toRange
 import io.kotest.assertions.assertSoftly

@@ -1,6 +1,6 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 
@@ -16,7 +16,6 @@ import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.float
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.long
-import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.short
 import io.kotest.property.arbitrary.string
 
@@ -151,16 +150,6 @@ fun <T : Comparable<T>> Arb.Companion.orderedTriple(
     strict: Boolean = false,
     reverted: Boolean = false
 ) = orderedTriple(gen, gen, gen, strict, reverted)
-
-/**
- * Returns an arbitrary generator for [Double] values within the given [range], excluding NaN and
- * infinite values.
- */
-fun Arb.Companion.real(
-    range: ClosedFloatingPointRange<Double> = Double.MIN_VALUE..Double.MAX_VALUE
-) = arbitrary {
-    double(range).next()
-}
 
 /**
  * Returns an arbitrary generator that produces values of [Any] type.

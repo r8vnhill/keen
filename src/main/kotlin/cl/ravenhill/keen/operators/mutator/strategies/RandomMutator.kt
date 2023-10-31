@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.operators.mutator
+package cl.ravenhill.keen.operators.mutator.strategies
 
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
@@ -13,6 +13,10 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.mutator.AbstractMutator
+import cl.ravenhill.keen.operators.mutator.ChromosomeMutator
+import cl.ravenhill.keen.operators.mutator.GeneMutator
+import cl.ravenhill.keen.operators.mutator.MutatorResult
 import cl.ravenhill.keen.probability
 
 /**
@@ -39,7 +43,9 @@ class RandomMutator<DNA, G : Gene<DNA, G>>(
     probability: Double,
     chromosomeRate: Double = 0.5,
     override val geneRate: Double = 0.5,
-) : AbstractMutator<DNA, G>(probability, chromosomeRate), GeneMutator<DNA, G> {
+) : AbstractMutator<DNA, G>(probability, chromosomeRate),
+    GeneMutator<DNA, G>,
+    ChromosomeMutator<DNA, G> {
 
     init {
         enforce {
@@ -56,6 +62,9 @@ class RandomMutator<DNA, G : Gene<DNA, G>>(
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
     ): MutatorResult<DNA, G, Chromosome<DNA, G>> {
+        if (Core.random.nextDouble() > chromosomeRate) {
+            return MutatorResult(chromosome, 0)
+        }
         val result = chromosome.genes.map { mutateGene(it) }
         return MutatorResult(
             chromosome.withGenes(result.map { it.mutated }),

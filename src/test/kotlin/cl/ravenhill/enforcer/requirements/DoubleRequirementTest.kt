@@ -9,7 +9,7 @@ import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeEqualTo
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.orderedPair
-import cl.ravenhill.real
+import cl.ravenhill.keen.arbs.real
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowWithMessage

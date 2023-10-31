@@ -3,13 +3,17 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.operators.mutator
+package cl.ravenhill.keen.operators.mutator.strategies
 
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.mutator.AbstractMutator
+import cl.ravenhill.keen.operators.mutator.ChromosomeMutator
+import cl.ravenhill.keen.operators.mutator.GeneMutator
+import cl.ravenhill.keen.operators.mutator.MutatorResult
 import cl.ravenhill.keen.util.eq
 
 /**
@@ -46,7 +50,9 @@ class BitFlipMutator<G : Gene<Boolean, G>>(
     probability: Double,
     chromosomeRate: Double = 0.5,
     override val geneRate: Double = 0.5
-) : AbstractMutator<Boolean, G>(probability, chromosomeRate), GeneMutator<Boolean, G> {
+) : AbstractMutator<Boolean, G>(probability, chromosomeRate),
+    GeneMutator<Boolean, G>,
+    ChromosomeMutator<Boolean, G> {
 
     init {
         enforce {

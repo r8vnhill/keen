@@ -13,9 +13,11 @@ import cl.ravenhill.keen.assertions.operations.mutators.`mutator gene rate defau
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator with valid parameters`
 import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on gene rate greater than one`
 import cl.ravenhill.keen.assertions.operations.mutators.`throw exception on negative gene rate`
+import cl.ravenhill.keen.assertions.operations.mutators.`validate unchanged chromosome with zero mutation rate`
 import cl.ravenhill.keen.assertions.operations.mutators.`validate unchanged gene with zero mutation rate`
 import cl.ravenhill.keen.genetic.genes.BoolGene
-import cl.ravenhill.real
+import cl.ravenhill.keen.operators.mutator.strategies.BitFlipMutator
+import cl.ravenhill.keen.arbs.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -115,15 +117,10 @@ class BitFlipMutatorTest : FreeSpec({
 
         "when mutating a chromosome" - {
             "should make no mutations if the chromosome rate is 0" {
-                checkAll(
-                    Arb.boolChromosome(),
-                    Arb.real(0.0..1.0)
-                ) { chromosome, probability ->
-                    val mutator =
-                        BitFlipMutator<BoolGene>(probability, chromosomeRate = 0.0)
-                    val result = mutator.mutateChromosome(chromosome)
-                    result.mutated shouldBe chromosome
-                    result.mutations shouldBe 0
+                `validate unchanged chromosome with zero mutation rate`(
+                    Arb.boolChromosome()
+                ) { probability, geneRate ->
+                    BitFlipMutator(probability, 0.0, geneRate)
                 }
             }
 
