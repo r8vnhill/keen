@@ -3,7 +3,6 @@
  * BSD Zero Clause License.
  */
 
-
 package cl.ravenhill.kuro
 
 import cl.ravenhill.keen.shouldBeOfClass
@@ -21,7 +20,6 @@ import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.string
 import io.kotest.property.assume
 import io.kotest.property.checkAll
-
 
 @OptIn(ExperimentalKotest::class)
 class CompositeOutputChannelTest : FreeSpec({

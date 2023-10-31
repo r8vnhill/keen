@@ -3,15 +3,9 @@
  * BSD Zero Clause License.
  */
 
-
 package cl.ravenhill.kuro
 
 import cl.ravenhill.keen.InvalidStateException
-import cl.ravenhill.kuro.BufferedOutputChannel
-import cl.ravenhill.kuro.CompositeOutputChannel
-import cl.ravenhill.kuro.FileOutputChannel
-import cl.ravenhill.kuro.OutputChannel
-import cl.ravenhill.kuro.StdoutChannel
 import io.kotest.matchers.result.FailureMatcher
 import io.kotest.matchers.should
 import io.kotest.property.Arb
@@ -21,7 +15,6 @@ import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.stringPattern
 import io.kotest.property.checkAll
 import java.io.File
-
 
 /**
  * Checks that attempting to add a child channel to an output channel returns a failure.
@@ -33,9 +26,11 @@ suspend fun <T : OutputChannel<T>> `check that trying to add a child channel ret
 ) {
     checkAll(Arb.outputChannel()) { child ->
         val outputChannel = builder()
-        outputChannel.add(child) should FailureMatcher(InvalidStateException(
-            "${outputChannel::class.simpleName}"
-        ) { "Cannot add channel to this channel." })
+        outputChannel.add(child) should FailureMatcher(
+            InvalidStateException(
+                "${outputChannel::class.simpleName}"
+            ) { "Cannot add channel to this channel." }
+        )
     }
 }
 
@@ -53,7 +48,6 @@ fun Arb.Companion.outputChannel() = arbitrary {
         bufferedOutputChannel().bind(),
     ).bind()
 }
-
 
 /**
  * Returns an arbitrary generator for [CompositeOutputChannel].
@@ -111,7 +105,6 @@ fun Arb.Companion.fileOutputChannel(filename: Arb<String>) = arbitrary {
  * Provides arbitrary instances of [BufferedOutputChannel] for property-based testing.
  */
 fun Arb.Companion.bufferedOutputChannel() = arbitrary { BufferedOutputChannel() }
-
 
 /**
  * Returns an [Arb] that generates arbitrary valid filenames.

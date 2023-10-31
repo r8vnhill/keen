@@ -12,7 +12,6 @@ import io.kotest.property.arbitrary.chunked
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 
-
 class BufferedOutputChannelSpec : FreeSpec({
     "BufferedOutputChannel should" - {
         "write to buffer" {

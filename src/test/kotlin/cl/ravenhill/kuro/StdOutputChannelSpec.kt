@@ -16,7 +16,6 @@ import io.kotest.property.arbitrary.string
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
-
 @OptIn(ExperimentalKotest::class)
 class StdOutputChannelSpec : FreeSpec({
     "StdOutputChannel should" - {
