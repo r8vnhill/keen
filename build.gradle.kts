@@ -50,10 +50,10 @@ dependencies {
     // region : -== TESTING ==-
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
     testImplementation("io.kotest.extensions:kotest-property-datetime:1.1.0")
-    testImplementation("io.kotest:kotest-assertions-core:5.5.5")
-    testImplementation("io.kotest:kotest-framework-datatest:5.5.5")
-    testImplementation("io.kotest:kotest-property:5.5.5")
-    testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
+    testImplementation("io.kotest:kotest-assertions-core:5.7.2")
+    testImplementation("io.kotest:kotest-framework-datatest:5.7.2")
+    testImplementation("io.kotest:kotest-property:5.7.2")
+    testImplementation("io.kotest:kotest-runner-junit5:5.7.2")
     // endregion TESTING
 
     // region : -== DOKKA ==-

@@ -8,9 +8,9 @@ package cl.ravenhill.keen.operators.selector
 import cl.ravenhill.enforcer.CollectionRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
-import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer

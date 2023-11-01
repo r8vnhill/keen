@@ -426,7 +426,7 @@ style:
   DataClassShouldBeImmutable:
     active: false
   DestructuringDeclarationWithTooManyEntries:
-    active: true
+    active: false
     maxDestructuringEntries: 3
   DoubleNegativeLambda:
     active: false

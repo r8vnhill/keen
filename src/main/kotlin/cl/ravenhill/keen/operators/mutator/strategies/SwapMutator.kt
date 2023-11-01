@@ -44,8 +44,9 @@ class SwapMutator<DNA, G : Gene<DNA, G>>(
         val genes = chromosome.genes.toMutableList()
         val indices = Core.random.indices(geneRate, genes.size)
         val mutations = indices
-            .map { genes.swap(it, Core.random.nextInt(genes.size)) }
-            .count()
+            .map {
+                Core.random.nextInt(genes.size).apply { genes.swap(it, this) }
+            }.count()
         MutatorResult(chromosome.withGenes(genes), mutations)
     } else {
         MutatorResult(chromosome, 0)

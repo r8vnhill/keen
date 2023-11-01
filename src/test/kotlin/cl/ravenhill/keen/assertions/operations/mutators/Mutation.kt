@@ -46,7 +46,7 @@ suspend fun <T, G> `validate unchanged gene with zero mutation rate`(
 
 suspend fun <T, G, C> `validate unchanged chromosome with zero mutation rate`(
     geneArb: Arb<C>,
-    mutatorBuilder: (Double, Double) -> ChromosomeMutator<T, G>
+    mutatorBuilder: (probability: Double, geneRate: Double) -> ChromosomeMutator<T, G>
 ) where G : Gene<T, G>, C : Chromosome<T, G> {
     checkAll(
         geneArb,
