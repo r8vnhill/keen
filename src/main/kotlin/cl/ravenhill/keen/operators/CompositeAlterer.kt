@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.operators
 
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 
 

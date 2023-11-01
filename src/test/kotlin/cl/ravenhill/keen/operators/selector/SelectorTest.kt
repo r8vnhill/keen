@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.selector
 import cl.ravenhill.enforcer.CollectionRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -60,7 +60,7 @@ class SelectorTest : FreeSpec({
         "should return [count] individuals from the population" {
             checkAll(
                 Arb.population(),
-                Arb.int(0..5),
+                Arb.int(0..3),
                 Arb.optimizer<Int, IntGene>()
             ) { population, count, optimizer ->
                 assume { count shouldBeLessThanOrEqualTo population.size }

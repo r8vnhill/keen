@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.mutator
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual

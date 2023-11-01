@@ -9,7 +9,7 @@ import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 
@@ -21,6 +21,15 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  */
 interface Selector<DNA, G> where G : Gene<DNA, G> {
 
+    /**
+     * Selects a specified number of individuals from a population based on the given optimizer.
+     *
+     * @param population The input population of individuals.
+     * @param count The number of individuals to select.
+     * @param optimizer The optimizer used to evaluate and compare individuals.
+     *
+     * @return The selected individuals, which form a new population.
+     */
     fun select(
         population: Population<DNA, G>,
         count: Int,

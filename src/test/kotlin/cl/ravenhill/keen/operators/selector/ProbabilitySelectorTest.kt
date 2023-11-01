@@ -6,13 +6,12 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
-import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue

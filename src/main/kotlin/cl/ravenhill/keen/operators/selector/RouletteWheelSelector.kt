@@ -1,11 +1,12 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.genetic.fitness
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.eq
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
@@ -41,37 +42,23 @@ class RouletteWheelSelector<DNA, G : Gene<DNA, G>>(override val sorted: Boolean 
         count: Int,
         optimizer: IndividualOptimizer<DNA, G>,
     ): DoubleArray {
-        // Subtract the minimum fitness from all fitness values to ensure they are all positive.
-        // This prevents negative fitness values from causing problems later on when computing the
-        // probabilities.
-        val fitness = population.fitness.let {
+        // Adjust fitness values to ensure they're positive.
+        val adjustedFitness = population.fitness.let {
             it sub min(it.min(), 0.0)
+        }.toMutableList()
+
+        // Compute total adjusted fitness.
+        val totalFitness = adjustedFitness.sum()
+
+        // Compute probabilities based on adjusted fitness.
+        if (totalFitness eq 0.0) {
+            return DoubleArray(population.size) { 1.0 / population.size }
         }
-        // Compute the sum of all fitness values.
-        val cums = fitness.reduce { acc, d -> acc + d }
-        // If the sum of fitness values is 0, return a uniform probability distribution.
-        // Otherwise, compute the probability of each individual by dividing its fitness by the sum
-        // of all fitness values.
-        return if (cums eq 0.0) {
-            List(population.size) { 1.0 / population.size }.toDoubleArray()
-        } else {
-            fitness.map { it / cums }.toDoubleArray()
+
+        for (i in adjustedFitness.indices) {
+            adjustedFitness[i] /= totalFitness
         }
+
+        return adjustedFitness.toDoubleArray()
     }
-
-    /* Documentation inherited from [Any] */
-    override fun toString() = "RouletteWheelSelector(sorted=$sorted)"
 }
-
-/**
- * Returns a list of the fitness values of all the individuals in this population.
- *
- * The `fitness` property is a computed property that maps over all individuals in this population
- * and returns a list of their fitness values.
- *
- * @param DNA The type of the genetic data of the individuals.
- * @param G The type of the genes that make up the individuals.
- * @return A list of the fitness values of all the individuals in this population.
- */
-private val <DNA, G : Gene<DNA, G>> Population<DNA, G>.fitness: List<Double>
-    get() = this.map { it.fitness }

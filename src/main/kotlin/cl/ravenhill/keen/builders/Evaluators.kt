@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.builders
 
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.evolution.executors.CoroutineEvaluator
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator

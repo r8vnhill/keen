@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.util.listeners
 
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import kotlin.time.ExperimentalTime

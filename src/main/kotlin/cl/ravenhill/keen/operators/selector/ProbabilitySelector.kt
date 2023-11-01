@@ -9,7 +9,7 @@ import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.requirements.DoubleRequirement
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
@@ -53,46 +53,84 @@ interface ProbabilitySelector<DNA, G> : Selector<DNA, G> where G : Gene<DNA, G> 
     ): DoubleArray
 
     /**
-     * Selects a specified number of individuals from a given population based on their fitness.
-     * The method employs fitness-proportionate selection, where the likelihood of an individual
-     * being selected correlates with its fitness.
+     * Selects individuals from a population based on fitness using fitness-proportionate selection.
+     * The likelihood of an individual's selection is proportional to its fitness.
      *
-     * During the process, individuals may be sorted based on their fitness (if required) and the
-     * probabilities are calculated for each individual. Any minor discrepancies in probability
-     * values due to rounding errors are corrected before proceeding with the selection.
+     * The population may be sorted by fitness if required. Probabilities are assigned to each individual,
+     * and any rounding discrepancies are corrected before selection.
      *
-     * @param population The population from which individuals are to be selected.
-     * @param count The number of individuals to select from the population.
-     * @param optimizer The optimizer used to rank and sort the individuals based on their phenotypes.
+     * @param population The source population.
+     * @param count Number of individuals to select.
+     * @param optimizer Used to rank and sort the population by fitness.
      *
-     * @return A new population consisting of the selected individuals.
+     * @return A new population of selected individuals.
      *
-     * @throws EnforcementException if the computed probabilities do not sum up to 1.0.
+     * @throws EnforcementException if the summed probabilities aren't 1.0.
      */
     override fun select(
         population: Population<DNA, G>,
         count: Int,
         optimizer: IndividualOptimizer<DNA, G>,
     ): Population<DNA, G> {
-        // Sort the population if necessary
-        val pop = if (sorted) {
-            optimizer.sort(population)
-        } else {
-            population
-        }
-        // Calculate the probabilities for each phenotype
+        val pop = sortIfRequired(population, optimizer)
         val probabilities = probabilities(population, count, optimizer)
-        // Check that the probabilities sum to 1.0
+        validateProbabilities(probabilities)
+        probabilities.incremental()
+
+        return selectByProbabilities(pop, probabilities, count)
+    }
+
+    /**
+     * Sorts the population by fitness if required. If sorting isn't needed, it simply returns the
+     * given population as-is.
+     *
+     * @param population The source population.
+     * @param optimizer The optimizer used to rank and sort the population by fitness.
+     *
+     * @return The sorted population or the original population if sorting isn't required.
+     */
+    private fun sortIfRequired(
+        population: Population<DNA, G>,
+        optimizer: IndividualOptimizer<DNA, G>
+    ): Population<DNA, G> {
+        return if (sorted) optimizer.sort(population) else population
+    }
+
+    /**
+     * Validates that the computed probabilities sum to 1.0.
+     * Throws an exception if the sum is not close to 1.0.
+     *
+     * @param probabilities Array of computed probabilities.
+     *
+     * @throws EnforcementException if the summed probabilities aren't 1.0.
+     */
+    private fun validateProbabilities(probabilities: DoubleArray) {
         enforce {
             "Probabilities must sum 1.0" {
                 probabilities.sum() must DoubleRequirement.BeEqualTo(1.0)
             }
         }
-        // Convert the probabilities to incremental probabilities
-        probabilities.incremental()
-        // Select the individuals using fitness-proportionate selection
+    }
+
+    /**
+     * Selects individuals from the population based on their associated probabilities.
+     * The method uses fitness-proportionate selection, where each individual's chance of being selected
+     * corresponds to its probability in the array.
+     *
+     * @param population The source population.
+     * @param probabilities Array of probabilities associated with each individual in the population.
+     * @param count Number of individuals to select.
+     *
+     * @return A new population of selected individuals.
+     */
+    private fun selectByProbabilities(
+        population: Population<DNA, G>,
+        probabilities: DoubleArray,
+        count: Int
+    ): Population<DNA, G> {
         return List(count) {
-            pop[probabilities.indexOfFirst { Core.random.nextDouble() <= it }]
+            population[probabilities.indexOfFirst { Core.random.nextDouble() <= it }]
         }
     }
+
 }

@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.selector
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 

@@ -9,7 +9,6 @@ import cl.ravenhill.keen.Core.EvolutionLogger.logger
 import cl.ravenhill.keen.Core.maxProgramDepth
 import cl.ravenhill.keen.Core.random
 import cl.ravenhill.keen.evolution.Evolver
-import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.kuro.Level
 import cl.ravenhill.kuro.logger
 import cl.ravenhill.kuro.stdoutChannel
@@ -113,11 +112,6 @@ object Core {
         fun fatal(lazyMessage: () -> String) = logger.fatal(lazyMessage)
     }
 }
-
-/**
- * A typealias for a list of [Individual] objects representing a population of individuals.
- */
-typealias Population<DNA, G> = List<Individual<DNA, G>>
 
 /**
  * Rolls a n-dimensional dice.

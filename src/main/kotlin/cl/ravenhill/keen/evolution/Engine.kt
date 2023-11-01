@@ -13,7 +13,7 @@ import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.Core.EvolutionLogger.debug
 import cl.ravenhill.keen.Core.EvolutionLogger.info
 import cl.ravenhill.keen.Core.EvolutionLogger.trace
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype

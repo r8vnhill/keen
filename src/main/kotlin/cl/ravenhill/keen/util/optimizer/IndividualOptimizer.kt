@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.util.optimizer
 
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 

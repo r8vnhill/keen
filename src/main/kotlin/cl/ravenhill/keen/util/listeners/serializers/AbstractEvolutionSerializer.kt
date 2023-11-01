@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.util.listeners.serializers
 
-import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.util.listeners.EvolutionListener
