@@ -19,7 +19,7 @@ import cl.ravenhill.keen.operators.Alterer
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Crossover<DNA, G: Gene<DNA, G>> : Alterer<DNA, G> {
+interface Crossover<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
 
     /**
      * Performs crossover on the input genotypes.

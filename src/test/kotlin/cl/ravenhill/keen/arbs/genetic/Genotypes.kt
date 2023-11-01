@@ -10,7 +10,7 @@ import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
-import io.kotest.property.arbitrary.list
+import cl.ravenhill.keen.arbs.list
 
 /**
  * Generates a genotype.
@@ -57,6 +57,10 @@ fun Arb.Companion.intGenotype() = arbitrary {
  *
  * @return an [Arb] genotype with a single nothing chromosome
  */
-fun Arb.Companion.nothingGenotype() = arbitrary {
-    Genotype(list(nothingChromosome()).bind())
+fun Arb.Companion.nothingGenotype(size: Int? = null) = arbitrary {
+    if (size != null) {
+        Genotype(List(size) { nothingChromosome().bind() })
+    } else {
+        Genotype(list(nothingChromosome()).bind())
+    }
 }

@@ -1,15 +1,15 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 
 /**
@@ -18,7 +18,7 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  *
  * @param DNA The type of the DNA of the phenotypes.
  */
-interface Selector<DNA, G : Gene<DNA, G>> {
+interface Selector<DNA, G> where G : Gene<DNA, G> {
 
     /**
      * Selects a subset of the population to be used in the next generation.
@@ -49,7 +49,7 @@ abstract class AbstractSelector<DNA, G : Gene<DNA, G>> : Selector<DNA, G> {
     ): Population<DNA, G> {
         enforce {
             "Population size [${population.size}] must be at least 1" {
-                population.size must BePositive
+                population mustNot BeEmpty
             }
             "Selection count [$count] must be at least 0" { count must BeAtLeast(0) }
         }

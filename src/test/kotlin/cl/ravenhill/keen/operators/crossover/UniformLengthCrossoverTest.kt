@@ -11,6 +11,7 @@ import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.arbs.genetic.nothingGenotype
 import cl.ravenhill.keen.arbs.probability
 import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -18,6 +19,7 @@ import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -30,7 +32,7 @@ import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
-class CrossoverTest : FreeSpec({
+class UniformLengthCrossoverTest : FreeSpec({
     "A [Crossover] operator" - {
         "when created" - {
             "without an explicit number of outputs defaults to 2" {
@@ -198,6 +200,50 @@ class CrossoverTest : FreeSpec({
         }
 
         "when crossing genotypes" - {
+            "should return an empty list if the chromosome rate is 0" {
+                checkAll(
+                    Arb.probability(),
+                    Arb.int(2..10),
+                    Arb.int(1..10),
+                    Arb.boolean(),
+                    Arb.int(1..10)
+                ) { probability, numIn, numOut, exclusivity, genotypeSize ->
+                    val genotypes = List(numIn) {
+                        Genotype(List(genotypeSize) { NothingChromosome(listOf()) })
+                    }
+                    val operator = DummyCrossover(
+                        probability,
+                        numOut,
+                        numIn,
+                        exclusivity,
+                        0.0
+                    )
+                    operator.crossover(genotypes) shouldBe emptyList()
+                }
+            }
+
+            "should cross all chromosomes if the chromosome rate is 1" {
+                checkAll(
+                    Arb.probability(),
+                    Arb.int(2..10),
+                    Arb.int(1..10),
+                    Arb.boolean(),
+                    Arb.int(1..10)
+                ) { probability, numIn, numOut, exclusivity, genotypeSize ->
+                    val genotypes = List(numIn) {
+                        Genotype(List(genotypeSize) { NothingChromosome(listOf()) })
+                    }
+                    val operator = DummyCrossover(
+                        probability,
+                        numOut,
+                        numIn,
+                        exclusivity,
+                        1.0
+                    )
+                    operator.crossover(genotypes) shouldHaveSize numOut
+                }
+            }
+
             "should throw an exception" - {
                 "if the number of inputs doesn't match the required amount" {
                     checkAll(
@@ -223,7 +269,7 @@ class CrossoverTest : FreeSpec({
                         }.shouldHaveInfringement<IntRequirementException>(
                             unfulfilledConstraint(
                                 "Input count [${genotypes.size}] must match " +
-                                    "constructor-specified count [$numIn]."
+                                      "constructor-specified count [$numIn]."
                             )
                         )
                     }

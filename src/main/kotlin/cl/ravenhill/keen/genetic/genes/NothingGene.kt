@@ -7,6 +7,7 @@ package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.IllegalOperationException
 import cl.ravenhill.keen.genetic.genes.NothingGene.dna
+import cl.ravenhill.keen.util.MultiStringFormat
 
 
 /**
@@ -22,7 +23,7 @@ import cl.ravenhill.keen.genetic.genes.NothingGene.dna
  * @property dna Accessing this property will always throw [IllegalOperationException],
  *               indicating that the `NothingGene` does not possess DNA.
  */
-data object NothingGene : Gene<Nothing, NothingGene> {
+data object NothingGene : Gene<Nothing, NothingGene>, MultiStringFormat {
 
     /**
      * Always throws [IllegalOperationException] due to the inherent lack of DNA in a `NothingGene`.
@@ -39,8 +40,13 @@ data object NothingGene : Gene<Nothing, NothingGene> {
      * The exception will never be thrown, as the ``withDna`` method cannot be called with a
      * [Nothing] value.
      */
-    override fun withDna(dna: Nothing): NothingGene {
+    override fun withDna(dna: Nothing) =
         throw IllegalOperationException { "A NothingGene cannot have DNA" }
-    }
+
+    override fun toString() = "NothingGene"
+
+    override fun toSimpleString() = toString()
+
+    override fun toFullString() = toString()
 }
 

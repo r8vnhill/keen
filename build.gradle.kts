@@ -4,7 +4,7 @@ val projectVersion: String by project // Obtains the version from the ``gradle.p
 
 plugins {
     // Configures Kotlin to compile to the JVM
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.20"
     // Enables publishing artifacts to Maven repositories
     `maven-publish`
     // Enables signing published artifacts
@@ -12,7 +12,7 @@ plugins {
     // Enables generating documentation
     id("org.jetbrains.dokka") version "1.8.20"
     // Enables Kotlin serialization
-    kotlin("plugin.serialization") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.20"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
 }
 
@@ -30,8 +30,8 @@ repositories {
 
 dependencies {
     // region : -== KOTLIN STD LIB ==-
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     // endregion KOTLIN STD LIB

@@ -88,6 +88,6 @@ fun Arb.Companion.intChromosome() = arbitrary {
     IntChromosome(list(intGene(), 0..100).bind())
 }
 
-fun Arb.Companion.nothingChromosome() = arbitrary {
-    NothingChromosome(list(constant(NothingGene)).bind())
+fun Arb.Companion.nothingChromosome(length: Arb<Int> = int(0..10)) = arbitrary {
+    NothingChromosome(List(length.bind()) { NothingGene })
 }
