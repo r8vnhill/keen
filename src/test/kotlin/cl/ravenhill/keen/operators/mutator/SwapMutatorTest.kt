@@ -21,10 +21,13 @@ class SwapMutatorTest : FreeSpec({
                     Arb.probability(),
                     Arb.probability()
                 ) { geneRate, chromosomeRate ->
-                    SwapMutator<Nothing, NothingGene>(
+                    val mutator = SwapMutator<Nothing, NothingGene>(
                         chromosomeRate = chromosomeRate,
                         geneRate = geneRate
-                    ).probability shouldBe 0.2
+                    )
+                    mutator.probability shouldBe 0.2
+                    mutator.chromosomeRate shouldBe chromosomeRate
+                    mutator.geneRate shouldBe geneRate
                 }
             }
 
@@ -33,10 +36,13 @@ class SwapMutatorTest : FreeSpec({
                     Arb.probability(),
                     Arb.probability()
                 ) { probability, geneRate ->
-                    SwapMutator<Nothing, NothingGene>(
+                    val mutator = SwapMutator<Nothing, NothingGene>(
                         probability,
                         geneRate = geneRate
-                    ).chromosomeRate shouldBe 0.5
+                    )
+                    mutator.probability shouldBe probability
+                    mutator.chromosomeRate shouldBe 0.5
+                    mutator.geneRate shouldBe geneRate
                 }
             }
 
@@ -45,10 +51,13 @@ class SwapMutatorTest : FreeSpec({
                     Arb.probability(),
                     Arb.probability()
                 ) { probability, chromosomeRate ->
-                    SwapMutator<Nothing, NothingGene>(
+                    val mutator = SwapMutator<Nothing, NothingGene>(
                         probability,
                         chromosomeRate = chromosomeRate
-                    ).geneRate shouldBe 0.5
+                    )
+                    mutator.probability shouldBe probability
+                    mutator.chromosomeRate shouldBe chromosomeRate
+                    mutator.geneRate shouldBe 0.5
                 }
             }
         }
