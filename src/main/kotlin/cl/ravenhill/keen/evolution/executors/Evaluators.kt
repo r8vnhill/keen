@@ -214,12 +214,12 @@ private fun <DNA, G : Gene<DNA, G>> selectAndCreateEvaluators(
 }.map { PhenotypeEvaluator(it, function) }
 
 /**
- * Evaluates a list of phenotype evaluators and adds the resulting individuals to the given
+ * Evaluates a list of individual evaluators and adds the resulting individuals to the given
  * population.
  *
- * @param toEvaluate a list of phenotype evaluators to evaluate and add to the population.
+ * @param toEvaluate a list of individual evaluators to evaluate and add to the population.
  * @param population the original population to add the evaluated individuals to.
- * @param evaluationStrategy a function that evaluates the list of phenotype evaluators.
+ * @param evaluationStrategy a function that evaluates the list of individual evaluators.
  * @return a new population that includes the evaluated individuals. If no individuals were selected
  *  for evaluation, the original population is returned.
  *  If all individuals in the population were evaluated, only the evaluated individuals are

@@ -31,9 +31,9 @@ import kotlin.math.min
  * @since 1.0.0
  * @version 2.0.0
  */
-class RouletteWheelSelector<DNA, G : Gene<DNA, G>>(
-    sorted: Boolean = false,
-) : AbstractProbabilitySelector<DNA, G>(sorted) {
+class RouletteWheelSelector<DNA, G : Gene<DNA, G>>(override val sorted: Boolean = false) :
+    AbstractSelector<DNA, G>(),
+    ProbabilitySelector<DNA, G> {
 
     /* Documentation inherited from [AbstractProbabilitySelector] */
     override fun probabilities(

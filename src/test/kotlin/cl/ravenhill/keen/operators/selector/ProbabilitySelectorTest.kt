@@ -5,27 +5,22 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.keen.util.isSorted
+import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
-import cl.ravenhill.unfulfilledConstraint
-import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.boolean
-import io.kotest.property.arbitrary.doubleArray
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.long
-import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -36,46 +31,44 @@ class ProbabilitySelectorTest : FreeSpec({
             DummyProbabilitySelector(false).sorted.shouldBeFalse()
         }
 
-        "when performing a serial search of an index" - {
-            "should find the first index exceeding the value or return -1 if none is found" {
-                checkAll(
-                    Arb.doubleArray(Arb.int(0..50), Arb.real()),
-                    Arb.boolean(),
-                    Arb.long()
-                ) { array, sorted, seed ->
-                    val random = Random(seed)
-                    Core.random = random
-                    val sortedArray = array.sortedArray()
-                    val selector = DummyProbabilitySelector(sorted)
-                    val value = random.nextDouble()
-                    val expected = sortedArray.indexOfFirst { it >= value }
-                    selector.serialSearchIndex(sortedArray).shouldBe(expected)
+        "can select a random individual based on the probabilities" {
+            checkAll(
+                Arb.population(),
+                Arb.int(1..5),
+                Arb.optimizer<Int, IntGene>(),
+                Arb.boolean(),
+                Arb.long()
+            ) { population, count, optimizer, sorted, seed ->
+                Core.random = Random(seed)
+                val random = Random(seed)
+                val pop = if (sorted) optimizer.sort(population) else population
+                val selector = DummyProbabilitySelector(sorted)
+                val probabilities = selector.probabilities(pop, count, optimizer)
+                probabilities.incremental()
+                val expected = List(count) {
+                    pop[probabilities.indexOfFirst { random.nextDouble() <= it }]
                 }
-            }
-
-            "should throw an exception if the array isn't sorted" {
-                checkAll(Arb.doubleArray(Arb.int(0..50), Arb.real())) { array ->
-                    assume {
-                        array.isSorted().shouldBeFalse()
-                    }
-                    shouldThrow<EnforcementException> {
-                        DummyProbabilitySelector(true).serialSearchIndex(array)
-                    }.shouldHaveInfringement<UnfulfilledRequirementException>(
-                        unfulfilledConstraint("The array must be sorted")
-                    )
-                }
+                val actual = selector.select(population, count, optimizer)
+                actual shouldBe expected
             }
         }
     }
 }) {
 
-    class DummyProbabilitySelector(sorted: Boolean) :
-        AbstractProbabilitySelector<Int, IntGene>(sorted) {
+    class DummyProbabilitySelector(
+        override val sorted: Boolean
+    ) : AbstractSelector<Int, IntGene>(),
+        ProbabilitySelector<Int, IntGene> {
 
         override fun probabilities(
             population: Population<Int, IntGene>,
             count: Int,
             optimizer: IndividualOptimizer<Int, IntGene>
-        ) = DoubleArray(population.size) { 0.0 }
+        ): DoubleArray {
+            val values = DoubleArray(population.size) { Random(11).nextDouble() }
+            val sum = values.sum()
+
+            return values.map { it / sum }.toDoubleArray()
+        }
     }
 }

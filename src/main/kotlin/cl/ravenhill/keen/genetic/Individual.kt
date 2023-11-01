@@ -10,12 +10,12 @@ import cl.ravenhill.keen.util.isNotNan
 import java.util.*
 
 /**
- * Represents a phenotype, which is a combination of a genotype (collection of genetic data)
+ * Represents a individual, which is a combination of a genotype (collection of genetic data)
  * and its associated fitness.
- * A phenotype can be evaluated and compared to other individuals.
+ * A individual can be evaluated and compared to other individuals.
  *
- * @property genotype The genotype associated with the phenotype.
- * @property fitness The fitness associated with the phenotype. Defaults to `Double.NaN`.
+ * @property genotype The genotype associated with the individual.
+ * @property fitness The fitness associated with the individual. Defaults to `Double.NaN`.
  * @property size The size of the genotype.
  *
  * @constructor Creates a new [Individual] instance with the given [genotype] and [fitness].
@@ -39,31 +39,31 @@ data class Individual<DNA, G : Gene<DNA, G>>(
         this.fitness compareTo other.fitness
 
     /**
-     * Returns a Boolean indicating whether the fitness of the phenotype has been evaluated.
+     * Returns a Boolean indicating whether the fitness of the individual has been evaluated.
      *
      * @return `true` if the fitness has been evaluated, `false` otherwise.
      */
     fun isEvaluated() = fitness.isNotNan()
 
     /**
-     * Returns `true` if the fitness of the phenotype has not been evaluated.
+     * Returns `true` if the fitness of the individual has not been evaluated.
      */
     fun isNotEvaluated() = !isEvaluated()
 
     /**
      * Creates a new [Individual] instance with the given fitness value.
      *
-     * @param fitness The fitness value of the phenotype.
+     * @param fitness The fitness value of the individual.
      * @return A new [Individual] instance with the given fitness value.
      */
     fun withFitness(fitness: Double) = Individual(genotype, fitness)
 
     /**
      * Creates a new [Individual] instance with the given genotype and fitness values.
-     * The generation of the new phenotype will be the same as the current one.
+     * The generation of the new individual will be the same as the current one.
      *
-     * @param candidate The genotype of the new phenotype.
-     * @param fitness The fitness value of the new phenotype.
+     * @param candidate The genotype of the new individual.
+     * @param fitness The fitness value of the new individual.
      * @return A new [Individual] instance with the given genotype and fitness values.
      */
     fun withGenotype(candidate: Genotype<DNA, G>, fitness: Double) =

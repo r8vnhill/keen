@@ -11,13 +11,13 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  * This code defines two classes: EvolutionResult and EvolutionStart that represent the result of an
  * evolution process and the starting point for a new generation of evolution, respectively.
  * EvolutionResult contains properties for the optimization strategy used, the population of
- * individuals, the generation number, and the best phenotype of the result.
+ * individuals, the generation number, and the best individual of the result.
  * It also has a function to return a new EvolutionStart object for the next generation.
  * EvolutionStart contains properties for the initial population of individuals, the generation
  * number, and a flag indicating whether the evaluation process needs to be run again.
  * It also has a function to create an empty EvolutionStart object.
  * Both classes have generic types DNA and T respectively, which represent the type of the gene's
- * value and the type of the phenotype.
+ * value and the type of the individual.
  **************************************************************************************************/
 
 /**
@@ -28,7 +28,7 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  * @property optimizer The optimization strategy used.
  * @property population The population of the result.
  * @property generation The generation of the result.
- * @property best The best phenotype of the result.
+ * @property best The best individual of the result.
  *
  * @constructor Creates a new [EvolutionResult] with the given [optimizer], [population], and
  *  [generation].
@@ -54,7 +54,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
     /**
      * Creates a new [EvolutionResult] with the population transformed by the provided function.
      *
-     * @param function A function to transform each phenotype in the population.
+     * @param function A function to transform each individual in the population.
      * @return A new [EvolutionResult] with the transformed population.
      */
     fun map(function: (Individual<DNA, G>) -> Individual<DNA, G>) =
@@ -75,7 +75,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
  * @property isDirty A flag indicating whether the evaluation process needs to be run again.
  *  The default value is `true`.
  *
- * @param DNA The type of the phenotype.
+ * @param DNA The type of the individual.
  *
  * @constructor Creates a new [EvolutionState] object.
  *
@@ -103,7 +103,7 @@ class EvolutionState<DNA, G : Gene<DNA, G>>(
         /**
          * Creates an empty [EvolutionState] object.
          *
-         * @param DNA The type of the phenotype.
+         * @param DNA The type of the individual.
          *
          * @return An empty [EvolutionState] object.
          */

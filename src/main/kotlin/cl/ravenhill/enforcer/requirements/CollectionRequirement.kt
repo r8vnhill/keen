@@ -1,6 +1,6 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.enforcer.requirements
@@ -24,14 +24,5 @@ sealed interface CollectionRequirement<T> : Requirement<Collection<T>> {
      */
     data object BeEmpty : CollectionRequirement<Any?> {
         override val validator = { value: Collection<*> -> value.isEmpty() }
-    }
-
-    /**
-     * Constraint that checks if a collection of comparable elements is sorted.
-     */
-    data object BeSorted : CollectionRequirement<Comparable<Any>> {
-        override val validator = { value: Collection<Comparable<Any>> ->
-            value.sorted() == value
-        }
     }
 }

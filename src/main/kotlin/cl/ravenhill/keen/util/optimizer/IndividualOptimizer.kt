@@ -20,13 +20,13 @@ interface IndividualOptimizer<DNA, G : Gene<DNA, G>> {
 
     /**
      * Compares two individuals and returns a negative integer, zero, or a positive integer as the
-     * first phenotype is less than, equal to, or greater than the second.
+     * first individual is less than, equal to, or greater than the second.
      */
     operator fun invoke(a: Individual<*, *>, b: Individual<*, *>): Int = compare(a, b)
 
     /**
      * Compares two individuals and returns a negative integer, zero, or a positive integer as the
-     * first phenotype is less than, equal to, or greater than the second.
+     * first individual is less than, equal to, or greater than the second.
      */
     fun compare(p1: Individual<*, *>, p2: Individual<*, *>): Int
 

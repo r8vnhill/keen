@@ -32,7 +32,7 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
  * @property evolutionResult Result after each evolution generation.
  * @property population Current set of candidate solutions.
  * @property optimizer Optimizer utilized during evolution.
- * @property fittest Most adapted phenotype in the current generation.
+ * @property fittest Most adapted individual in the current generation.
  * @property steadyGenerations Count of generations without improvements.
  * @property generation Current generation number.
  * @property currentGeneration Details of the current generation.
@@ -177,13 +177,13 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
         }
 
         /**
-         * Computes the population's phenotype records based on the optimizer and the given population.
+         * Computes the population's individual records based on the optimizer and the given population.
          *
-         * This method sorts the population based on the optimizer and returns a list of phenotype records.
+         * This method sorts the population based on the optimizer and returns a list of individual records.
          *
-         * @param optimizer The phenotype optimizer used for sorting.
+         * @param optimizer The individual optimizer used for sorting.
          * @param population The current population of candidate solutions.
-         * @return A list of phenotype records after sorting the population.
+         * @return A list of individual records after sorting the population.
          */
         fun <DNA, G : Gene<DNA, G>> computePopulation(
             optimizer: IndividualOptimizer<DNA, G>,

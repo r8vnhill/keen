@@ -22,7 +22,7 @@ import cl.ravenhill.keen.util.eq
 /**
  * Represents an interface for mutation operations on genes within a population.
  *
- * The mutator works at multiple levels of the genome hierarchy: phenotype, genotype, and
+ * The mutator works at multiple levels of the genome hierarchy: individual, genotype, and
  * chromosome.
  * Mutation operations modify individual genes based on mutation-specific logic.
  * This is essential for introducing new genetic variations within the population.
@@ -58,10 +58,10 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
     }
 
     /**
-     * Mutates a given phenotype.
+     * Mutates a given individual.
      *
-     * @param individual The phenotype to be mutated.
-     * @return The mutated phenotype.
+     * @param individual The individual to be mutated.
+     * @return The mutated individual.
      */
     fun mutateIndividual(
         individual: Individual<DNA, G>,

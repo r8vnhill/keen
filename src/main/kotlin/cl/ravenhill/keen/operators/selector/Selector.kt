@@ -21,6 +21,12 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  */
 interface Selector<DNA, G> where G : Gene<DNA, G> {
 
+    fun select(
+        population: Population<DNA, G>,
+        count: Int,
+        optimizer: IndividualOptimizer<DNA, G>,
+    ): Population<DNA, G>
+
     /**
      * Selects a subset of the population to be used in the next generation.
      *
@@ -62,18 +68,4 @@ abstract class AbstractSelector<DNA, G : Gene<DNA, G>> : Selector<DNA, G> {
             }
         }
     }
-
-    /**
-     * Selects a subset of the population to be used in the next generation.
-     *
-     * @param population The population to select from.
-     * @param count The number of individuals to select.
-     * @param optimizer The optimizer that is using this selector.
-     * @return The selected individuals.
-     */
-    internal abstract fun select(
-        population: Population<DNA, G>,
-        count: Int,
-        optimizer: IndividualOptimizer<DNA, G>
-    ): Population<DNA, G>
 }

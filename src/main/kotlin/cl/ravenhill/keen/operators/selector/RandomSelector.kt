@@ -37,7 +37,12 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  * @since 2.0.0
  * @version 2.0.0
  */
-class RandomSelector<DNA, G : Gene<DNA, G>> : AbstractProbabilitySelector<DNA, G>(false) {
+class RandomSelector<DNA, G : Gene<DNA, G>> :
+    AbstractSelector<DNA, G>(),
+    ProbabilitySelector<DNA, G> {
+
+    override val sorted: Boolean = false
+
     /**
      * Computes the selection probabilities for each individual in the population.
      *
@@ -46,7 +51,7 @@ class RandomSelector<DNA, G : Gene<DNA, G>> : AbstractProbabilitySelector<DNA, G
      *
      * @param population The population of individuals.
      * @param count The number of individuals to be selected.
-     * @param optimizer The phenotype optimizer.
+     * @param optimizer The individual optimizer.
      * @return A DoubleArray with the computed probabilities.
      */
     override fun probabilities(

@@ -26,7 +26,7 @@ import kotlin.time.TimeSource
  *
  * @property population The population to calculate statistics from.
  * @property optimizer The optimizer used to calculate the fitness.
- * @property fittest The fittest phenotype.
+ * @property fittest The fittest individual.
  * @property steadyGenerations The number of generations without improvement.
  * @property generation The current generation.
  */
