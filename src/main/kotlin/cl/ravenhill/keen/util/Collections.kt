@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2023, Ignacio Slater M.
- * BSD Zero Clause License.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.util
@@ -9,10 +9,10 @@ import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
 
-/***************************************************************************************************
- * This code includes a collection of extensions and functions for different types of collections in
- * Kotlin.
- **************************************************************************************************/
+/*****************************************************************************************
+ * This code includes a collection of extensions and functions for different types of
+ * collections in Kotlin.
+ ****************************************************************************************/
 
 // region : -== ARRAYS ==-
 /**
@@ -24,6 +24,16 @@ fun DoubleArray.incremental() {
         this[i] += this[i - 1]
     }
 }
+
+/**
+ * Determines if the elements in the [DoubleArray] are sorted in ascending order.
+ *
+ * Iterates through the array from the second element to the last. For each element,
+ * it compares it with its preceding element. If any element is found to be less than
+ * its predecessor, the function returns `false`, indicating the array is not sorted.
+ */
+fun DoubleArray.isSorted(): Boolean = zip(drop(1)).all { (a, b) -> a <= b }
+
 // endregion ARRAYS
 
 // region : -== ITERABLE ==-
@@ -100,7 +110,8 @@ fun <E> List<List<E>>.transpose(): List<List<E>> {
  *
  * @return `true` if the element was added, `false` otherwise.
  */
-fun <E> MutableCollection<E>.addIfAbsent(element: E) = !this.contains(element) && this.add(element)
+fun <E> MutableCollection<E>.addIfAbsent(element: E) =
+    !this.contains(element) && this.add(element)
 
 /**
  * Removes the first [n] elements from this collection.

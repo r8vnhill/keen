@@ -12,7 +12,7 @@ import java.util.*
 /**
  * Represents a phenotype, which is a combination of a genotype (collection of genetic data)
  * and its associated fitness.
- * A phenotype can be evaluated and compared to other phenotypes.
+ * A phenotype can be evaluated and compared to other individuals.
  *
  * @property genotype The genotype associated with the phenotype.
  * @property fitness The fitness associated with the phenotype. Defaults to `Double.NaN`.

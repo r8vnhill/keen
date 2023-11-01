@@ -14,15 +14,24 @@ import cl.ravenhill.enforcer.CollectionRequirementException
  * @since 2.0.0
  * @version 2.0.0
  */
-sealed interface CollectionRequirement : Requirement<Collection<*>> {
-    /// Inherit documentation from [Requirement]
+sealed interface CollectionRequirement<T> : Requirement<Collection<T>> {
+    /* Inherit documentation from [Requirement] */
     override fun generateException(description: String) =
         CollectionRequirementException { description }
 
     /**
      * Constraint that checks if a collection is not empty.
      */
-    data object BeEmpty : CollectionRequirement {
+    data object BeEmpty : CollectionRequirement<Any?> {
         override val validator = { value: Collection<*> -> value.isEmpty() }
+    }
+
+    /**
+     * Constraint that checks if a collection of comparable elements is sorted.
+     */
+    data object BeSorted : CollectionRequirement<Comparable<Any>> {
+        override val validator = { value: Collection<Comparable<Any>> ->
+            value.sorted() == value
+        }
     }
 }

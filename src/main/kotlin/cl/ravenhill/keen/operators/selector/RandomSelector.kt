@@ -3,13 +3,11 @@
  * 2-Clause BSD License.
  */
 
-
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
-
 
 /**
  * Class that implements a random selection strategy for a population in a genetic algorithm.

@@ -11,6 +11,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.incremental
+import cl.ravenhill.keen.util.isSorted
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 
 /**
@@ -37,7 +38,7 @@ private const val SERIAL_INDEX_THRESHOLD = 35
  * @since 1.3.0
  * @version 2.0.0
  */
-abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val sorted: Boolean) :
+abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(val sorted: Boolean) :
     AbstractSelector<DNA, G>() {
 
     /* Documentation inherited from [Selector] */
@@ -62,7 +63,7 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
         checkAndCorrectProbabilities(probabilities)
         // Convert the probabilities to incremental probabilities
         probabilities.incremental()
-        // Select the phenotypes using fitness-proportionate selection
+        // Select the individuals using fitness-proportionate selection
         return List(count) { pop[indexOf(probabilities)] }
     }
 
@@ -87,8 +88,8 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
      *
      * @param probabilities The array of probabilities to be checked and corrected.
      */
-    private fun checkAndCorrectProbabilities(probabilities: DoubleArray) {
-        if (probabilities.any { !it.isFinite() }) {
+    internal fun checkAndCorrectProbabilities(probabilities: DoubleArray) {
+        if (probabilities.any { !it.isFinite() } || probabilities.any { it.isNaN() }) {
             probabilities.fill(1.0 / probabilities.size)
         }
         val sum = probabilities.sum()
@@ -109,10 +110,12 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
      * @param incr the sorted array of increasing values to search
      * @return the index of the random value
      */
-    private fun indexOf(incr: DoubleArray) = if (incr.size <= SERIAL_INDEX_THRESHOLD) {
-        serialSearchIndex(incr)
-    } else {
-        binarySearchIndex(incr)
+    private fun indexOf(incr: DoubleArray): Int {
+        return if (incr.size <= SERIAL_INDEX_THRESHOLD) {
+            serialSearchIndex(incr)
+        } else {
+            binarySearchIndex(incr)
+        }
     }
 
     /**
@@ -122,7 +125,8 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
      * @param incr the sorted array of increasing values to search
      * @return the index of the random value
      */
-    private fun binarySearchIndex(incr: DoubleArray): Int {
+    fun binarySearchIndex(incr: DoubleArray): Int {
+        enforce { "The array must be sorted" { requirement { incr.isSorted() } } }
         var (lo, hi) = 0 to incr.size
         var index = -1
         val v = Core.random.nextDouble()
@@ -148,14 +152,9 @@ abstract class AbstractProbabilitySelector<DNA, G : Gene<DNA, G>>(protected val 
      * @param incr the sorted array of increasing values to search
      * @return the index of the first element that is greater than or equal to the random value
      */
-    private fun serialSearchIndex(incr: DoubleArray): Int {
-        var index = -1
-        incr.forEachIndexed { i, value ->
-            if (value >= Core.random.nextDouble()) {
-                index = i
-                return@forEachIndexed
-            }
-        }
-        return index
+    fun serialSearchIndex(incr: DoubleArray): Int {
+        enforce { "The array must be sorted" { requirement { incr.isSorted() } } }
+        val v = Core.random.nextDouble()
+        return incr.indexOfFirst { it >= v }
     }
 }

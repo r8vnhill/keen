@@ -11,6 +11,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
 import cl.ravenhill.keen.arbs.list
+import io.kotest.property.arbitrary.int
 
 /**
  * Generates a genotype.
@@ -49,7 +50,7 @@ fun Arb.Companion.genotype() = choice(intGenotype(), nothingGenotype())
  * @see Genotype
  */
 fun Arb.Companion.intGenotype() = arbitrary {
-    Genotype(list(intChromosome()).bind())
+    Genotype(list(intChromosome(), int(0..5)).bind())
 }
 
 /**

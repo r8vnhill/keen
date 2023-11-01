@@ -83,8 +83,8 @@ object Runner {
         }
         results[selectOp::class.simpleName]!!.first +=
             "$funName\t& ${initTimes.average()} ms\t& ${evaluationTimes.average()} ms\t& " +
-                    "${selectionTimes.average()} ms\t& ${alterationTimes.average()} ms\t& " +
-                    "${evolutionTimes.average()} s\\\\\\hline"
+            "${selectionTimes.average()} ms\t& ${alterationTimes.average()} ms\t& " +
+            "${evolutionTimes.average()} s\\\\\\hline"
         results[selectOp::class.simpleName]!!.second +=
             "$funName\t& ${totalGenerations.average()}\t& \\((${
                 fittests.map { it[0] }.average()
@@ -156,7 +156,7 @@ fun main() {
     Runner.run("Sphere", ::sphere, 0.0, RouletteWheelSelector(), -10.0..10.0)
     Runner.run("Three-hump camel", ::threeHumpCamel, 0.0, RouletteWheelSelector(), -5.0..5.0)
 
-    Runner.results.forEach { (   t, u) ->
+    Runner.results.forEach { (t, u) ->
         println("========= $t =========")
         println(u.first.joinToString("\n"))
         println()

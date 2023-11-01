@@ -76,7 +76,7 @@ data class GenerationRecord(val generation: Int) : AbstractTimedRecord() {
 
     /**
      * This class is used to hold the result of the population of a specific generation.
-     * It contains a list of [PhenotypeRecord] that represents the phenotypes of the population after the generation process.
+     * It contains a list of [PhenotypeRecord] that represents the individuals of the population after the generation process.
      */
     @Serializable
     class PopulationRecord : AbstractRecord() {

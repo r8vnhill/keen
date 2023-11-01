@@ -11,9 +11,9 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  * This code defines two classes: EvolutionResult and EvolutionStart that represent the result of an
  * evolution process and the starting point for a new generation of evolution, respectively.
  * EvolutionResult contains properties for the optimization strategy used, the population of
- * phenotypes, the generation number, and the best phenotype of the result.
+ * individuals, the generation number, and the best phenotype of the result.
  * It also has a function to return a new EvolutionStart object for the next generation.
- * EvolutionStart contains properties for the initial population of phenotypes, the generation
+ * EvolutionStart contains properties for the initial population of individuals, the generation
  * number, and a flag indicating whether the evaluation process needs to be run again.
  * It also has a function to create an empty EvolutionStart object.
  * Both classes have generic types DNA and T respectively, which represent the type of the gene's
@@ -70,7 +70,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
 /**
  * Represents the starting point for a new generation of evolution.
  *
- * @property population The initial population of phenotypes.
+ * @property population The initial population of individuals.
  * @property generation The generation number.
  * @property isDirty A flag indicating whether the evaluation process needs to be run again.
  *  The default value is `true`.

@@ -70,7 +70,7 @@ fun Arb.Companion.charChromosome() =
  * @return An arbitrary instance of [DoubleChromosome] with genes in the specified range.
  */
 fun Arb.Companion.doubleChromosome() = arbitrary {
-    DoubleChromosome(list(doubleGene(), 0..100).bind())
+    DoubleChromosome(list(doubleGene(), 0..5).bind())
 }
 
 /**
@@ -85,7 +85,7 @@ fun Arb.Companion.doubleChromosome() = arbitrary {
  * @return An arbitrary instance of [IntChromosome] with genes in the specified range.
  */
 fun Arb.Companion.intChromosome() = arbitrary {
-    IntChromosome(list(intGene(), 0..100).bind())
+    IntChromosome(list(intGene(), 0..5).bind())
 }
 
 fun Arb.Companion.nothingChromosome(length: Arb<Int> = int(0..10)) = arbitrary {

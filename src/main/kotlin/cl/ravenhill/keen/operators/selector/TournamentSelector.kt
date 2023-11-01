@@ -11,11 +11,6 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
-import java.util.Objects
 
 /**
  * A selector that chooses the fittest individuals from a population by comparing the fitness of
@@ -37,7 +32,11 @@ class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
     AbstractSelector<DNA, G>() {
 
     init {
-        enforce { "The sample size must be positive" { sampleSize must BePositive } }
+        enforce {
+            "The sample size [$sampleSize] must be positive" {
+                sampleSize must BePositive
+            }
+        }
     }
 
     /* Documentation inherited from [Selector]  */
@@ -45,26 +44,12 @@ class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
         population: Population<DNA, G>,
         count: Int,
         optimizer: IndividualOptimizer<DNA, G>,
-    ): Population<DNA, G> = runBlocking {
-        (0 until count).asFlow().map {
-            generateSequence { population[Core.random.nextInt(population.size)] }
-                .take(sampleSize)
-                .maxWith(optimizer.comparator)
-        }.toList()
+    ) = (0..<count).map {
+        generateSequence { population[Core.random.nextInt(population.size)] }
+            .take(sampleSize)
+            .maxWith(optimizer.comparator)
     }
 
     /* Documentation inherited from [Any]   */
-    override fun equals(other: Any?) = when {
-        other === this -> true
-        other !is TournamentSelector<*, *> -> false
-        other::class != this::class -> false
-        other.sampleSize != this.sampleSize -> false
-        else -> true
-    }
-
-    /* Documentation inherited from [Any]   */
-    override fun toString() = "TournamentSelector { sampleSize: $sampleSize }"
-
-    /* Documentation inherited from [Any]   */
-    override fun hashCode() = Objects.hash(TournamentSelector::class, sampleSize)
+    override fun toString() = "TournamentSelector(sampleSize=$sampleSize)"
 }

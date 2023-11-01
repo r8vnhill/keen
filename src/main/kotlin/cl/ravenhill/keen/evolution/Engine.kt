@@ -234,7 +234,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
                 "Evaluated population size [${it.size}] doesn't match expected population size [$populationSize]" {
                     populationSize must IntRequirement.BeEqualTo(it.size)
                 }
-                "There are unevaluated phenotypes" {
+                "There are unevaluated individuals" {
                     requirement { it.all { phenotype -> phenotype.isEvaluated() } }
                 }
             }

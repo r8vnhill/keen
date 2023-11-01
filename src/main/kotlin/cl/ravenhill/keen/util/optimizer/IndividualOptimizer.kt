@@ -12,26 +12,26 @@ import cl.ravenhill.keen.genetic.genes.Gene
 /**
  * Generic optimization strategy to determine which of two individuals is better.
  *
- * @property comparator The comparator to use to determine which of two phenotypes is better.
+ * @property comparator The comparator to use to determine which of two individuals is better.
  */
 interface IndividualOptimizer<DNA, G : Gene<DNA, G>> {
     val comparator
         get() = Comparator(::compare)
 
     /**
-     * Compares two phenotypes and returns a negative integer, zero, or a positive integer as the
+     * Compares two individuals and returns a negative integer, zero, or a positive integer as the
      * first phenotype is less than, equal to, or greater than the second.
      */
     operator fun invoke(a: Individual<*, *>, b: Individual<*, *>): Int = compare(a, b)
 
     /**
-     * Compares two phenotypes and returns a negative integer, zero, or a positive integer as the
+     * Compares two individuals and returns a negative integer, zero, or a positive integer as the
      * first phenotype is less than, equal to, or greater than the second.
      */
     fun compare(p1: Individual<*, *>, p2: Individual<*, *>): Int
 
     /**
-     * Sorts the given list of phenotypes using this optimizer.
+     * Sorts the given list of individuals using this optimizer.
      */
     fun sort(population: Population<DNA, G>) =
         population.sortedWith(comparator.reversed())

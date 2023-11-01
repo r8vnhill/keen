@@ -70,5 +70,5 @@ class CollectionRequirementTest : FreeSpec({
  *
  * @see CollectionRequirement.BeEmpty
  */
-private fun Arb.Companion.requirement(): Arb<CollectionRequirement> =
+private fun Arb.Companion.requirement(): Arb<CollectionRequirement<*>> =
     arbitrary { element(BeEmpty).bind() }

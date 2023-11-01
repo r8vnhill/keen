@@ -39,7 +39,7 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
     /**
      * Performs mutation operations on the entire population.
      *
-     * @param population The current population of phenotypes.
+     * @param population The current population of individuals.
      * @param generation The current generation number.
      * @return The result after applying mutation operations on the population.
      */
