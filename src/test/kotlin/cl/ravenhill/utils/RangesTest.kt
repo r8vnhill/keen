@@ -1,14 +1,13 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.utils
 
+import cl.ravenhill.keen.arbs.real
 import cl.ravenhill.orderedPair
 import cl.ravenhill.orderedTriple
-import cl.ravenhill.keen.arbs.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
@@ -20,7 +19,6 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
-
 
 /**
  * This is a test class for [IntToInt] and [DoubleToDouble] ranges, implemented in a
@@ -69,7 +67,6 @@ class RangesTest : FreeSpec({
             }
         }
     }
-
 
     "A [DoubleToDouble] range" - {
         "contains a [Double] within the range" {

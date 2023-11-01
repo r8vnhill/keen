@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.util.listeners.serializers
