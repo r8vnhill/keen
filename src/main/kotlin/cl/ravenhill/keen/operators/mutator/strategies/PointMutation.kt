@@ -6,20 +6,41 @@
 package cl.ravenhill.keen.operators.mutator.strategies
 
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.requirements.DoubleRequirement
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.mutator.Mutator
+import cl.ravenhill.keen.operators.mutator.ChromosomeMutator
+import cl.ravenhill.keen.operators.mutator.GeneMutator
 import cl.ravenhill.keen.operators.mutator.MutatorResult
-import cl.ravenhill.keen.util.eq
 import cl.ravenhill.keen.util.trees.Tree
 
-class PointMutation<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
+/**
+ * Represents a point mutation operation on a genetic structure. Point mutations involve changing
+ * the value of a gene to another value within its domain. In the context of genetic programming,
+ * this could
+ * mean swapping a node in the expression tree with another node of the same arity.
+ *
+ * @param V The type of the value held by the nodes in the tree structure of the DNA.
+ * @param DNA The type of the DNA, which extends a tree structure.
+ * @param G The type of the gene, which extends the Gene class.
+ * @property probability The overall probability of a mutation occurring.
+ * @property chromosomeRate The probability of a chromosome being selected for mutation.
+ * @property geneRate The probability of a gene within a selected chromosome being mutated.
+ *
+ * @constructor Creates a new [PointMutation] with the given [probability], [chromosomeRate] and [geneRate].
+ * @throws EnforcementException if the mutation probabilities are not in the range 0.0 to 1.0.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+class PointMutation<V, DNA, G>(
     override val probability: Double,
     override val chromosomeRate: Double = 0.5,
-    val geneProbability: Double = 0.5
-) : Mutator<DNA, G> {
+    override val geneRate: Double = 0.5
+) : ChromosomeMutator<DNA, G>, GeneMutator<DNA, G> where DNA : Tree<V, DNA>, G : Gene<DNA, G> {
 
     init {
         enforce {
@@ -29,20 +50,39 @@ class PointMutation<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
         }
     }
 
-    override fun mutateChromosome(chromosome: Chromosome<DNA, G>): MutatorResult<DNA, G, Chromosome<DNA, G>> {
-        TODO()
-//        val result = chromosome.genes.map { mutateGene(it) }
-//        return MutatorResult(
-//            chromosome.withGenes(result.map { it.mutated }),
-//            result.sumOf { it.mutations }
-//        )
+    /**
+     * Mutates the given chromosome by potentially mutating each gene within it.
+     *
+     * @param chromosome The chromosome to be mutated.
+     * @return A [MutatorResult] containing the mutated chromosome and the total number of mutations.
+     */
+    override fun mutateChromosome(
+        chromosome: Chromosome<DNA, G>
+    ): MutatorResult<DNA, G, Chromosome<DNA, G>> {
+        val genes = chromosome.genes.map { mutateGene(it) }
+        return MutatorResult(
+            chromosome.withGenes(genes.map { it.mutated }),
+            genes.sumOf { it.mutations }
+        )
     }
 
-    private fun mutateGene(gene: G) = when {
-        geneProbability eq 0.0 -> MutatorResult(gene)
-        geneProbability eq 1.0 || Core.random.nextDouble() < geneProbability -> {
-            val dna = gene.dna
+    /**
+     * Mutates the given gene with a certain probability. Mutation involves replacing the gene's DNA
+     * with another node of the same arity from the available nodes.
+     *
+     * @param gene The gene to be mutated.
+     * @return A [MutatorResult] containing the mutated gene (or the original gene if no mutation occurred).
+     */
+    override fun mutateGene(gene: G) =
+        if (Core.random.nextDouble() <= geneRate) {
+            MutatorResult(
+                gene.withDna(
+                    gene.dna.nodes.filter { it.arity == gene.dna.arity }
+                        .random(Core.random)
+                )
+            )
+        } else {
+            MutatorResult(gene)
         }
-        else -> MutatorResult(gene)
-    }
 }
+
