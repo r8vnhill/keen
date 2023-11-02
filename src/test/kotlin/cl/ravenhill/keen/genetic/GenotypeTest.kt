@@ -7,7 +7,7 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
-import cl.ravenhill.keen.arbs.genetic.intChromosome
+import cl.ravenhill.keen.arbs.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arbs.genetic.intGenotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene

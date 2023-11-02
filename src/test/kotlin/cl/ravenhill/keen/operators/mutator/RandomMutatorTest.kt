@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.genetic.intChromosome
+import cl.ravenhill.keen.arbs.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.arbs.probability
 import cl.ravenhill.keen.arbs.real

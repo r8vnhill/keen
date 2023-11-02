@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.arbs.genetic
 
+import cl.ravenhill.keen.arbs.genetic.chromosomes.intChromosome
+import cl.ravenhill.keen.arbs.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import io.kotest.property.Arb

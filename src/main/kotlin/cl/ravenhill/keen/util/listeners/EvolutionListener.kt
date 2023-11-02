@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.util.listeners
 
-import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
@@ -11,7 +16,6 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlin.reflect.KProperty
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
-
 
 /**
  * Represents a list of [EvolutionListener] instances.
@@ -198,4 +202,3 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
 
     var evolution: EvolutionRecord<DNA, G>
 }
-

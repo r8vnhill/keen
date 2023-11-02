@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.genetic.boolChromosome
+import cl.ravenhill.keen.arbs.genetic.chromosomes.boolChromosome
 import cl.ravenhill.keen.arbs.genetic.boolGene
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator chromosome rate defaults to one half`
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator gene rate defaults to one half`

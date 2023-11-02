@@ -5,6 +5,11 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.EnforcementException
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
+import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.genes.NothingGene
 
 /**
@@ -31,4 +36,28 @@ class NothingChromosome(genes: List<NothingGene>) :
      * @return A new instance of `NothingChromosome` with the specified genes.
      */
     override fun withGenes(genes: List<NothingGene>) = NothingChromosome(genes)
+
+    /**
+     * A factory for creating `NothingChromosome` instances.
+     *
+     * @property genes A list of `NothingGene` elements that will compose the new chromosome.
+     */
+    class Factory : Chromosome.AbstractFactory<Nothing, NothingGene>() {
+
+        /**
+         * Creates a new instance of NothingChromosome with the specified size.
+         * If the size is negative, an exception will be thrown.
+         *
+         * @return a new instance of NothingChromosome
+         */
+        @Throws(EnforcementException::class)
+        override fun make(): NothingChromosome {
+            enforce {
+                "Chromosome size [$size] must be non-negative" {
+                    size must BeAtLeast(0)
+                }
+            }
+            return NothingChromosome(List(size) { NothingGene })
+        }
+    }
 }

@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
-import cl.ravenhill.keen.arbs.genetic.doubleChromosome
+import cl.ravenhill.keen.arbs.genetic.chromosomes.doubleChromosome
 import cl.ravenhill.keen.arbs.genetic.doubleGene
 import cl.ravenhill.keen.arbs.doubleRange
 import cl.ravenhill.keen.assertions.chromosomes.`assert chromosome enforces range to gene count equality`

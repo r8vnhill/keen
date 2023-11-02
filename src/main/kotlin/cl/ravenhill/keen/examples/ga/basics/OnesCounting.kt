@@ -43,7 +43,7 @@ fun main() {
     val engine = engine(::count,
         genotype {
             chromosome {
-                booleans { size = 50; truesProbability = 0.15 }
+                booleans { size = 50; trueRate = 0.15 }
             }
         }) {
         populationSize = 50

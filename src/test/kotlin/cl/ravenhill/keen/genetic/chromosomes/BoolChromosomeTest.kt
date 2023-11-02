@@ -8,7 +8,7 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.genetic.boolChromosome
+import cl.ravenhill.keen.arbs.genetic.chromosomes.boolChromosome
 import cl.ravenhill.keen.arbs.genetic.boolGene
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -138,7 +138,7 @@ class BoolChromosomeTest : FreeSpec({
                         }
                     }
                     BoolChromosome.Factory().apply {
-                        this.truesProbability = probability
+                        this.trueRate = probability
                         this.size = size
                     }.make() shouldBe BoolChromosome(expected)
                 }

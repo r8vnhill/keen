@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.arbs.genetic
 
+import cl.ravenhill.keen.arbs.genetic.chromosomes.chromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.choice
 

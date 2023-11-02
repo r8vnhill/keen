@@ -91,7 +91,7 @@ fun main() {
     val engine = engine(
         ::fitnessFn,
         genotype {
-            chromosome { booleans { size = items.size; truesProbability = 0.5 } }
+            chromosome { booleans { size = items.size; trueRate = 0.5 } }
         }
     ) {
         populationSize = 50

@@ -123,13 +123,13 @@ data class BoolChromosome(
      * Factory for [BoolChromosome]s.
      *
      * @property size The size of the chromosome to build.
-     * @property truesProbability The probability of a gene being true.
+     * @property trueRate The probability of a gene being true.
      */
     class Factory : Chromosome.AbstractFactory<Boolean, BoolGene>() {
 
-        var truesProbability: Double by Delegates.notNull()
+        var trueRate: Double by Delegates.notNull()
 
         // Documentation inherited from [Chromosome.Factory].
-        override fun make() = BoolChromosome(size, truesProbability, executor)
+        override fun make() = BoolChromosome(size, trueRate, executor)
     }
 }
