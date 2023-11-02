@@ -31,11 +31,11 @@ class SwapMutatorTest : FreeSpec({
                 ) { geneRate, chromosomeRate ->
                     val mutator = SwapMutator<Nothing, NothingGene>(
                         chromosomeRate = chromosomeRate,
-                        geneRate = geneRate
+                        swapRate = geneRate
                     )
                     mutator.probability shouldBe 0.2
                     mutator.chromosomeRate shouldBe chromosomeRate
-                    mutator.geneRate shouldBe geneRate
+                    mutator.swapRate shouldBe geneRate
                 }
             }
 
@@ -46,11 +46,11 @@ class SwapMutatorTest : FreeSpec({
                 ) { probability, geneRate ->
                     val mutator = SwapMutator<Nothing, NothingGene>(
                         probability,
-                        geneRate = geneRate
+                        swapRate = geneRate
                     )
                     mutator.probability shouldBe probability
                     mutator.chromosomeRate shouldBe 0.5
-                    mutator.geneRate shouldBe geneRate
+                    mutator.swapRate shouldBe geneRate
                 }
             }
 
@@ -65,7 +65,7 @@ class SwapMutatorTest : FreeSpec({
                     )
                     mutator.probability shouldBe probability
                     mutator.chromosomeRate shouldBe chromosomeRate
-                    mutator.geneRate shouldBe 0.5
+                    mutator.swapRate shouldBe 0.5
                 }
             }
         }
@@ -75,7 +75,7 @@ class SwapMutatorTest : FreeSpec({
                 `validate unchanged chromosome with zero mutation rate`(
                     Arb.intChromosome()
                 ) { probability, geneRate ->
-                    SwapMutator(probability, chromosomeRate = 0.0, geneRate = geneRate)
+                    SwapMutator(probability, chromosomeRate = 0.0, swapRate = geneRate)
                 }
             }
 
@@ -86,7 +86,7 @@ class SwapMutatorTest : FreeSpec({
                     SwapMutator(
                         probability,
                         chromosomeRate = chromosomeRate,
-                        geneRate = 0.0
+                        swapRate = 0.0
                     )
                 }
             }

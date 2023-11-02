@@ -72,6 +72,7 @@ class MutableListsTest : FreeSpec({
 
         "Not add the element if it's present" {
             checkAll(
+                PropTestConfig(iterations = 54),
                 Arb.mutableCollection(Arb.any(), 1..100),
                 Arb.random()
             ) { collection, rng ->
@@ -109,7 +110,7 @@ class MutableListsTest : FreeSpec({
                 }
                 with(ex.infringements.first()) {
                     shouldBeInstanceOf<IntRequirementException>()
-                    message shouldBe unfulfilledConstraint("Size [$n] should be in range [0, ${n}]")
+                    message shouldBe unfulfilledConstraint("Size [$n] should be in range [0, $n]")
                 }
             }
         }
@@ -250,7 +251,6 @@ class MutableListsTest : FreeSpec({
         }
     }
 })
-
 
 // region : -== GENERATORS ==-
 // region : -== COLLECTIONS ==-

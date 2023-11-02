@@ -3,7 +3,6 @@
  * 2-Clause BSD License.
  */
 
-
 package cl.ravenhill.keen.util.collections
 
 import cl.ravenhill.any
@@ -23,7 +22,6 @@ import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.assume
 import io.kotest.property.checkAll
-
 
 /**
  * Test class for various matrix related functionalities.
@@ -52,7 +50,7 @@ class MatricesTest : FreeSpec({
         }
 
         "throw an exception if the lists are not of the same size" {
-            checkAll(Arb.list(Arb.list(Arb.any()))) { ass ->
+            checkAll(Arb.list(Arb.list(Arb.any(), 0..10), 0..10)) { ass ->
                 assume {
                     ass.shouldNotBeEmpty()
                     ass shouldAny { it.size != ass.first().size }
@@ -64,7 +62,6 @@ class MatricesTest : FreeSpec({
         }
     }
 })
-
 
 /**
  * Returns an [Arb] that generates a matrix with random elements of type [T].

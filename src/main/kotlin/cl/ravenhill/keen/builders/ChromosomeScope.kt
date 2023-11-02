@@ -1,6 +1,6 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 @file:Suppress("UnusedReceiverParameter")
@@ -46,7 +46,6 @@ import cl.ravenhill.keen.prog.Program
  */
 class ChromosomeScope<DNA>
 
-
 /**
  * Adds a chromosome factory to the builder.
  *
@@ -70,9 +69,6 @@ class ChromosomeScope<DNA>
 fun <DNA, G : Gene<DNA, G>> GenotypeScope<DNA, G>.chromosome(
     lazyFactory: ChromosomeScope<DNA>.() -> Chromosome.Factory<DNA, G>,
 ) = chromosomes.add(ChromosomeScope<DNA>().lazyFactory())
-
-infix fun <DNA, G : Gene<DNA, G>> ChromosomeScope<DNA>.of(factory: Chromosome.Factory<DNA, G>) =
-    factory
 
 /**
  * Creates a new [BoolChromosome.Factory] with the given [builder] block.

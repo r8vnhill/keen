@@ -37,6 +37,12 @@ class IntChromosomeTest : FreeSpec({
                     IntChromosome(it)
                 }
             }
+
+            "genes as varargs then the chromosome should have the same genes" {
+                `chromosome should reflect input genes`(Arb.intGene()) {
+                    IntChromosome(*it.toTypedArray())
+                }
+            }
         }
 
         "can create a new one with the given genes" {

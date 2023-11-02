@@ -29,20 +29,20 @@ import cl.ravenhill.keen.util.swap
  *
  * @param probability The probability of mutating a genotype
  * @param chromosomeRate The probability of mutating a chromosome
- * @param geneRate The probability of mutating a gene
+ * @param swapRate The probability of swapping two genes
  *
  * @constructor Creates a new [SwapMutator] with the given [probability]
  */
 class SwapMutator<DNA, G : Gene<DNA, G>>(
     override val probability: Double = 0.2,
     override val chromosomeRate: Double = 0.5,
-    val geneRate: Double = 0.5
+    val swapRate: Double = 0.5
 ) : ChromosomeMutator<DNA, G> {
     override fun mutateChromosome(
         chromosome: Chromosome<DNA, G>,
     ) = if (chromosomeRate neq 0.0 && chromosome.size > 1) {
         val genes = chromosome.genes.toMutableList()
-        val indices = Core.random.indices(geneRate, genes.size)
+        val indices = Core.random.indices(swapRate, genes.size)
         val mutations = indices
             .map {
                 Core.random.nextInt(genes.size).apply { genes.swap(it, this) }

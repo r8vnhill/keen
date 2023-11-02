@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen
 
 import cl.ravenhill.enforcer.Enforcement.enforce
@@ -13,10 +18,6 @@ import cl.ravenhill.kuro.Level
 import cl.ravenhill.kuro.logger
 import cl.ravenhill.kuro.stdoutChannel
 import kotlin.random.Random
-
-/***************************************************************************************************
- * TODO: Add top-level file documentation.
- **************************************************************************************************/
 
 /**
  * The `Core` object contains the functions and variables that are used by the rest of the library.

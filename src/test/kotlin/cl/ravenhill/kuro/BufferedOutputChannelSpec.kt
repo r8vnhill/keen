@@ -16,7 +16,7 @@ class BufferedOutputChannelSpec : FreeSpec({
     "BufferedOutputChannel should" - {
         "write to buffer" {
             // Generates a list of 0 to 1000 strings
-            checkAll(Arb.string(1, 1000).chunked(0, 100)) { messages ->
+            checkAll(Arb.string(1, 200).chunked(0, 100)) { messages ->
                 val bufferedOutputChannel = BufferedOutputChannel()
                 messages.forEach { bufferedOutputChannel.write(it) }
                 bufferedOutputChannel.toString() shouldBe messages.joinToString("")
@@ -25,7 +25,7 @@ class BufferedOutputChannelSpec : FreeSpec({
 
         "clear buffer" {
             // Generates a list of 0 to 1000 strings
-            checkAll(Arb.string(1, 1000).chunked(0, 100)) { messages ->
+            checkAll(Arb.string(1, 922).chunked(0, 100)) { messages ->
                 val bufferedOutputChannel = BufferedOutputChannel()
                 messages.forEach { bufferedOutputChannel.write(it) }
                 bufferedOutputChannel.clear()

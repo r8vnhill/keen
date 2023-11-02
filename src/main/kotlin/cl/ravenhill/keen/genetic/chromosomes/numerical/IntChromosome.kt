@@ -38,11 +38,18 @@ import cl.ravenhill.utils.IntToInt
 data class IntChromosome(override val genes: List<IntGene>) :
     AbstractChromosome<Int, IntGene>(genes) {
 
-    // / Documentation inherited from [Chromosome]
+    /**
+     * Secondary constructor that allows for the creation of an [IntChromosome] instance
+     * using a variable number of [IntGene] arguments.
+     *
+     * @param genes Vararg of [IntGene] objects to be included in the chromosome.
+     */
+    constructor(vararg genes: IntGene) : this(genes.toList())
+
     override fun withGenes(genes: List<IntGene>) = IntChromosome(genes)
 
     override fun toSimpleString() =
-        "[ ${genes.joinToString(", ") { it.toSimpleString() }} ]"
+        "[${genes.joinToString(", ") { it.toSimpleString() }}]"
 
     override fun toString(): String {
         return "IntChromosome(genes=[${genes.joinToString(", ") { it.toSimpleString() }}])"
