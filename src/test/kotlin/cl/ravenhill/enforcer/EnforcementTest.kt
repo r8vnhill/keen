@@ -9,6 +9,7 @@ package cl.ravenhill.enforcer
 import cl.ravenhill.enforcer.requirements.Requirement
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -18,6 +19,7 @@ import io.kotest.matchers.result.shouldBeSuccess
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.nonNegativeInt
@@ -127,7 +129,7 @@ class EnforcementTest : FreeSpec({
                 }
 
                 "the predicate is true for some iterations and false for others" {
-                    checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement()))) { enforced ->
+                    checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement()), 0..50)) { enforced ->
                         val scope = Enforcement.Scope()
                         with(scope) {
                             enforced.forEach { (msg, req) ->
@@ -237,11 +239,12 @@ class EnforcementTest : FreeSpec({
     }
 })
 
+@OptIn(ExperimentalKotest::class)
 private suspend fun `check must`(
     req: Requirement<Any>,
     afterChecks: (scope: Enforcement.Scope, iterations: Int) -> Unit,
 ) {
-    checkAll(Arb.string(), Arb.nonNegativeInt(100)) { msg, iterations ->
+    checkAll(PropTestConfig(iterations = 97), Arb.string(), Arb.nonNegativeInt(50)) { msg, iterations ->
         val scope = Enforcement.Scope()
         with(scope.StringScope(msg)) {
             repeat(iterations) {

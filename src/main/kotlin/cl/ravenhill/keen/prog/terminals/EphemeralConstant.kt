@@ -18,9 +18,10 @@ import java.util.Objects
  * @since 2.0.0
  * @version 2.0.0
  */
-class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
+data class EphemeralConstant<T>(val generator: () -> T, ) : Terminal<T> {
 
-    val value = generator()
+    private val _value: T? = null
+    val value: T get() = _value ?: generator()
 
     /**
      * Invokes this terminal with the given list of arguments.
@@ -31,13 +32,6 @@ class EphemeralConstant<T>(val generator: () -> T) : Terminal<T> {
     override fun invoke(args: List<T>) = value
 
     override fun toString() = "$value"
+
     override fun create() = EphemeralConstant(generator)
-
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is EphemeralConstant<*> -> false
-        else -> value == other.value
-    }
-
-    override fun hashCode() = Objects.hash(EphemeralConstant::class, value)
 }

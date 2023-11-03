@@ -10,19 +10,24 @@ import cl.ravenhill.keen.prog.terminals.Terminal
 import cl.ravenhill.keen.util.trees.Intermediate
 
 /**
- * This is an open class that represents a function with a name, an arity, and a body.
- * The function is "reduceable", which means that it can be simplified by evaluating its body
- * with its arguments, recursively reducing any sub-expressions that may be functions or
- * terminals.
+ * Represents a named function that is capable of reducing its arguments to produce an outcome.
+ * The function's body, which is a lambda, can be evaluated by providing a list of arguments.
+ * The function can also reduce or simplify sub-expressions present within its body, recursively
+ * handling other `Reduceable` instances such as functions or terminals.
  *
- * @param name The name of the function.
- * @param arity The arity of the function, which is the number of arguments it takes.
- * @param body The body of the function, which is a lambda that takes a list of arguments
- *             and returns a value of type T.
- * @param T The generic type of the function's return value.
- * @see Terminal
+ * The class also provides a clear `toString` representation by simply returning the name of the function.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @param T The generic type representing the return type of the function.
+ *
+ * @property name The unique identifier or name of the function.
+ * @property arity Specifies the number of arguments the function can take.
+ * @property body A lambda that provides the computational logic of the function. It takes a list
+ *                of arguments and returns a result of type T.
+ *
+ * @see Terminal This could be another related class or type that the user should be aware of,
+ *               providing more context.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 2.0.0
  * @version 2.0.0
  */
@@ -32,9 +37,29 @@ open class Fun<T>(
     private val body: (List<T>) -> T
 ) : Reduceable<T>, Intermediate<Reduceable<T>> {
 
-    // Inherited documentation from Reduceable<T>
+    /**
+     * Reduces the arguments using the body of the function to produce a result.
+     * This method is an override from `Reduceable` interface.
+     *
+     * @param args A list of arguments to be processed by the function.
+     * @return The result after processing the arguments.
+     */
     override fun invoke(args: List<T>) = body(args)
 
-    // Inherited documentation from Any
+    /**
+     * An overloaded version of the invoke method that accepts variable arguments.
+     * The arguments are converted to a list and then processed.
+     *
+     * @param args Variable arguments to be processed by the function.
+     * @return The result after processing the arguments.
+     */
+    override fun invoke(vararg args: T): T = body(args.toList())
+
+    /**
+     * Provides a string representation of the function, which is simply its name.
+     *
+     * @return The name of the function.
+     */
     override fun toString() = name
 }
+
