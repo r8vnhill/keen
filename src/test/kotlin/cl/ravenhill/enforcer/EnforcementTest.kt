@@ -48,7 +48,7 @@ class EnforcementTest : FreeSpec({
     "Enforcing a requirement" - {
         "performs no checks if the skip checks flag is set to true" {
             Enforcement.skipChecks = true
-            checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement()))) { strings ->
+            checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement()), 0..50)) { strings ->
                 Enforcement.enforce {
                     shouldNotThrowAny {
                         strings.forEach { (msg, req) ->

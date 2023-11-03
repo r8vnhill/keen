@@ -6,8 +6,14 @@
 package cl.ravenhill.keen.builders
 
 import cl.ravenhill.keen.assertions.builders.`test adding chromosome factory to GenotypeScope`
+import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
+import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.genetic.genes.CharGene
+import cl.ravenhill.keen.genetic.genes.ProgramGene
+import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
+import cl.ravenhill.keen.prog.Program
 import io.kotest.core.spec.style.FreeSpec
 
 class ChromosomeScopeTest : FreeSpec({
@@ -21,6 +27,24 @@ class ChromosomeScopeTest : FreeSpec({
         "can add a char chromosome factory to a [GenotypeScope]" {
             `test adding chromosome factory to GenotypeScope`<Char, CharGene> {
                 chars { }
+            }
+        }
+
+        "can add a double chromosome factory to a [GenotypeScope]" {
+            `test adding chromosome factory to GenotypeScope`<Double, DoubleGene> {
+                doubles { }
+            }
+        }
+
+        "can add an integer chromosome factory to a [GenotypeScope]" {
+            `test adding chromosome factory to GenotypeScope`<Int, IntGene> {
+                ints { }
+            }
+        }
+
+        "can add a program chromosome factory to a [GenotypeScope]" {
+            `test adding chromosome factory to GenotypeScope`<Program<Int>, ProgramGene<Int>> {
+                program { }
             }
         }
     }
