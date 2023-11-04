@@ -1,12 +1,14 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.CollectionRequirement
 import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.HaveSize
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.SelfReferential
@@ -51,13 +53,13 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
 
     /**
      * Returns an [IntRange] that corresponds to the indices of the subtree rooted at the specified
-     * [node1].
+     * [node].
      *
-     * @throws NoSuchElementException if the specified [node1] is not found in the tree.
+     * @throws NoSuchElementException if the specified [node] is not found in the tree.
      */
-    fun searchSubtree(node1: T): IntRange {
+    fun searchSubtree(node: T): IntRange {
         // Find the index of the specified node
-        val index = nodes.indexOfFirst { it === node1 }
+        val index = nodes.indexOfFirst { it === node }
         // If the specified node is not found, throw a NoSuchElementException
         if (index == -1) {
             throw NoSuchElementException("Node not found in tree.")
@@ -96,7 +98,7 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
             val node = createNode(it.value, children)
             enforce {
                 "The arity of the tree [${it.arity}] does not match the arity of the node [${node.children.size}]." {
-                    node.children.size must BeEqualTo(it.arity)
+                    node.children must HaveSize(it.arity)
                 }
             }
             // Add the new node to the stack.

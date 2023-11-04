@@ -5,11 +5,9 @@
 
 package cl.ravenhill.keen.util.trees
 
-import cl.ravenhill.orderedPair
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
 
 // region : -== TREE NODES ==-
 /**
@@ -150,15 +148,4 @@ fun <T> Arb.Companion.intermediate(arity: Arb<Int> = Arb.int(1..4)) =
         TypedIntermediate<T>(a)
     }
 
-private fun <T> Arb.Companion.tree(gen: Arb<T>, maxDepth: IntRange = 1..5) = arbitrary {
-    val (lo, hi) = orderedPair(int(maxDepth), int(maxDepth)).bind()
-    Tree.generate(
-        leafs = list(leaf(gen)).bind(),
-        intermediates = list(intermediate<T>()).bind(),
-        min = lo,
-        max = hi,
-        condition = { _, _ -> true },
-        leafFactory = { value -> leafFactory(value) }
-    ) { value, children -> intermediateFactory(value, children) }
-}
 // endregion GENERATORS

@@ -6,15 +6,17 @@
 package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.arbs.trees.tree
 import cl.ravenhill.keen.random
+import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.long
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-// TODO: Complete this test class.
 class TreeTest : FreeSpec({
     /**
      * Represents a leaf node containing an integer value of 1.
@@ -135,7 +137,7 @@ class TreeTest : FreeSpec({
         }
     }
 
-    "A given tree should" - {
+    "A given [Tree] should" - {
         "have a `value` equal to the root node" {
             basicTree.value shouldBe intermediateNode
         }
@@ -177,6 +179,29 @@ class TreeTest : FreeSpec({
 
         "return a random node when `random` is called" {
             `check that a random node is returned when random is called`(basicTree)
+        }
+
+        "when searching for an element in its subtree" - {
+            "should return an IntRange with the indices of the subtree" {
+                val range = basicTree.searchSubtree(intermediateTree)
+                range.first shouldBe 2
+                range.last shouldBe 5
+            }
+
+            "should throw a NoSuchElementException if the element is not found" {
+                checkAll(Arb.tree(Arb.int())) { tree ->
+                    shouldThrowWithMessage<NoSuchElementException>("Node not found in tree.") {
+                        basicTree.searchSubtree(tree)
+                    }
+                }
+            }
+        }
+
+        "can be created from a depth-first list of nodes" {
+            checkAll(Arb.tree(Arb.int())) { tree ->
+                val newTree = basicTree.fromDepthFirst(tree.nodes)
+                newTree shouldBe tree
+            }
         }
     }
 })
