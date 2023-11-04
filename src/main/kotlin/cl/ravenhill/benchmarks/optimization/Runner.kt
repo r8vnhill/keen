@@ -5,6 +5,26 @@
 
 package cl.ravenhill.benchmarks.optimization
 
+import cl.ravenhill.benchmarks.optimization.functions.ackley
+import cl.ravenhill.benchmarks.optimization.functions.beale
+import cl.ravenhill.benchmarks.optimization.functions.booth
+import cl.ravenhill.benchmarks.optimization.functions.bukinN6
+import cl.ravenhill.benchmarks.optimization.functions.crossInTray
+import cl.ravenhill.benchmarks.optimization.functions.easom
+import cl.ravenhill.benchmarks.optimization.functions.eggholder
+import cl.ravenhill.benchmarks.optimization.functions.goldsteinPrice
+import cl.ravenhill.benchmarks.optimization.functions.himmelblau
+import cl.ravenhill.benchmarks.optimization.functions.holderTable
+import cl.ravenhill.benchmarks.optimization.functions.levi
+import cl.ravenhill.benchmarks.optimization.functions.matyas
+import cl.ravenhill.benchmarks.optimization.functions.mccormick
+import cl.ravenhill.benchmarks.optimization.functions.rastrigin
+import cl.ravenhill.benchmarks.optimization.functions.rosenbrock
+import cl.ravenhill.benchmarks.optimization.functions.schafferN2
+import cl.ravenhill.benchmarks.optimization.functions.schafferN4
+import cl.ravenhill.benchmarks.optimization.functions.sphere
+import cl.ravenhill.benchmarks.optimization.functions.styblinskiTang
+import cl.ravenhill.benchmarks.optimization.functions.threeHumpCamel
 import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.doubles
 import cl.ravenhill.keen.builders.engine

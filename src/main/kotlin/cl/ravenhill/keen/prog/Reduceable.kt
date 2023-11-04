@@ -35,7 +35,7 @@ interface Reduceable<T> : Node<Reduceable<T>> {
         "Use invoke(environment: Environment, args: List<T>) instead.",
         ReplaceWith("invoke(environment, args)")
     )
-    operator fun invoke(args: List<T>): T
+    operator fun invoke(args: List<T>): T = invoke(Environment(""), args)
 
     /**
      * An overloaded version of the `invoke` method that allows the operation to be

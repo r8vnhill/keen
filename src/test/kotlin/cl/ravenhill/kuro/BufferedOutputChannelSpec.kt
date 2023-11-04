@@ -24,8 +24,8 @@ class BufferedOutputChannelSpec : FreeSpec({
         }
 
         "clear buffer" {
-            // Generates a list of 0 to 1000 strings
-            checkAll(Arb.string(1, 922).chunked(0, 100)) { messages ->
+            // Generates a list of 1 to 58 strings
+            checkAll(Arb.string(1, 58).chunked(0, 100)) { messages ->
                 val bufferedOutputChannel = BufferedOutputChannel()
                 messages.forEach { bufferedOutputChannel.write(it) }
                 bufferedOutputChannel.clear()

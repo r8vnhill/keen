@@ -19,14 +19,6 @@ import cl.ravenhill.keen.prog.Environment
  */
 data class Constant<T>(val value: T) : Terminal<T> {
     /**
-     * Returns the constant value this node holds.
-     *
-     * @param args a list of arguments (not used, as a `Constant` node does not have child nodes)
-     * @return the constant value this node holds
-     */
-    override fun invoke(args: List<T>) = value
-
-    /**
      * Creates a new `Constant` node with the same value as this node.
      *
      * @return a new `Constant` node with the same value as this node

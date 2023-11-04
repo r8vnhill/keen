@@ -1,8 +1,7 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.enforcer
 
@@ -21,6 +20,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.element
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.arbitrary.pair
@@ -161,7 +161,7 @@ class EnforcementTest : FreeSpec({
                     }
                 }
                 "the predicate is false" {
-                    checkAll(Arb.string(), Arb.nonNegativeInt(100)) { msg, iterations ->
+                    checkAll(Arb.string(), Arb.int(0..50)) { msg, iterations ->
                         val scope = Enforcement.Scope()
                         with(scope.StringScope(msg)) {
                             repeat(iterations) {

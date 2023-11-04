@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.arbs.prog.environment
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
@@ -29,11 +35,11 @@ class EphemeralConstantTest : FreeSpec({
         }
 
         "can be invoked as a function" {
-            checkAll(Arb.list(Arb.long()), Arb.long()) { args, seed ->
+            checkAll(Arb.list(Arb.long()), Arb.environment(), Arb.long()) { args, env, seed ->
                 Core.random = Random(seed)
                 val randomGenerator = Random(seed)
                 val constant = EphemeralConstant(Core.random::nextLong)
-                constant(args) shouldBe randomGenerator.nextLong()
+                constant(env, args) shouldBe randomGenerator.nextLong()
             }
         }
 

@@ -1,9 +1,6 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.util.listeners
@@ -46,7 +43,6 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     override var generation: Int = 0
     override var evolution: EvolutionRecord<DNA, G> = EvolutionRecord()
     protected val generations get() = evolution.generations
-    @Suppress("PropertyName")
     protected lateinit var _currentGeneration: GenerationRecord
     override val currentGeneration: GenerationRecord get() = _currentGeneration
     @ExperimentalTime
