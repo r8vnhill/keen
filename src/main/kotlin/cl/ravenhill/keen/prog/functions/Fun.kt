@@ -50,7 +50,7 @@ open class Fun<T>(
 
     override fun invoke(environment: Environment<T>, args: List<T>): T {
         enforce {
-            "The number of arguments [$args] must be equal to the function's arity [$arity]" {
+            "The number of arguments [${args.size}] must be equal to the arity [$arity]" {
                 args must HaveSize(arity)
             }
         }

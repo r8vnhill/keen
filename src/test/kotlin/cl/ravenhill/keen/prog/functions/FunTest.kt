@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.prog.functions
 
+import cl.ravenhill.enforcer.CollectionRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.arbs.datatypes.list
@@ -73,11 +74,11 @@ class FunTest : FreeSpec({
                     Arb.list(Arb.int())
                 ) { name, arity, body, environment, args ->
                     assume { args shouldNotHaveSize arity }
-                    val funObj = Fun(name, args.size + 1, body)
+                    val funObj = Fun(name, arity, body)
                     shouldThrow<EnforcementException> {
                         funObj(environment, args)
-                    }.shouldHaveInfringement<IntRequirementException>(
-                        unfulfilledConstraint("The number of arguments [${args.size}] must be equal to the arity [${args.size + 1}]")
+                    }.shouldHaveInfringement<CollectionRequirementException>(
+                        unfulfilledConstraint("The number of arguments [${args.size}] must be equal to the arity [$arity]")
                     )
                 }
             }
