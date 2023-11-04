@@ -5,6 +5,10 @@
 
 package cl.ravenhill.keen.prog.functions
 
+import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.enforcer.requirements.CollectionRequirement
+import cl.ravenhill.enforcer.requirements.CollectionRequirement.*
+import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
 import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.Terminal
@@ -33,31 +37,24 @@ import cl.ravenhill.keen.util.trees.Intermediate
  * @version 2.0.0
  */
 open class Fun<T>(
-    private val name: String,
+    val name: String,
     override val arity: Int,
-    private val body: (List<T>) -> T
+    val body: (List<T>) -> T
 ) : Reduceable<T>, Intermediate<Reduceable<T>> {
 
-    /**
-     * Reduces the arguments using the body of the function to produce a result.
-     * This method is an override from `Reduceable` interface.
-     *
-     * @param args A list of arguments to be processed by the function.
-     * @return The result after processing the arguments.
-     */
-    override fun invoke(args: List<T>) = body(args)
-
-    /**
-     * An overloaded version of the invoke method that accepts variable arguments.
-     * The arguments are converted to a list and then processed.
-     *
-     * @param args Variable arguments to be processed by the function.
-     * @return The result after processing the arguments.
-     */
-    override fun invoke(vararg args: T): T = body(args.toList())
+    init {
+        enforce {
+            "The arity [$arity] must be at least 0" { arity must BeAtLeast(0) }
+        }
+    }
 
     override fun invoke(environment: Environment<T>, args: List<T>): T {
-        TODO("Not yet implemented")
+        enforce {
+            "The number of arguments [$args] must be equal to the function's arity [$arity]" {
+                args must HaveSize(arity)
+            }
+        }
+        return body(args)
     }
 
     /**
