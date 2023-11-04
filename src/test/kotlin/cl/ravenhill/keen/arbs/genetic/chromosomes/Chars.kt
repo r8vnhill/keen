@@ -8,7 +8,7 @@ package cl.ravenhill.keen.arbs.genetic.chromosomes
 
 import cl.ravenhill.keen.arbs.charRange
 import cl.ravenhill.keen.arbs.genetic.charGene
-import cl.ravenhill.keen.arbs.mutableList
+import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

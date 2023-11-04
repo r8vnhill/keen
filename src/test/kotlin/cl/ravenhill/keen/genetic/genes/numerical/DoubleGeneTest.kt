@@ -9,7 +9,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.genetic.doubleGene
 import cl.ravenhill.keen.util.nextDoubleInRange
 import cl.ravenhill.keen.util.shouldEq
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue

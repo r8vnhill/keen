@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.prog.terminals
 
+import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Reduceable
 import java.util.Objects
 
@@ -34,4 +35,7 @@ data class EphemeralConstant<T>(val generator: () -> T, ) : Terminal<T> {
     override fun toString() = "$value"
 
     override fun create() = EphemeralConstant(generator)
+    override fun invoke(environment: Environment, args: List<T>): T {
+        TODO("Not yet implemented")
+    }
 }

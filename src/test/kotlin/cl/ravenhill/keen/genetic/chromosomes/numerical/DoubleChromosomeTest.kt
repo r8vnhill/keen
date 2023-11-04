@@ -21,7 +21,7 @@ import cl.ravenhill.keen.assertions.chromosomes.`validate factory filter assignm
 import cl.ravenhill.keen.assertions.chromosomes.`validate factory range assignment`
 import cl.ravenhill.keen.assertions.chromosomes.`validate genes with specified range and factory`
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe

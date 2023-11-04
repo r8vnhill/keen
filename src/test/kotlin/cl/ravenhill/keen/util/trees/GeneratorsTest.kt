@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.util.trees
 
-import cl.ravenhill.any
+import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.enforcer.CollectionRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException

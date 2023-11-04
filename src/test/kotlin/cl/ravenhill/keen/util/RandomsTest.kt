@@ -5,12 +5,12 @@
 
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.any
+import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.enforcer.UnfulfilledRequirementException
 import cl.ravenhill.keen.random
 import cl.ravenhill.orderedPair
 import cl.ravenhill.orderedTriple
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.unfulfilledConstraint
 import cl.ravenhill.utils.toRange
 import io.kotest.assertions.assertSoftly

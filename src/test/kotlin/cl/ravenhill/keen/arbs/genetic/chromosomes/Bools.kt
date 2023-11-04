@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.arbs.genetic.chromosomes
 
 import cl.ravenhill.keen.arbs.genetic.boolGene
-import cl.ravenhill.keen.arbs.probability
+import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.genetic.chromosomes.BoolChromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

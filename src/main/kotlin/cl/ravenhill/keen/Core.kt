@@ -14,6 +14,7 @@ import cl.ravenhill.keen.Core.EvolutionLogger.logger
 import cl.ravenhill.keen.Core.maxProgramDepth
 import cl.ravenhill.keen.Core.random
 import cl.ravenhill.keen.evolution.Evolver
+import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.kuro.Level
 import cl.ravenhill.kuro.logger
 import cl.ravenhill.kuro.stdoutChannel
@@ -32,7 +33,11 @@ import kotlin.random.Random
  * @since 1.0.0
  */
 object Core {
+
     const val DEFAULT_MAX_PROGRAM_DEPTH = 7
+
+    val environments: MutableMap<String, Environment> = mutableMapOf()
+
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
         set(value) {
             enforce { "The maximum program depth must be positive" { value must BePositive } }

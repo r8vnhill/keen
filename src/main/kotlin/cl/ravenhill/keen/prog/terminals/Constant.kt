@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.prog.terminals
 
+import cl.ravenhill.keen.prog.Environment
+
 /**
  * A terminal node representing a constant value in a program tree.
  *
@@ -30,4 +32,5 @@ data class Constant<T>(val value: T) : Terminal<T> {
      * @return a new `Constant` node with the same value as this node
      */
     override fun create() = Constant(value)
+    override fun invoke(environment: Environment, args: List<T>): T = value
 }

@@ -9,8 +9,8 @@ import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
 import cl.ravenhill.keen.arbs.genetic.nothingGenotype
-import cl.ravenhill.keen.arbs.probability
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.probability
+import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome

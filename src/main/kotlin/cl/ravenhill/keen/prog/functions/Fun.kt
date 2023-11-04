@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.prog.functions
 
+import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.Terminal
 import cl.ravenhill.keen.util.trees.Intermediate
@@ -54,6 +55,10 @@ open class Fun<T>(
      * @return The result after processing the arguments.
      */
     override fun invoke(vararg args: T): T = body(args.toList())
+
+    override fun invoke(environment: Environment, args: List<T>): T {
+        TODO("Not yet implemented")
+    }
 
     /**
      * Provides a string representation of the function, which is simply its name.

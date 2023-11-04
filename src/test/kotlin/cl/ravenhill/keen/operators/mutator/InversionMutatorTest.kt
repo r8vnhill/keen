@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.mutator
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arbs.genetic.intGene
-import cl.ravenhill.keen.arbs.probability
+import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.operators.mutator.strategies.InversionMutator

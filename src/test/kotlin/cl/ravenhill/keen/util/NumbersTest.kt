@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb

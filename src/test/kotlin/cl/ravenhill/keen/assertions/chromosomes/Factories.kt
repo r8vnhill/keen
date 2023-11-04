@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.assertions.chromosomes
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.mutableList
+import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.Filterable

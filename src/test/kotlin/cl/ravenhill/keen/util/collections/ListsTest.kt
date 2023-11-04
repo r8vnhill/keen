@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.util.collections
 
-import cl.ravenhill.any
+import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.keen.util.duplicates
 import cl.ravenhill.keen.util.get
 import cl.ravenhill.keen.util.sub

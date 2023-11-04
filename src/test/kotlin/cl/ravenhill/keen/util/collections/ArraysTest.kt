@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.util.collections
 
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.util.incremental
 import cl.ravenhill.keen.util.isSorted
 import cl.ravenhill.keen.util.shouldEq

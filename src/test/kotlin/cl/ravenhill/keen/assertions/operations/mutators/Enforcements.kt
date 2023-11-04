@@ -7,7 +7,7 @@ package cl.ravenhill.keen.assertions.operations.mutators
 
 import cl.ravenhill.enforcer.DoubleRequirementException
 import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.shouldHaveInfringement

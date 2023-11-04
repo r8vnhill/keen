@@ -8,8 +8,8 @@ package cl.ravenhill.keen.operators.mutator
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arbs.genetic.intGene
-import cl.ravenhill.keen.arbs.probability
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.probability
+import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator chromosome rate defaults to one half`
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator gene rate defaults to one half`
 import cl.ravenhill.keen.assertions.operations.mutators.`mutator with valid parameters`

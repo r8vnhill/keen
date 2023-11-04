@@ -5,7 +5,7 @@
 
 package cl.ravenhill.utils
 
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.orderedPair
 import cl.ravenhill.orderedTriple
 import io.kotest.core.spec.style.FreeSpec

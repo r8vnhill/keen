@@ -45,7 +45,7 @@ fun main() {
                     function("*", 2) { it[0] * it[1] }
                     function("+", 2) { it[0] + it[1] }
                     terminal { EphemeralConstant { Core.random.nextInt(-1, 2).toDouble() } }
-                    terminal { Variable("x", 0) }
+//                    terminal { Variable("x", 0) }
                 }
             }
         }

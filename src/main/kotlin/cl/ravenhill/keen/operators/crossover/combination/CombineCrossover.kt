@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.operators.crossover.combination
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -48,7 +49,7 @@ open class CombineCrossover<DNA, G : Gene<DNA, G>>(
      * @see Dice.probability
      */
     internal fun combine(chromosomes: List<Chromosome<DNA, G>>) = List(chromosomes[0].size) { i ->
-        if (Dice.probability() < geneRate) {
+        if (Core.random.nextDouble() < geneRate) {
             combiner(chromosomes.map { it[i] })
         } else {
             chromosomes[0][i]

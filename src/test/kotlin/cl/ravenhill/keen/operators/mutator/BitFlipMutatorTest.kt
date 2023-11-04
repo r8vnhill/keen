@@ -17,7 +17,7 @@ import cl.ravenhill.keen.assertions.operations.mutators.`validate unchanged chro
 import cl.ravenhill.keen.assertions.operations.mutators.`validate unchanged gene with zero mutation rate`
 import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.operators.mutator.strategies.BitFlipMutator
-import cl.ravenhill.keen.arbs.real
+import cl.ravenhill.keen.arbs.datatypes.real
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb

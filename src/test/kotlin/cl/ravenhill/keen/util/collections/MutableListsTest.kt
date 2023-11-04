@@ -5,11 +5,11 @@
 
 package cl.ravenhill.keen.util.collections
 
-import cl.ravenhill.any
+import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.enforcer.CollectionRequirementException
 import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.enforcer.IntRequirementException
-import cl.ravenhill.keen.arbs.mutableList
+import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.addIfAbsent

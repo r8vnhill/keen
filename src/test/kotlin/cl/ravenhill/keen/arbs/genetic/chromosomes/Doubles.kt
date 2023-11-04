@@ -7,7 +7,7 @@ package cl.ravenhill.keen.arbs.genetic.chromosomes
 
 import cl.ravenhill.keen.arbs.doubleRange
 import cl.ravenhill.keen.arbs.genetic.doubleGene
-import cl.ravenhill.keen.arbs.mutableList
+import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

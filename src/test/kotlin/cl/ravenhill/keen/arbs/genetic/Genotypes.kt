@@ -12,7 +12,7 @@ import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
-import cl.ravenhill.keen.arbs.list
+import cl.ravenhill.keen.arbs.datatypes.list
 import io.kotest.property.arbitrary.int
 
 /**

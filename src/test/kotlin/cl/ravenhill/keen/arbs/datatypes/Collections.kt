@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.arbs
+package cl.ravenhill.keen.arbs.datatypes
 
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

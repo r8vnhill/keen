@@ -5,7 +5,8 @@
 
 package cl.ravenhill.keen.prog.terminals
 
-import java.util.Objects
+import cl.ravenhill.keen.prog.Environment
+import java.util.*
 
 /**
  * This class represents a variable with a name and an index that points to an argument in a list.
@@ -19,7 +20,15 @@ import java.util.Objects
  * @since 2.0.0
  * @version 2.0.0
  */
-class Variable<T>(private val name: String, val index: Int) : Terminal<T> {
+data class Variable<T>(
+    val name: String,
+    val index: Int = 0,
+    val environment: Environment = Environment("")
+) : Terminal<T> {
+
+    init {
+        environment += this
+    }
 
     // Inherited documentation from Reduceable<T>
     override fun invoke(args: List<T>) = args[index]
@@ -28,15 +37,20 @@ class Variable<T>(private val name: String, val index: Int) : Terminal<T> {
     override fun toString() = name
 
     // Inherited documentation from Terminal<T>
-    override fun create() = Variable<T>(name, index)
+    override fun create() = Variable<T>(name, index, environment.copy())
+
+    override fun invoke(environment: Environment, args: List<T>): T {
+        TODO("Not yet implemented")
+    }
 
     // Inherited documentation from Any
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is Variable<*> -> false
-        else -> name == other.name && index == other.index
+        index != other.index -> false
+        else -> environment == other.environment
     }
 
     // Inherited documentation from Any
-    override fun hashCode() = Objects.hash(Variable::class, name, index)
+    override fun hashCode() = Objects.hash(Variable::class, index, environment)
 }

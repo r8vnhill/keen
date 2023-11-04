@@ -6,7 +6,7 @@
 
 package cl.ravenhill.enforcer.requirements
 
-import cl.ravenhill.any
+import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.enforcer.CollectionRequirementException
 import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
 import io.kotest.core.spec.style.FreeSpec
