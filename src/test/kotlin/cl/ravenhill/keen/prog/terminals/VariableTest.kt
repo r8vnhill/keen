@@ -18,8 +18,8 @@ class VariableTest : FreeSpec({
         "when created" - {
             "without an explicit index defaults to 0" {
                 checkAll(Arb.string(), Arb.string()) { variableName, environmentName ->
-                    val environment = Environment(environmentName)
-                    with(Variable<Int>(variableName, environment = environment)) {
+                    val environment = Environment<Int>(environmentName)
+                    with(Variable<Int>(variableName)) {
                         name shouldBe variableName
                         index shouldBe 0
                         environment shouldBe environment

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.prog.Environment
@@ -27,5 +32,5 @@ data class EphemeralConstant<T>(val generator: () -> T, ) : Terminal<T> {
     override fun toString() = "$value"
 
     override fun create() = EphemeralConstant(generator)
-    override fun invoke(environment: Environment, args: List<T>) = value
+    override fun invoke(environment: Environment<T>, args: List<T>) = value
 }

@@ -15,7 +15,7 @@ class MapsTest : FreeSpec({
     "A [Map] of [String] and [Environment]" - {
         "can add a [Pair] of [String] and [Environment]" {
             checkAll<String> { name ->
-                val map = mutableMapOf<String, Environment>()
+                val map = mutableMapOf<String, Environment<Any>>()
                 map += name to Environment(name)
                 map.size shouldBe 1
                 map[name] shouldBe Environment(name)
@@ -24,7 +24,7 @@ class MapsTest : FreeSpec({
 
         "can add a [Pair] of [String] and [Environment] using the [plusAssign] operator" {
             checkAll<String> { name ->
-                val map = mutableMapOf<String, Environment>()
+                val map = mutableMapOf<String, Environment<Any>>()
                 map += name to Environment(name)
                 map.size shouldBe 1
                 map[name] shouldBe Environment(name)

@@ -17,11 +17,21 @@ import io.kotest.property.arbitrary.string
  * that use the `Arb` type for generating random test data.
  *
  * When invoked, it creates an `Environment` instance with a randomly generated string identifier. This can be
- * particularly useful when testing functions or classes that interact with different environments and you need a
+ * particularly useful when testing functions or classes that interact with different environments, and you need a
  * variety of `Environment` instances for comprehensive testing.
+ *
+ * @param U the upper bound of the type of values stored in the environment.
  *
  * @return An arbitrary of `Environment` with a randomly generated string as its ID.
  */
-fun Arb.Companion.environment() = arbitrary {
-   Environment(string().bind())
+fun <U> Arb.Companion.environment() = arbitrary {
+    Environment<U>(string().bind())
+}
+
+fun <U> Arb.Companion.environment(size: Arb<Int>, value: Arb<U>) = arbitrary {
+    val env = Environment<U>(string().bind())
+    repeat(size.bind()) {
+        env += it to value.bind()
+    }
+    env
 }

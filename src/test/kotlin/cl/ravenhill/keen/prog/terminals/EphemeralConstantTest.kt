@@ -35,7 +35,7 @@ class EphemeralConstantTest : FreeSpec({
         }
 
         "can be invoked as a function" {
-            checkAll(Arb.list(Arb.long()), Arb.environment(), Arb.long()) { args, env, seed ->
+            checkAll(Arb.list(Arb.long()), Arb.environment<Long>(), Arb.long()) { args, env, seed ->
                 Core.random = Random(seed)
                 val randomGenerator = Random(seed)
                 val constant = EphemeralConstant(Core.random::nextLong)

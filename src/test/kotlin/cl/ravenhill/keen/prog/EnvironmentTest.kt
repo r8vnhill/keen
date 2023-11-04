@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.prog
 
+import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.keen.arbs.prog.environment
 import cl.ravenhill.keen.prog.terminals.Variable
 import io.kotest.core.spec.style.FreeSpec
@@ -13,26 +14,29 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.pair
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 
 class EnvironmentTest : FreeSpec({
     "An [Environment]" - {
-        "is created with an empty map of variables" {
+        "is created with an empty memory map" {
             checkAll<String> { name ->
-                val env = Environment(name)
+                val env = Environment<Any>(name)
                 env.id shouldBe name
-                env.variables.isEmpty().shouldBeTrue()
+                env.memory.isEmpty().shouldBeTrue()
             }
         }
 
-        "can add variables" {
-            checkAll(Arb.list(Arb.string()), Arb.environment()) { variableNames, env ->
-                variableNames.forEachIndexed { index, s -> env += Variable<Int>(s, index, env) }
-                env.variables.size shouldBe variableNames.size
-                variableNames.forEachIndexed { index, s ->
-                    env.variables shouldContain (index to Variable<Int>(s, index, env))
+        "can add values to its memory" {
+            checkAll(Arb.list(Arb.pair(Arb.int(), Arb.any())), Arb.environment<Any>()) { values, env ->
+                val distinctValues = values.distinctBy { it.first }
+                distinctValues.forEach { (index, value) -> env += index to value }
+                env.memory.size shouldBe distinctValues.size
+                distinctValues.forEach { (index, value) ->
+                    env.memory shouldContain (index to value)
                 }
             }
         }

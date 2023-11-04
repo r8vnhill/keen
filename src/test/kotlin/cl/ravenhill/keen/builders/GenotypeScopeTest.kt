@@ -32,6 +32,7 @@ class GenotypeScopeTest : FreeSpec({
                 }
             }
         }
+
         "when created" - {
             "should have an empty list of chromosomes" {
                 GenotypeScope<Nothing, NothingGene>().chromosomes.shouldBeEmpty()

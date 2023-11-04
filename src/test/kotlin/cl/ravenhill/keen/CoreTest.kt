@@ -87,7 +87,7 @@ class CoreTest : FreeSpec({
         "can add environments" {
             checkAll(Arb.uniqueStrings()) { names ->
                 Core.environments.shouldBeEmpty()
-                names.forEach { it to Environment(it) }
+                names.forEach { it to Environment<Any>(it) }
                 Core.environments.size shouldBe names.size
                 names.forEach {
                     Core.environments shouldContainKey it

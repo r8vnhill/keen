@@ -22,13 +22,8 @@ import java.util.*
  */
 data class Variable<T>(
     val name: String,
-    val index: Int = 0,
-    val environment: Environment = Environment("")
+    val index: Int = 0
 ) : Terminal<T> {
-
-    init {
-        environment += this
-    }
 
     // Inherited documentation from Reduceable<T>
     override fun invoke(args: List<T>) = args[index]
@@ -37,20 +32,9 @@ data class Variable<T>(
     override fun toString() = name
 
     // Inherited documentation from Terminal<T>
-    override fun create() = Variable<T>(name, index, environment.copy())
+    override fun create() = Variable<T>(name, index)
 
-    override fun invoke(environment: Environment, args: List<T>): T {
+    override fun invoke(environment: Environment<T>, args: List<T>): T {
         TODO("Not yet implemented")
     }
-
-    // Inherited documentation from Any
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is Variable<*> -> false
-        index != other.index -> false
-        else -> environment == other.environment
-    }
-
-    // Inherited documentation from Any
-    override fun hashCode() = Objects.hash(Variable::class, index, environment)
 }

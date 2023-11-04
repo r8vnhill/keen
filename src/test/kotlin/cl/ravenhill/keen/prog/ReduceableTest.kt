@@ -17,15 +17,13 @@ import io.kotest.property.checkAll
 class ReduceableTest : FreeSpec({
     "A [Reduceable]" - {
         "can be reduced" {
-            checkAll(Arb.list(Arb.int()), Arb.environment()) { value, environment ->
+            checkAll(Arb.list(Arb.int()), Arb.environment<Int>()) { value, environment ->
                 val reduceable = object : Reduceable<Int> {
-                    override fun invoke(args: List<Int>) = args.sum()
-                    override fun invoke(environment: Environment, args: List<Int>) = args.sum()
+                    override fun invoke(environment: Environment<Int>, args: List<Int>) = args.sum()
 
                     override val arity = value.size
                 }
                 reduceable(environment, value) shouldBe value.sum()
-                reduceable(environment, *value.toTypedArray()) shouldBe value.sum()
             }
         }
     }

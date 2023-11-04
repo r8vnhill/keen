@@ -56,7 +56,7 @@ open class Fun<T>(
      */
     override fun invoke(vararg args: T): T = body(args.toList())
 
-    override fun invoke(environment: Environment, args: List<T>): T {
+    override fun invoke(environment: Environment<T>, args: List<T>): T {
         TODO("Not yet implemented")
     }
 

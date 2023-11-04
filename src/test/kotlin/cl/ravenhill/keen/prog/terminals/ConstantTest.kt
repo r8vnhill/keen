@@ -24,7 +24,7 @@ class ConstantTest : FreeSpec({
 
         "should return its value when invoked" - {
             "with an environment and a list of arguments" {
-                checkAll(Arb.any(), Arb.list(Arb.any()), Arb.environment()) { a, args, env ->
+                checkAll(Arb.any(), Arb.list(Arb.any()), Arb.environment<Any>()) { a, args, env ->
                     Constant(a).invoke(env, args) shouldBe a
                 }
             }

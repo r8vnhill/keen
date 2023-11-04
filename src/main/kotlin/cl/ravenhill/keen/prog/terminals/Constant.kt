@@ -24,5 +24,5 @@ data class Constant<T>(val value: T) : Terminal<T> {
      * @return a new `Constant` node with the same value as this node
      */
     override fun create() = Constant(value)
-    override fun invoke(environment: Environment, args: List<T>): T = value
+    override fun invoke(environment: Environment<T>, args: List<T>): T = value
 }

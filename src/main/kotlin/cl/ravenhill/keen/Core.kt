@@ -36,7 +36,7 @@ object Core {
 
     const val DEFAULT_MAX_PROGRAM_DEPTH = 7
 
-    val environments: MutableMap<String, Environment> = mutableMapOf()
+    val environments: MutableMap<String, Environment<*>> = mutableMapOf()
 
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
         set(value) {

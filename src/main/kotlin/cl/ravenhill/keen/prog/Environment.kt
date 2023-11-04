@@ -1,49 +1,57 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.prog.terminals.Variable
 
 /**
- * Represents an environment in the context of the application. Each environment has a unique identifier
- * and can contain multiple variables. An environment automatically registers itself to the core
- * environments list upon its creation.
+ * Represents a specific computational environment identified by an ID. This environment
+ * acts as a container to store and manage key-value pairs in a memory structure, where keys
+ * are integers and values are of type `T`.
  *
- * An environment serves as a container or scope for a collection of variables, which can be used for
- * various purposes depending on the application's needs.
+ * The environment is automatically added to a central repository (`Core.environments`) upon
+ * its creation.
  *
- * @property id The unique identifier associated with this environment.
- * @property variables A read-only map of variables indexed by their integer index.
- *                     Provides access to the variables held within this environment.
+ * @param T The type of the values that will be stored in the environment's memory.
  *
- * @constructor Creates an instance of the `Environment` with a given unique identifier.
- *              On instantiation, the environment adds itself to the core environments list.
+ * @property id A unique identifier for this environment.
+ * @property memory An immutable view of the environment's internal memory. It provides access to
+ *                  the stored key-value pairs without allowing modifications to the underlying
+ *                  memory structure directly.
+ *
+ * @constructor Initializes the environment with a specific ID and registers it within
+ *              `Core.environments`.
+ *
+ * @see Core A central repository or management class that maintains a record of all created
+ *           environments.
  *
  * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 2.0.0
  * @version 2.0.0
  */
-data class Environment(val id: String) {
+data class Environment<T>(val id: String) {
 
     init {
         Core.environments += id to this
     }
 
     /**
-     * Allows adding a variable to this environment using the `+=` operator.
-     * The variable is added to the internal mutable map with its index as the key.
+     * Adds a key-value pair to the environment's memory. This operator function allows a more
+     * concise way to store data in the environment using the `+=` operator.
      *
-     * @param T The type of the variable being added.
-     * @param variable The variable instance to be added to this environment.
+     * @param pair The key-value pair to be added to the environment's memory.
      */
-    operator fun <T> plusAssign(variable: Variable<T>) {
-        _variables += variable.index to variable
+    operator fun plusAssign(pair: Pair<Int, T>) {
+        _memory += pair
     }
 
-    // Internal mutable map to store variables. This ensures encapsulation and immutability
-    // for external access via the 'variables' property.
-    private val _variables = mutableMapOf<Int, Variable<*>>()
+    // Internal mutable memory representation.
+    private val _memory = mutableMapOf<Int, T>()
 
-    // Provides read-only access to the internal variables map.
-    val variables: Map<Int, Variable<*>> get() = _variables
+    // Public view of the memory ensuring it remains immutable from external access.
+    val memory: Map<Int, T> get() = _memory
 }
-
