@@ -6,9 +6,8 @@
 package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.CollectionRequirement
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.*
 import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.enforcer.requirements.collections.HaveSize
 import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.Terminal

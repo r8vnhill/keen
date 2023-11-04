@@ -3,9 +3,10 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.enforcer.requirements.collections
 
 import cl.ravenhill.enforcer.CollectionRequirementException
+import cl.ravenhill.enforcer.requirements.Requirement
 
 /**
  * Represents a set of conditions or rules that collections must satisfy. These conditions,
@@ -27,7 +28,7 @@ import cl.ravenhill.enforcer.CollectionRequirementException
  * @since 2.0.0
  * @version 2.0.0
  */
-sealed interface CollectionRequirement<T> : Requirement<Collection<T>> {
+interface CollectionRequirement<T> : Requirement<Collection<T>> {
 
     /**
      * Generates an exception for cases when a collection does not meet the requirement.
@@ -39,20 +40,4 @@ sealed interface CollectionRequirement<T> : Requirement<Collection<T>> {
     override fun generateException(description: String) =
         CollectionRequirementException { description }
 
-    /**
-     * Represents a constraint requiring that a collection has a specific size.
-     *
-     * @property size The desired size that the collection should have.
-     */
-    data class HaveSize<T>(val size: Int) : CollectionRequirement<T> {
-        override val validator = { value: Collection<T> -> value.size == size }
-    }
-
-    /**
-     * Represents a constraint that ensures a collection is empty. It checks if the collection
-     * does not contain any elements.
-     */
-    data object BeEmpty : CollectionRequirement<Any?> {
-        override val validator = { value: Collection<*> -> value.isEmpty() }
-    }
 }

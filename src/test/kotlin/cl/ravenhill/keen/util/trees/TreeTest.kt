@@ -203,6 +203,92 @@ class TreeTest : FreeSpec({
                 newTree shouldBe tree
             }
         }
+
+        "can replace a subtree with a new node" {
+            /**
+             * Tree representation:
+             *
+             *    a
+             *    |
+             *    b
+             */
+            val originalNode = TypedTree(TypedIntermediate(1, 'a'), listOf(TypedTree(TypedLeaf('b'))))
+
+            /**
+             * Tree representation:
+             *
+             *   c
+             *  / \
+             * a   d
+             * |
+             * b
+             */
+            val tree = TypedTree(TypedIntermediate(2, 'c'), listOf(originalNode, TypedTree(TypedLeaf('d'))))
+
+            /**
+             * Tree representation:
+             *
+             *   e
+             *  / \
+             * f   g
+             */
+            val replacementNode =
+                TypedTree(TypedIntermediate(2, 'e'), listOf(TypedTree(TypedLeaf('f')), TypedTree(TypedLeaf('g'))))
+
+            // Replace the originalNode in the tree with the replacementNode
+            val newTree = tree.replaceSubtree(originalNode, replacementNode)
+
+            // Validate if the newTree structure matches our expectation
+            newTree.value shouldBe TypedIntermediate(2, 'c')
+            newTree.children.size shouldBe 2
+
+            // Checking the replaced subtree
+            val replacedSubtree = newTree.children.first()
+            replacedSubtree.value shouldBe TypedIntermediate(3, 'e')
+            replacedSubtree.children.size shouldBe 2
+            replacedSubtree.children[0].value shouldBe TypedLeaf('f')
+            replacedSubtree.children[1].value shouldBe TypedLeaf('g')
+
+            // Checking the subtree that wasn't replaced
+            val secondSubtree = newTree.children[1]
+            secondSubtree.value shouldBe TypedLeaf('d')
+        }
+
+
+        "toSimpleString should return simplified tree structure" {
+            // Create a sample tree for testing
+            val child1 = TypedTree(TypedLeaf('b'))
+            val child2 = TypedTree(TypedIntermediate(3, 'c'), listOf(TypedTree(TypedLeaf('d'))))
+            val root = TypedTree(TypedIntermediate(2, 'a'), listOf(child1, child2))
+
+            // Expected output:
+            val expectedOutput = """
+            a {
+              b
+              c {
+                d
+              }
+            }
+        """.trimIndent()
+
+            root.toSimpleString() shouldBe expectedOutput
+        }
+
+        "toFullString should return detailed tree structure" {
+            // Create a sample tree for testing
+            val child1 = TypedTree(TypedLeaf('b'))
+            val child2 = TypedTree(TypedIntermediate(3, 'c'), listOf(TypedTree(TypedLeaf('d'))))
+            val root = TypedTree(TypedIntermediate(2, 'a'), listOf(child1, child2))
+
+            // Expected output (pseudo-code, the actual format may differ based on the actual implementation):
+            val expectedOutput =
+                "Tree(value=a, arity=2, height=2, size=3, nodes=[" +
+                      "Tree(value=b, arity=0, height=0, size=1, nodes=[]), " +
+                      "Tree(value=c, arity=1, height=1, size=2, nodes=[" +
+                      "Tree(value=d, arity=0, height=0, size=1, nodes=[])])])"
+
+            root.toFullString() shouldBe expectedOutput
+        }
     }
 })
 

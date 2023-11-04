@@ -6,11 +6,11 @@
 package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.CollectionRequirement
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.HaveSize
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.enforcer.requirements.collections.BeEmpty
+import cl.ravenhill.enforcer.requirements.collections.HaveElement
+import cl.ravenhill.enforcer.requirements.collections.HaveSize
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.util.MultiStringFormat
 import cl.ravenhill.keen.util.SelfReferential
 
 /**
@@ -34,7 +34,7 @@ import cl.ravenhill.keen.util.SelfReferential
  * @version 2.0.0
  * @since 2.0.0
  */
-interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
+interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T> {
     val value: V
     val children: List<T>
     val nodes: List<T>
@@ -81,6 +81,16 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
         return fromDepthFirst(newNodes)
     }
 
+    fun replaceSubtree(original: T, replacement: T): T {
+        val range = searchSubtree(original)
+        val newNodes = mutableListOf<T>().apply {
+            addAll(nodes.subList(0, range.first))
+            addAll(replacement.nodes)
+            addAll(nodes.subList(range.last, nodes.size))
+        }
+        return fromDepthFirst(newNodes)
+    }
+
     /**
      * Creates a new tree from the given `nodes` in depth-first order.
      */
@@ -112,6 +122,82 @@ interface Tree<V, T : Tree<V, T>> : SelfReferential<T> {
      * Creates a new node with the given value and children.
      */
     fun createNode(value: V, children: List<T>): T
+
+    /**
+     * Converts the tree to a simplified string representation.
+     *
+     * This function provides a pretty-printed representation of the tree. Each level of the tree
+     * is indented by two spaces. The nodes are represented by their values, and child nodes are
+     * encapsulated within curly braces.
+     *
+     * For example, a tree with value "a" having two children with values "b" and "c", where "c" has a
+     * child with value "d", will be represented as:
+     * ```
+     * a {
+     *   b
+     *   c {
+     *     d
+     *   }
+     * }
+     * ```
+     *
+     * @return A string representation of the tree.
+     */
+    override fun toSimpleString(): String {
+        fun stringify(child: Tree<V, T>, indent: Int = 0): String {
+            // Create a StringBuilder for constructing the string representation
+            val builder = StringBuilder()
+
+            // Append the value of the current node
+            builder.append(" ".repeat(indent)) // This adds spaces for indentation
+            builder.append(value.toString())
+
+            if (children.isNotEmpty()) {
+                // Append child nodes
+                builder.append(" {\n") // Opening brace for child nodes
+                for (c in children) {
+                    builder.append(stringify(c, indent + 2)) // Recurse into child with an increased indentation
+                    builder.append("\n") // Newline after each child
+                }
+                builder.append(" ".repeat(indent)) // Spaces for closing brace indentation
+                builder.append("}") // Closing brace for child nodes
+            }
+
+            return builder.toString()
+        }
+        return stringify(this)
+    }
+
+    /**
+     * Converts the tree to a detailed string representation.
+     *
+     * This function returns a representation of the tree that provides more detailed information
+     * about each node. It includes attributes such as value, arity, height, and size of the tree.
+     * Additionally, it recursively lists all nodes in the tree.
+     *
+     * For example, for a simple tree, the representation might look something like:
+     * "Tree(value=a, arity=2, height=2, size=3, nodes=[...])"
+     *
+     * @return A detailed string representation of the tree.
+     */
+    override fun toFullString(): String {
+        fun subtreeToString(node: Tree<V, T>, visited: MutableSet<Tree<V, T>>): String {
+            enforce {
+                "The tree contains cycles." { visited mustNot HaveElement(node) }
+            }
+            // Check for cyclic references.
+            if (visited.contains(node)) {
+                return "CYCLIC_REFERENCE"
+            }
+
+            visited.add(node)
+
+            val childrenStr = node.children.joinToString(", ") { child -> subtreeToString(child, visited) }
+            return "Tree(value=${node.value}, children=[$childrenStr])"
+        }
+
+        return subtreeToString(this, mutableSetOf())
+    }
 
     /**
      * Companion object for the [Tree] interface, empty on purpose.

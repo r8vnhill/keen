@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.requirements.collections.BeEmpty
 import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
 import cl.ravenhill.enforcer.requirements.IntRequirement
 import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive

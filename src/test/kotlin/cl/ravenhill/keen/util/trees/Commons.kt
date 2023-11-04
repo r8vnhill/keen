@@ -25,7 +25,7 @@ import io.kotest.property.arbitrary.int
  * @version 2.0.0
  * @since 2.0.0
  */
-data class TypedIntermediate<T>(override val arity: Int) : Intermediate<T>
+data class TypedIntermediate<T>(override val arity: Int, val value: T? = null) : Intermediate<T>
 
 /**
  * Represents a leaf node in a typed tree structure.

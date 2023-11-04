@@ -6,16 +6,22 @@
 package cl.ravenhill.enforcer.requirements
 
 import cl.ravenhill.enforcer.CollectionRequirementException
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.HaveSize
+import cl.ravenhill.enforcer.requirements.collections.BeEmpty
+import cl.ravenhill.enforcer.requirements.collections.CollectionRequirement
+import cl.ravenhill.enforcer.requirements.collections.HaveElement
+import cl.ravenhill.enforcer.requirements.collections.HaveSize
 import cl.ravenhill.keen.arbs.datatypes.any
+import cl.ravenhill.keen.arbs.datatypes.mutableList
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.int
@@ -45,6 +51,7 @@ import io.kotest.property.checkAll
  * @since 2.0.0
  * @version 2.0.0
  */
+@OptIn(ExperimentalKotest::class)
 class CollectionRequirementTest : FreeSpec({
     "Generating an exception should return a CollectionRequirementException" {
         checkAll(Arb.requirement(), Arb.string()) { requirement, description ->
@@ -78,6 +85,26 @@ class CollectionRequirementTest : FreeSpec({
             checkAll(Arb.list(Arb.any(), 1..100), Arb.int(1..100)) { list, size ->
                 assume { list.size shouldNotBe size }
                 HaveSize<Any>(size).validator(list).shouldBeFalse()
+            }
+        }
+    }
+
+    "Validating that a collection includes a given element should" - {
+        "return [true] if the collection includes the given element" {
+            checkAll(Arb.mutableList(Arb.any(), 1..100), Arb.any()) { list, element ->
+                list += element
+                HaveElement(element).validator(list).shouldBeTrue()
+            }
+        }
+
+        "return [false] if the collection does not include the given element" {
+            checkAll(
+                PropTestConfig(iterations = 89),
+                Arb.list(Arb.any(), 1..50),
+                Arb.any()
+            ) { list, element ->
+                assume { list shouldNotContain element }
+                HaveElement(element).validator(list).shouldBeFalse()
             }
         }
     }

@@ -6,11 +6,10 @@
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.CollectionRequirement.BeEmpty
+import cl.ravenhill.enforcer.requirements.collections.BeEmpty
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
-import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.keen.util.Ranged
 import cl.ravenhill.keen.util.nextDoubleInRange
 import cl.ravenhill.utils.DoubleToDouble
