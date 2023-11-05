@@ -1,6 +1,6 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators
@@ -21,29 +21,13 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 1.0.0
  * @version 2.0.0
  */
-class CompositeAlterer<DNA, G : Gene<DNA, G>>(private val alterers: List<Alterer<DNA, G>>) :
-        AbstractAlterer<DNA, G>(1.0) {
-    /**
-     * Applies the composite alterer to the specified population of individuals and returns an
-     * [AltererResult], which contains the resulting population of individuals and a count of how
-     * many individuals were altered.
-     *
-     * @param population The population of individuals to which the composite alterer will be applied.
-     * @param generation The current generation of the population.
-     * @return An [AltererResult], which contains the resulting population of individuals and a count
-     *      of how many individuals were altered.
-     */
-    override fun invoke(population: Population<DNA, G>, generation: Int): AltererResult<DNA, G> {
-        var result = AltererResult(population)
-        for (alterer in alterers) {
-            val altererResult = alterer(result.population, generation)
-            result = AltererResult(
-                altererResult.population,
-                result.alterations + altererResult.alterations
-            )
-        }
-        return result
-    }
+class CompositeAlterer<DNA, G : Gene<DNA, G>>(val alterers: List<Alterer<DNA, G>>) :
+    AbstractAlterer<DNA, G>(1.0) {
 
-    override fun toString() = "CompositeAlterer { alterers: $alterers }"
+    override fun invoke(population: Population<DNA, G>, generation: Int) =
+        alterers.fold(AltererResult(population)) { result, alterer ->
+            alterer(result.population, generation).let {
+                AltererResult(it.population, result.alterations + it.alterations)
+            }
+        }
 }
