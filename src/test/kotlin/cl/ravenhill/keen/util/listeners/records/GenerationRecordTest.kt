@@ -6,16 +6,21 @@
 
 package cl.ravenhill.keen.util.listeners.records
 
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.keen.arbs.records.generationRecord
+import cl.ravenhill.keen.arbs.records.populationRecord
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.assertions.throwables.shouldThrowWithMessage
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.checkAll
@@ -35,6 +40,7 @@ import kotlin.time.TimeSource
  * @since 2.0.0
  * @version 2.0.0
  */
+@OptIn(ExperimentalKotest::class)
 class GenerationRecordTest : FreeSpec({
     "A [GenerationRecord]" - {
         "can be created with a generation number" {
@@ -45,7 +51,7 @@ class GenerationRecordTest : FreeSpec({
 
         "should throw an exception if the generation number is negative" {
             checkAll(Arb.negativeInt()) { generation ->
-                shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                shouldThrow<CompositeException> {
                     GenerationRecord(generation)
                 }.shouldHaveInfringement<IntRequirementException>(
                     unfulfilledConstraint("The generation number [$generation] must be positive")
@@ -56,7 +62,9 @@ class GenerationRecordTest : FreeSpec({
         "should have an ``initial time`` that" - {
             "is late initialized" {
                 checkAll(Arb.nonNegativeInt()) { generation ->
-                    shouldThrowWithMessage<UninitializedPropertyAccessException>("lateinit property startTime has not been initialized") {
+                    shouldThrowWithMessage<UninitializedPropertyAccessException>(
+                        "lateinit property startTime has not been initialized"
+                    ) {
                         GenerationRecord(generation).startTime
                     }
                 }
@@ -75,8 +83,7 @@ class GenerationRecordTest : FreeSpec({
         "should have a steady generation number that" - {
             "is initialized to 0" {
                 checkAll(Arb.generationRecord()) { data ->
-                    val record = data
-                    record.steady shouldBe 0
+                    data.steady shouldBe 0
                 }
             }
 
@@ -90,7 +97,7 @@ class GenerationRecordTest : FreeSpec({
 
             "should throw an exception if the generation number is negative" {
                 checkAll(Arb.generationRecord(), Arb.negativeInt()) { data, steady ->
-                    shouldThrowUnit<cl.ravenhill.jakt.exceptions.CompositeException> {
+                    shouldThrowUnit<CompositeException> {
                         data.steady = steady
                     }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint("The generation number [$steady] must be positive")
@@ -102,18 +109,20 @@ class GenerationRecordTest : FreeSpec({
         "should have a [PopulationRecord] that" - {
             "have a resulting population that" - {
                 "is initialized as an empty list" {
-                    checkAll(Arb.generationRecord()) { data ->
+                    checkAll(
+                        PropTestConfig(iterations = 50),
+                        Arb.generationRecord()
+                    ) { data ->
                         data.population.resulting.shouldBeEmpty()
                     }
                 }
-                // TODO: Implement when Arb.population is implemented.
-//                "can be initialized" {
-//                    checkAll(Arb.generationRecord(), Arb.populationRecord()) { data, population ->
-//                        val record = data
-//                        record.population = population
-//                        record.population shouldBe population
-//                    }
-//                }
+
+                "can be initialized" {
+                    checkAll(Arb.generationRecord(), Arb.populationRecord()) { data, population ->
+                        data.population.resulting = population.resulting
+                        data.population shouldBe population
+                    }
+                }
             }
         }
     }

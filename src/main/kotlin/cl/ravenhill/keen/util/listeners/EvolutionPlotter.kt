@@ -3,7 +3,7 @@ package cl.ravenhill.keen.util.listeners
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
-import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
+import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 import tech.tablesaw.api.DoubleColumn
 import tech.tablesaw.plotly.Plot
 import tech.tablesaw.plotly.components.Figure
@@ -89,7 +89,7 @@ class EvolutionPlotter<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     override fun onGenerationFinished(population: Population<DNA, G>) {
         val sorted = optimizer.sort(population)
         _currentGeneration.population.resulting = List(sorted.size) {
-            PhenotypeRecord(
+            IndividualRecord(
                 sorted[it].genotype.toString(),
                 sorted[it].fitness
             )

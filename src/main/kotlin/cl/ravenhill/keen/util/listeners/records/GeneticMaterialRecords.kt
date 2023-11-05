@@ -9,4 +9,4 @@ package cl.ravenhill.keen.util.listeners.records
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PhenotypeRecord(val genotype: String, val fitness: Double) : AbstractRecord()
+data class IndividualRecord(val genotype: String, val fitness: Double) : AbstractRecord()

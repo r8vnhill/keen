@@ -10,7 +10,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
-import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
+import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -41,7 +41,7 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
         // Sort population and set resulting
         val sorted = optimizer.sort(population)
         _currentGeneration.population.resulting = List(sorted.size) {
-            PhenotypeRecord("${sorted[it].genotype}", sorted[it].fitness)
+            IndividualRecord("${sorted[it].genotype}", sorted[it].fitness)
         }
         generations.lastOrNull()?.let { lastGeneration ->
             EvolutionListener.computeSteadyGenerations(lastGeneration, _currentGeneration)

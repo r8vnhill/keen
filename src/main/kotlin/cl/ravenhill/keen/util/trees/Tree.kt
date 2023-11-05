@@ -83,6 +83,7 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
      *
      * @throws NoSuchElementException if the specified [node] is not found in the tree.
      */
+    @Deprecated("Use indexOfFirst instead.", ReplaceWith("indexOfFirst { it === node }"))
     fun searchSubtree(node: T): IntRange {
         // Find the index of the specified node
         val index = nodes.indexOfFirst { it === node }
@@ -135,6 +136,7 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
      * Returns a new tree with the specified ``node`` replacing the subtree rooted at the given
      * ``range``.
      */
+    @Deprecated("Use replaceFirst instead.", ReplaceWith("replaceFirst(node) { it === node }"))
     fun replaceSubtree(range: IntRange, node: T): T {
         val newNodes = mutableListOf<T>().apply {
             addAll(nodes.subList(0, range.first))

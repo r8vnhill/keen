@@ -75,11 +75,27 @@ data class GenerationRecord(val generation: Int) : AbstractTimedRecord() {
     class AlterationRecord : AbstractTimedRecord()
 
     /**
-     * This class is used to hold the result of the population of a specific generation.
-     * It contains a list of [PhenotypeRecord] that represents the individuals of the population after the generation process.
+     * Represents a record of a population consisting of multiple individual records.
+     *
+     * The [PopulationRecord] data class encapsulates information about a population in terms of individual entities.
+     * Each population record contains a list of [IndividualRecord] instances, representing members of that population.
+     *
+     * This class can be serialized and deserialized, making it suitable for data storage, transmission, and
+     * processing tasks that involve object-to-text and text-to-object conversions.
+     *
+     * ### Example:
+     * ```kotlin
+     * val individual1 = IndividualRecord("Genotype1", 1.0)
+     * val individual2 = IndividualRecord("Genotype2", 2.0)
+     * val populationRecord = PopulationRecord(listOf(individual1, individual2))
+     * ```
+     *
+     * @property resulting A list of [IndividualRecord] instances representing individuals in the population.
+     *                     By default, it's an empty list.
+     *
+     * @see IndividualRecord
+     * @see AbstractRecord
      */
     @Serializable
-    class PopulationRecord : AbstractRecord() {
-        var resulting: List<PhenotypeRecord> = listOf()
-    }
+    data class PopulationRecord(var resulting: List<IndividualRecord> = listOf()) : AbstractRecord()
 }

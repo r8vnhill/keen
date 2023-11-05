@@ -11,7 +11,7 @@ import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
-import cl.ravenhill.keen.util.listeners.records.PhenotypeRecord
+import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlin.reflect.KProperty
 import kotlin.time.ExperimentalTime
@@ -192,10 +192,10 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
         fun <DNA, G : Gene<DNA, G>> computePopulation(
             optimizer: IndividualOptimizer<DNA, G>,
             population: Population<DNA, G>,
-        ): List<PhenotypeRecord> {
+        ): List<IndividualRecord> {
             val sorted = optimizer.sort(population)
             return List(sorted.size) {
-                PhenotypeRecord("${sorted[it].genotype}", sorted[it].fitness)
+                IndividualRecord("${sorted[it].genotype}", sorted[it].fitness)
             }
         }
     }

@@ -8,6 +8,7 @@ package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.arbs.datatypes.mutableList
+import cl.ravenhill.keen.arbs.records.generationRecord
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
