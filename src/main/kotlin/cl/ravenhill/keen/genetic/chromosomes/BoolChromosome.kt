@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.BoolGene
@@ -48,7 +48,7 @@ data class BoolChromosome(
             }
         }
     ) {
-        enforce {
+        constraints {
             "The probability of a gene being true must be in the range [0.0, 1.0]" {
                 truesProbability must BeInRange(0.0..1.0)
             }
@@ -74,7 +74,7 @@ data class BoolChromosome(
         constructorExecutor: ConstructorExecutor<BoolGene>
     ) : this(
         constructorExecutor(
-            enforce {
+            constraints {
                 "The trues probability [$truesProbability] must be between 0 and 1, inclusive." {
                     truesProbability must BeInRange(0.0..1.0)
                 }

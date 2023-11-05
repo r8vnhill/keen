@@ -10,12 +10,12 @@
 
 package cl.ravenhill.keen.util.trees
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.requirements.collections.BeEmpty
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 import cl.ravenhill.keen.Core
 
 
@@ -55,7 +55,7 @@ import cl.ravenhill.keen.Core
  *
  * @return The root node of the generated tree, of type [T].
  *
- * @throws EnforcementException if the list of intermediates and leafs is empty, or if the minimum
+ * @throws CompositeException if the list of intermediates and leafs is empty, or if the minimum
  * or maximum height is not positive, or if the maximum height is less than the minimum height.
  *
  * @see Tree.Companion.generateRecursive
@@ -69,7 +69,7 @@ fun <V, L, I, T> Tree.Companion.generate(
     leafFactory: (L) -> T,
     intermediateFactory: (I, List<T>) -> T,
 ): T where L : Leaf<V>, I : Intermediate<V>, T : Tree<V, T> {
-    enforce {
+    constraints {
         "There should be at least one leaf node." { leafs mustNot BeEmpty }
         "The minimum height must be positive." { min must BePositive }
         "The maximum height must be positive." { max must BePositive }

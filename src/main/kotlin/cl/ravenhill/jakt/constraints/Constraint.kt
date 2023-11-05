@@ -3,9 +3,9 @@
  * BSD Zero Clause License.
  */
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.enforcer.UnfulfilledRequirementException
+import cl.ravenhill.jakt.exceptions.ConstraintException
 
 
 /**
@@ -19,7 +19,7 @@ import cl.ravenhill.enforcer.UnfulfilledRequirementException
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Requirement<T> {
+interface Constraint<T> {
     val validator: (T) -> Boolean
 
     /**
@@ -59,7 +59,7 @@ interface Requirement<T> {
     /**
      * Generates an exception with the given description.
      *
-     * @return A new instance of [UnfulfilledRequirementException] with the given message.
+     * @return A new instance of [ConstraintException] with the given message.
      */
-    fun generateException(description: String): UnfulfilledRequirementException
+    fun generateException(description: String): ConstraintException
 }

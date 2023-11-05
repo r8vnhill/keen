@@ -9,9 +9,9 @@
  */
 
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.enforcer.UnfulfilledRequirementException
+import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.keen.arbs.datatypes.any
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.result.shouldBeFailure
@@ -27,14 +27,14 @@ import io.kotest.property.checkAll
  * Creates a requirement using the provided validator function.
  *
  * @param validator the function that validates the requirement.
- * @return a new [Requirement] object.
+ * @return a new [Constraint] object.
  */
-private fun requirement(validator: (Any) -> Boolean) = object : Requirement<Any> {
+private fun requirement(validator: (Any) -> Boolean) = object : Constraint<Any> {
     override val validator: (Any) -> Boolean
         get() = validator
 
     override fun generateException(description: String) =
-        UnfulfilledRequirementException { description }
+        ConstraintException { description }
 }
 
 class RequirementTest : FreeSpec({
@@ -86,7 +86,7 @@ class RequirementTest : FreeSpec({
         checkAll(Arb.string()) { description ->
             with(requirement { true }.generateException(description)) {
                 message shouldBe "Unfulfilled constraint: $description"
-                shouldBeInstanceOf<UnfulfilledRequirementException>()
+                shouldBeInstanceOf<ConstraintException>()
             }
         }
     }

@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.prog
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.collections.BeEmpty
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.probability
@@ -49,7 +49,7 @@ fun <T> generateProgramWith(
     min: Int,
     max: Int,
 ): Program<T> {
-    enforce { "The list of generation methods must not be empty" { methods mustNot BeEmpty } }
+    constraints { "The list of generation methods must not be empty" { methods mustNot BeEmpty } }
     return methods.random(Core.random).invoke(terminals, functions, min, max)
 }
 

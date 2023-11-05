@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 
 /**
  * A [Match] limit that checks if the population has remained steady for a given number of
@@ -15,7 +15,7 @@ import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
  */
 data class SteadyGenerations(val n: Int) : Match({ steadyGenerations >= n }) {
     init {
-        enforce { "Steady generations must be positive" { n must BePositive } }
+        constraints { "Steady generations must be positive" { n must BePositive } }
     }
 
     /// Documentation inherited from [Any]

@@ -4,15 +4,15 @@
  */
 
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.enforcer.IntRequirementException
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtMost
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeNegative
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtMost
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.IntConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.IntConstraint.BeNegative
+import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 import cl.ravenhill.orderedPair
 import cl.ravenhill.orderedTriple
 import cl.ravenhill.unfulfilledConstraint
@@ -220,10 +220,10 @@ class IntRequirementTest : FreeSpec({
 })
 
 /**
- * Generates an arbitrary instance of [IntRequirement].
+ * Generates an arbitrary instance of [IntConstraint].
  *
  * @receiver The `Arb.Companion` object.
- * @return An [Arb] instance that generates [IntRequirement]s.
+ * @return An [Arb] instance that generates [IntConstraint]s.
  */
 private fun Arb.Companion.intRequirement() = arbitrary {
     element(

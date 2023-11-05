@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen
 
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.UnfulfilledRequirementException
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.kuro.Logger
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
@@ -64,16 +64,16 @@ infix fun String.shouldBeEqualIgnoringBreaks(expected: String) = should(
 )
 
 /**
- * Enforces that an [UnfulfilledRequirementException] is present in the
- * [EnforcementException.infringements] list.
+ * Enforces that an [ConstraintException] is present in the
+ * [CompositeException.failures] list.
  *
- * @param message the message to match against the [UnfulfilledRequirementException].
- * @throws AssertionError if the [EnforcementException.infringements] list does not contain an
- * [UnfulfilledRequirementException] of type [T] with the specified [message].
+ * @param message the message to match against the [ConstraintException].
+ * @throws AssertionError if the [CompositeException.failures] list does not contain an
+ * [ConstraintException] of type [T] with the specified [message].
  */
-inline fun <reified T> EnforcementException.shouldHaveInfringement(message: String)
-    where T : UnfulfilledRequirementException = should(
-    if (infringements.none { it is T }) {
+inline fun <reified T> cl.ravenhill.jakt.exceptions.CompositeException.shouldHaveInfringement(message: String)
+    where T : ConstraintException = should(
+    if (failures.none { it is T }) {
         Matcher { value ->
             MatcherResult(
                 false,
@@ -83,7 +83,7 @@ inline fun <reified T> EnforcementException.shouldHaveInfringement(message: Stri
         }
     } else {
         Matcher { value ->
-            val filtered = infringements.filterIsInstance<T>()
+            val filtered = failures.filterIsInstance<T>()
             MatcherResult(
                 filtered.any { it.message == message },
                 {

@@ -29,7 +29,7 @@ class EphemeralConstantTest : FreeSpec({
                 }) { (_, expected, generator) ->
                 val constant = EphemeralConstant(generator)
                 repeat(10) {
-                    constant.value shouldBe expected
+                    constant.contents shouldBe expected
                 }
             }
         }
@@ -59,7 +59,7 @@ class EphemeralConstantTest : FreeSpec({
                 val constant = EphemeralConstant(Core.random::nextLong)
                 val newConstant = constant.create()
                 repeat(10) {
-                    newConstant.value shouldBe randomGenerator.nextLong()
+                    newConstant.contents shouldBe randomGenerator.nextLong()
                 }
             }
         }

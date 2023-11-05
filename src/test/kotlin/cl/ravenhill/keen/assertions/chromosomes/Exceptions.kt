@@ -5,8 +5,7 @@
 
 package cl.ravenhill.keen.assertions.chromosomes
 
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -49,7 +48,7 @@ suspend fun <T, G, F> `assert chromosome enforces range to gene count equality`(
             val factory = factoryBuilder()
             ranges.forEach { factory.ranges += it }
             factory.size = size
-            shouldThrow<EnforcementException> {
+            shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                 factory.make()
             }.shouldHaveInfringement<IntRequirementException>(
                 unfulfilledConstraint(
@@ -85,7 +84,7 @@ suspend fun <T, G, F> `ensure chromosome filter count matches gene count`(
             val factory = factoryBuilder()
             repeat(filtersAmount) { factory.filters += filter }
             factory.size = size
-            shouldThrow<EnforcementException> {
+            shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                 factory.make()
             }.shouldHaveInfringement<IntRequirementException>(
                 unfulfilledConstraint(

@@ -4,11 +4,10 @@
  */
 
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.enforcer.PairRequirementException
-import cl.ravenhill.enforcer.requirements.PairRequirement.BeFinite
-import cl.ravenhill.enforcer.requirements.PairRequirement.BeStrictlyOrdered
+import cl.ravenhill.jakt.constraints.PairConstraint.BeFinite
+import cl.ravenhill.jakt.constraints.PairConstraint.BeStrictlyOrdered
 import cl.ravenhill.keen.util.shouldBeFinite
 import cl.ravenhill.orderedPair
 import cl.ravenhill.unfulfilledConstraint
@@ -52,7 +51,7 @@ class PairRequirementTest : FreeSpec({
     "Generating an exception should return a [PairRequirementException]" {
         checkAll(Arb.pairRequirement(), Arb.string()) { requirement, description ->
             with(requirement.generateException(description)) {
-                shouldBeInstanceOf<PairRequirementException>()
+                shouldBeInstanceOf<cl.ravenhill.jakt.exceptions.PairRequirementException>()
                 message shouldBe unfulfilledConstraint(description)
             }
         }
@@ -108,7 +107,7 @@ class PairRequirementTest : FreeSpec({
 })
 
 /**
- * This function provides an arbitrary generator of [PairRequirement] instances.
+ * This function provides an arbitrary generator of [PairConstraint] instances.
  */
 private fun Arb.Companion.pairRequirement() = arbitrary {
     element(

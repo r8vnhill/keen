@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.prog.functions
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.enforcer.requirements.collections.HaveSize
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.Terminal
@@ -42,13 +42,13 @@ open class Fun<T>(
 ) : Reduceable<T>, Intermediate<Reduceable<T>> {
 
     init {
-        enforce {
+        constraints {
             "The arity [$arity] must be at least 0" { arity must BeAtLeast(0) }
         }
     }
 
     override fun invoke(environment: Environment<T>, args: List<T>): T {
-        enforce {
+        constraints {
             "The number of arguments [${args.size}] must be equal to the arity [$arity]" {
                 args must HaveSize(arity)
             }

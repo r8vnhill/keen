@@ -6,8 +6,8 @@
 
 package cl.ravenhill.keen.evolution.executors
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -75,7 +75,7 @@ class SequentialConstructor<T> : ConstructorExecutor<T> {
 
     // Documentation inherited from ConstructorExecutor.
     override fun invoke(size: Int, init: () -> T): List<T> {
-        enforce { "The size [$size] must be positive." { size must BePositive } }
+        constraints { "The size [$size] must be positive." { size must BePositive } }
         return List(size) { init() }
     }
 }
@@ -95,7 +95,7 @@ class CoroutineConstructor<T>(
 
     // Documentation inherited from ConstructorExecutor.
     override fun invoke(size: Int, init: () -> T): List<T> = runBlocking {
-        enforce { "The size [$size] must be positive." { size must BePositive } }
+        constraints { "The size [$size] must be positive." { size must BePositive } }
         // Create a list of `Deferred` objects using `async` and the `dispatcher` to execute
         // the constructor `init()` concurrently.
         val deferredList = List(size) {

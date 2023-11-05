@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -100,13 +100,13 @@ data class IntChromosome(override val genes: List<IntGene>) :
         }
 
         private fun enforceConstraints() {
-            enforce {
+            constraints {
                 if (ranges.size > 1) {
                     (
                           "When creating a chromosome with more than one range, the number of ranges " +
                                 "must be equal to the number of genes"
                           ) {
-                        ranges.size must IntRequirement.BeEqualTo(size)
+                        ranges.size must IntConstraint.BeEqualTo(size)
                     }
                 }
                 if (filters.size > 1) {
@@ -114,7 +114,7 @@ data class IntChromosome(override val genes: List<IntGene>) :
                           "When creating a chromosome with more than one filter, the number of " +
                                 "filters must be equal to the number of genes"
                           ) {
-                        filters.size must IntRequirement.BeEqualTo(size)
+                        filters.size must IntConstraint.BeEqualTo(size)
                     }
                 }
             }

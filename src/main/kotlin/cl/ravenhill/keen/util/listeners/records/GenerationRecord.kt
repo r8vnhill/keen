@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.util.listeners.records
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeNegative
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeNegative
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.EvaluationRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.SelectionRecord
 import kotlinx.serialization.Serializable
@@ -41,14 +41,14 @@ data class GenerationRecord(val generation: Int) : AbstractTimedRecord() {
     val population = PopulationRecord()
     var steady: Int = 0
         set(value) {
-            enforce {
+            constraints {
                 "The generation number [$value] must be positive" { value mustNot BeNegative }
             }
             field = value
         }
 
     init {
-        enforce {
+        constraints {
             "The generation number [$generation] must be positive" { generation mustNot BeNegative }
         }
     }

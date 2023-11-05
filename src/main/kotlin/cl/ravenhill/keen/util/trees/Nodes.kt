@@ -32,6 +32,7 @@ package cl.ravenhill.keen.util.trees
  */
 interface Node<T> {
     val arity: Int
+    val contents: T? get() = null
 }
 
 /**

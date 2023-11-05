@@ -3,9 +3,9 @@
  * BSD Zero Clause License.
  */
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.utils.IntToInt
 import cl.ravenhill.utils.contains
 
@@ -16,7 +16,7 @@ import cl.ravenhill.utils.contains
  * @since 2.0.0
  * @version 2.0.0
  */
-sealed interface IntRequirement : Requirement<Int> {
+sealed interface IntConstraint : Constraint<Int> {
 
     /// Documentation inherited from [Requirement].
     override fun generateException(description: String) =
@@ -25,13 +25,13 @@ sealed interface IntRequirement : Requirement<Int> {
     /**
      * Represents a requirement that an integer value must be positive.
      */
-    data object BePositive : IntRequirement {
+    data object BePositive : IntConstraint {
 
         /// Documentation inherited from [Requirement].
         override val validator = { value: Int -> value > 0 }
     }
 
-    data object BeNegative : IntRequirement {
+    data object BeNegative : IntConstraint {
         override val validator = { value: Int -> value < 0 }
     }
 
@@ -42,7 +42,7 @@ sealed interface IntRequirement : Requirement<Int> {
      * [IntToInt].
      * @property range The range of values that are allowed.
      */
-    open class BeInRange(val range: IntToInt) : IntRequirement {
+    open class BeInRange(val range: IntToInt) : IntConstraint {
 
         init {
             require(range.first <= range.second) {
@@ -96,7 +96,7 @@ sealed interface IntRequirement : Requirement<Int> {
      *
      * @property expected The expected value.
      */
-    class BeEqualTo(val expected: Int) : IntRequirement {
+    class BeEqualTo(val expected: Int) : IntConstraint {
 
         /// Documentation inherited from [Requirement].
         override val validator = { value: Int -> value == expected }

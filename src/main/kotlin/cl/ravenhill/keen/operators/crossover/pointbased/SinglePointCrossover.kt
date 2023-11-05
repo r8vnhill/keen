@@ -6,11 +6,11 @@
 package cl.ravenhill.keen.operators.crossover.pointbased
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.enforcer.Enforcement.enforce
+import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.IntConstraint.BeInRange
 import kotlin.math.min
 
 
@@ -60,7 +60,7 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
      * @return A list with two new [Chromosome]s resulting from the crossover.
      */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
-        enforce {
+        constraints {
             "The number of chromosomes to be crossed over must be 2." {
                 chromosomes.size must BeEqualTo(2)
             }
@@ -88,7 +88,7 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
         mates: Pair<List<G>, List<G>>
     ): Pair<List<G>, List<G>> {
         val hi = min(mates.first.size, mates.second.size)
-        enforce {
+        constraints {
             "The index must be in the range [0, $hi)." { index must BeInRange(0 until hi) }
         }
         val newFirst = mates.first.slice(0 until index) + mates.second.slice(index until hi)

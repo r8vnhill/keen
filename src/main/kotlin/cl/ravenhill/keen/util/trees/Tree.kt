@@ -5,9 +5,10 @@
 
 package cl.ravenhill.keen.util.trees
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.collections.BeEmpty
-import cl.ravenhill.enforcer.requirements.collections.HaveSize
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.MultiStringFormat
 import cl.ravenhill.keen.util.SelfReferential
@@ -46,7 +47,7 @@ import cl.ravenhill.keen.util.SelfReferential
  * @param V The type of the value stored in the tree node.
  * @param T The type of the tree itself.
  *
- * @property value The value held in the root node.
+ * @property node The value held in the root node.
  * @property size Total count of nodes within the tree.
  * @property nodes List of all nodes in depth-first order.
  * @property children Immediate child nodes of the root node.
@@ -60,7 +61,7 @@ import cl.ravenhill.keen.util.SelfReferential
  * @since 2.0.0
  */
 interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T> {
-    val value: V
+    val node: V
     val children: List<T>
     val nodes: List<T>
     val arity: Int
@@ -94,6 +95,43 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
     }
 
     /**
+     * Searches for the first node in the tree that satisfies the given [predicate] and
+     * returns an [IntRange] representing the indices of the subtree rooted at that node.
+     *
+     * The function will traverse the tree in a depth-first order and stop at the first
+     * node for which the [predicate] returns `true`. The returned range starts from
+     * the index of the node in the depth-first list of nodes of the tree and goes up
+     * to the last node in the subtree rooted at that node.
+     *
+     * ### Example:
+     * Given a tree as a (top-down) depth-first list of nodes: [`A`, `B`, `D`, `C`]
+     * ```
+     * (0) A
+     * (1) ├── B
+     * (2) │   └── D
+     * (3) └── C
+     * ```
+     * If the predicate is looking for node `B`, the returned range will cover the nodes `B` and `D` (indices 1 and 2).
+     *
+     * @param predicate A lambda function that takes in a tree node and returns a boolean value.
+     *                  It determines the condition based on which a node should be found.
+     *
+     * @return An [IntRange] representing the indices of the subtree rooted at the node that
+     *         satisfies the predicate. The range starts from the index of the node in the
+     *         depth-first list of nodes of the tree and goes up to the last node in the subtree
+     *         rooted at that node.
+     *
+     * @throws NoSuchElementException If no node in the tree satisfies the given predicate.
+     */
+    fun indexOfFirst(predicate: (T) -> Boolean): IntRange {
+        val index = nodes.indexOfFirst(predicate)
+        if (index == -1) {
+            throw NoSuchElementException("Node not found in tree")
+        }
+        return index..<index + nodes[index].size
+    }
+
+    /**
      * Returns a new tree with the specified ``node`` replacing the subtree rooted at the given
      * ``range``.
      */
@@ -103,24 +141,101 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
             addAll(node.nodes)
             addAll(nodes.subList(range.last, nodes.size))
         }
-        return fromDepthFirst(newNodes)
-    }
-
-    fun replaceSubtree(original: T, replacement: T): T {
-        val range = searchSubtree(original)
-        val newNodes = mutableListOf<T>().apply {
-            addAll(nodes.subList(0, range.first))
-            addAll(replacement.nodes)
-            addAll(nodes.subList(range.last, nodes.size))
-        }
-        return fromDepthFirst(newNodes)
+        return fromTopDown(newNodes)
     }
 
     /**
-     * Creates a new tree from the given `nodes` in depth-first order.
+     * Replaces the first subtree in the current tree that satisfies the given [predicate] with a new subtree
+     * [replacement].
+     *
+     * This function searches for the first node that satisfies the provided [predicate]. Upon finding this node, it
+     * replaces the subtree rooted at this node with the [replacement] subtree.
+     *
+     * The process involves the following steps:
+     * 1. Search for the first node that matches the [predicate].
+     * 2. Identify the range of nodes that make up the subtree rooted at the found node.
+     * 3. Construct a new list of nodes by combining:
+     *     - Nodes before the identified subtree.
+     *     - Nodes from the replacement subtree.
+     *     - Nodes after the identified subtree.
+     * 4. Reconstruct the tree using the newly formed list of nodes.
+     *
+     * ### Example:
+     * Suppose we have a tree represented as a (top-down) depth-first list of nodes: [`A`, `B`, `D`, `C`]
+     * and a replacement subtree represented by: [`X`, `Y`].
+     *
+     * Invoking this function with a predicate that matches node `B` will replace the subtree rooted at `B`
+     * with the `X` subtree, resulting in a new tree: [`A`, `X`, `Y`, `C`].
+     *
+     * @param replacement The subtree to replace the identified subtree with. This subtree is described by its root node
+     *        [T].
+     * @param predicate A lambda function that determines the condition based on which a node in the current tree should
+     *        be matched.
+     *
+     * @return The root node of the modified tree after the replacement.
+     *
+     * @throws NoSuchElementException If no node in the tree satisfies the given predicate.
      */
-    fun fromDepthFirst(nodes: List<T>): T {
-        enforce { "Cannot create a tree from an empty list of nodes." { nodes mustNot BeEmpty } }
+    @Throws(NoSuchElementException::class)
+    fun replaceFirst(replacement: T, predicate: (T) -> Boolean): T {
+        val range = indexOfFirst(predicate)
+        val newNodes = mutableListOf<T>().apply {
+            addAll(nodes.subList(0, range.first))
+            addAll(replacement.nodes)
+            addAll(nodes.subList(range.last + 1, nodes.size))
+        }
+        return fromTopDown(newNodes)
+    }
+
+    /**
+     * Constructs a tree from a given list of nodes using a depth-first order.
+     *
+     * This function constructs a tree by treating the provided list of nodes as a depth-first traversal of the desired
+     * tree. Starting from the end of the list, each node is popped and becomes a parent to the previous nodes based on
+     * its arity (number of children).
+     *
+     * ### Process:
+     *
+     * 1. Traverse the list of nodes in reverse order.
+     * 2. For each node, retrieve its arity and get the corresponding number of child nodes from the stack.
+     * 3. Create a new node with the extracted children.
+     * 4. Push the new node onto the stack.
+     *
+     * After processing all nodes, the top of the stack will be the root node of the resulting tree.
+     *
+     * ### Constraints:
+     * - The list of nodes should not be empty.
+     * - The arity of each node in the list must be consistent with the number of available child nodes in the stack at
+     *   each step.
+     *
+     * ### Example:
+     * Given a list of nodes in depth-first order: [`A`, `B`, `D`, `C`]
+     * ```
+     * val nodes = listOf(
+     *    MyNode(2, 'A'),
+     *    MyNode(1, 'B'),
+     *    MyNode(0, 'D'),
+     *    MyNode(0, 'C')
+     * )
+     * singleElementTree.fromDepthFirst(nodes)
+     * ```
+     * The resulting tree will be:
+     * ```
+     * (0) A
+     * (1) ├── B
+     * (2) │   └── D
+     * (3) └── C
+     * ```
+     *
+     * @param nodes A list of nodes in depth-first order from which the tree should be constructed.
+     *
+     * @return The root node of the constructed tree.
+     *
+     * @throws CompositeException If the list of nodes is empty or if there is a mismatch between the node's arity and
+     *                               the actual number of children available.
+     */
+    fun fromTopDown(nodes: List<T>): T {
+        constraints { "Cannot create a tree from an empty list of nodes." { nodes mustNot BeEmpty } }
         // Create an empty stack to hold the nodes.
         val stack = mutableListOf<T>()
         // Traverse the list of nodes in reverse order.
@@ -130,8 +245,8 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
             // Remove the children from the stack.
             stack.removeAll(children.toSet())
             // Create a new node with the given value and children.
-            val node = createNode(it.value, children)
-            enforce {
+            val node = createNode(it.node, children)
+            constraints {
                 "The arity of the tree [${it.arity}] does not match the arity of the node [${node.children.size}]." {
                     node.children must HaveSize(it.arity)
                 }
@@ -191,7 +306,7 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
 
             // Append the value of the current node
             builder.append(" ".repeat(indent)) // This adds spaces for indentation
-            builder.append(child.value.toString())
+            builder.append(child.node.toString())
             visited.add(child)
 
             if (child.children.isNotEmpty()) {
@@ -218,15 +333,33 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
      * about each node. It includes attributes such as value, arity, height, and size of the tree.
      * Additionally, it recursively lists all nodes in the tree.
      *
-     * For example, for a simple tree, the representation might look something like:
-     * "Tree(value=a, arity=2, height=2, size=3, nodes=[...])"
+     * ### Examples
+     *
+     * #### Single element tree
+     *
+     * ```kotlin
+     * singleElementTree.toDetailedString()
+     * ```
+     *
+     * Output:
+     * ```
+     * MyTree(value=MyLeaf(value=a), size=1, arity=0, height=0, children=[], descendants=[])
+     * ```
+     *
+     * #### Multi-element tree
+     *
+     * ```kotlin
+     * multiElementTree.toDetailedString()
+     * ```
+     *
+     * Output:
+     * ```
+     * MyTree(value=MyIntermediate(arity=2, value=a), size=4, arity=2, height=2, children=[MyTree(node=MyIntermediate(arity=1, value=b), children=[MyTree(node=MyLeaf(value=d), children=[])]), MyTree(node=MyLeaf(value=c), children=[])], descendants=[MyTree(node=MyIntermediate(arity=1, value=b), children=[MyTree(node=MyLeaf(value=d), children=[])]), MyTree(node=MyLeaf(value=d), children=[]), MyTree(node=MyLeaf(value=c), children=[])])
      *
      * @return A detailed string representation of the tree.
      */
-    override fun toDetailedString(): String {
-        return "${this::class.simpleName}(" +
-              "value=$value, size=$size, arity=$arity, height=$height, children=$children, descendants=$descendants)"
-    }
+    override fun toDetailedString() = "${this::class.simpleName}(" +
+          "value=$node, size=$size, arity=$arity, height=$height, children=$children, descendants=$descendants)"
 
     /**
      * Companion object intended for the [Tree] interface.

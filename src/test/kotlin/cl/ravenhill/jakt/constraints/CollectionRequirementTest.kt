@@ -3,13 +3,13 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.enforcer.CollectionRequirementException
-import cl.ravenhill.enforcer.requirements.collections.BeEmpty
-import cl.ravenhill.enforcer.requirements.collections.CollectionRequirement
-import cl.ravenhill.enforcer.requirements.collections.HaveElement
-import cl.ravenhill.enforcer.requirements.collections.HaveSize
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.collections.CollectionConstraint
+import cl.ravenhill.jakt.constraints.collections.HaveElement
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import io.kotest.common.ExperimentalKotest
@@ -45,7 +45,7 @@ import io.kotest.property.checkAll
  * A suite of tests for validating collection requirements.
  *
  * @see Arb.Companion.requirement
- * @see CollectionRequirementException
+ * @see CollectionConstraintException
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -56,7 +56,7 @@ class CollectionRequirementTest : FreeSpec({
     "Generating an exception should return a CollectionRequirementException" {
         checkAll(Arb.requirement(), Arb.string()) { requirement, description ->
             with(requirement.generateException(description)) {
-                shouldBeInstanceOf<CollectionRequirementException>()
+                shouldBeInstanceOf<cl.ravenhill.jakt.exceptions.CollectionConstraintException>()
                 message shouldBe "Unfulfilled constraint: $description"
             }
         }
@@ -77,14 +77,14 @@ class CollectionRequirementTest : FreeSpec({
     "Validating that a collection have a given size should" - {
         "return [true] if the collection has the given size" {
             checkAll(Arb.list(Arb.any(), 1..100)) { list ->
-                HaveSize<Any>(list.size).validator(list).shouldBeTrue()
+                HaveSize(list.size).validator(list).shouldBeTrue()
             }
         }
 
         "return [false] if the collection does not have the given size" {
             checkAll(Arb.list(Arb.any(), 1..100), Arb.int(1..100)) { list, size ->
                 assume { list.size shouldNotBe size }
-                HaveSize<Any>(size).validator(list).shouldBeFalse()
+                HaveSize(size).validator(list).shouldBeFalse()
             }
         }
     }
@@ -113,7 +113,7 @@ class CollectionRequirementTest : FreeSpec({
 /**
  * Creates an arbitrary for generating a requirement.
  *
- * @see CollectionRequirement.BeEmpty
+ * @see CollectionConstraint.BeEmpty
  */
-private fun Arb.Companion.requirement(): Arb<CollectionRequirement<*>> =
-    arbitrary { element(BeEmpty, HaveSize<Any>(int().bind())).bind() }
+private fun Arb.Companion.requirement(): Arb<CollectionConstraint> =
+    arbitrary { element(BeEmpty, HaveSize(int().bind())).bind() }

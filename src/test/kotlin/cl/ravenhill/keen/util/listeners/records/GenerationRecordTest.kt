@@ -6,8 +6,7 @@
 
 package cl.ravenhill.keen.util.listeners.records
 
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
@@ -15,12 +14,10 @@ import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.reflection.shouldBeLateInit
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
-import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
 import kotlin.time.TimeSource
 
@@ -48,7 +45,7 @@ class GenerationRecordTest : FreeSpec({
 
         "should throw an exception if the generation number is negative" {
             checkAll(Arb.negativeInt()) { generation ->
-                shouldThrow<EnforcementException> {
+                shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                     GenerationRecord(generation)
                 }.shouldHaveInfringement<IntRequirementException>(
                     unfulfilledConstraint("The generation number [$generation] must be positive")
@@ -93,7 +90,7 @@ class GenerationRecordTest : FreeSpec({
 
             "should throw an exception if the generation number is negative" {
                 checkAll(Arb.generationRecord(), Arb.negativeInt()) { data, steady ->
-                    shouldThrowUnit<EnforcementException> {
+                    shouldThrowUnit<cl.ravenhill.jakt.exceptions.CompositeException> {
                         data.steady = steady
                     }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint("The generation number [$steady] must be positive")

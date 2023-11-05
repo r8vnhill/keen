@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.operators.mutator
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.Genotype
@@ -118,7 +118,7 @@ abstract class AbstractMutator<DNA, G>(
 ) : AbstractAlterer<DNA, G>(probability), Mutator<DNA, G> where G : Gene<DNA, G> {
 
     init {
-        enforce {
+        constraints {
             "The chromosome mutation probability [$chromosomeRate] must be in 0.0..1.0" {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
@@ -141,7 +141,7 @@ data class MutatorResult<DNA, G, T>(
 ) where T : GeneticMaterial<DNA, G>, G : Gene<DNA, G> {
 
     init {
-        enforce {
+        constraints {
             "The number of mutations [$mutations] must be non-negative." {
                 mutations must BeAtLeast(0)
             }

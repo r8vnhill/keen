@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 
 /**
  * Limits the number of generations the evolution will run.
@@ -19,6 +19,6 @@ import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
  */
 data class GenerationCount(private val i: Int) : Match({ generation >= i }) {
     init {
-        enforce { "Generation count [$i] must be at least 1" { i must BePositive } }
+        constraints { "Generation count [$i] must be at least 1" { i must BePositive } }
     }
 }

@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.requirements.DoubleRequirement
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.constraints.DoubleConstraint
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -65,7 +65,7 @@ interface ProbabilitySelector<DNA, G> : Selector<DNA, G> where G : Gene<DNA, G> 
      *
      * @return A new population of selected individuals.
      *
-     * @throws EnforcementException if the summed probabilities aren't 1.0.
+     * @throws CompositeException if the summed probabilities aren't 1.0.
      */
     override fun select(
         population: Population<DNA, G>,
@@ -102,12 +102,12 @@ interface ProbabilitySelector<DNA, G> : Selector<DNA, G> where G : Gene<DNA, G> 
      *
      * @param probabilities Array of computed probabilities.
      *
-     * @throws EnforcementException if the summed probabilities aren't 1.0.
+     * @throws CompositeException if the summed probabilities aren't 1.0.
      */
     private fun validateProbabilities(probabilities: DoubleArray) {
-        enforce {
+        constraints {
             "Probabilities must sum 1.0" {
-                probabilities.sum() must DoubleRequirement.BeEqualTo(1.0)
+                probabilities.sum() must DoubleConstraint.BeEqualTo(1.0)
             }
         }
     }

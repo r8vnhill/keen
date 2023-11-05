@@ -3,11 +3,10 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.enforcer.DoubleRequirementException
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeEqualTo
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
 import cl.ravenhill.orderedPair
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.unfulfilledConstraint
@@ -33,7 +32,7 @@ class DoubleRequirementTest : FreeSpec({
     "Generating an exception should return a [DoubleRequirementException]" {
         checkAll(Arb.doubleRequirement(), Arb.string()) { requirement, description ->
             with(requirement.generateException(description)) {
-                shouldBeInstanceOf<DoubleRequirementException>()
+                shouldBeInstanceOf<cl.ravenhill.jakt.exceptions.DoubleRequirementException>()
                 message shouldBe unfulfilledConstraint(description)
             }
         }

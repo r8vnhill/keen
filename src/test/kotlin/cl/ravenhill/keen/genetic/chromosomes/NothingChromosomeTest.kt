@@ -5,8 +5,7 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
@@ -42,7 +41,7 @@ class NothingChromosomeTest : FreeSpec({
 
         "should throw an exception if the size is negative" {
             checkAll(Arb.negativeInt()) { size ->
-                shouldThrow<EnforcementException> {
+                shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                     NothingChromosome.Factory().apply {
                         this.size = size
                     }.make()

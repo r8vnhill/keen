@@ -5,11 +5,8 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
-import cl.ravenhill.keen.evolution.executors.SequentialConstructor
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
 import cl.ravenhill.keen.genetic.genes.NothingGene
 
 /**
@@ -50,9 +47,9 @@ class NothingChromosome(genes: List<NothingGene>) :
          *
          * @return a new instance of NothingChromosome
          */
-        @Throws(EnforcementException::class)
+        @Throws(cl.ravenhill.jakt.exceptions.CompositeException::class)
         override fun make(): NothingChromosome {
-            enforce {
+            constraints {
                 "Chromosome size [$size] must be non-negative" {
                     size must BeAtLeast(0)
                 }

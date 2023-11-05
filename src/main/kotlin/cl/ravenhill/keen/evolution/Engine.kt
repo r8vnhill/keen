@@ -5,11 +5,11 @@
 
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.collections.BeEmpty
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.enforcer.requirements.IntRequirement
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.IntConstraint
+import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 import cl.ravenhill.keen.Core.EvolutionLogger.debug
 import cl.ravenhill.keen.Core.EvolutionLogger.info
 import cl.ravenhill.keen.Core.EvolutionLogger.trace
@@ -230,9 +230,9 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onEvaluationStarted() }
         return evaluator(evolution.population, force).also {
             listeners.forEach { it.onEvaluationFinished() }
-            enforce {
+            constraints {
                 "Evaluated population size [${it.size}] doesn't match expected population size [$populationSize]" {
-                    populationSize must IntRequirement.BeEqualTo(it.size)
+                    populationSize must IntConstraint.BeEqualTo(it.size)
                 }
                 "There are unevaluated individuals" {
                     requirement { it.all { individual -> individual.isEvaluated() } }
@@ -351,12 +351,12 @@ class Engine<DNA, G : Gene<DNA, G>>(
     ) {
         // region : Evolution parameters -----------------------------------------------------------
         var populationSize = 50
-            set(value) = enforce {
+            set(value) = constraints {
                 "Population size must be greater than 0" { value must BePositive }
             }.let { field = value }
 
         var limits: List<Limit> = listOf(GenerationCount(100))
-            set(value) = enforce {
+            set(value) = constraints {
                 "Limits cannot be empty" { value mustNot BeEmpty }
             }.let { field = value }
 
@@ -394,7 +394,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         var offspringSelector = selector
 
         var offspringFraction = 0.6
-            set(value) = enforce {
+            set(value) = constraints {
                 "Offspring fraction must be in range [0, 1]" { value must BeInRange(0.0..1.0) }
             }.let { field = value }
         // endregion    ----------------------------------------------------------------------------

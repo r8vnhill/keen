@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.prog.Environment
+import cl.ravenhill.keen.prog.Reduceable
 
 /**
  * A terminal node representing a constant value in a program tree.
@@ -18,6 +19,9 @@ import cl.ravenhill.keen.prog.Environment
  * @constructor creates a new constant node with the given value
  */
 data class Constant<T>(val value: T) : Terminal<T> {
+    override val contents: Reduceable<T>
+        get() = this
+
     /**
      * Creates a new `Constant` node with the same value as this node.
      *

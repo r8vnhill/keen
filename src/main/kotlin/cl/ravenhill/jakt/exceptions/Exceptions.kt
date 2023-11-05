@@ -1,10 +1,9 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
-
-package cl.ravenhill.enforcer
+package cl.ravenhill.jakt.exceptions
 
 /***************************************************************************************************
  * This file defines a hierarchy of custom exceptions for unfulfilled requirements.
@@ -26,8 +25,7 @@ package cl.ravenhill.enforcer
  * @version 2.0.0
  * @since 2.0.0
  */
-open class UnfulfilledRequirementException(lazyMessage: () -> String) :
-        Exception("Unfulfilled constraint: ${lazyMessage()}")
+open class ConstraintException(lazyMessage: () -> String) : Exception(lazyMessage())
 
 /**
  * Exception thrown when an integer constraint is not fulfilled.
@@ -39,7 +37,7 @@ open class UnfulfilledRequirementException(lazyMessage: () -> String) :
  * @since 2.0.0
  */
 class IntRequirementException(lazyMessage: () -> String) :
-        UnfulfilledRequirementException(lazyMessage)
+        ConstraintException(lazyMessage)
 
 /**
  * Exception thrown when a long constraint is not fulfilled.
@@ -51,7 +49,7 @@ class IntRequirementException(lazyMessage: () -> String) :
  * @since 2.0.0
  */
 class LongRequirementException(lazyMessage: () -> String) :
-        UnfulfilledRequirementException(lazyMessage)
+        ConstraintException(lazyMessage)
 
 /**
  * Exception thrown when a pair constraint is not fulfilled.
@@ -63,7 +61,7 @@ class LongRequirementException(lazyMessage: () -> String) :
  * @version 2.0.0
  */
 class PairRequirementException(lazyMessage: () -> String) :
-        UnfulfilledRequirementException(lazyMessage)
+        ConstraintException(lazyMessage)
 
 /**
  * Exception thrown when a double constraint is not fulfilled.
@@ -75,7 +73,7 @@ class PairRequirementException(lazyMessage: () -> String) :
  * @since 2.0.0
  */
 class DoubleRequirementException(lazyMessage: () -> String) :
-        UnfulfilledRequirementException(lazyMessage)
+        ConstraintException(lazyMessage)
 
 /**
  * Exception thrown when a collection constraint is not fulfilled.
@@ -86,20 +84,6 @@ class DoubleRequirementException(lazyMessage: () -> String) :
  * @since 2.0.0
  * @version 2.0.0
  */
-class CollectionRequirementException(lazyMessage: () -> String) :
-        UnfulfilledRequirementException(lazyMessage)
+class CollectionConstraintException(lazyMessage: () -> String) :
+        ConstraintException(lazyMessage)
 
-/**
- * Exception thrown when a contract is not fulfilled.
- *
- * @param infringements List of contract violations.
- *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 2.0.0
- * @since 2.0.0
- */
-class EnforcementException(val infringements: List<Throwable>) : Exception(
-    "Unfulfilled contract: [ " +
-            infringements.joinToString(", ") { "{ ${it.message} }" } +
-            " ]"
-)

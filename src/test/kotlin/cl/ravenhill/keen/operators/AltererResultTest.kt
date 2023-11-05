@@ -5,8 +5,7 @@
 
 package cl.ravenhill.keen.operators
 
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.arbs.altererResult
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -46,7 +45,7 @@ class AltererResultTest : FreeSpec({
 
             "with a negative number of alterations should throw an exception" {
                 checkAll(Arb.population(), Arb.negativeInt()) { population, alterations ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         AltererResult(population, alterations)
                     }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint(

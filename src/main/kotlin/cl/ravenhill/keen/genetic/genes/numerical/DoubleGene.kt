@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.genetic.genes.numerical
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.collections.BeEmpty
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
@@ -45,7 +45,7 @@ class DoubleGene(
     val end = range.endInclusive
 
     init {
-        enforce {
+        constraints {
 //            "The range [$range] must be ordered" { range must BeStrictlyOrdered() }
 //            "The range [$range] must be finite" { range must BeFinite }
 //            "The value [$dna] must be in range [$range]" { dna must BeInRange(range) }
@@ -61,7 +61,7 @@ class DoubleGene(
 
     // / Documentation inherited from [NumberGene]
     override fun average(genes: List<DoubleGene>): DoubleGene {
-        enforce { "The list of genes must not be empty" { genes mustNot BeEmpty } }
+        constraints { "The list of genes must not be empty" { genes mustNot BeEmpty } }
         return withDna((dna + genes.sumOf { it.dna }) / (genes.size + 1))
     }
 

@@ -3,8 +3,10 @@
  * BSD Zero Clause License.
  */
 
-package cl.ravenhill.enforcer
+package cl.ravenhill.jakt
 
+import cl.ravenhill.jakt.exceptions.ConstraintException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -54,9 +56,9 @@ class ExceptionsTest : FreeSpec({
             checkAll(Arb.list(Arb.requirementException())) { violations ->
                 val exceptions = violations.map { it.first() }
                 val messages = violations.map { it.second }
-                val exception = EnforcementException(exceptions)
+                val exception = cl.ravenhill.jakt.exceptions.CompositeException(exceptions)
                 exception.message shouldBe
-                        "Unfulfilled contract: [ " +
+                        "Unmet constraints: [" +
                         messages.joinToString(", ") {
                             "{ ${unfulfilledConstraint(it)} }"
                         } + " ]"
@@ -66,14 +68,14 @@ class ExceptionsTest : FreeSpec({
 })
 
 /**
- * Generates an arbitrary instance of a subclass of [UnfulfilledRequirementException].
+ * Generates an arbitrary instance of a subclass of [ConstraintException].
  *
  * @receiver The `Arb.Companion` object.
  * @return An [Arb] instance that generates pairs where the first component is a
- * [UnfulfilledRequirementException] and the second component is the message associated with the
+ * [ConstraintException] and the second component is the message associated with the
  * exception.
  *
- * @see UnfulfilledRequirementException
+ * @see ConstraintException
  * @see IntRequirementException
  * @see LongRequirementException
  * @see PairRequirementException
@@ -84,9 +86,9 @@ private fun Arb.Companion.requirementException() = arbitrary {
     val message = string().bind()
     element(
         { IntRequirementException { message } } to message,
-        { LongRequirementException { message } } to message,
-        { PairRequirementException { message } } to message,
-        { DoubleRequirementException { message } } to message,
-        { CollectionRequirementException { message } } to message,
-        { UnfulfilledRequirementException { message } } to message).bind()
+        { cl.ravenhill.jakt.exceptions.LongRequirementException { message } } to message,
+        { cl.ravenhill.jakt.exceptions.PairRequirementException { message } } to message,
+        { cl.ravenhill.jakt.exceptions.DoubleRequirementException { message } } to message,
+        { cl.ravenhill.jakt.exceptions.CollectionConstraintException { message } } to message,
+        { ConstraintException { message } } to message).bind()
 }

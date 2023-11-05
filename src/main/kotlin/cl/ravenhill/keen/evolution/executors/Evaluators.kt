@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.evolution.executors
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
@@ -177,7 +177,7 @@ class CoroutineEvaluator<DNA, G : Gene<DNA, G>>(
         var dispatcher: CoroutineDispatcher = Dispatchers.Default
         var chunkSize: Int = 100
             set(value) {
-                enforce {
+                constraints {
                     "The chunk size [$value] must be a positive integer." {
                         value must BePositive
                     }

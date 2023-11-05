@@ -5,10 +5,10 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.collections.BeEmpty
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
@@ -63,14 +63,14 @@ abstract class AbstractSelector<DNA, G : Gene<DNA, G>> : Selector<DNA, G> {
         count: Int,
         optimizer: IndividualOptimizer<DNA, G>
     ): Population<DNA, G> {
-        enforce {
+        constraints {
             "Population size [${population.size}] must be at least 1" {
                 population mustNot BeEmpty
             }
             "Selection count [$count] must be at least 0" { count must BeAtLeast(0) }
         }
         return select(population, count, optimizer).apply {
-            enforce {
+            constraints {
                 "Selected population size [$size] must match selection count [$count]." {
                     size must BeEqualTo(count)
                 }

@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.operators.mutator.strategies
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.requirements.DoubleRequirement
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.constraints.DoubleConstraint
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -30,7 +30,7 @@ import cl.ravenhill.keen.util.trees.Tree
  * @property geneRate The probability of a gene within a selected chromosome being mutated.
  *
  * @constructor Creates a new [PointMutation] with the given [probability], [chromosomeRate] and [geneRate].
- * @throws EnforcementException if the mutation probabilities are not in the range 0.0 to 1.0.
+ * @throws CompositeException if the mutation probabilities are not in the range 0.0 to 1.0.
  *
  * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 2.0.0
@@ -43,9 +43,9 @@ class PointMutation<V, DNA, G>(
 ) : ChromosomeMutator<DNA, G>, GeneMutator<DNA, G> where DNA : Tree<V, DNA>, G : Gene<DNA, G> {
 
     init {
-        enforce {
+        constraints {
             "Mutation probabilities must be between 0.0 and 1.0" {
-                probability must DoubleRequirement.BeInRange(0.0..1.0)
+                probability must DoubleConstraint.BeInRange(0.0..1.0)
             }
         }
     }

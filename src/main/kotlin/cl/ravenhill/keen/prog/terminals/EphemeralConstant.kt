@@ -6,8 +6,6 @@
 package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.prog.Environment
-import cl.ravenhill.keen.prog.Reduceable
-import java.util.Objects
 
 
 /**
@@ -18,7 +16,7 @@ import java.util.Objects
  *
  * @param T The generic type of the constant value.
  * @param generator The generator function that generates the constant value of type T.
- * @property value The constant value of type T.
+ * @property contents The constant value of type T.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -29,7 +27,7 @@ data class EphemeralConstant<T>(val generator: () -> T, ) : Terminal<T> {
     private val _value: T? = null
     val value: T get() = _value ?: generator()
 
-    override fun toString() = "$value"
+    override fun toString() = "$contents"
 
     override fun create() = EphemeralConstant(generator)
     override fun invoke(environment: Environment<T>, args: List<T>) = value

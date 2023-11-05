@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeInRange
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -55,7 +55,7 @@ data class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA,
      * Returns the [Chromosome] at the given `index`.
      */
     operator fun get(index: Int): Chromosome<DNA, G> {
-        enforce {
+        constraints {
             "The index [$index] must be in the range [0, $size)" {
                 index must BeInRange(0 to size)
             }

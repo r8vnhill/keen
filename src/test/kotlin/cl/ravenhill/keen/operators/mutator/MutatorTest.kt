@@ -5,8 +5,7 @@
 
 package cl.ravenhill.keen.operators.mutator
 
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.arbs.genetic.geneticMaterial
 import cl.ravenhill.keen.arbs.genetic.individual
 import cl.ravenhill.keen.arbs.genetic.intGene
@@ -129,7 +128,7 @@ class MutatorTest : FreeSpec({
                     Arb.geneticMaterial(),
                     Arb.negativeInt()
                 ) { material, mutations ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         MutatorResult(material, mutations)
                     }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint(

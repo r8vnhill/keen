@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.operators
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import java.util.*
@@ -74,7 +74,7 @@ interface Alterer<DNA, G : Gene<DNA, G>> : GeneticOperator<DNA, G> {
 abstract class AbstractAlterer<DNA, G : Gene<DNA, G>>(final override val probability: Double) :
     Alterer<DNA, G> {
     init {
-        enforce {
+        constraints {
             "The alteration probability [$probability] must be between 0.0 and 1.0" {
                 probability must BeInRange(0.0..1.0)
             }
@@ -97,7 +97,7 @@ class AltererResult<DNA, G : Gene<DNA, G>>(
     val alterations: Int = 0,
 ) : GeneticOperationResult<DNA> {
     init {
-        enforce {
+        constraints {
             "The number of alterations [$alterations] must be greater than or equal to 0" {
                 alterations must BeAtLeast(0)
             }

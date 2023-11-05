@@ -7,9 +7,7 @@
 package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.keen.arbs.datatypes.any
-import cl.ravenhill.enforcer.CollectionRequirementException
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.orderedPair
 import cl.ravenhill.unfulfilledConstraint
@@ -77,7 +75,7 @@ class GeneratorsTest : FreeSpec({
                         list(intermediate<Any>()),
                         condition()
                     ) { (minHeight, maxHeight), intermediates, condition ->
-                        shouldThrow<EnforcementException> {
+                        shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                             Tree.generate(
                                 emptyList(),
                                 intermediates,
@@ -88,7 +86,7 @@ class GeneratorsTest : FreeSpec({
                                 { intermediate, children ->
                                     intermediateFactory(intermediate, children)
                                 })
-                        }.shouldHaveInfringement<CollectionRequirementException>(
+                        }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.CollectionConstraintException>(
                             unfulfilledConstraint("There should be at least one leaf node.")
                         )
                     }
@@ -103,7 +101,7 @@ class GeneratorsTest : FreeSpec({
                     Arb.positiveInt(),
                     Arb.condition()
                 ) { leaves, intermediates, minHeight, maxHeight, condition ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         Tree.generate(
                             leaves,
                             intermediates,
@@ -128,7 +126,7 @@ class GeneratorsTest : FreeSpec({
                     Arb.nonPositiveInt(),
                     Arb.condition()
                 ) { leaves, intermediates, minHeight, maxHeight, condition ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         Tree.generate(
                             leaves,
                             intermediates,
@@ -152,7 +150,7 @@ class GeneratorsTest : FreeSpec({
                     Arb.orderedPair(Arb.positiveInt(), Arb.positiveInt()),
                     Arb.condition()
                 ) { leaves, intermediates, (maxHeight, minHeight), condition ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         Tree.generate(
                             leaves,
                             intermediates,

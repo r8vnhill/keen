@@ -3,14 +3,11 @@
  * BSD Zero Clause License.
  */
 
-package cl.ravenhill.enforcer.requirements
-
-import cl.ravenhill.enforcer.PairRequirementException
-import kotlin.reflect.KClass
+package cl.ravenhill.jakt.constraints
 
 
 /**
- * A [PairRequirement] is a [Requirement] that specifies constraints on a [Pair] of values of types
+ * A [PairConstraint] is a [Constraint] that specifies constraints on a [Pair] of values of types
  * [T] and [U].
  *
  * @param T The type of the first element of the pair.
@@ -20,17 +17,18 @@ import kotlin.reflect.KClass
  * @since 2.0.0
  * @version 2.0.0
  */
-sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
+sealed interface PairConstraint<T, U> : Constraint<Pair<T, U>> {
 
     /// Documentation inherited from [Requirement].
-    override fun generateException(description: String) = PairRequirementException { description }
+    override fun generateException(description: String) =
+        cl.ravenhill.jakt.exceptions.PairRequirementException { description }
 
     /**
-     * [BeStrictlyOrdered] is a [PairRequirement] that requires that the first element in a [Pair]
+     * [BeStrictlyOrdered] is a [PairConstraint] that requires that the first element in a [Pair]
      * is strictly less than the second element, where both elements must be of the same comparable
      * type [A].
      */
-    class BeStrictlyOrdered<A : Comparable<A>> : PairRequirement<A, A> {
+    class BeStrictlyOrdered<A : Comparable<A>> : PairConstraint<A, A> {
         /// Documentation inherited from [Requirement].
         override val validator = { value: Pair<A, A> -> value.first < value.second }
 
@@ -40,10 +38,10 @@ sealed interface PairRequirement<T, U> : Requirement<Pair<T, U>> {
     }
 
     /**
-     * [BeFinite] is a [PairRequirement] that requires that both elements in a [Pair] are finite
+     * [BeFinite] is a [PairConstraint] that requires that both elements in a [Pair] are finite
      * doubles.
      */
-    data object BeFinite : PairRequirement<Double, Double> {
+    data object BeFinite : PairConstraint<Double, Double> {
         override val validator =
             { value: Pair<Double, Double> -> value.first.isFinite() && value.second.isFinite() }
     }

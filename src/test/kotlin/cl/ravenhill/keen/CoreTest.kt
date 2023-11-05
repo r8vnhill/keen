@@ -5,18 +5,16 @@
 
 package cl.ravenhill.keen
 
-import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.keen.prog.Environment
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.positiveInt
-import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -72,9 +70,9 @@ class CoreTest : FreeSpec({
         "cannot be set to a non-positive integer" {
             Core.maxProgramDepth shouldBe Core.DEFAULT_MAX_PROGRAM_DEPTH
             checkAll(Arb.nonPositiveInt()) { depth ->
-                shouldThrow<EnforcementException> {
+                shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                     depth.also { Core.maxProgramDepth = it }
-                }.infringements.forEach { it shouldBeOfClass cl.ravenhill.enforcer.IntRequirementException::class }
+                }.failures.forEach { it shouldBeOfClass IntRequirementException::class }
             }
         }
     }

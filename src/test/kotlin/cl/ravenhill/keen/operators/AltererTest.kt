@@ -5,8 +5,6 @@
 
 package cl.ravenhill.keen.operators
 
-import cl.ravenhill.enforcer.DoubleRequirementException
-import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -25,9 +23,9 @@ class AltererTest : FreeSpec({
         "should throw an exception when" - {
             "the probability is less than 0" {
                 checkAll(Arb.negativeDouble()) { probability ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummyAlterer(probability)
-                    }.shouldHaveInfringement<DoubleRequirementException>(
+                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleRequirementException>(
                         unfulfilledConstraint(
                             "The alteration probability [$probability] must be between " +
                                 "0.0 and 1.0"
@@ -39,9 +37,9 @@ class AltererTest : FreeSpec({
             "the probability is greater than 1" {
                 checkAll(Arb.double(1.0..Double.MAX_VALUE)) { probability ->
                     assume { probability shouldBeGreaterThan 1.0 }
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummyAlterer(probability)
-                    }.shouldHaveInfringement<DoubleRequirementException>(
+                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleRequirementException>(
                         unfulfilledConstraint(
                             "The alteration probability [$probability] must be between " +
                                 "0.0 and 1.0"

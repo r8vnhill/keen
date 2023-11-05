@@ -25,22 +25,22 @@ import io.kotest.property.arbitrary.int
  * @version 2.0.0
  * @since 2.0.0
  */
-data class TypedIntermediate<T>(override val arity: Int, val value: T? = null) : Intermediate<T>
+data class TypedIntermediate<T>(override val arity: Int, override val contents: T? = null) : Intermediate<T>
 
 /**
  * Represents a leaf node in a typed tree structure.
  * A leaf node is a node that does not have any child nodes.
  *
  * @param T the type of data contained in the node.
- * @property value the value associated with the leaf node.
+ * @property contents the value associated with the leaf node.
  *
- * @constructor Creates a new instance of [TypedLeaf] with the specified [value].
+ * @constructor Creates a new instance of [TypedLeaf] with the specified [contents].
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @version 2.0.0
  * @since 2.0.0
  */
-data class TypedLeaf<T>(val value: T) : Leaf<T>
+data class TypedLeaf<T>(override val contents: T) : Leaf<T>
 // endregion TREE NODES
 
 /**
@@ -57,7 +57,7 @@ data class TypedLeaf<T>(val value: T) : Leaf<T>
  * @property arity the arity of the typed tree node, which indicates the number of child nodes it
  * can have.
  * It is derived from the associated [node]'s arity.
- * @property value the value of the typed tree node, which is the associated [node].
+ * @property node the value of the typed tree node, which is the associated [node].
  * @property nodes a list of all nodes in the typed tree, including the current node and its
  * descendants.
  *
@@ -68,13 +68,11 @@ data class TypedLeaf<T>(val value: T) : Leaf<T>
  * @since 2.0.0
  */
 data class TypedTree<V>(
-    val node: Node<V>,
+    override val node: Node<V>,
     override val children: List<TypedTree<V>> = emptyList()
 ) : Tree<Node<V>, TypedTree<V>> {
 
     override val arity: Int = node.arity
-
-    override val value = node
 
     override fun createNode(value: Node<V>, children: List<TypedTree<V>>) =
         TypedTree(value, children)

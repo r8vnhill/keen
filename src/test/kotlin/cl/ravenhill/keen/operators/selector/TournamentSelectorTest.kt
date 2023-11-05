@@ -6,8 +6,7 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
@@ -31,7 +30,7 @@ class TournamentSelectorTest : FreeSpec({
         "when created" - {
             "should throw an exception if the tournament size is negative" {
                 checkAll(Arb.nonPositiveInt()) { size ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         TournamentSelector<Int, IntGene>(size)
                     }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint("The sample size [$size] must be positive")

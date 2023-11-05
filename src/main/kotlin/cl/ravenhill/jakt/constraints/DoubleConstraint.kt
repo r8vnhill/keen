@@ -3,11 +3,10 @@
  * BSD Zero Clause License.
  */
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
 import cl.ravenhill.utils.DoubleRange
 import cl.ravenhill.utils.DoubleToDouble
-import cl.ravenhill.utils.contains
 import cl.ravenhill.utils.toRange
 import kotlin.math.abs
 
@@ -18,18 +17,18 @@ import kotlin.math.abs
  * @version 2.0.0
  * @since 2.0.0
  */
-sealed interface DoubleRequirement : Requirement<Double> {
+sealed interface DoubleConstraint : Constraint<Double> {
 
     /// Documentation inherited from [Requirement]
     override fun generateException(description: String) =
-        cl.ravenhill.enforcer.DoubleRequirementException { description }
+        cl.ravenhill.jakt.exceptions.DoubleRequirementException { description }
 
     /**
-     * A [DoubleRequirement] constraint that checks if a given [Double] is within a specified range.
+     * A [DoubleConstraint] constraint that checks if a given [Double] is within a specified range.
      *
      * @property range The range of acceptable [Double] values, as a [DoubleToDouble] pair.
      */
-    class BeInRange(val range: DoubleRange) : DoubleRequirement {
+    class BeInRange(val range: DoubleRange) : DoubleConstraint {
 
         /**
          * A secondary constructor that allows for the range to be specified as a
@@ -50,14 +49,14 @@ sealed interface DoubleRequirement : Requirement<Double> {
     }
 
     /**
-     * A [DoubleRequirement] constraint that checks if a given [Double] is equal to within a certain
+     * A [DoubleConstraint] constraint that checks if a given [Double] is equal to within a certain
      * tolerance of an expected value.
      *
      * @property expected The expected [Double] value.
      * @property tolerance The maximum allowable difference between the given value and the expected
      * value. Defaults to `1e-8`.
      */
-    class BeEqualTo(val expected: Double, val tolerance: Double = 1e-8) : DoubleRequirement {
+    class BeEqualTo(val expected: Double, val tolerance: Double = 1e-8) : DoubleConstraint {
 
         init {
             require(tolerance >= 0) { "The tolerance must be non-negative." }

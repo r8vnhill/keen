@@ -3,10 +3,9 @@
  * BSD Zero Clause License.
  */
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.enforcer.LongRequirementException
-import cl.ravenhill.enforcer.requirements.LongRequirement.BeEqualTo
+import cl.ravenhill.jakt.constraints.LongConstraint.BeEqualTo
 import cl.ravenhill.orderedPair
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.core.spec.style.FreeSpec
@@ -21,11 +20,11 @@ import io.kotest.property.checkAll
 
 
 /**
- * Test class for verifying the behaviour of [LongRequirement].
- * It tests various scenarios related to [LongRequirement] and ensures the expected behaviour is
+ * Test class for verifying the behaviour of [LongConstraint].
+ * It tests various scenarios related to [LongConstraint] and ensures the expected behaviour is
  * observed.
  *
- * @see LongRequirement
+ * @see LongConstraint
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -35,7 +34,7 @@ class LongRequirementTest : FreeSpec({
     "Generating an exception should return a [LongRequirementException]" {
         checkAll(Arb.longRequirement(), Arb.string()) { requirement, description ->
             with(requirement.generateException(description)) {
-                shouldBeInstanceOf<LongRequirementException>()
+                shouldBeInstanceOf<cl.ravenhill.jakt.exceptions.LongRequirementException>()
                 message shouldBe unfulfilledConstraint(description)
             }
         }
@@ -71,7 +70,7 @@ class LongRequirementTest : FreeSpec({
 })
 
 /**
- * Generates an arbitrary instance of [LongRequirement].
+ * Generates an arbitrary instance of [LongConstraint].
  */
 private fun Arb.Companion.longRequirement() = arbitrary {
     element(beEqualToData().bind().requirement).bind()

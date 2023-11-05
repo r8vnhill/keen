@@ -31,7 +31,7 @@ class Program<V>(
     override val arity: Int = reduceable.arity
 
     // Inherit documentation from Tree.
-    override val value = reduceable
+    override val node = reduceable
 
     val root: Program<V>
         get() = nodes.first()

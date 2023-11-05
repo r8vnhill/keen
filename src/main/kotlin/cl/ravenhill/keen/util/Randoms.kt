@@ -5,12 +5,12 @@
 
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.requirements.collections.BeEmpty
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.enforcer.requirements.IntRequirement
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.IntConstraint
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
 import java.util.LinkedList
 import kotlin.random.Random
 
@@ -134,7 +134,7 @@ fun Random.nextDoubleInRange(range: ClosedRange<Double>) =
  * @return a list of randomly selected indices.
  */
 fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int> {
-    enforce {
+    constraints {
         "The probability [$pickProbability] must be between 0.0 and 1.0, inclusive." {
             pickProbability must BeInRange(0.0..1.0)
         }
@@ -160,9 +160,9 @@ fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int>
  * @return a list of indices.
  */
 fun Random.indices(size: Int, end: Int, start: Int = 0): List<Int> {
-    enforce {
+    constraints {
         "The size [$size] must be at most the size of the range [${end - start}]." {
-            size must IntRequirement.BeAtMost(end - start)
+            size must IntConstraint.BeAtMost(end - start)
         }
     }
     val remainingIndices = List(end - start) { start + it }.toMutableList()
@@ -225,7 +225,7 @@ fun Random.indices(size: Int, end: Int, start: Int = 0): List<Int> {
  * @param limit the maximum number of subsets to generate.
  * Default is [Int.MAX_VALUE].
  * @return a list of randomly generated subsets.
- * @throws EnforcementException if the input parameters are invalid.
+ * @throws CompositeException if the input parameters are invalid.
  */
 fun <T> Random.subsets(
     elements: List<T>,
@@ -291,15 +291,15 @@ private fun <T> Random.createNonExclusiveSubset(
  * @param exclusive whether each element can be used only once across all subsets.
  * @param limit the maximum number of subsets to generate.
  *
- * @throws EnforcementException if the input parameters are invalid.
+ * @throws CompositeException if the input parameters are invalid.
  */
 private fun <T> validateSubsetsInput(elements: List<T>, size: Int, exclusive: Boolean, limit: Int) =
-    enforce {
+    constraints {
         if (elements.isEmpty()) {
             "The input list must not be empty." { elements mustNot BeEmpty }
         } else {
             "The subset size [$size] must be at least 1 and at most the number of elements in the input list [${elements.size}]." {
-                size must IntRequirement.BeInRange(1..elements.size)
+                size must IntConstraint.BeInRange(1..elements.size)
             }
             if (exclusive && size != 0) {
                 "The number of elements [${elements.size}] must be a multiple of the subset size [$size] when using exclusive subsets." {

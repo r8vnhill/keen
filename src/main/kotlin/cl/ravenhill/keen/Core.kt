@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 import cl.ravenhill.keen.Core.DEFAULT_MAX_PROGRAM_DEPTH
 import cl.ravenhill.keen.Core.EvolutionLogger.DEFAULT_LEVEL
 import cl.ravenhill.keen.Core.EvolutionLogger.level
@@ -40,7 +40,7 @@ object Core {
 
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
         set(value) {
-            enforce { "The maximum program depth must be positive" { value must BePositive } }
+            constraints { "The maximum program depth must be positive" { value must BePositive } }
             field = value
         }
     var random: Random = Random.Default

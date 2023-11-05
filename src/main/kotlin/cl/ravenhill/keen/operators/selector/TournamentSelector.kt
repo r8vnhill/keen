@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BePositive
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -32,7 +32,7 @@ class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
     AbstractSelector<DNA, G>() {
 
     init {
-        enforce {
+        constraints {
             "The sample size [$sampleSize] must be positive" {
                 sampleSize must BePositive
             }

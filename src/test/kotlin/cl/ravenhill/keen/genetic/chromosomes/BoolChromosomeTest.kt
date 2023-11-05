@@ -5,8 +5,6 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.enforcer.DoubleRequirementException
-import cl.ravenhill.enforcer.EnforcementException
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.genetic.chromosomes.boolChromosome
 import cl.ravenhill.keen.arbs.genetic.boolGene
@@ -61,9 +59,9 @@ class BoolChromosomeTest : FreeSpec({
                         assume {
                             probability shouldNotBeInRange 0.0..1.0
                         }
-                        shouldThrow<EnforcementException> {
+                        shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                             BoolChromosome(size, probability)
-                        }.shouldHaveInfringement<DoubleRequirementException>(
+                        }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleRequirementException>(
                             unfulfilledConstraint(
                                 "The probability of a gene being true must be in the range [0.0, 1.0]"
                             )

@@ -5,10 +5,10 @@
 
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.Genotype
@@ -42,7 +42,7 @@ abstract class AbstractUniformLenghtCrossover<DNA, G : Gene<DNA, G>>(
 ) : AbstractAlterer<DNA, G>(probability), Crossover<DNA, G> {
 
     init {
-        enforce {
+        constraints {
             "There should be at least 2 inputs to perform a crossover operation" {
                 numIn must BeAtLeast(2)
             }
@@ -90,7 +90,7 @@ abstract class AbstractUniformLenghtCrossover<DNA, G : Gene<DNA, G>>(
     }
 
     override fun crossover(inGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
-        enforce {
+        constraints {
             val inCount = inGenotypes.size
             "Input count [$inCount] must match constructor-specified count [$numIn]." {
                 inGenotypes.size must BeEqualTo(numIn)

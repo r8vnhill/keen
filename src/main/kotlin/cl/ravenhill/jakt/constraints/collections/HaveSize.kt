@@ -3,13 +3,13 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.enforcer.requirements.collections
+package cl.ravenhill.jakt.constraints.collections
 
 /**
  * Represents a constraint requiring that a collection has a specific size.
  *
  * @property size The desired size that the collection should have.
  */
-data class HaveSize<T>(val size: Int) : CollectionRequirement<T> {
-    override val validator = { value: Collection<T> -> value.size == size }
+data class HaveSize(val size: Int) : CollectionConstraint {
+    override val validator = { value: Collection<*> -> value.size == size }
 }

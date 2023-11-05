@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.util.MutableFilterCollection
@@ -85,7 +85,7 @@ data class CharChromosome(override val genes: List<CharGene>) :
         }
 
         private fun enforceConstraints() {
-            enforce {
+            constraints {
                 if (ranges.size > 1) {
                     (
                         "When creating a chromosome with more than one range, the number of ranges " +

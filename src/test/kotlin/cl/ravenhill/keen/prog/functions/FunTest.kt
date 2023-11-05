@@ -6,9 +6,7 @@
 
 package cl.ravenhill.keen.prog.functions
 
-import cl.ravenhill.enforcer.CollectionRequirementException
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.arbs.datatypes.list
 import cl.ravenhill.keen.arbs.prog.environment
 import cl.ravenhill.keen.arbs.prog.function
@@ -43,7 +41,7 @@ class FunTest : FreeSpec({
 
             "should throw an exception when created with a negative arity" {
                 checkAll(Arb.string(), Arb.negativeInt(), Arb.function<Int>()) { name, arity, function ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         Fun(name, arity, function)
                     }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint("The arity [$arity] must be at least 0")
@@ -75,9 +73,9 @@ class FunTest : FreeSpec({
                 ) { name, arity, body, environment, args ->
                     assume { args shouldNotHaveSize arity }
                     val funObj = Fun(name, arity, body)
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         funObj(environment, args)
-                    }.shouldHaveInfringement<CollectionRequirementException>(
+                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.CollectionConstraintException>(
                         unfulfilledConstraint("The number of arguments [${args.size}] must be equal to the arity [$arity]")
                     )
                 }

@@ -5,9 +5,7 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.enforcer.CollectionRequirementException
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.Population
@@ -32,9 +30,9 @@ class SelectorTest : FreeSpec({
         "should throw an exception when" - {
             "the population size is empty" {
                 checkAll(Arb.nonNegativeInt()) { count ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummySelector()(listOf(), count, FitnessMinimizer())
-                    }.shouldHaveInfringement<CollectionRequirementException>(
+                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.CollectionConstraintException>(
                         unfulfilledConstraint("Population size [0] must be at least 1")
                     )
                 }
@@ -46,7 +44,7 @@ class SelectorTest : FreeSpec({
                     Arb.negativeInt(),
                     Arb.optimizer<Int, IntGene>()
                 ) { population, count, optimizer ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummySelector()(population, count, optimizer)
                     }.shouldHaveInfringement<IntRequirementException>(
                         unfulfilledConstraint(

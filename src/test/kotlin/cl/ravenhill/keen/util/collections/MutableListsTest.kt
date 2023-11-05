@@ -6,9 +6,8 @@
 package cl.ravenhill.keen.util.collections
 
 import cl.ravenhill.keen.arbs.datatypes.any
-import cl.ravenhill.enforcer.CollectionRequirementException
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -105,10 +104,10 @@ class MutableListsTest : FreeSpec({
                 assume {
                     n shouldBeGreaterThan list.size
                 }
-                val ex = shouldThrow<EnforcementException> {
+                val ex = shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                     list.dropFirst(n)
                 }
-                with(ex.infringements.first()) {
+                with(ex.failures.first()) {
                     shouldBeInstanceOf<IntRequirementException>()
                     message shouldBe unfulfilledConstraint("Size [$n] should be in range [0, $n]")
                 }
@@ -143,9 +142,9 @@ class MutableListsTest : FreeSpec({
         "throw an exception if" - {
             "the list is empty" {
                 checkAll(Arb.int(), Arb.int()) { i, j ->
-                    shouldThrow<EnforcementException> {
+                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         mutableListOf<Any>().swap(i, j)
-                    }.shouldHaveInfringement<CollectionRequirementException>(
+                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.CollectionConstraintException>(
                         unfulfilledConstraint("The list must not be empty")
                     )
                 }
@@ -337,7 +336,7 @@ private fun <T> Arb.Companion.indices(
  * @param y Pair consisting of another Int and an IndexType to be checked.
  * @param names Pair of strings used for descriptive error messaging.
  *
- * @throws EnforcementException If the index is out of the list's bounds.
+ * @throws CompositeException If the index is out of the list's bounds.
  */
 @ExperimentalStdlibApi
 private fun `check index constraints`(
@@ -347,7 +346,7 @@ private fun `check index constraints`(
     names: Pair<String, String>,
 ) {
     assume { list.shouldNotBeEmpty() }
-    val ex = shouldThrow<EnforcementException> {
+    val ex = shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
         list.swap(x.first, y.first)
     }
     with(ex) {
@@ -361,7 +360,7 @@ private fun `check index constraints`(
                 unfulfilledConstraint("${names.second} [${y.first}] should be in range [0, ${list.size})")
             )
         }
-        infringements.size shouldBe if (x.second is IndexType.Invalid && y.second is IndexType.Invalid) 2 else 1
+        failures.size shouldBe if (x.second is IndexType.Invalid && y.second is IndexType.Invalid) 2 else 1
     }
 }
 

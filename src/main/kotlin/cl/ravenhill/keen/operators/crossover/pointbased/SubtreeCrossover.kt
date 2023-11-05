@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.operators.crossover.pointbased
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtMost
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtMost
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -67,7 +67,7 @@ class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
     /**
      * Ensures that the parents meet the preconditions for the crossover.
      */
-    private fun enforcePreconditions(chromosomes: List<Chromosome<DNA, G>>) = enforce {
+    private fun enforcePreconditions(chromosomes: List<Chromosome<DNA, G>>) = constraints {
         "The crossover must have exactly two parents" { chromosomes.size must BeEqualTo(2) }
         chromosomes.forEach { chromosome ->
             "The parents must have the same size" {
@@ -123,7 +123,7 @@ class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
                         it
                     }
                 }
-                enforce {
+                constraints {
                     "The new tree's height (${newTree1.height}) exceeds the maximum allowed height (${Core.maxProgramDepth})." {
                         newTree1.height must BeAtMost(Core.maxProgramDepth)
                     }

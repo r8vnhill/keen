@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -97,7 +97,7 @@ class PartiallyMappedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
 
     // / Documentation inherited from [AbstractPermutationCrossover]
     override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
-        enforce {
+        constraints {
             "Partially mapped crossover requires exactly two chromosomes" {
                 chromosomes.size must BeEqualTo(2)
             }

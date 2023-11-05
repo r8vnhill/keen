@@ -3,9 +3,11 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.enforcer
+package cl.ravenhill.jakt
 
-import cl.ravenhill.enforcer.requirements.Requirement
+import cl.ravenhill.jakt.constraints.Constraint
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.exceptions.ConstraintException
 
 /**
  * Provides utility methods and inner classes for enforcing contracts.
@@ -22,7 +24,7 @@ import cl.ravenhill.enforcer.requirements.Requirement
  * @since 2.0.0
  * @version 2.0.0
  */
-object Enforcement {
+object Jakt {
     var skipChecks = false
 
     /**
@@ -42,13 +44,13 @@ object Enforcement {
      * ```
      *
      * @param builder The builder that contains the contract.
-     * @throws EnforcementException If the contract is not fulfilled.
+     * @throws CompositeException If the contract is not fulfilled.
      */
-    inline fun enforce(builder: Scope.() -> Unit) {
+    inline fun constraints(builder: Scope.() -> Unit) {
         if (skipChecks) return
         Scope().apply(builder).failures.let { errors ->
             if (errors.isNotEmpty()) {
-                throw EnforcementException(errors)
+                throw CompositeException(errors)
             }
         }
     }
@@ -59,7 +61,7 @@ object Enforcement {
      * An instance of this class can be used to enforce a contract by defining clauses using string
      * literals as message keys and lambda expressions that define the predicate.
      * Each clause defines a requirement, which can be validated by calling the `validate()` method
-     * of a [Requirement] instance.
+     * of a [Constraint] instance.
      *
      * @property results The list of results of evaluating the contract.
      * @property failures The list of exceptions thrown by the contract.
@@ -81,13 +83,13 @@ object Enforcement {
          * @receiver The message key for the clause.
          * @param value A lambda expression that defines the predicate for the clause.
          *
-         * @return A [StringScope] instance that can be used to define a [Requirement] for the clause.
+         * @return A [StringScope] instance that can be used to define a [Constraint] for the clause.
          */
         inline operator fun String.invoke(value: StringScope.() -> Boolean) =
             StringScope(this).apply { value() }
 
         /**
-         * A scope for defining a [Requirement] for a contract clause.
+         * A scope for defining a [Constraint] for a contract clause.
          *
          * @property message The message key associated with the clause.
          */
@@ -106,10 +108,10 @@ object Enforcement {
              * @param requirement the requirement to validate against.
              * @receiver the current value to be validated.
              *
-             * @see Requirement.validate
+             * @see Constraint.validate
              */
 
-            infix fun <T, R : Requirement<T>> T.must(requirement: R) =
+            infix fun <T, R : Constraint<T>> T.must(requirement: R) =
                 _results.add(requirement.validate(this, message))
 
             /**
@@ -119,13 +121,13 @@ object Enforcement {
              * @param requirement the requirement to validate against.
              * @receiver the current value to be validated.
              *
-             * @see Requirement.validateNot
+             * @see Constraint.validateNot
              */
-            infix fun <T, R : Requirement<T>> T.mustNot(requirement: R) =
+            infix fun <T, R : Constraint<T>> T.mustNot(requirement: R) =
                 _results.add(requirement.validateNot(this, message))
 
             /**
-             * Defines a [Requirement] based on a predicate.
+             * Defines a [Constraint] based on a predicate.
              *
              * @param predicate The predicate that defines the clause.
              */
@@ -133,7 +135,7 @@ object Enforcement {
                 if (predicate()) {
                     Result.success(Unit)
                 } else {
-                    Result.failure(UnfulfilledRequirementException { message })
+                    Result.failure(ConstraintException { message })
                 }
             )
 

@@ -149,4 +149,4 @@ fun <T : Comparable<T>> Arb.Companion.orderedTriple(
  * @param description the description of the unfulfilled constraint.
  * @return an error message indicating the unfulfilled constraint.
  */
-fun unfulfilledConstraint(description: String): String = "Unfulfilled constraint: $description"
+fun unfulfilledConstraint(description: String): String = ""

@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.collections.BeEmpty
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeInRange
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.IntConstraint.BeInRange
 
 /*****************************************************************************************
  * This code includes a collection of extensions and functions for different types of
@@ -94,7 +94,7 @@ operator fun <E> List<E>.get(indices: List<Int>) = indices.map { this[it] }
  * The sublists of this list must all have the same size, i.e. this list must be a valid matrix.
  */
 fun <E> List<List<E>>.transpose(): List<List<E>> {
-    enforce {
+    constraints {
         "All sublists must have the same size" { requirement { all { it.size == first().size } } }
     }
     return when {
@@ -120,7 +120,7 @@ fun <E> MutableCollection<E>.addIfAbsent(element: E) =
  * @return a list containing the removed elements.
  */
 fun <E> MutableList<E>.dropFirst(n: Int): List<E> {
-    enforce {
+    constraints {
         "Size [$n] should be in range [0, $n]" { n must BeInRange(0..size) }
     }
     return (0 until n).map { removeFirst() }
@@ -131,10 +131,10 @@ fun <E> MutableList<E>.dropFirst(n: Int): List<E> {
  * Swaps the elements at the given indices in the receiver.
  */
 fun <E> MutableList<E>.swap(i: Int, j: Int) {
-    enforce {
+    constraints {
         "The list must not be empty" { this@swap mustNot BeEmpty }
     }
-    enforce {
+    constraints {
         "i [$i] should be in range [0, ${this@swap.size})" {
             i must BeInRange(0..<this@swap.size)
         }

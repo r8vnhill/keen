@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.operators.crossover.permutation
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractUniformLenghtCrossover
@@ -37,7 +37,7 @@ abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
 
     /* Documentation inherited from [AbstractCrossover] */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
-        enforce {
+        constraints {
             for (chromosome in chromosomes) {
                 "A permutation crossover can't have duplicated genes: ${chromosome.genes.duplicates}" {
                     chromosome.genes.distinct().size must BeEqualTo(chromosome.genes.size)

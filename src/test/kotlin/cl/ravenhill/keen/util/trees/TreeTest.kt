@@ -5,8 +5,19 @@
 
 package cl.ravenhill.keen.util.trees
 
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.random
+import cl.ravenhill.keen.shouldHaveInfringement
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.long
+import io.kotest.property.checkAll
+import kotlin.random.Random
 
 class TreeTest : FreeSpec({
     lateinit var singleElementTree: TypedTree<Char>
@@ -58,18 +69,73 @@ class TreeTest : FreeSpec({
         }
 
         "can be converted to a simplified string representation" {
-            singleElementTree.toSimpleString() shouldBe "TypedLeaf(value=a)"
+            singleElementTree.toSimpleString() shouldBe "TypedLeaf(contents=a)"
         }
 
         "can be converted to a detailed string representation" {
             singleElementTree.toDetailedString() shouldBe "TypedTree(" +
-                  "value=TypedLeaf(value=a), " +
+                  "value=TypedLeaf(contents=a), " +
                   "size=1, " +
                   "arity=0, " +
                   "height=0, " +
                   "children=[], " +
                   "descendants=[]" +
                   ")"
+        }
+
+        "when getting a random node" - {
+            "should return the root node" {
+                checkAll(Arb.random()) { random ->
+                    Core.random = random
+                    singleElementTree.random() shouldBe singleElementTree
+                }
+            }
+        }
+
+        "when searching for a node should" - {
+            "return the index of the node if it is in the tree" {
+                singleElementTree.indexOfFirst { it.node.contents == 'a' } shouldBe 0..<1
+            }
+
+            "throw a [NoSuchElementException] if the node is not in the tree" {
+                shouldThrowWithMessage<NoSuchElementException>("Node not found in tree") {
+                    singleElementTree.indexOfFirst { it.node.contents == 'b' }
+                }
+            }
+        }
+
+        "when creating a new instance from a top-down list of nodes" - {
+            "from a list with a single element should return the same element" {
+                val nodes = listOf(
+                    singleElementTree
+                )
+                val tree = singleElementTree.fromTopDown(nodes)
+                tree shouldBe singleElementTree
+            }
+
+            "from a list with more than one element should return the provided multi-element tree" {
+                val nodes = listOf(
+                    intermediateNodeB,
+                    leafNodeD
+                )
+                val tree = singleElementTree.fromTopDown(nodes)
+                tree shouldBe intermediateNodeB
+            }
+
+            "from an empty list should throw a [CompositeException] with a [CollectionConstraintException]" {
+                val nodes = emptyList<TypedTree<Char>>()
+                shouldThrow<CompositeException> {
+                    singleElementTree.fromTopDown(nodes)
+                }.shouldHaveInfringement<CollectionConstraintException>(
+                    "Cannot create a tree from an empty list of nodes."
+                )
+            }
+        }
+
+        "can replace its root node" {
+            val newRoot = intermediateNodeB
+            val newTree = singleElementTree.replaceFirst(newRoot) { it.node.contents == 'a' }
+            newTree shouldBe newRoot
         }
     }
 
@@ -94,37 +160,101 @@ class TreeTest : FreeSpec({
 
         "can be converted to a simplified string representation" {
             multiElementTree.toSimpleString() shouldBe """
-                TypedIntermediate(arity=2, value=a) {
-                  TypedIntermediate(arity=1, value=b) {
-                    TypedLeaf(value=d)
+                TypedIntermediate(arity=2, contents=a) {
+                  TypedIntermediate(arity=1, contents=b) {
+                    TypedLeaf(contents=d)
                   }
-                  TypedLeaf(value=c)
+                  TypedLeaf(contents=c)
                 }
             """.trimIndent()
         }
 
         "can be converted to a detailed string representation" {
             multiElementTree.toDetailedString() shouldBe "TypedTree(" +
-                  "value=TypedIntermediate(arity=2, value=a), " +
+                  "value=TypedIntermediate(arity=2, contents=a), " +
                   "size=4, " +
                   "arity=2, " +
                   "height=2, " +
                   "children=[" +
                   "TypedTree(" +
-                  "node=TypedIntermediate(arity=1, value=b), " +
-                  "children=[TypedTree(node=TypedLeaf(value=d), children=[])]" +
+                  "node=TypedIntermediate(arity=1, contents=b), " +
+                  "children=[TypedTree(node=TypedLeaf(contents=d), children=[])]" +
                   "), " +
-                  "TypedTree(node=TypedLeaf(value=c), children=[])" +
+                  "TypedTree(node=TypedLeaf(contents=c), children=[])" +
                   "], " +
                   "descendants=[" +
                   "TypedTree(" +
-                  "node=TypedIntermediate(arity=1, value=b), " +
+                  "node=TypedIntermediate(arity=1, contents=b), " +
                   "children=[" +
-                  "TypedTree(node=TypedLeaf(value=d), children=[])]), " +
-                  "TypedTree(node=TypedLeaf(value=d), children=[]), " +
-                  "TypedTree(node=TypedLeaf(value=c), children=[])" +
+                  "TypedTree(node=TypedLeaf(contents=d), children=[])]), " +
+                  "TypedTree(node=TypedLeaf(contents=d), children=[]), " +
+                  "TypedTree(node=TypedLeaf(contents=c), children=[])" +
                   "]" +
                   ")"
+        }
+
+        "when getting a random node" - {
+            "should return a random node from the tree" {
+                checkAll(Arb.long()) { seed ->
+                    Core.random = Random(seed)
+                    val random = Random(seed)
+                    multiElementTree.random() shouldBe multiElementTree.nodes.random(random)
+                }
+            }
+        }
+
+        "when searching for a node should" - {
+            "return the index of the node if it is in the tree" {
+                multiElementTree.indexOfFirst { it.node.contents == 'b' } shouldBe 1..<3
+            }
+
+            "throw a [NoSuchElementException] if the node is not in the tree" {
+                shouldThrowWithMessage<NoSuchElementException>("Node not found in tree") {
+                    multiElementTree.indexOfFirst { it.node.contents == 'e' }
+                }
+            }
+        }
+
+        "when creating a new instance from a top-down list of nodes" - {
+            "from a list with a single element should return the same element" {
+                val nodes = listOf(
+                    singleElementTree
+                )
+                val tree = multiElementTree.fromTopDown(nodes)
+                tree shouldBe singleElementTree
+            }
+
+            "from a list with more than one element should return the provided multi-element tree" {
+                val nodes = listOf(
+                    intermediateNodeB,
+                    leafNodeD
+                )
+                val tree = multiElementTree.fromTopDown(nodes)
+                tree shouldBe intermediateNodeB
+            }
+
+            "from an empty list should throw a [CompositeException] with a [CollectionConstraintException]" {
+                val nodes = emptyList<TypedTree<Char>>()
+                shouldThrow<CompositeException> {
+                    multiElementTree.fromTopDown(nodes)
+                }.shouldHaveInfringement<CollectionConstraintException>(
+                    "Cannot create a tree from an empty list of nodes."
+                )
+            }
+        }
+
+        "can replace" - {
+            "its root node" {
+                val newRoot = singleElementTree
+                val newTree = multiElementTree.replaceFirst(newRoot) { it.node.contents == 'a' }
+                newTree shouldBe newRoot
+            }
+
+            "an intermediate node" {
+                val replacement = singleElementTree
+                val newTree = multiElementTree.replaceFirst(replacement) { it.node.contents == 'b' }
+                newTree shouldBe TypedTree(TypedIntermediate(2, 'a'), listOf(leafNodeC, replacement))
+            }
         }
     }
 })

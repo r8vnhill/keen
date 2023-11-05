@@ -5,9 +5,7 @@
 
 package cl.ravenhill.keen.operators.crossover
 
-import cl.ravenhill.enforcer.DoubleRequirementException
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.arbs.genetic.nothingGenotype
 import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.arbs.datatypes.real
@@ -125,7 +123,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                         Arb.boolean(),
                         Arb.probability()
                     ) { probability, numIn, numOut, exclusivity, chromosomeRate ->
-                        shouldThrow<EnforcementException> {
+                        shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                             object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
                                 probability,
                                 numOut = numOut,
@@ -151,7 +149,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                         Arb.boolean(),
                         Arb.probability()
                     ) { probability, numIn, numOut, exclusivity, chromosomeRate ->
-                        shouldThrow<EnforcementException> {
+                        shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                             object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
                                 probability,
                                 numOut = numOut,
@@ -179,7 +177,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                         Arb.boolean(),
                         Arb.real(1.0..Double.MAX_VALUE)
                     ) { probability, numIn, numOut, exclusivity, chromosomeRate ->
-                        shouldThrow<EnforcementException> {
+                        shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                             object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
                                 probability,
                                 numOut = numOut,
@@ -191,7 +189,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                                     chromosomes: List<Chromosome<Nothing, NothingGene>>
                                 ) = List(numOut) { NothingChromosome(listOf()) }
                             }
-                        }.shouldHaveInfringement<DoubleRequirementException>(
+                        }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleRequirementException>(
                             unfulfilledConstraint("The chromosome crossover probability should be in 0..1")
                         )
                     }
@@ -264,7 +262,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                             exclusivity,
                             chromosomeRate
                         )
-                        shouldThrow<EnforcementException> {
+                        shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                             operator.crossover(genotypes)
                         }.shouldHaveInfringement<IntRequirementException>(
                             unfulfilledConstraint(
@@ -294,7 +292,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                             exclusivity,
                             chromosomeRate
                         )
-                        shouldThrow<EnforcementException> {
+                        shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                             operator.crossover(genotypes)
                         }.shouldHaveInfringement<IntRequirementException>(
                             unfulfilledConstraint("All inputs must have the same genotype length")

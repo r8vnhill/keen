@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.operators.mutator.strategies
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.DoubleRequirement.BeInRange
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.Genotype
@@ -48,7 +48,7 @@ class RandomMutator<DNA, G : Gene<DNA, G>>(
     ChromosomeMutator<DNA, G> {
 
     init {
-        enforce {
+        constraints {
             "The gene rate [$geneRate] must be in 0.0..1.0" {
                 geneRate must BeInRange(0.0..1.0)
             }

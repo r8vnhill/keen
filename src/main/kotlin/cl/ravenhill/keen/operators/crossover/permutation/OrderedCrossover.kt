@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.operators.crossover.permutation
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeEqualTo
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
+import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -96,7 +96,7 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(
      * @return a list of the offspring produced by the crossover operation
      */
     override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
-        enforce {
+        constraints {
             "The Ordered Crossover operator requires exactly two chromosomes" {
                 chromosomes.size must BeEqualTo(2)
             }
@@ -133,7 +133,7 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(
         // Creates the new offspring list by combining genes from the second parent and the sublist
         // of the first parent.
         val offspring = uniqueGenes.take(start) + sublist + uniqueGenes.drop(start)
-        enforce {
+        constraints {
             "The size of the offspring's genes should be at least $size" {
                 offspring.size must BeAtLeast(size)
             }

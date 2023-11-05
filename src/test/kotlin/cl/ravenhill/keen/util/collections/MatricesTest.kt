@@ -6,8 +6,7 @@
 package cl.ravenhill.keen.util.collections
 
 import cl.ravenhill.keen.arbs.datatypes.any
-import cl.ravenhill.enforcer.EnforcementException
-import cl.ravenhill.enforcer.UnfulfilledRequirementException
+import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.util.shouldAny
 import cl.ravenhill.keen.util.transpose
@@ -55,9 +54,9 @@ class MatricesTest : FreeSpec({
                     ass.shouldNotBeEmpty()
                     ass shouldAny { it.size != ass.first().size }
                 }
-                shouldThrow<EnforcementException> {
+                shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                     ass.transpose()
-                }.infringements.first() shouldBeOfClass UnfulfilledRequirementException::class
+                }.failures.first() shouldBeOfClass ConstraintException::class
             }
         }
     }

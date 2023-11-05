@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.enforcer.Enforcement.enforce
-import cl.ravenhill.enforcer.requirements.IntRequirement.BeAtLeast
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -90,7 +90,7 @@ class EvolutionState<DNA, G : Gene<DNA, G>>(
 ) {
 
     init {
-        enforce { "Generation [$generation] must be non-negative" { generation must BeAtLeast(0) } }
+        constraints { "Generation [$generation] must be non-negative" { generation must BeAtLeast(0) } }
     }
 
     override fun toString() = "EvolutionStart { " +

@@ -9,9 +9,9 @@
  */
 
 
-package cl.ravenhill.enforcer.requirements
+package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.enforcer.LongRequirementException
+import cl.ravenhill.jakt.exceptions.LongRequirementException
 
 
 /**
@@ -21,7 +21,7 @@ import cl.ravenhill.enforcer.LongRequirementException
  * @since 2.0.0
  * @version 2.0.0
  */
-sealed interface LongRequirement : Requirement<Long> {
+sealed interface LongConstraint : Constraint<Long> {
 
     /**
      * Generates a [LongRequirementException] using the provided [description].
@@ -29,14 +29,15 @@ sealed interface LongRequirement : Requirement<Long> {
      * @param description The description to use in the generated exception.
      * @return A new instance of [LongRequirementException] using the provided [description].
      */
-    override fun generateException(description: String) = LongRequirementException { description }
+    override fun generateException(description: String) =
+        cl.ravenhill.jakt.exceptions.LongRequirementException { description }
 
     /**
      * A [BeEqualTo] requirement checks whether a given Long value is equal to an expected value.
      *
      * @param expected The expected value to compare with.
      */
-    class BeEqualTo(val expected: Long) : LongRequirement {
+    class BeEqualTo(val expected: Long) : LongConstraint {
 
         /**
          * The validator function for this requirement.
