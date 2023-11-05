@@ -71,41 +71,16 @@ data class TypedTree<V>(
     val node: Node<V>,
     override val children: List<TypedTree<V>> = emptyList()
 ) : Tree<Node<V>, TypedTree<V>> {
-    // / Inherit documentation from Tree.
+
     override val arity: Int = node.arity
 
-    // / Inherit documentation from Tree.
     override val value = node
 
-    // / Inherit documentation from Tree.
     override fun createNode(value: Node<V>, children: List<TypedTree<V>>) =
         TypedTree(value, children)
 
-    // / Inherit documentation from Tree.
     override val nodes: List<TypedTree<V>>
         get() = listOf(this) + children.flatMap { it.nodes }
-
-    // / Inherit documentation from [Any].
-    override fun toString() = prettyPrint()
-
-    fun prettyPrint(indent: String = ""): String {
-        // Helper function to print the node
-        fun Node<V>.printNode(): String = when (this) {
-            is TypedLeaf -> "Leaf($value)"
-            is TypedIntermediate -> "Intermediate(arity=$arity)"
-            else -> "UnknownNode"
-        }
-
-        // Print the current node
-        val sb = StringBuilder("$indent${node.printNode()}\n")
-
-        // Print all child nodes with an increased indentation
-        children.forEach {
-            sb.append(it.prettyPrint("$indent  ")) // Using two spaces for indentation
-        }
-
-        return sb.toString()
-    }
 }
 
 // region : -== FACTORY FUNCTIONS ==-

@@ -62,5 +62,5 @@ interface Gene<DNA, G> :
 
     override fun toSimpleString() = dna.toString()
 
-    override fun toFullString() = "${this::class.simpleName}(dna=$dna)"
+    override fun toDetailedString() = "${this::class.simpleName}(dna=$dna)"
 }

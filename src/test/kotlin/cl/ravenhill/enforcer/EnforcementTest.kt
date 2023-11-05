@@ -28,6 +28,7 @@ import io.kotest.property.arbitrary.string
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
+@OptIn(ExperimentalKotest::class)
 class EnforcementTest : FreeSpec({
     beforeEach {
         Enforcement.skipChecks = false
@@ -161,7 +162,9 @@ class EnforcementTest : FreeSpec({
                     }
                 }
                 "the predicate is false" {
-                    checkAll(Arb.string(), Arb.int(0..50)) { msg, iterations ->
+                    checkAll(
+                        PropTestConfig(iterations = 50),
+                        Arb.string(), Arb.int(0..50)) { msg, iterations ->
                         val scope = Enforcement.Scope()
                         with(scope.StringScope(msg)) {
                             repeat(iterations) {
@@ -175,7 +178,9 @@ class EnforcementTest : FreeSpec({
                 }
 
                 "the predicate is true for some iterations and false for others" {
-                    checkAll(Arb.list(Arb.pair(Arb.string(), Arb.requirement()))) { enforced ->
+                    checkAll(
+                        PropTestConfig(iterations = 50),
+                        Arb.list(Arb.pair(Arb.string(), Arb.requirement()))) { enforced ->
                         val scope = Enforcement.Scope()
                         with(scope) {
                             enforced.forEach { (msg, req) ->

@@ -116,8 +116,8 @@ data class BoolChromosome(
 
     override fun toString() = "BoolChromosome(genes=${toSimpleString()})"
 
-    override fun toFullString() =
-        "BoolChromosome(genes=${genes.map { it.toFullString() }})"
+    override fun toDetailedString() =
+        "BoolChromosome(genes=${genes.map { it.toDetailedString() }})"
 
     /**
      * Factory for [BoolChromosome]s.

@@ -7,30 +7,55 @@ package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.enforcer.Enforcement.enforce
 import cl.ravenhill.enforcer.requirements.collections.BeEmpty
-import cl.ravenhill.enforcer.requirements.collections.HaveElement
 import cl.ravenhill.enforcer.requirements.collections.HaveSize
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.util.MultiStringFormat
 import cl.ravenhill.keen.util.SelfReferential
 
 /**
- * Generic tree data structure where each node is stored as a depth-first list.
+ * Represents a generic tree data structure in which each node is organized in a depth-first list.
  *
- * @param V The type of the value stored in the tree.
- * @param T The type of the tree.
- * @property value The value stored in the root node.
- * @property size The number of nodes in the tree.
- * @property nodes The nodes of the tree in a depth-first order.
- * @property children The children of the tree.
- * @property arity The number of children of the root node.
- * @property descendants The descendants of the tree in a breadth-first order.
- * @property height The height of this node in the program tree.
+ * This interface is designed for representing hierarchical structures and offers methods for
+ * tree manipulations like subtree replacement and conversion to string in multiple formats.
  *
- *  The height of a node is defined as the maximum distance from the node to any leaf node in
- *  the subtree rooted at the node.
- *  If the node has no children, its height is zero.
+ * ### Example
+ * ```kotlin
+ * data class MyTree<V>(
+ *     val node: Node<V>,
+ *     override val children: List<MyTree<V>> = emptyList()
+ * ) : Tree<Node<V>, MyTree<V>> {
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ *     override val arity: Int = node.arity
+ *
+ *     override val value = node
+ *
+ *     override fun createNode(value: Node<V>, children: List<MyTree<V>>) =
+ *         MyTree(value, children)
+ *
+ *     override val nodes: List<MyTree<V>>
+ *         get() = listOf(this) + children.flatMap { it.nodes }
+ * }
+ *
+ * val leafNodeD = MyTree(MyLeaf('d'))
+ * val intermediateNodeB = MyTree(MyIntermediate(1, 'b'), listOf(leafNodeD))
+ * val leafNodeC = MyTree(MyLeaf('c'))
+ * val singleElementTree = MyTree(MyLeaf('a'))
+ * val multiElementTree = MyTree(MyIntermediate(2, 'a'), listOf(intermediateNodeB, leafNodeC))
+ * ```
+ *
+ * @param V The type of the value stored in the tree node.
+ * @param T The type of the tree itself.
+ *
+ * @property value The value held in the root node.
+ * @property size Total count of nodes within the tree.
+ * @property nodes List of all nodes in depth-first order.
+ * @property children Immediate child nodes of the root node.
+ * @property arity Count of immediate children the root node has.
+ * @property descendants All nodes excluding the root, in depth-first order.
+ * @property height The height of this node in the tree. Defined as the greatest distance
+ *                  from this node to any of its descendant leaf nodes. A node without children has a height of zero.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @version 2.0.0
  * @since 2.0.0
  */
@@ -44,7 +69,7 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
     val size: Int
         get() = nodes.size
     val descendants: List<T>
-        get() = nodes.subList(1, nodes.size)
+        get() = nodes.drop(1)
 
     /**
      * Returns a random node from the tree using the given [random] number generator.
@@ -124,39 +149,57 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
     fun createNode(value: V, children: List<T>): T
 
     /**
-     * Converts the tree to a simplified string representation.
+     * Transforms the tree into a concise string representation.
      *
-     * This function provides a pretty-printed representation of the tree. Each level of the tree
-     * is indented by two spaces. The nodes are represented by their values, and child nodes are
-     * encapsulated within curly braces.
+     * The output is a neatly formatted representation of the tree structure, where each depth
+     * level is indented by two spaces. Nodes are denoted by their values, and child nodes are
+     * enclosed within curly braces.
      *
-     * For example, a tree with value "a" having two children with values "b" and "c", where "c" has a
-     * child with value "d", will be represented as:
+     * __Important:__ This function does not handle infinite recursion.
+     *
+     * ### Examples
+     *
+     * #### Single element tree
+     * ```kotlin
+     * singleElementTree.toSimpleString()
      * ```
-     * a {
-     *   b
-     *   c {
-     *     d
+     * Output:
+     * ```
+     * MyLeaf(value=a)
+     * ```
+     *
+     * #### Multi-element tree
+     * ```kotlin
+     * multiElementTree.toSimpleString()
+     * ```
+     * Output:
+     * ```
+     * MyIntermediate(arity=2, value=a) {
+     *   MyIntermediate(arity=1, value=b) {
+     *     MyLeaf(value=d)
      *   }
+     *   MyLeaf(value=c)
      * }
      * ```
      *
-     * @return A string representation of the tree.
+     * @return A neatly formatted string portraying the tree.
      */
     override fun toSimpleString(): String {
-        fun stringify(child: Tree<V, T>, indent: Int = 0): String {
+        fun stringify(child: Tree<V, T>, indent: Int = 0, visited: MutableSet<Tree<V, T>> = mutableSetOf()): String {
             // Create a StringBuilder for constructing the string representation
             val builder = StringBuilder()
 
             // Append the value of the current node
             builder.append(" ".repeat(indent)) // This adds spaces for indentation
-            builder.append(value.toString())
+            builder.append(child.value.toString())
+            visited.add(child)
 
-            if (children.isNotEmpty()) {
+            if (child.children.isNotEmpty()) {
                 // Append child nodes
                 builder.append(" {\n") // Opening brace for child nodes
-                for (c in children) {
-                    builder.append(stringify(c, indent + 2)) // Recurse into child with an increased indentation
+                for (c in child.children) {
+                    // Recurse into child with an increased indentation
+                    builder.append(stringify(c, indent + 2, visited = visited))
                     builder.append("\n") // Newline after each child
                 }
                 builder.append(" ".repeat(indent)) // Spaces for closing brace indentation
@@ -180,29 +223,16 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
      *
      * @return A detailed string representation of the tree.
      */
-    override fun toFullString(): String {
-        fun subtreeToString(node: Tree<V, T>, visited: MutableSet<Tree<V, T>>): String {
-            enforce {
-                "The tree contains cycles." { visited mustNot HaveElement(node) }
-            }
-            // Check for cyclic references.
-            if (visited.contains(node)) {
-                return "CYCLIC_REFERENCE"
-            }
-
-            visited.add(node)
-
-            val childrenStr = node.children.joinToString(", ") { child -> subtreeToString(child, visited) }
-            return "Tree(value=${node.value}, children=[$childrenStr])"
-        }
-
-        return subtreeToString(this, mutableSetOf())
+    override fun toDetailedString(): String {
+        return "${this::class.simpleName}(" +
+              "value=$value, size=$size, arity=$arity, height=$height, children=$children, descendants=$descendants)"
     }
 
     /**
-     * Companion object for the [Tree] interface, empty on purpose.
-     * This is used to provide static-like access to the [Tree] interface to be available to
-     * create extension functions.
+     * Companion object intended for the [Tree] interface.
+     *
+     * Presently unoccupied, this placeholder allows for future static-like access or
+     * extension functions for the [Tree] interface.
      */
     companion object
 }

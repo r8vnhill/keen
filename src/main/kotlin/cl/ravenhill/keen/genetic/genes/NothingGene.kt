@@ -47,6 +47,6 @@ data object NothingGene : Gene<Nothing, NothingGene>, MultiStringFormat {
 
     override fun toSimpleString() = toString()
 
-    override fun toFullString() = toString()
+    override fun toDetailedString() = toString()
 }
 

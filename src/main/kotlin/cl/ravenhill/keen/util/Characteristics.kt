@@ -188,5 +188,5 @@ interface MultiStringFormat {
      *
      * @return A detailed string representation of the object.
      */
-    fun toFullString(): String
+    fun toDetailedString(): String
 }

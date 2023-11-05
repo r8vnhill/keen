@@ -39,6 +39,6 @@ abstract class AbstractChromosome<DNA, G : Gene<DNA, G>>(override val genes: Lis
     override fun toString() =
         "${this::class.simpleName}(genes=${toSimpleString()})"
 
-    override fun toFullString() =
-        "${this::class.simpleName}(genes=${genes.map { it.toFullString() }}"
+    override fun toDetailedString() =
+        "${this::class.simpleName}(genes=${genes.map { it.toDetailedString() }}"
 }

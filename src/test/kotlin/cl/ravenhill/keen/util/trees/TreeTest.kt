@@ -56,6 +56,21 @@ class TreeTest : FreeSpec({
                 singleElementTree.descendants shouldBe emptyList()
             }
         }
+
+        "can be converted to a simplified string representation" {
+            singleElementTree.toSimpleString() shouldBe "TypedLeaf(value=a)"
+        }
+
+        "can be converted to a detailed string representation" {
+            singleElementTree.toDetailedString() shouldBe "TypedTree(" +
+                  "value=TypedLeaf(value=a), " +
+                  "size=1, " +
+                  "arity=0, " +
+                  "height=0, " +
+                  "children=[], " +
+                  "descendants=[]" +
+                  ")"
+        }
     }
 
     "A [Tree] with more than one element" - {
@@ -75,6 +90,41 @@ class TreeTest : FreeSpec({
             "should return a list with all the nodes in the tree except the root node" {
                 multiElementTree.descendants shouldBe listOf(intermediateNodeB, leafNodeD, leafNodeC)
             }
+        }
+
+        "can be converted to a simplified string representation" {
+            multiElementTree.toSimpleString() shouldBe """
+                TypedIntermediate(arity=2, value=a) {
+                  TypedIntermediate(arity=1, value=b) {
+                    TypedLeaf(value=d)
+                  }
+                  TypedLeaf(value=c)
+                }
+            """.trimIndent()
+        }
+
+        "can be converted to a detailed string representation" {
+            multiElementTree.toDetailedString() shouldBe "TypedTree(" +
+                  "value=TypedIntermediate(arity=2, value=a), " +
+                  "size=4, " +
+                  "arity=2, " +
+                  "height=2, " +
+                  "children=[" +
+                  "TypedTree(" +
+                  "node=TypedIntermediate(arity=1, value=b), " +
+                  "children=[TypedTree(node=TypedLeaf(value=d), children=[])]" +
+                  "), " +
+                  "TypedTree(node=TypedLeaf(value=c), children=[])" +
+                  "], " +
+                  "descendants=[" +
+                  "TypedTree(" +
+                  "node=TypedIntermediate(arity=1, value=b), " +
+                  "children=[" +
+                  "TypedTree(node=TypedLeaf(value=d), children=[])]), " +
+                  "TypedTree(node=TypedLeaf(value=d), children=[]), " +
+                  "TypedTree(node=TypedLeaf(value=c), children=[])" +
+                  "]" +
+                  ")"
         }
     }
 })

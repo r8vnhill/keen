@@ -107,5 +107,5 @@ interface Chromosome<DNA, G> :
     override fun toSimpleString() = toString()
 
     /* Documentation inherited from [MultiStringFormat] */
-    override fun toFullString() = toString()
+    override fun toDetailedString() = toString()
 }
