@@ -10,14 +10,22 @@ import cl.ravenhill.keen.genetic.genes.Gene
 
 
 /**
- * This class represents a composite alterer that applies multiple [Alterer] objects to a
- * population in sequence.
+ * Represents a composite alterer that applies a sequence of [Alterer] instances to a population.
  *
- * @param DNA The type of data that represents an individual's genotype.
- * @param alterers The list of alterers to apply to the population in sequence.
- * @constructor Creates a new [CompositeAlterer] object.
+ * A `CompositeAlterer` works by chaining multiple alterers, applying each one in the order they appear in the list
+ * to the resultant population of the previous alterer. This allows complex genetic operations to be broken down
+ * into a series of simpler ones.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * ### Usage:
+ * ```
+ * val composite = CompositeAlterer(listOf(alterer1, alterer2, alterer3))
+ * val result = composite.invoke(initialPopulation, generation)
+ * ```
+ *
+ * @param DNA The type representing an individual's genotype.
+ * @param alterers The sequence of alterers to be applied to the population.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 1.0.0
  * @version 2.0.0
  */

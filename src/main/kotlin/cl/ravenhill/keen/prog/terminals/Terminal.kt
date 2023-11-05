@@ -9,21 +9,28 @@ import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.util.trees.Leaf
 
 /**
- * Represents a terminal operation in a tree-based genetic programming system.
- * Terminals are operations that return a value and do not have any child nodes.
+ * Defines a terminal operation for tree-based genetic programming.
  *
- * @param T The type of value returned by this terminal operation.
- * @property arity The number of child nodes expected by this terminal. Always 0.
+ * In the context of genetic programming, terminals serve as the leaves of the program tree. Unlike other nodes,
+ * terminals do not perform operations on child nodes but instead provide constant or variable values to the program.
+ * Consequently, they don't have child nodes of their own.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @param T The data type of the value provided by this terminal operation.
+ * @property arity The number of child nodes associated with this terminal, which is always 0 for terminals.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 2.0.0
  * @version 2.0.0
  */
 interface Terminal<T> : Reduceable<T>, Leaf<Reduceable<T>> {
+
     /**
-     * Creates a new instance of this terminal operation.
+     * Produces a fresh instance of this terminal operation.
      *
-     * @return A new instance of this terminal operation.
+     * This can be particularly useful when creating a new generation in genetic programming, ensuring that operations
+     * are treated as separate entities rather than references to the same object.
+     *
+     * @return A new instance of the terminal operation.
      */
     fun create(): Terminal<T>
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.util.trees.Node
@@ -23,6 +28,8 @@ import cl.ravenhill.keen.util.trees.Node
  * @version 2.0.0
  */
 interface Reduceable<T> : Node<Reduceable<T>> {
+    override val contents: Reduceable<T>
+        get() = this
 
     /**
      * Evaluates or reduces the operation based on a list of input values. This method defines

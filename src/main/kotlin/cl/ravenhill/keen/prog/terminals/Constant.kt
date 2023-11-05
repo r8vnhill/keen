@@ -19,8 +19,6 @@ import cl.ravenhill.keen.prog.Reduceable
  * @constructor creates a new constant node with the given value
  */
 data class Constant<T>(val value: T) : Terminal<T> {
-    override val contents: Reduceable<T>
-        get() = this
 
     /**
      * Creates a new `Constant` node with the same value as this node.
