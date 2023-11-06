@@ -11,7 +11,7 @@ import cl.ravenhill.keen.util.trees.intermediate
 import cl.ravenhill.keen.util.trees.intermediateFactory
 import cl.ravenhill.keen.util.trees.leaf
 import cl.ravenhill.keen.util.trees.leafFactory
-import cl.ravenhill.orderedPair
+import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int

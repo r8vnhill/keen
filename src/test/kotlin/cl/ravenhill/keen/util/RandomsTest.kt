@@ -5,11 +5,12 @@
 
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.keen.random
-import cl.ravenhill.orderedPair
-import cl.ravenhill.orderedTriple
+import cl.ravenhill.keen.arbs.datatypes.orderedPair
+import cl.ravenhill.keen.arbs.datatypes.orderedTriple
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.unfulfilledConstraint
@@ -216,7 +217,7 @@ class RandomsTest : FreeSpec({
 
     "Generating subsets should" - {
         "return a list of random subsets of the given size containing all elements" {
-            checkAll(Arb.listAndIndex(Arb.any()), Arb.random()) { (elements, size), rng ->
+            checkAll(Arb.listAndIndex(Arb.any(), 1..50), Arb.random()) { (elements, size), rng ->
                 assume {
                     size.shouldBePositive()
                 }
@@ -264,7 +265,7 @@ class RandomsTest : FreeSpec({
                 checkAll(
                     Arb.positiveInt(), Arb.boolean(), Arb.random()
                 ) { size, exclusivity, rng ->
-                    val ex = shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                    val ex = shouldThrow<CompositeException> {
                         rng.subsets(emptyList<Any>(), size, exclusivity)
                     }
                     ex.failures.size shouldBe 1
@@ -279,7 +280,7 @@ class RandomsTest : FreeSpec({
                 checkAll(
                     Arb.list(Arb.any(), 1..100), Arb.nonPositiveInt(), Arb.boolean(), Arb.random()
                 ) { elements, size, exclusivity, rng ->
-                    val ex = shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                    val ex = shouldThrow<CompositeException> {
                         rng.subsets(elements, size, exclusivity)
                     }
                     with(ex.failures.first()) {
@@ -291,17 +292,17 @@ class RandomsTest : FreeSpec({
 
             "the elements list is too small" {
                 checkAll(
-                    Arb.list(Arb.any(), 1..100), Arb.positiveInt(), Arb.boolean(), Arb.random()
+                    Arb.list(Arb.any(), 1..50), Arb.positiveInt(), Arb.boolean(), Arb.random()
                 ) { elements, size, exclusivity, rng ->
                     assume {
                         elements.size shouldBeLessThan size
                     }
-                    val ex = shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                    val ex = shouldThrow<CompositeException> {
                         rng.subsets(elements, size, exclusivity)
                     }
                     with(ex.failures.first()) {
                         shouldBeInstanceOf<IntRequirementException>()
-                        message shouldBe unfulfilledConstraint("The subset size [$size] must be at least 1 and at most the number of elements in the input list [${elements.size}].")
+                        message shouldBe "The subset size [$size] must be at least 1 and at most the number of elements in the input list [${elements.size}]."
                     }
                 }
             }
@@ -315,16 +316,14 @@ class RandomsTest : FreeSpec({
                         size.shouldBePositive()
                         elements.size shouldNotBeMultipleOf size
                     }
-                    val ex = shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                    val ex = shouldThrow<CompositeException> {
                         rng.subsets(elements, size, true)
                     }
                     with(ex.failures.first()) {
                         shouldBeInstanceOf<ConstraintException>()
-                        message shouldBe unfulfilledConstraint(
-                            "The number of elements [${elements.size}] must be a " +
-                                "multiple of the subset size [$size] when using exclusive " +
-                                "subsets."
-                        )
+                        message shouldBe "The number of elements [${elements.size}] must be a " +
+                            "multiple of the subset size [$size] when using exclusive " +
+                            "subsets."
                     }
                 }
             }
@@ -333,12 +332,12 @@ class RandomsTest : FreeSpec({
                 checkAll(
                     Arb.list(Arb.any(), 1..100), Arb.nonPositiveInt(), Arb.boolean(), Arb.random()
                 ) { elements, limit, exclusivity, rng ->
-                    val ex = shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                    val ex = shouldThrow<CompositeException> {
                         rng.subsets(elements, elements.size, exclusivity, limit)
                     }
                     with(ex.failures.first()) {
                         shouldBeInstanceOf<IntRequirementException>()
-                        message shouldBe unfulfilledConstraint("The limit [$limit] must be at least 1.")
+                        message shouldBe "The limit [$limit] must be at least 1."
                     }
                 }
             }

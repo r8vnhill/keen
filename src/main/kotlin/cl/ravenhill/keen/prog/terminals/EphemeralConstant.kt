@@ -27,7 +27,7 @@ data class EphemeralConstant<T>(val generator: () -> T, ) : Terminal<T> {
     private val _value: T? = null
     val value: T get() = _value ?: generator()
 
-    override fun toString() = "$contents"
+    override fun toString() = "$value"
 
     override fun create() = EphemeralConstant(generator)
     override fun invoke(environment: Environment<T>, args: List<T>) = value

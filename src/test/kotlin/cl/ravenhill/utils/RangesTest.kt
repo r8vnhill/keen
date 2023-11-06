@@ -6,8 +6,8 @@
 package cl.ravenhill.utils
 
 import cl.ravenhill.keen.arbs.datatypes.real
-import cl.ravenhill.orderedPair
-import cl.ravenhill.orderedTriple
+import cl.ravenhill.keen.arbs.datatypes.orderedPair
+import cl.ravenhill.keen.arbs.datatypes.orderedTriple
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult

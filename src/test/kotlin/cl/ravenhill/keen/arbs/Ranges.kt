@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.arbs
 
 import cl.ravenhill.keen.arbs.datatypes.real
-import cl.ravenhill.orderedPair
+import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import cl.ravenhill.utils.DoubleRange
 import cl.ravenhill.utils.toRange
 import io.kotest.property.Arb

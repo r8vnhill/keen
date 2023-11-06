@@ -9,7 +9,7 @@ package cl.ravenhill.keen.util.trees
 import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.jakt.exceptions.IntRequirementException
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.orderedPair
+import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
