@@ -25,7 +25,7 @@ class AltererTest : FreeSpec({
                 checkAll(Arb.negativeDouble()) { probability ->
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummyAlterer(probability)
-                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleRequirementException>(
+                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleConstraintException>(
                         unfulfilledConstraint(
                             "The alteration probability [$probability] must be between " +
                                 "0.0 and 1.0"
@@ -39,7 +39,7 @@ class AltererTest : FreeSpec({
                     assume { probability shouldBeGreaterThan 1.0 }
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummyAlterer(probability)
-                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleRequirementException>(
+                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleConstraintException>(
                         unfulfilledConstraint(
                             "The alteration probability [$probability] must be between " +
                                 "0.0 and 1.0"

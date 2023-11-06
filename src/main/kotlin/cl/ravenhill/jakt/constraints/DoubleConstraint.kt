@@ -21,7 +21,7 @@ sealed interface DoubleConstraint : Constraint<Double> {
 
     /// Documentation inherited from [Requirement]
     override fun generateException(description: String) =
-        cl.ravenhill.jakt.exceptions.DoubleRequirementException { description }
+        cl.ravenhill.jakt.exceptions.DoubleConstraintException { description }
 
     /**
      * A [DoubleConstraint] constraint that checks if a given [Double] is within a specified range.

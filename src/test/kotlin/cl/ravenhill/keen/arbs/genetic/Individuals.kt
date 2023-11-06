@@ -5,12 +5,15 @@
 
 package cl.ravenhill.keen.arbs.genetic
 
+import cl.ravenhill.keen.arbs.datatypes.list
+import cl.ravenhill.keen.arbs.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 
 /**
@@ -43,5 +46,9 @@ fun Arb.Companion.individual() = arbitrary { Individual(genotype().bind()) }
  *
  * @return An [Arb] instance that produces random populations of individuals with [intGenotype]s.
  */
-fun Arb.Companion.population() =
-    arbitrary { list(individual(intGenotype()), 1..5).bind() }
+fun Arb.Companion.population() = list(individual(intGenotype()), 1..5)
+
+fun Arb.Companion.uniformLengthPopulation() = arbitrary {
+    val size = int(1..5).bind()
+    List(size) { Individual(Genotype(list(intChromosome(), int(0..5)).bind())) }
+}

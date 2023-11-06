@@ -61,7 +61,7 @@ class BoolChromosomeTest : FreeSpec({
                         }
                         shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                             BoolChromosome(size, probability)
-                        }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleRequirementException>(
+                        }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleConstraintException>(
                             unfulfilledConstraint(
                                 "The probability of a gene being true must be in the range [0.0, 1.0]"
                             )

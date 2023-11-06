@@ -37,7 +37,7 @@ suspend fun <T, G> `should enforce valid mutation probability`(
         assumption(rate)
         shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
             mutatorBuilder(probability, rate)
-        }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleRequirementException>(
+        }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleConstraintException>(
             unfulfilledConstraint(
                 "The $parameterName [$rate] must be in 0.0..1.0"
             )

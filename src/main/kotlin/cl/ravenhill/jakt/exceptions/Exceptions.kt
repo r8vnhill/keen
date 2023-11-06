@@ -72,7 +72,7 @@ class PairRequirementException(lazyMessage: () -> String) :
  * @version 2.0.0
  * @since 2.0.0
  */
-class DoubleRequirementException(lazyMessage: () -> String) :
+class DoubleConstraintException(lazyMessage: () -> String) :
         ConstraintException(lazyMessage)
 
 /**
