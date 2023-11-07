@@ -55,12 +55,5 @@ open class Fun<T>(
         }
         return body(args)
     }
-
-    /**
-     * Provides a string representation of the function, which is simply its name.
-     *
-     * @return The name of the function.
-     */
-    override fun toString() = name
 }
 

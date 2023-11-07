@@ -40,15 +40,17 @@ import cl.ravenhill.keen.probability
  * @constructor Creates a new [RandomMutator] with the given [probability]
  */
 class RandomMutator<DNA, G : Gene<DNA, G>>(
-    probability: Double,
-    chromosomeRate: Double = 0.5,
+    override val probability: Double,
+    override val chromosomeRate: Double = 0.5,
     override val geneRate: Double = 0.5,
-) : AbstractMutator<DNA, G>(probability, chromosomeRate),
-    GeneMutator<DNA, G>,
+) : GeneMutator<DNA, G>,
     ChromosomeMutator<DNA, G> {
 
     init {
         constraints {
+            "The chromosome mutation probability [$chromosomeRate] must be in 0.0..1.0" {
+                chromosomeRate must BeInRange(0.0..1.0)
+            }
             "The gene rate [$geneRate] must be in 0.0..1.0" {
                 geneRate must BeInRange(0.0..1.0)
             }

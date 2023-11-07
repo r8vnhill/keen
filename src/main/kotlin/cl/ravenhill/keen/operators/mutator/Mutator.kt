@@ -112,6 +112,7 @@ interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
  * @version 2.0.0
  * @since 2.0.0
  */
+@Deprecated("Directly use the Mutator interface")
 abstract class AbstractMutator<DNA, G>(
     probability: Double,
     override val chromosomeRate: Double = 0.5

@@ -6,9 +6,8 @@
 package cl.ravenhill.keen.operators.mutator.strategies
 
 import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.jakt.constraints.DoubleConstraint
-import cl.ravenhill.jakt.constraints.DoubleConstraint.*
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -30,14 +29,14 @@ import cl.ravenhill.keen.util.trees.Tree
  * @property chromosomeRate The probability of a chromosome being selected for mutation.
  * @property geneRate The probability of a gene within a selected chromosome being mutated.
  *
- * @constructor Creates a new [PointMutation] with the given [probability], [chromosomeRate] and [geneRate].
+ * @constructor Creates a new [PointMutator] with the given [probability], [chromosomeRate] and [geneRate].
  * @throws CompositeException if the mutation probabilities are not in the range 0.0 to 1.0.
  *
  * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 2.0.0
  * @version 2.0.0
  */
-class PointMutation<V, DNA, G>(
+class PointMutator<V, DNA, G>(
     override val probability: Double,
     override val chromosomeRate: Double = 0.5,
     override val geneRate: Double = 0.5
