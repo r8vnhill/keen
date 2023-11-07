@@ -26,17 +26,12 @@ import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
  * @version 2.0.0
  */
 class AverageCrossover<DNA : Number, G : NumberGene<DNA, G>>(
-    probability: Double,
     chromosomeRate: Double = 1.0,
     geneRate: Double = 1.0
 ) : CombineCrossover<DNA, G>(
     { genes: List<G> ->
         genes[0].average(genes.drop(1))
     },
-    probability,
     chromosomeRate,
     geneRate
-) {
-    override fun toString() =
-        "MeanCrossover(probability=$probability, chromosomeRate=$chromosomeRate, geneRate=$geneRate)"
-}
+)

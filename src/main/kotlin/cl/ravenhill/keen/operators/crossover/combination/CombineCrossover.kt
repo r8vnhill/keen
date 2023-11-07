@@ -5,8 +5,11 @@
 
 package cl.ravenhill.keen.operators.crossover.combination
 
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractUniformLengthCrossover
@@ -22,8 +25,6 @@ import cl.ravenhill.keen.probability
  * [geneRate] parameter.
  *
  * @param combiner A lambda that combines genes from the input chromosomes to produce a new gene.
- * @param probability The probability of applying the crossover operator to each individual of the
- *      population.
  * @param chromosomeRate The rate of applying the crossover operator to individual chromosomes.
  * @param geneRate The rate of applying the crossover operator to individual genes.
  *
@@ -32,38 +33,33 @@ import cl.ravenhill.keen.probability
  * @version 2.0.0
  */
 open class CombineCrossover<DNA, G : Gene<DNA, G>>(
-    private val combiner: (List<G>) -> G,
-    val probability: Double,
+    val combiner: (List<G>) -> G,
     chromosomeRate: Double = 1.0,
     val geneRate: Double = 1.0
 ) : AbstractUniformLengthCrossover<DNA, G>(1, chromosomeRate = chromosomeRate) {
 
-    /**
-     * Combines the genes of the given chromosomes using the combiner function.
-     * If the [geneRate] probability is less than the value returned by ``Dice.probability()``
-     * the gene is taken from the first chromosome, otherwise it is taken from the combination
-     * of the genes from the other chromosomes.
-     *
-     * @param chromosomes The list of chromosomes to be combined.
-     * @return A new chromosome that is the result of the combination.
-     * @see Dice.probability
-     */
-    internal fun combine(chromosomes: List<Chromosome<DNA, G>>) = List(chromosomes[0].size) { i ->
-        if (Core.random.nextDouble() < geneRate) {
-            combiner(chromosomes.map { it[i] })
-        } else {
-            chromosomes[0][i]
+    init {
+        constraints {
+            "The gene rate [$geneRate] must be in 0.0..1.0" {
+                geneRate must BeInRange(0.0..1.0)
+            }
         }
     }
 
-    /**
-     * Applies the crossover operator to the given list of chromosomes, and returns a new
-     * list of chromosomes that contains the result of the crossover operation.
-     * This operation always returns a list of size 1.
-     *
-     * @param chromosomes The list of chromosomes to be crossed over.
-     * @return A list of chromosomes that contains the result of the crossover operation.
-     */
+    fun combine(chromosomes: List<Chromosome<DNA, G>>): List<G> {
+        constraints {
+            "Combination needs at least one chromosome" { chromosomes mustNot BeEmpty }
+            "All chromosomes must have the same size" { chromosomes.map { it.size }.toSet() must HaveSize(1) }
+        }
+        return List(chromosomes[0].size) { i ->
+            if (Core.random.nextDouble() < geneRate) {
+                combiner(chromosomes.map { it[i] })
+            } else {
+                chromosomes[0][i]
+            }
+        }
+    }
+
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>) =
         listOf(chromosomes[0].withGenes(combine(chromosomes)))
 }

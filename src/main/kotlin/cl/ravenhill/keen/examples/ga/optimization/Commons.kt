@@ -72,7 +72,7 @@ fun createEngine(
         optimizer = FitnessMinimizer()
         alterers = listOf(
             RandomMutator(0.03),
-            AverageCrossover(0.3, geneRate = 0.5)
+            AverageCrossover(geneRate = 0.5)
         )
         limits = listOf(SteadyGenerations(100))
         listeners += listOf(
@@ -103,7 +103,7 @@ fun createEngine(
     this.selector = selector
     alterers = listOf(
         RandomMutator(0.03),
-        AverageCrossover(0.3, geneRate = 0.5)
+        AverageCrossover(geneRate = 0.5)
     )
     limits = listOf(SteadyGenerations(50))
     listeners += listOf(

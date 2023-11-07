@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.arbs.genetic.chromosomes
 
-import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.arbs.datatypes.mutableList
+import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
@@ -27,6 +27,12 @@ import io.kotest.property.arbitrary.list
  */
 fun Arb.Companion.intChromosome() = arbitrary {
     IntChromosome(list(intGene(), 0..5).bind())
+}
+
+fun Arb.Companion.intChromosome(size: Arb<Int>) = arbitrary {
+    size.bind().let {
+        IntChromosome(list(intGene(), it..it + 1).bind())
+    }
 }
 
 /**

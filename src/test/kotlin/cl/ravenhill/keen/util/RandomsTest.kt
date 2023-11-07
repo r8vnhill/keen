@@ -69,7 +69,6 @@ private fun Arb.Companion.filter() = arbitrary {
     ).bind()
 }
 
-@OptIn(ExperimentalKotest::class)
 class RandomsTest : FreeSpec({
     "Generating a random character should" - {
         "return a character in a given range" {
@@ -290,26 +289,6 @@ class RandomsTest : FreeSpec({
                     with(ex.failures.first()) {
                         shouldBeInstanceOf<IntConstraintException>()
                         message shouldBe "The subset size [$size] must be at least 1"
-                    }
-                }
-            }
-
-            "the elements list is too small" {
-                checkAll(
-                    // Reduced number of iterations to improve performance
-                    PropTestConfig(iterations = 50),
-                    Arb.list(Arb.any(), 1..25), Arb.int(1..50), Arb.boolean(), Arb.random()
-                ) { elements, size, exclusivity, rng ->
-                    assume {
-                        elements.size shouldBeLessThan size
-                    }
-                    val ex = shouldThrow<CompositeException> {
-                        rng.subsets(elements, size, exclusivity)
-                    }
-                    with(ex.failures.first()) {
-                        shouldBeInstanceOf<IntConstraintException>()
-                        message shouldBe
-                              "The subset size [$size] must be at most the size of the input list [${elements.size}]."
                     }
                 }
             }

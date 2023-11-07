@@ -77,7 +77,7 @@ object Runner {
                 optimizer = FitnessMinimizer()
                 populationSize = 500
                 selector = selectOp
-                alterers = listOf(RandomMutator(0.1), AverageCrossover(0.3))
+                alterers = listOf(RandomMutator(0.1), AverageCrossover())
                 listeners += EvolutionSummary()
                 limits = listOf(SteadyGenerations(50))
             }
