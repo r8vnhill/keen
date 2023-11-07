@@ -8,6 +8,7 @@ package cl.ravenhill.keen.operators.mutator.strategies
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.constraints.DoubleConstraint
+import cl.ravenhill.jakt.constraints.DoubleConstraint.*
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -45,7 +46,7 @@ class PointMutation<V, DNA, G>(
     init {
         constraints {
             "Mutation probabilities must be between 0.0 and 1.0" {
-                probability must DoubleConstraint.BeInRange(0.0..1.0)
+                probability must BeInRange(0.0..1.0)
             }
         }
     }

@@ -99,13 +99,13 @@ publishing {
 
             // If the version ends with "SNAPSHOT", publish to the snapshot repository. Otherwise,
             // publish to the release repository.
-            val destintation = if (isSnapshot) {
+            val destination = if (isSnapshot) {
                 "https://oss.sonatype.org/content/repositories/snapshots/"
             } else {
                 "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
             }
 
-            url = uri(destintation)
+            url = uri(destination)
 
             credentials {
                 if (System.getProperty("os.name").startsWith("Windows")) {
