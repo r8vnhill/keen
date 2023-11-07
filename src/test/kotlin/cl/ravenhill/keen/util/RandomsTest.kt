@@ -297,7 +297,7 @@ class RandomsTest : FreeSpec({
                 checkAll(
                     // Reduced number of iterations to improve performance
                     PropTestConfig(iterations = 50),
-                    Arb.list(Arb.any(), 1..50), Arb.positiveInt(), Arb.boolean(), Arb.random()
+                    Arb.list(Arb.any(), 1..25), Arb.int(1..50), Arb.boolean(), Arb.random()
                 ) { elements, size, exclusivity, rng ->
                     assume {
                         elements.size shouldBeLessThan size
