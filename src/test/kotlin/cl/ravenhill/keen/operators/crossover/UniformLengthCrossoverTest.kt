@@ -18,9 +18,7 @@ import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import cl.ravenhill.keen.operators.AltererResult
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldHaveSize
@@ -37,18 +35,16 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 class UniformLengthCrossoverTest : FreeSpec({
-    "A [Crossover] operator" - {
+    "A [UniformLengthCrossover] operator" - {
         "when created" - {
             "without an explicit number of outputs defaults to 2" {
                 checkAll(
-                    Arb.probability(),
                     Arb.int(2..Int.MAX_VALUE),
                     Arb.positiveInt(10),
                     Arb.boolean(),
                     Arb.probability()
-                ) { probability, numIn, numOut, exclusivity, chromosomeRate ->
-                    object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
-                        probability,
+                ) { numIn, numOut, exclusivity, chromosomeRate ->
+                    object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
                         numIn = numIn,
                         exclusivity = exclusivity,
                         chromosomeRate = chromosomeRate
@@ -62,13 +58,11 @@ class UniformLengthCrossoverTest : FreeSpec({
 
             "without an explicit number of inputs defaults to 2" {
                 checkAll(
-                    Arb.probability(),
                     Arb.positiveInt(10),
                     Arb.boolean(),
                     Arb.probability()
-                ) { probability, numOut, exclusivity, chromosomeRate ->
-                    object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
-                        probability,
+                ) { numOut, exclusivity, chromosomeRate ->
+                    object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
                         numOut = numOut,
                         exclusivity = exclusivity,
                         chromosomeRate = chromosomeRate
@@ -82,13 +76,11 @@ class UniformLengthCrossoverTest : FreeSpec({
 
             "without an explicit exclusivity defaults to false" {
                 checkAll(
-                    Arb.probability(),
                     Arb.int(2..Int.MAX_VALUE),
                     Arb.positiveInt(10),
                     Arb.probability()
-                ) { probability, numIn, numOut, chromosomeRate ->
-                    object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
-                        probability,
+                ) { numIn, numOut, chromosomeRate ->
+                    object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
                         numOut = numOut,
                         numIn = numIn,
                         chromosomeRate = chromosomeRate
@@ -102,13 +94,11 @@ class UniformLengthCrossoverTest : FreeSpec({
 
             "without a chromosome rate defaults to 1.0" {
                 checkAll(
-                    Arb.probability(),
                     Arb.int(2..Int.MAX_VALUE),
                     Arb.positiveInt(10),
                     Arb.boolean()
-                ) { probability, numIn, numOut, exclusivity ->
-                    object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
-                        probability,
+                ) { numIn, numOut, exclusivity ->
+                    object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
                         numOut = numOut,
                         numIn = numIn,
                         exclusivity = exclusivity
@@ -123,15 +113,13 @@ class UniformLengthCrossoverTest : FreeSpec({
             "should throw an exception when" - {
                 "the number of inputs is less than 2" {
                     checkAll(
-                        Arb.probability(),
                         Arb.int(Int.MIN_VALUE..1),
                         Arb.int(2..Int.MAX_VALUE),
                         Arb.boolean(),
                         Arb.probability()
-                    ) { probability, numIn, numOut, exclusivity, chromosomeRate ->
+                    ) { numIn, numOut, exclusivity, chromosomeRate ->
                         shouldThrow<CompositeException> {
-                            object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
-                                probability,
+                            object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
                                 numOut = numOut,
                                 numIn = numIn,
                                 exclusivity = exclusivity,
@@ -142,22 +130,20 @@ class UniformLengthCrossoverTest : FreeSpec({
                                 ) = List(numOut) { NothingChromosome(listOf()) }
                             }
                         }.shouldHaveInfringement<IntConstraintException>(
-                            unfulfilledConstraint("There should be at least 2 inputs to perform a crossover operation")
+                            "There should be at least 2 inputs to perform a crossover operation"
                         )
                     }
                 }
 
                 "the number of outputs is negative" {
                     checkAll(
-                        Arb.probability(),
                         Arb.int(2..Int.MAX_VALUE),
                         Arb.negativeInt(),
                         Arb.boolean(),
                         Arb.probability()
-                    ) { probability, numIn, numOut, exclusivity, chromosomeRate ->
+                    ) { numIn, numOut, exclusivity, chromosomeRate ->
                         shouldThrow<CompositeException> {
-                            object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
-                                probability,
+                            object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
                                 numOut = numOut,
                                 numIn = numIn,
                                 exclusivity = exclusivity,
@@ -168,24 +154,20 @@ class UniformLengthCrossoverTest : FreeSpec({
                                 ) = List(numOut) { NothingChromosome(listOf()) }
                             }
                         }.shouldHaveInfringement<IntConstraintException>(
-                            unfulfilledConstraint(
-                                "The number of outputs should be greater than 0"
-                            )
+                            "The number of outputs should be greater than 0"
                         )
                     }
                 }
 
                 "the chromosome crossover probability is greater than 1" {
                     checkAll(
-                        Arb.probability(),
                         Arb.int(2..Int.MAX_VALUE),
                         Arb.int(2..Int.MAX_VALUE),
                         Arb.boolean(),
                         Arb.real(1.0..Double.MAX_VALUE)
-                    ) { probability, numIn, numOut, exclusivity, chromosomeRate ->
+                    ) { numIn, numOut, exclusivity, chromosomeRate ->
                         shouldThrow<CompositeException> {
-                            object : AbstractUniformLenghtCrossover<Nothing, NothingGene>(
-                                probability,
+                            object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
                                 numOut = numOut,
                                 numIn = numIn,
                                 exclusivity = exclusivity,
@@ -206,17 +188,15 @@ class UniformLengthCrossoverTest : FreeSpec({
         "when crossing genotypes" - {
             "should return an empty list if the chromosome rate is 0" {
                 checkAll(
-                    Arb.probability(),
                     Arb.int(2..10),
                     Arb.int(1..10),
                     Arb.boolean(),
                     Arb.int(1..10)
-                ) { probability, numIn, numOut, exclusivity, genotypeSize ->
+                ) { numIn, numOut, exclusivity, genotypeSize ->
                     val genotypes = List(numIn) {
                         Genotype(List(genotypeSize) { IntChromosome(listOf(IntGene(1), IntGene(2))) })
                     }
                     val operator = DummyCrossover(
-                        probability,
                         numOut,
                         numIn,
                         exclusivity,
@@ -228,17 +208,15 @@ class UniformLengthCrossoverTest : FreeSpec({
 
             "should cross all chromosomes if the chromosome rate is 1" {
                 checkAll(
-                    Arb.probability(),
                     Arb.int(2..10),
                     Arb.int(1..10),
                     Arb.boolean(),
                     Arb.int(1..10)
-                ) { probability, numIn, numOut, exclusivity, genotypeSize ->
+                ) { numIn, numOut, exclusivity, genotypeSize ->
                     val genotypes = List(numIn) {
                         Genotype(List(genotypeSize) { IntChromosome(listOf(IntGene(1), IntGene(2))) })
                     }
                     val operator = DummyCrossover(
-                        probability,
                         numOut,
                         numIn,
                         exclusivity,
@@ -251,18 +229,16 @@ class UniformLengthCrossoverTest : FreeSpec({
             "should throw an exception" - {
                 "if the number of inputs doesn't match the required amount" {
                     checkAll(
-                        Arb.probability(),
                         Arb.int(2..Int.MAX_VALUE),
                         Arb.int(2..Int.MAX_VALUE),
                         Arb.boolean(),
                         Arb.probability(),
                         Arb.list(Arb.intGenotype()),
-                    ) { probability, numIn, numOut, exclusivity, chromosomeRate, genotypes ->
+                    ) { numIn, numOut, exclusivity, chromosomeRate, genotypes ->
                         assume {
                             genotypes shouldNotHaveSize numIn
                         }
                         val operator = DummyCrossover(
-                            probability,
                             numOut,
                             numIn,
                             exclusivity,
@@ -278,18 +254,16 @@ class UniformLengthCrossoverTest : FreeSpec({
 
                 "if the genotypes have different lengths" {
                     checkAll(
-                        Arb.probability(),
                         Arb.int(2..Int.MAX_VALUE),
                         Arb.int(2..Int.MAX_VALUE),
                         Arb.boolean(),
                         Arb.probability(),
                         Arb.list(Arb.intGenotype()),
-                    ) { probability, numIn, numOut, exclusivity, chromosomeRate, genotypes ->
+                    ) { numIn, numOut, exclusivity, chromosomeRate, genotypes ->
                         assume {
                             genotypes.map { it.size }.distinct().size shouldNotBe 1
                         }
                         val operator = DummyCrossover(
-                            probability,
                             numOut,
                             numIn,
                             exclusivity,
@@ -306,38 +280,42 @@ class UniformLengthCrossoverTest : FreeSpec({
         }
 
         "when crossing populations" - {
-            "if the probability is 0 should return an [AltererResult] with the same population" - {
+            "should return an [AltererResult] with a population with the same size as the original" {
                 checkAll(
                     Arb.int(2..10),
                     Arb.int(2..10),
-                    Arb.boolean(),
-                    Arb.probability(),
-                ) { numIn, numOut, exclusivity, chromosomeRate ->
+                    Arb.probability()
+                ) { numIn, numOut, chromosomeRate ->
                     val operator = DummyCrossover(
-                        0.0,
                         numOut,
                         numIn,
-                        exclusivity,
+                        false,
                         chromosomeRate
                     )
-                    val individuals = listOf(
-                        Individual(Genotype(listOf(IntChromosome(listOf(IntGene(1), IntGene(2)))))),
-                        Individual(Genotype(listOf(IntChromosome(listOf(IntGene(3), IntGene(4)))))),
-                    )
-                    operator(individuals, 0) shouldBe AltererResult(individuals)
+                    val individuals = List(5) {
+                        Individual(
+                            Genotype(
+                                listOf(
+                                    IntChromosome(listOf(IntGene(it), IntGene(it + 1))),
+                                    IntChromosome(listOf(IntGene(it), IntGene(it + 1)))
+                                )
+                            )
+                        )
+                    }
+                    with(operator(individuals, 0)) {
+                        population shouldHaveSize individuals.size
+                    }
                 }
             }
         }
     }
 }) {
     class DummyCrossover(
-        probability: Double,
         numOut: Int,
         numIn: Int,
         exclusivity: Boolean,
         chromosomeRate: Double
-    ) : AbstractUniformLenghtCrossover<Int, IntGene>(
-        probability,
+    ) : AbstractUniformLengthCrossover<Int, IntGene>(
         numOut,
         numIn,
         exclusivity,

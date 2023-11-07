@@ -131,7 +131,7 @@ object Jakt {
              *
              * @param predicate The predicate that defines the clause.
              */
-            fun requirement(predicate: () -> Boolean) = _results.add(
+            fun constraint(predicate: () -> Boolean) = _results.add(
                 if (predicate()) {
                     Result.success(Unit)
                 } else {

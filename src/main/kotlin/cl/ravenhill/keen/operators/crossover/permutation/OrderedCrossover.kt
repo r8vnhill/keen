@@ -85,7 +85,7 @@ typealias OX<DNA, G> = OrderedCrossover<DNA, G>
  * @version 2.0.0
  */
 class OrderedCrossover<DNA, G : Gene<DNA, G>>(
-    probability: Double,
+    val probability: Double,
     chromosomeProbability: Double = 1.0,
 ) : AbstractPermutationCrossover<DNA, G>(probability, chromosomeRate = chromosomeProbability) {
 

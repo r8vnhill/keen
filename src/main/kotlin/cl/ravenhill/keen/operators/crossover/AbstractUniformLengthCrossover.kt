@@ -7,19 +7,16 @@ package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
-import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.IntConstraint
+import cl.ravenhill.jakt.constraints.IntConstraint.*
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.AbstractAlterer
 import cl.ravenhill.keen.operators.AltererResult
-import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.indices
-import cl.ravenhill.keen.util.neq
 import cl.ravenhill.keen.util.subsets
 import cl.ravenhill.keen.util.transpose
 
@@ -27,19 +24,17 @@ import cl.ravenhill.keen.util.transpose
  * An abstract class for performing crossover operations on individuals within a population.
  * Subclasses must implement the [crossoverChromosomes] method for actual crossover functionality.
  *
- * @param probability The probability that a crossover operation will be performed on a given pair of individuals
  * @param numOut The number of new individuals produced by each crossover operation
  * @param numIn The number of individuals required as input for each crossover operation
  * @param exclusivity If true, individuals cannot be selected more than once for a given crossover operation
  * @param chromosomeRate The probability that a given chromosome within an individual will be selected for recombination
  */
-abstract class AbstractUniformLenghtCrossover<DNA, G : Gene<DNA, G>>(
-    probability: Double,
+abstract class AbstractUniformLengthCrossover<DNA, G : Gene<DNA, G>>(
     val numOut: Int = 2,
     val numIn: Int = 2,
     val exclusivity: Boolean = false,
     val chromosomeRate: Double = 1.0,
-) : AbstractAlterer<DNA, G>(probability), Crossover<DNA, G> {
+) : Crossover<DNA, G> {
 
     init {
         constraints {
@@ -47,7 +42,7 @@ abstract class AbstractUniformLenghtCrossover<DNA, G : Gene<DNA, G>>(
                 numIn must BeAtLeast(2)
             }
             "The number of outputs should be greater than 0" {
-                numOut must BeAtLeast(1)
+                numOut must BePositive
             }
             "The chromosome crossover probability should be in 0..1" {
                 chromosomeRate must BeInRange(0.0..1.0)
@@ -60,33 +55,19 @@ abstract class AbstractUniformLenghtCrossover<DNA, G : Gene<DNA, G>>(
         population: Population<DNA, G>,
         generation: Int,
     ): AltererResult<DNA, G> {
-        // check if the probability is non-zero, and there are at least 2 individuals in the
-        // population
-        return if (probability neq 0.0 && population.size >= 2) {
-            // select a subset of individuals to recombine using the provided probability and other
-            // parameters
-            val indices = Core.random.indices(probability, population.size)
-            if (indices.size < numIn) return AltererResult(population)
-            val parents = Core.random.subsets(population, numIn, exclusivity)
-            // recombine the selected parents and count the number of individuals that were
-            // recombined
-            val recombined = generateSequence {
-                crossover(parents.random(Core.random).map { it.genotype })
+        // select a subset of individuals to recombine using the provided probability and other
+        // parameters
+        val parents = Core.random.subsets(population, numIn, exclusivity)
+        // recombine the selected parents and count the number of individuals that were
+        // recombined
+        val recombined = mutableListOf<Individual<DNA, G>>()
+        while (recombined.size < population.size) {
+            crossover(parents.random(Core.random).map { it.genotype }).forEach { genotype ->
+                recombined += Individual(genotype)
             }
-                // Ceiling division to ensure that we generate enough individuals to maintain or
-                // exceed the original population size.
-                .take((population.size / numOut.toDouble()).ceil())
-                .flatten().map {
-                    Individual(it)
-                }.toList()
-                .take(population.size) // Truncate the list to the original population size
-            // return the resulting population and count
-            AltererResult(recombined, recombined.size)
-        } else {
-            // if probability is zero or there are less than 2 individuals in the population, return
-            // the original population
-            AltererResult(population)
         }
+        // return the resulting population and count
+        return AltererResult(recombined.take(population.size), recombined.size)
     }
 
     override fun crossover(inGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {

@@ -235,7 +235,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
                     populationSize must IntConstraint.BeEqualTo(it.size)
                 }
                 "There are unevaluated individuals" {
-                    requirement { it.all { individual -> individual.isEvaluated() } }
+                    constraint { it.all { individual -> individual.isEvaluated() } }
                 }
             }
         }

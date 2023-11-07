@@ -1,6 +1,6 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.crossover.combination
@@ -9,7 +9,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.crossover.AbstractUniformLenghtCrossover
+import cl.ravenhill.keen.operators.crossover.AbstractUniformLengthCrossover
 import cl.ravenhill.keen.probability
 
 /**
@@ -33,10 +33,10 @@ import cl.ravenhill.keen.probability
  */
 open class CombineCrossover<DNA, G : Gene<DNA, G>>(
     private val combiner: (List<G>) -> G,
-    probability: Double,
+    val probability: Double,
     chromosomeRate: Double = 1.0,
     val geneRate: Double = 1.0
-) : AbstractUniformLenghtCrossover<DNA, G>(probability, 1, chromosomeRate = chromosomeRate) {
+) : AbstractUniformLengthCrossover<DNA, G>(1, chromosomeRate = chromosomeRate) {
 
     /**
      * Combines the genes of the given chromosomes using the combiner function.
@@ -66,8 +66,4 @@ open class CombineCrossover<DNA, G : Gene<DNA, G>>(
      */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>) =
         listOf(chromosomes[0].withGenes(combine(chromosomes)))
-
-    /// Documentation inherited from [Any]
-    override fun toString() =
-        "CombineCrossover(combiner=$combiner, probability=$probability, chromosomeRate=$chromosomeRate, geneRate=$geneRate)"
 }

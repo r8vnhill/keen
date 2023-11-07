@@ -289,7 +289,7 @@ class RandomsTest : FreeSpec({
                     }
                     with(ex.failures.first()) {
                         shouldBeInstanceOf<IntConstraintException>()
-                        message shouldBe unfulfilledConstraint("The subset size [$size] must be at least 1 and at most the number of elements in the input list [${elements.size}].")
+                        message shouldBe "The subset size [$size] must be at least 1"
                     }
                 }
             }
@@ -308,7 +308,8 @@ class RandomsTest : FreeSpec({
                     }
                     with(ex.failures.first()) {
                         shouldBeInstanceOf<IntConstraintException>()
-                        message shouldBe "The subset size [$size] must be at least 1 and at most the number of elements in the input list [${elements.size}]."
+                        message shouldBe
+                              "The subset size [$size] must be at most the size of the input list [${elements.size}]."
                     }
                 }
             }
@@ -327,9 +328,8 @@ class RandomsTest : FreeSpec({
                     }
                     with(ex.failures.first()) {
                         shouldBeInstanceOf<ConstraintException>()
-                        message shouldBe "The number of elements [${elements.size}] must be a " +
-                            "multiple of the subset size [$size] when using exclusive " +
-                            "subsets."
+                        message shouldBe
+                              "Subset count [${elements.size}] must be a multiple of size [$size] for exclusivity."
                     }
                 }
             }

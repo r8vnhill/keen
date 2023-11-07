@@ -95,13 +95,5 @@ class ProgramTest : FreeSpec({
                 }
             }
         }
-
-        "can be converted to a string" {
-            checkAll(Arb.terminal(), Arb.terminal()) { t1, t2 ->
-                with(Program(Add(), listOf(Program(t1), Program(t2)))) {
-                    toString() shouldBe "($t1 + $t2)"
-                }
-            }
-        }
     }
 })

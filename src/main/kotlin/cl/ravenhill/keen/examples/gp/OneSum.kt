@@ -10,6 +10,7 @@ import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.operators.crossover.pointbased.SubtreeCrossover
 import cl.ravenhill.keen.operators.mutator.strategies.RandomMutator
+import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.EphemeralConstant
@@ -30,7 +31,7 @@ import kotlin.math.abs
 private fun fitness(target: Int): (Genotype<Program<Double>, ProgramGene<Double>>) -> Double =
     { gt ->
         val program = gt.flatMap().first()
-        abs(program() - target)
+        abs(program(Environment("")) - target)
     }
 
 /**

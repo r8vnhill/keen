@@ -34,6 +34,7 @@ import cl.ravenhill.keen.util.eq
  */
 interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
 
+    val probability: Double
     val chromosomeRate: Double
 
     /**

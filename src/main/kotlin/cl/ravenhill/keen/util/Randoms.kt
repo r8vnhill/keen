@@ -9,8 +9,7 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
-import cl.ravenhill.jakt.constraints.IntConstraint
-import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
+import cl.ravenhill.jakt.constraints.IntConstraint.*
 import java.util.LinkedList
 import kotlin.random.Random
 
@@ -162,7 +161,7 @@ fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int>
 fun Random.indices(size: Int, end: Int, start: Int = 0): List<Int> {
     constraints {
         "The size [$size] must be at most the size of the range [${end - start}]." {
-            size must IntConstraint.BeAtMost(end - start)
+            size must BeAtMost(end - start)
         }
     }
     val remainingIndices = List(end - start) { start + it }.toMutableList()
@@ -298,12 +297,17 @@ private fun <T> validateSubsetsInput(elements: List<T>, size: Int, exclusive: Bo
         if (elements.isEmpty()) {
             "The input list must not be empty." { elements mustNot BeEmpty }
         } else {
-            "The subset size [$size] must be at least 1 and at most the number of elements in the input list [${elements.size}]." {
-                size must IntConstraint.BeInRange(1..elements.size)
+            "The subset size [$size] must be at least 1" {
+                size must BePositive
+            }
+            if (exclusive) {
+                "The subset size [$size] must be at most the size of the input list [${elements.size}]." {
+                    size must BeAtMost(elements.size)
+                }
             }
             if (exclusive && size != 0) {
-                "The number of elements [${elements.size}] must be a multiple of the subset size [$size] when using exclusive subsets." {
-                    requirement { elements.size % size == 0 }
+                "Subset count [${elements.size}] must be a multiple of size [$size] for exclusivity." {
+                    constraint { elements.size % size == 0 }
                 }
             }
         }

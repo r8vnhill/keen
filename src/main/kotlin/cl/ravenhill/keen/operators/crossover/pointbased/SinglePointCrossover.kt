@@ -48,7 +48,7 @@ import kotlin.math.min
  * @since 1.0.0
  * @version 2.0.0
  */
-class SinglePointCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
+class SinglePointCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
         MultiPointCrossover<DNA, G>(probability, 1) {
 
     /**

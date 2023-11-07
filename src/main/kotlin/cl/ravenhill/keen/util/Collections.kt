@@ -95,7 +95,7 @@ operator fun <E> List<E>.get(indices: List<Int>) = indices.map { this[it] }
  */
 fun <E> List<List<E>>.transpose(): List<List<E>> {
     constraints {
-        "All sublists must have the same size" { requirement { all { it.size == first().size } } }
+        "All sublists must have the same size" { constraint { all { it.size == first().size } } }
     }
     return when {
         isEmpty() -> emptyList()

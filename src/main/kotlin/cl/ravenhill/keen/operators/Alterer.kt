@@ -38,8 +38,6 @@ import java.util.*
  */
 interface Alterer<DNA, G : Gene<DNA, G>> : GeneticOperator<DNA, G> {
 
-    val probability: Double
-
     /**
      * Applies the alterer to the specified population of individuals and returns an AltererResult,
      * which contains the resulting population of individuals and a count of how many individuals
@@ -71,7 +69,7 @@ interface Alterer<DNA, G : Gene<DNA, G>> : GeneticOperator<DNA, G> {
  * @since 0.1.0
  * @version 2.0.0
  */
-abstract class AbstractAlterer<DNA, G : Gene<DNA, G>>(final override val probability: Double) :
+abstract class AbstractAlterer<DNA, G : Gene<DNA, G>>(val probability: Double) :
     Alterer<DNA, G> {
     init {
         constraints {

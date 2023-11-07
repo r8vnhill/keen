@@ -8,14 +8,14 @@ package cl.ravenhill.keen.operators.crossover.pointbased
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.crossover.AbstractUniformLenghtCrossover
+import cl.ravenhill.keen.operators.crossover.AbstractUniformLengthCrossover
 import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 
 /**
  * Not yet implemented.
  */
 open class MultiPointCrossover<DNA, G : Gene<DNA, G>>(probability: Double, private val cuts: Int) :
-        AbstractUniformLenghtCrossover<DNA, G>(probability) {
+        AbstractUniformLengthCrossover<DNA, G>() {
 
     init {
         constraints { "The crossover must have at least one cut" { cuts must BePositive } }

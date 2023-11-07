@@ -92,7 +92,7 @@ typealias PBX<DNA, G> = PositionBasedCrossover<DNA, G>
  * @since 1.2.0
  * @version 2.0.0
  */
-class PositionBasedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
+class PositionBasedCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
     AbstractPermutationCrossover<DNA, G>(probability) {
 
     /// Documentation inherited from [AbstractPermutationCrossover]
