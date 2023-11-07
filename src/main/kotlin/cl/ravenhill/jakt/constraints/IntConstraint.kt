@@ -5,7 +5,7 @@
 
 package cl.ravenhill.jakt.constraints
 
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.utils.IntToInt
 import cl.ravenhill.utils.contains
 
@@ -20,7 +20,7 @@ sealed interface IntConstraint : Constraint<Int> {
 
     /// Documentation inherited from [Requirement].
     override fun generateException(description: String) =
-        IntRequirementException { description }
+        IntConstraintException { description }
 
     /**
      * Represents a requirement that an integer value must be positive.

@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.assertions.chromosomes
 
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -50,7 +50,7 @@ suspend fun <T, G, F> `assert chromosome enforces range to gene count equality`(
             factory.size = size
             shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                 factory.make()
-            }.shouldHaveInfringement<IntRequirementException>(
+            }.shouldHaveInfringement<IntConstraintException>(
                 unfulfilledConstraint(
                     "When creating a chromosome with more than one range, the number of ranges " +
                         "must be equal to the number of genes"
@@ -86,7 +86,7 @@ suspend fun <T, G, F> `ensure chromosome filter count matches gene count`(
             factory.size = size
             shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                 factory.make()
-            }.shouldHaveInfringement<IntRequirementException>(
+            }.shouldHaveInfringement<IntConstraintException>(
                 unfulfilledConstraint(
                     "When creating a chromosome with more than one filter, the " +
                         "number of filters must be equal to the number of genes"

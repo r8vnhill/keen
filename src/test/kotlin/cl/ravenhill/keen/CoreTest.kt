@@ -6,7 +6,7 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.keen.prog.Environment
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.maps.shouldBeEmpty
@@ -72,7 +72,7 @@ class CoreTest : FreeSpec({
             checkAll(Arb.nonPositiveInt()) { depth ->
                 shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                     depth.also { Core.maxProgramDepth = it }
-                }.failures.forEach { it shouldBeOfClass IntRequirementException::class }
+                }.failures.forEach { it shouldBeOfClass IntConstraintException::class }
             }
         }
     }

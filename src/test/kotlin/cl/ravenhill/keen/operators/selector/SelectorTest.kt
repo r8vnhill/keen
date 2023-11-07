@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.Population
@@ -46,7 +46,7 @@ class SelectorTest : FreeSpec({
                 ) { population, count, optimizer ->
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummySelector()(population, count, optimizer)
-                    }.shouldHaveInfringement<IntRequirementException>(
+                    }.shouldHaveInfringement<IntConstraintException>(
                         unfulfilledConstraint(
                             "Selection count [$count] must be at least 0"
                         )

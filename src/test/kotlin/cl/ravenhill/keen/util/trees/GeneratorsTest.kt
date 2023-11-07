@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.keen.arbs.datatypes.any
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import cl.ravenhill.unfulfilledConstraint
@@ -112,7 +112,7 @@ class GeneratorsTest : FreeSpec({
                             { intermediate, children ->
                                 intermediateFactory(intermediate, children)
                             })
-                    }.shouldHaveInfringement<IntRequirementException>(
+                    }.shouldHaveInfringement<IntConstraintException>(
                         unfulfilledConstraint("The minimum height must be positive.")
                     )
                 }
@@ -137,7 +137,7 @@ class GeneratorsTest : FreeSpec({
                             { intermediate, children ->
                                 intermediateFactory(intermediate, children)
                             })
-                    }.shouldHaveInfringement<IntRequirementException>(
+                    }.shouldHaveInfringement<IntConstraintException>(
                         unfulfilledConstraint("The maximum height must be positive.")
                     )
                 }
@@ -161,7 +161,7 @@ class GeneratorsTest : FreeSpec({
                             { intermediate, children ->
                                 intermediateFactory(intermediate, children)
                             })
-                    }.shouldHaveInfringement<IntRequirementException>(
+                    }.shouldHaveInfringement<IntConstraintException>(
                         unfulfilledConstraint("The maximum height [$maxHeight] must be greater than the minimum height [$minHeight].")
                     )
                 }

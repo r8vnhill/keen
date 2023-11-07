@@ -7,13 +7,10 @@ package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
-import cl.ravenhill.jakt.exceptions.IntRequirementException
-import cl.ravenhill.keen.arbs.genetic.nothingGenotype
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.arbs.genetic.intGenotype
-import cl.ravenhill.keen.arbs.genetic.population
-import cl.ravenhill.keen.arbs.genetic.uniformLengthPopulation
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -144,7 +141,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                                     chromosomes: List<Chromosome<Nothing, NothingGene>>
                                 ) = List(numOut) { NothingChromosome(listOf()) }
                             }
-                        }.shouldHaveInfringement<IntRequirementException>(
+                        }.shouldHaveInfringement<IntConstraintException>(
                             unfulfilledConstraint("There should be at least 2 inputs to perform a crossover operation")
                         )
                     }
@@ -170,7 +167,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                                     chromosomes: List<Chromosome<Nothing, NothingGene>>
                                 ) = List(numOut) { NothingChromosome(listOf()) }
                             }
-                        }.shouldHaveInfringement<IntRequirementException>(
+                        }.shouldHaveInfringement<IntConstraintException>(
                             unfulfilledConstraint(
                                 "The number of outputs should be greater than 0"
                             )
@@ -273,7 +270,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                         )
                         shouldThrow<CompositeException> {
                             operator.crossover(genotypes)
-                        }.shouldHaveInfringement<IntRequirementException>(
+                        }.shouldHaveInfringement<IntConstraintException>(
                             "Input count [${genotypes.size}] must match constructor-specified count [$numIn]."
                         )
                     }
@@ -300,7 +297,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                         )
                         shouldThrow<CompositeException> {
                             operator.crossover(genotypes)
-                        }.shouldHaveInfringement<IntRequirementException>(
+                        }.shouldHaveInfringement<IntConstraintException>(
                             "All inputs must have the same genotype length"
                         )
                     }

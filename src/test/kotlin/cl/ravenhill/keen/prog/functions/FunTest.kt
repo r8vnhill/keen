@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.prog.functions
 
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.datatypes.list
 import cl.ravenhill.keen.arbs.prog.environment
 import cl.ravenhill.keen.arbs.prog.function
@@ -43,7 +43,7 @@ class FunTest : FreeSpec({
                 checkAll(Arb.string(), Arb.negativeInt(), Arb.function<Int>()) { name, arity, function ->
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         Fun(name, arity, function)
-                    }.shouldHaveInfringement<IntRequirementException>(
+                    }.shouldHaveInfringement<IntConstraintException>(
                         unfulfilledConstraint("The arity [$arity] must be at least 0")
                     )
                 }

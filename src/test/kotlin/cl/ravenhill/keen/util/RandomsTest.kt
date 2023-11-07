@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.util
 
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.jakt.exceptions.ConstraintException
@@ -12,7 +13,7 @@ import cl.ravenhill.keen.random
 import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import cl.ravenhill.keen.arbs.datatypes.orderedTriple
 import cl.ravenhill.keen.arbs.datatypes.real
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.unfulfilledConstraint
 import cl.ravenhill.utils.toRange
 import io.kotest.assertions.assertSoftly
@@ -273,8 +274,8 @@ class RandomsTest : FreeSpec({
                     }
                     ex.failures.size shouldBe 1
                     with(ex.failures.first()) {
-                        shouldBeInstanceOf<cl.ravenhill.jakt.exceptions.CollectionConstraintException>()
-                        message shouldBe unfulfilledConstraint("The input list must not be empty.")
+                        shouldBeInstanceOf<CollectionConstraintException>()
+                        message shouldBe "The input list must not be empty."
                     }
                 }
             }
@@ -287,7 +288,7 @@ class RandomsTest : FreeSpec({
                         rng.subsets(elements, size, exclusivity)
                     }
                     with(ex.failures.first()) {
-                        shouldBeInstanceOf<IntRequirementException>()
+                        shouldBeInstanceOf<IntConstraintException>()
                         message shouldBe unfulfilledConstraint("The subset size [$size] must be at least 1 and at most the number of elements in the input list [${elements.size}].")
                     }
                 }
@@ -306,7 +307,7 @@ class RandomsTest : FreeSpec({
                         rng.subsets(elements, size, exclusivity)
                     }
                     with(ex.failures.first()) {
-                        shouldBeInstanceOf<IntRequirementException>()
+                        shouldBeInstanceOf<IntConstraintException>()
                         message shouldBe "The subset size [$size] must be at least 1 and at most the number of elements in the input list [${elements.size}]."
                     }
                 }
@@ -341,7 +342,7 @@ class RandomsTest : FreeSpec({
                         rng.subsets(elements, elements.size, exclusivity, limit)
                     }
                     with(ex.failures.first()) {
-                        shouldBeInstanceOf<IntRequirementException>()
+                        shouldBeInstanceOf<IntConstraintException>()
                         message shouldBe "The limit [$limit] must be at least 1."
                     }
                 }

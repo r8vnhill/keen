@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arbs.genetic.intGenotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
@@ -96,7 +96,7 @@ class GenotypeTest : FreeSpec({
                     assume { index shouldNotBeInRange 0..genotype.size }
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         genotype[index]
-                    }.shouldHaveInfringement<IntRequirementException>(
+                    }.shouldHaveInfringement<IntConstraintException>(
                         unfulfilledConstraint(
                             "The index [$index] must be in the range [0, ${genotype.size})"
                         )

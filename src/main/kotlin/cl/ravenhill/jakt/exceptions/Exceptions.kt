@@ -36,7 +36,7 @@ open class ConstraintException(lazyMessage: () -> String) : Exception(lazyMessag
  * @version 2.0.0
  * @since 2.0.0
  */
-class IntRequirementException(lazyMessage: () -> String) :
+class IntConstraintException(lazyMessage: () -> String) :
         ConstraintException(lazyMessage)
 
 /**

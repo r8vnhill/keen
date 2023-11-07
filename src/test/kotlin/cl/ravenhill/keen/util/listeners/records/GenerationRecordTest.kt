@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.records.generationRecord
 import cl.ravenhill.keen.arbs.records.populationRecord
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -53,7 +53,7 @@ class GenerationRecordTest : FreeSpec({
             checkAll(Arb.negativeInt()) { generation ->
                 shouldThrow<CompositeException> {
                     GenerationRecord(generation)
-                }.shouldHaveInfringement<IntRequirementException>(
+                }.shouldHaveInfringement<IntConstraintException>(
                     unfulfilledConstraint("The generation number [$generation] must be positive")
                 )
             }
@@ -99,7 +99,7 @@ class GenerationRecordTest : FreeSpec({
                 checkAll(Arb.generationRecord(), Arb.negativeInt()) { data, steady ->
                     shouldThrowUnit<CompositeException> {
                         data.steady = steady
-                    }.shouldHaveInfringement<IntRequirementException>(
+                    }.shouldHaveInfringement<IntConstraintException>(
                         unfulfilledConstraint("The generation number [$steady] must be positive")
                     )
                 }

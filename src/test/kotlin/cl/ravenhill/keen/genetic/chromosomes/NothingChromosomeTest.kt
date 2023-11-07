@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.unfulfilledConstraint
@@ -45,7 +45,7 @@ class NothingChromosomeTest : FreeSpec({
                     NothingChromosome.Factory().apply {
                         this.size = size
                     }.make()
-                }.shouldHaveInfringement<IntRequirementException>(
+                }.shouldHaveInfringement<IntConstraintException>(
                     unfulfilledConstraint("Chromosome size [$size] must be non-negative")
                 )
             }

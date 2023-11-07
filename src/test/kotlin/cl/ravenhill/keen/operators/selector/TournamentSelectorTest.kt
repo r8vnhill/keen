@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
@@ -32,7 +32,7 @@ class TournamentSelectorTest : FreeSpec({
                 checkAll(Arb.nonPositiveInt()) { size ->
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         TournamentSelector<Int, IntGene>(size)
-                    }.shouldHaveInfringement<IntRequirementException>(
+                    }.shouldHaveInfringement<IntConstraintException>(
                         unfulfilledConstraint("The sample size [$size] must be positive")
                     )
                 }

@@ -7,7 +7,7 @@ package cl.ravenhill.keen.util.collections
 
 import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.jakt.exceptions.IntRequirementException
+import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -108,7 +108,7 @@ class MutableListsTest : FreeSpec({
                     list.dropFirst(n)
                 }
                 with(ex.failures.first()) {
-                    shouldBeInstanceOf<IntRequirementException>()
+                    shouldBeInstanceOf<IntConstraintException>()
                     message shouldBe unfulfilledConstraint("Size [$n] should be in range [0, $n]")
                 }
             }
@@ -351,12 +351,12 @@ private fun `check index constraints`(
     }
     with(ex) {
         if (x.second is IndexType.Invalid) {
-            shouldHaveInfringement<IntRequirementException>(
+            shouldHaveInfringement<IntConstraintException>(
                 unfulfilledConstraint("${names.first} [${x.first}] should be in range [0, ${list.size})")
             )
         }
         if (y.second is IndexType.Invalid) {
-            shouldHaveInfringement<IntRequirementException>(
+            shouldHaveInfringement<IntConstraintException>(
                 unfulfilledConstraint("${names.second} [${y.first}] should be in range [0, ${list.size})")
             )
         }
