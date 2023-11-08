@@ -42,13 +42,6 @@ data class IntGene(
     override val filter: (Int) -> Boolean = { true },
 ) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene>, Ranged<Int> {
 
-    @Deprecated("IntToInt is to be removed to use more idiomatic stdlib ranges")
-    constructor(
-        dna: Int,
-        range: IntToInt,
-        filter: (Int) -> Boolean = { true },
-    ) : this(dna, range.toRange(), filter)
-
     // region : Properties
     val start = range.start
 

@@ -49,7 +49,7 @@ fun main() {
         populationSize = 50
         selector = TournamentSelector(sampleSize = 2)
         alterers =
-            listOf(RandomMutator(probability = 0.03), SinglePointCrossover(probability = 0.2))
+            listOf(RandomMutator(probability = 0.03), SinglePointCrossover())
         limits = listOf(GenerationCount(100), TargetFitness(50.0))
         listeners +=
             listOf(EvolutionSummary(), EvolutionPrinter(1), EvolutionPlotter())

@@ -14,8 +14,11 @@ import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 /**
  * Not yet implemented.
  */
-open class MultiPointCrossover<DNA, G : Gene<DNA, G>>(private val cuts: Int) :
-        AbstractCrossover<DNA, G>() {
+open class MultiPointCrossover<DNA, G : Gene<DNA, G>>(
+    private val cuts: Int,
+    exclusivity: Boolean = false,
+    chromosomeRate: Double = 1.0,
+) : AbstractCrossover<DNA, G>(exclusivity = exclusivity, chromosomeRate = chromosomeRate) {
 
     init {
         constraints { "The crossover must have at least one cut" { cuts must BePositive } }

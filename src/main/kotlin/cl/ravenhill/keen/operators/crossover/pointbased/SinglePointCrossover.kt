@@ -42,14 +42,15 @@ import kotlin.math.min
  * ```
  *
  * @param DNA The type of the values stored in the genes.
- * @param probability The probability of performing crossover on each individual of the population.
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.0.0
  * @version 2.0.0
  */
-class SinglePointCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
-    MultiPointCrossover<DNA, G>(1) {
+class SinglePointCrossover<DNA, G : Gene<DNA, G>>(
+    chromosomeRate: Double = 1.0,
+    exclusivity: Boolean = false,
+) : MultiPointCrossover<DNA, G>(1, exclusivity, chromosomeRate) {
 
     /**
      * Performs a single point crossover between the given chromosomes.
@@ -65,6 +66,7 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
                 chromosomes must HaveSize(2)
             }
         }
+        if (Core.random.nextDouble() > chromosomeRate) return chromosomes
         val first = chromosomes[0].genes
         val second = chromosomes[1].genes
         val index = Core.random.nextInt(min(first.size, second.size))
@@ -95,7 +97,4 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
         val newSecond = mates.second.slice(0..<index) + mates.first.slice(index..<hi)
         return newFirst to newSecond
     }
-
-    /// Documentation inherited from [Any].
-    override fun toString() = "SinglePointCrossover(probability=$probability)"
 }

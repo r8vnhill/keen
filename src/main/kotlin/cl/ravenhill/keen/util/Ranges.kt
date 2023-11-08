@@ -34,6 +34,7 @@ package cl.ravenhill.keen.util
 /**
  * A typealias for a pair of integers that represent a range.
  */
+@Deprecated("Prefer using a ClosedRange instead.")
 typealias IntToInt = Pair<Int, Int>
 
 /**
