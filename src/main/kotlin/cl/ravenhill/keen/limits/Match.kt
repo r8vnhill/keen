@@ -1,6 +1,6 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.limits
@@ -8,22 +8,37 @@ package cl.ravenhill.keen.limits
 import cl.ravenhill.keen.evolution.Engine
 
 /**
- * This class represents a limit/stopping condition for a genetic algorithm that is defined by a
- * [predicate].
- * It implements the [Limit] interface, which defines a single [invoke] function that is called to
- * check whether the limit has been reached.
+ * Represents a termination condition (or "limit") for the evolutionary engine based on a custom predicate.
  *
- * @property predicate A lambda expression that takes an [Engine] object as its receiver and returns
- * a boolean value indicating whether the limit has been reached or not.
+ * This limit is evaluated as a function that checks whether a given condition is true for the current state
+ * of the evolution engine. If the predicate evaluates to true, it signals that the evolutionary process
+ * should terminate.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @property predicate A lambda function that takes the evolution engine as a receiver and returns a Boolean.
+ *                     It defines the condition upon which the evolutionary process should stop.
+ *
+ * @constructor Creates a [Match] limit with a specified predicate.
+ *
+ * @see Engine The evolution engine that this limit will be applied to.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 1.0.0
  * @version 2.0.0
  */
 open class Match(private val predicate: Engine<*, *>.() -> Boolean) : Limit {
-    /// Documentation inherited from [Limit]
+
+    /**
+     * Invokes the predicate on the given [Engine] instance to determine if the evolution should stop.
+     *
+     * @param engine The [Engine] instance on which to evaluate the predicate.
+     * @return A Boolean indicating whether the limit has been reached according to the predicate.
+     */
     override fun invoke(engine: Engine<*, *>) = predicate(engine)
 
-    /// Documentation inherited from [Any]
-    override fun toString() = "Match($predicate)"
+    /**
+     * Destructures this [Match] object, allowing its internal predicate to be used in a component-like manner.
+     *
+     * @return The predicate function that defines the limit condition.
+     */
+    operator fun component1() = predicate
 }

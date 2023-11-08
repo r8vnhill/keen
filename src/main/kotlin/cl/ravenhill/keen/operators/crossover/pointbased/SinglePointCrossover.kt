@@ -67,8 +67,7 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(
             }
         }
         if (Core.random.nextDouble() > chromosomeRate) return chromosomes
-        val first = chromosomes[0].genes
-        val second = chromosomes[1].genes
+        val (first, second) = chromosomes.map { it.genes }
         val index = Core.random.nextInt(min(first.size, second.size))
         val crossed = crossoverAt(index, first to second)
         return listOf(

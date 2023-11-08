@@ -32,15 +32,43 @@ import kotlinx.coroutines.runBlocking
 import kotlin.properties.Delegates
 
 /**
- * Fundamental class of the library. It is the engine that will run the evolution process.
+ * The core class that drives the evolutionary algorithm process.
  *
- * @param DNA   The type of the DNA of the Genotype
- * @property genotype           The genotype that will be used to create the population
- * @property populationSize     The size of the population
- * @property selector           The selector that will be used to select the individuals
- * @property generation         The current generation
- * @property limits             The limits that will be used to stop the evolution
- * @property steadyGenerations  The number of generations that the fitness has not changed
+ * This class encapsulates the genetic algorithm's logic to evolve a population of genotypes
+ * towards better solutions using genetic operators such as selection, crossover, and mutation.
+ * It employs a variety of customizable components to tailor the evolutionary process to
+ * specific problem domains.
+ *
+ * The evolutionary process consists of evaluating the population, selecting individuals for reproduction,
+ * creating offspring, applying genetic operators, and selecting survivors to form the next generation.
+ * Listeners and interceptors can be attached to monitor and influence the evolution.
+ *
+ * @param DNA The data type that represents the genetic information of an individual.
+ * @param G The type of gene that holds the genetic information, extending from [Gene].
+ * @param genotype Factory to produce genotypes for initial population and offspring generation.
+ * @param populationSize The number of individuals in the population.
+ * @param offspringFraction The proportion of the population to be replaced by offspring each generation.
+ * @param selector Selection mechanism to choose individuals for reproduction.
+ * @param offspringSelector Selection mechanism to choose which offspring to keep.
+ * @param alterer Genetic operator to modify genotypes (e.g., mutation, crossover).
+ * @param limits Conditions to terminate the evolution (e.g., number of generations, fitness threshold).
+ * @param survivorSelector Selection mechanism to choose which existing individuals to keep.
+ * @param optimizer Strategy to compare and optimize individual fitness values.
+ * @param listeners Observers that react to evolution events and collect statistics.
+ * @param evaluator Executor responsible for evaluating the fitness of individuals.
+ * @param interceptor Hook that allows custom operations before and after evolution stages.
+ *
+ * @property population The current population of individuals in the genetic algorithm.
+ * @property generation The current generation count in the evolutionary process.
+ * @property steadyGenerations The number of generations without significant fitness improvement.
+ * @property bestFitness The fitness value of the best individual in the current generation.
+ * @property fittest The individual with the highest fitness in the current generation.
+ *
+ * @constructor Initializes the engine with the provided parameters.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @since 1.0.0
+ * @version 2.0.0
  */
 class Engine<DNA, G : Gene<DNA, G>>(
     val genotype: Genotype.Factory<DNA, G>,
@@ -267,19 +295,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
             }
 
     }
-
-    override fun toString() =
-        "Engine { " +
-            "populationSize: $populationSize, " +
-            "genotype: $genotype, " +
-            "selector: $selector, " +
-            "alterer: $alterer, " +
-            "optimizer: $optimizer, " +
-            "survivorSelector: $survivorSelector, " +
-            "evaluator: $evaluator, " +
-            "interceptor: $interceptor, " +
-            "limits: $limits " +
-            "}"
 
     /**
      * Builder for the [Engine] class.
