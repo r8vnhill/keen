@@ -23,7 +23,6 @@ class CoreTest : FreeSpec({
         Core.random = Random.Default
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
         Core.Dice.random = Random.Default
-        Core.EvolutionLogger.level = Core.EvolutionLogger.DEFAULT_LEVEL
         Core.environments.clear()
     }
 
