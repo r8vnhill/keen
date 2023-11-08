@@ -7,8 +7,8 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
-import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
+import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer

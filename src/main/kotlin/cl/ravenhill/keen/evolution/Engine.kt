@@ -1,23 +1,23 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
-import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
-import cl.ravenhill.jakt.constraints.IntConstraint
-import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
+import cl.ravenhill.jakt.constraints.ints.BeEqualTo
+import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Core.EvolutionLogger.debug
 import cl.ravenhill.keen.Core.EvolutionLogger.info
 import cl.ravenhill.keen.Core.EvolutionLogger.trace
-import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
@@ -101,11 +101,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
     private
     var fittest: Individual<DNA, G>? by Delegates.observable(null) { _, _, _ ->
     }
-
-    /**
-     * The clock that will be used to measure the time of the evolution.
-     */
-    private val clock = Clock.systemDefaultZone()
     // endregion    --------------------------------------------------------------------------------
 
     /**
@@ -232,7 +227,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
             listeners.forEach { it.onEvaluationFinished() }
             constraints {
                 "Evaluated population size [${it.size}] doesn't match expected population size [$populationSize]" {
-                    populationSize must IntConstraint.BeEqualTo(it.size)
+                    populationSize must BeEqualTo(it.size)
                 }
                 "There are unevaluated individuals" {
                     constraint { it.all { individual -> individual.isEvaluated() } }

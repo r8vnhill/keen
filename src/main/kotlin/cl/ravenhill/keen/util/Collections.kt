@@ -7,7 +7,8 @@ package cl.ravenhill.keen.util
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
-import cl.ravenhill.jakt.constraints.IntConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeInRange
 
 /*****************************************************************************************
  * This code includes a collection of extensions and functions for different types of
@@ -95,7 +96,7 @@ operator fun <E> List<E>.get(indices: List<Int>) = indices.map { this[it] }
  */
 fun <E> List<List<E>>.transpose(): List<List<E>> {
     constraints {
-        "All sublists must have the same size" { constraint { all { it.size == first().size } } }
+        "All sublists must have the same size" { distinctBy { it.size } must HaveSize(1) }
     }
     return when {
         isEmpty() -> emptyList()

@@ -1,16 +1,16 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.crossover.pointbased
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeInRange
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
-import cl.ravenhill.jakt.constraints.IntConstraint.BeInRange
 import kotlin.math.min
 
 
@@ -49,7 +49,7 @@ import kotlin.math.min
  * @version 2.0.0
  */
 class SinglePointCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
-        MultiPointCrossover<DNA, G>(probability, 1) {
+    MultiPointCrossover<DNA, G>(1) {
 
     /**
      * Performs a single point crossover between the given chromosomes.
@@ -62,7 +62,7 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         constraints {
             "The number of chromosomes to be crossed over must be 2." {
-                chromosomes.size must BeEqualTo(2)
+                chromosomes must HaveSize(2)
             }
         }
         val first = chromosomes[0].genes
@@ -89,10 +89,10 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
     ): Pair<List<G>, List<G>> {
         val hi = min(mates.first.size, mates.second.size)
         constraints {
-            "The index must be in the range [0, $hi)." { index must BeInRange(0 until hi) }
+            "The index must be in the range [0, $hi)." { index must BeInRange(0..<hi) }
         }
-        val newFirst = mates.first.slice(0 until index) + mates.second.slice(index until hi)
-        val newSecond = mates.second.slice(0 until index) + mates.first.slice(index until hi)
+        val newFirst = mates.first.slice(0..<index) + mates.second.slice(index..<hi)
+        val newSecond = mates.second.slice(0..<index) + mates.first.slice(index..<hi)
         return newFirst to newSecond
     }
 

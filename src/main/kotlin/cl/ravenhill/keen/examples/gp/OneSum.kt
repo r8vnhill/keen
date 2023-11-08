@@ -60,7 +60,7 @@ fun main() {
     ) {
         populationSize = 100
         limits = listOf(TargetFitness(0.0), GenerationCount(1000))
-        alterers = listOf(RandomMutator(0.06), SubtreeCrossover(0.2))
+        alterers = listOf(RandomMutator(0.06), SubtreeCrossover())
         optimizer = FitnessMinimizer()
         listeners +=
             listOf(EvolutionSummary(), EvolutionPrinter(10), EvolutionPlotter())

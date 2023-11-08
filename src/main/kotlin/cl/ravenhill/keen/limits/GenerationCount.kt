@@ -1,12 +1,12 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
+import cl.ravenhill.jakt.constraints.ints.BePositive
 
 /**
  * Limits the number of generations the evolution will run.

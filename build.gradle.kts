@@ -47,6 +47,8 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.7")
     // endregion PLOTTING
 
+    implementation("com.github.r8vnhill:strait-jakt:v1.0.0")
+
     // region : -== TESTING ==-
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
     testImplementation("io.kotest.extensions:kotest-property-datetime:1.1.0")

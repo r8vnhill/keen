@@ -6,8 +6,8 @@
 package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
 import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Reduceable
 import cl.ravenhill.keen.prog.terminals.Terminal

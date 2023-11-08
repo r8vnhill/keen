@@ -7,7 +7,7 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.jakt.constraints.DoubleConstraint
+import cl.ravenhill.jakt.constraints.doubles.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -107,7 +107,7 @@ interface ProbabilitySelector<DNA, G> : Selector<DNA, G> where G : Gene<DNA, G> 
     private fun validateProbabilities(probabilities: DoubleArray) {
         constraints {
             "Probabilities must sum 1.0" {
-                probabilities.sum() must DoubleConstraint.BeEqualTo(1.0)
+                probabilities.sum() must BeEqualTo(1.0)
             }
         }
     }

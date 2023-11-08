@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
+import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene

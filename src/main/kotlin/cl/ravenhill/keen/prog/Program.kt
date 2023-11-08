@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.keen.util.Copyable
 import cl.ravenhill.keen.util.trees.Tree
 

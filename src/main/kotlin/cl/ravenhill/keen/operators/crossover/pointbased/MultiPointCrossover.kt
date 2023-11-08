@@ -1,20 +1,20 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.crossover.pointbased
 
 import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
-import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
 
 /**
  * Not yet implemented.
  */
-open class MultiPointCrossover<DNA, G : Gene<DNA, G>>(probability: Double, private val cuts: Int) :
+open class MultiPointCrossover<DNA, G : Gene<DNA, G>>(private val cuts: Int) :
         AbstractCrossover<DNA, G>() {
 
     init {

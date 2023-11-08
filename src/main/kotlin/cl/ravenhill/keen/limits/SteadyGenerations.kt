@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
+import cl.ravenhill.jakt.constraints.ints.BePositive
 
 /**
  * A [Match] limit that checks if the population has remained steady for a given number of

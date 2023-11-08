@@ -6,8 +6,8 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -87,7 +87,7 @@ typealias OX<DNA, G> = OrderedCrossover<DNA, G>
 class OrderedCrossover<DNA, G : Gene<DNA, G>>(
     val probability: Double,
     chromosomeProbability: Double = 1.0,
-) : AbstractPermutationCrossover<DNA, G>(probability, chromosomeRate = chromosomeProbability) {
+) : AbstractPermutationCrossover<DNA, G>(chromosomeRate = chromosomeProbability) {
 
     /**
      * Performs ordered crossover on a list of chromosomes.
@@ -98,7 +98,7 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(
     override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
         constraints {
             "The Ordered Crossover operator requires exactly two chromosomes" {
-                chromosomes.size must BeEqualTo(2)
+                chromosomes must HaveSize(2)
             }
         }
         val size = chromosomes.minOf { it.size }

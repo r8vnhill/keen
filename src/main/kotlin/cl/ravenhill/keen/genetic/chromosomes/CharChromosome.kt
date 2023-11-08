@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.util.MutableFilterCollection
@@ -91,7 +96,7 @@ data class CharChromosome(override val genes: List<CharGene>) :
                         "When creating a chromosome with more than one range, the number of ranges " +
                             "must be equal to the number of genes"
                         ) {
-                        ranges.size must BeEqualTo(size)
+                        ranges must HaveSize(size)
                     }
                 }
                 if (filters.size > 1) {
@@ -99,7 +104,7 @@ data class CharChromosome(override val genes: List<CharGene>) :
                         "When creating a chromosome with more than one filter, the number of " +
                             "filters must be equal to the number of genes"
                         ) {
-                        filters.size must BeEqualTo(size)
+                        filters must HaveSize(size)
                     }
                 }
             }

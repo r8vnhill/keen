@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -93,13 +98,13 @@ typealias PBX<DNA, G> = PositionBasedCrossover<DNA, G>
  * @version 2.0.0
  */
 class PositionBasedCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
-    AbstractPermutationCrossover<DNA, G>(probability) {
+    AbstractPermutationCrossover<DNA, G>() {
 
     /// Documentation inherited from [AbstractPermutationCrossover]
     override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
         constraints {
             "PBX crossover requires two chromosomes" {
-                chromosomes.size must BeEqualTo(2)
+                chromosomes must HaveSize(2)
             }
         }
         val size = chromosomes.minOf { it.size }

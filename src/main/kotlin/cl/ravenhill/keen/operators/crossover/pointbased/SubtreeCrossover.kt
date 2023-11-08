@@ -1,13 +1,13 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.crossover.pointbased
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BeAtMost
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeAtMost
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -44,7 +44,6 @@ import cl.ravenhill.keen.util.trees.Tree
  * @version 2.0.0
  */
 class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
-    probability: Double,
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0,
     private val geneRate: Double = 1.0,
@@ -67,15 +66,15 @@ class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
      * Ensures that the parents meet the preconditions for the crossover.
      */
     private fun enforcePreconditions(chromosomes: List<Chromosome<DNA, G>>) = constraints {
-        "The crossover must have exactly two parents" { chromosomes.size must BeEqualTo(2) }
+        "The crossover must have exactly two parents" { chromosomes must HaveSize(2) }
         chromosomes.forEach { chromosome ->
             "The parents must have the same size" {
-                chromosome.genes.size must BeEqualTo(chromosomes[0].genes.size)
+                chromosome.genes must HaveSize(chromosomes[0].genes.size)
             }
             chromosome.genes.forEach { gene ->
                 "The gene's arity (${gene.dna.arity}) does not match the number of " +
                         "children (${gene.dna.children.size})." {
-                            gene.dna.children.size must BeEqualTo(gene.dna.arity)
+                            gene.dna.children must HaveSize(gene.dna.arity)
                         }
             }
         }

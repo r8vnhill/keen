@@ -6,8 +6,10 @@
 package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
-import cl.ravenhill.jakt.constraints.IntConstraint.*
+import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
+import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
@@ -71,7 +73,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     override fun crossover(parentGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
         constraints {
             "Input count [${parentGenotypes.size}] must match constructor-specified count [$numIn]." {
-                parentGenotypes.size must BeEqualTo(numIn)
+                parentGenotypes must HaveSize(numIn)
             }
         }
         val size = parentGenotypes[0].size

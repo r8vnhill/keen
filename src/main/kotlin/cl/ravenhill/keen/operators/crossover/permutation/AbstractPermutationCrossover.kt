@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
@@ -28,7 +28,6 @@ import cl.ravenhill.keen.util.duplicates
  * @version 2.0.0
  */
 abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
-    probability: Double,
     numOut: Int = 2,
     numIn: Int = 2,
     exclusivity: Boolean = false,
@@ -40,7 +39,7 @@ abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
         constraints {
             for (chromosome in chromosomes) {
                 "A permutation crossover can't have duplicated genes: ${chromosome.genes.duplicates}" {
-                    chromosome.genes.distinct().size must BeEqualTo(chromosome.genes.size)
+                    chromosome.genes.distinct() must HaveSize(chromosome.genes.size)
                 }
             }
         }

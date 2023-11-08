@@ -8,8 +8,10 @@ package cl.ravenhill.keen.util
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
-import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
-import cl.ravenhill.jakt.constraints.IntConstraint.*
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
+import cl.ravenhill.jakt.constraints.ints.BeAtMost
+import cl.ravenhill.jakt.constraints.ints.BePositive
 import java.util.LinkedList
 import kotlin.random.Random
 

@@ -1,9 +1,15 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.evolution
 
+
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
-import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 

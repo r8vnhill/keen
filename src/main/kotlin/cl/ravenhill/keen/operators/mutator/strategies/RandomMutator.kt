@@ -6,14 +6,13 @@
 package cl.ravenhill.keen.operators.mutator.strategies
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.mutator.AbstractMutator
 import cl.ravenhill.keen.operators.mutator.ChromosomeMutator
 import cl.ravenhill.keen.operators.mutator.GeneMutator
 import cl.ravenhill.keen.operators.mutator.MutatorResult

@@ -6,8 +6,8 @@
 package cl.ravenhill.keen.operators.mutator
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
-import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.Genotype

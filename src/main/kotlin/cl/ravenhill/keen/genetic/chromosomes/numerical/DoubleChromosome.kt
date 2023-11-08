@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -84,7 +84,7 @@ data class DoubleChromosome(
                         "When creating a chromosome with more than one range, the number of ranges " +
                             "must be equal to the number of genes"
                         ) {
-                        ranges.size must IntConstraint.BeEqualTo(size)
+                        ranges must HaveSize(size)
                     }
                 }
                 if (filters.size > 1) {
@@ -92,7 +92,7 @@ data class DoubleChromosome(
                         "When creating a chromosome with more than one filter, the number of " +
                             "filters must be equal to the number of genes"
                         ) {
-                        filters.size must IntConstraint.BeEqualTo(size)
+                        filters must HaveSize(size)
                     }
                 }
             }

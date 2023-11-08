@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2023, Ravenhill.CL.
- * BSD Zero Clause License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BeNegative
+import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.EvaluationRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.SelectionRecord
 import kotlinx.serialization.Serializable

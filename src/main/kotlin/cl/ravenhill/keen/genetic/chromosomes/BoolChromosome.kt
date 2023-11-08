@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.BoolGene

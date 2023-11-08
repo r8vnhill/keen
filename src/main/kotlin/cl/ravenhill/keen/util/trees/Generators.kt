@@ -1,32 +1,17 @@
 /*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- * work.
- * If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.keen.util.trees
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
-import cl.ravenhill.jakt.constraints.IntConstraint.BeAtLeast
-import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
-import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
+import cl.ravenhill.jakt.constraints.ints.BeEqualTo
+import cl.ravenhill.jakt.constraints.ints.BePositive
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Core
-
-
-//fun <V, T : Tree<V, T>, I : Intermediate<V>, L : Leaf<V>> Tree.Companion.generateFull(
-//    leafs: List<L>, functions: List<Fun<T>>, min: Int, max: Int
-//): Program<T> {
-//    val condition = { height: Int, depth: Int ->
-//        depth == height
-//    }
-//    return generate(functions, leafs, min, max, condition)
-//}
 
 /**
  * Generates a tree by randomly selecting intermediate and leaf nodes from the provided lists of

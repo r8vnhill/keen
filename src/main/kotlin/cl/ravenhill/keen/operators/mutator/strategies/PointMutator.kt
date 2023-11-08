@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.operators.mutator.strategies
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome

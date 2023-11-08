@@ -6,7 +6,7 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
+import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Core.DEFAULT_MAX_PROGRAM_DEPTH
 import cl.ravenhill.keen.Core.EvolutionLogger.DEFAULT_LEVEL
 import cl.ravenhill.keen.Core.EvolutionLogger.level
@@ -63,6 +63,7 @@ object Core {
      * @property level The logging level. Defaults to [DEFAULT_LEVEL].
      * @property logger The logger instance used for logging.
      */
+    @Deprecated("Prefer using the evolution listeners and records")
     object EvolutionLogger {
         val DEFAULT_LEVEL: Level = Level.Warn()
         var level: Level = DEFAULT_LEVEL
@@ -97,25 +98,12 @@ object Core {
         fun info(lazyMessage: () -> String) = logger.info(lazyMessage)
 
         /**
-         * Logs a message at the Warn level.
-         *
-         * @param lazyMessage A lambda that returns the message to be logged.
-         */
-        fun warn(lazyMessage: () -> String) = logger.warn(lazyMessage)
-
-        /**
          * Logs a message at the Error level.
          *
          * @param lazyMessage A lambda that returns the message to be logged.
          */
         fun error(lazyMessage: () -> String) = logger.error(lazyMessage)
 
-        /**
-         * Logs a message at the Fatal level.
-         *
-         * @param lazyMessage A lambda that returns the message to be logged.
-         */
-        fun fatal(lazyMessage: () -> String) = logger.fatal(lazyMessage)
     }
 }
 

@@ -6,10 +6,10 @@
 package cl.ravenhill.keen.evolution.executors
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.IntConstraint.BePositive
-import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
