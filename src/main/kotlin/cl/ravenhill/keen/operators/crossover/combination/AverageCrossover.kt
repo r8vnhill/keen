@@ -1,6 +1,6 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.crossover.combination
@@ -8,20 +8,44 @@ package cl.ravenhill.keen.operators.crossover.combination
 import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
 
 /**
- * A [CombineCrossover] that performs mean crossover on [NumberGene]s in the chromosome.
- * Given a list of chromosomes, this crossover will take the average of the genes in each chromosome
- * with a given rate.
+ * A crossover operator for numeric genes that produces offspring by averaging the values of
+ * corresponding genes from multiple parents. This type of crossover is suitable for continuous
+ * optimization problems where blending parental genes can lead to a better exploration of the
+ * search space.
  *
- * @param DNA The type of the number values stored in the genes.
- * @param probability The probability of performing crossover on each individual of the population.
- * @param chromosomeRate The rate of chromosomes that will undergo crossover.
- * @param geneRate The rate of genes that will undergo crossover within each chromosome.
+ * The crossover process involves averaging the values of each gene across all parents, creating a new gene
+ * for the offspring. The operation is controlled by two rates: `chromosomeRate` determines the likelihood
+ * a chromosome is chosen for crossover, while `geneRate` decides if a gene will be averaged or passed on
+ * directly from the first parent.
  *
- * @constructor Creates a [AverageCrossover] instance with the given crossover rates and probability.
+ * ## Usage
+ * ### Example 1: Manually computing the average of 3 chromosomes
+ * ```kotlin
+ * val chromosome1 = IntChromosome(IntGene(1), IntGene(2), IntGene(3))
+ * val chromosome2 = IntChromosome(IntGene(4), IntGene(5), IntGene(6))
+ * val chromosome3 = IntChromosome(IntGene(7), IntGene(8), IntGene(9))
+ * val crossover = AverageCrossover<Int, IntGene>()
+ * val result = crossover.combine(listOf(chromosome1, chromosome2, chromosome3))
+ * ```
+ * The resulting chromosome will be `[4, 5, 6]`.
  *
- * @see NumberGene
+ * ### Example 2: Using the crossover operator in a genetic algorithm
+ * ```kotlin
+ * val engine = engine {
+ *   // ...
+ *   alterers += AverageCrossover<Int, IntGene>(0.5, 0.7)
+ * }
+ * ```
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @param DNA A numeric type that extends from [Number], representing the type of the gene's value.
+ * @param G The specific type of [NumberGene] which contains [DNA] type values.
+ * @property chromosomeRate The probability with which a chromosome will be selected for crossover.
+ * @property geneRate The probability with which an individual gene within a chromosome will undergo crossover.
+ *
+ * @constructor Creates an [AverageCrossover] instance with the specified chromosome and gene rates.
+ * Inherits from [CombineCrossover], using a predefined averaging function as the combiner.
+ **
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 1.0.0
  * @version 2.0.0
  */

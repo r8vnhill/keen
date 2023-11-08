@@ -103,7 +103,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
      * @param chromosomes The list of chromosomes to recombine
      * @return The list of chromosomes produced by the crossover operation
      */
-    protected abstract fun crossoverChromosomes(
+    abstract fun crossoverChromosomes(
         chromosomes: List<Chromosome<DNA, G>>,
     ): List<Chromosome<DNA, G>>
 }

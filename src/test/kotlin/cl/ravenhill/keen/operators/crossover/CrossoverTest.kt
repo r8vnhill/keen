@@ -24,7 +24,6 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.int
@@ -34,8 +33,8 @@ import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
-class UniformLengthCrossoverTest : FreeSpec({
-    "A [UniformLengthCrossover] operator" - {
+class CrossoverTest : FreeSpec({
+    "A [Crossover] operator" - {
         "when created" - {
             "without an explicit number of outputs defaults to 2" {
                 checkAll(
@@ -248,31 +247,6 @@ class UniformLengthCrossoverTest : FreeSpec({
                             operator.crossover(genotypes)
                         }.shouldHaveInfringement<IntConstraintException>(
                             "Input count [${genotypes.size}] must match constructor-specified count [$numIn]."
-                        )
-                    }
-                }
-
-                "if the genotypes have different lengths" {
-                    checkAll(
-                        Arb.int(2..Int.MAX_VALUE),
-                        Arb.int(2..Int.MAX_VALUE),
-                        Arb.boolean(),
-                        Arb.probability(),
-                        Arb.list(Arb.intGenotype()),
-                    ) { numIn, numOut, exclusivity, chromosomeRate, genotypes ->
-                        assume {
-                            genotypes.map { it.size }.distinct().size shouldNotBe 1
-                        }
-                        val operator = DummyCrossover(
-                            numOut,
-                            numIn,
-                            exclusivity,
-                            chromosomeRate
-                        )
-                        shouldThrow<CompositeException> {
-                            operator.crossover(genotypes)
-                        }.shouldHaveInfringement<IntConstraintException>(
-                            "All inputs must have the same genotype length"
                         )
                     }
                 }
