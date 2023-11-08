@@ -26,8 +26,6 @@ import cl.ravenhill.keen.util.IntToInt
  * A gene is considered valid if its value is within the range and satisfies the predicate.
  *
  * @param genes The list of genes that this chromosome will contain.
- * @property ranges The ranges of possible values for each gene.
- * @property filter The filter to apply to the genes.
  *
  * @constructor Creates a new [IntChromosome] with the given [genes], [range], and [filter].
  *

@@ -62,7 +62,7 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(
      */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         constraints {
-            "The number of chromosomes to be crossed over must be 2." {
+            "The number of chromosomes to be crossed over must be 2" {
                 chromosomes must HaveSize(2)
             }
         }

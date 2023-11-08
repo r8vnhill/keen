@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.arbs.operators
 
-import cl.ravenhill.keen.arbs.probability
+import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import io.kotest.property.Arb
@@ -27,6 +27,6 @@ import io.kotest.property.arbitrary.boolean
  * @return An [Arb] (arbitrary) instance that generates [SinglePointCrossover] objects with random crossover
  * probabilities and offspring variety flags.
  */
-fun Arb.Companion.singlePointCrossover() = arbitrary {
-    SinglePointCrossover<Int, IntGene>(probability().bind(), boolean().bind())
+fun Arb.Companion.singlePointCrossover(chromosomeRate: Arb<Double> = probability()) = arbitrary {
+    SinglePointCrossover<Int, IntGene>(chromosomeRate.bind(), boolean().bind())
 }

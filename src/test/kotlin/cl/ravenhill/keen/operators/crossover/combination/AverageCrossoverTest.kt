@@ -5,13 +5,12 @@
 
 package cl.ravenhill.keen.operators.crossover.combination
 
-import cl.ravenhill.keen.arbs.probability
+import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.long
 import io.kotest.property.checkAll
 
 class AverageCrossoverTest : FreeSpec({

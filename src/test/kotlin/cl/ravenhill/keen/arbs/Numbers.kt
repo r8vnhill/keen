@@ -10,8 +10,6 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.next
 
-fun Arb.Companion.probability() = Arb.real(0.0..1.0)
-
 /**
  * Returns an arbitrary generator for [Double] values within the given [range], excluding NaN and
  * infinite values.

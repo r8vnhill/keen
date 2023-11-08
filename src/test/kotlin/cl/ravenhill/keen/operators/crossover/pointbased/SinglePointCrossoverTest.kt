@@ -5,14 +5,18 @@
 
 package cl.ravenhill.keen.operators.crossover.pointbased
 
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.datatypes.intWith
 import cl.ravenhill.keen.arbs.datatypes.matrix
+import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.arbs.operators.singlePointCrossover
-import cl.ravenhill.keen.arbs.probability
+import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.NothingGene
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -24,7 +28,9 @@ import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.checkAll
+import org.junit.jupiter.api.fail
 import kotlin.math.min
+import kotlin.random.Random
 
 class SinglePointCrossoverTest : FreeSpec({
 
@@ -97,7 +103,13 @@ class SinglePointCrossoverTest : FreeSpec({
                 "the index is greater than the size of the parents" {
                     checkAll(
                         Arb.singlePointCrossover(),
-                        Arb.intWith(Arb.matrix(Arb.intGene(), Arb.constant(2), Arb.int(3..10))) { it.size..Int.MAX_VALUE }
+                        Arb.intWith(
+                            Arb.matrix(
+                                Arb.intGene(),
+                                Arb.constant(2),
+                                Arb.int(3..10)
+                            )
+                        ) { it.size..Int.MAX_VALUE }
                     ) { crossover, (cutPoint, parents) ->
                         shouldThrow<CompositeException> {
                             crossover.crossoverAt(cutPoint, parents[0] to parents[1])
@@ -105,6 +117,66 @@ class SinglePointCrossoverTest : FreeSpec({
                             "The index must be in the range [0, ${min(parents[0].size, parents[1].size)}]."
                         )
                     }
+                }
+            }
+        }
+
+        "when crossing a list of chromosomes" - {
+            "returns the same list if the chromosome rate is 0.0" {
+                checkAll(
+                    Arb.singlePointCrossover(Arb.constant(0.0)),
+                    Arb.matrix(Arb.intGene(), Arb.constant(2), Arb.int(3..10)),
+                ) { crossover, genes ->
+                    val chromosomes = genes.map { IntChromosome(it) }
+                    val crossed = crossover.crossoverChromosomes(chromosomes)
+                    crossed shouldBe chromosomes
+                }
+            }
+
+            "always perform a crossover if the chromosome rate is 1.0" {
+                val chromosomes = listOf(
+                    IntChromosome(IntGene(1), IntGene(2), IntGene(3), IntGene(4)),
+                    IntChromosome(IntGene(5), IntGene(6), IntGene(7), IntGene(8))
+                )
+                Core.random = Random(0)
+                val crossover = SinglePointCrossover<Int, IntGene>(1.0)
+                val crossed = crossover.crossoverChromosomes(chromosomes)
+                crossed shouldBe listOf(
+                    IntChromosome(IntGene(1), IntGene(2), IntGene(3), IntGene(8)),
+                    IntChromosome(IntGene(5), IntGene(6), IntGene(7), IntGene(4))
+                )
+            }
+
+            "perform a crossover according to a given probability" {
+                checkAll(Arb.probability()) { chromosomeRate ->
+                    val chromosomes = listOf(
+                        IntChromosome(IntGene(1), IntGene(2), IntGene(3), IntGene(4)),
+                        IntChromosome(IntGene(5), IntGene(6), IntGene(7), IntGene(8))
+                    )
+                    Core.random = Random(0)
+                    val crossover = SinglePointCrossover<Int, IntGene>(chromosomeRate)
+                    val crossed = crossover.crossoverChromosomes(chromosomes)
+                    crossed shouldBe if (Random(0).nextDouble() <= chromosomeRate) {
+                        listOf(
+                            IntChromosome(IntGene(1), IntGene(2), IntGene(3), IntGene(8)),
+                            IntChromosome(IntGene(5), IntGene(6), IntGene(7), IntGene(4))
+                        )
+                    } else {
+                        chromosomes
+                    }
+                }
+            }
+
+            "should throw an exception if the number of chromosomes is not 2" {
+                checkAll(
+                    Arb.singlePointCrossover(),
+                    Arb.matrix(Arb.intGene(), Arb.int(3..10), Arb.int(3..10))
+                ) { crossover, chromosomes ->
+                    shouldThrow<CompositeException> {
+                        crossover.crossoverChromosomes(chromosomes.map { IntChromosome(it) })
+                    }.shouldHaveInfringement<CollectionConstraintException>(
+                        "The number of chromosomes to be crossed over must be 2"
+                    )
                 }
             }
         }

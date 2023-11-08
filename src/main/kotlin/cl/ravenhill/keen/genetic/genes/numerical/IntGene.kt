@@ -79,6 +79,7 @@ data class IntGene(
     override fun toSimpleString() = dna.toString()
 
     override fun equals(other: Any?) = when {
+        other === this -> true
         other !is IntGene -> false
         other::class != IntGene::class -> false
         other.dna != dna -> false
