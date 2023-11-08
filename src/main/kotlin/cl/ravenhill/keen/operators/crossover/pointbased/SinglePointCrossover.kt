@@ -85,13 +85,13 @@ class SinglePointCrossover<DNA, G : Gene<DNA, G>>(
      *
      * @return A [Pair] with the crossed over lists of genes.
      */
-    internal fun crossoverAt(
+    fun crossoverAt(
         index: Int,
         mates: Pair<List<G>, List<G>>
     ): Pair<List<G>, List<G>> {
         val hi = min(mates.first.size, mates.second.size)
         constraints {
-            "The index must be in the range [0, $hi)." { index must BeInRange(0..<hi) }
+            "The index must be in the range [0, $hi]." { index must BeInRange(0..hi) }
         }
         val newFirst = mates.first.slice(0..<index) + mates.second.slice(index..<hi)
         val newSecond = mates.second.slice(0..<index) + mates.first.slice(index..<hi)
