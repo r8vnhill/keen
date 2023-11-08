@@ -14,6 +14,7 @@ import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import cl.ravenhill.keen.arbs.datatypes.orderedTriple
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -263,14 +264,9 @@ class RandomsTest : FreeSpec({
                 checkAll(
                     Arb.positiveInt(), Arb.boolean(), Arb.random()
                 ) { size, exclusivity, rng ->
-                    val ex = shouldThrow<CompositeException> {
+                    shouldThrow<CompositeException> {
                         rng.subsets(emptyList<Any>(), size, exclusivity)
-                    }
-                    ex.failures.size shouldBe 1
-                    with(ex.failures.first()) {
-                        shouldBeInstanceOf<CollectionConstraintException>()
-                        message shouldBe "The input list must not be empty."
-                    }
+                    }.shouldHaveInfringement<CollectionConstraintException>("The input list must not be empty.")
                 }
             }
 
@@ -281,7 +277,7 @@ class RandomsTest : FreeSpec({
                     val ex = shouldThrow<CompositeException> {
                         rng.subsets(elements, size, exclusivity)
                     }
-                    with(ex.failures.first()) {
+                    with(ex.throwables.first()) {
                         shouldBeInstanceOf<IntConstraintException>()
                         message shouldBe "The subset size [$size] must be at least 1"
                     }
@@ -300,7 +296,7 @@ class RandomsTest : FreeSpec({
                     val ex = shouldThrow<CompositeException> {
                         rng.subsets(elements, size, true)
                     }
-                    with(ex.failures.first()) {
+                    with(ex.throwables.first()) {
                         shouldBeInstanceOf<ConstraintException>()
                         message shouldBe
                               "Subset count [${elements.size}] must be a multiple of size [$size] for exclusivity."
@@ -315,7 +311,7 @@ class RandomsTest : FreeSpec({
                     val ex = shouldThrow<CompositeException> {
                         rng.subsets(elements, elements.size, exclusivity, limit)
                     }
-                    with(ex.failures.first()) {
+                    with(ex.throwables.first()) {
                         shouldBeInstanceOf<IntConstraintException>()
                         message shouldBe "The limit [$limit] must be at least 1."
                     }

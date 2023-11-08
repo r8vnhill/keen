@@ -12,7 +12,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `CHANGELOG.md` with initial structure for documenting notable changes to the project.
 
 ### Changed
-- Updated `strait-jakt` dependency in `build.gradle.kts` from `1.0.0` to `1.0.3` to incorporate the latest updates and enhancements.
+- Moved utility classes for range and standard output from `cl.ravenhill.utils` to `cl.ravenhill.keen.util` to centralize utility functions within the Keen library.
+- Upgraded the `strait-jakt` library dependency to version `1.1.0`.
 
 ### Removed
-- Unnecessary reset of `Core.EvolutionLogger` level in `CoreTest.kt` to simplify the codebase.
+- Removed legacy log-related code utilizing the deprecated `Logger` class in preparation for a new logging approach.
+- Deleted outdated code pertaining to logging and constraints following recent updates and refactorings.
+
+
+### Deprecated
+- Marked old utility classes as deprecated after the introduction of improved alternatives.
+
+### Refactored
+- Refactored constraints in test classes, such as `RangesTest`, to enhance testing robustness.
+- Overhauled constraints for greater intuitiveness and alignment with new utility functions.
+- Revised failing tests caused by reliance on deprecated code, ensuring all tests are up-to-date with the current codebase.

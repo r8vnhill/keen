@@ -10,9 +10,6 @@ import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.keen.Core.EvolutionLogger.debug
-import cl.ravenhill.keen.Core.EvolutionLogger.info
-import cl.ravenhill.keen.Core.EvolutionLogger.trace
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
@@ -32,7 +29,6 @@ import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlinx.coroutines.runBlocking
-import java.time.Clock
 import kotlin.properties.Delegates
 
 /**
@@ -111,20 +107,13 @@ class Engine<DNA, G : Gene<DNA, G>>(
      */
     override fun evolve(): EvolutionResult<DNA, G> {
         listeners.forEach { it.onEvolutionStart() }
-        info { "Starting evolution process." }
-        var evolution =
-            EvolutionState.empty<DNA, G>().apply { debug { "Started an empty evolution." } }
+        var evolution = EvolutionState.empty<DNA, G>()
         var result = EvolutionResult(optimizer, evolution.population, generation)
-        debug { "Optimizer: ${result.optimizer}" }
         while (limits.none { it(this) }) { // While none of the limits are met
-            result = evolve(evolution).apply {
-                debug { "Generation: $generation" }
-                debug { "Best: $best" }
-            }
+            result = evolve(evolution)
             bestFitness = result.best.fitness
             evolution = result.next()
         }
-        info { "Evolution process finished" }
         return result.also {
             listeners.forEach { it.onEvolutionFinished() }
         }
@@ -151,33 +140,24 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onGenerationStarted(generation, listOf<Individual<DNA, G>>()) }
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
-        trace { "Pre-processing evolution start." }
         val interceptedStart = interceptor.before(start)
         // (2) The population is created from the starting state
-        trace { "Creating population." }
         val evolution = startEvolution(interceptedStart)
         // (3) The population's fitness is evaluated
-        trace { "Evaluating population." }
         val evaluatedPopulation = evaluate(evolution)
         // (4) The offspring is selected from the evaluated population
-        trace { "Selecting offspring." }
         val offspring = selectOffspring(evaluatedPopulation)
         // (5) The survivors are selected from the evaluated population
-        trace { "Selecting survivors." }
         val survivors = selectSurvivors(evaluatedPopulation)
         // (6) The offspring is altered
-        trace { "Altering offspring." }
         val alteredOffspring = alter(offspring, evolution)
         // (7) The altered offspring is merged with the survivors
-        trace { "Merging offspring and survivors." }
         val nextPopulation = survivors + alteredOffspring.population
         // (8) The next population is evaluated
-        trace { "Evaluating next population." }
         val pop = evaluate(EvolutionState(nextPopulation, generation), true)
         evolutionResult = EvolutionResult(optimizer, pop, ++generation)
         fittest = evolutionResult.best
         // (9) The result of the evolution is post-processed
-        trace { "Post-processing evolution result." }
         val afterResult = interceptor.after(evolutionResult)
         listeners.forEach { it.onGenerationFinished(pop) }
         afterResult
@@ -192,7 +172,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
     fun startEvolution(state: EvolutionState<DNA, G>): EvolutionState<DNA, G> {
         return if (state.population.isEmpty()) {
             listeners.forEach { it.onInitializationStarted() }
-            info { "Initial population is empty, creating a new one." }
             val generation = state.generation
             val individuals =
                 state.population.asSequence() + generateSequence { genotype.make() }
@@ -201,12 +180,9 @@ class Engine<DNA, G : Gene<DNA, G>>(
                 individuals.take(populationSize).toList(),
                 generation
             ).also {
-                info { "Created a new population." }
-                debug { "Generation: ${it.generation}" }
                 listeners.forEach { it.onInitializationFinished() }
             }
         } else {
-            debug { "Initial population is not empty, using it." }
             state
         }
     }
@@ -245,13 +221,11 @@ class Engine<DNA, G : Gene<DNA, G>>(
      */
     fun selectOffspring(population: Population<DNA, G>): Population<DNA, G> {
         listeners.forEach { it.onOffspringSelectionStarted() }
-        debug { "Selecting offspring." }
         return offspringSelector(
             population,
             (offspringFraction * populationSize).ceil(),
             optimizer
         ).also {
-            debug { "Selected offspring." }
             listeners.forEach { it.onOffspringSelectionFinished() }
         }
     }
@@ -264,7 +238,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
      */
     fun selectSurvivors(population: List<Individual<DNA, G>>): Population<DNA, G> {
         listeners.forEach { it.onSurvivorSelectionStarted() }
-        debug { "Selecting survivors." }
         return survivorSelector(
             population,
             ((1 - offspringFraction) * populationSize).floor(),
@@ -288,10 +261,8 @@ class Engine<DNA, G : Gene<DNA, G>>(
         evolution: EvolutionState<DNA, G>,
     ): AltererResult<DNA, G> {
         listeners.forEach { it.onAlterationStarted() }
-        debug { "Altering offspring." }
         return alterer(population, evolution.generation)
             .also {
-                debug { "Altered offspring." }
                 listeners.forEach { it.onAlterationFinished() }
             }
 

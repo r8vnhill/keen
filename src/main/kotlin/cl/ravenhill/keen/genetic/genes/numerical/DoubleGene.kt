@@ -43,12 +43,6 @@ class DoubleGene(
 
     val start = range.start
     val end = range.endInclusive
-    @Deprecated(
-        "Use the constructor that receives a range instead",
-        ReplaceWith("DoubleGene(dna, range.toRange(), filter)")
-    )
-    constructor(dna: Double, range: DoubleToDouble, filter: (Double) -> Boolean = { true }) :
-        this(dna, range.toRange(), filter = filter)
 
     // / Documentation inherited from [NumberGene]
     override fun average(genes: List<DoubleGene>): DoubleGene {

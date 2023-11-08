@@ -7,7 +7,6 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.ConstraintException
-import cl.ravenhill.kuro.Logger
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
@@ -17,16 +16,15 @@ import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.set
 import io.kotest.property.arbitrary.string
 import kotlin.random.Random
-import kotlin.reflect.KClass
 
 // region : -====================== SHOULD ASSERTIONS =============================================-
 
 /**
  * Enforces that an [ConstraintException] is present in the
- * [CompositeException.failures] list.
+ * [CompositeException.throwables] list.
  *
  * @param message the message to match against the [ConstraintException].
- * @throws AssertionError if the [CompositeException.failures] list does not contain an
+ * @throws AssertionError if the [CompositeException.throwables] list does not contain an
  * [ConstraintException] of type [T] with the specified [message].
  */
 inline fun <reified T> CompositeException.shouldHaveInfringement(message: String)

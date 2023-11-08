@@ -104,10 +104,10 @@ class MutableListsTest : FreeSpec({
                 assume {
                     n shouldBeGreaterThan list.size
                 }
-                val ex = shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                val ex = shouldThrow<CompositeException> {
                     list.dropFirst(n)
                 }
-                with(ex.failures.first()) {
+                with(ex.throwables.first()) {
                     shouldBeInstanceOf<IntConstraintException>()
                     message shouldBe unfulfilledConstraint("Size [$n] should be in range [0, $n]")
                 }
@@ -142,7 +142,7 @@ class MutableListsTest : FreeSpec({
         "throw an exception if" - {
             "the list is empty" {
                 checkAll(Arb.int(), Arb.int()) { i, j ->
-                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                    shouldThrow<CompositeException> {
                         mutableListOf<Any>().swap(i, j)
                     }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.CollectionConstraintException>(
                         unfulfilledConstraint("The list must not be empty")
@@ -346,21 +346,21 @@ private fun `check index constraints`(
     names: Pair<String, String>,
 ) {
     assume { list.shouldNotBeEmpty() }
-    val ex = shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+    val ex = shouldThrow<CompositeException> {
         list.swap(x.first, y.first)
     }
     with(ex) {
         if (x.second is IndexType.Invalid) {
             shouldHaveInfringement<IntConstraintException>(
-                unfulfilledConstraint("${names.first} [${x.first}] should be in range [0, ${list.size})")
+                "${names.first} [${x.first}] should be in range [0, ${list.size})"
             )
         }
         if (y.second is IndexType.Invalid) {
             shouldHaveInfringement<IntConstraintException>(
-                unfulfilledConstraint("${names.second} [${y.first}] should be in range [0, ${list.size})")
+                "${names.second} [${y.first}] should be in range [0, ${list.size})"
             )
         }
-        failures.size shouldBe if (x.second is IndexType.Invalid && y.second is IndexType.Invalid) 2 else 1
+        throwables.size shouldBe if (x.second is IndexType.Invalid && y.second is IndexType.Invalid) 2 else 1
     }
 }
 

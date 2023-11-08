@@ -8,22 +8,14 @@ package cl.ravenhill.keen
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Core.DEFAULT_MAX_PROGRAM_DEPTH
-import cl.ravenhill.keen.Core.EvolutionLogger.DEFAULT_LEVEL
-import cl.ravenhill.keen.Core.EvolutionLogger.level
-import cl.ravenhill.keen.Core.EvolutionLogger.logger
 import cl.ravenhill.keen.Core.maxProgramDepth
 import cl.ravenhill.keen.Core.random
-import cl.ravenhill.keen.evolution.Evolver
 import cl.ravenhill.keen.prog.Environment
-import cl.ravenhill.kuro.Level
-import cl.ravenhill.kuro.logger
-import cl.ravenhill.kuro.stdoutChannel
 import kotlin.random.Random
 
 /**
  * The `Core` object contains the functions and variables that are used by the rest of the library.
  *
- * @property logger The logger used by the library.
  * @property maxProgramDepth The maximum depth of a program tree.
  * @property DEFAULT_MAX_PROGRAM_DEPTH The default maximum depth of a program tree (7).
  * @property random The random number generator.
@@ -48,62 +40,13 @@ object Core {
     /**
      * Represents the "roll" of an n-dimensional or continuous dice.
      */
+    @Deprecated("To be removed, prefer using Core.random")
     object Dice {
 
         /**
          * Backing [Random] instance.
          */
         var random: Random = Random.Default
-    }
-
-    /**
-     * A logger for tracking the evolution of [Evolver] instances.
-     *
-     * @property DEFAULT_LEVEL The default logging level ([Level.Warn]).
-     * @property level The logging level. Defaults to [DEFAULT_LEVEL].
-     * @property logger The logger instance used for logging.
-     */
-    @Deprecated("Prefer using the evolution listeners and records")
-    object EvolutionLogger {
-        val DEFAULT_LEVEL: Level = Level.Warn()
-        var level: Level = DEFAULT_LEVEL
-            set(value) {
-                field = value
-                logger.level = value
-            }
-        var logger = logger("Evolution") {
-            level = Level.Warn()
-            stdoutChannel()
-        }
-
-        /**
-         * Logs a message at the Trace level.
-         *
-         * @param lazyMessage A lambda that returns the message to be logged.
-         */
-        fun trace(lazyMessage: () -> String) = logger.trace(lazyMessage)
-
-        /**
-         * Logs a message at the Debug level.
-         *
-         * @param lazyMessage A lambda that returns the message to be logged.
-         */
-        fun debug(lazyMessage: () -> String) = logger.debug(lazyMessage)
-
-        /**
-         * Logs a message at the Info level.
-         *
-         * @param lazyMessage A lambda that returns the message to be logged.
-         */
-        fun info(lazyMessage: () -> String) = logger.info(lazyMessage)
-
-        /**
-         * Logs a message at the Error level.
-         *
-         * @param lazyMessage A lambda that returns the message to be logged.
-         */
-        fun error(lazyMessage: () -> String) = logger.error(lazyMessage)
-
     }
 }
 
