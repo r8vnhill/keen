@@ -7,13 +7,13 @@ package cl.ravenhill.keen.util
 
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.jakt.exceptions.ConstraintException
-import cl.ravenhill.keen.random
+import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import cl.ravenhill.keen.arbs.datatypes.orderedTriple
 import cl.ravenhill.keen.arbs.datatypes.real
-import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
@@ -286,21 +286,18 @@ class RandomsTest : FreeSpec({
 
             "the elements list's size is not valid when exclusivity is required" {
                 checkAll(
-                    Arb.listAndIndex(Arb.any(), 1..1000),
+                    Arb.listAndIndex(Arb.any(), 1..100),
                     Arb.random()
                 ) { (elements, size), rng ->
                     assume {
                         size.shouldBePositive()
                         elements.size shouldNotBeMultipleOf size
                     }
-                    val ex = shouldThrow<CompositeException> {
+                    shouldThrow<CompositeException> {
                         rng.subsets(elements, size, true)
-                    }
-                    with(ex.throwables.first()) {
-                        shouldBeInstanceOf<ConstraintException>()
-                        message shouldBe
-                              "Subset count [${elements.size}] must be a multiple of size [$size] for exclusivity."
-                    }
+                    }.shouldHaveInfringement<ConstraintException>(
+                        "Subset count [${elements.size}] must be a multiple of size [$size] for exclusivity."
+                    )
                 }
             }
 

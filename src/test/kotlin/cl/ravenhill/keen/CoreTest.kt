@@ -5,8 +5,10 @@
 
 package cl.ravenhill.keen
 
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.prog.Environment
+import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.assertions.throwables.shouldThrowUnitWithMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.maps.shouldBeEmpty
@@ -69,11 +71,9 @@ class CoreTest : FreeSpec({
         "cannot be set to a non-positive integer" {
             Core.maxProgramDepth shouldBe Core.DEFAULT_MAX_PROGRAM_DEPTH
             checkAll(Arb.nonPositiveInt()) { depth ->
-                shouldThrowUnitWithMessage<IntConstraintException>(
-                    "The maximum program depth [$depth] must be positive"
-                ) {
+                shouldThrowUnit<CompositeException> {
                     Core.maxProgramDepth = depth
-                }
+                }.shouldHaveInfringement<IntConstraintException>("The maximum program depth [$depth] must be positive")
             }
         }
     }
