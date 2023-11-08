@@ -16,7 +16,7 @@ import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutator.strategies.RandomMutator
 import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.listeners.Listeners
-import cl.ravenhill.utils.runWithStdoutOff
+import cl.ravenhill.keen.util.runWithStdoutOff
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction

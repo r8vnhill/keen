@@ -17,6 +17,7 @@ import kotlin.reflect.full.isSupertypeOf
  * @version 2.0.0
  * @since 2.0.0
  */
+@Deprecated("To be removed, prefer using evolution listeners and records")
 sealed interface Level : Comparable<Level> {
     /** Returns an empty string.  */
     fun trace(message: () -> String) = ""
@@ -41,22 +42,6 @@ sealed interface Level : Comparable<Level> {
         this::class == other::class -> 0
         this::class.createType().isSupertypeOf(other::class.createType()) -> 1
         else -> -1
-    }
-
-    /** A _trace_ level.  */
-    class Trace : Debug() {
-        /** Returns the trace message.  */
-        override fun trace(message: () -> String) = message()
-
-        override fun toString() = "TRACE"
-    }
-
-    /** A _debug_ level.  */
-    open class Debug : Info() {
-        /** Returns the debug message.  */
-        override fun debug(message: () -> String) = message()
-
-        override fun toString() = "DEBUG"
     }
 
     /** An _info_ level.  */

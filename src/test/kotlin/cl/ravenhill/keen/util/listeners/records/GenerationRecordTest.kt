@@ -11,7 +11,7 @@ import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.records.generationRecord
 import cl.ravenhill.keen.arbs.records.populationRecord
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.unfulfilledConstraint
+import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.assertions.throwables.shouldThrowWithMessage

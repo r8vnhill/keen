@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
+/*
  * "Keen" (c) by R8V.
  * "Keen" is licensed under a
  * Creative Commons Attribution 4.0 International License.
@@ -8,7 +13,7 @@
  */
 @file:Suppress("ConvertTwoComparisonsToRangeCheck")
 
-package cl.ravenhill.utils
+package cl.ravenhill.keen.util
 
 /***************************************************************************************************
  * This file provides efficient, streamlined utilities for managing numerical ranges, using type

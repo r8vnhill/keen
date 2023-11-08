@@ -96,7 +96,10 @@ operator fun <E> List<E>.get(indices: List<Int>) = indices.map { this[it] }
  */
 fun <E> List<List<E>>.transpose(): List<List<E>> {
     constraints {
-        "All sublists must have the same size" { distinctBy { it.size } must HaveSize(1) }
+        "All sublists must have the same size" {
+            // If the list is empty, it is valid.
+            distinctBy { it.size } must HaveSize { it in 0..1}
+        }
     }
     return when {
         isEmpty() -> emptyList()

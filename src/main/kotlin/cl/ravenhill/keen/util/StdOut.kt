@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.utils
+package cl.ravenhill.keen.util
 
 import java.io.OutputStream
 import java.io.PrintStream

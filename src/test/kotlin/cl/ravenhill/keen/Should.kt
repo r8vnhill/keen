@@ -1,6 +1,6 @@
 package cl.ravenhill.keen
 
-import cl.ravenhill.utils.DoubleRange
+import cl.ravenhill.keen.util.DoubleRange
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should

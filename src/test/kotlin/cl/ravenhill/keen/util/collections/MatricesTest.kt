@@ -7,12 +7,9 @@ package cl.ravenhill.keen.util.collections
 
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.keen.arbs.datatypes.any
-import cl.ravenhill.jakt.exceptions.ConstraintException
-import cl.ravenhill.keen.shouldBeOfClass
 import cl.ravenhill.keen.util.shouldAny
 import cl.ravenhill.keen.util.transpose
 import io.kotest.assertions.assertSoftly
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowWithMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldNotBeEmpty

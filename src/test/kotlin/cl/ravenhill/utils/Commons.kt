@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill
+package cl.ravenhill.utils
 
 /**
  * Constructs an error message indicating an unfulfilled constraint based on the given

@@ -13,7 +13,7 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.MutableFilterCollection
 import cl.ravenhill.keen.util.MutableRangedCollection
-import cl.ravenhill.utils.IntToInt
+import cl.ravenhill.keen.util.IntToInt
 
 /**
  * A chromosome that contains a list of [IntGene]s.

@@ -1,12 +1,11 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
+package cl.ravenhill.keen.util
 
-package cl.ravenhill.utils
-
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut
+import com.github.stefanbirkner.systemlambda.SystemLambda
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
@@ -29,11 +28,11 @@ import io.kotest.property.checkAll
 class StdOutTest : FreeSpec({
     "Running a block of code with stdout turned off should not print anything to the console" {
         checkAll(Arb.list(Arb.string())) { strings ->
-            tapSystemOut {
+            SystemLambda.tapSystemOut {
                 // Printing each string without stdout turned off
                 strings.forEach { print(it) }
             } shouldBe strings.joinToString("")
-            tapSystemOut {
+            SystemLambda.tapSystemOut {
                 runWithStdoutOff {
                     // Printing each string with stdout turned off
                     strings.forEach { print(it) }

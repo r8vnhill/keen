@@ -11,7 +11,7 @@ import cl.ravenhill.keen.arbs.datatypes.list
 import cl.ravenhill.keen.arbs.prog.environment
 import cl.ravenhill.keen.arbs.prog.function
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.unfulfilledConstraint
+import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldNotHaveSize

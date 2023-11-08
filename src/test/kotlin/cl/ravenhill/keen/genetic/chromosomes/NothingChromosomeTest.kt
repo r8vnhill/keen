@@ -8,7 +8,7 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.unfulfilledConstraint
+import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe

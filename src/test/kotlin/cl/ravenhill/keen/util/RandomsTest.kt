@@ -14,18 +14,14 @@ import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import cl.ravenhill.keen.arbs.datatypes.orderedTriple
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.unfulfilledConstraint
-import cl.ravenhill.utils.toRange
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.char.shouldBeInRange
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.ints.shouldBeInRange
-import io.kotest.matchers.ints.shouldBeLessThan
 import io.kotest.matchers.ints.shouldBeLessThanOrEqual
 import io.kotest.matchers.ints.shouldBePositive
 import io.kotest.matchers.should
@@ -33,7 +29,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
-import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.char

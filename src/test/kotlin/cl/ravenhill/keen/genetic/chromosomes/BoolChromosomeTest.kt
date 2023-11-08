@@ -12,7 +12,7 @@ import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.shouldNotBeInRange
 import cl.ravenhill.keen.arbs.datatypes.real
-import cl.ravenhill.unfulfilledConstraint
+import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData

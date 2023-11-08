@@ -12,8 +12,8 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import cl.ravenhill.keen.util.Ranged
 import cl.ravenhill.keen.util.nextDoubleInRange
-import cl.ravenhill.utils.DoubleToDouble
-import cl.ravenhill.utils.toRange
+import cl.ravenhill.keen.util.DoubleToDouble
+import cl.ravenhill.keen.util.toRange
 import java.util.Objects
 
 /**
@@ -43,15 +43,6 @@ class DoubleGene(
 
     val start = range.start
     val end = range.endInclusive
-
-    init {
-        constraints {
-//            "The range [$range] must be ordered" { range must BeStrictlyOrdered() }
-//            "The range [$range] must be finite" { range must BeFinite }
-//            "The value [$dna] must be in range [$range]" { dna must BeInRange(range) }
-        }
-    }
-
     @Deprecated(
         "Use the constructor that receives a range instead",
         ReplaceWith("DoubleGene(dna, range.toRange(), filter)")

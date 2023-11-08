@@ -34,6 +34,7 @@ fun logger(name: String, builder: Logger.() -> Unit) =
  * @version 2.0.0
  * @since 2.0.0
  */
+@Deprecated("To be removed, prefer using evolution listeners and records")
 class Logger private constructor(val name: String) : Clearable<Logger> {
     val compositeChannel = CompositeOutputChannel()
     var level: Level = Level.Info()
@@ -46,10 +47,6 @@ class Logger private constructor(val name: String) : Clearable<Logger> {
     fun error(message: () -> String) =
         compositeChannel.write(level.error { "${msgMeta("ERROR")} ${message()}" })
 
-    /** Logs a message at the FATAL level.  */
-    fun fatal(message: () -> String) =
-        compositeChannel.write(level.fatal { "${msgMeta("FATAL")} ${message()}" })
-
     /** Logs a message at the INFO level.  */
     fun info(message: () -> String) =
         compositeChannel.write(level.info { "${msgMeta("INFO")} ${message()}" })
@@ -57,10 +54,6 @@ class Logger private constructor(val name: String) : Clearable<Logger> {
     /** Logs a message at the TRACE level.  */
     fun trace(message: () -> String) =
         compositeChannel.write(level.trace { "${msgMeta("TRACE")} ${message()}" })
-
-    /** Logs a message at the WARN level.  */
-    fun warn(message: () -> String) =
-        compositeChannel.write(level.warn { "${msgMeta("WARN")} ${message()}" })
 
     /**
      * Formats a log message metadata string with the given logging level.
@@ -105,9 +98,5 @@ class Logger private constructor(val name: String) : Clearable<Logger> {
         fun instance(name: String) =
             _activeLoggers.getOrDefault(name, Logger(name)).also { _activeLoggers[name] = it }
 
-        /**
-         * Clears all active loggers.
-         */
-        internal fun clearActiveLoggers() = _activeLoggers.clear()
     }
 }

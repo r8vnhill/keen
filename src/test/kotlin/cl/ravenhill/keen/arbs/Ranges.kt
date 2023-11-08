@@ -7,8 +7,8 @@ package cl.ravenhill.keen.arbs
 
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.arbs.datatypes.orderedPair
-import cl.ravenhill.utils.DoubleRange
-import cl.ravenhill.utils.toRange
+import cl.ravenhill.keen.util.DoubleRange
+import cl.ravenhill.keen.util.toRange
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.char

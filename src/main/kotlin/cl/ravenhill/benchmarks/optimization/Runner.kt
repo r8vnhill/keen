@@ -40,7 +40,7 @@ import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.utils.DoubleRange
+import cl.ravenhill.keen.util.DoubleRange
 import kotlin.math.abs
 
 object Runner {

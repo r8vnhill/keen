@@ -21,7 +21,7 @@ import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.utils.DoubleToDouble
+import cl.ravenhill.keen.util.DoubleToDouble
 
 /**
  * Creates and returns an evolutionary computation engine for optimizing a given fitness function.
