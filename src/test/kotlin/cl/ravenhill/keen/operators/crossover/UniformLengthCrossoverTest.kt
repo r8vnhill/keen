@@ -44,7 +44,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                     Arb.boolean(),
                     Arb.probability()
                 ) { numIn, numOut, exclusivity, chromosomeRate ->
-                    object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
+                    object : AbstractCrossover<Nothing, NothingGene>(
                         numIn = numIn,
                         exclusivity = exclusivity,
                         chromosomeRate = chromosomeRate
@@ -62,7 +62,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                     Arb.boolean(),
                     Arb.probability()
                 ) { numOut, exclusivity, chromosomeRate ->
-                    object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
+                    object : AbstractCrossover<Nothing, NothingGene>(
                         numOut = numOut,
                         exclusivity = exclusivity,
                         chromosomeRate = chromosomeRate
@@ -80,7 +80,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                     Arb.positiveInt(10),
                     Arb.probability()
                 ) { numIn, numOut, chromosomeRate ->
-                    object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
+                    object : AbstractCrossover<Nothing, NothingGene>(
                         numOut = numOut,
                         numIn = numIn,
                         chromosomeRate = chromosomeRate
@@ -98,7 +98,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                     Arb.positiveInt(10),
                     Arb.boolean()
                 ) { numIn, numOut, exclusivity ->
-                    object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
+                    object : AbstractCrossover<Nothing, NothingGene>(
                         numOut = numOut,
                         numIn = numIn,
                         exclusivity = exclusivity
@@ -119,7 +119,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                         Arb.probability()
                     ) { numIn, numOut, exclusivity, chromosomeRate ->
                         shouldThrow<CompositeException> {
-                            object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
+                            object : AbstractCrossover<Nothing, NothingGene>(
                                 numOut = numOut,
                                 numIn = numIn,
                                 exclusivity = exclusivity,
@@ -143,7 +143,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                         Arb.probability()
                     ) { numIn, numOut, exclusivity, chromosomeRate ->
                         shouldThrow<CompositeException> {
-                            object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
+                            object : AbstractCrossover<Nothing, NothingGene>(
                                 numOut = numOut,
                                 numIn = numIn,
                                 exclusivity = exclusivity,
@@ -167,7 +167,7 @@ class UniformLengthCrossoverTest : FreeSpec({
                         Arb.real(1.0..Double.MAX_VALUE)
                     ) { numIn, numOut, exclusivity, chromosomeRate ->
                         shouldThrow<CompositeException> {
-                            object : AbstractUniformLengthCrossover<Nothing, NothingGene>(
+                            object : AbstractCrossover<Nothing, NothingGene>(
                                 numOut = numOut,
                                 numIn = numIn,
                                 exclusivity = exclusivity,
@@ -315,7 +315,7 @@ class UniformLengthCrossoverTest : FreeSpec({
         numIn: Int,
         exclusivity: Boolean,
         chromosomeRate: Double
-    ) : AbstractUniformLengthCrossover<Int, IntGene>(
+    ) : AbstractCrossover<Int, IntGene>(
         numOut,
         numIn,
         exclusivity,

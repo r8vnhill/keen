@@ -7,7 +7,6 @@ package cl.ravenhill.keen.operators.crossover
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
-import cl.ravenhill.jakt.constraints.IntConstraint
 import cl.ravenhill.jakt.constraints.IntConstraint.*
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Genotype
@@ -29,7 +28,7 @@ import cl.ravenhill.keen.util.transpose
  * @param exclusivity If true, individuals cannot be selected more than once for a given crossover operation
  * @param chromosomeRate The probability that a given chromosome within an individual will be selected for recombination
  */
-abstract class AbstractUniformLengthCrossover<DNA, G : Gene<DNA, G>>(
+abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     val numOut: Int = 2,
     val numIn: Int = 2,
     val exclusivity: Boolean = false,
@@ -50,7 +49,6 @@ abstract class AbstractUniformLengthCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
-    /* Documentation inherited from [Alterer] interface.    */
     override fun invoke(
         population: Population<DNA, G>,
         generation: Int,
@@ -70,21 +68,17 @@ abstract class AbstractUniformLengthCrossover<DNA, G : Gene<DNA, G>>(
         return AltererResult(recombined.take(population.size), recombined.size)
     }
 
-    override fun crossover(inGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
+    override fun crossover(parentGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
         constraints {
-            val inCount = inGenotypes.size
-            "Input count [$inCount] must match constructor-specified count [$numIn]." {
-                inGenotypes.size must BeEqualTo(numIn)
-            }
-            "All inputs must have the same genotype length" {
-                inGenotypes.map { it.size }.distinct().size must BeEqualTo(1)
+            "Input count [${parentGenotypes.size}] must match constructor-specified count [$numIn]." {
+                parentGenotypes.size must BeEqualTo(numIn)
             }
         }
-        val size = inGenotypes[0].size
+        val size = parentGenotypes[0].size
         // Select random indices of chromosomes to recombine
         val chIndices = Core.random.indices(chromosomeRate, size)
         // Associate the chromosomes at the selected indices
-        val chromosomes = chIndices.map { i -> inGenotypes.map { it[i] } }
+        val chromosomes = chIndices.map { i -> parentGenotypes.map { it[i] } }
         // Recombine the selected chromosomes to create new genotypes.
         val recombined = chromosomes.map { crossoverChromosomes(it) }.transpose()
         // Create new genotypes from the recombined chromosomes.
@@ -93,7 +87,7 @@ abstract class AbstractUniformLengthCrossover<DNA, G : Gene<DNA, G>>(
             Genotype(
                 // Iterate over the input genotypes and create a new genotype by selecting
                 // chromosomes from the recombined chromosomes or the original genotype.
-                inGenotypes[0].mapIndexed { index, ch ->
+                parentGenotypes[0].mapIndexed { index, ch ->
                     if (index in chIndices) chs[i++] else ch
                 }
             )

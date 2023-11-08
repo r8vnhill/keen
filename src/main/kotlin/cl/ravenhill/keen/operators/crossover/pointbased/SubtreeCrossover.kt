@@ -12,7 +12,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.crossover.AbstractUniformLengthCrossover
+import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.trees.Tree
 
@@ -48,7 +48,7 @@ class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0,
     private val geneRate: Double = 1.0,
-) : AbstractUniformLengthCrossover<DNA, G>(
+) : AbstractCrossover<DNA, G>(
     exclusivity = exclusivity,
     chromosomeRate = chromosomeRate
 ) {

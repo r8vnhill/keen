@@ -9,34 +9,38 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.DoubleConstraint.BeInRange
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.crossover.AbstractUniformLengthCrossover
-import cl.ravenhill.keen.probability
+import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 
 /**
- * A crossover operator that combines genes from the given chromosomes by applying a function to the
- * corresponding genes from each chromosome.
- * The function that combines genes is specified as a lambda that takes a list of genes and returns
- * a new gene that represents the combination of those genes.
- * The probability of applying the crossover operator is specified by the [probability] parameter,
- * and the rate of applying the crossover operator to individual genes is specified by the
- * [geneRate] parameter.
+ * A crossover operator that combines genes from multiple parent chromosomes to produce offspring.
+ * This crossover operation applies a combiner function to a list of genes taken from the same
+ * position across all parent chromosomes.
  *
- * @param combiner A lambda that combines genes from the input chromosomes to produce a new gene.
- * @param chromosomeRate The rate of applying the crossover operator to individual chromosomes.
- * @param geneRate The rate of applying the crossover operator to individual genes.
+ * @param DNA The type of the gene's value.
+ * @param G The gene type which implements [Gene] interface.
+ * @property combiner A function that takes a list of genes and combines them into a single gene.
+ * @property chromosomeRate The probability of a chromosome being selected for crossover.
+ * @property geneRate The probability of a gene within a selected chromosome being combined.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @since 0.9
+ * @constructor Initializes the crossover operation with the provided combiner function, chromosome rate,
+ *              and gene rate, ensuring the gene rate falls within the valid range of 0.0 to 1.0.
+ *              It also ensures that the chromosomes passed to combine have uniform length.
+ *
+ * @throws DoubleConstraintException if the gene rate is not in the range 0.0 to 1.0.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @since 2.0.0
  * @version 2.0.0
  */
 open class CombineCrossover<DNA, G : Gene<DNA, G>>(
     val combiner: (List<G>) -> G,
     chromosomeRate: Double = 1.0,
     val geneRate: Double = 1.0
-) : AbstractUniformLengthCrossover<DNA, G>(1, chromosomeRate = chromosomeRate) {
+) : AbstractCrossover<DNA, G>(1, chromosomeRate = chromosomeRate) {
 
     init {
         constraints {
@@ -46,6 +50,12 @@ open class CombineCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
+    /**
+     * Combines genes from the same index across a list of chromosomes using the provided combiner function.
+     *
+     * @param chromosomes A list of parent chromosomes to be combined.
+     * @return A list of genes, each created by combining genes from the same position across all parent chromosomes.
+     */
     fun combine(chromosomes: List<Chromosome<DNA, G>>): List<G> {
         constraints {
             "Combination needs at least one chromosome" { chromosomes mustNot BeEmpty }
@@ -60,6 +70,12 @@ open class CombineCrossover<DNA, G : Gene<DNA, G>>(
         }
     }
 
+    /**
+     * Performs crossover on chromosomes by combining their genes to produce offspring.
+     *
+     * @param chromosomes The parent chromosomes to undergo crossover.
+     * @return A list containing a single offspring chromosome resulting from the combination.
+     */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>) =
         listOf(chromosomes[0].withGenes(combine(chromosomes)))
 }

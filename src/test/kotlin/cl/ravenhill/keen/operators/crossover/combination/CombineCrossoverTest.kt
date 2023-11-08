@@ -41,6 +41,19 @@ class CombineCrossoverTest : FreeSpec({
                     result shouldBe chromosomes[0].genes
                 }
             }
+
+            "should apply the combiner to all genes if [geneRate] is 1" {
+                checkAll(Arb.probability()) { chromosomeRate ->
+                    val combiner: (List<IntGene>) -> IntGene = { genes -> IntGene(genes.sumOf { it.dna }) }
+                    val crossover = CombineCrossover(combiner, chromosomeRate, 1.0)
+                    val chromosomes = listOf(
+                        IntChromosome(IntGene(1), IntGene(2), IntGene(3)),
+                        IntChromosome(IntGene(4), IntGene(5), IntGene(6))
+                    )
+                    val result = crossover.combine(chromosomes)
+                    result shouldBe listOf(IntGene(5), IntGene(7), IntGene(9))
+                }
+            }
         }
     }
 })

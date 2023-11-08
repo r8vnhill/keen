@@ -9,7 +9,7 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.IntConstraint.BeEqualTo
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.crossover.AbstractUniformLengthCrossover
+import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.util.duplicates
 
 /**
@@ -33,7 +33,7 @@ abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
     numIn: Int = 2,
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0
-) : AbstractUniformLengthCrossover<DNA, G>(numOut, numIn, exclusivity, chromosomeRate) {
+) : AbstractCrossover<DNA, G>(numOut, numIn, exclusivity, chromosomeRate) {
 
     /* Documentation inherited from [AbstractCrossover] */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
