@@ -14,13 +14,24 @@ import cl.ravenhill.keen.prog.Environment
 import kotlin.random.Random
 
 /**
- * The `Core` object contains the functions and variables that are used by the rest of the library.
+ * The `Core` singleton provides global settings and utilities shared across the genetic programming library.
  *
- * @property maxProgramDepth The maximum depth of a program tree.
- * @property DEFAULT_MAX_PROGRAM_DEPTH The default maximum depth of a program tree (7).
- * @property random The random number generator.
+ * It manages environmental configurations, randomization behaviors, and sets constraints for program trees
+ * to ensure they do not exceed specified complexity limits.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * The `Core` settings play a critical role in the behavior and performance of evolutionary computation operations,
+ * providing a centralized point of configuration and control.
+ *
+ * @property maxProgramDepth Specifies the maximum depth that program trees are allowed to reach. This limit
+ *  helps prevent the creation of overly complex and computationally expensive programs.
+ *  It must be a positive integer.
+ * @property DEFAULT_MAX_PROGRAM_DEPTH Immutable default value for the maximum program tree depth.
+ * @property random A centralized random number generator that provides a uniform source of randomness,
+ *  ensuring reproducibility and coherence in random operations throughout the library.
+ * @property environments Stores environments by their identifiers, providing access to shared variables
+ *  and configurations across different components of the library.
+ *
+ * @author <a[href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @version 2.0.0
  * @since 1.0.0
  */
@@ -35,22 +46,6 @@ object Core {
             constraints { "The maximum program depth [$value] must be positive" { value must BePositive } }
             field = value
         }
+
     var random: Random = Random.Default
-
-    /**
-     * Represents the "roll" of an n-dimensional or continuous dice.
-     */
-    @Deprecated("To be removed, prefer using Core.random")
-    object Dice {
-
-        /**
-         * Backing [Random] instance.
-         */
-        var random: Random = Random.Default
-    }
 }
-
-/**
- * Rolls a n-dimensional dice.
- */
-fun Core.Dice.int(n: Int) = random.nextInt(n)

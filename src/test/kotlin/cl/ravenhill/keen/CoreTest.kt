@@ -24,7 +24,6 @@ class CoreTest : FreeSpec({
     beforeAny {
         Core.random = Random.Default
         Core.maxProgramDepth = Core.DEFAULT_MAX_PROGRAM_DEPTH
-        Core.Dice.random = Random.Default
         Core.environments.clear()
     }
 

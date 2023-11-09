@@ -51,8 +51,8 @@ fun Arb.Companion.genotype() = choice(intGenotype(), nothingGenotype())
  * @return An arbitrary generator for [Genotype].
  * @see Genotype
  */
-fun Arb.Companion.intGenotype() = arbitrary {
-    Genotype(list(intChromosome(), int(0..5)).bind())
+fun Arb.Companion.intGenotype(size: Arb<Int> = int(0..5)) = arbitrary {
+    Genotype(list(intChromosome(), size).bind())
 }
 
 /**
