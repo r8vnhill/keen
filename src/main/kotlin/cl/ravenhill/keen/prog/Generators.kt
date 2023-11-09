@@ -8,8 +8,6 @@ package cl.ravenhill.keen.prog
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Dice
-import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
 import cl.ravenhill.keen.util.trees.Tree
@@ -70,7 +68,7 @@ fun <T> generateProgramGrowing(
     max: Int,
 ): Program<T> {
     val condition = { h: Int, d: Int ->
-        d == h || d >= min && Dice.probability() < terminals.size.toDouble() / (terminals.size + functions.size)
+        d == h || d >= min && Core.random.nextDouble() < terminals.size.toDouble() / (terminals.size + functions.size)
     }
     return generateProgram(functions, terminals, min, max, condition)
 }

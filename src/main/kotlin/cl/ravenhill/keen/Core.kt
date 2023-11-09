@@ -32,7 +32,7 @@ object Core {
 
     var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
         set(value) {
-            constraints { "The maximum program depth must be positive" { value must BePositive } }
+            constraints { "The maximum program depth [$value] must be positive" { value must BePositive } }
             field = value
         }
     var random: Random = Random.Default
@@ -54,8 +54,3 @@ object Core {
  * Rolls a n-dimensional dice.
  */
 fun Core.Dice.int(n: Int) = random.nextInt(n)
-
-/**
- * Generates a new random double in [0, 1).
- */
-fun Core.Dice.probability() = random.nextDouble()

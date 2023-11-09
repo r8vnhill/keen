@@ -16,7 +16,6 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.mutator.ChromosomeMutator
 import cl.ravenhill.keen.operators.mutator.GeneMutator
 import cl.ravenhill.keen.operators.mutator.MutatorResult
-import cl.ravenhill.keen.probability
 
 /**
  * The mutator operator is responsible for mutating the [Genotype] of the [Individual]s in the
@@ -36,7 +35,7 @@ import cl.ravenhill.keen.probability
  * If the mutation is the main exploration mechanism, then the mutation probability should be high.
  *
  * @param DNA The type of the DNA
- * @constructor Creates a new [RandomMutator] with the given [probability]
+ * @constructor Creates a new [RandomMutator] with the given probability, chromosome rate and gene rate.
  */
 class RandomMutator<DNA, G : Gene<DNA, G>>(
     override val probability: Double,

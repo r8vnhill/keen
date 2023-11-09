@@ -9,11 +9,9 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BeAtMost
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Core.Dice
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
-import cl.ravenhill.keen.probability
 import cl.ravenhill.keen.util.trees.Tree
 
 /**
@@ -30,14 +28,13 @@ import cl.ravenhill.keen.util.trees.Tree
  * @param V the type of value stored in the tree nodes.
  * @param DNA the type of the tree structure.
  * @property geneRate the probability of applying the crossover to each gene (default is 1.0).
- * @param probability the probability of applying the operator to a pair of parents.
  * @param exclusivity a flag that indicates whether the operator should be exclusive (default is
  *  `false`).
  * @param chromosomeRate the probability of applying the operator to a pair of chromosomes (default
  *  is 1.0).
  *
- * @constructor Creates a new instance of [SubtreeCrossover] with the specified [probability],
- * [exclusivity], [chromosomeRate], and [geneRate].
+ * @constructor Creates a new instance of [SubtreeCrossover] with the specified [exclusivity], [chromosomeRate], and
+ *  [geneRate].
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 2.0.0
@@ -92,7 +89,7 @@ class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
         // iterate over each pair of genes from the two parent chromosomes
         chromosomes[0].genes.zip(chromosomes[1].genes).forEach { (gene1, gene2) ->
             // randomly decide whether to perform a crossover at this point
-            if (Dice.probability() < geneRate) {
+            if (Core.random.nextDouble() < geneRate) {
                 // randomly select two nodes from the two parent genes
                 val node1 = gene1.dna.random()
                 val node2 = gene2.dna.random()
