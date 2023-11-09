@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.limits
 
 /**
@@ -9,4 +14,4 @@ package cl.ravenhill.keen.limits
  * @since 1.0.0
  * @version 1.0.0
  */
-data class TargetFitness(val fitness: Double) : Match({ bestFitness == fitness })
+data class TargetFitness(val fitness: Double) : MatchLimit({ bestFitness == fitness })

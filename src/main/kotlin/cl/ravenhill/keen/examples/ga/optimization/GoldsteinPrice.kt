@@ -18,19 +18,19 @@ fun main() {
         engine.evolve()
     }
     println(engine.listeners.first())
-    println("Error: ${abs(engine.bestFitness - 3)}")
+    println("Error: ${abs( - 3)}")
     println("========= Tournament selector =========")
     repeat(2) {
         engine = createEngine(::goldsteinPrice, -2.0..2.0, -2.0..2.0)
         engine.evolve()
     }
     println(engine.listeners.first())
-    println("Error: ${abs(engine.bestFitness - 3)}")
+    println("Error: ${abs( - 3)}")
     println("========= Roulette wheel selector =========")
     repeat(2) {
         engine = createEngine(::goldsteinPrice, -2.0..2.0, -2.0..2.0)
         engine.evolve()
     }
     println(engine.listeners.first())
-    println("Error: ${abs(engine.bestFitness - 3)}")
+    println("Error: ${abs( - 3)}")
 }

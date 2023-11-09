@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.Evolver
 
 /**
  * Represents a termination condition (or "limit") for the evolutionary engine based on a custom predicate.
@@ -17,7 +18,7 @@ import cl.ravenhill.keen.evolution.Engine
  * @property predicate A lambda function that takes the evolution engine as a receiver and returns a Boolean.
  *                     It defines the condition upon which the evolutionary process should stop.
  *
- * @constructor Creates a [Match] limit with a specified predicate.
+ * @constructor Creates a [MatchLimit] limit with a specified predicate.
  *
  * @see Engine The evolution engine that this limit will be applied to.
  *
@@ -25,7 +26,7 @@ import cl.ravenhill.keen.evolution.Engine
  * @since 1.0.0
  * @version 2.0.0
  */
-open class Match(private val predicate: Engine<*, *>.() -> Boolean) : Limit {
+open class MatchLimit(private val predicate: Evolver<*, *>.() -> Boolean) : Limit {
 
     /**
      * Invokes the predicate on the given [Engine] instance to determine if the evolution should stop.
@@ -33,12 +34,5 @@ open class Match(private val predicate: Engine<*, *>.() -> Boolean) : Limit {
      * @param engine The [Engine] instance on which to evaluate the predicate.
      * @return A Boolean indicating whether the limit has been reached according to the predicate.
      */
-    override fun invoke(engine: Engine<*, *>) = predicate(engine)
-
-    /**
-     * Destructures this [Match] object, allowing its internal predicate to be used in a component-like manner.
-     *
-     * @return The predicate function that defines the limit condition.
-     */
-    operator fun component1() = predicate
+    override fun invoke(engine: Evolver<*, *>) = predicate(engine)
 }

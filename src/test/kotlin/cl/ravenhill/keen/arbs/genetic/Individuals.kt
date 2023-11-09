@@ -48,7 +48,25 @@ fun Arb.Companion.individual() = arbitrary { Individual(genotype().bind()) }
  */
 fun Arb.Companion.population() = list(individual(intGenotype()), 1..5)
 
-fun Arb.Companion.uniformLengthPopulation() = arbitrary {
-    val size = int(1..5).bind()
-    List(size) { Individual(Genotype(list(intChromosome(), int(0..5)).bind())) }
-}
+/**
+ * Creates an arbitrary generator that produces a list of individuals with 'Nothing' genotypes,
+ * suitable for property-based testing where the genotype does not contain any meaningful data.
+ *
+ * This generator is useful in scenarios where the focus is on testing the framework or algorithm
+ * logic rather than the effects of specific genetic information. For example, it can be used to
+ * verify selection mechanisms, population handling, and other non-genotype-specific operations
+ * in a genetic algorithm.
+ *
+ * The size of the generated population will be between 1 and 5 individuals, making it manageable
+ * for tests that do not require large populations.
+ *
+ * Usage:
+ * ```kotlin
+ * checkAll(Arb.nothingPopulation()) { population ->
+ *     // Test assertions on the population
+ * }
+ * ```
+ *
+ * @return An [Arb] instance that generates a list of individuals with 'Nothing' genotypes.
+ */
+fun Arb.Companion.nothingPopulation() = list(individual(nothingGenotype()), 1..5)

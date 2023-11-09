@@ -1,30 +1,56 @@
-/**
- * Copyright (c) 2023, R8V.
- * BSD Zero Clause License.
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.genetic.genes.Gene
-import java.io.Serializable
-
 
 /**
- * The `Evolver` interface defines the contract for an object that can evolve a population of
- * genetic material of type `DNA` from an initial state to a final state.
+ * Defines the core functionality of an evolutionary process.
+ * An `Evolver` is capable of taking a population through successive generations, applying genetic
+ * operators to produce new generations, and ultimately progressing towards an optimal or satisfactory
+ * solution based on the genetic material type `DNA`.
  *
- * @param DNA the type of genetic material that will be evolved
- * @param G the type of [Gene] that will be used to evolve the genetic material
+ * @param DNA The data type representing the genetic information of the population. It acts as a blueprint
+ *            for creating individuals within the population.
+ * @param G The concrete type of [Gene] that carries the genetic information (`DNA`). Genes are the
+ *          fundamental units of heredity and are subject to evolutionary processes such as mutation
+ *          and recombination.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @property generation An integer representing the current generation number in the evolutionary process.
+ *           This is typically used to track the progress and to apply generational limits.
+ * @property steadyGenerations The number of generations that the population has remained unchanged.
+ *           This is typically used to track the progress and to apply generational limits.
+ * @property bestFitness The fitness of the best individual in the population.
+ *           This is typically used to track the progress and to apply fitness limits.
+ *
+ * @return [EvolutionResult] encapsulating the final state of the population at the end of the evolution
+ *         process. This includes the last generation evolved and any additional results or metadata.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @version 2.0.0
  * @since 2.0.0
  */
-interface Evolver<DNA, G: Gene<DNA, G>> {
+interface Evolver<DNA, G : Gene<DNA, G>> {
+
+    val generation: Int
+
+    val steadyGenerations: Int
+
+    val bestFitness: Double
+
     /**
-     * The entry point of the evolution process.
+     * Initiates and conducts the evolutionary process. The method orchestrates the selection,
+     * crossover, mutation, and evaluation steps, guiding the population towards improved fitness
+     * over successive generations.
      *
-     * @return an [EvolutionResult] containing the last generation of the evolution process.
+     * The method continues the evolutionary process until a specified termination condition is met,
+     * such as a maximum number of generations or a satisfactory fitness level.
+     *
+     * @return An [EvolutionResult] that holds the final generation of the evolution along with
+     *         any pertinent information.
      */
     fun evolve(): EvolutionResult<DNA, G>
 }

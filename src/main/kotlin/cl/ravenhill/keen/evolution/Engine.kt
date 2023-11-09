@@ -60,8 +60,8 @@ import kotlin.properties.Delegates
  *
  * @property population The current population of individuals in the genetic algorithm.
  * @property generation The current generation count in the evolutionary process.
- * @property steadyGenerations The number of generations without significant fitness improvement.
- * @property bestFitness The fitness value of the best individual in the current generation.
+ * @property _steadyGenerations The number of generations without significant fitness improvement.
+ * @property _bestFitness The fitness value of the best individual in the current generation.
  * @property fittest The individual with the highest fitness in the current generation.
  *
  * @constructor Initializes the engine with the provided parameters.
@@ -95,29 +95,32 @@ class Engine<DNA, G : Gene<DNA, G>>(
     private var evolutionResult: EvolutionResult<DNA, G> by Delegates.observable(
         initialValue = EvolutionResult(optimizer, listOf(), 0),
         onChange = { _, _, new -> listeners.forEach { it.evolutionResult = new } })
-    var generation: Int by Delegates.observable(
+    private var _generation: Int by Delegates.observable(
         initialValue = 0,
         onChange = { prop, old, new ->
             listeners.forEach { it.onGenerationShift(prop, old, new) }
         }
     )
-        private set
 
-    var steadyGenerations by Delegates.observable(
+    override val generation: Int get() = _generation
+
+    private var _steadyGenerations by Delegates.observable(
         initialValue = 0,
         onChange = { _, _, new -> listeners.forEach { it.steadyGenerations = new } })
-        private set
 
-    var bestFitness: Double by Delegates.observable(
+    override val steadyGenerations: Int get() = _steadyGenerations
+
+    private var _bestFitness: Double by Delegates.observable(
         initialValue = Double.NaN,
         onChange = { _, old, new ->
             if (old == new) {
-                steadyGenerations++
+                _steadyGenerations++
             } else {
-                steadyGenerations = 0
+                _steadyGenerations = 0
             }
         })
-        private set
+
+    override val bestFitness: Double get() = _bestFitness
 
     /**
      * The fittest individual of the current generation.
@@ -139,7 +142,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         var result = EvolutionResult(optimizer, evolution.population, generation)
         while (limits.none { it(this) }) { // While none of the limits are met
             result = evolve(evolution)
-            bestFitness = result.best.fitness
+            _bestFitness = result.best.fitness
             evolution = result.next()
         }
         return result.also {
@@ -183,7 +186,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         val nextPopulation = survivors + alteredOffspring.population
         // (8) The next population is evaluated
         val pop = evaluate(EvolutionState(nextPopulation, generation), true)
-        evolutionResult = EvolutionResult(optimizer, pop, ++generation)
+        evolutionResult = EvolutionResult(optimizer, pop, ++_generation)
         fittest = evolutionResult.best
         // (9) The result of the evolution is post-processed
         val afterResult = interceptor.after(evolutionResult)

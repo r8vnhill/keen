@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.Evolver
 
 /**
  * A `Limit` represents a stopping condition for a genetic algorithm.
@@ -21,7 +22,7 @@ import cl.ravenhill.keen.evolution.Engine
  * To create a new limit, you can implement this interface and define your own stopping condition in
  * the [invoke] method.
  *
- * @see Match
+ * @see MatchLimit
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  * @since 1.0.0
@@ -35,6 +36,6 @@ interface Limit {
      * @param engine the engine object that is running the algorithm
      * @return a boolean indicating whether the algorithm should stop
      */
-    operator fun invoke(engine: Engine<*, *>): Boolean
+    operator fun invoke(engine: Evolver<*, *>): Boolean
 }
 
