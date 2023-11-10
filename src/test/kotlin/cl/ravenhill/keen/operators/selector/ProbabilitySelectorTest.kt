@@ -7,7 +7,7 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Population
-import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.arbs.genetic.intPopulation
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.incremental
@@ -32,7 +32,7 @@ class ProbabilitySelectorTest : FreeSpec({
 
         "can select a random individual based on the probabilities" {
             checkAll(
-                Arb.population(),
+                Arb.intPopulation(),
                 Arb.int(1..5),
                 Arb.optimizer<Int, IntGene>(),
                 Arb.boolean(),

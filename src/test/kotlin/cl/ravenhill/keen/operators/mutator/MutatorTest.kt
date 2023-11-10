@@ -10,7 +10,7 @@ import cl.ravenhill.keen.arbs.genetic.geneticMaterial
 import cl.ravenhill.keen.arbs.genetic.individual
 import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.arbs.genetic.intGenotype
-import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.arbs.genetic.intPopulation
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.assertions.operations.mutators.`should enforce valid mutation probability`
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -93,7 +93,7 @@ class MutatorTest : FreeSpec({
         }
 
         "can mutate a population" {
-            checkAll(Arb.population()) { population ->
+            checkAll(Arb.intPopulation()) { population ->
                 with(DummyMutator<Int, IntGene>(1.0)(population, 0)) {
                     this.population shouldBe population
                     this.alterations shouldBe 0
@@ -173,8 +173,8 @@ class MutatorTest : FreeSpec({
  * @version 2.0.0
  * @since 2.0.0
  */
-private class DummyMutator<DNA, G>(probability: Double, chromosomeRate: Double = 0.5) :
-    AbstractMutator<DNA, G>(probability, chromosomeRate) where G : Gene<DNA, G> {
+private class DummyMutator<DNA, G>(override val probability: Double, override val chromosomeRate: Double = 0.5) :
+    Mutator<DNA, G> where G : Gene<DNA, G> {
 
     override fun mutateChromosome(chromosome: Chromosome<DNA, G>) =
         MutatorResult(chromosome)

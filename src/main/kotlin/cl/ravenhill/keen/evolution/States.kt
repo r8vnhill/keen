@@ -7,7 +7,8 @@ package cl.ravenhill.keen.evolution
 
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.ints.BeAtLeast
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -27,50 +28,45 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  **************************************************************************************************/
 
 /**
- * Result of an evolution process.
+ * Represents the outcome of an evolutionary generation, encapsulating the population's state
+ * at that point along with the optimizer used for fitness comparison.
  *
- * @param DNA The type of the gene's value.
+ * This class is a snapshot of the evolutionary process, providing access to the best individual
+ * in the population and enabling transitions to subsequent generations.
  *
- * @property optimizer The optimization strategy used.
- * @property population The population of the result.
- * @property generation The generation of the result.
- * @property best The best individual of the result.
+ * @param DNA The type of genetic data or information.
+ * @param G The gene type, which contains [DNA] type data and conforms to [Gene].
+ * @property optimizer The optimization strategy used to assess and rank individuals based on fitness.
+ * @property population The collection of individuals at the current generation.
+ * @property generation The generation number of the current evolutionary state.
+ * @property best Retrieves the fittest individual in the current population using the optimizer's comparator.
  *
- * @constructor Creates a new [EvolutionResult] with the given [optimizer], [population], and
- *  [generation].
+ * @constructor Creates an [EvolutionResult] instance with the given optimizer, population, and generation.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionResult<DNA, G : Gene<DNA, G>>(
+data class EvolutionResult<DNA, G : Gene<DNA, G>>(
     val optimizer: IndividualOptimizer<DNA, G>,
-    val population: Population<DNA, G>,
-    val generation: Int
-) : Comparable<EvolutionResult<DNA, G>> {
+    override val population: Population<DNA, G>,
+    override val generation: Int
+) : EvolutionState<DNA, G>(population, generation) {
 
-    val best: Individual<DNA, G>
-        get() = population.maxWith(optimizer.comparator)
-
-    /**
-     * Returns a new [EvolutionState] object for the next generation.
-     */
-    operator fun next() = EvolutionState(population, generation + 1, true)
+    val best: Individual<DNA, G> by lazy {
+        constraints { "Cannot get the best individual of an empty population" { population mustNot BeEmpty } }
+        population.maxWith(optimizer.comparator)
+    }
 
     /**
-     * Creates a new [EvolutionResult] with the population transformed by the provided function.
+     * Applies a transformation function to each individual in the population and creates a new
+     * [EvolutionResult] with the resulting population.
      *
-     * @param function A function to transform each individual in the population.
+     * @param function A transform function to apply to each individual.
      * @return A new [EvolutionResult] with the transformed population.
      */
     fun map(function: (Individual<DNA, G>) -> Individual<DNA, G>) =
         EvolutionResult(optimizer, population.map(function), generation)
-
-    /// Documentation inherited from [Comparable].
-    override fun compareTo(other: EvolutionResult<DNA, G>) =
-        optimizer.comparator.compare(this.best, other.best)
-    /// Documentation inherited from [Any].
-    override fun toString() = "EvolutionResult { generation: $generation, best: $best }"
 }
 
 /**
@@ -78,8 +74,6 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
  *
  * @property population The initial population of individuals.
  * @property generation The generation number.
- * @property isDirty A flag indicating whether the evaluation process needs to be run again.
- *  The default value is `true`.
  *
  * @param DNA The type of the individual.
  *
@@ -89,21 +83,22 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionState<DNA, G : Gene<DNA, G>>(
-    val population: List<Individual<DNA, G>>,
-    val generation: Int,
-    val isDirty: Boolean = true
+open class EvolutionState<DNA, G : Gene<DNA, G>>(
+    open val population: List<Individual<DNA, G>>,
+    open val generation: Int
 ) {
 
     init {
-        constraints { "Generation [$generation] must be non-negative" { generation must BeAtLeast(0) } }
+        constraints { "Generation [$generation] must be non-negative" { generation mustNot BeNegative } }
     }
 
-    override fun toString() = "EvolutionStart { " +
-            "population: $population, " +
-            "generation: $generation, " +
-            "isDirty: $isDirty" +
-            " }"
+
+    /**
+     * Advances the evolution result to the next generation, incrementing the generation count.
+     *
+     * @return An [EvolutionState] representing the next stage in the evolutionary process.
+     */
+    operator fun next() = EvolutionState(population, generation + 1)
 
     companion object {
         /**
@@ -113,6 +108,6 @@ class EvolutionState<DNA, G : Gene<DNA, G>>(
          *
          * @return An empty [EvolutionState] object.
          */
-        fun <DNA, G : Gene<DNA, G>> empty(): EvolutionState<DNA, G> = EvolutionState(listOf(), 1)
+        fun <DNA, G : Gene<DNA, G>> empty(): EvolutionState<DNA, G> = EvolutionState(listOf(), 0)
     }
 }

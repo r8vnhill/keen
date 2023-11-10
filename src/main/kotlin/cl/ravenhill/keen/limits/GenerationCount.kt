@@ -9,16 +9,22 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
 
 /**
- * Limits the number of generations the evolution will run.
+ * Represents a termination criterion for a genetic algorithm based on a fixed number of generations.
  *
- * @param i The number of generations to run.
+ * This limit is used to stop the evolutionary process once a certain number of generations
+ * have been processed. It encapsulates a simple condition that checks if the current generation
+ * number meets or exceeds a predefined count.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 2.0.0
- * @since 1.0.0
+ * @property count The maximum number of generations to process before stopping the evolution.
+ *                 Must be a positive integer, representing the stopping point of the evolution.
+ * @constructor Initializes a `GenerationCount` with a given generation count.
+ *
+ * The constructor also imposes a constraint that the provided `count` must be a positive integer.
+ * This ensures that the evolutionary process will run for at least one generation.
  */
-data class GenerationCount(private val i: Int) : MatchLimit({ generation >= i }) {
+data class GenerationCount(val count: Int) : MatchLimit({ generation >= count }) {
     init {
-        constraints { "Generation count [$i] must be at least 1" { i must BePositive } }
+        constraints { "Generation count [$count] must be at least 1" { count must BePositive } }
     }
 }
+

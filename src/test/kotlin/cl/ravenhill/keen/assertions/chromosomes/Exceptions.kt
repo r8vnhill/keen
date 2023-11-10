@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.assertions.chromosomes
 
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -48,13 +50,10 @@ suspend fun <T, G, F> `assert chromosome enforces range to gene count equality`(
             val factory = factoryBuilder()
             ranges.forEach { factory.ranges += it }
             factory.size = size
-            shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+            shouldThrow<CompositeException> {
                 factory.make()
-            }.shouldHaveInfringement<IntConstraintException>(
-                unfulfilledConstraint(
-                    "When creating a chromosome with more than one range, the number of ranges " +
-                        "must be equal to the number of genes"
-                )
+            }.shouldHaveInfringement<CollectionConstraintException>(
+                "Chromosome with multiple ranges must have equal number of ranges and genes"
             )
         }
     }
@@ -80,17 +79,13 @@ suspend fun <T, G, F> `ensure chromosome filter count matches gene count`(
 ) where T : Comparable<T>, G : Gene<T, G>, F : Chromosome.Factory<T, G>, F : MutableFilterCollection<T> {
     with(Arb) {
         checkAll(int(2..100), int(2..100)) { filtersAmount, size ->
-            assume { filtersAmount shouldNotBe size }
             val factory = factoryBuilder()
             repeat(filtersAmount) { factory.filters += filter }
             factory.size = size
-            shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+            shouldThrow<CompositeException> {
                 factory.make()
             }.shouldHaveInfringement<IntConstraintException>(
-                unfulfilledConstraint(
-                    "When creating a chromosome with more than one filter, the " +
-                        "number of filters must be equal to the number of genes"
-                )
+                "Chromosome creation requires equal number of filters and genes"
             )
         }
     }

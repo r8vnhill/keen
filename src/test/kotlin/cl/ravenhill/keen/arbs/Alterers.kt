@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.arbs
 
-import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.arbs.genetic.intPopulation
 import cl.ravenhill.keen.operators.AltererResult
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
@@ -22,6 +22,6 @@ import io.kotest.property.arbitrary.nonNegativeInt
  * @return An [Arb] instance that produces random [AltererResult]s made up of populations with individuals and non-negative integers.
  */
 fun Arb.Companion.altererResult() = arbitrary {
-    AltererResult(population().bind(), nonNegativeInt().bind())
+    AltererResult(intPopulation().bind(), nonNegativeInt().bind())
 }
 

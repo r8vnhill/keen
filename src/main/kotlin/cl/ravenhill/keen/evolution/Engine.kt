@@ -28,7 +28,6 @@ import cl.ravenhill.keen.util.floor
 import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
-import kotlinx.coroutines.runBlocking
 import kotlin.properties.Delegates
 
 /**
@@ -167,8 +166,8 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see alter
      * @see EvolutionResult
      */
-    fun evolve(start: EvolutionState<DNA, G>) = runBlocking {
-        listeners.forEach { it.onGenerationStarted(generation, listOf<Individual<DNA, G>>()) }
+    fun evolve(start: EvolutionState<DNA, G>): EvolutionResult<DNA, G> {
+        listeners.forEach { it.onGenerationStarted(generation, listOf()) }
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
         val interceptedStart = interceptor.before(start)
@@ -191,7 +190,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         // (9) The result of the evolution is post-processed
         val afterResult = interceptor.after(evolutionResult)
         listeners.forEach { it.onGenerationFinished(pop) }
-        afterResult
+        return afterResult
     }
 
     /**

@@ -8,7 +8,6 @@ package cl.ravenhill.keen.arbs.records
 
 import cl.ravenhill.keen.arbs.datatypes.list
 import cl.ravenhill.keen.arbs.genetic.genotype
-import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 import io.kotest.property.Arb

@@ -92,18 +92,12 @@ data class CharChromosome(override val genes: List<CharGene>) :
         private fun enforceConstraints() {
             constraints {
                 if (ranges.size > 1) {
-                    (
-                        "When creating a chromosome with more than one range, the number of ranges " +
-                            "must be equal to the number of genes"
-                        ) {
+                    "Chromosome with multiple ranges must have equal number of ranges and genes" {
                         ranges must HaveSize(size)
                     }
                 }
                 if (filters.size > 1) {
-                    (
-                        "When creating a chromosome with more than one filter, the number of " +
-                            "filters must be equal to the number of genes"
-                        ) {
+                    "Chromosome creation requires equal number of filters and genes" {
                         filters must HaveSize(size)
                     }
                 }

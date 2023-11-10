@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.arbs.genetic.intPopulation
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -49,7 +49,7 @@ class TournamentSelectorTest : FreeSpec({
         "when selecting" - {
             "should return a population with the same size as the given count" {
                 checkAll(
-                    Arb.population(),
+                    Arb.intPopulation(),
                     Arb.int(0..5),
                     Arb.int(1..5),
                     Arb.optimizer<Int, IntGene>()
@@ -64,7 +64,7 @@ class TournamentSelectorTest : FreeSpec({
 
             "should return the first picked individual if the sample size is 1" {
                 checkAll(
-                    Arb.population(),
+                    Arb.intPopulation(),
                     Arb.int(1..5),
                     Arb.optimizer<Int, IntGene>(),
                     Arb.long()
@@ -83,7 +83,7 @@ class TournamentSelectorTest : FreeSpec({
 
             "should return the best of the sample" {
                 checkAll(
-                    Arb.population(),
+                    Arb.intPopulation(),
                     Arb.int(1..5),
                     Arb.int(1..5),
                     Arb.optimizer<Int, IntGene>(),

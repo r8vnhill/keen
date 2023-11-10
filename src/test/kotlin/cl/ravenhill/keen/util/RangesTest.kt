@@ -10,10 +10,8 @@ import cl.ravenhill.keen.arbs.datatypes.orderedTriple
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.shouldBeInRange
 import cl.ravenhill.keen.shouldNotBeInRange
-import cl.ravenhill.utils.shouldBeInRange
-import cl.ravenhill.utils.shouldNotBeIn
+import cl.ravenhill.keen.shouldNotBeIn
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.collections.shouldNotBeIn
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb

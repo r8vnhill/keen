@@ -9,20 +9,34 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
 
 /**
- * A [MatchLimit] limit that checks if the population has remained steady for a given number of
- * generations.
+ * Represents a limit based on the number of consecutive generations without fitness improvement.
+ * This [MatchLimit] evaluates if the population's fitness has remained unchanged (steady) for a specified
+ * number of generations, indicating a potential convergence of the genetic algorithm.
  *
- * @property n The number of steady generations required to satisfy the limit.
+ * @property generations The number of generations for which the fitness should remain steady to meet the limit.
+ *             A positive value is required to ensure a valid check.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * When the limit is reached, it signals that the population may have reached an evolutionary plateau,
+ * potentially triggering the termination of the evolution process.
+ *
+ * Usage in an evolutionary algorithm setup might look like:
+ * ```
+ * val evolutionAlgorithm = Engine.builder { ... }
+ *     .withLimit(SteadyGenerations(5))
+ *     .build()
+ * ```
+ *
+ * @throws ConstraintException if [generations] is not positive, ensuring the parameter is valid for the evolutionary process.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 1.0.0
  * @version 2.0.0
  */
-data class SteadyGenerations(val n: Int) : MatchLimit({ steadyGenerations >= n }) {
+data class SteadyGenerations(val generations: Int) : MatchLimit({ steadyGenerations >= generations }) {
     init {
-        constraints { "Steady generations must be positive" { n must BePositive } }
+        constraints {
+            "Number of steady generations [$generations] must be a positive integer" { generations must BePositive }
+        }
     }
-
-    /// Documentation inherited from [Any]
-    override fun toString() = "SteadyGenerations($n)"
 }
+

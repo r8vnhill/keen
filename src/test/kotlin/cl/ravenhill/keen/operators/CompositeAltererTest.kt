@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.arbs.genetic.intPopulation
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.operators.mutator.strategies.InversionMutator
 import cl.ravenhill.keen.operators.mutator.strategies.RandomMutator
@@ -29,7 +29,7 @@ class CompositeAltererTest : FreeSpec({
 
         "when invoked with a population and a generation" - {
             "should return an [AltererResult] with the same population if the list of alterers is empty" {
-                checkAll(Arb.population(), Arb.nonNegativeInt()) { population, generation ->
+                checkAll(Arb.intPopulation(), Arb.nonNegativeInt()) { population, generation ->
                     val alterers = listOf<Alterer<Int, IntGene>>()
                     val compositeAlterer = CompositeAlterer(alterers)
                     val result = compositeAlterer(population, generation)
@@ -38,7 +38,7 @@ class CompositeAltererTest : FreeSpec({
             }
 
             "should apply the alterers in sequence" {
-                checkAll(Arb.population(), Arb.nonNegativeInt(), Arb.long()) { population, generation, seed ->
+                checkAll(Arb.intPopulation(), Arb.nonNegativeInt(), Arb.long()) { population, generation, seed ->
                     Core.random = Random(seed)
                     val alterers = listOf<Alterer<Int, IntGene>>(
                         RandomMutator(1.0, 1.0),

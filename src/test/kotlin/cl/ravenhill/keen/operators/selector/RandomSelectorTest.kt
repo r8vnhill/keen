@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.arbs.genetic.intPopulation
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.core.spec.style.FreeSpec
@@ -23,7 +23,7 @@ class RandomSelectorTest : FreeSpec({
 
         "when calculating probabilities should return the same value for all individuals" {
             checkAll(
-                Arb.population(),
+                Arb.intPopulation(),
                 Arb.int(0..100),
                 Arb.optimizer<Int, IntGene>()
             ) { population, count, optimizer ->

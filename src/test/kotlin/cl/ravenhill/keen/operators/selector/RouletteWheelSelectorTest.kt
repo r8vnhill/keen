@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.operators.selector
 
-import cl.ravenhill.keen.arbs.genetic.population
+import cl.ravenhill.keen.arbs.genetic.intPopulation
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.fitness
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -30,7 +30,7 @@ class RouletteWheelSelectorTest : FreeSpec({
         "when calculating probabilities" - {
             "should return probabilities proportional to the fitness of the individuals" {
                 checkAll(
-                    Arb.population(),
+                    Arb.intPopulation(),
                     Arb.int(0..100),
                     Arb.optimizer<Int, IntGene>()
                 ) { population, count, optimizer ->

@@ -3,26 +3,15 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.utils
+package cl.ravenhill.keen
 
-import cl.ravenhill.keen.arbs.datatypes.real
-import cl.ravenhill.keen.arbs.datatypes.orderedPair
-import cl.ravenhill.keen.arbs.datatypes.orderedTriple
 import cl.ravenhill.keen.util.DoubleToDouble
 import cl.ravenhill.keen.util.IntToInt
 import cl.ravenhill.keen.util.contains
-import cl.ravenhill.keen.util.toRange
-import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
-import io.kotest.matchers.types.shouldBeInstanceOf
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.int
-import io.kotest.property.checkAll
 
 /**
  * This function returns a Matcher object that checks if an Int value is within the specified range.
