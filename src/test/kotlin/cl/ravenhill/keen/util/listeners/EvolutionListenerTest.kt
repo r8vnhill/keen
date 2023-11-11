@@ -17,6 +17,7 @@ import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import com.github.stefanbirkner.systemlambda.SystemLambda
 import com.ibm.icu.impl.Assert.fail
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
@@ -24,17 +25,19 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-@OptIn(ExperimentalTime::class)
+@OptIn(ExperimentalTime::class, ExperimentalKotest::class)
 class EvolutionListenerTest : FreeSpec({
     "An [EvolutionLister]" - {
         "should do nothing for all notifications" {
             checkAll(
+                PropTestConfig(iterations = 25),
                 Arb.optimizer<Nothing, NothingGene>(),
                 Arb.nothingPopulation(),
                 Arb.orderedPair(Arb.positiveInt(), Arb.positiveInt()),

@@ -11,25 +11,57 @@ import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import kotlin.time.ExperimentalTime
 
 /**
- * The `EvolutionPrinter` class provides functionality to print out results of an evolutionary
- * process periodically. This is useful for tracking the progress of the genetic algorithm,
- * including the duration of generations, and the fitness of populations within each generation.
+ * A listener for evolutionary processes that prints detailed statistics of each generation.
+ * This class extends [AbstractEvolutionListener] and provides insights into each generation's
+ * performance and results at specified intervals.
  *
- * @param every The interval (in terms of generations) at which the evolutionary results should be printed.
- * @param DNA The type parameter representing the entities being evolved.
+ * ### Functionality:
+ * - Tracks and calculates the duration of each generation, allowing performance analysis over time.
+ * - Sorts the population based on fitness and updates the resulting population records.
+ * - Computes and tracks the number of steady generations (generations without significant fitness change).
+ * - Prints a summary of each generation's statistics, including time metrics, steady generation count, and fitness
+ *   metrics.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 2.0.0
- * @since 1.0.0
+ * ### Usage:
+ * To use this listener, add it to your evolutionary algorithm configuration:
+ * ```kotlin
+ * val printer = EvolutionPrinter<Int, IntGene>(every = 10)
+ * val engine = engine(...) {
+ *   ...
+ *   listeners += printer
+ * }
+ * engine.evolve()
+ * ```
+ * This will print detailed statistics of every 10th generation during the evolution process.
+ *
+ * ### Time Metrics:
+ * - Average, maximum, and minimum generation times are calculated and displayed, providing insights into the time
+ *   efficiency of the evolutionary process.
+ *
+ * ### Fitness Metrics:
+ * - Best, worst, and average fitness of the population in each generation.
+ * - The genotype of the fittest individual.
+ *
+ * ### Output Format:
+ * The output is formatted for easy reading, with clear delineation and organized information.
+ * Example output snippet:
+ * ```
+ * === Generation 10 ===
+ * --> Average generation time: 1234 ms
+ * --> Max generation time: 2345 ms
+ * --> Min generation time: 123 ms
+ * ...
+ * ```
+ *
+ * @param DNA The type of the gene's value.
+ * @param G The type of the gene.
+ * @property every The frequency (in generations) at which the statistics are printed.
+ *
+ * @see [AbstractEvolutionListener] for base functionality.
  */
 class EvolutionPrinter<DNA, G : Gene<DNA, G>>(val every: Int) :
     AbstractEvolutionListener<DNA, G>() {
 
-    /**
-     * Invoked when the current generation finishes its execution. This method records the duration of
-     * the generation, sorts the population and updates the steady generations count. It also adds the
-     * current generation to the list of processed generations.
-     */
     @ExperimentalTime
     override fun onGenerationFinished(population: Population<DNA, G>) {
         _currentGeneration.duration = _currentGeneration.startTime.elapsedNow().inWholeNanoseconds
@@ -48,10 +80,6 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(val every: Int) :
         }
     }
 
-    /**
-     * Invoked when a new generation starts. It creates a new GenerationRecord instance and
-     * marks the start time of the generation.
-     */
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
         _currentGeneration = GenerationRecord(generation).apply {

@@ -26,6 +26,7 @@ import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.floor
 import cl.ravenhill.keen.util.listeners.EvolutionListener
+import cl.ravenhill.keen.util.listeners.Listeners
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlin.properties.Delegates
@@ -79,7 +80,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
     val limits: List<Limit>,
     val survivorSelector: Selector<DNA, G>,
     val optimizer: IndividualOptimizer<DNA, G>,
-    val listeners: List<EvolutionListener<DNA, G>>,
+    val listeners: Listeners<DNA, G>,
     val evaluator: EvaluationExecutor<DNA, G>,
     val interceptor: EvolutionInterceptor<DNA, G>,
 ) : Evolver<DNA, G> {

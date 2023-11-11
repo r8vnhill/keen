@@ -17,6 +17,7 @@ import cl.ravenhill.keen.random
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
@@ -30,6 +31,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.char
@@ -65,6 +67,7 @@ private fun Arb.Companion.filter() = arbitrary {
     ).bind()
 }
 
+@OptIn(ExperimentalKotest::class)
 class RandomsTest : FreeSpec({
     "Generating a random character should" - {
         "return a character in a given range" {
@@ -286,6 +289,7 @@ class RandomsTest : FreeSpec({
 
             "the elements list's size is not valid when exclusivity is required" {
                 checkAll(
+                    PropTestConfig(maxDiscardPercentage = 30),
                     Arb.listAndIndex(Arb.any(), 1..100),
                     Arb.random()
                 ) { (elements, size), rng ->

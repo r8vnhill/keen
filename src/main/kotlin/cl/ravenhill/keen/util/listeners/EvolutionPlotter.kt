@@ -21,8 +21,11 @@ import tech.tablesaw.plotly.traces.ScatterTrace
  * The statistics are then plotted using the [Plot] class from the
  * [Tablesaw](https://jtablesaw.github.io/tablesaw/) library.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
- * @version 1.0.0
+ * @param DNA The type of the DNA.
+ * @param G The gene type, which contains [DNA] type data and conforms to [Gene].
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @version 2.0.0
  * @since 1.0.0
  */
 class EvolutionPlotter<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G>() {

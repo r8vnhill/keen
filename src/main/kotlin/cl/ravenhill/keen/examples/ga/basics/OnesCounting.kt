@@ -44,7 +44,7 @@ fun count(genotype: Genotype<Boolean, BoolGene>) = genotype.flatMap().count { it
  * Finally, the engine is run and the statistics are printed to the console. The [EvolutionPlotter]
  * is used to display a graph of the fitness values over time.
  */
-fun main() {
+fun run() {
     val engine = engine(::count,
         genotype {
             chromosome {
