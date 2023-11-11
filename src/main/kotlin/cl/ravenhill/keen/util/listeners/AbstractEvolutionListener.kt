@@ -29,12 +29,6 @@ import kotlin.time.TimeSource
  */
 abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListener<DNA, G> {
     private var _fittest: Individual<DNA, G>? = null
-    override var evolutionResult: EvolutionResult<DNA, G> =
-        EvolutionResult(FitnessMaximizer(), listOf(), 0)
-        set(value) {
-            field = value
-            onResultUpdated()
-        }
     override var population: Population<DNA, G> = listOf()
     override var optimizer: IndividualOptimizer<DNA, G> = FitnessMaximizer()
     override val fittest: Individual<DNA, G>?
@@ -42,17 +36,16 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     override var steadyGenerations: Int = 0
     override var generation: Int = 0
     override var evolution: EvolutionRecord<DNA, G> = EvolutionRecord()
-    protected val generations get() = evolution.generations
+    protected val generations by lazy { evolution.generations }
     protected lateinit var _currentGeneration: GenerationRecord
-    override val currentGeneration: GenerationRecord get() = _currentGeneration
+    override val currentGeneration by lazy { _currentGeneration }
     @ExperimentalTime
     override var timeSource: TimeSource = TimeSource.Monotonic
 
     override fun onResultUpdated() {
-        optimizer = evolutionResult.optimizer
-        population = optimizer.sort(evolutionResult.population)
+        population = optimizer.sort(population)
         _fittest = population.first()
-        generation = evolutionResult.generation
+        generation = currentGeneration.generation
     }
 
     fun display() = println(toString())

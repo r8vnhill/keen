@@ -90,10 +90,8 @@ class Engine<DNA, G : Gene<DNA, G>>(
         onChange = { _, _, _ -> listeners.forEach { it.population = population } })
         private set
 
-    // TODO: Records para poder hacer un mejor seguimiento de la evolución [R8V]
-    private var evolutionResult: EvolutionResult<DNA, G> by Delegates.observable(
-        initialValue = EvolutionResult(optimizer, listOf(), 0),
-        onChange = { _, _, new -> listeners.forEach { it.evolutionResult = new } })
+    private var evolutionResult: EvolutionResult<DNA, G> = EvolutionResult(optimizer, listOf(), 0)
+
     private var _generation: Int by Delegates.observable(
         initialValue = 0,
         onChange = { prop, old, new ->

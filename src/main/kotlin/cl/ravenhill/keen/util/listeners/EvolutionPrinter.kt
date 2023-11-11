@@ -21,17 +21,6 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
     AbstractEvolutionListener<DNA, G>() {
 
     /**
-     * Updates the result of evolution and checks if the generation meets the interval for printing.
-     * If so, the evolutionary results are printed.
-     */
-    override fun onResultUpdated() {
-        super.onResultUpdated()
-        if (evolutionResult.generation % every == 0) {
-            println(toString())
-        }
-    }
-
-    /**
      * Invoked when the current generation finishes its execution. This method records the duration of
      * the generation, sorts the population and updates the steady generations count. It also adds the
      * current generation to the list of processed generations.
@@ -49,6 +38,9 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
         }
         // Add current generation to the list of generations
         _currentGeneration.also { evolution.generations += it }
+        if (currentGeneration.generation % every == 0) {
+            println(toString())
+        }
     }
 
     /**

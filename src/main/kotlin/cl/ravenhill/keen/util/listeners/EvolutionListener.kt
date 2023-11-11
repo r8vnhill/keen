@@ -5,7 +5,6 @@
 
 package cl.ravenhill.keen.util.listeners
 
-import cl.ravenhill.keen.evolution.EvolutionResult
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -33,7 +32,6 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
  * Classes implementing this interface can use these hooks for a variety of purposes
  * such as metrics tracking, progress reporting, or behavior modifications.
  *
- * @property evolutionResult Result after each evolution generation.
  * @property population Current set of candidate solutions.
  * @property optimizer Optimizer utilized during evolution.
  * @property fittest Most adapted individual in the current generation.
@@ -47,14 +45,13 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
  * @version 2.0.0
  */
 interface EvolutionListener<DNA, G : Gene<DNA, G>> {
-    var evolutionResult: EvolutionResult<DNA, G>
     var population: Population<DNA, G>
     var optimizer: IndividualOptimizer<DNA, G>
     val fittest: Individual<DNA, G>?
     var steadyGenerations: Int
     var generation: Int
     val currentGeneration: GenerationRecord
-
+    var evolution: EvolutionRecord<DNA, G>
     @ExperimentalTime
     var timeSource: TimeSource
 
@@ -195,10 +192,8 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
         ): List<IndividualRecord> {
             val sorted = optimizer.sort(population)
             return List(sorted.size) {
-                IndividualRecord("${sorted[it].genotype}", sorted[it].fitness)
+                IndividualRecord(sorted[it].genotype.toSimpleString(), sorted[it].fitness)
             }
         }
     }
-
-    var evolution: EvolutionRecord<DNA, G>
 }
