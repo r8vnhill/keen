@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.genetic.Population
@@ -17,7 +22,7 @@ import kotlin.time.ExperimentalTime
  * @version 2.0.0
  * @since 1.0.0
  */
-class EvolutionPrinter<DNA, G : Gene<DNA, G>>(private val every: Int) :
+class EvolutionPrinter<DNA, G : Gene<DNA, G>>(val every: Int) :
     AbstractEvolutionListener<DNA, G>() {
 
     /**

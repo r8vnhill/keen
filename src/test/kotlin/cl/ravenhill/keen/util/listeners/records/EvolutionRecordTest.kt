@@ -6,12 +6,14 @@
 
 package cl.ravenhill.keen.util.listeners.records
 
-import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.arbs.records.generationRecord
+import cl.ravenhill.keen.genetic.genes.NothingGene
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.checkAll
 
@@ -25,11 +27,15 @@ import io.kotest.property.checkAll
  * It currently focuses on verifying that an instance of `EvolutionRecord` can be properly
  * created when given a generation number.
  */
+@OptIn(ExperimentalKotest::class)
 class EvolutionRecordTest : FreeSpec({
 
     "An [EvolutionRecord]" - {
         "can be created with a generation number" {
-            checkAll(Arb.evolutionRecord()) { record ->
+            checkAll(
+                PropTestConfig(iterations = 50),
+                Arb.evolutionRecord()
+            ) { record ->
                 record shouldBe EvolutionRecord(record.generations)
             }
         }
@@ -46,5 +52,5 @@ class EvolutionRecordTest : FreeSpec({
  * @return An arbitrary [EvolutionRecord] instance.
  */
 private fun Arb.Companion.evolutionRecord() = arbitrary {
-    EvolutionRecord<Nothing, NothingGene>(mutableList(generationRecord()).bind())
+    EvolutionRecord<Nothing, NothingGene>(mutableList(generationRecord(), 0..50).bind())
 }

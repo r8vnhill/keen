@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.arbs.genetic.chromosomes.charChromosome
-import cl.ravenhill.keen.arbs.genetic.charGene
 import cl.ravenhill.keen.arbs.charRange
+import cl.ravenhill.keen.arbs.genetic.charGene
+import cl.ravenhill.keen.arbs.genetic.chromosomes.charChromosome
 import cl.ravenhill.keen.assertions.chromosomes.`assert chromosome enforces range to gene count equality`
 import cl.ravenhill.keen.assertions.chromosomes.`chromosome should reflect input genes`
 import cl.ravenhill.keen.assertions.chromosomes.`each gene should have the specified range`
@@ -22,6 +22,7 @@ import cl.ravenhill.keen.assertions.chromosomes.`validate genes with specified r
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.util.nextChar
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.char
@@ -47,10 +48,8 @@ class CharChromosomeTest : FreeSpec({
         }
 
         "can be converted to a [String]" {
-            with(Arb) {
-                checkAll(charChromosome()) { c ->
-                    c.toSimpleString() shouldBe c.genes.joinToString("") { it.toChar().toString() }
-                }
+            checkAll(Arb.charChromosome()) { c ->
+                c.toSimpleString() shouldBe c.genes.joinToString("") { it.toChar().toString() }
             }
         }
     }
@@ -58,7 +57,7 @@ class CharChromosomeTest : FreeSpec({
     "A chromosome [Factory]" - {
         "should have a list of ranges that" - {
             "is empty by default" {
-                CharChromosome.Factory().ranges.isEmpty() shouldBe true
+                CharChromosome.Factory().ranges.shouldBeEmpty()
             }
 
             "can be modified" {
