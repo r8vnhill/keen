@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.arbs.genetic.chromosomes
 
 import cl.ravenhill.keen.arbs.datatypes.mutableList
+import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import io.kotest.property.Arb
@@ -45,10 +46,14 @@ fun Arb.Companion.intChromosome(size: Arb<Int>) = arbitrary {
  */
 fun Arb.Companion.intChromosomeFactory(
     size: Arb<Int> = int(0..10),
-    ranges: Arb<MutableList<ClosedRange<Int>>> = mutableList(intRange(Int.MIN_VALUE..Int.MAX_VALUE))
+    ranges: Arb<MutableList<Pair<Int, Int>>> = mutableList(orderedPair(int(), strict = true))
 ) = arbitrary {
     IntChromosome.Factory().apply {
         this.size = size.bind()
-        this.ranges = ranges.bind()
+        this.ranges = ranges.bind().let { ranges ->
+            ranges.map { (min, max) ->
+                min..max
+            }
+        }.toMutableList()
     }
 }

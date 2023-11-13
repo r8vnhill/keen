@@ -6,11 +6,7 @@
 
 package cl.ravenhill.keen.arbs.operators
 
-import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.element
+import io.kotest.property.arbitrary.choice
 
-fun Arb.Companion.combiner() = element(
-    { g: List<IntGene> -> IntGene(g.sumOf { it.dna }) },
-
-)
+fun Arb.Companion.intAlterer() = choice(intCrossover())

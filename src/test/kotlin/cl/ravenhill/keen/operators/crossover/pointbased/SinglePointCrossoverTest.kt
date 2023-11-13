@@ -56,7 +56,7 @@ class SinglePointCrossoverTest : FreeSpec({
         "when applied to two lists of genes" - {
             "returns a list with two new lists of genes crossed over at the given point" {
                 checkAll(
-                    Arb.singlePointCrossover(),
+                    Arb.singlePointCrossover<Int, IntGene>(),
                     Arb.intWith(
                         Arb.matrix(Arb.intGene(), Arb.constant(2), Arb.int(3..10))
                     ) { 0..it.size }
@@ -72,7 +72,7 @@ class SinglePointCrossoverTest : FreeSpec({
 
             "returns the same lists if the picked index is the first or last index" {
                 checkAll(
-                    Arb.singlePointCrossover(),
+                    Arb.singlePointCrossover<Int, IntGene>(),
                     Arb.matrix(Arb.intGene(), Arb.constant(2), Arb.int(3..10)),
                 ) { crossover, parents ->
                     val (parent1, parent2) = parents
@@ -88,7 +88,7 @@ class SinglePointCrossoverTest : FreeSpec({
             "should throw an exception if " - {
                 "the index is negative " {
                     checkAll(
-                        Arb.singlePointCrossover(),
+                        Arb.singlePointCrossover<Int, IntGene>(),
                         Arb.matrix(Arb.intGene(), Arb.constant(2), Arb.int(3..10)),
                         Arb.negativeInt()
                     ) { crossover, parents, cutPoint ->
@@ -102,7 +102,7 @@ class SinglePointCrossoverTest : FreeSpec({
 
                 "the index is greater than the size of the parents" {
                     checkAll(
-                        Arb.singlePointCrossover(),
+                        Arb.singlePointCrossover<Int, IntGene>(),
                         Arb.intWith(
                             Arb.matrix(
                                 Arb.intGene(),
@@ -124,7 +124,7 @@ class SinglePointCrossoverTest : FreeSpec({
         "when crossing a list of chromosomes" - {
             "returns the same list if the chromosome rate is 0.0" {
                 checkAll(
-                    Arb.singlePointCrossover(Arb.constant(0.0)),
+                    Arb.singlePointCrossover<Int, IntGene>(Arb.constant(0.0)),
                     Arb.matrix(Arb.intGene(), Arb.constant(2), Arb.int(3..10)),
                 ) { crossover, genes ->
                     val chromosomes = genes.map { IntChromosome(it) }
@@ -169,7 +169,7 @@ class SinglePointCrossoverTest : FreeSpec({
 
             "should throw an exception if the number of chromosomes is not 2" {
                 checkAll(
-                    Arb.singlePointCrossover(),
+                    Arb.singlePointCrossover<Int, IntGene>(),
                     Arb.matrix(Arb.intGene(), Arb.int(3..10), Arb.int(3..10))
                 ) { crossover, chromosomes ->
                     shouldThrow<CompositeException> {

@@ -47,7 +47,7 @@ import kotlin.properties.Delegates
  * @param G The type of gene that holds the genetic information, extending from [Gene].
  * @param genotype Factory to produce genotypes for initial population and offspring generation.
  * @param populationSize The number of individuals in the population.
- * @param offspringFraction The proportion of the population to be replaced by offspring each generation.
+ * @param offspringRatio The proportion of the population to be replaced by offspring each generation.
  * @param selector Selection mechanism to choose individuals for reproduction.
  * @param offspringSelector Selection mechanism to choose which offspring to keep.
  * @param alterer Genetic operator to modify genotypes (e.g., mutation, crossover).
@@ -73,7 +73,7 @@ import kotlin.properties.Delegates
 class Engine<DNA, G : Gene<DNA, G>>(
     val genotype: Genotype.Factory<DNA, G>,
     val populationSize: Int,
-    val offspringFraction: Double,
+    val offspringRatio: Double,
     val selector: Selector<DNA, G>,
     val offspringSelector: Selector<DNA, G>,
     val alterer: Alterer<DNA, G>,
@@ -252,7 +252,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onOffspringSelectionStarted() }
         return offspringSelector(
             population,
-            (offspringFraction * populationSize).ceil(),
+            (offspringRatio * populationSize).ceil(),
             optimizer
         ).also {
             listeners.forEach { it.onOffspringSelectionFinished() }
@@ -269,7 +269,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onSurvivorSelectionStarted() }
         return survivorSelector(
             population,
-            ((1 - offspringFraction) * populationSize).floor(),
+            ((1 - offspringRatio) * populationSize).floor(),
             optimizer
         ).also {
             listeners.forEach {
@@ -386,7 +386,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         fun build() = Engine(
             genotype = genotype,
             populationSize = populationSize,
-            offspringFraction = offspringFraction,
+            offspringRatio = offspringFraction,
             selector = selector,
             offspringSelector = offspringSelector,
             alterer = alterer,
