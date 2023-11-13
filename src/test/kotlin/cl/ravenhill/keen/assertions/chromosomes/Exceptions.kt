@@ -84,7 +84,7 @@ suspend fun <T, G, F> `ensure chromosome filter count matches gene count`(
             factory.size = size
             shouldThrow<CompositeException> {
                 factory.make()
-            }.shouldHaveInfringement<IntConstraintException>(
+            }.shouldHaveInfringement<CollectionConstraintException>(
                 "Chromosome creation requires equal number of filters and genes"
             )
         }
