@@ -14,4 +14,4 @@ package cl.ravenhill.keen.limits
  * @since 1.0.0
  * @version 1.0.0
  */
-data class TargetFitness(val fitness: Double) : MatchLimit({ bestFitness == fitness })
+data class TargetFitness(val fitness: Double) : ListenLimit({ bestFitness == fitness })

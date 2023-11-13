@@ -45,10 +45,7 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
  * @version 2.0.0
  */
 interface EvolutionListener<DNA, G : Gene<DNA, G>> {
-    var population: Population<DNA, G>
     var optimizer: IndividualOptimizer<DNA, G>
-    val fittest: Individual<DNA, G>?
-    var steadyGenerations: Int
     var generation: Int
     val currentGeneration: GenerationRecord
     var evolution: EvolutionRecord<DNA, G>
@@ -64,14 +61,6 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
      * Called when the evolution process has ended (e.g., when the termination criteria are met).
      */
     fun onEvolutionEnded() = Unit
-
-    /**
-     * Called when the generation value has changed.
-     * @param prop The property that has changed.
-     * @param old The old generation value.
-     * @param new The new generation value.
-     */
-    fun onGenerationShift(prop: KProperty<*>, old: Int, new: Int) = Unit
 
     /**
      * Called when a new generation has started.

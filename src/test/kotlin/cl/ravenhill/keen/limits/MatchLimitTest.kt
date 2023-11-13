@@ -29,7 +29,7 @@ class MatchLimitTest : FreeSpec({
                 Arb.optimizer<Nothing, NothingGene>(),
                 Arb.nothingPopulation()
             ) { i, gen, steady, fitness, optimizer, population ->
-                val limit = MatchLimit { generation >= i }
+                val limit = ListenLimit { generation >= i }
                 limit.invoke(object : Evolver<Nothing, NothingGene> {
                     override val generation: Int = gen
                     override val steadyGenerations: Int = steady

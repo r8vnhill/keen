@@ -6,6 +6,8 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.EvolutionListener
+import cl.ravenhill.keen.util.listeners.Listeners
 
 /**
  * Defines the core functionality of an evolutionary process.
@@ -40,6 +42,8 @@ interface Evolver<DNA, G : Gene<DNA, G>> {
     val steadyGenerations: Int
 
     val bestFitness: Double
+
+    val listeners: MutableList<EvolutionListener<DNA, G>>
 
     /**
      * Initiates and conducts the evolutionary process. The method orchestrates the selection,

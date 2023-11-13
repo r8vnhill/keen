@@ -10,6 +10,7 @@ import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
+import cl.ravenhill.keen.operators.Alterer
 import cl.ravenhill.keen.operators.crossover.combination.AverageCrossover
 import cl.ravenhill.keen.operators.crossover.combination.CombineCrossover
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover

@@ -7,35 +7,46 @@ package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.evolution.Evolver
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.EvolutionListener
 
 /**
- * A `Limit` represents a stopping condition for a genetic algorithm.
- * It defines a function that takes an [Engine] object and returns a boolean indicating whether the
- * algorithm should stop.
- * If the function returns `true`, the algorithm will stop; otherwise, it will continue running.
+ * Represents a termination criterion for genetic algorithms, known as a `Limit`.
+ * This interface defines a function that accepts an [Evolver] instance and returns a boolean value
+ * indicating whether the genetic algorithm should cease operation.
  *
- * Limits can be used to define a wide range of stopping conditions for a genetic algorithm.
- * For example, you might use a limit to stop the algorithm after a certain number of generations,
- * when a specific fitness threshold has been reached, or when the population has converged to a
- * stable solution.
+ * A `Limit` can be implemented to encapsulate various stopping conditions tailored to specific
+ * requirements of a genetic algorithm. Common examples of such conditions include halting the algorithm
+ * after processing a predefined number of generations, achieving a certain fitness level, or when the
+ * population exhibits signs of convergence.
  *
- * To create a new limit, you can implement this interface and define your own stopping condition in
- * the [invoke] method.
+ * To utilize a `Limit`, implement this interface and specify the logic of the stopping condition
+ * within the [invoke] method. The `invoke` method is called with the current state of the genetic
+ * algorithm, represented by the [Evolver] instance, and it should return `true` to halt the algorithm
+ * or `false` to allow it to continue.
  *
- * @see MatchLimit
+ * @param DNA The type representing the genetic data or information.
+ * @param G The type of gene that the genetic algorithm operates on, which holds [DNA] type data.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @property engine The [Evolver] instance that is executing the genetic algorithm.
+ *
+ * @see ListenLimit
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 1.0.0
  * @version 2.0.0
  */
-interface Limit {
+interface Limit<DNA, G> where G : Gene<DNA, G> {
+
+    var engine: Evolver<DNA, G>?
 
     /**
-     * Defines the stopping condition for the genetic algorithm.
+     * Evaluates the stopping condition for the genetic algorithm based on the current state of the [Evolver].
      *
-     * @param engine the engine object that is running the algorithm
-     * @return a boolean indicating whether the algorithm should stop
+     * @param engine The [Evolver] instance running the genetic algorithm.
+     * @return `true` if the algorithm should stop, otherwise `false`.
      */
-    operator fun invoke(engine: Evolver<*, *>): Boolean
+    operator fun invoke(): Boolean
 }
+
 

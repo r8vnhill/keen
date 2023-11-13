@@ -45,9 +45,7 @@ class EvolutionListenerTest : FreeSpec({
             ) { optimizer, population, (steadyGenerations, generation), generationRecords ->
                 with(
                     object : EvolutionListener<Nothing, NothingGene> {
-                        override var population = population
                         override var optimizer: IndividualOptimizer<Nothing, NothingGene> = optimizer
-                        override val fittest = population.firstOrNull()
                         override var steadyGenerations = steadyGenerations
                         override var generation = generation
                         override val currentGeneration = generationRecords.first()
@@ -136,10 +134,7 @@ class EvolutionListenerTest : FreeSpec({
         "when created" - {
             "should start with the correct parameters" {
                 with(object : AbstractEvolutionListener<Nothing, NothingGene>() {}) {
-                    population.shouldBeEmpty()
                     optimizer.shouldBeInstanceOf<FitnessMaximizer<*, *>>()
-                    fittest.shouldBeNull()
-                    steadyGenerations shouldBe 0
                     generation shouldBe 0
                     evolution shouldBe EvolutionRecord()
                 }

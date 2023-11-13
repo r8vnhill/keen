@@ -58,7 +58,6 @@ import kotlin.properties.Delegates
  * @param evaluator Executor responsible for evaluating the fitness of individuals.
  * @param interceptor Hook that allows custom operations before and after evolution stages.
  *
- * @property population The current population of individuals in the genetic algorithm.
  * @property generation The current generation count in the evolutionary process.
  * @property _steadyGenerations The number of generations without significant fitness improvement.
  * @property _bestFitness The fitness value of the best individual in the current generation.
@@ -77,34 +76,23 @@ class Engine<DNA, G : Gene<DNA, G>>(
     val selector: Selector<DNA, G>,
     val offspringSelector: Selector<DNA, G>,
     val alterer: Alterer<DNA, G>,
-    val limits: List<Limit>,
+    val limits: List<Limit<DNA, G>>,
     val survivorSelector: Selector<DNA, G>,
     val optimizer: IndividualOptimizer<DNA, G>,
-    val listeners: Listeners<DNA, G>,
+    override val listeners: MutableList<EvolutionListener<DNA, G>>,
     val evaluator: EvaluationExecutor<DNA, G>,
     val interceptor: EvolutionInterceptor<DNA, G>,
 ) : Evolver<DNA, G> {
 
     // region : PROPERTIES  ------------------------------------------------------------------------
-    var population: Population<DNA, G> by Delegates.observable(
-        initialValue = listOf(),
-        onChange = { _, _, _ -> listeners.forEach { it.population = population } })
-        private set
 
     private var evolutionResult: EvolutionResult<DNA, G> = EvolutionResult(optimizer, listOf(), 0)
 
-    private var _generation: Int by Delegates.observable(
-        initialValue = 0,
-        onChange = { prop, old, new ->
-            listeners.forEach { it.onGenerationShift(prop, old, new) }
-        }
-    )
+    private var _generation: Int = 0
 
     override val generation: Int get() = _generation
 
-    private var _steadyGenerations by Delegates.observable(
-        initialValue = 0,
-        onChange = { _, _, new -> listeners.forEach { it.steadyGenerations = new } })
+    private var _steadyGenerations = 0
 
     override val steadyGenerations: Int get() = _steadyGenerations
 
@@ -138,7 +126,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onEvolutionStart() }
         var evolution = EvolutionState.empty<DNA, G>()
         var result = EvolutionResult(optimizer, evolution.population, generation)
-        while (limits.none { it(this) }) { // While none of the limits are met
+        while (limits.none { it() }) { // While none of the limits are met
             result = evolve(evolution)
             _bestFitness = result.best.fitness
             evolution = result.next()
@@ -337,7 +325,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
                 "Population size must be greater than 0" { value must BePositive }
             }.let { field = value }
 
-        var limits: List<Limit> = listOf(GenerationCount(100))
+        var limits: List<Limit<DNA, G>> = listOf(GenerationCount(100))
             set(value) = constraints {
                 "Limits cannot be empty" { value mustNot BeEmpty }
             }.let { field = value }

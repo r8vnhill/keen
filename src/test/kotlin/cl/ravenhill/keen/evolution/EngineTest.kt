@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.arbs.evolution.engine
 import cl.ravenhill.keen.arbs.evolution.evaluator
 import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.limits.limit
@@ -31,7 +32,17 @@ class EngineTest : FreeSpec({
                 Arb.optimizer<Int, IntGene>(),
                 Arb.evolutionListener<Int, IntGene>(),
                 Arb.evaluator<Int, IntGene>()
-            ) { genotype, populationSize, offspringRatio, selector, offspringSelector, alterer, limit, survivorSelector, optimizer, listener, evaluator ->
+            ) { genotype,
+                populationSize,
+                offspringRatio,
+                selector,
+                offspringSelector,
+                alterer,
+                limit,
+                survivorSelector,
+                optimizer,
+                listener,
+                evaluator ->
                 val engine = Engine(
                     genotype,
                     populationSize,
@@ -59,5 +70,15 @@ class EngineTest : FreeSpec({
                 engine.evaluator shouldBe evaluator
             }
         }
+
+        "have a [generation] property that" - {
+            "starts at 0" {
+                checkAll(Arb.engine()) { engine ->
+                    engine.generation shouldBe 0
+                }
+            }
+        }
+
+        "have a "
     }
 })

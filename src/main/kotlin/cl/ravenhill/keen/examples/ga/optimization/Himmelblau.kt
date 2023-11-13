@@ -16,19 +16,19 @@ fun main() {
         engine.evolve()
     }
     println(engine.listeners.first())
-    println("Error: ${engine.bestFitness}")
-    println("========= Tournament selector =========")
-    repeat(2) {
-        engine = createEngine(::himmelblau, -10.0..10.0, -10.0..10.0)
-        engine.evolve()
-    }
-    println(engine.listeners.first())
-    println("Error: ${engine.bestFitness}")
-    println("========= Roulette wheel selector =========")
-    repeat(2) {
-        engine = createEngine(::himmelblau, -10.0..10.0, -10.0..10.0)
-        engine.evolve()
-    }
-    println(engine.listeners.first())
-    println("Error: ${engine.bestFitness}")
+//    println("Error: ${engine.bestFitness}")
+//    println("========= Tournament selector =========")
+//    repeat(2) {
+//        engine = createEngine(::himmelblau, -10.0..10.0, -10.0..10.0)
+//        engine.evolve()
+//    }
+//    println(engine.listeners.first())
+//    println("Error: ${engine.bestFitness}")
+//    println("========= Roulette wheel selector =========")
+//    repeat(2) {
+//        engine = createEngine(::himmelblau, -10.0..10.0, -10.0..10.0)
+//        engine.evolve()
+//    }
+//    println(engine.listeners.first())
+//    println("Error: ${engine.bestFitness}")
 }
