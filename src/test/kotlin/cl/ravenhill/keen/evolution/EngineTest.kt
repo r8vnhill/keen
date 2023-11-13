@@ -19,18 +19,24 @@ class EngineTest : FreeSpec({
 
     "An evolution [Engine]" - {
         "can be created" {
-            with(Engine<Nothing, NothingGene>(
-                Genotype.Factory<Nothing, NothingGene>(),
-                2,
-                0.5,
-                TournamentSelector(2),
-                val offspringSelector: Selector<DNA, G>,
-                val alterer: Alterer<DNA, G>,
-            val limits: List<Limit>,
-            val survivorSelector: Selector<DNA, G>,
-            val optimizer: IndividualOptimizer<DNA, G>,
-            val listeners: Listeners<DNA, G>,
-            val evaluator: EvaluationExecutor<DNA, G>,
-            val interceptor: EvolutionInterceptor<DNA, G>,
+            with(
+                Engine<Nothing, NothingGene>(
+                    Genotype.Factory<Nothing, NothingGene>(),
+                    2,
+                    0.5,
+                    TournamentSelector(2),
+                    TournamentSelector(2),
+                    RandomMutator(0.5),
+                    listOf(GenerationCount(10)),
+                    TournamentSelector(2),
+                    FitnessMinimizer(),
+                    listOf(),
+                    SequentialEvaluator { 0.0 },
+                    EvolutionInterceptor.identity()
+                )
+            ) {
+
+            }
+        }
     }
 })
