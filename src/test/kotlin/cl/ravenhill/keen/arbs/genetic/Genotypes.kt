@@ -13,6 +13,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
 import cl.ravenhill.keen.arbs.datatypes.list
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.property.arbitrary.int
 
 /**
@@ -66,4 +67,29 @@ fun Arb.Companion.nothingGenotype(size: Int? = null) = arbitrary {
     } else {
         Genotype(list(nothingChromosome()).bind())
     }
+}
+
+/**
+ * Provides an arbitrary generator for creating instances of `Genotype.Factory<Int, IntGene>`.
+ * This function is part of Kotest's property-based testing framework and is used to generate
+ * random `Genotype.Factory` instances with `Int` as the DNA type and `IntGene` as the gene type.
+ *
+ * The generated `Genotype.Factory` can be used in tests to create `Genotype` instances with
+ * integer genes. It is particularly useful in scenarios where you need to test functions or
+ * algorithms that operate on genotypes with integer values.
+ *
+ * ## Usage Example:
+ * This example demonstrates how to use the generator to create a random `Genotype.Factory<Int, IntGene>`:
+ * ```kotlin
+ * val factoryArb = Arb.intGenotypeFactory()
+ * val factory = factoryArb.bind() // Binding the arbitrary to get an instance
+ * val genotype = factory.make() // Creating a genotype using the factory
+ * ```
+ *
+ * @return An [Arb] of [Genotype.Factory] with [Int] as the DNA type and [IntGene] as the gene type.
+ * @see Genotype.Factory
+ * @see IntGene
+ */
+fun Arb.Companion.intGenotypeFactory() = arbitrary {
+    Genotype.Factory<Int, IntGene>()
 }
