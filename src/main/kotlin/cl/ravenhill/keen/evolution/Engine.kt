@@ -26,7 +26,6 @@ import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.floor
 import cl.ravenhill.keen.util.listeners.EvolutionListener
-import cl.ravenhill.keen.util.listeners.Listeners
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlin.properties.Delegates
@@ -59,8 +58,6 @@ import kotlin.properties.Delegates
  * @param interceptor Hook that allows custom operations before and after evolution stages.
  *
  * @property generation The current generation count in the evolutionary process.
- * @property _steadyGenerations The number of generations without significant fitness improvement.
- * @property _bestFitness The fitness value of the best individual in the current generation.
  * @property fittest The individual with the highest fitness in the current generation.
  *
  * @constructor Initializes the engine with the provided parameters.
@@ -92,22 +89,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
     override val generation: Int get() = _generation
 
-    private var _steadyGenerations = 0
-
-    override val steadyGenerations: Int get() = _steadyGenerations
-
-    private var _bestFitness: Double by Delegates.observable(
-        initialValue = Double.NaN,
-        onChange = { _, old, new ->
-            if (old == new) {
-                _steadyGenerations++
-            } else {
-                _steadyGenerations = 0
-            }
-        })
-
-    override val bestFitness: Double get() = _bestFitness
-
     /**
      * The fittest individual of the current generation.
      */
@@ -128,7 +109,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
         var result = EvolutionResult(optimizer, evolution.population, generation)
         while (limits.none { it() }) { // While none of the limits are met
             result = evolve(evolution)
-            _bestFitness = result.best.fitness
             evolution = result.next()
         }
         return result.also {

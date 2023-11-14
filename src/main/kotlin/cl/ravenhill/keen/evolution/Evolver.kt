@@ -23,10 +23,6 @@ import cl.ravenhill.keen.util.listeners.Listeners
  *
  * @property generation An integer representing the current generation number in the evolutionary process.
  *           This is typically used to track the progress and to apply generational limits.
- * @property steadyGenerations The number of generations that the population has remained unchanged.
- *           This is typically used to track the progress and to apply generational limits.
- * @property bestFitness The fitness of the best individual in the population.
- *           This is typically used to track the progress and to apply fitness limits.
  *
  * @return [EvolutionResult] encapsulating the final state of the population at the end of the evolution
  *         process. This includes the last generation evolved and any additional results or metadata.
@@ -38,10 +34,6 @@ import cl.ravenhill.keen.util.listeners.Listeners
 interface Evolver<DNA, G : Gene<DNA, G>> {
 
     val generation: Int
-
-    val steadyGenerations: Int
-
-    val bestFitness: Double
 
     val listeners: MutableList<EvolutionListener<DNA, G>>
 
