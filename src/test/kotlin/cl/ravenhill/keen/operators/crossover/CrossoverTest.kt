@@ -44,14 +44,14 @@ class CrossoverTest : FreeSpec({
                     Arb.probability()
                 ) { numIn, numOut, exclusivity, chromosomeRate ->
                     object : AbstractCrossover<Nothing, NothingGene>(
-                        numIn = numIn,
+                        numParents = numIn,
                         exclusivity = exclusivity,
                         chromosomeRate = chromosomeRate
                     ) {
                         override fun crossoverChromosomes(
                             chromosomes: List<Chromosome<Nothing, NothingGene>>
                         ) = List(numOut) { NothingChromosome(listOf()) }
-                    }.numOut shouldBe 2
+                    }.numOffspring shouldBe 2
                 }
             }
 
@@ -62,14 +62,14 @@ class CrossoverTest : FreeSpec({
                     Arb.probability()
                 ) { numOut, exclusivity, chromosomeRate ->
                     object : AbstractCrossover<Nothing, NothingGene>(
-                        numOut = numOut,
+                        numOffspring = numOut,
                         exclusivity = exclusivity,
                         chromosomeRate = chromosomeRate
                     ) {
                         override fun crossoverChromosomes(
                             chromosomes: List<Chromosome<Nothing, NothingGene>>
                         ) = List(numOut) { NothingChromosome(listOf()) }
-                    }.numIn shouldBe 2
+                    }.numParents shouldBe 2
                 }
             }
 
@@ -80,8 +80,8 @@ class CrossoverTest : FreeSpec({
                     Arb.probability()
                 ) { numIn, numOut, chromosomeRate ->
                     object : AbstractCrossover<Nothing, NothingGene>(
-                        numOut = numOut,
-                        numIn = numIn,
+                        numOffspring = numOut,
+                        numParents = numIn,
                         chromosomeRate = chromosomeRate
                     ) {
                         override fun crossoverChromosomes(
@@ -98,8 +98,8 @@ class CrossoverTest : FreeSpec({
                     Arb.boolean()
                 ) { numIn, numOut, exclusivity ->
                     object : AbstractCrossover<Nothing, NothingGene>(
-                        numOut = numOut,
-                        numIn = numIn,
+                        numOffspring = numOut,
+                        numParents = numIn,
                         exclusivity = exclusivity
                     ) {
                         override fun crossoverChromosomes(
@@ -119,8 +119,8 @@ class CrossoverTest : FreeSpec({
                     ) { numIn, numOut, exclusivity, chromosomeRate ->
                         shouldThrow<CompositeException> {
                             object : AbstractCrossover<Nothing, NothingGene>(
-                                numOut = numOut,
-                                numIn = numIn,
+                                numOffspring = numOut,
+                                numParents = numIn,
                                 exclusivity = exclusivity,
                                 chromosomeRate = chromosomeRate
                             ) {
@@ -143,8 +143,8 @@ class CrossoverTest : FreeSpec({
                     ) { numIn, numOut, exclusivity, chromosomeRate ->
                         shouldThrow<CompositeException> {
                             object : AbstractCrossover<Nothing, NothingGene>(
-                                numOut = numOut,
-                                numIn = numIn,
+                                numOffspring = numOut,
+                                numParents = numIn,
                                 exclusivity = exclusivity,
                                 chromosomeRate = chromosomeRate
                             ) {
@@ -167,8 +167,8 @@ class CrossoverTest : FreeSpec({
                     ) { numIn, numOut, exclusivity, chromosomeRate ->
                         shouldThrow<CompositeException> {
                             object : AbstractCrossover<Nothing, NothingGene>(
-                                numOut = numOut,
-                                numIn = numIn,
+                                numOffspring = numOut,
+                                numParents = numIn,
                                 exclusivity = exclusivity,
                                 chromosomeRate = chromosomeRate
                             ) {
@@ -297,6 +297,6 @@ class CrossoverTest : FreeSpec({
     ) {
         override fun crossoverChromosomes(
             chromosomes: List<Chromosome<Int, IntGene>>
-        ) = List(numOut) { IntChromosome(listOf(IntGene(1), IntGene(2))) }
+        ) = List(numOffspring) { IntChromosome(listOf(IntGene(1), IntGene(2))) }
     }
 }

@@ -27,6 +27,8 @@ import cl.ravenhill.keen.genetic.genes.NothingGene
 class NothingChromosome(genes: List<NothingGene>) :
     AbstractChromosome<Nothing, NothingGene>(genes) {
 
+    constructor(vararg genes: NothingGene) : this(genes.toList())
+
     /**
      * Returns a new `NothingChromosome` instance with the provided genes.
      *

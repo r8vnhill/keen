@@ -25,14 +25,14 @@ import cl.ravenhill.keen.util.transpose
  * An abstract class for performing crossover operations on individuals within a population.
  * Subclasses must implement the [crossoverChromosomes] method for actual crossover functionality.
  *
- * @param numOut The number of new individuals produced by each crossover operation
- * @param numIn The number of individuals required as input for each crossover operation
+ * @param numOffspring The number of new individuals produced by each crossover operation
+ * @param numParents The number of individuals required as input for each crossover operation
  * @param exclusivity If true, individuals cannot be selected more than once for a given crossover operation
  * @param chromosomeRate The probability that a given chromosome within an individual will be selected for recombination
  */
 abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
-    val numOut: Int = 2,
-    val numIn: Int = 2,
+    val numOffspring: Int = 2,
+    val numParents: Int = 2,
     val exclusivity: Boolean = false,
     val chromosomeRate: Double = 1.0,
 ) : Crossover<DNA, G> {
@@ -40,10 +40,10 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     init {
         constraints {
             "There should be at least 2 inputs to perform a crossover operation" {
-                numIn must BeAtLeast(2)
+                numParents must BeAtLeast(2)
             }
             "The number of outputs should be greater than 0" {
-                numOut must BePositive
+                numOffspring must BePositive
             }
             "The chromosome crossover probability should be in 0..1" {
                 chromosomeRate must BeInRange(0.0..1.0)
@@ -57,7 +57,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     ): AltererResult<DNA, G> {
         // select a subset of individuals to recombine using the provided probability and other
         // parameters
-        val parents = Core.random.subsets(population, numIn, exclusivity)
+        val parents = Core.random.subsets(population, numParents, exclusivity)
         // recombine the selected parents and count the number of individuals that were
         // recombined
         val recombined = mutableListOf<Individual<DNA, G>>()
@@ -72,8 +72,8 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
 
     override fun crossover(parentGenotypes: List<Genotype<DNA, G>>): List<Genotype<DNA, G>> {
         constraints {
-            "Input count [${parentGenotypes.size}] must match constructor-specified count [$numIn]." {
-                parentGenotypes must HaveSize(numIn)
+            "Input count [${parentGenotypes.size}] must match constructor-specified count [$numParents]." {
+                parentGenotypes must HaveSize(numParents)
             }
         }
         val size = parentGenotypes[0].size
@@ -99,7 +99,7 @@ abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
     /**
      * Performs crossover on a list of chromosomes to create new individuals.
      *
-     * This method receives a list of [numIn] input [chromosomes] and returns a list of [numOut]
+     * This method receives a list of [numParents] input [chromosomes] and returns a list of [numOffspring]
      * output [chromosomes].
      *
      * @param chromosomes The list of chromosomes to recombine

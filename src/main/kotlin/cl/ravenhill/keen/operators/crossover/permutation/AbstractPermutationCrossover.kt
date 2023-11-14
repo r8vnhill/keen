@@ -18,8 +18,8 @@ import cl.ravenhill.keen.util.duplicates
  *
  * @param DNA The type of the elements in the genes.
  * @param probability The probability of performing crossover on each individual of the population.
- * @param numOut The number of individuals produced by the crossover (default: 2).
- * @param numIn The number of individuals required to perform the crossover (default: 2).
+ * @param numOffspring The number of individuals produced by the crossover (default: 2).
+ * @param numParents The number of individuals required to perform the crossover (default: 2).
  * @param exclusivity whether a parent can be used more than once (default: false)
  * @param chromosomeRate The rate of chromosomes that will undergo crossover (default: 1.0).
  *
@@ -28,11 +28,11 @@ import cl.ravenhill.keen.util.duplicates
  * @version 2.0.0
  */
 abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
-    numOut: Int = 2,
-    numIn: Int = 2,
+    numOffspring: Int = 2,
+    numParents: Int = 2,
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0
-) : AbstractCrossover<DNA, G>(numOut, numIn, exclusivity, chromosomeRate) {
+) : AbstractCrossover<DNA, G>(numOffspring, numParents, exclusivity, chromosomeRate) {
 
     /* Documentation inherited from [AbstractCrossover] */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
