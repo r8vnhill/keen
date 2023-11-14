@@ -58,4 +58,12 @@ interface PermutationCrossover<DNA, G> : Crossover<DNA, G> where G : Gene<DNA, G
      * @return A list containing lists of [G] genes, each representing an offspring chromosome.
      */
     fun performPermutationCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>>
+
+    /**
+     * Performs crossover operation on a list of chromosomes.
+     *
+     * @param chromosomes the list of chromosomes to be crossed over
+     * @return the list of resulting chromosomes after crossover operation
+     */
+    fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>>
 }

@@ -143,5 +143,6 @@ fun Arb.Companion.intCrossover() = choice(
         chromosomeRate = probability(),
         geneRate = probability()
     ),
-    averageCrossover()
+    averageCrossover(),
+    dummyPermutationCrossover()
 )

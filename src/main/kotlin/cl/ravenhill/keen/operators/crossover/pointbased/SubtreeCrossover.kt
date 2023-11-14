@@ -107,7 +107,7 @@ class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
                         it
                     }
                 }
-                val newTree2 = gene2.dna.replaceSubtree(slices.second, node1).let {
+                val newTree2 = gene2.dna.replaceFirst(node1) { it === node1 }.let {
                     if (it.height > Core.maxProgramDepth) {
                         if (Core.random.nextBoolean()) {
                             gene1.dna
@@ -119,10 +119,10 @@ class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
                     }
                 }
                 constraints {
-                    "The new tree's height (${newTree1.height}) exceeds the maximum allowed height (${Core.maxProgramDepth})." {
+                    "New tree height (${newTree1.height}) exceeds maximum limit (${Core.maxProgramDepth})." {
                         newTree1.height must BeAtMost(Core.maxProgramDepth)
                     }
-                    "The new tree's height (${newTree2.height}) exceeds the maximum allowed height (${Core.maxProgramDepth})." {
+                    "New tree height (${newTree2.height}) exceeds maximum limit (${Core.maxProgramDepth})." {
                         newTree2.height must BeAtMost(Core.maxProgramDepth)
                     }
                 }

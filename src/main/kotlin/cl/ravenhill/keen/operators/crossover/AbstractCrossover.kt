@@ -31,10 +31,10 @@ import cl.ravenhill.keen.util.transpose
  * @param chromosomeRate The probability that a given chromosome within an individual will be selected for recombination
  */
 abstract class AbstractCrossover<DNA, G : Gene<DNA, G>>(
-    val numOffspring: Int = 2,
-    val numParents: Int = 2,
+    override val numOffspring: Int = 2,
+    override val numParents: Int = 2,
     val exclusivity: Boolean = false,
-    val chromosomeRate: Double = 1.0,
+    override val chromosomeRate: Double = 1.0,
 ) : Crossover<DNA, G> {
 
     init {

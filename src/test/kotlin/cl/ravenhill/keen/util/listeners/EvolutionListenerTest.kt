@@ -41,7 +41,7 @@ class EvolutionListenerTest : FreeSpec({
                 Arb.optimizer<Nothing, NothingGene>(),
                 Arb.orderedPair(Arb.positiveInt(), Arb.positiveInt()),
                 Arb.mutableList(Arb.generationRecord(), 1..25)
-            ) { optimizer, (steadyGenerations, generation), generationRecords ->
+            ) { optimizer, (_, generation), generationRecords ->
                 with(
                     object : EvolutionListener<Nothing, NothingGene> {
                         override var optimizer: IndividualOptimizer<Nothing, NothingGene> = optimizer

@@ -80,4 +80,3 @@ abstract class AbstractPermutationCrossover<DNA, G>(
         return crossed.map { chromosomes[0].withGenes(genes = it) }
     }
 }
-
