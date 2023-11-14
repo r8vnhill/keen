@@ -15,6 +15,7 @@ import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
 import cl.ravenhill.keen.operators.crossover.combination.AverageCrossover
 import cl.ravenhill.keen.operators.crossover.combination.CombineCrossover
 import cl.ravenhill.keen.operators.crossover.permutation.AbstractPermutationCrossover
+import cl.ravenhill.keen.operators.crossover.permutation.PermutationCrossover
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
@@ -100,7 +101,7 @@ fun <T, G> Arb.Companion.dummyPermutationCrossover(
     numOffspring: Arb<Int> = int(2..10),
     exclusivity: Arb<Boolean> = boolean(),
     chromosomeRate: Arb<Double> = probability()
-): Arb<AbstractPermutationCrossover<T, G>> where G : Gene<T, G> = arbitrary {
+): Arb<PermutationCrossover<T, G>> where G : Gene<T, G> = arbitrary {
     val boundParents = numParents.bind()
     val boundOffspring = numOffspring.bind()
     val boundExclusivity = exclusivity.bind()

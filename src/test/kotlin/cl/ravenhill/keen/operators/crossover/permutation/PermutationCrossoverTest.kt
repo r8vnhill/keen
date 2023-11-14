@@ -33,7 +33,6 @@ import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-@OptIn(ExperimentalKotest::class)
 class PermutationCrossoverTest : FreeSpec({
 
     "A [PermutationCrossover]" - {

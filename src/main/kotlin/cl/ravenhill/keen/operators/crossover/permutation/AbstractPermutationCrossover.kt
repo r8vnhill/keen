@@ -14,28 +14,59 @@ import cl.ravenhill.keen.operators.crossover.AbstractCrossover
 import cl.ravenhill.keen.util.duplicates
 
 /**
- * A _Permutation Crossover_ operator is a crossover operator that works with a list of
- * genes that represent a permutation of a set of elements (without duplication).
+ * Abstract class for implementing permutation crossover in genetic algorithms.
  *
- * @param DNA The type of the elements in the genes.
- * @param probability The probability of performing crossover on each individual of the population.
- * @param numOffspring The number of individuals produced by the crossover (default: 2).
- * @param numParents The number of individuals required to perform the crossover (default: 2).
- * @param exclusivity whether a parent can be used more than once (default: false)
- * @param chromosomeRate The rate of chromosomes that will undergo crossover (default: 1.0).
+ * Permutation crossover is a genetic operation used for problems where the solution is a permutation
+ * of elements, such as scheduling or routing problems. This class provides a framework for implementing
+ * permutation crossover by defining the [performPermutationCrossover] method from the [PermutationCrossover] interface.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * The [crossoverChromosomes] method orchestrates the crossover process, ensuring that the resulting
+ * offspring are valid permutations and do not contain duplicated genes.
+ *
+ * ## Constraints:
+ * This class imposes constraints to ensure that the chromosomes involved in the crossover do not
+ * contain duplicate genes, as this would violate the permutation property.
+ *
+ * ## Usage:
+ * To use this class, extend it and implement the [performPermutationCrossover] method. This method
+ * should define how the chromosomes are combined to produce offspring. The actual crossover logic
+ * will depend on the specific requirements of the problem being solved.
+ *
+ * ```kotlin
+ * class MyPermutationCrossover : AbstractPermutationCrossover<Int, IntGene>() {
+ *     override fun performPermutationCrossover(chromosomes: List<Chromosome<Int, IntGene>>): List<List<IntGene>> {
+ *         // Implement specific crossover logic here
+ *     }
+ * }
+ * ```
+ *
+ * @param DNA The type of data that represents an individual's genotype.
+ * @param G The specific type of [Gene] that encapsulates the [DNA] type data.
+ * @param numOffspring The number of offspring to produce in each crossover operation.
+ * @param numParents The number of parent chromosomes involved in the crossover.
+ * @param exclusivity Determines whether the crossover operation is exclusive.
+ * @param chromosomeRate The rate at which chromosomes are selected for crossover.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 1.2.0
  * @version 2.0.0
  */
-abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
+abstract class AbstractPermutationCrossover<DNA, G>(
     numOffspring: Int = 2,
     numParents: Int = 2,
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0
-) : AbstractCrossover<DNA, G>(numOffspring, numParents, exclusivity, chromosomeRate) {
+) : AbstractCrossover<DNA, G>(numOffspring, numParents, exclusivity, chromosomeRate),
+    PermutationCrossover<DNA, G>
+      where G : Gene<DNA, G> {
 
-    /* Documentation inherited from [AbstractCrossover] */
+    /**
+     * Orchestrates the permutation crossover process on a given set of chromosomes.
+     * It ensures the validity of the permutation and applies the crossover rate.
+     *
+     * @param chromosomes The list of parent chromosomes to undergo crossover.
+     * @return A list of offspring chromosomes resulting from the crossover.
+     */
     override fun crossoverChromosomes(chromosomes: List<Chromosome<DNA, G>>): List<Chromosome<DNA, G>> {
         constraints {
             for (chromosome in chromosomes) {
@@ -48,9 +79,5 @@ abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
         val crossed = performPermutationCrossover(chromosomes)
         return crossed.map { chromosomes[0].withGenes(genes = it) }
     }
-
-    /**
-     * Performs permutation crossover on a list of chromosomes.
-     */
-    protected abstract fun performPermutationCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>>
 }
+
