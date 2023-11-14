@@ -7,6 +7,7 @@ package cl.ravenhill.keen.limits
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -21,14 +22,14 @@ class SteadyGenerationsTest : FreeSpec({
     "A [SteadyGenerations] limit" - {
         "can be created with a positive integer" {
             checkAll(Arb.positiveInt()) { numGenerations ->
-                SteadyGenerations(numGenerations).generations shouldBe numGenerations
+                SteadyGenerations<Nothing, NothingGene>(numGenerations).generations shouldBe numGenerations
             }
         }
 
         "cannot be created with a non-positive integer" {
             checkAll(Arb.nonPositiveInt()) { numGenerations ->
                 shouldThrow<CompositeException> {
-                    SteadyGenerations(numGenerations)
+                    SteadyGenerations<Nothing, NothingGene>(numGenerations)
                 }.shouldHaveInfringement<IntConstraintException>(
                     "Number of steady generations [$numGenerations] must be a positive integer"
                 )

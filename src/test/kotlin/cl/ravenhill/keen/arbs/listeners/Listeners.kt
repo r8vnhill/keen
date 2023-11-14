@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.arbs.listeners
 
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import io.kotest.property.Arb
@@ -18,8 +19,8 @@ import io.kotest.property.arbitrary.positiveInt
  * @param G The type of gene that the listener will be dealing with.
  * @return An arbitrary generator producing instances of [EvolutionListener].
  */
-fun <T, G> Arb.Companion.evolutionListener() where G : Gene<T, G> =
-    choice(evolutionPlotter<T, G>(), evolutionPrinter())
+fun <T, G> Arb.Companion.evolutionListener(): Arb<EvolutionListener<T, G>> where G : Gene<T, G> =
+    choice(evolutionPlotter(), evolutionPrinter())
 
 /**
  * Generates an arbitrary [EvolutionPlotter] for property-based testing.

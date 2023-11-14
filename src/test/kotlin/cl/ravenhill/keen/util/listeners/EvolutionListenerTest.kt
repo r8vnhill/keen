@@ -39,14 +39,12 @@ class EvolutionListenerTest : FreeSpec({
             checkAll(
                 PropTestConfig(iterations = 25),
                 Arb.optimizer<Nothing, NothingGene>(),
-                Arb.nothingPopulation(),
                 Arb.orderedPair(Arb.positiveInt(), Arb.positiveInt()),
                 Arb.mutableList(Arb.generationRecord(), 1..25)
-            ) { optimizer, population, (steadyGenerations, generation), generationRecords ->
+            ) { optimizer, (steadyGenerations, generation), generationRecords ->
                 with(
                     object : EvolutionListener<Nothing, NothingGene> {
                         override var optimizer: IndividualOptimizer<Nothing, NothingGene> = optimizer
-                        override var steadyGenerations = steadyGenerations
                         override var generation = generation
                         override val currentGeneration = generationRecords.first()
                         override var evolution = EvolutionRecord<Nothing, NothingGene>(

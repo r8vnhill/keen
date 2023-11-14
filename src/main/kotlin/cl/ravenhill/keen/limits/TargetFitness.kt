@@ -5,6 +5,11 @@
 
 package cl.ravenhill.keen.limits
 
+import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.AbstractEvolutionListener
+import cl.ravenhill.keen.util.listeners.records.GenerationRecord
+
 /**
  * A [Limit] that checks whether the genetic algorithm has reached the target fitness.
  *
@@ -14,4 +19,13 @@ package cl.ravenhill.keen.limits
  * @since 1.0.0
  * @version 1.0.0
  */
-data class TargetFitness(val fitness: Double) : ListenLimit({ bestFitness == fitness })
+data class TargetFitness<DNA, G>(val fitness: Double) : ListenLimit<DNA, G>(
+    object : AbstractEvolutionListener<DNA, G>() {
+        override fun onGenerationFinished(population: Population<DNA, G>) {
+            _currentGeneration = GenerationRecord(generation)
+        }
+    },
+    {
+        this.currentGeneration.population.resulting.any { it.fitness >= fitness }
+    }
+) where G : Gene<DNA, G>

@@ -1,9 +1,12 @@
 package cl.ravenhill.keen.arbs.limits
 
+import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.limits.ListenLimit
 import cl.ravenhill.keen.limits.SteadyGenerations
+import cl.ravenhill.keen.util.listeners.AbstractEvolutionListener
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
@@ -25,8 +28,8 @@ import io.kotest.property.arbitrary.int
  *         determined by the provided [count] generator. This allows for testing the effect of different
  *         generation limits on the evolutionary process.
  */
-fun Arb.Companion.generationCount(count: Arb<Int> = int(1..100)) = arbitrary {
-    GenerationCount(count.bind())
+fun <T, G> Arb.Companion.generationCount(count: Arb<Int> = int(1..100)) where G : Gene<T, G> = arbitrary {
+    GenerationCount<T, G>(count.bind())
 }
 
 /**
@@ -45,9 +48,14 @@ fun Arb.Companion.generationCount(count: Arb<Int> = int(1..100)) = arbitrary {
  *         is a multiple of the bound. This provides a way to test the evolutionary process under
  *         different periodic conditions.
  */
-fun Arb.Companion.matchLimit(hi: Arb<Int> = int(1..100)) = arbitrary {
+fun <T, G> Arb.Companion.matchLimit(hi: Arb<Int> = int(1..100)) where G : Gene<T, G> = arbitrary {
     val bound = hi.bind()
-    ListenLimit { (generation + 1) % bound == 0 }
+    ListenLimit(
+        object : AbstractEvolutionListener<T, G>() {
+            override fun onGenerationFinished(population: Population<T, G>) {
+                generation++
+            }
+        }) { (generation + 1) % bound == 0 }
 }
 
 /**
@@ -64,8 +72,8 @@ fun Arb.Companion.matchLimit(hi: Arb<Int> = int(1..100)) = arbitrary {
  * @return An [Arb] that generates [SteadyGenerations] instances. Each instance represents a limit
  *         that triggers when the specified number of generations pass without improvement in fitness.
  */
-fun Arb.Companion.steadyGenerations(steady: Arb<Int> = int(1..100)) = arbitrary {
-    SteadyGenerations(steady.bind())
+fun <T, G> Arb.Companion.steadyGenerations(steady: Arb<Int> = int(1..100)) where G : Gene<T, G> = arbitrary {
+    SteadyGenerations<T, G>(steady.bind())
 }
 
 /**
@@ -80,5 +88,6 @@ fun Arb.Companion.steadyGenerations(steady: Arb<Int> = int(1..100)) = arbitrary 
  *         - [MatchLimit]: A customizable limit based on a matching condition.
  *         - [SteadyGenerations]: A limit based on the number of steady generations without improvement.
  */
-fun Arb.Companion.limit(): Arb<Limit> = choice(generationCount(), matchLimit(), steadyGenerations())
+fun <DNA, G> Arb.Companion.limit(): Arb<Limit<DNA, G>> where G : Gene<DNA, G> =
+    choice(generationCount(), matchLimit(), steadyGenerations())
 

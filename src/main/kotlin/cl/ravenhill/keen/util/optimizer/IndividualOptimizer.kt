@@ -8,6 +8,7 @@ package cl.ravenhill.keen.util.optimizer
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 
 /**
  * Generic optimization strategy to determine which of two individuals is better.

@@ -7,6 +7,7 @@ package cl.ravenhill.keen.limits
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
@@ -22,14 +23,14 @@ class GenerationCountTest : FreeSpec({
     "A [GenerationCount]" - {
         "can be created with a positive integer" {
             checkAll(Arb.positiveInt()) {
-                GenerationCount(it).count shouldBe it
+                GenerationCount<Int, IntGene>(it).count shouldBe it
             }
         }
 
         "cannot be created with a non-positive integer" {
             checkAll(Arb.nonPositiveInt()) {
                 shouldThrow<CompositeException> {
-                    GenerationCount(it)
+                    GenerationCount<Int, IntGene>(it)
                 }.shouldHaveInfringement<IntConstraintException>("Generation count [$it] must be at least 1")
             }
         }

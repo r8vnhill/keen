@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.arbs.evolution
 
+import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.limits.limit
 import cl.ravenhill.keen.arbs.listeners.evolutionListener
@@ -35,10 +36,10 @@ fun Arb.Companion.engine() = arbitrary {
         selector<Int, IntGene>().bind(),
         selector<Int, IntGene>().bind(),
         intAlterer().bind(),
-        list(limit(), 1..3).bind(),
+        list(limit<Int, IntGene>(), 1..3).bind(),
         selector<Int, IntGene>().bind(),
         optimizer<Int, IntGene>().bind(),
-        Arb.list(evolutionListener<Int, IntGene>(), 1..3).bind(),
+        mutableList(evolutionListener<Int, IntGene>(), 1..3).bind(),
         evaluator<Int, IntGene>().bind(),
         EvolutionInterceptor.identity()
     )
