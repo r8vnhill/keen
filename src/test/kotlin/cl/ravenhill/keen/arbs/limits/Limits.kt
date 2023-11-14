@@ -48,14 +48,14 @@ fun <T, G> Arb.Companion.generationCount(count: Arb<Int> = int(1..100)) where G 
  *         is a multiple of the bound. This provides a way to test the evolutionary process under
  *         different periodic conditions.
  */
-fun <T, G> Arb.Companion.matchLimit(hi: Arb<Int> = int(1..100)) where G : Gene<T, G> = arbitrary {
-    val bound = hi.bind()
+fun <T, G> Arb.Companion.listenLimit(count: Arb<Int> = int(1..100)) where G : Gene<T, G> = arbitrary {
+    val bound = count.bind()
     ListenLimit(
         object : AbstractEvolutionListener<T, G>() {
             override fun onGenerationFinished(population: Population<T, G>) {
                 generation++
             }
-        }) { (generation + 1) % bound == 0 }
+        }) { generation % 100 == 0 }
 }
 
 /**
@@ -89,5 +89,5 @@ fun <T, G> Arb.Companion.steadyGenerations(steady: Arb<Int> = int(1..100)) where
  *         - [SteadyGenerations]: A limit based on the number of steady generations without improvement.
  */
 fun <DNA, G> Arb.Companion.limit(): Arb<Limit<DNA, G>> where G : Gene<DNA, G> =
-    choice(generationCount(), matchLimit(), steadyGenerations())
+    choice(generationCount(), listenLimit(), steadyGenerations())
 

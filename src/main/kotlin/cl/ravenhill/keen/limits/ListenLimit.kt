@@ -48,12 +48,12 @@ import cl.ravenhill.keen.util.listeners.EvolutionListener
  * @version 2.0.0
  */
 open class ListenLimit<DNA, G>(
-    private val listener: EvolutionListener<DNA, G>,
+    val listener: EvolutionListener<DNA, G>,
     private val predicate: EvolutionListener<DNA, G>.() -> Boolean
 ) : Limit<DNA, G> where G : Gene<DNA, G> {
     override var engine: Evolver<DNA, G>? = null
         set(value) {
-            engine?.listeners?.plusAssign(listener)
+            value?.listeners?.add(listener)
             field = value
         }
 

@@ -14,6 +14,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
@@ -21,17 +22,33 @@ import io.kotest.property.checkAll
 class GenerationCountTest : FreeSpec({
 
     "A [GenerationCount]" - {
-        "can be created with a positive integer" {
-            checkAll(Arb.positiveInt()) {
-                GenerationCount<Int, IntGene>(it).count shouldBe it
+        "when created with a positive integer" - {
+            "correctly initializes its count value" {
+                checkAll(Arb.positiveInt()) {
+                    GenerationCount<Int, IntGene>(it).count shouldBe it
+                }
             }
         }
 
-        "cannot be created with a non-positive integer" {
-            checkAll(Arb.nonPositiveInt()) {
-                shouldThrow<CompositeException> {
-                    GenerationCount<Int, IntGene>(it)
-                }.shouldHaveInfringement<IntConstraintException>("Generation count [$it] must be at least 1")
+        "when attempted with a non-positive integer" - {
+            "throws an appropriate constraint violation exception" {
+                checkAll(Arb.nonPositiveInt()) {
+                    shouldThrow<CompositeException> {
+                        GenerationCount<Int, IntGene>(it)
+                    }.shouldHaveInfringement<IntConstraintException>("Generation count [$it] must be at least 1")
+                }
+            }
+        }
+
+        "when invoked to check the limit condition" - {
+            "accurately evaluates whether the generation count exceeds the limit" {
+                checkAll(Arb.int(1..100), Arb.int(1..100)) { count, generations ->
+                    val limit = GenerationCount<Int, IntGene>(count)
+                    repeat(generations) {
+                        limit.listener.onGenerationFinished(emptyList())
+                    }
+                    limit() shouldBe (generations >= count)
+                }
             }
         }
     }
