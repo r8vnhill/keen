@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.arbs.limits
 
+import cl.ravenhill.keen.arbs.datatypes.intWith
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
@@ -10,6 +11,7 @@ import cl.ravenhill.keen.util.listeners.AbstractEvolutionListener
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
+import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.int
 
 /**
@@ -33,6 +35,35 @@ fun <T, G> Arb.Companion.generationCount(count: Arb<Int> = int(1..100)) where G 
 }
 
 /**
+ * Provides an arbitrary generator for creating instances of [GenerationCount] with a specified constant count.
+ *
+ * This function is a specialized version of the [generationCount] generator that produces [GenerationCount]
+ * instances with a predefined number of generations. It is useful when a specific, constant number of generations
+ * is required for testing purposes.
+ *
+ * ## Usage
+ * This generator can be used in property-based tests where the number of generations for a [GenerationCount]
+ * limit is fixed. It is particularly useful when testing evolutionary algorithms with a predetermined stopping
+ * point based on generation count.
+ *
+ * ```kotlin
+ * // Example usage in a test
+ * checkAll(Arb.generationCount<Int, IntGene>(5)) { generationCount ->
+ *     // Test implementation where generationCount has a constant value of 5
+ * }
+ * ```
+ *
+ * @param count The constant number of generations to be used for the [GenerationCount] instances.
+ *              This value is fixed and passed directly to the [GenerationCount] constructor.
+ *
+ * @return An arbitrary ([Arb]) generator that produces [GenerationCount] instances with the specified count.
+ *
+ * @param T The type representing the genetic data or information.
+ * @param G The type of [Gene] associated with the genetic data.
+ */
+fun <T, G> Arb.Companion.generationCount(count: Int) where G : Gene<T, G> = generationCount<T, G>(constant(count))
+
+/**
  * Creates an arbitrary generator for [ListenLimit] instances suitable for property-based testing.
  *
  * This generator utilizes Kotest's [Arb] (Arbitrary) API to create [ListenLimit] instances with
@@ -48,14 +79,13 @@ fun <T, G> Arb.Companion.generationCount(count: Arb<Int> = int(1..100)) where G 
  *         is a multiple of the bound. This provides a way to test the evolutionary process under
  *         different periodic conditions.
  */
-fun <T, G> Arb.Companion.listenLimit(count: Arb<Int> = int(1..100)) where G : Gene<T, G> = arbitrary {
-    val bound = count.bind()
+fun <T, G> Arb.Companion.listenLimit(count: Int = 100) where G : Gene<T, G> = arbitrary {
     ListenLimit(
         object : AbstractEvolutionListener<T, G>() {
             override fun onGenerationFinished(population: Population<T, G>) {
                 generation++
             }
-        }) { generation % 100 == 0 }
+        }) { generation % count == 0 }
 }
 
 /**

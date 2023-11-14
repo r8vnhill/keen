@@ -37,7 +37,7 @@ fun Arb.Companion.real(
  * @return An [Arb] that generates pairs of the form `(Int, T)`, where the integer is randomly chosen from a
  *         range specified by the associated value of type [T].
  */
-fun <T> Arb.Companion.intWith(gen: Arb<T>, rangeFn: (T) -> IntRange) = arbitrary {
+fun <T> Arb.Companion.intWith(gen: Arb<T>, rangeFn: (T) -> Arb<Int>) = arbitrary {
     val value = gen.bind()
-    int(rangeFn(value)).next() to value
+    rangeFn(value).bind() to value
 }

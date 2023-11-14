@@ -59,7 +59,7 @@ class SinglePointCrossoverTest : FreeSpec({
                     Arb.singlePointCrossover<Int, IntGene>(),
                     Arb.intWith(
                         Arb.matrix(Arb.intGene(), Arb.constant(2), Arb.int(3..10))
-                    ) { 0..it.size }
+                    ) { Arb.int(0..it.size) }
                 ) { crossover, (cutPoint, parents) ->
                     val (parent1, parent2) = parents
                     val (child1, child2) = crossover.crossoverAt(cutPoint, parent1 to parent2)
@@ -109,7 +109,7 @@ class SinglePointCrossoverTest : FreeSpec({
                                 Arb.constant(2),
                                 Arb.int(3..10)
                             )
-                        ) { it.size..Int.MAX_VALUE }
+                        ) { Arb.int(it.size..Int.MAX_VALUE) }
                     ) { crossover, (cutPoint, parents) ->
                         shouldThrow<CompositeException> {
                             crossover.crossoverAt(cutPoint, parents[0] to parents[1])

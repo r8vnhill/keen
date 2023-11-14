@@ -7,6 +7,8 @@ package cl.ravenhill.keen.limits
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.arbs.limits.generationCount
+import cl.ravenhill.keen.assertions.util.listeners.`test ListenLimit with varying generations`
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.fail
@@ -42,12 +44,8 @@ class GenerationCountTest : FreeSpec({
 
         "when invoked to check the limit condition" - {
             "accurately evaluates whether the generation count exceeds the limit" {
-                checkAll(Arb.int(1..100), Arb.int(1..100)) { count, generations ->
-                    val limit = GenerationCount<Int, IntGene>(count)
-                    repeat(generations) {
-                        limit.listener.onGenerationFinished(emptyList())
-                    }
-                    limit() shouldBe (generations >= count)
+                `test ListenLimit with varying generations`({ Arb.generationCount<Int, IntGene>(it) }) { count ->
+                    generation >= count
                 }
             }
         }

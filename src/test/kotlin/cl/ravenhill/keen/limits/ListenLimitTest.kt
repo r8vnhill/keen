@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.limits
 
+import cl.ravenhill.keen.arbs.datatypes.intWith
 import cl.ravenhill.keen.arbs.evolution.engine
 import cl.ravenhill.keen.arbs.limits.listenLimit
 import cl.ravenhill.keen.arbs.listeners.evolutionListener
@@ -55,8 +56,8 @@ class ListenLimitTest : FreeSpec({
 
         "when invoked" - {
             "accurately determines if the limit condition is met" {
-                `test ListenLimit with varying generations`(Arb.listenLimit<Int, IntGene>()) {
-                    generation % 100 == 0
+                `test ListenLimit with varying generations`({ Arb.listenLimit<Int, IntGene>(it) }) { count ->
+                    generation % count == 0
                 }
             }
         }

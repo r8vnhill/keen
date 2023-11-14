@@ -1,7 +1,9 @@
 package cl.ravenhill.keen.assertions.util.listeners
 
+import cl.ravenhill.keen.arbs.datatypes.compose
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.ListenLimit
+import cl.ravenhill.keen.limits.ListenLimitTest
 import cl.ravenhill.keen.util.listeners.EvolutionListener
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -9,36 +11,59 @@ import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
 
 /**
- * Tests the behavior of [ListenLimit] with varying numbers of generations.
+ * Tests [ListenLimit] instances with varying numbers of generations to verify their behavior.
  *
- * This function checks whether the [ListenLimit] correctly determines when to stop the evolution process
- * based on a predefined predicate and a varying number of generations. It runs through multiple generations,
- * invoking the limit's listener's `onGenerationFinished` method each time, and then assesses if the limit's
- * stopping condition is met as expected.
+ * This function facilitates the testing of different [ListenLimit] configurations by simulating
+ * the evolutionary process for a specified number of generations. It checks if the limit's
+ * condition is met accurately at each generation.
  *
- * ## Examples
- * ### Example 1: Testing a simple generation count limit
+ *
+ * ## Usage Scenario in Testing
+ *
+ * ### Example: Testing ListenLimit with Varying Generations
+ * This function is used in [ListenLimitTest] to check the behavior of [ListenLimit] instances.
+ * It verifies whether the limit's condition, defined by the predicate, accurately determines
+ * if the limit is met for different numbers of generations.
+ *
+ * In the test suite, the function is invoked with specific configurations of [ListenLimit] and
+ * a predicate to assert the expected behavior. The test ensures that the limit's condition is
+ * consistently evaluated across multiple generations and confirms that the limit behaves as expected.
+ *
+ * ```kotlin
+ * class ListenLimitTest : FreeSpec({
+ *     "A [ListenLimit]" - {
+ *         // Test cases using `test ListenLimit with varying generations`
+ *         "when invoked" - {
+ *             "accurately determines if the limit condition is met" {
+ *                 `test ListenLimit with varying generations`({ Arb.listenLimit<Int, IntGene>(it) }) { count ->
+ *                     generation % count == 0
+ *                 }
+ *             }
+ *         }
+ *     }
+ * })
  * ```
- * val generationLimit = GenerationCount<Int, IntGene>(5)
- * val limitArb = Arb.constant(generationLimit)
- * val predicate = { generations: Int -> this.generation >= generations }
- * `test ListenLimit with varying generations`(limitArb, predicate)
- * ```
- * In this example, the test will check if the [ListenLimit] correctly stops the evolution after 5 generations.
  *
- * @param T The type of the gene's value.
- * @param G The specific type of [Gene].
- * @param limitArb An [Arb] that generates instances of [ListenLimit].
- * @param predicate A lambda function defining the stopping condition based on the generation count.
+ * @param T The type representing the genetic data or information.
+ * @param G The type of [Gene] associated with the genetic data.
+ * @param arbFactory A factory function that produces an [Arb] of [ListenLimit] instances.
+ *                   The factory takes an integer representing the number of generations
+ *                   and returns a corresponding [ListenLimit].
+ * @param predicate A predicate function that takes an [EvolutionListener] and a count of generations.
+ *                  It defines the condition upon which the limit is expected to be met.
+ *
+ * @throws AssertionError if the limit's condition does not behave as expected according to the predicate.
  */
 suspend fun <T, G> `test ListenLimit with varying generations`(
-    limitArb: Arb<ListenLimit<T, G>>,
-    predicate: EvolutionListener<T, G>.(Int) -> Boolean
+    arbFactory: (Int) -> Arb<ListenLimit<T, G>>,
+    predicate: EvolutionListener<T, G>.(count: Int) -> Boolean
 ) where G : Gene<T, G> {
-    checkAll(limitArb, Arb.int(1..100)) { limit, generations ->
+    checkAll(
+        Arb.int(1..100).compose { arbFactory(it) }, Arb.int(1..100)
+    ) { (count, limit), generations ->
         repeat(generations) {
             limit.listener.onGenerationFinished(emptyList())
         }
-        limit() shouldBe limit.listener.predicate(generations)
+        limit() shouldBe limit.listener.predicate(count)
     }
 }
