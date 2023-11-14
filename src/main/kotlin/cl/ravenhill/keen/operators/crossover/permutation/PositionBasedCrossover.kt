@@ -101,7 +101,7 @@ class PositionBasedCrossover<DNA, G : Gene<DNA, G>>(val probability: Double) :
     AbstractPermutationCrossover<DNA, G>() {
 
     /// Documentation inherited from [AbstractPermutationCrossover]
-    override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
+    override fun performPermutationCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
         constraints {
             "PBX crossover requires two chromosomes" {
                 chromosomes must HaveSize(2)

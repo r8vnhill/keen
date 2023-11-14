@@ -101,7 +101,7 @@ class PartiallyMappedCrossover<DNA, G : Gene<DNA, G>>(probability: Double) :
     AbstractPermutationCrossover<DNA, G>() {
 
     // / Documentation inherited from [AbstractPermutationCrossover]
-    override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
+    override fun performPermutationCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
         constraints {
             "Partially mapped crossover requires exactly two chromosomes" {
                 chromosomes must HaveSize(2)

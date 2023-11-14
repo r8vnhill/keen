@@ -95,7 +95,7 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(
      * @param chromosomes the list of chromosomes to be crossed over
      * @return a list of the offspring produced by the crossover operation
      */
-    override fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
+    override fun performPermutationCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
         constraints {
             "The Ordered Crossover operator requires exactly two chromosomes" {
                 chromosomes must HaveSize(2)

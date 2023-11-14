@@ -76,7 +76,7 @@ fun Arb.Companion.uniqueStrings(range: IntRange = 0..100) = arbitrary {
  * instance.
  * @return an [Arb] that generates [Random] instances with the given seed.
  */
-fun Arb.Companion.random(seed: Arb<Long> = Arb.long()) = arbitrary {
+fun Arb.Companion.random(seed: Arb<Long> = long()) = arbitrary {
     Random(seed.bind())
 }
 // endregion ARBITRARY GENERATORS

@@ -7,6 +7,7 @@ package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.crossover.AbstractCrossover
@@ -43,12 +44,13 @@ abstract class AbstractPermutationCrossover<DNA, G : Gene<DNA, G>>(
                 }
             }
         }
-        val crossed = doCrossover(chromosomes)
+        if (Core.random.nextDouble() > chromosomeRate) return chromosomes
+        val crossed = performPermutationCrossover(chromosomes)
         return crossed.map { chromosomes[0].withGenes(genes = it) }
     }
 
     /**
      * Performs permutation crossover on a list of chromosomes.
      */
-    protected abstract fun doCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>>
+    protected abstract fun performPermutationCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>>
 }

@@ -6,18 +6,21 @@
 
 package cl.ravenhill.keen.arbs.operators
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.datatypes.probability
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.genetic.genes.numerical.NumberGene
-import cl.ravenhill.keen.operators.Alterer
 import cl.ravenhill.keen.operators.crossover.combination.AverageCrossover
 import cl.ravenhill.keen.operators.crossover.combination.CombineCrossover
+import cl.ravenhill.keen.operators.crossover.permutation.AbstractPermutationCrossover
 import cl.ravenhill.keen.operators.crossover.pointbased.SinglePointCrossover
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.choice
+import io.kotest.property.arbitrary.int
 
 /**
  * Provides an arbitrary generator for [AverageCrossover] instances.
@@ -90,6 +93,27 @@ fun <T, G> Arb.Companion.singlePointCrossover(
     exclusivity: Arb<Boolean> = boolean()
 ) where G : Gene<T, G> = arbitrary {
     SinglePointCrossover<Int, IntGene>(chromosomeRate.bind(), exclusivity.bind())
+}
+
+fun <T, G> Arb.Companion.dummyPermutationCrossover(
+    numParents: Arb<Int> = int(2..10),
+    numOffspring: Arb<Int> = int(2..10),
+    exclusivity: Arb<Boolean> = boolean(),
+    chromosomeRate: Arb<Double> = probability()
+): Arb<AbstractPermutationCrossover<T, G>> where G : Gene<T, G> = arbitrary {
+    val boundParents = numParents.bind()
+    val boundOffspring = numOffspring.bind()
+    val boundExclusivity = exclusivity.bind()
+    val boundChromosomeRate = chromosomeRate.bind()
+    object : AbstractPermutationCrossover<T, G>(
+        numParents = boundParents,
+        numOffspring = boundOffspring,
+        exclusivity = boundExclusivity,
+        chromosomeRate = boundChromosomeRate
+    ) {
+        override fun performPermutationCrossover(chromosomes: List<Chromosome<T, G>>) =
+            List(boundOffspring) { chromosomes[0].genes }
+    }
 }
 
 /**
