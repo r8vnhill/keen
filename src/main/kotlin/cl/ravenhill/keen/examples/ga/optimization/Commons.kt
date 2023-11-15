@@ -21,7 +21,6 @@ import cl.ravenhill.keen.util.listeners.EvolutionPlotter
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
-import cl.ravenhill.keen.util.DoubleToDouble
 
 /**
  * Creates and returns an evolutionary computation engine for optimizing a given fitness function.
@@ -47,7 +46,6 @@ import cl.ravenhill.keen.util.DoubleToDouble
  * @param fitnessFunc The fitness function to be optimized.
  * @param range The range within which the double values of the genotype can vary.
  * @return A configured [Engine] instance.
- * @property DoubleToDouble Represents a mapping from a Double to another Double. Typically used to define a range.
  *
  * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 2.0.0

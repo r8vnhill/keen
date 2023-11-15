@@ -7,9 +7,11 @@ package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeNegative
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.EvaluationRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.SelectionRecord
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import kotlinx.serialization.Serializable
 
 /**

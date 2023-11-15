@@ -7,6 +7,7 @@ package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.isNotNan
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.listeners.records.IndividualRecord
@@ -149,6 +150,10 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
          * @return Returns incremented steady count if the fitness of the fittest individual remains the same,
          * otherwise, returns 0.
          */
+        @Deprecated(
+            "Use computeSteadyGenerations(optimizer, evolution) instead.",
+            ReplaceWith("computeSteadyGenerations(optimizer, evolution)")
+        )
         fun <DNA, G> computeSteadyGenerations(
             lastGeneration: GenerationRecord<DNA, G>,
             currentGeneration: GenerationRecord<DNA, G>,
@@ -168,14 +173,18 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
             for (i in evolution.generations.size - 1 downTo 1) {
                 val last = evolution.generations[i - 1]
                 val current = evolution.generations[i]
-                val lastFittest = last.population.resulting.maxOfWith(
-                    comparator = optimizer.comparator,
-                    selector = { it.toIndividual() }
-                )
-                val currentFittest = current.population.resulting.maxOfWith(
-                    comparator = optimizer.comparator,
-                    selector = { it.toIndividual() }
-                )
+                val lastFittest = last.population.resulting
+                    .filter { it.fitness.isNotNan() }
+                    .maxOfWith(
+                        comparator = optimizer.comparator,
+                        selector = { it.toIndividual() }
+                    )
+                val currentFittest = current.population.resulting
+                    .filter { it.fitness.isNotNan() }
+                    .maxOfWith(
+                        comparator = optimizer.comparator,
+                        selector = { it.toIndividual() }
+                    )
                 if (lastFittest.fitness == currentFittest.fitness) {
                     steady++
                 } else {

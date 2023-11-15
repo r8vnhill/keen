@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.util.listeners
 
+import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
@@ -30,8 +31,8 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     /**
      * Returns a string representation of the evolution summary, formatted for display.
      */
-    override fun toString(): String {
-        return """
+    override fun display() {
+        println("""
         ------------ Evolution Summary ---------------
         |--> Initialization time: ${evolution.initialization.duration} ms
         ------------- Evaluation Times ----------------
@@ -78,8 +79,12 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         |--> Steady generations: ${evolution.generations.last().steady}
         |--> Fittest: ${generations.last().population.resulting.first().genotype}
         |--> Best fitness: ${generations.last().population.resulting.first().fitness}
-        """.trimIndent()
+        """.trimIndent())
     }
+
+    override fun toString() =
+        "EvolutionSummary(optimizer=$optimizer, generation=$generation, evolution=$evolution, " +
+            "currentGenerationRecord=$currentGenerationRecord)"
 
     /**
      * This method is invoked at the start of each new generation in the evolution process.
@@ -91,16 +96,41 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        currentGenerationRecord = GenerationRecord<DNA, G>(generation).apply {
+        currentGenerationRecord = GenerationRecord<DNA, G>(generations.size + 1).apply {
             startTime = timeSource.markNow()
             this.population.initial = List(population.size) {
                 IndividualRecord(population[it].genotype, population[it].fitness)
             }
         }
+        evolution.generations += currentGenerationRecord
     }
 
     /**
-     * Called when the current generation finishes, records the duration of the generation.
+     * Called at the end of each generation in the evolutionary process.
+     * This method updates the [EvolutionSummary] with information about the finished generation.
+     * It primarily handles sorting the population by fitness and updating the records.
+     *
+     * ## Workflow
+     * 1. **Duration Calculation**: Computes the time elapsed since the start of the generation. This helps in
+     *    tracking the performance and efficiency of the evolutionary process over time.
+     * 2. **Sorting Population**: The population is sorted based on the fitness values using the optimizer's
+     *    sorting mechanism. This ensures that the fittest individuals are recognized and recorded accurately.
+     * 3. **Updating Resulting Population**: The sorted population is then used to update the `resulting` field of
+     *    the current generation record. Each individual in the population is represented as an `IndividualRecord`,
+     *    containing the genotype and fitness information.
+     * 4. **Computing Steady Generations**: The method also calculates the number of steady generations, which
+     *    indicates the number of consecutive generations without significant changes in fitness. This is crucial
+     *    for identifying convergence or stagnation in the evolutionary process.
+     *
+     * ## Usage Scenario
+     * This method is part of the evolutionary loop where, after each generation's evolution, it is called to
+     * finalize and record the generation's results. It follows the `onGenerationStarted` method, which sets up
+     * the initial state of the generation.
+     *
+     * @param population The population at the end of the generation, which needs to be sorted and recorded.
+     *
+     * @see [onGenerationStarted]
+     * @see [Engine.evolve]
      */
     override fun onGenerationFinished(population: Population<DNA, G>) {
         // Calculate duration
@@ -110,9 +140,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         currentGenerationRecord.population.resulting = List(sorted.size) {
             IndividualRecord(sorted[it].genotype, sorted[it].fitness)
         }
-        EvolutionListener.computeSteadyGenerations<DNA, G>(optimizer, evolution)
-        // Add current generation to the list of generations
-        currentGenerationRecord.also { evolution.generations += it }
+        currentGenerationRecord.steady = EvolutionListener.computeSteadyGenerations(optimizer, evolution)
     }
 
     /**

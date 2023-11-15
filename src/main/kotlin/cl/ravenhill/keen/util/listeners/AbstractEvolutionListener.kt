@@ -33,5 +33,5 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     @ExperimentalTime
     override var timeSource: TimeSource = TimeSource.Monotonic
 
-    fun display() = println(toString())
+    open fun display() = println(toString())
 }
