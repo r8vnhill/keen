@@ -87,12 +87,45 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
             "currentGenerationRecord=$currentGenerationRecord)"
 
     /**
-     * This method is invoked at the start of each new generation in the evolution process.
-     * It records the start time of the generation which will be used to calculate the
-     * duration of the generation when it finishes.
+     * Called at the beginning of each generation in the evolutionary process.
+     * This method sets up a new [GenerationRecord] for the current generation, capturing its initial state
+     * and marking its start time. This plays a vital role in tracking the evolution of each generation.
      *
-     * @param generation The number of the generation that is starting.
-     * @param population The population of the generation that is starting.
+     * ## Workflow
+     * 1. **Generation Initialization**: Assigns a unique identifier to the generation, usually its sequence number.
+     * 2. **Time Tracking**: Records the start time of the generation using a high-resolution time source. This is
+     *    essential for measuring the generation's duration accurately.
+     * 3. **Initial Population Recording**: Documents the initial state of the population. Each individual in the
+     *    population is logged as an `IndividualRecord`, encompassing their genotype and initial fitness. This
+     *    initial snapshot is crucial for later analysis and comparison with the final state of the generation.
+     *
+     * ## Usage Scenario
+     * This method is a key part of the evolutionary cycle, marking the commencement of each generation's evolution.
+     * It is typically followed by various evolutionary operations (such as selection, crossover, and mutation)
+     * and concludes with the `onGenerationFinished` method, which finalizes the generation's results.
+     *
+     * The method is integral to the evolution tracking process, as it defines the starting point for each generation,
+     * allowing for detailed analysis of how populations evolve and change over time.
+     *
+     * ```kotlin
+     * override fun evolve(): EvolutionResult<DNA, G> {
+     *     listeners.forEach { it.onGenerationStarted(generation, listOf()) }
+     *     // Additional steps in the evolution process...
+     *     val result = someEvolutionaryOperation()
+     *     listeners.forEach { it.onGenerationFinished(result) }
+     *     return result
+     * }
+     * ```
+     *
+     * In the example above, the `onGenerationStarted` method is called at the beginning of each evolutionary cycle,
+     * setting up the initial state of the generation for tracking purposes.
+     *
+     * @param generation The numerical identifier of the current generation.
+     * @param population The initial population at the beginning of the generation.
+     *
+     * @see [onGenerationFinished] for handling the end of a generation.
+     * @see [GenerationRecord] for details on the structure used for recording generation data.
+     * @see [Engine.evolve]
      */
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
@@ -106,40 +139,40 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     }
 
     /**
-     * Called at the end of each generation in the evolutionary process.
-     * This method updates the [EvolutionSummary] with information about the finished generation.
-     * It primarily handles sorting the population by fitness and updating the records.
+     * Called at the conclusion of each generation during the evolutionary process. This method plays a
+     * pivotal role in updating the [EvolutionSummary] with comprehensive details about the recently
+     * completed generation.
      *
-     * ## Workflow
-     * 1. **Duration Calculation**: Computes the time elapsed since the start of the generation. This helps in
-     *    tracking the performance and efficiency of the evolutionary process over time.
-     * 2. **Sorting Population**: The population is sorted based on the fitness values using the optimizer's
-     *    sorting mechanism. This ensures that the fittest individuals are recognized and recorded accurately.
-     * 3. **Updating Resulting Population**: The sorted population is then used to update the `resulting` field of
-     *    the current generation record. Each individual in the population is represented as an `IndividualRecord`,
-     *    containing the genotype and fitness information.
-     * 4. **Computing Steady Generations**: The method also calculates the number of steady generations, which
-     *    indicates the number of consecutive generations without significant changes in fitness. This is crucial
-     *    for identifying convergence or stagnation in the evolutionary process.
+     * ## Workflow Overview
+     * This method encompasses several key steps in processing and documenting the evolution of a generation:
+     * 1. **Duration Calculation**: Measures the time elapsed since the commencement of the current generation.
+     *    This metric is instrumental in assessing the time efficiency of the evolutionary process.
+     * 2. **Recording Resulting Population**: Records the state of the population at the end of the generation.
+     *    Each individual in the population is represented as an `IndividualRecord`, capturing their genotype
+     *    and fitness metrics for record-keeping.
+     * 3. **Computing Steady Generations**: Evaluates and records the count of steady generations, a critical
+     *    metric for detecting potential convergence or stagnation within the evolutionary trajectory. It reflects
+     *    the number of consecutive generations that have not exhibited significant changes in fitness.
      *
-     * ## Usage Scenario
-     * This method is part of the evolutionary loop where, after each generation's evolution, it is called to
-     * finalize and record the generation's results. It follows the `onGenerationStarted` method, which sets up
-     * the initial state of the generation.
+     * ## Context of Use
+     * In the overarching evolutionary loop, this method is invoked post-evolution of each generation to
+     * finalize and document the outcomes. It acts as a sequential follow-up to the `onGenerationStarted`
+     * method, which establishes the initial setup for a generation's evolution.
      *
-     * @param population The population at the end of the generation, which needs to be sorted and recorded.
+     * @param population The population at the conclusion of a generation, which is documented for
+     *                   evolutionary analysis.
      *
-     * @see [onGenerationStarted]
-     * @see [Engine.evolve]
+     * @see [onGenerationStarted] for initializing generation parameters.
+     * @see [Engine.evolve] for understanding the context within the overall evolutionary process.
      */
     override fun onGenerationFinished(population: Population<DNA, G>) {
         // Calculate duration
         currentGenerationRecord.duration = currentGenerationRecord.startTime.elapsedNow().inWholeNanoseconds
-        // Sort population and set resulting
-        val sorted = optimizer.sort(population)
-        currentGenerationRecord.population.resulting = List(sorted.size) {
-            IndividualRecord(sorted[it].genotype, sorted[it].fitness)
+        // Record resulting population
+        currentGenerationRecord.population.resulting = List(population.size) {
+            IndividualRecord(population[it].genotype, population[it].fitness)
         }
+        // Compute steady generations
         currentGenerationRecord.steady = EvolutionListener.computeSteadyGenerations(optimizer, evolution)
     }
 

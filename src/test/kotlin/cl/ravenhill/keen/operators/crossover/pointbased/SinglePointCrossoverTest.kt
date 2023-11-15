@@ -9,6 +9,7 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.arbs.datatypes.compose
 import cl.ravenhill.keen.arbs.datatypes.intWith
 import cl.ravenhill.keen.arbs.datatypes.matrix
 import cl.ravenhill.keen.arbs.datatypes.probability
@@ -103,14 +104,12 @@ class SinglePointCrossoverTest : FreeSpec({
                 "the index is greater than the size of the parents" {
                     checkAll(
                         Arb.singlePointCrossover<Int, IntGene>(),
-                        Arb.intWith(
-                            Arb.matrix(
-                                Arb.intGene(),
-                                Arb.constant(2),
-                                Arb.int(3..10)
-                            )
-                        ) { Arb.int(it.size..Int.MAX_VALUE) }
-                    ) { crossover, (cutPoint, parents) ->
+                        Arb.matrix(
+                            Arb.intGene(),
+                            Arb.constant(2),
+                            Arb.int(3..10)
+                        ).compose { Arb.int(it[0].size + 1..Int.MAX_VALUE) }
+                    ) { crossover, (parents, cutPoint) ->
                         shouldThrow<CompositeException> {
                             crossover.crossoverAt(cutPoint, parents[0] to parents[1])
                         }.shouldHaveInfringement<IntConstraintException>(
