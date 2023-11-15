@@ -23,8 +23,9 @@ import kotlin.random.Random
  * providing a centralized point of configuration and control.
  *
  * @property maxProgramDepth Specifies the maximum depth that program trees are allowed to reach. This limit
- *  helps prevent the creation of overly complex and computationally expensive programs.
- *  It must be a positive integer.
+ * helps prevent the creation of overly complex and computationally expensive programs.
+ * It must be a positive integer.
+ * Defaults to [Core.DEFAULT_MAX_PROGRAM_DEPTH].
  * @property DEFAULT_MAX_PROGRAM_DEPTH Immutable default value for the maximum program tree depth.
  * @property random A centralized random number generator that provides a uniform source of randomness,
  *  ensuring reproducibility and coherence in random operations throughout the library.
