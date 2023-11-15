@@ -91,10 +91,10 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        currentGenerationRecord = GenerationRecord(generation).apply {
+        currentGenerationRecord = GenerationRecord<DNA, G>(generation).apply {
             startTime = timeSource.markNow()
             this.population.initial = List(population.size) {
-                IndividualRecord("${population[it].genotype}", population[it].fitness)
+                IndividualRecord(population[it].genotype, population[it].fitness)
             }
         }
     }
@@ -108,12 +108,9 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         // Sort population and set resulting
         val sorted = optimizer.sort(population)
         currentGenerationRecord.population.resulting = List(sorted.size) {
-            IndividualRecord("${sorted[it].genotype}", sorted[it].fitness)
+            IndividualRecord(sorted[it].genotype, sorted[it].fitness)
         }
-        generations.lastOrNull()?.let { lastGeneration ->
-            currentGenerationRecord.steady =
-                EvolutionListener.computeSteadyGenerations(lastGeneration, currentGenerationRecord)
-        }
+        EvolutionListener.computeSteadyGenerations<DNA, G>(optimizer, evolution)
         // Add current generation to the list of generations
         currentGenerationRecord.also { evolution.generations += it }
     }

@@ -93,7 +93,7 @@ data class CharChromosome(override val genes: List<CharGene>) :
             constraints {
                 if (ranges.size > 1) {
                     "Chromosome with multiple ranges must have equal number of ranges and genes" {
-                        ranges must HaveSize(size)
+                            ranges must HaveSize(size)
                     }
                 }
                 if (filters.size > 1) {

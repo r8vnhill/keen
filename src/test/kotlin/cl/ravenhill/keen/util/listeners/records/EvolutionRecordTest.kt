@@ -9,6 +9,7 @@ package cl.ravenhill.keen.util.listeners.records
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.arbs.records.generationRecord
 import cl.ravenhill.keen.genetic.genes.NothingGene
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -52,5 +53,5 @@ class EvolutionRecordTest : FreeSpec({
  * @return An arbitrary [EvolutionRecord] instance.
  */
 private fun Arb.Companion.evolutionRecord() = arbitrary {
-    EvolutionRecord<Nothing, NothingGene>(mutableList(generationRecord(), 0..50).bind())
+    EvolutionRecord(mutableList(generationRecord(), 0..50).bind())
 }

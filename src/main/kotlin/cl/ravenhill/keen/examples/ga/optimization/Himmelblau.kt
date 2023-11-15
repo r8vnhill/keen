@@ -12,7 +12,7 @@ fun main() {
     lateinit var engine: cl.ravenhill.keen.evolution.Engine<Double, DoubleGene>
     println("========= Random selector =========")
     repeat(2) {
-        engine = createEngine(::himmelblau, -10.0..10.0, -10.0..10.0)
+        engine = createEngine(::himmelblau)
         engine.evolve()
     }
     println(engine.listeners.first())

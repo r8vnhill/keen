@@ -9,6 +9,7 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeInRange
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import kotlinx.serialization.Serializable
 
 /**
  * A set of [Chromosome] objects that encodes a collection of genetic data.
@@ -35,6 +36,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @version 2.0.0
  * @since 1.0.0
  */
+@Serializable
 data class Genotype<DNA, G : Gene<DNA, G>>(val chromosomes: List<Chromosome<DNA, G>>) :
     GeneticMaterial<DNA, G>, Iterable<Chromosome<DNA, G>> {
 

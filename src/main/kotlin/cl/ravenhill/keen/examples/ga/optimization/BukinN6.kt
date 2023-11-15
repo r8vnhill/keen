@@ -18,19 +18,19 @@ fun main() {
     lateinit var engine: Engine<Double, DoubleGene>
     println("========= Random selector =========")
     repeat(2) {
-        engine = createEngine(::bukinN6, -15.0..-5.0, -3.0..3.0)
+        engine = createEngine(::bukinN6)
         engine.evolve()
     }
     println(engine.listeners.first())
     println("========= Tournament selector =========")
     repeat(2) {
-        engine = createEngine(::bukinN6, -15.0..-5.0, -3.0..3.0)
+        engine = createEngine(::bukinN6)
         engine.evolve()
     }
     println(engine.listeners.first())
     println("========= Roulette wheel selector =========")
     repeat(2) {
-        engine = createEngine(::bukinN6, -15.0..-5.0, -3.0..3.0)
+        engine = createEngine(::bukinN6)
         engine.evolve()
     }
     println(engine.listeners.first())

@@ -38,22 +38,21 @@ class EvolutionListenerTest : FreeSpec({
         "should do nothing for all notifications" {
             checkAll(
                 PropTestConfig(iterations = 25),
-                Arb.optimizer<Nothing, NothingGene>(),
+                Arb.optimizer<Int, IntGene>(),
                 Arb.orderedPair(Arb.positiveInt(), Arb.positiveInt()),
                 Arb.mutableList(Arb.generationRecord(), 1..25)
             ) { optimizer, (_, generation), generationRecords ->
                 with(
-                    object : EvolutionListener<Nothing, NothingGene> {
-                        override var optimizer: IndividualOptimizer<Nothing, NothingGene> = optimizer
+                    object : EvolutionListener<Int, IntGene> {
+                        override var optimizer: IndividualOptimizer<Int, IntGene> = optimizer
                         override var generation = generation
                         override val currentGeneration = generationRecords.first()
-                        override var evolution = EvolutionRecord<Nothing, NothingGene>(
+                        override var evolution = EvolutionRecord<Int, IntGene>(
                             generationRecords
                         )
 
                         @ExperimentalTime
                         override var timeSource: TimeSource = TimeSource.Monotonic
-
                     }
                 ) {
                     onEvolutionEnded() shouldBe Unit
@@ -118,7 +117,7 @@ class EvolutionListenerTest : FreeSpec({
                         population.size
                     ) { i ->
                         IndividualRecord(
-                            sorted[i].genotype.toSimpleString(),
+                            sorted[i].genotype,
                             sorted[i].fitness
                         )
                     }

@@ -14,21 +14,21 @@ fun main() {
     lateinit var engine: cl.ravenhill.keen.evolution.Engine<Double, DoubleGene>
     println("========= Random selector =========")
     repeat(2) {
-        engine = createEngine(::goldsteinPrice, -2.0..2.0, -2.0..2.0)
+        engine = createEngine(::goldsteinPrice)
         engine.evolve()
     }
     println(engine.listeners.first())
     println("Error: ${abs( - 3)}")
     println("========= Tournament selector =========")
     repeat(2) {
-        engine = createEngine(::goldsteinPrice, -2.0..2.0, -2.0..2.0)
+        engine = createEngine(::goldsteinPrice)
         engine.evolve()
     }
     println(engine.listeners.first())
     println("Error: ${abs( - 3)}")
     println("========= Roulette wheel selector =========")
     repeat(2) {
-        engine = createEngine(::goldsteinPrice, -2.0..2.0, -2.0..2.0)
+        engine = createEngine(::goldsteinPrice)
         engine.evolve()
     }
     println(engine.listeners.first())

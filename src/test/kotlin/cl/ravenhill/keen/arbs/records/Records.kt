@@ -9,6 +9,9 @@ package cl.ravenhill.keen.arbs.records
 import cl.ravenhill.keen.arbs.datatypes.list
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.arbs.genetic.genotype
+import cl.ravenhill.keen.arbs.genetic.intGenotype
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 import io.kotest.property.Arb
@@ -26,7 +29,7 @@ import kotlin.time.TimeSource
  * @return An Arb instance that generates a [GenerationRecordData] object.
  */
 fun Arb.Companion.generationRecord(size: Arb<Int> = int(1..50)) = arbitrary {
-    GenerationRecord(nonNegativeInt().bind()).apply {
+    GenerationRecord<Int, IntGene>(nonNegativeInt().bind()).apply {
         startTime = TimeSource.Monotonic.markNow()
         population.resulting = list(individualRecord(), size).bind()
     }
@@ -47,7 +50,7 @@ fun Arb.Companion.generationRecord(size: Arb<Int> = int(1..50)) = arbitrary {
  * @return An arbitrary generator that yields [IndividualRecord] instances with randomized data.
  */
 fun Arb.Companion.individualRecord() = arbitrary {
-    IndividualRecord(genotype().bind().toSimpleString(), Arb.real().bind())
+    IndividualRecord(intGenotype().bind(), Arb.real().bind())
 }
 
 
@@ -66,7 +69,7 @@ fun Arb.Companion.individualRecord() = arbitrary {
  * @return An arbitrary generator that creates [GenerationRecord.PopulationRecord] instances with randomized data.
  */
 fun Arb.Companion.populationRecord() = arbitrary {
-    GenerationRecord.PopulationRecord().apply {
+    GenerationRecord.PopulationRecord<Int, IntGene>().apply {
         resulting = list(individualRecord()).bind()
     }
 }

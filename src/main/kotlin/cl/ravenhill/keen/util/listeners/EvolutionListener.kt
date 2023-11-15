@@ -5,14 +5,12 @@
 
 package cl.ravenhill.keen.util.listeners
 
-import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
-import kotlin.reflect.KProperty
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
@@ -47,8 +45,9 @@ typealias Listeners<DNA, G> = List<EvolutionListener<DNA, G>>
 interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     var optimizer: IndividualOptimizer<DNA, G>
     var generation: Int
-    val currentGeneration: GenerationRecord
+    val currentGeneration: GenerationRecord<DNA, G>
     var evolution: EvolutionRecord<DNA, G>
+
     @ExperimentalTime
     var timeSource: TimeSource
 
@@ -150,15 +149,40 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
          * @return Returns incremented steady count if the fitness of the fittest individual remains the same,
          * otherwise, returns 0.
          */
-        fun computeSteadyGenerations(
-            lastGeneration: GenerationRecord,
-            currentGeneration: GenerationRecord,
-        ) = lastGeneration.population.resulting.let { previous ->
+        fun <DNA, G> computeSteadyGenerations(
+            lastGeneration: GenerationRecord<DNA, G>,
+            currentGeneration: GenerationRecord<DNA, G>,
+        ) where G : Gene<DNA, G> = lastGeneration.population.resulting.let { previous ->
             if (previous.first().fitness == currentGeneration.population.resulting.first().fitness) {
                 lastGeneration.steady + 1
             } else {
                 0
             }
+        }
+
+        fun <T, G> computeSteadyGenerations(
+            optimizer: IndividualOptimizer<T, G>,
+            evolution: EvolutionRecord<T, G>
+        ): Int where G : Gene<T, G> {
+            var steady = 0
+            for (i in evolution.generations.size - 1 downTo 1) {
+                val last = evolution.generations[i - 1]
+                val current = evolution.generations[i]
+                val lastFittest = last.population.resulting.maxOfWith(
+                    comparator = optimizer.comparator,
+                    selector = { it.toIndividual() }
+                )
+                val currentFittest = current.population.resulting.maxOfWith(
+                    comparator = optimizer.comparator,
+                    selector = { it.toIndividual() }
+                )
+                if (lastFittest.fitness == currentFittest.fitness) {
+                    steady++
+                } else {
+                    break
+                }
+            }
+            return steady
         }
 
         /**
@@ -173,10 +197,10 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
         fun <DNA, G : Gene<DNA, G>> computePopulation(
             optimizer: IndividualOptimizer<DNA, G>,
             population: Population<DNA, G>,
-        ): List<IndividualRecord> {
+        ): List<IndividualRecord<DNA, G>> {
             val sorted = optimizer.sort(population)
             return List(sorted.size) {
-                IndividualRecord(sorted[it].genotype.toSimpleString(), sorted[it].fitness)
+                IndividualRecord(sorted[it].genotype, sorted[it].fitness)
             }
         }
     }

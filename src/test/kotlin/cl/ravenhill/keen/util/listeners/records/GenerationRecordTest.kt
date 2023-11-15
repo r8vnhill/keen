@@ -10,6 +10,8 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.records.generationRecord
 import cl.ravenhill.keen.arbs.records.populationRecord
+import cl.ravenhill.keen.genetic.genes.NothingGene
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
@@ -52,7 +54,7 @@ class GenerationRecordTest : FreeSpec({
         "should throw an exception if the generation number is negative" {
             checkAll(Arb.negativeInt()) { generation ->
                 shouldThrow<CompositeException> {
-                    GenerationRecord(generation)
+                    GenerationRecord<Nothing, NothingGene>(generation)
                 }.shouldHaveInfringement<IntConstraintException>(
                     "The generation number [$generation] must be positive"
                 )
@@ -65,14 +67,14 @@ class GenerationRecordTest : FreeSpec({
                     shouldThrowWithMessage<UninitializedPropertyAccessException>(
                         "lateinit property startTime has not been initialized"
                     ) {
-                        GenerationRecord(generation).startTime
+                        GenerationRecord<Nothing, NothingGene>(generation).startTime
                     }
                 }
             }
 
             "can be initialized" {
                 checkAll(Arb.generationRecord()) { data ->
-                    val record = GenerationRecord(data.generation)
+                    val record = GenerationRecord<Nothing, NothingGene>(data.generation)
                     val now = TimeSource.Monotonic.markNow()
                     record.startTime = now
                     record.startTime shouldBe now

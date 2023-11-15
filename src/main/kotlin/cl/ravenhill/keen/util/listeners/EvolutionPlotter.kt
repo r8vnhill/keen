@@ -98,7 +98,7 @@ class EvolutionPlotter<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         val sorted = optimizer.sort(population)
         currentGenerationRecord.population.resulting = List(sorted.size) {
             IndividualRecord(
-                sorted[it].genotype.toString(),
+                sorted[it].genotype,
                 sorted[it].fitness
             )
         }

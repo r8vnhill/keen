@@ -7,6 +7,7 @@ package cl.ravenhill.keen.util.listeners.records
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeNegative
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.EvaluationRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord.SelectionRecord
 import kotlinx.serialization.Serializable
@@ -33,12 +34,12 @@ import kotlinx.serialization.Serializable
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
  */
 @Serializable
-data class GenerationRecord(val generation: Int) : AbstractTimedRecord() {
+data class GenerationRecord<DNA, G>(val generation: Int) : AbstractTimedRecord() where G : Gene<DNA, G> {
     val alteration = AlterationRecord()
     val evaluation = EvaluationRecord()
     val offspringSelection = SelectionRecord()
     val survivorSelection = SelectionRecord()
-    val population = PopulationRecord()
+    val population = PopulationRecord<DNA, G>()
     var steady: Int = 0
         set(value) {
             constraints {
@@ -97,8 +98,8 @@ data class GenerationRecord(val generation: Int) : AbstractTimedRecord() {
      * @see AbstractRecord
      */
     @Serializable
-    data class PopulationRecord(
-        var resulting: List<IndividualRecord> = emptyList(),
-        var initial: List<IndividualRecord> = emptyList()
-    ) : AbstractRecord()
+    data class PopulationRecord<DNA, G>(
+        var resulting: List<IndividualRecord<DNA, G>> = emptyList(),
+        var initial: List<IndividualRecord<DNA, G>> = emptyList()
+    ) : AbstractRecord() where G : Gene<DNA, G>
 }
