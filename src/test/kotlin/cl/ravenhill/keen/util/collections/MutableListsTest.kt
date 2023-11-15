@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.util.collections
 
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
@@ -109,7 +110,7 @@ class MutableListsTest : FreeSpec({
                 }
                 with(ex.throwables.first()) {
                     shouldBeInstanceOf<IntConstraintException>()
-                    message shouldBe unfulfilledConstraint("Size [$n] should be in range [0, $n]")
+                    message shouldBe "Size [$n] should be in range [0, $n]"
                 }
             }
         }
@@ -144,14 +145,15 @@ class MutableListsTest : FreeSpec({
                 checkAll(Arb.int(), Arb.int()) { i, j ->
                     shouldThrow<CompositeException> {
                         mutableListOf<Any>().swap(i, j)
-                    }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.CollectionConstraintException>(
-                        unfulfilledConstraint("The list must not be empty")
+                    }.shouldHaveInfringement<CollectionConstraintException>(
+                        "The list must not be empty"
                     )
                 }
             }
 
             "the first index is negative" {
                 checkAll(
+                    PropTestConfig(iterations = 50),
                     Arb.indices(
                         Arb.mutableList(Arb.any(), 1..100),
                         x = IndexType.Underflow

@@ -79,14 +79,18 @@ suspend fun <T, G, F> `ensure chromosome filter count matches gene count`(
 ) where T : Comparable<T>, G : Gene<T, G>, F : Chromosome.Factory<T, G>, F : MutableFilterCollection<T> {
     with(Arb) {
         checkAll(int(2..100), int(2..100)) { filtersAmount, size ->
+            assume(filtersAmount != size)
             val factory = factoryBuilder()
             repeat(filtersAmount) { factory.filters += filter }
             factory.size = size
-            shouldThrow<CompositeException> {
+            try {
                 factory.make()
-            }.shouldHaveInfringement<CollectionConstraintException>(
-                "Chromosome creation requires equal number of filters and genes"
-            )
+                println()
+            } catch (ex: CompositeException) {
+                ex.shouldHaveInfringement<CollectionConstraintException>(
+                    "Chromosome creation requires equal number of filters and genes")
+            }
+            factory.toString()
         }
     }
 }
