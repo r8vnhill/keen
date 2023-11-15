@@ -111,7 +111,8 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
             IndividualRecord("${sorted[it].genotype}", sorted[it].fitness)
         }
         generations.lastOrNull()?.let { lastGeneration ->
-            EvolutionListener.computeSteadyGenerations(lastGeneration, currentGenerationRecord)
+            currentGenerationRecord.steady =
+                EvolutionListener.computeSteadyGenerations(lastGeneration, currentGenerationRecord)
         }
         // Add current generation to the list of generations
         currentGenerationRecord.also { evolution.generations += it }

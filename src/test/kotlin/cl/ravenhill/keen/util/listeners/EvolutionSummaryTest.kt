@@ -16,17 +16,57 @@ import kotlin.time.ExperimentalTime
 class EvolutionSummaryTest : FreeSpec({
 
     "An Evolution Summary listener" - {
-        "should assign the current generation on generation started" {
-            checkAll(
-                Arb.evolutionSummary<Int, IntGene>(),
-                Arb.nonNegativeInt(),
-                Arb.intPopulation()
-            ) { listener, generation, population ->
-                listener.onGenerationStarted(generation, population)
-                listener.currentGeneration shouldBe GenerationRecord(generation).apply {
-                    this.population.initial = List(population.size) {
-                        IndividualRecord("${population[it].genotype}", population[it].fitness)
+        "on generation started" - {
+            "should assign the current generation" {
+                checkAll(
+                    Arb.evolutionSummary<Int, IntGene>(),
+                    Arb.nonNegativeInt(),
+                    Arb.intPopulation()
+                ) { listener, generation, population ->
+                    listener.onGenerationStarted(generation, population)
+                    listener.currentGeneration shouldBe GenerationRecord(generation).apply {
+                        this.population.initial = List(population.size) {
+                            IndividualRecord("${population[it].genotype}", population[it].fitness)
+                        }
                     }
+                }
+            }
+        }
+
+        "on generation finished" - {
+            "should update the resulting population" {
+                checkAll(
+                    Arb.evolutionSummary<Int, IntGene>(),
+                    Arb.nonNegativeInt(),
+                    Arb.intPopulation(),
+                    Arb.intPopulation()
+                ) { listener, generation, initialPopulation, resultingPopulation ->
+                    listener.onGenerationStarted(generation, initialPopulation)
+                    listener.onGenerationFinished(resultingPopulation)
+                    listener.currentGeneration.population.resulting = List(resultingPopulation.size) {
+                        IndividualRecord("${resultingPopulation[it].genotype}", resultingPopulation[it].fitness)
+                    }
+                }
+            }
+
+            "should compute the steady generations" {
+                checkAll(
+                    Arb.evolutionSummary<Int, IntGene>(),
+                    Arb.nonNegativeInt(),
+                    Arb.intPopulation(),
+                    Arb.intPopulation()
+                ) { listener, generation, initialPopulation, resultingPopulation ->
+                    listener.onGenerationStarted(generation, initialPopulation)
+                    listener.onGenerationFinished(resultingPopulation)
+                    listener.currentGeneration.population.resulting = List(resultingPopulation.size) {
+                        IndividualRecord("${resultingPopulation[it].genotype}", resultingPopulation[it].fitness)
+                    }
+                    listener.onGenerationStarted(generation + 1, initialPopulation)
+                    listener.onGenerationFinished(resultingPopulation)
+                    listener.currentGeneration.population.resulting = List(resultingPopulation.size) {
+                        IndividualRecord("${resultingPopulation[it].genotype}", resultingPopulation[it].fitness)
+                    }
+                    listener.evolution.generations.last().steady shouldBe 1
                 }
             }
         }
