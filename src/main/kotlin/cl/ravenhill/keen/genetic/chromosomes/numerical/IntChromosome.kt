@@ -13,7 +13,6 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.MutableFilterCollection
 import cl.ravenhill.keen.util.MutableRangedCollection
-import cl.ravenhill.keen.util.IntToInt
 
 /**
  * A chromosome that contains a list of [IntGene]s.
@@ -56,7 +55,6 @@ data class IntChromosome(override val genes: List<IntGene>) :
     /**
      * A [Chromosome.Factory] for [IntChromosome]s.
      *
-     * @property range The range of the genes.
      * @property filter The filter to apply to the genes.
      *
      * @constructor Creates a new [IntChromosome.Factory].
@@ -71,9 +69,6 @@ data class IntChromosome(override val genes: List<IntGene>) :
 
         @Deprecated("Use the list version instead", ReplaceWith("ranges += range"))
         var filter: (Int) -> Boolean = { true }
-
-        @Deprecated("Use the list version instead", ReplaceWith("ranges += range"))
-        lateinit var range: IntToInt
 
         // / Documentation inherited from [Chromosome.Factory]
         override fun make(): IntChromosome {

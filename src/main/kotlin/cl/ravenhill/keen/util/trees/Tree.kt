@@ -78,24 +78,6 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
     fun random() = nodes.random(Core.random)
 
     /**
-     * Returns an [IntRange] that corresponds to the indices of the subtree rooted at the specified
-     * [node].
-     *
-     * @throws NoSuchElementException if the specified [node] is not found in the tree.
-     */
-    @Deprecated("Use indexOfFirst instead.", ReplaceWith("indexOfFirst { it === node }"))
-    fun searchSubtree(node: T): IntRange {
-        // Find the index of the specified node
-        val index = nodes.indexOfFirst { it === node }
-        // If the specified node is not found, throw a NoSuchElementException
-        if (index == -1) {
-            throw NoSuchElementException("Node not found in tree.")
-        }
-        // Return an IntRange representing the indices of the subtree rooted at the specified node
-        return index..index + nodes[index].size
-    }
-
-    /**
      * Searches for the first node in the tree that satisfies the given [predicate] and
      * returns an [IntRange] representing the indices of the subtree rooted at that node.
      *
@@ -130,20 +112,6 @@ interface Tree<V, T> : SelfReferential<T>, MultiStringFormat where T : Tree<V, T
             throw NoSuchElementException("Node not found in tree")
         }
         return index..<index + nodes[index].size
-    }
-
-    /**
-     * Returns a new tree with the specified ``node`` replacing the subtree rooted at the given
-     * ``range``.
-     */
-    @Deprecated("Use replaceFirst instead.", ReplaceWith("replaceFirst(node) { it === node }"))
-    fun replaceSubtree(range: IntRange, node: T): T {
-        val newNodes = mutableListOf<T>().apply {
-            addAll(nodes.subList(0, range.first))
-            addAll(node.nodes)
-            addAll(nodes.subList(range.last, nodes.size))
-        }
-        return fromTopDown(newNodes)
     }
 
     /**

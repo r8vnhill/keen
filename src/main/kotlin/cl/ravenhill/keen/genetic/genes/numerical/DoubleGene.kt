@@ -12,8 +12,6 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import cl.ravenhill.keen.util.Ranged
 import cl.ravenhill.keen.util.nextDoubleInRange
-import cl.ravenhill.keen.util.DoubleToDouble
-import cl.ravenhill.keen.util.toRange
 import java.util.Objects
 
 /**

@@ -39,7 +39,9 @@ import cl.ravenhill.keen.util.MultiStringFormat
  * @since 2.0.0
  */
 interface Node<T> : MultiStringFormat {
+
     val arity: Int
+
     val contents: T?
         get() = null
 

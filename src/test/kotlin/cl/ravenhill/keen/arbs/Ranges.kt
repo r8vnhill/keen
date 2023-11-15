@@ -8,7 +8,6 @@ package cl.ravenhill.keen.arbs
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.arbs.datatypes.orderedPair
 import cl.ravenhill.keen.util.DoubleRange
-import cl.ravenhill.keen.util.toRange
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.char
@@ -39,7 +38,9 @@ fun Arb.Companion.charRange(
  * @return An arbitrary of [DoubleRange].
  */
 fun Arb.Companion.doubleRange() = arbitrary {
-    orderedPair(real()).bind().toRange()
+    orderedPair(real()).bind().let {
+        it.first..it.second
+    }
 }
 
 /**

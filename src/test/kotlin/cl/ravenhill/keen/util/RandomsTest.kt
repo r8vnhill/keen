@@ -137,7 +137,7 @@ class RandomsTest : FreeSpec({
                 orderedPair(int(), int(), strict = true),
                 random()
             ) { orderedPair, randomGenerator ->
-                val range = orderedPair.toRange()
+                val range = orderedPair.first..orderedPair.second
                 randomGenerator.nextIntInRange(range) shouldBeInRange range
             }
         }

@@ -43,7 +43,7 @@ import cl.ravenhill.keen.util.trees.Tree
 class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
     exclusivity: Boolean = false,
     chromosomeRate: Double = 1.0,
-    private val geneRate: Double = 1.0,
+    val geneRate: Double = 1.0,
 ) : AbstractCrossover<DNA, G>(
     exclusivity = exclusivity,
     chromosomeRate = chromosomeRate
@@ -94,9 +94,9 @@ class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
                 val node1 = gene1.dna.random()
                 val node2 = gene2.dna.random()
                 // search for the subtrees rooted at each of the selected nodes
-                val slices = gene1.dna.searchSubtree(node1) to gene2.dna.searchSubtree(node2)
+                val slices = gene1.dna.indexOfFirst { it === node1 } to gene2.dna.indexOfFirst { it === node2 }
                 // replace the selected subtrees in each parent with the subtrees from the other parent
-                val newTree1 = gene1.dna.replaceSubtree(slices.first, node2).let {
+                val newTree1 = gene1.dna.replaceFirst(node2) { it === node2 }.let {
                     if (it.height > Core.maxProgramDepth) {
                         if (Core.random.nextBoolean()) {
                             gene1.dna

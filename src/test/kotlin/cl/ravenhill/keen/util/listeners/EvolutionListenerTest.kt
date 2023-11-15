@@ -47,7 +47,7 @@ class EvolutionListenerTest : FreeSpec({
                         override var optimizer: IndividualOptimizer<Int, IntGene> = optimizer
                         override var generation = generation
                         override val currentGeneration = generationRecords.first()
-                        override var evolution = EvolutionRecord<Int, IntGene>(
+                        override var evolution = EvolutionRecord(
                             generationRecords
                         )
 

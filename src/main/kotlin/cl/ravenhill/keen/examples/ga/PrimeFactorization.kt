@@ -60,14 +60,12 @@ fun main() {
             chromosome {
                 ints {
                     size = 10;
-                    range = 1 to 200;
                     filter = { it in candidateFactors }
                 }
             }
             chromosome {
                 ints {
                     size = 1;
-                    range = 1 to 200;
                     filter = { it in candidateFactors }
                 }
             }

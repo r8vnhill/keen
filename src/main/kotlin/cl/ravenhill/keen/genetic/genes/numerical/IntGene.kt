@@ -10,8 +10,6 @@ import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import cl.ravenhill.keen.util.Ranged
 import cl.ravenhill.keen.util.nextIntInRange
-import cl.ravenhill.keen.util.IntToInt
-import cl.ravenhill.keen.util.toRange
 import java.util.*
 
 /**
