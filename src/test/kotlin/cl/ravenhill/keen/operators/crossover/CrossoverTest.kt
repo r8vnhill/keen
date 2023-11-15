@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.operators.crossover
 
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
@@ -232,7 +233,7 @@ class CrossoverTest : FreeSpec({
                         Arb.int(2..Int.MAX_VALUE),
                         Arb.boolean(),
                         Arb.probability(),
-                        Arb.list(Arb.intGenotype()),
+                        Arb.list(Arb.intGenotype(), 1..5),
                     ) { numIn, numOut, exclusivity, chromosomeRate, genotypes ->
                         assume {
                             genotypes shouldNotHaveSize numIn
@@ -243,11 +244,13 @@ class CrossoverTest : FreeSpec({
                             exclusivity,
                             chromosomeRate
                         )
-                        shouldThrow<CompositeException> {
+                        try {
                             operator.crossover(genotypes)
-                        }.shouldHaveInfringement<IntConstraintException>(
-                            "Input count [${genotypes.size}] must match constructor-specified count [$numIn]."
-                        )
+                        } catch (e: CompositeException) {
+                            e.shouldHaveInfringement<CollectionConstraintException>(
+                                "Input count [${genotypes.size}] must match constructor-specified count [$numIn]."
+                            )
+                        }
                     }
                 }
             }

@@ -84,7 +84,13 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
 
     override fun toString() =
         "EvolutionSummary(optimizer=$optimizer, generation=$generation, evolution=$evolution, " +
-            "currentGenerationRecord=$currentGenerationRecord)"
+                "currentGenerationRecord=${
+                    try {
+                        currentGenerationRecord
+                    } catch (_: UninitializedPropertyAccessException) {
+                        "None"
+                    }
+                }"
 
     /**
      * Called at the beginning of each generation in the evolutionary process.

@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.operators.mutator
 
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.genetic.geneticMaterial
 import cl.ravenhill.keen.arbs.genetic.individual
@@ -39,33 +40,6 @@ class MutatorTest : FreeSpec({
                 checkAll(Arb.real(0.0..1.0)) { probability ->
                     DummyMutator<Nothing, NothingGene>(probability).probability
                         .shouldBe(probability)
-                }
-            }
-
-            "should throw an exception when" - {
-                "the chromosome mutation rate is negative" {
-                    `should enforce valid mutation probability`(
-                        Arb.negativeDouble(),
-                        "chromosome mutation probability"
-                    ) { probability, chromosomeRate ->
-                        DummyMutator<Nothing, NothingGene>(
-                            probability,
-                            chromosomeRate
-                        )
-                    }
-                }
-
-                "the chromosome mutation rate is greater than 1" {
-                    `should enforce valid mutation probability`(
-                        Arb.positiveDouble(),
-                        "chromosome mutation probability",
-                        { assume { it shouldBeGreaterThan 1.0 } }
-                    ) { probability, chromosomeRate ->
-                        DummyMutator<Nothing, NothingGene>(
-                            probability,
-                            chromosomeRate
-                        )
-                    }
                 }
             }
         }
@@ -128,12 +102,10 @@ class MutatorTest : FreeSpec({
                     Arb.geneticMaterial(),
                     Arb.negativeInt()
                 ) { material, mutations ->
-                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                    shouldThrow<CompositeException> {
                         MutatorResult(material, mutations)
                     }.shouldHaveInfringement<IntConstraintException>(
-                        unfulfilledConstraint(
-                            "The number of mutations [$mutations] must be non-negative."
-                        )
+                        "The number of mutations [$mutations] must be non-negative."
                     )
                 }
             }

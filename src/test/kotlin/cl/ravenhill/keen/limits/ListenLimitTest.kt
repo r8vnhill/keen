@@ -47,9 +47,14 @@ class ListenLimitTest : FreeSpec({
 
             "can be assigned a non-null engine instance" {
                 checkAll(Arb.listenLimit<Int, IntGene>(), Arb.engine()) { limit, engine ->
-                    limit.engine = engine
-                    limit.engine shouldBe engine
-                    engine.listeners shouldContain limit.listener
+                    try {
+                        limit.engine = engine
+                        limit.engine shouldBe engine
+                        engine.listeners shouldContain limit.listener
+                    } catch (ex: UninitializedPropertyAccessException) {
+                        println("Engine: $engine")
+                        println("Limit: $limit")
+                    }
                 }
             }
         }

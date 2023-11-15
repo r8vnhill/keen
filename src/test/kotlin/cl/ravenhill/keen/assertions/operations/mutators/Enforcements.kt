@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.assertions.operations.mutators
 
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.mutator.Mutator
@@ -35,12 +37,10 @@ suspend fun <T, G> `should enforce valid mutation probability`(
 ) where G : Gene<T, G> {
     checkAll(Arb.real(0.0..1.0), probabilityArb) { probability, rate ->
         assumption(rate)
-        shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+        shouldThrow<CompositeException> {
             mutatorBuilder(probability, rate)
-        }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleConstraintException>(
-            unfulfilledConstraint(
-                "The $parameterName [$rate] must be in 0.0..1.0"
-            )
+        }.shouldHaveInfringement<DoubleConstraintException>(
+            "The $parameterName [$rate] must be in 0.0..1.0"
         )
     }
 }
