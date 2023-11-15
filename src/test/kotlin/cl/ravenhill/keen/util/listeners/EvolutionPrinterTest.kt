@@ -10,7 +10,6 @@ import cl.ravenhill.keen.arbs.listeners.evolutionPrinter
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import com.github.stefanbirkner.systemlambda.SystemLambda
-import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeBlank
@@ -31,7 +30,8 @@ class EvolutionPrinterTest : FreeSpec({
                     Arb.nothingPopulation()
                 ) { printer, generation, population ->
                     printer.onGenerationStarted(generation, population)
-                    printer.currentGeneration.generation shouldBe GenerationRecord(generation).generation
+                    printer.currentGeneration.generation shouldBe
+                          GenerationRecord<Nothing, NothingGene>(generation).generation
                 }
             }
         }

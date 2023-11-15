@@ -16,6 +16,4 @@ private fun beInRange(range: DoubleRange) = object : Matcher<Double> {
     }
 }
 
-infix fun Double.shouldBeInRange(range: DoubleRange) = this should beInRange(range)
-
 infix fun Double.shouldNotBeInRange(range: DoubleRange) = this shouldNot beInRange(range)

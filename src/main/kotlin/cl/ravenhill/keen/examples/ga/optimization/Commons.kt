@@ -55,7 +55,6 @@ import cl.ravenhill.keen.util.DoubleToDouble
  */
 fun createEngine(
     fitnessFunc: (Genotype<Double, DoubleGene>) -> Double,
-    range: DoubleToDouble,
 ): Engine<Double, DoubleGene> {
     return engine(
         fitnessFunc,
@@ -63,7 +62,6 @@ fun createEngine(
             chromosome {
                 doubles {
                     this.size = 2
-//                    this.ranges = listOf(range.toRange(), range.toRange())
                 }
             }
         }
@@ -85,7 +83,6 @@ fun createEngine(
 
 fun createEngine(
     fitnessFunc: (Genotype<Double, DoubleGene>) -> Double,
-    vararg ranges: ClosedFloatingPointRange<Double>,
     selector: Selector<Double, DoubleGene> = TournamentSelector(3)
 ) = engine(
     fitnessFunc,

@@ -48,19 +48,19 @@ fun main() {
     lateinit var engine: Engine<Double, DoubleGene>
     println("========= Random selector =========")
     repeat(2) {
-        engine = createEngine(::booth, -10.0..10.0, -10.0..10.0, selector = RandomSelector())
+        engine = createEngine(::booth, selector = RandomSelector())
         engine.evolve()
     }
     println(engine.listeners.first())
     println("========= Tournament selector =========")
     repeat(2) {
-        engine = createEngine(::booth, -10.0..10.0, -10.0..10.0)
+        engine = createEngine(::booth)
         engine.evolve()
     }
     println(engine.listeners.first())
     println("========= Roulette wheel selector =========")
     repeat(2) {
-        engine = createEngine(::booth, -10.0..10.0, -10.0..10.0, selector = RouletteWheelSelector())
+        engine = createEngine(::booth, selector = RouletteWheelSelector())
         engine.evolve()
     }
     println(engine.listeners.first())

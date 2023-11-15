@@ -41,13 +41,12 @@ import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 data class SteadyGenerations<DNA, G>(val generations: Int) :
     ListenLimit<DNA, G>(object : AbstractEvolutionListener<DNA, G>() {
         override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-            currentGenerationRecord = GenerationRecord(generation)
+            currentGenerationRecord = GenerationRecord<DNA, G>(generation)
         }
 
         override fun onGenerationFinished(population: Population<DNA, G>) {
-            val sorted = optimizer.sort(population)
-            currentGenerationRecord.population.resulting = List(sorted.size) {
-                IndividualRecord("${sorted[it].genotype}", sorted[it].fitness)
+            currentGenerationRecord.population.resulting = List(population.size) {
+                IndividualRecord(population[it].genotype, population[it].fitness)
             }
             this.generations.lastOrNull()?.let { lastGeneration ->
                 EvolutionListener.computeSteadyGenerations(lastGeneration, currentGenerationRecord)

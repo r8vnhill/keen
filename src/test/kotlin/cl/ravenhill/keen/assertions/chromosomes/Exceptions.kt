@@ -42,8 +42,7 @@ suspend fun <T, G, F> `assert chromosome enforces range to gene count equality`(
       T : Comparable<T>,
       G : Gene<T, G>, G : Filterable<T>, G : Ranged<T>,
       F : Chromosome.Factory<T, G>, F : MutableRangedCollection<T> {
-    with(Arb) {
-        checkAll(list(arb, 2..100), int(2..100)) { ranges, size ->
+        checkAll(Arb.list(arb, 2..100), Arb.int(2..100)) { ranges, size ->
             assume {
                 ranges.size shouldNotBe size
             }
@@ -55,7 +54,6 @@ suspend fun <T, G, F> `assert chromosome enforces range to gene count equality`(
             }.shouldHaveInfringement<CollectionConstraintException>(
                 "Chromosome with multiple ranges must have equal number of ranges and genes"
             )
-        }
     }
 }
 

@@ -14,21 +14,21 @@ fun main() {
     println()
     println("========= Random selector =========")
     repeat(2) {
-        engine = createEngine(::crossInTray, -10.0..10.0, -10.0..10.0)
+        engine = createEngine(::crossInTray)
         engine.evolve()
     }
     println(engine.listeners.first())
     println()
     println("========= Tournament selector =========")
     repeat(2) {
-        engine = createEngine(::crossInTray, -10.0..10.0, -10.0..10.0)
+        engine = createEngine(::crossInTray)
         engine.evolve()
     }
     println(engine.listeners.first())
     println()
     println("========= Roulette wheel selector =========")
     repeat(2) {
-        engine = createEngine(::crossInTray, -10.0..10.0, -10.0..10.0)
+        engine = createEngine(::crossInTray)
         engine.evolve()
     }
     println(engine.listeners.first())

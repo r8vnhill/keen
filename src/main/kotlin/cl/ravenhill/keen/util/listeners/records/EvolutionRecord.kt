@@ -40,7 +40,7 @@ import kotlin.time.ExperimentalTime
  */
 @Serializable
 data class EvolutionRecord<DNA, G : Gene<DNA, G>>(
-    val generations: MutableList<GenerationRecord> = mutableListOf(),
+    val generations: MutableList<GenerationRecord<DNA, G>> = mutableListOf(),
 ) : AbstractTimedRecord() {
     val initialization = InitializationRecord()
 

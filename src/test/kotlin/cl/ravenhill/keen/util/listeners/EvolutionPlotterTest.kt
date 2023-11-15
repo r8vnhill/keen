@@ -37,7 +37,7 @@ class EvolutionPlotterTest : FreeSpec({
                 plotter.onGenerationFinished(population)
                 val sorted = plotter.optimizer.sort(population)
                 val resulting = List(sorted.size) {
-                    IndividualRecord(sorted[it].genotype.toString(), sorted[it].fitness)
+                    IndividualRecord(sorted[it].genotype, sorted[it].fitness)
                 }
                 plotter.evolution.generations.last().population.resulting shouldBe resulting
             }

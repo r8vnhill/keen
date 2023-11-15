@@ -28,7 +28,7 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     override var generation: Int = 0
     override var evolution: EvolutionRecord<DNA, G> = EvolutionRecord()
     protected val generations by lazy { evolution.generations }
-    protected lateinit var currentGenerationRecord: GenerationRecord
+    protected lateinit var currentGenerationRecord: GenerationRecord<DNA, G>
     override val currentGeneration by lazy { currentGenerationRecord }
     @ExperimentalTime
     override var timeSource: TimeSource = TimeSource.Monotonic

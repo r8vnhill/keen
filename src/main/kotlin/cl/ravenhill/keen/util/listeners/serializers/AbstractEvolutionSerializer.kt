@@ -27,7 +27,7 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
      */
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        currentGenerationRecord = GenerationRecord(generation).apply {
+        currentGenerationRecord = GenerationRecord<DNA, G>(generation).apply {
             startTime = timeSource.markNow()
         }
     }
@@ -41,11 +41,9 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
         // Sort population and set resulting
         val sorted = optimizer.sort(population)
         currentGenerationRecord.population.resulting = List(sorted.size) {
-            IndividualRecord("${sorted[it].genotype}", sorted[it].fitness)
+            IndividualRecord(sorted[it].genotype, sorted[it].fitness)
         }
-        generations.lastOrNull()?.let { lastGeneration ->
-            EvolutionListener.computeSteadyGenerations(lastGeneration, currentGenerationRecord)
-        }
+        EvolutionListener.computeSteadyGenerations(optimizer, evolution)
         // Add current generation to the list of generations
         currentGenerationRecord.also { evolution.generations += it }
     }

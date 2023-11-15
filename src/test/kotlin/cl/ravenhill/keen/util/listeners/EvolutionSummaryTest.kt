@@ -24,9 +24,9 @@ class EvolutionSummaryTest : FreeSpec({
                     Arb.intPopulation()
                 ) { listener, generation, population ->
                     listener.onGenerationStarted(generation, population)
-                    listener.currentGeneration shouldBe GenerationRecord(generation).apply {
+                    listener.currentGeneration shouldBe GenerationRecord<Int, IntGene>(generation).apply {
                         this.population.initial = List(population.size) {
-                            IndividualRecord("${population[it].genotype}", population[it].fitness)
+                            IndividualRecord(population[it].genotype, population[it].fitness)
                         }
                     }
                 }
@@ -44,7 +44,7 @@ class EvolutionSummaryTest : FreeSpec({
                     listener.onGenerationStarted(generation, initialPopulation)
                     listener.onGenerationFinished(resultingPopulation)
                     listener.currentGeneration.population.resulting = List(resultingPopulation.size) {
-                        IndividualRecord("${resultingPopulation[it].genotype}", resultingPopulation[it].fitness)
+                        IndividualRecord(resultingPopulation[it].genotype, resultingPopulation[it].fitness)
                     }
                 }
             }
@@ -59,13 +59,10 @@ class EvolutionSummaryTest : FreeSpec({
                     listener.onGenerationStarted(generation, initialPopulation)
                     listener.onGenerationFinished(resultingPopulation)
                     listener.currentGeneration.population.resulting = List(resultingPopulation.size) {
-                        IndividualRecord("${resultingPopulation[it].genotype}", resultingPopulation[it].fitness)
+                        IndividualRecord(resultingPopulation[it].genotype, resultingPopulation[it].fitness)
                     }
-                    listener.onGenerationStarted(generation + 1, initialPopulation)
+                    listener.onGenerationStarted(generation + 1, resultingPopulation)
                     listener.onGenerationFinished(resultingPopulation)
-                    listener.currentGeneration.population.resulting = List(resultingPopulation.size) {
-                        IndividualRecord("${resultingPopulation[it].genotype}", resultingPopulation[it].fitness)
-                    }
                     listener.evolution.generations.last().steady shouldBe 1
                 }
             }

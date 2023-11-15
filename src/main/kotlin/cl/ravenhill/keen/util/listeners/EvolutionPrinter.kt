@@ -82,7 +82,7 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(val every: Int) :
 
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        currentGenerationRecord = GenerationRecord(generation).apply {
+        currentGenerationRecord = GenerationRecord<DNA, G>(generation).apply {
             startTime = timeSource.markNow()
         }
     }
