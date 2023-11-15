@@ -22,7 +22,7 @@ import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 data class TargetFitness<DNA, G>(val fitness: Double) : ListenLimit<DNA, G>(
     object : AbstractEvolutionListener<DNA, G>() {
         override fun onGenerationFinished(population: Population<DNA, G>) {
-            _currentGeneration = GenerationRecord(generation)
+            currentGenerationRecord = GenerationRecord(generation)
         }
     },
     {

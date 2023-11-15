@@ -91,17 +91,17 @@ class EvolutionPlotter<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
     }
 
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        _currentGeneration = GenerationRecord(generation)
+        currentGenerationRecord = GenerationRecord(generation)
     }
 
     override fun onGenerationFinished(population: Population<DNA, G>) {
         val sorted = optimizer.sort(population)
-        _currentGeneration.population.resulting = List(sorted.size) {
+        currentGenerationRecord.population.resulting = List(sorted.size) {
             IndividualRecord(
                 sorted[it].genotype.toString(),
                 sorted[it].fitness
             )
         }
-        evolution.generations += _currentGeneration
+        evolution.generations += currentGenerationRecord
     }
 }

@@ -91,8 +91,11 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     @ExperimentalTime
     override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        _currentGeneration = GenerationRecord(generation).apply {
+        currentGenerationRecord = GenerationRecord(generation).apply {
             startTime = timeSource.markNow()
+            this.population.initial = List(population.size) {
+                IndividualRecord("${population[it].genotype}", population[it].fitness)
+            }
         }
     }
 
@@ -101,17 +104,17 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      */
     override fun onGenerationFinished(population: Population<DNA, G>) {
         // Calculate duration
-        _currentGeneration.duration = _currentGeneration.startTime.elapsedNow().inWholeNanoseconds
+        currentGenerationRecord.duration = currentGenerationRecord.startTime.elapsedNow().inWholeNanoseconds
         // Sort population and set resulting
         val sorted = optimizer.sort(population)
-        _currentGeneration.population.resulting = List(sorted.size) {
+        currentGenerationRecord.population.resulting = List(sorted.size) {
             IndividualRecord("${sorted[it].genotype}", sorted[it].fitness)
         }
         generations.lastOrNull()?.let { lastGeneration ->
-            EvolutionListener.computeSteadyGenerations(lastGeneration, _currentGeneration)
+            EvolutionListener.computeSteadyGenerations(lastGeneration, currentGenerationRecord)
         }
         // Add current generation to the list of generations
-        _currentGeneration.also { evolution.generations += it }
+        currentGenerationRecord.also { evolution.generations += it }
     }
 
     /**
@@ -133,60 +136,60 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      * Called when the evaluation of the population starts, marks the start time.
      */
     override fun onEvaluationStarted() {
-        _currentGeneration.evaluation.startTime = timeSource.markNow()
+        currentGenerationRecord.evaluation.startTime = timeSource.markNow()
     }
 
     /**
      * Called when the evaluation of the population finishes, records the duration.
      */
     override fun onEvaluationFinished() {
-        _currentGeneration.evaluation.duration =
-            _currentGeneration.evaluation.startTime.elapsedNow().inWholeNanoseconds
+        currentGenerationRecord.evaluation.duration =
+            currentGenerationRecord.evaluation.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
      * Called when the offspring selection process starts, marks the start time.
      */
     override fun onOffspringSelectionStarted() {
-        _currentGeneration.offspringSelection.startTime = timeSource.markNow()
+        currentGenerationRecord.offspringSelection.startTime = timeSource.markNow()
     }
 
     /**
      * Called when the offspring selection process finishes, records the duration.
      */
     override fun onOffspringSelectionFinished() {
-        _currentGeneration.offspringSelection.duration =
-            _currentGeneration.offspringSelection.startTime.elapsedNow().inWholeNanoseconds
+        currentGenerationRecord.offspringSelection.duration =
+            currentGenerationRecord.offspringSelection.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
      * Called when the survivor selection process starts, marks the start time.
      */
     override fun onSurvivorSelectionStarted() {
-        _currentGeneration.survivorSelection.startTime = timeSource.markNow()
+        currentGenerationRecord.survivorSelection.startTime = timeSource.markNow()
     }
 
     /**
      * Called when the survivor selection process finishes, records the duration.
      */
     override fun onSurvivorSelectionFinished() {
-        _currentGeneration.survivorSelection.duration =
-            _currentGeneration.survivorSelection.startTime.elapsedNow().inWholeNanoseconds
+        currentGenerationRecord.survivorSelection.duration =
+            currentGenerationRecord.survivorSelection.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**
      * Called when the alteration of the population starts, marks the start time.
      */
     override fun onAlterationStarted() {
-        _currentGeneration.alteration.startTime = timeSource.markNow()
+        currentGenerationRecord.alteration.startTime = timeSource.markNow()
     }
 
     /**
      * Called when the alteration of the population finishes, records the duration.
      */
     override fun onAlterationFinished() {
-        _currentGeneration.alteration.duration =
-            _currentGeneration.alteration.startTime.elapsedNow().inWholeNanoseconds
+        currentGenerationRecord.alteration.duration =
+            currentGenerationRecord.alteration.startTime.elapsedNow().inWholeNanoseconds
     }
 
     /**

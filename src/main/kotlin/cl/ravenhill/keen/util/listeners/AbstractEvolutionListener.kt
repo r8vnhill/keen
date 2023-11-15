@@ -5,9 +5,6 @@
 
 package cl.ravenhill.keen.util.listeners
 
-import cl.ravenhill.keen.genetic.Population
-import cl.ravenhill.keen.evolution.EvolutionResult
-import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
@@ -31,14 +28,10 @@ abstract class AbstractEvolutionListener<DNA, G: Gene<DNA, G>> : EvolutionListen
     override var generation: Int = 0
     override var evolution: EvolutionRecord<DNA, G> = EvolutionRecord()
     protected val generations by lazy { evolution.generations }
-    protected lateinit var _currentGeneration: GenerationRecord
-    override val currentGeneration by lazy { _currentGeneration }
+    protected lateinit var currentGenerationRecord: GenerationRecord
+    override val currentGeneration by lazy { currentGenerationRecord }
     @ExperimentalTime
     override var timeSource: TimeSource = TimeSource.Monotonic
-
-    override fun onResultUpdated() {
-        generation = currentGeneration.generation
-    }
 
     fun display() = println(toString())
 }

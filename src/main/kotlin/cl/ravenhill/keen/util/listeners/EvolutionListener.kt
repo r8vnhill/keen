@@ -53,11 +53,6 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
     var timeSource: TimeSource
 
     /**
-     * Called whenever the result of the evolution is updated.
-     */
-    fun onResultUpdated() = Unit
-
-    /**
      * Called when the evolution process has ended (e.g., when the termination criteria are met).
      */
     fun onEvolutionEnded() = Unit

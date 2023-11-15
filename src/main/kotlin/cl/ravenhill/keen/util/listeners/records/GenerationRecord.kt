@@ -97,5 +97,8 @@ data class GenerationRecord(val generation: Int) : AbstractTimedRecord() {
      * @see AbstractRecord
      */
     @Serializable
-    data class PopulationRecord(var resulting: List<IndividualRecord> = listOf()) : AbstractRecord()
+    data class PopulationRecord(
+        var resulting: List<IndividualRecord> = emptyList(),
+        var initial: List<IndividualRecord> = emptyList()
+    ) : AbstractRecord()
 }

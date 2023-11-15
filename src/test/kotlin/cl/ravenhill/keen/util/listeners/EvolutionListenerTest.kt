@@ -56,7 +56,6 @@ class EvolutionListenerTest : FreeSpec({
 
                     }
                 ) {
-                    onResultUpdated() shouldBe Unit
                     onEvolutionEnded() shouldBe Unit
                     onGenerationStarted(0, emptyList()) shouldBe Unit
                     onGenerationFinished(emptyList()) shouldBe Unit

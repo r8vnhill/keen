@@ -54,7 +54,7 @@ class GenerationRecordTest : FreeSpec({
                 shouldThrow<CompositeException> {
                     GenerationRecord(generation)
                 }.shouldHaveInfringement<IntConstraintException>(
-                    unfulfilledConstraint("The generation number [$generation] must be positive")
+                    "The generation number [$generation] must be positive"
                 )
             }
         }
@@ -100,7 +100,7 @@ class GenerationRecordTest : FreeSpec({
                     shouldThrowUnit<CompositeException> {
                         data.steady = steady
                     }.shouldHaveInfringement<IntConstraintException>(
-                        unfulfilledConstraint("The generation number [$steady] must be positive")
+                        "The generation number [$steady] must be positive"
                     )
                 }
             }
