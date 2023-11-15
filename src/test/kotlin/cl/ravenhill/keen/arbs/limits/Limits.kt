@@ -3,6 +3,7 @@ package cl.ravenhill.keen.arbs.limits
 import cl.ravenhill.keen.arbs.datatypes.intWith
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.limits.ListenLimit
@@ -105,6 +106,9 @@ fun <T, G> Arb.Companion.listenLimit(count: Int = 100) where G : Gene<T, G> = ar
 fun <T, G> Arb.Companion.steadyGenerations(steady: Arb<Int> = int(1..100)) where G : Gene<T, G> = arbitrary {
     SteadyGenerations<T, G>(steady.bind())
 }
+
+
+fun <T, G> Arb.Companion.steadyGenerations(steady: Int) where G : Gene<T, G> = steadyGenerations<T, G>(constant(steady))
 
 /**
  * Provides an arbitrary generator for creating instances of various [Limit] types used in genetic algorithms.

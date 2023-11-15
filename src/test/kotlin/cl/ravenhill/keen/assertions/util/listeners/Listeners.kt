@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.assertions.util.listeners
 
 import cl.ravenhill.keen.arbs.datatypes.compose
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.ListenLimit
 import cl.ravenhill.keen.limits.ListenLimitTest
@@ -61,6 +62,7 @@ suspend fun <T, G> `test ListenLimit with varying generations`(
     checkAll(
         Arb.int(1..100).compose { arbFactory(it) }, Arb.int(1..100)
     ) { (count, limit), generations ->
+        limit.listener.onGenerationStarted(0, emptyList())
         repeat(generations) {
             limit.listener.onGenerationFinished(emptyList())
         }

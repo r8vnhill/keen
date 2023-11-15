@@ -7,7 +7,11 @@ package cl.ravenhill.keen.limits
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.arbs.limits.generationCount
+import cl.ravenhill.keen.arbs.limits.steadyGenerations
+import cl.ravenhill.keen.assertions.util.listeners.`test ListenLimit with varying generations`
 import cl.ravenhill.keen.genetic.genes.NothingGene
+import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -33,6 +37,14 @@ class SteadyGenerationsTest : FreeSpec({
                 }.shouldHaveInfringement<IntConstraintException>(
                     "Number of steady generations [$numGenerations] must be a positive integer"
                 )
+            }
+        }
+
+        "when invoked to check the limit condition" - {
+            "accurately evaluates whether the generation count exceeds the limit" {
+                `test ListenLimit with varying generations`({ Arb.steadyGenerations<Int, IntGene>(it) }) { count ->
+                    evolution.generations.last().steady >= count
+                }
             }
         }
     }
