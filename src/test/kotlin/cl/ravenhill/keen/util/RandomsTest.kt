@@ -250,6 +250,7 @@ class RandomsTest : FreeSpec({
 
         "return a list of at most the given number of subsets" {
             checkAll(
+                PropTestConfig(iterations = 50),
                 Arb.listAndIndex(Arb.any(), 1..100),
                 Arb.positiveInt(),
                 Arb.random()

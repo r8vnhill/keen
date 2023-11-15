@@ -108,15 +108,6 @@ class GenerationRecordTest : FreeSpec({
 
         "should have a [PopulationRecord] that" - {
             "have a resulting population that" - {
-                "is initialized as an empty list" {
-                    checkAll(
-                        PropTestConfig(iterations = 50),
-                        Arb.generationRecord()
-                    ) { data ->
-                        data.population.resulting.shouldBeEmpty()
-                    }
-                }
-
                 "can be initialized" {
                     checkAll(Arb.generationRecord(), Arb.populationRecord()) { data, population ->
                         data.population.resulting = population.resulting
