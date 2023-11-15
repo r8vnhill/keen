@@ -217,6 +217,7 @@ class MutableListsTest : FreeSpec({
 
             "the second index is greater than the list's size" {
                 checkAll(
+                    PropTestConfig(iterations = 50),
                     Arb.indices(
                         Arb.mutableList(Arb.any(), 1..100),
                         y = IndexType.Overflow

@@ -6,14 +6,13 @@
 package cl.ravenhill.keen.operators.crossover.permutation
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BeAtLeast
+import cl.ravenhill.jakt.constraints.ints.BeAtMost
+import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.indices
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 
 /**
  * Type alias for the [OrderedCrossover] class with generic types ``DNA`` and ``G``.
@@ -86,8 +85,8 @@ typealias OX<DNA, G> = OrderedCrossover<DNA, G>
  */
 class OrderedCrossover<DNA, G : Gene<DNA, G>>(
     val probability: Double,
-    chromosomeProbability: Double = 1.0,
-) : AbstractPermutationCrossover<DNA, G>(chromosomeRate = chromosomeProbability) {
+    chromosomeRate: Double = 1.0,
+) : AbstractPermutationCrossover<DNA, G>(chromosomeRate = chromosomeRate) {
 
     /**
      * Performs ordered crossover on a list of chromosomes.
@@ -95,53 +94,46 @@ class OrderedCrossover<DNA, G : Gene<DNA, G>>(
      * @param chromosomes the list of chromosomes to be crossed over
      * @return a list of the offspring produced by the crossover operation
      */
-    override fun performPermutationCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> = runBlocking {
+    override fun performPermutationCrossover(chromosomes: List<Chromosome<DNA, G>>): List<List<G>> {
         constraints {
-            "The Ordered Crossover operator requires exactly two chromosomes" {
-                chromosomes must HaveSize(2)
-            }
+            "Both parents must have the same size" { chromosomes[0].size must BeEqualTo(chromosomes[1].size) }
         }
-        val size = chromosomes.minOf { it.size }
-        if (size < 2) return@runBlocking chromosomes.map { it.genes }
+        val size = chromosomes[0].size
+        if (size < 2) return chromosomes.map { it.genes }
         val (start, end) = Core.random.indices(2, size).sorted()
         val (genes1, genes2) = chromosomes.map { it.genes }
-        // Launches the two crossover operations concurrently.
-        val job1 = async { crossoverGenes(genes1 to genes2, start, end, size) }
-        val job2 = async { crossoverGenes(genes2 to genes1, start, end, size) }
-        listOf(job1.await(), job2.await())
+        return listOf(
+            crossoverGenes(genes1 to genes2, start..end),
+            crossoverGenes(genes2 to genes1, start..end)
+        )
     }
 
     /**
      * Performs the ordered crossover operation between two parents' genes.
      *
      * @param parents a pair of chromosomes representing the parents
-     * @param start the starting index of the subsequence to be taken from the first parent's genes
+     * @param indices the starting index of the subsequence to be taken from the first parent's genes
      * @param end the ending index of the subsequence to be taken from the first parent's genes
      * @param size the expected size of the offspring's genes
      * @return a new list of genes representing the offspring produced by the crossover operation
      */
-    private fun crossoverGenes(
+    fun crossoverGenes(
         parents: Pair<List<G>, List<G>>,
-        start: Int,
-        end: Int,
-        size: Int,
+        indices: ClosedRange<Int>
     ): List<G> {
+        constraints {
+            "The start of the crossover region must be non-negative" { indices.start must BeAtLeast(0) }
+            "The end of the crossover region must be less than the size of the parents" {
+                indices.endInclusive must BeAtMost(parents.first.size - 1)
+            }
+        }
+        if (indices.start == indices.endInclusive) return parents.second
         // Takes a sublist of genes from the first parent to be inserted into the second parent.
-        val sublist = parents.first.subList(start, end + 1)
+        val sublist = parents.first.subList(indices.start, indices.endInclusive + 1)
         // Creates a new list to hold the genes from the second parent that are not in the sublist.
         val uniqueGenes = parents.second.filter { it !in sublist }
         // Creates the new offspring list by combining genes from the second parent and the sublist
         // of the first parent.
-        val offspring = uniqueGenes.take(start) + sublist + uniqueGenes.drop(start)
-        constraints {
-            "The size of the offspring's genes should be at least $size" {
-                offspring.size must BeAtLeast(size)
-            }
-        }
-        return offspring
+        return uniqueGenes.take(indices.start) + sublist + uniqueGenes.drop(indices.start)
     }
-
-    /* Documentation inherited from [Any] */
-    override fun toString() =
-        "OrderedCrossover(probability=$probability, chromosomeRate=$chromosomeRate)"
 }
