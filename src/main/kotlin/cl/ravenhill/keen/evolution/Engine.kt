@@ -327,6 +327,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         var selector: Selector<DNA, G> = TournamentSelector(3)
             set(value) {
                 offspringSelector = value
+                survivorSelector = value
                 field = value
             }
 

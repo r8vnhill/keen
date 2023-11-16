@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.evolution.evolutionEngine
@@ -7,13 +8,13 @@ import cl.ravenhill.keen.arbs.evolution.fitnessFunction
 import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.limits.limit
 import cl.ravenhill.keen.arbs.operators.intAlterer
+import cl.ravenhill.keen.arbs.operators.selector
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.operators.selector.TournamentSelector
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
-import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -25,14 +26,15 @@ import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
 
 class EngineFactoryTest : FreeSpec({
+
     "An evolution Engine Factory" - {
         "should have a genotype factory property that" - {
             "returns the value provided to the constructor" {
-                io.kotest.property.checkAll(
-                    io.kotest.property.Arb.intGenotypeFactory(),
-                    io.kotest.property.Arb.fitnessFunction()
+                checkAll(
+                    Arb.intGenotypeFactory(),
+                    Arb.fitnessFunction()
                 ) { factory, fitnessFunction ->
-                    val engine = cl.ravenhill.keen.evolution.Engine.Factory(fitnessFunction, factory)
+                    val engine = Engine.Factory(fitnessFunction, factory)
                     engine.genotypeFactory shouldBe factory
                 }
             }
@@ -40,11 +42,11 @@ class EngineFactoryTest : FreeSpec({
 
         "should have a fitness function property that" - {
             "returns the value provided to the constructor" {
-                io.kotest.property.checkAll(
-                    io.kotest.property.Arb.intGenotypeFactory(),
-                    io.kotest.property.Arb.fitnessFunction()
+                checkAll(
+                    Arb.intGenotypeFactory(),
+                    Arb.fitnessFunction()
                 ) { factory, fitnessFunction ->
-                    val engine = cl.ravenhill.keen.evolution.Engine.Factory(fitnessFunction, factory)
+                    val engine = Engine.Factory(fitnessFunction, factory)
                     engine.fitnessFunction shouldBe fitnessFunction
                 }
             }
@@ -109,16 +111,16 @@ class EngineFactoryTest : FreeSpec({
             }
 
             "cannot be set to an empty list" {
-                io.kotest.property.checkAll(
-                    io.kotest.property.Arb.evolutionEngine(
-                        io.kotest.property.Arb.fitnessFunction(),
-                        io.kotest.property.Arb.intGenotypeFactory()
+                checkAll(
+                    Arb.evolutionEngine(
+                        Arb.fitnessFunction(),
+                        Arb.intGenotypeFactory()
                     )
                 ) { engine ->
-                    io.kotest.assertions.throwables.shouldThrowUnit<cl.ravenhill.jakt.exceptions.CompositeException> {
-                        engine.limits = kotlin.collections.emptyList()
+                    shouldThrowUnit<CompositeException> {
+                        engine.limits = emptyList()
                     }
-                        .shouldHaveInfringement<cl.ravenhill.jakt.exceptions.CollectionConstraintException>("Limits cannot be empty")
+                        .shouldHaveInfringement<CollectionConstraintException>("Limits cannot be empty")
                 }
             }
         }
@@ -137,12 +139,12 @@ class EngineFactoryTest : FreeSpec({
             }
 
             "can be set to a different optimizer" {
-                io.kotest.property.checkAll(
-                    io.kotest.property.Arb.evolutionEngine(
-                        io.kotest.property.Arb.fitnessFunction(),
-                        io.kotest.property.Arb.intGenotypeFactory()
+                checkAll(
+                    Arb.evolutionEngine(
+                        Arb.fitnessFunction(),
+                        Arb.intGenotypeFactory()
                     ),
-                    io.kotest.property.Arb.optimizer<kotlin.Int, cl.ravenhill.keen.genetic.genes.numerical.IntGene>()
+                    Arb.optimizer<Int, IntGene>()
                 ) { engine, optimizer ->
                     engine.optimizer = optimizer
                     engine.optimizer shouldBe optimizer
@@ -164,12 +166,12 @@ class EngineFactoryTest : FreeSpec({
             }
 
             "can be set to a list" {
-                io.kotest.property.checkAll(
-                    io.kotest.property.Arb.evolutionEngine(
-                        io.kotest.property.Arb.fitnessFunction(),
-                        io.kotest.property.Arb.intGenotypeFactory()
+                checkAll(
+                    Arb.evolutionEngine(
+                        Arb.fitnessFunction(),
+                        Arb.intGenotypeFactory()
                     ),
-                    io.kotest.property.Arb.list(io.kotest.property.Arb.intAlterer(), 1..3)
+                    Arb.list(Arb.intAlterer(), 1..3)
                 ) { engine, alterers ->
                     engine.alterers = alterers
                     engine.alterers shouldBe alterers
@@ -191,7 +193,18 @@ class EngineFactoryTest : FreeSpec({
             }
 
             "when set should assign both the survivor and offspring selectors" - {
-                fail("TODO")
+                checkAll(
+                    Arb.evolutionEngine(
+                        Arb.fitnessFunction(),
+                        Arb.intGenotypeFactory(),
+                    ),
+                    Arb.selector<Int, IntGene>(),
+                ) { engine, selector ->
+                    engine.selector = selector
+                    engine.selector shouldBe selector
+                    engine.offspringSelector shouldBe selector
+                    engine.survivorSelector shouldBe selector
+                }
             }
         }
     }
