@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.arbs.evolution
 
 import cl.ravenhill.keen.arbs.datatypes.mutableList
+import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.limits.limit
 import cl.ravenhill.keen.arbs.listeners.evolutionListener
@@ -15,6 +16,7 @@ import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.operators.Alterer
 import cl.ravenhill.keen.operators.selector.Selector
+import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.*
@@ -84,40 +86,49 @@ fun Arb.Companion.fitnessFunction(): Arb<(Genotype<Int, IntGene>) -> Double> = e
 )
 
 /**
- * Provides an arbitrary generator for creating instances of [Engine] for property-based testing.
+ * Provides an arbitrary generator for creating factory instances of [Engine] for property-based testing.
  *
- * This generator creates [Engine] instances suitable for testing genetic algorithms. Each instance is
- * configured with different components necessary for running a genetic algorithm, including a fitness
- * function, genotype factory, and optionally, a specified population size.
- *
- * The function leverages Kotest's property-based testing framework to randomly select configurations for
- * these components, thus facilitating extensive and varied testing of [Engine] behaviors under different
- * scenarios.
+ * This generator allows for the creation of [Engine.Factory] instances with various configurations,
+ * enabling extensive testing of genetic algorithms under different conditions. Each factory instance
+ * can be customized with different components like fitness functions, genotype factories, population
+ * sizes, limits, optimizers, alterers, selectors, survival rates, and listeners.
  *
  * ### Usage:
  * ```
- * val engineArb = Arb.evolutionEngine(
+ * val engineFactoryArb = Arb.evolutionEngineFactory(
  *     fitnessFunction = Arb.fitnessFunction(),
  *     genotypeFactory = Arb.intGenotypeFactory(),
- *     populationSize = Arb.positiveInt()
+ *     populationSize = Arb.positiveInt(),
+ *     limits = Arb.list(Arb.limit(), 1..3),
+ *     optimizer = Arb.optimizer(),
+ *     alterers = Arb.list(Arb.alterer(), 1..3),
+ *     selectors = Arb.pair(Arb.selector(), Arb.selector()),
+ *     survivalRate = Arb.probability(),
+ *     listeners = Arb.mutableList(Arb.evolutionListener(), 1..3)
  * )
- * val geneticEngine = engineArb.bind() // Instance of Engine
+ * val engineFactory = engineFactoryArb.bind() // Instance of Engine.Factory
+ * val geneticEngine = engineFactory.build() // Build Engine instance
  * // Use in genetic algorithm tests
  * ```
  *
+ * The flexibility of this approach allows for thorough testing of genetic algorithms across a wide
+ * spectrum of scenarios and configurations.
+ *
  * @param T The type representing the genetic data or information.
  * @param G The type of [Gene] associated with the genetic data.
+ * @param fitnessFunction An [Arb] that generates fitness functions.
+ * @param genotypeFactory An [Arb] that generates [Genotype.Factory] instances.
+ * @param populationSize An optional [Arb] that generates population sizes.
+ * @param limits An optional [Arb] that generates a list of [Limit] instances.
+ * @param optimizer An optional [Arb] that generates [IndividualOptimizer] instances.
+ * @param alterers An optional [Arb] that generates a list of [Alterer] instances.
+ * @param selectors An [Arb] generating a pair of [Selector] instances for survivor and offspring selection.
+ * @param survivalRate An optional [Arb] that generates survival rate values.
+ * @param listeners An optional [Arb] that generates a list of [EvolutionListener] instances.
  *
- * @param fitnessFunction An [Arb] that generates fitness functions. Each fitness function evaluates the
- *   fitness of a genotype.
- * @param genotypeFactory An [Arb] that generates [Genotype.Factory] instances, responsible for creating
- *   initial populations of genotypes.
- * @param populationSize An optional [Arb] that generates population sizes. If provided, it determines the
- *   size of the population in the genetic algorithm. If not provided, a default size is used.
- *
- * @return An [Arb] that generates instances of [Engine] with various configurations.
+ * @return An [Arb] that generates instances of [Engine.Factory] with various configurations.
  */
-fun <T, G> Arb.Companion.evolutionEngine(
+fun <T, G> Arb.Companion.evolutionEngineFactory(
     fitnessFunction: Arb<(Genotype<T, G>) -> Double>,
     genotypeFactory: Arb<Genotype.Factory<T, G>>,
     populationSize: Arb<Int>? = int(1..100),
@@ -125,6 +136,8 @@ fun <T, G> Arb.Companion.evolutionEngine(
     optimizer: Arb<IndividualOptimizer<T, G>>? = optimizer(),
     alterers: Arb<List<Alterer<T, G>>>? = Arb.constant(emptyList()),
     selectors: Arb<Pair<Selector<T, G>?, Selector<T, G>?>> = pair(selector(), selector()),
+    survivalRate: Arb<Double>? = probability(),
+    listeners: Arb<MutableList<EvolutionListener<T, G>>>? = mutableList(evolutionListener(), 1..3)
 ) where G : Gene<T, G> = arbitrary {
     Engine.Factory(
         fitnessFunction.bind(),
@@ -138,5 +151,8 @@ fun <T, G> Arb.Companion.evolutionEngine(
             it.first?.let { selector -> survivorSelector = selector }
             it.second?.let { selector -> offspringSelector = selector }
         }
+        survivalRate?.let { this.survivalRate = it.bind() }
+        listeners?.let { this.listeners = it.bind() }
     }
 }
+

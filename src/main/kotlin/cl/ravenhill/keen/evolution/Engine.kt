@@ -43,9 +43,9 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  *
  * @param DNA The data type that represents the genetic information of an individual.
  * @param G The type of gene that holds the genetic information, extending from [Gene].
- * @param genotype Factory to produce genotypes for initial population and offspring generation.
+ * @param genotypeFactory Factory to produce genotypes for initial population and offspring generation.
  * @param populationSize The number of individuals in the population.
- * @param offspringRatio The proportion of the population to be replaced by offspring each generation.
+ * @param survivalRate The proportion of the population to be replaced by offspring each generation.
  * @param selector Selection mechanism to choose individuals for reproduction.
  * @param offspringSelector Selection mechanism to choose which offspring to keep.
  * @param alterer Genetic operator to modify genotypes (e.g., mutation, crossover).
@@ -65,9 +65,9 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  * @version 2.0.0
  */
 class Engine<DNA, G : Gene<DNA, G>>(
-    val genotype: Genotype.Factory<DNA, G>,
+    val genotypeFactory: Genotype.Factory<DNA, G>,
     val populationSize: Int,
-    val offspringRatio: Double,
+    val survivalRate: Double,
     val selector: Selector<DNA, G>,
     val offspringSelector: Selector<DNA, G>,
     val alterer: Alterer<DNA, G>,
@@ -157,22 +157,20 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param state the starting state of the evolution at this generation.
      * @return the initial population of the evolution.
      */
-    fun startEvolution(state: EvolutionState<DNA, G>): EvolutionState<DNA, G> {
-        return if (state.population.isEmpty()) {
-            listeners.forEach { it.onInitializationStarted() }
-            val generation = state.generation
-            val individuals =
-                state.population.asSequence() + generateSequence { genotype.make() }
-                    .map { Individual(it) }
-            EvolutionState(
-                individuals.take(populationSize).toList(),
-                generation
-            ).also {
-                listeners.forEach { it.onInitializationFinished() }
-            }
-        } else {
-            state
+    fun startEvolution(state: EvolutionState<DNA, G>) = if (state.population.isEmpty()) {
+        listeners.forEach { it.onInitializationStarted() }
+        val generation = state.generation
+        val individuals =
+            state.population.asSequence() + generateSequence { genotypeFactory.make() }
+                .map { Individual(it) }
+        EvolutionState(
+            individuals.take(populationSize).toList(),
+            generation
+        ).also {
+            listeners.forEach { it.onInitializationFinished() }
         }
+    } else {
+        state
     }
 
     /**
@@ -211,7 +209,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onOffspringSelectionStarted() }
         return offspringSelector(
             population,
-            (offspringRatio * populationSize).ceil(),
+            ((1 - survivalRate) * populationSize).floor(),
             optimizer
         ).also {
             listeners.forEach { it.onOffspringSelectionFinished() }
@@ -228,7 +226,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onSurvivorSelectionStarted() }
         return survivorSelector(
             population,
-            ((1 - offspringRatio) * populationSize).floor(),
+            (survivalRate * populationSize).ceil(),
             optimizer
         ).also {
             listeners.forEach {
@@ -279,7 +277,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * Default value is the same as the ``selector``.
      * @property survivorSelector The selector that will be used to select the survivors.
      * Default value is the same as the ``selector``.
-     * @property offspringFraction The fraction of the population that will be used to create
+     * @property survivalRate The fraction of the population that will be used to create
      * the offspring.
      * Default value is 0.6.
      * @property alterers The alterers that will be used to alter the population.
@@ -335,18 +333,18 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
         var offspringSelector = selector
 
-        var offspringFraction = 0.6
+        var survivalRate = 0.4
             set(value) = constraints {
-                "Offspring fraction must be in range [0, 1]" { value must BeInRange(0.0..1.0) }
+                "Survival rate [$value] must be a valid probability" { value must BeInRange(0.0..1.0) }
             }.let { field = value }
         // endregion    ----------------------------------------------------------------------------
 
         var listeners = mutableListOf<EvolutionListener<DNA, G>>()
 
-        fun build() = Engine(
-            genotype = genotypeFactory,
+        fun make() = Engine(
+            genotypeFactory = genotypeFactory,
             populationSize = populationSize,
-            offspringRatio = offspringFraction,
+            survivalRate = survivalRate,
             selector = selector,
             offspringSelector = offspringSelector,
             alterer = alterer,

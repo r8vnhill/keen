@@ -7,6 +7,7 @@ package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
+import java.util.*
 
 
 /**
@@ -38,4 +39,14 @@ class CompositeAlterer<DNA, G : Gene<DNA, G>>(val alterers: List<Alterer<DNA, G>
                 AltererResult(it.population, result.alterations + it.alterations)
             }
         }
+
+    override fun toString() = "CompositeAlterer(alterers=$alterers)"
+
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is CompositeAlterer<*, *> -> false
+        else -> alterers == other.alterers
+    }
+
+    override fun hashCode() = Objects.hash(CompositeAlterer::class, alterers)
 }
