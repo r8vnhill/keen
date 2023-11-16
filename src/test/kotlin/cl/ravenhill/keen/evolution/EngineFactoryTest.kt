@@ -19,10 +19,7 @@ import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.constant
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.nonPositiveInt
-import io.kotest.property.arbitrary.positiveInt
+import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 
 class EngineFactoryTest : FreeSpec({
@@ -204,6 +201,54 @@ class EngineFactoryTest : FreeSpec({
                     engine.selector shouldBe selector
                     engine.offspringSelector shouldBe selector
                     engine.survivorSelector shouldBe selector
+                }
+            }
+        }
+
+        "should have a survivor selector property that" - {
+            "defaults to a Tournament Selector with sample size of 3" {
+                checkAll(
+                    Arb.evolutionEngine(
+                        Arb.fitnessFunction(),
+                        Arb.intGenotypeFactory(),
+                        selectors = Arb.pair(Arb.constant(null), Arb.constant(null))
+                    )
+                ) { engine ->
+                    engine.survivorSelector shouldBe TournamentSelector(3)
+                }
+            }
+
+            "can be set to another selector" {
+                checkAll(Arb.evolutionEngine(
+                    Arb.fitnessFunction(),
+                    Arb.intGenotypeFactory(),
+                ), Arb.selector<Int, IntGene>()) { engine, selector ->
+                    engine.survivorSelector = selector
+                    engine.survivorSelector shouldBe selector
+                }
+            }
+        }
+
+        "should have an offspring selector that" - {
+            "defaults to a Tournament Selector with a sample size of 3" {
+                checkAll(
+                    Arb.evolutionEngine(
+                        Arb.fitnessFunction(),
+                        Arb.intGenotypeFactory(),
+                        selectors = Arb.pair(Arb.constant(null), Arb.constant(null))
+                    )
+                ) { engine ->
+                    engine.offspringSelector shouldBe TournamentSelector(3)
+                }
+            }
+
+            "can be set to another selector" {
+                checkAll(Arb.evolutionEngine(
+                    Arb.fitnessFunction(),
+                    Arb.intGenotypeFactory(),
+                ), Arb.selector<Int, IntGene>()) { engine, selector ->
+                    engine.offspringSelector = selector
+                    engine.offspringSelector shouldBe selector
                 }
             }
         }
