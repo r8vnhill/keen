@@ -5,11 +5,7 @@
 
 package cl.ravenhill.keen.operators.mutator.strategies
 
-import cl.ravenhill.keen.genetic.genes.ProgramGene
-import cl.ravenhill.keen.prog.Program
-import cl.ravenhill.keen.prog.Reduceable
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.shouldBe
 
 class PointMutatorTest : FreeSpec({
 

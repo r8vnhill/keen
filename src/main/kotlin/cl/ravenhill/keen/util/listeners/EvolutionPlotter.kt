@@ -90,8 +90,8 @@ class EvolutionPlotter<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
         return Triple(bestFitnessScatter, worstFitnessScatter, averageFitnessScatter)
     }
 
-    override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        currentGenerationRecord = GenerationRecord(generation)
+    override fun onGenerationStarted(population: Population<DNA, G>) {
+        currentGenerationRecord = GenerationRecord(generations.size + 1)
     }
 
     override fun onGenerationFinished(population: Population<DNA, G>) {

@@ -36,5 +36,5 @@ import cl.ravenhill.keen.genetic.genes.Gene
 fun <DNA, G: Gene<DNA, G>> engine(
     fitnessFunction: (Genotype<DNA, G>) -> Double,
     genotype: Genotype.Factory<DNA, G>,
-    init: Engine.Builder<DNA, G>.() -> Unit
-): Engine<DNA, G> = Engine.Builder(fitnessFunction, genotype).apply(init).build()
+    init: Engine.Factory<DNA, G>.() -> Unit
+): Engine<DNA, G> = Engine.Factory(fitnessFunction, genotype).apply(init).build()

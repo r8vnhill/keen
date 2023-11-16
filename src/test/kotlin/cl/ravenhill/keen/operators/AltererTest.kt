@@ -8,7 +8,6 @@ package cl.ravenhill.keen.operators
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.doubles.shouldBeGreaterThan
@@ -26,10 +25,8 @@ class AltererTest : FreeSpec({
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummyAlterer(probability)
                     }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleConstraintException>(
-                        unfulfilledConstraint(
-                            "The alteration probability [$probability] must be between " +
-                                "0.0 and 1.0"
-                        )
+                        "The alteration probability [$probability] must be between " +
+                            "0.0 and 1.0"
                     )
                 }
             }
@@ -40,10 +37,8 @@ class AltererTest : FreeSpec({
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummyAlterer(probability)
                     }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleConstraintException>(
-                        unfulfilledConstraint(
-                            "The alteration probability [$probability] must be between " +
-                                "0.0 and 1.0"
-                        )
+                        "The alteration probability [$probability] must be between " +
+                            "0.0 and 1.0"
                     )
                 }
             }

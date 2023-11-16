@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.prog.terminals
 
-import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.prog.Reducible
 import cl.ravenhill.keen.util.trees.Leaf
 
 /**
@@ -22,7 +22,7 @@ import cl.ravenhill.keen.util.trees.Leaf
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Terminal<T> : Reduceable<T>, Leaf<Reduceable<T>> {
+interface Terminal<T> : Reducible<T>, Leaf<Reducible<T>> {
 
     /**
      * Produces a fresh instance of this terminal operation.

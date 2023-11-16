@@ -11,6 +11,7 @@ import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
+import java.util.*
 
 /**
  * A selector that chooses the fittest individuals from a population by comparing the fitness of
@@ -52,4 +53,12 @@ class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
 
     /* Documentation inherited from [Any]   */
     override fun toString() = "TournamentSelector(sampleSize=$sampleSize)"
+
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is TournamentSelector<*, *> -> false
+        else -> sampleSize == other.sampleSize
+    }
+
+    override fun hashCode() = Objects.hash(TournamentSelector::class, sampleSize)
 }

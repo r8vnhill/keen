@@ -9,7 +9,7 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.keen.prog.Environment
-import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.prog.Reducible
 import cl.ravenhill.keen.prog.terminals.Terminal
 import cl.ravenhill.keen.util.trees.Intermediate
 
@@ -39,7 +39,7 @@ open class Fun<T>(
     val name: String,
     override val arity: Int,
     val body: (List<T>) -> T
-) : Reduceable<T>, Intermediate<Reduceable<T>> {
+) : Reducible<T>, Intermediate<Reducible<T>> {
 
     init {
         constraints {

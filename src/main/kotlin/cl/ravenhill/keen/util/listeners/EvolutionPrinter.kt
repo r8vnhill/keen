@@ -71,7 +71,7 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(val every: Int) :
             EvolutionListener.computePopulation(optimizer, population)
         // Calculate steady generations
         generations.lastOrNull()?.let { lastGeneration ->
-            EvolutionListener.computeSteadyGenerations(lastGeneration, currentGenerationRecord)
+            EvolutionListener.computeSteadyGenerations(optimizer, evolution)
         }
         // Add current generation to the list of generations
         currentGenerationRecord.also { evolution.generations += it }
@@ -81,8 +81,8 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(val every: Int) :
     }
 
     @ExperimentalTime
-    override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        currentGenerationRecord = GenerationRecord<DNA, G>(generation).apply {
+    override fun onGenerationStarted(population: Population<DNA, G>) {
+        currentGenerationRecord = GenerationRecord<DNA, G>(generations.size + 1).apply {
             startTime = timeSource.markNow()
         }
     }

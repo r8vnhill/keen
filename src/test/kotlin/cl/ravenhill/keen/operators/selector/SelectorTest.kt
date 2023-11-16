@@ -13,7 +13,6 @@ import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
@@ -33,7 +32,7 @@ class SelectorTest : FreeSpec({
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummySelector()(listOf(), count, FitnessMinimizer())
                     }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.CollectionConstraintException>(
-                        unfulfilledConstraint("Population size [0] must be at least 1")
+                        "Population size [0] must be at least 1"
                     )
                 }
             }
@@ -47,9 +46,7 @@ class SelectorTest : FreeSpec({
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         DummySelector()(population, count, optimizer)
                     }.shouldHaveInfringement<IntConstraintException>(
-                        unfulfilledConstraint(
-                            "Selection count [$count] must be at least 0"
-                        )
+                        "Selection count [$count] must be at least 0"
                     )
                 }
             }

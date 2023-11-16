@@ -34,8 +34,8 @@ import java.util.Objects
  * @since 2.0.0
  * @version 2.0.0
  */
-class ProgramGene<DNA>(
-    program: Program<DNA>,
+data class ProgramGene<DNA>(
+    val program: Program<DNA>,
     val functions: List<Fun<DNA>>,
     val terminals: List<Terminal<DNA>>,
     private val generationMethods: List<((

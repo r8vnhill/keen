@@ -64,3 +64,6 @@ fun run() {
     (engine.listeners.last() as EvolutionPlotter).displayFitness()
 }
 
+fun main() {
+    run()
+}

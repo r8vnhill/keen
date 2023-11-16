@@ -11,7 +11,7 @@ import cl.ravenhill.keen.util.trees.Node
  * Represents an operation that can be condensed or simplified to produce a single outcome. This
  * operation works on instances of type `T` and may involve multiple input values or sub-operations.
  *
- * A `Reduceable` can be visualized as a node in a tree, with the potential of having child nodes.
+ * A `Reducible` can be visualized as a node in a tree, with the potential of having child nodes.
  * Each child node (or operation) can be recursively reduced until a final value for the root node
  * is determined. The concept is somewhat similar to how functions in mathematics can be
  * "reduced" to simpler forms or values.
@@ -27,22 +27,9 @@ import cl.ravenhill.keen.util.trees.Node
  * @since 2.0.0
  * @version 2.0.0
  */
-interface Reduceable<T> : Node<Reduceable<T>> {
-    override val contents: Reduceable<T>
+interface Reducible<T> : Node<Reducible<T>> {
+    override val contents: Reducible<T>
         get() = this
-
-    /**
-     * Evaluates or reduces the operation based on a list of input values. This method defines
-     * the primary logic of the operation, determining its outcome based on the provided arguments.
-     *
-     * @param args A list of input values that the operation will process.
-     * @return The result of the operation after evaluating the input values.
-     */
-    @Deprecated(
-        "Use invoke(environment: Environment, args: List<T>) instead.",
-        ReplaceWith("invoke(environment, args)")
-    )
-    operator fun invoke(args: List<T>): T = invoke(Environment<T>(""), args)
 
     /**
      * An overloaded version of the `invoke` method that allows the operation to be
@@ -55,18 +42,5 @@ interface Reduceable<T> : Node<Reduceable<T>> {
     operator fun invoke(environment: Environment<T>, args: List<T>): T
 
     operator fun invoke(environment: Environment<T>, vararg args: T): T = invoke(environment, args.toList())
-
-    /**
-     * Simplifies the invocation process by accepting a variable number of arguments directly.
-     * This method is especially handy when the exact count of input values is known in advance.
-     *
-     * @param args A variable number of input values that the operation will process.
-     * @return The result of the operation after evaluating the input values.
-     */
-    @Deprecated(
-        "Use invoke(environment: Environment, vararg args: T) instead.",
-        ReplaceWith("invoke(environment, args)")
-    )
-    operator fun invoke(vararg args: T): T = invoke(args.toList())
 }
 

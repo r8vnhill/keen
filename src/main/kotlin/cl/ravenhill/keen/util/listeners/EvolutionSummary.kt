@@ -134,7 +134,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      * @see [Engine.evolve]
      */
     @ExperimentalTime
-    override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
+    override fun onGenerationStarted(population: Population<DNA, G>) {
         currentGenerationRecord = GenerationRecord<DNA, G>(generations.size + 1).apply {
             startTime = timeSource.markNow()
             this.population.initial = List(population.size) {

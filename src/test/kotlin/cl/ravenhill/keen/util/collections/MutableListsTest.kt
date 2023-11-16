@@ -15,7 +15,6 @@ import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.addIfAbsent
 import cl.ravenhill.keen.util.dropFirst
 import cl.ravenhill.keen.util.swap
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest

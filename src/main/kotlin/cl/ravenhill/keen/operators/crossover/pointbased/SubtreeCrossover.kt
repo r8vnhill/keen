@@ -252,7 +252,10 @@ class SubtreeCrossover<V, DNA : Tree<V, DNA>, G : Gene<DNA, G>>(
      *         the original DNA of the source gene is returned.
      */
     fun replaceSubtreeAndCheckHeight(sourceGene: G, originalNode: DNA, replacementNode: DNA): DNA {
-        return sourceGene.dna.replaceFirst(replacementNode) { it === originalNode }.let { newTree ->
+        return if (sourceGene.dna.children.isEmpty()) {
+            replacementNode
+        }
+        else sourceGene.dna.replaceFirst(replacementNode) { it === originalNode }.let { newTree ->
             if (newTree.height > Core.maxProgramDepth) {
                 sourceGene.dna
             } else {

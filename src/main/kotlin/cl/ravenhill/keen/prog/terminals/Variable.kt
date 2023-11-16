@@ -25,9 +25,6 @@ data class Variable<T>(
     val index: Int = 0
 ) : Terminal<T> {
 
-    // Inherited documentation from Reduceable<T>
-    override fun invoke(args: List<T>) = args[index]
-
     // Inherited documentation from Any
     override fun toString() = name
 

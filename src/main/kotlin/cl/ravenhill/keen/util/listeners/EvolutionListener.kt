@@ -61,7 +61,7 @@ interface EvolutionListener<DNA, G : Gene<DNA, G>> {
      * Called when a new generation has started.
      * @param generation The generation number.
      */
-    fun onGenerationStarted(generation: Int, population: Population<DNA, G>) = Unit
+    fun onGenerationStarted(population: Population<DNA, G>) = Unit
 
     /**
      * Called when the current generation has finished.

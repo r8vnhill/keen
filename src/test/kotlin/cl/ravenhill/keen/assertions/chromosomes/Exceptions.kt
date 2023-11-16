@@ -15,7 +15,6 @@ import cl.ravenhill.keen.util.Filterable
 import cl.ravenhill.keen.util.MutableFilterCollection
 import cl.ravenhill.keen.util.MutableRangedCollection
 import cl.ravenhill.keen.util.Ranged
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb

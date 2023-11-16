@@ -6,7 +6,6 @@
 package cl.ravenhill.keen.prog.terminals
 
 import cl.ravenhill.keen.prog.Environment
-import cl.ravenhill.keen.prog.Reduceable
 
 /**
  * A terminal node representing a constant value in a program tree.

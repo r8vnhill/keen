@@ -5,11 +5,11 @@
 
 package cl.ravenhill.keen.operators
 
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.altererResult
 import cl.ravenhill.keen.arbs.genetic.intPopulation
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -45,13 +45,11 @@ class AltererResultTest : FreeSpec({
 
             "with a negative number of alterations should throw an exception" {
                 checkAll(Arb.intPopulation(), Arb.negativeInt()) { population, alterations ->
-                    shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
+                    shouldThrow<CompositeException> {
                         AltererResult(population, alterations)
                     }.shouldHaveInfringement<IntConstraintException>(
-                        unfulfilledConstraint(
-                            "The number of alterations [$alterations] must be greater " +
-                                  "than or equal to 0"
-                        )
+                        "The number of alterations [$alterations] must be greater " +
+                                "than or equal to 0"
                     )
                 }
             }

@@ -11,7 +11,6 @@ import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.mutator.Mutator
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.property.Arb

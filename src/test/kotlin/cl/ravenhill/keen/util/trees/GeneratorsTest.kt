@@ -10,7 +10,6 @@ import cl.ravenhill.keen.arbs.datatypes.any
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.arbs.datatypes.orderedPair
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.ints.shouldBeLessThanOrEqual
@@ -87,7 +86,7 @@ class GeneratorsTest : FreeSpec({
                                     intermediateFactory(intermediate, children)
                                 })
                         }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.CollectionConstraintException>(
-                            unfulfilledConstraint("There should be at least one leaf node.")
+                            "There should be at least one leaf node."
                         )
                     }
                 }
@@ -113,7 +112,7 @@ class GeneratorsTest : FreeSpec({
                                 intermediateFactory(intermediate, children)
                             })
                     }.shouldHaveInfringement<IntConstraintException>(
-                        unfulfilledConstraint("The minimum height must be positive.")
+                        "The minimum height must be positive."
                     )
                 }
             }
@@ -138,7 +137,7 @@ class GeneratorsTest : FreeSpec({
                                 intermediateFactory(intermediate, children)
                             })
                     }.shouldHaveInfringement<IntConstraintException>(
-                        unfulfilledConstraint("The maximum height must be positive.")
+                        "The maximum height must be positive."
                     )
                 }
             }
@@ -162,7 +161,7 @@ class GeneratorsTest : FreeSpec({
                                 intermediateFactory(intermediate, children)
                             })
                     }.shouldHaveInfringement<IntConstraintException>(
-                        unfulfilledConstraint("The maximum height [$maxHeight] must be greater than the minimum height [$minHeight].")
+                        "The maximum height [$maxHeight] must be greater than the minimum height [$minHeight]."
                     )
                 }
             }

@@ -13,7 +13,6 @@ import cl.ravenhill.keen.arbs.records.populationRecord
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.assertions.throwables.shouldThrowWithMessage

@@ -12,7 +12,6 @@ import cl.ravenhill.keen.arbs.genetic.intGenotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse

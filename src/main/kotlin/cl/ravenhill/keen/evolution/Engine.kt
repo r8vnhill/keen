@@ -28,7 +28,6 @@ import cl.ravenhill.keen.util.floor
 import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
-import kotlin.properties.Delegates
 
 /**
  * The core class that drives the evolutionary algorithm process.
@@ -58,7 +57,6 @@ import kotlin.properties.Delegates
  * @param interceptor Hook that allows custom operations before and after evolution stages.
  *
  * @property generation The current generation count in the evolutionary process.
- * @property fittest The individual with the highest fitness in the current generation.
  *
  * @constructor Initializes the engine with the provided parameters.
  *
@@ -89,12 +87,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
     override val generation: Int get() = _generation
 
-    /**
-     * The fittest individual of the current generation.
-     */
-    private
-    var fittest: Individual<DNA, G>? by Delegates.observable(null) { _, _, _ ->
-    }
     // endregion    --------------------------------------------------------------------------------
 
     /**
@@ -134,7 +126,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see EvolutionResult
      */
     fun evolve(start: EvolutionState<DNA, G>): EvolutionResult<DNA, G> {
-        listeners.forEach { it.onGenerationStarted(generation, listOf()) }
+        listeners.forEach { it.onGenerationStarted(listOf()) }
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
         val interceptedStart = interceptor.before(start)
@@ -153,7 +145,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
         // (8) The next population is evaluated
         val pop = evaluate(EvolutionState(nextPopulation, generation), true)
         evolutionResult = EvolutionResult(optimizer, pop, ++_generation)
-        fittest = evolutionResult.best
         // (9) The result of the evolution is post-processed
         val afterResult = interceptor.after(evolutionResult)
         listeners.forEach { it.onGenerationFinished(pop) }
@@ -271,7 +262,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param DNA The type of the DNA of the Genotype.
      * @property fitnessFunction the fitness function used to evaluate the fitness of the
      * population.
-     * @property genotype the genotype factory used to create the initial population.
+     * @property genotypeFactory the genotype factory used to create the initial population.
      * @property populationSize The size of the population.
      * It must be greater than 0.
      * Default value is 50.
@@ -295,14 +286,14 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * Default value is an empty list.
      * @property listeners The statistics collectors used to collect data during the evolution.
      */
-    class Builder<DNA, G : Gene<DNA, G>>(
-        private val fitnessFunction: (Genotype<DNA, G>) -> Double,
-        private val genotype: Genotype.Factory<DNA, G>,
+    class Factory<DNA, G : Gene<DNA, G>>(
+        val fitnessFunction: (Genotype<DNA, G>) -> Double,
+        val genotypeFactory: Genotype.Factory<DNA, G>,
     ) {
         // region : Evolution parameters -----------------------------------------------------------
         var populationSize = 50
             set(value) = constraints {
-                "Population size must be greater than 0" { value must BePositive }
+                "Population size [$value] must be greater than 0" { value must BePositive }
             }.let { field = value }
 
         var limits: List<Limit<DNA, G>> = listOf(GenerationCount(100))
@@ -352,7 +343,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         var listeners = mutableListOf<EvolutionListener<DNA, G>>()
 
         fun build() = Engine(
-            genotype = genotype,
+            genotype = genotypeFactory,
             populationSize = populationSize,
             offspringRatio = offspringFraction,
             selector = selector,

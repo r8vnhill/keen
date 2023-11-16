@@ -26,8 +26,8 @@ abstract class AbstractEvolutionSerializer<DNA, G : Gene<DNA, G>> :
      * @param population The population of the generation that is starting.
      */
     @ExperimentalTime
-    override fun onGenerationStarted(generation: Int, population: Population<DNA, G>) {
-        currentGenerationRecord = GenerationRecord<DNA, G>(generation).apply {
+    override fun onGenerationStarted(population: Population<DNA, G>) {
+        currentGenerationRecord = GenerationRecord<DNA, G>(generations.size + 1).apply {
             startTime = timeSource.markNow()
         }
     }

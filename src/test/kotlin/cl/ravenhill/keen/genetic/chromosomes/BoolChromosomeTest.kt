@@ -12,7 +12,6 @@ import cl.ravenhill.keen.genetic.genes.BoolGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.shouldNotBeInRange
 import cl.ravenhill.keen.arbs.datatypes.real
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
@@ -62,9 +61,7 @@ class BoolChromosomeTest : FreeSpec({
                         shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                             BoolChromosome(size, probability)
                         }.shouldHaveInfringement<cl.ravenhill.jakt.exceptions.DoubleConstraintException>(
-                            unfulfilledConstraint(
-                                "The probability of a gene being true must be in the range [0.0, 1.0]"
-                            )
+                            "The probability of a gene being true must be in the range [0.0, 1.0]"
                         )
                     }
                 }

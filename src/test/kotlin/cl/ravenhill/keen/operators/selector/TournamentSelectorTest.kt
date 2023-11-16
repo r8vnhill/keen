@@ -13,7 +13,6 @@ import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
-import cl.ravenhill.utils.unfulfilledConstraint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -33,7 +32,7 @@ class TournamentSelectorTest : FreeSpec({
                     shouldThrow<cl.ravenhill.jakt.exceptions.CompositeException> {
                         TournamentSelector<Int, IntGene>(size)
                     }.shouldHaveInfringement<IntConstraintException>(
-                        unfulfilledConstraint("The sample size [$size] must be positive")
+                        "The sample size [$size] must be positive"
                     )
                 }
             }
