@@ -2,10 +2,8 @@ package cl.ravenhill.keen.arbs.evolution
 
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.arbs.datatypes.probability
-import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.limits.limit
 import cl.ravenhill.keen.arbs.listeners.evolutionListener
-import cl.ravenhill.keen.arbs.operators.intAlterer
 import cl.ravenhill.keen.arbs.operators.selector
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.evolution.Engine
@@ -19,7 +17,15 @@ import cl.ravenhill.keen.operators.selector.Selector
 import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.*
+import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.constant
+import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.element
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.next
+import io.kotest.property.arbitrary.pair
+import io.kotest.property.arbitrary.positiveInt
 
 /**
  * Generates an arbitrary instance of [Engine] for property-based testing in genetic algorithms.
@@ -33,19 +39,22 @@ import io.kotest.property.arbitrary.*
  *
  * @return An [Arb] that produces instances of [Engine] with randomized configurations.
  */
-fun Arb.Companion.engine() = arbitrary {
+fun <T, G> Arb.Companion.engine(
+    genotypeFactory: Arb<Genotype.Factory<T, G>>,
+    alterer: Arb<Alterer<T, G>>,
+) where G : Gene<T, G> = arbitrary {
     Engine(
-        intGenotypeFactory().bind(),
+        genotypeFactory.bind(),
         positiveInt().bind(),
         double(0.0..1.0).bind(),
-        selector<Int, IntGene>().bind(),
-        selector<Int, IntGene>().bind(),
-        intAlterer().bind(),
-        list(limit<Int, IntGene>(), 1..3).bind(),
-        selector<Int, IntGene>().bind(),
-        optimizer<Int, IntGene>().bind(),
-        mutableList(evolutionListener<Int, IntGene>(), 1..3).bind(),
-        evaluator<Int, IntGene>().bind(),
+        selector<T, G>().bind(),
+        selector<T, G>().bind(),
+        alterer.bind(),
+        list(limit<T, G>(), 1..3).bind(),
+        selector<T, G>().bind(),
+        optimizer<T, G>().bind(),
+        mutableList(evolutionListener<T, G>(), 1..3).bind(),
+        evaluator<T, G>().bind(),
         EvolutionInterceptor.identity()
     )
 }
@@ -137,7 +146,7 @@ fun <T, G> Arb.Companion.evolutionEngineFactory(
     alterers: Arb<List<Alterer<T, G>>>? = Arb.constant(emptyList()),
     selectors: Arb<Pair<Selector<T, G>?, Selector<T, G>?>> = pair(selector(), selector()),
     survivalRate: Arb<Double>? = probability(),
-    listeners: Arb<MutableList<EvolutionListener<T, G>>>? = mutableList(evolutionListener(), 1..3)
+    listeners: Arb<MutableList<EvolutionListener<T, G>>>? = mutableList(evolutionListener(), 1..3),
 ) where G : Gene<T, G> = arbitrary {
     Engine.Factory(
         fitnessFunction.bind(),

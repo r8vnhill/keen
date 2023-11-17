@@ -62,7 +62,7 @@ suspend fun <T, G> `test ListenLimit with varying generations`(
     checkAll(
         Arb.int(1..100).compose { arbFactory(it) }, Arb.int(1..100)
     ) { (count, limit), generations ->
-        limit.listener.onGenerationStarted(0, emptyList())
+        limit.listener.onGenerationStarted(emptyList())
         repeat(generations) {
             limit.listener.onGenerationFinished(emptyList())
         }
