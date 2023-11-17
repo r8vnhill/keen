@@ -160,11 +160,12 @@ class Engine<DNA, G : Gene<DNA, G>>(
     fun startEvolution(state: EvolutionState<DNA, G>) = if (state.population.isEmpty()) {
         listeners.forEach { it.onInitializationStarted() }
         val generation = state.generation
-        val individuals =
-            state.population.asSequence() + generateSequence { genotypeFactory.make() }
-                .map { Individual(it) }
+        val individuals = generateSequence { genotypeFactory.make() }
+            .map { Individual(it) }
+            .take(populationSize)
+            .toList()
         EvolutionState(
-            individuals.take(populationSize).toList(),
+            individuals,
             generation
         ).also {
             listeners.forEach { it.onInitializationFinished() }

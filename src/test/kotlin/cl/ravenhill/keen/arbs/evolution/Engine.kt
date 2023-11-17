@@ -44,18 +44,18 @@ fun <T, G> Arb.Companion.engine(
     alterer: Arb<Alterer<T, G>>,
 ) where G : Gene<T, G> = arbitrary {
     Engine(
-        genotypeFactory.bind(),
-        positiveInt().bind(),
-        double(0.0..1.0).bind(),
-        selector<T, G>().bind(),
-        selector<T, G>().bind(),
-        alterer.bind(),
-        list(limit<T, G>(), 1..3).bind(),
-        selector<T, G>().bind(),
-        optimizer<T, G>().bind(),
-        mutableList(evolutionListener<T, G>(), 1..3).bind(),
-        evaluator<T, G>().bind(),
-        EvolutionInterceptor.identity()
+        genotypeFactory = genotypeFactory.bind(),
+        populationSize = int(0..100).bind(),
+        survivalRate = probability().bind(),
+        selector = selector<T, G>().bind(),
+        offspringSelector = selector<T, G>().bind(),
+        alterer = alterer.bind(),
+        limits = list(limit<T, G>(), 1..3).bind(),
+        survivorSelector = selector<T, G>().bind(),
+        optimizer = optimizer<T, G>().bind(),
+        listeners = mutableList(evolutionListener<T, G>(), 1..3).bind(),
+        evaluator = evaluator<T, G>().bind(),
+        interceptor = EvolutionInterceptor.identity()
     )
 }
 

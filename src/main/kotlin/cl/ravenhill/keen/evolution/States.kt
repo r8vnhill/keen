@@ -92,6 +92,7 @@ open class EvolutionState<DNA, G : Gene<DNA, G>>(
         constraints { "Generation [$generation] must be non-negative" { generation mustNot BeNegative } }
     }
 
+    override fun toString() = "EvolutionState(generation=$generation, population=$population)"
 
     /**
      * Advances the evolution result to the next generation, incrementing the generation count.

@@ -5,10 +5,11 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.arbs.datatypes.intWith
 import cl.ravenhill.keen.arbs.evolution.engine
+import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.limits.listenLimit
 import cl.ravenhill.keen.arbs.listeners.evolutionListener
+import cl.ravenhill.keen.arbs.operators.intAlterer
 import cl.ravenhill.keen.assertions.util.listeners.`test ListenLimit with varying generations`
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -17,7 +18,6 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
 
 class ListenLimitTest : FreeSpec({
@@ -46,15 +46,13 @@ class ListenLimitTest : FreeSpec({
             }
 
             "can be assigned a non-null engine instance" {
-                checkAll(Arb.listenLimit<Int, IntGene>(), Arb.engine()) { limit, engine ->
-                    try {
-                        limit.engine = engine
-                        limit.engine shouldBe engine
-                        engine.listeners shouldContain limit.listener
-                    } catch (ex: UninitializedPropertyAccessException) {
-                        println("Engine: $engine")
-                        println("Limit: $limit")
-                    }
+                checkAll(
+                    Arb.listenLimit<Int, IntGene>(),
+                    Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer())
+                ) { limit, engine ->
+                    limit.engine = engine
+                    limit.engine shouldBe engine
+                    engine.listeners shouldContain limit.listener
                 }
             }
         }

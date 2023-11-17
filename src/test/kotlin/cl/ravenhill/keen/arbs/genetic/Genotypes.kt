@@ -13,7 +13,6 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
 import cl.ravenhill.keen.arbs.datatypes.list
-import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.arbs.genetic.chromosomes.intChromosomeFactory
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.property.arbitrary.int
