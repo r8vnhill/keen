@@ -12,7 +12,9 @@ import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.listeners.EvolutionListener
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
+import java.util.*
 
 /***************************************************************************************************
  * This code defines two classes: EvolutionResult and EvolutionStart that represent the result of an
@@ -70,16 +72,42 @@ data class EvolutionResult<DNA, G : Gene<DNA, G>>(
 }
 
 /**
- * Represents the starting point for a new generation of evolution.
+ * Represents the state of an evolutionary process at a specific point in time.
  *
- * @property population The initial population of individuals.
- * @property generation The generation number.
+ * This class encapsulates the current population of individuals and the generation number, providing
+ * a snapshot of the evolutionary process. It is used to track the progress and state of a genetic algorithm
+ * throughout its execution.
  *
- * @param DNA The type of the individual.
+ * ## Constraints:
+ * - The generation number must be non-negative. This constraint ensures that the evolutionary process
+ *   is logically consistent, as generations cannot be negative.
  *
- * @constructor Creates a new [EvolutionState] object.
+ * ## Usage:
+ * An `EvolutionState` instance is typically created and updated by the [Engine] class during the
+ * evolutionary process. It is passed to various components of the genetic algorithm, such as
+ * [EvolutionListener]s, to provide context and information about the current state of the evolution.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * ### Example:
+ * ```
+ * val initialPopulation = //... create initial population
+ * var currentState = EvolutionState(initialPopulation, 0)
+ *
+ * // In each iteration of the genetic algorithm:
+ * currentState = currentState.next() // Advances to the next generation
+ * ```
+ *
+ * @param DNA The type of data that represents an individual's genotype.
+ * @param G The specific type of [Gene] that the individuals in the population possess.
+ *
+ * @constructor Creates an [EvolutionState] with the provided population and generation number.
+ *
+ * @property population A list of individuals representing the current population in this state.
+ * @property generation The current generation number in the evolutionary process.
+ *
+ * @see Individual
+ * @see Engine
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @version 2.0.0
  * @since 1.0.0
  */
@@ -92,22 +120,28 @@ open class EvolutionState<DNA, G : Gene<DNA, G>>(
         constraints { "Generation [$generation] must be non-negative" { generation mustNot BeNegative } }
     }
 
-    override fun toString() = "EvolutionState(generation=$generation, population=$population)"
-
     /**
-     * Advances the evolution result to the next generation, incrementing the generation count.
+     * Advances this state to the next generation.
      *
-     * @return An [EvolutionState] representing the next stage in the evolutionary process.
+     * @return A new [EvolutionState] with the same population and incremented generation number.
      */
     operator fun next() = EvolutionState(population, generation + 1)
 
+    override fun toString() = "EvolutionState(generation=$generation, population=$population)"
+
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is EvolutionState<*, *> -> false
+        else -> population == other.population && generation == other.generation
+    }
+
+    override fun hashCode() = Objects.hash(EvolutionState::class, population, generation)
+
     companion object {
         /**
-         * Creates an empty [EvolutionState] object.
+         * Creates an empty [EvolutionState] with no individuals and a generation number of 0.
          *
-         * @param DNA The type of the individual.
-         *
-         * @return An empty [EvolutionState] object.
+         * @return An empty [EvolutionState].
          */
         fun <DNA, G : Gene<DNA, G>> empty(): EvolutionState<DNA, G> = EvolutionState(listOf(), 0)
     }

@@ -7,6 +7,7 @@ package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
@@ -177,23 +178,28 @@ class Engine<DNA, G : Gene<DNA, G>>(
     /**
      * Evaluates the fitness of the population.
      *
-     * @param evolution the current state of the evolution.
+     * @param state the current state of the evolution.
      * @param force if true, the fitness will be evaluated even if it has already been evaluated.
      * @return the evaluated population.
      */
     fun evaluate(
-        evolution: EvolutionState<DNA, G>,
+        state: EvolutionState<DNA, G>,
         force: Boolean = false,
     ): Population<DNA, G> {
+        constraints {
+            "Population size must be the same as the expected population size" {
+                state.population must HaveSize(populationSize)
+            }
+        }
         listeners.forEach { it.onEvaluationStarted() }
-        return evaluator(evolution.population, force).also {
+        return evaluator(state.population, force).apply {
             listeners.forEach { it.onEvaluationFinished() }
             constraints {
-                "Evaluated population size [${it.size}] doesn't match expected population size [$populationSize]" {
-                    populationSize must BeEqualTo(it.size)
+                "Evaluated population size [${size}] doesn't match expected population size [$populationSize]" {
+                    populationSize must BeEqualTo(size)
                 }
                 "There are unevaluated individuals" {
-                    constraint { it.all { individual -> individual.isEvaluated() } }
+                    constraint { all { individual -> individual.isEvaluated() } }
                 }
             }
         }

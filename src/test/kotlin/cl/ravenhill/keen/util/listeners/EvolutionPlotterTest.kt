@@ -23,7 +23,7 @@ class EvolutionPlotterTest : FreeSpec({
                 Arb.nonNegativeInt(),
                 Arb.nothingPopulation()
             ) { plotter, generation, population ->
-                plotter.onGenerationStarted(generation, population)
+                plotter.onGenerationStarted(population)
                 plotter.currentGeneration shouldBe GenerationRecord(generation)
             }
         }
@@ -33,7 +33,7 @@ class EvolutionPlotterTest : FreeSpec({
                 Arb.evolutionPlotter<Int, IntGene>(),
                 Arb.intPopulation(),
             ) { plotter, population ->
-                plotter.onGenerationStarted(0, population)
+                plotter.onGenerationStarted(population)
                 plotter.onGenerationFinished(population)
                 val sorted = plotter.optimizer.sort(population)
                 val resulting = List(sorted.size) {

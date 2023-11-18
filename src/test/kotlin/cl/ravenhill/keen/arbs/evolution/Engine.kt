@@ -42,10 +42,11 @@ import io.kotest.property.arbitrary.positiveInt
 fun <T, G> Arb.Companion.engine(
     genotypeFactory: Arb<Genotype.Factory<T, G>>,
     alterer: Arb<Alterer<T, G>>,
+    populationSize: Arb<Int> = int(1..100),
 ) where G : Gene<T, G> = arbitrary {
     Engine(
         genotypeFactory = genotypeFactory.bind(),
-        populationSize = int(0..100).bind(),
+        populationSize = populationSize.bind(),
         survivalRate = probability().bind(),
         selector = selector<T, G>().bind(),
         offspringSelector = selector<T, G>().bind(),

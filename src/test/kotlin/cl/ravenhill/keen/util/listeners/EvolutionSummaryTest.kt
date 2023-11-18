@@ -23,10 +23,9 @@ class EvolutionSummaryTest : FreeSpec({
             "should assign the current generation" {
                 checkAll(
                     Arb.evolutionSummary<Int, IntGene>(),
-                    Arb.nonNegativeInt(),
                     Arb.intPopulation()
-                ) { listener, generation, population ->
-                    listener.onGenerationStarted(generation, population)
+                ) { listener, population ->
+                    listener.onGenerationStarted(population)
                     listener.currentGeneration shouldBe GenerationRecord<Int, IntGene>(1).apply {
                         this.population.initial = List(population.size) {
                             IndividualRecord(population[it].genotype, population[it].fitness)
@@ -43,7 +42,7 @@ class EvolutionSummaryTest : FreeSpec({
                     Arb.intPopulation(),
                     Arb.intPopulation()
                 ) { listener, initialPopulation, resultingPopulation ->
-                    listener.onGenerationStarted(0, initialPopulation)
+                    listener.onGenerationStarted(initialPopulation)
                     listener.onGenerationFinished(resultingPopulation)
                     listener.currentGeneration.population.resulting = List(resultingPopulation.size) {
                         IndividualRecord(resultingPopulation[it].genotype, resultingPopulation[it].fitness)
@@ -54,15 +53,14 @@ class EvolutionSummaryTest : FreeSpec({
             "should compute the steady generations" {
                 checkAll(
                     Arb.evolutionSummary<Int, IntGene>(),
-                    Arb.nonNegativeInt(),
                     Arb.intPopulation()
-                ) { listener, generation, resultingPopulation ->
+                ) { listener, resultingPopulation ->
                     assume {
                         resultingPopulation.any { it.fitness.isNotNan() }.shouldBeTrue()
                     }
-                    listener.onGenerationStarted(generation, resultingPopulation)
+                    listener.onGenerationStarted(resultingPopulation)
                     listener.onGenerationFinished(resultingPopulation)
-                    listener.onGenerationStarted(generation, resultingPopulation)
+                    listener.onGenerationStarted(resultingPopulation)
                     listener.onGenerationFinished(resultingPopulation)
                     listener.evolution.generations.last().steady shouldBe 1
                 }

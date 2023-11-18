@@ -69,7 +69,7 @@ fun Arb.Companion.any() = arbitrary {
  *
  * @return An [Arb] that generates pairs of [T] and [U], where [U] is dependent on the generated [T].
  */
-fun <T, U> Arb<T>.compose(other: (T) -> Arb<U>) = arbitrary {
+infix fun <T, U> Arb<T>.compose(other: (T) -> Arb<U>) = arbitrary {
     val value = bind()
     value to other(value).bind()
 }

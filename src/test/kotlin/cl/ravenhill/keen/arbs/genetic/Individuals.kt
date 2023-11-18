@@ -5,7 +5,6 @@
 
 package cl.ravenhill.keen.arbs.genetic
 
-import cl.ravenhill.keen.arbs.real
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -44,7 +43,8 @@ fun Arb.Companion.individual() = arbitrary { Individual(genotype().bind()) }
  *
  * @return An [Arb] instance that produces random populations of individuals with [intGenotype]s.
  */
-fun Arb.Companion.intPopulation(fitness: Arb<Double> = double()) = list(individual(intGenotype(), fitness), 1..5)
+fun Arb.Companion.intPopulation(fitness: Arb<Double> = double(), size: IntRange = 0..50) =
+    list(individual(intGenotype(), fitness), size)
 
 /**
  * Creates an arbitrary generator that produces a list of individuals with 'Nothing' genotypes,
