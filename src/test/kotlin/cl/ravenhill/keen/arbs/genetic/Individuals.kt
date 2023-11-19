@@ -43,7 +43,7 @@ fun Arb.Companion.individual() = arbitrary { Individual(genotype().bind()) }
  *
  * @return An [Arb] instance that produces random populations of individuals with [intGenotype]s.
  */
-fun Arb.Companion.intPopulation(fitness: Arb<Double> = double(), size: IntRange = 0..50) =
+fun Arb.Companion.population(fitness: Arb<Double> = double(), size: IntRange = 0..50) =
     list(individual(intGenotype(), fitness), size)
 
 /**

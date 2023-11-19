@@ -2,25 +2,19 @@ package cl.ravenhill.keen.util.listeners
 
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.arbs.datatypes.orderedPair
-import cl.ravenhill.keen.arbs.genetic.intPopulation
-import cl.ravenhill.keen.arbs.genetic.nothingPopulation
-import cl.ravenhill.keen.arbs.listeners.evolutionListener
+import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.arbs.records.generationRecord
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.isNotNan
 import cl.ravenhill.keen.util.listeners.records.EvolutionRecord
-import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 import cl.ravenhill.keen.util.optimizer.FitnessMaximizer
 import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
 import com.github.stefanbirkner.systemlambda.SystemLambda
-import com.ibm.icu.impl.Assert.fail
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -110,7 +104,7 @@ class EvolutionListenerTest : FreeSpec({
             "the population is not empty" {
                 checkAll(
                     Arb.optimizer<Int, IntGene>(),
-                    Arb.intPopulation()
+                    Arb.population()
                 ) { optimizer, population ->
                     val sorted = optimizer.sort(population)
                     EvolutionListener.computePopulation(optimizer, population) shouldBe List(

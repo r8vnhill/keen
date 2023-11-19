@@ -8,14 +8,14 @@ package cl.ravenhill.keen.arbs.records
 
 import cl.ravenhill.keen.arbs.datatypes.list
 import cl.ravenhill.keen.arbs.datatypes.real
-import cl.ravenhill.keen.arbs.genetic.genotype
 import cl.ravenhill.keen.arbs.genetic.intGenotype
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
 import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.*
+import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.nonNegativeInt
 import kotlin.time.TimeSource
 
 

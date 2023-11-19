@@ -105,6 +105,11 @@ interface ProbabilitySelector<DNA, G> : Selector<DNA, G> where G : Gene<DNA, G> 
      * @throws CompositeException if the summed probabilities aren't 1.0.
      */
     private fun validateProbabilities(probabilities: DoubleArray) {
+        if (probabilities.all { it == 0.0 }) {
+            for (i in probabilities.indices) {
+                probabilities[i] = 1.0 / probabilities.size
+            }
+        }
         constraints {
             "Probabilities must sum 1.0" {
                 probabilities.sum() must BeEqualTo(1.0)

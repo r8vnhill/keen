@@ -29,7 +29,7 @@ class EvolutionPrinterTest : FreeSpec({
                     Arb.nonNegativeInt(),
                     Arb.nothingPopulation()
                 ) { printer, generation, population ->
-                    printer.onGenerationStarted(generation, population)
+                    printer.onGenerationStarted(population)
                     printer.currentGeneration.generation shouldBe
                           GenerationRecord<Nothing, NothingGene>(generation).generation
                 }
@@ -44,7 +44,7 @@ class EvolutionPrinterTest : FreeSpec({
                     Arb.nothingPopulation()
                 ) { printer, generation, population ->
                     SystemLambda.tapSystemOut {
-                        printer.onGenerationStarted(generation, population)
+                        printer.onGenerationStarted(population)
                         printer.onGenerationFinished(population)
                         printer.evolution.generations.last().generation shouldBe generation
                     }
@@ -59,12 +59,12 @@ class EvolutionPrinterTest : FreeSpec({
                 ) { printer, generation, population ->
                     if (generation % printer.every == 0) {
                         SystemLambda.tapSystemOut {
-                            printer.onGenerationStarted(generation, population)
+                            printer.onGenerationStarted(population)
                             printer.onGenerationFinished(population)
                         }.trim() shouldBe printer.toString().trim()
                     } else {
                         SystemLambda.tapSystemOut {
-                            printer.onGenerationStarted(generation, population)
+                            printer.onGenerationStarted(population)
                             printer.onGenerationFinished(population)
                         }.shouldBeBlank()
                     }

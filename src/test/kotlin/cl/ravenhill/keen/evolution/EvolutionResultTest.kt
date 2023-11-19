@@ -7,7 +7,7 @@ package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.keen.arbs.genetic.intPopulation
+import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -25,7 +25,7 @@ class EvolutionResultTest : FreeSpec({
         "can be created with an optimizer, a population, and a generation" {
             checkAll(
                 Arb.optimizer<Int, IntGene>(),
-                Arb.intPopulation(),
+                Arb.population(),
                 Arb.nonNegativeInt()
             ) { optimizer, population, generation ->
                 val result = EvolutionResult(optimizer, population, generation)
@@ -38,7 +38,7 @@ class EvolutionResultTest : FreeSpec({
         "when getting the best individual" - {
             "returns the best individual in the population" {
                 checkAll(
-                    Arb.intPopulation(),
+                    Arb.population(),
                     Arb.nonNegativeInt()
                 ) { population, generation ->
                     val result = EvolutionResult(FitnessMaximizer(), population, generation)
@@ -64,7 +64,7 @@ class EvolutionResultTest : FreeSpec({
         "can map the population to a new population" {
             checkAll(
                 Arb.optimizer<Int, IntGene>(),
-                Arb.intPopulation(),
+                Arb.population(),
                 Arb.nonNegativeInt()
             ) { optimizer, population, generation ->
                 val result = EvolutionResult(optimizer, population, generation)

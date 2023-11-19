@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arbs.altererResult
-import cl.ravenhill.keen.arbs.genetic.intPopulation
+import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -26,14 +26,14 @@ class AltererResultTest : FreeSpec({
     "An [AltererResult]" - {
         "when created" - {
             "without explicit alterations should default to 0" {
-                checkAll(Arb.intPopulation()) { population ->
+                checkAll(Arb.population()) { population ->
                     AltererResult(population).alterations shouldBe 0
                 }
             }
 
             "with explicit alterations should have the given value" {
                 checkAll(
-                    Arb.intPopulation(),
+                    Arb.population(),
                     Arb.nonNegativeInt()
                 ) { population, alterations ->
                     AltererResult(
@@ -44,7 +44,7 @@ class AltererResultTest : FreeSpec({
             }
 
             "with a negative number of alterations should throw an exception" {
-                checkAll(Arb.intPopulation(), Arb.negativeInt()) { population, alterations ->
+                checkAll(Arb.population(), Arb.negativeInt()) { population, alterations ->
                     shouldThrow<CompositeException> {
                         AltererResult(population, alterations)
                     }.shouldHaveInfringement<IntConstraintException>(
@@ -81,7 +81,7 @@ class AltererResultTest : FreeSpec({
 
             "be symmetric" {
                 checkAll(
-                    Arb.intPopulation(),
+                    Arb.population(),
                     Arb.nonNegativeInt()
                 ) { population, alterations ->
                     val result1 = AltererResult(population, alterations)
@@ -93,7 +93,7 @@ class AltererResultTest : FreeSpec({
 
             "be transitive" {
                 checkAll(
-                    Arb.intPopulation(),
+                    Arb.population(),
                     Arb.nonNegativeInt()
                 ) { population, alterations ->
                     val result1 = AltererResult(population, alterations)
@@ -109,7 +109,7 @@ class AltererResultTest : FreeSpec({
         "hashing should" - {
             "be consistent with equality" {
                 checkAll(
-                    Arb.intPopulation(),
+                    Arb.population(),
                     Arb.nonNegativeInt()
                 ) { population, alterations ->
                     val result1 = AltererResult(population, alterations)

@@ -49,7 +49,7 @@ import java.util.*
  * @version 2.0.0
  * @since 1.0.0
  */
-data class EvolutionResult<DNA, G : Gene<DNA, G>>(
+class EvolutionResult<DNA, G : Gene<DNA, G>>(
     val optimizer: IndividualOptimizer<DNA, G>,
     override val population: Population<DNA, G>,
     override val generation: Int
@@ -88,7 +88,7 @@ data class EvolutionResult<DNA, G : Gene<DNA, G>>(
  * [EvolutionListener]s, to provide context and information about the current state of the evolution.
  *
  * ### Example:
- * ```
+ * ```kotlin
  * val initialPopulation = //... create initial population
  * var currentState = EvolutionState(initialPopulation, 0)
  *
@@ -106,8 +106,7 @@ data class EvolutionResult<DNA, G : Gene<DNA, G>>(
  *
  * @see Individual
  * @see Engine
- *
- * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @author <https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @version 2.0.0
  * @since 1.0.0
  */
@@ -127,6 +126,20 @@ open class EvolutionState<DNA, G : Gene<DNA, G>>(
      */
     operator fun next() = EvolutionState(population, generation + 1)
 
+    /**
+     * Provides a destructuring declaration for the population and generation components of this state.
+     *
+     * @return The population component of this state.
+     */
+    operator fun component1() = population
+
+    /**
+     * Provides a destructuring declaration for the generation component of this state.
+     *
+     * @return The generation component of this state.
+     */
+    operator fun component2() = generation
+
     override fun toString() = "EvolutionState(generation=$generation, population=$population)"
 
     override fun equals(other: Any?) = when {
@@ -140,6 +153,9 @@ open class EvolutionState<DNA, G : Gene<DNA, G>>(
     companion object {
         /**
          * Creates an empty [EvolutionState] with no individuals and a generation number of 0.
+         *
+         * This function can be used to initialize the state of an evolutionary algorithm
+         * at the very beginning before any evolution has taken place.
          *
          * @return An empty [EvolutionState].
          */

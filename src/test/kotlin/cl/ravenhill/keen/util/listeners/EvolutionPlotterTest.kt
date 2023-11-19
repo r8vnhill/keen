@@ -1,9 +1,8 @@
 package cl.ravenhill.keen.util.listeners
 
-import cl.ravenhill.keen.arbs.genetic.intPopulation
+import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.genetic.nothingPopulation
 import cl.ravenhill.keen.arbs.listeners.evolutionPlotter
-import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
@@ -31,7 +30,7 @@ class EvolutionPlotterTest : FreeSpec({
         "can update the result when a generation finishes" - {
             checkAll(
                 Arb.evolutionPlotter<Int, IntGene>(),
-                Arb.intPopulation(),
+                Arb.population(),
             ) { plotter, population ->
                 plotter.onGenerationStarted(population)
                 plotter.onGenerationFinished(population)

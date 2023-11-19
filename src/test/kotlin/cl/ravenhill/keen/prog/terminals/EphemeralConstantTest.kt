@@ -16,7 +16,6 @@ import io.kotest.property.arbitrary.long
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-
 class EphemeralConstantTest : FreeSpec({
     "An [EphemeralConstant]" - {
         "can be created with a generator" - {

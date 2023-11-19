@@ -11,9 +11,8 @@ import cl.ravenhill.keen.arbs.genetic.geneticMaterial
 import cl.ravenhill.keen.arbs.genetic.individual
 import cl.ravenhill.keen.arbs.genetic.intGene
 import cl.ravenhill.keen.arbs.genetic.intGenotype
-import cl.ravenhill.keen.arbs.genetic.intPopulation
+import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.datatypes.real
-import cl.ravenhill.keen.assertions.operations.mutators.`should enforce valid mutation probability`
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -21,14 +20,10 @@ import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.negativeDouble
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
-import io.kotest.property.arbitrary.positiveDouble
-import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 class MutatorTest : FreeSpec({
@@ -66,7 +61,7 @@ class MutatorTest : FreeSpec({
         }
 
         "can mutate a population" {
-            checkAll(Arb.intPopulation()) { population ->
+            checkAll(Arb.population()) { population ->
                 with(DummyMutator<Int, IntGene>(1.0)(population, 0)) {
                     this.population shouldBe population
                     this.alterations shouldBe 0

@@ -7,7 +7,7 @@ package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.arbs.genetic.intPopulation
+import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
@@ -25,7 +25,7 @@ class EvolutionStateTest : FreeSpec({
     "An [EvolutionState]" - {
         "when created" - {
             "can be created with a population and generation" {
-                checkAll(Arb.intPopulation(), Arb.nonNegativeInt()) { population, generation ->
+                checkAll(Arb.population(), Arb.nonNegativeInt()) { population, generation ->
                     val state = EvolutionState(population, generation)
                     state.population shouldBe population
                     state.generation shouldBe generation
@@ -33,7 +33,7 @@ class EvolutionStateTest : FreeSpec({
             }
 
             "should throw an exception when the generation is negative" {
-                checkAll(Arb.intPopulation(), Arb.negativeInt()) { population, generation ->
+                checkAll(Arb.population(), Arb.negativeInt()) { population, generation ->
                     shouldThrow<CompositeException> {
                         EvolutionState(population, generation)
                     }.shouldHaveInfringement<IntConstraintException>("Generation [$generation] must be non-negative")
@@ -48,7 +48,7 @@ class EvolutionStateTest : FreeSpec({
         }
 
         "can advance to the next state" {
-            checkAll(Arb.intPopulation(), Arb.int(0..<Int.MAX_VALUE)) { population, generation ->
+            checkAll(Arb.population(), Arb.int(0..<Int.MAX_VALUE)) { population, generation ->
                 val state = EvolutionState(population, generation)
                 val nextState = state.next()
                 nextState.population shouldBe population

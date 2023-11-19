@@ -213,6 +213,11 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @return the offspring.
      */
     fun selectOffspring(population: Population<DNA, G>): Population<DNA, G> {
+        constraints {
+            "Population [size=${population.size}] must not be empty" {
+                population mustNot BeEmpty
+            }
+        }
         listeners.forEach { it.onOffspringSelectionStarted() }
         return offspringSelector(
             population,

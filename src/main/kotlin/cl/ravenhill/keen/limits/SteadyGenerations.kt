@@ -7,6 +7,7 @@ package cl.ravenhill.keen.limits
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.AbstractEvolutionListener
@@ -20,19 +21,13 @@ import cl.ravenhill.keen.util.listeners.records.IndividualRecord
  * number of generations, indicating a potential convergence of the genetic algorithm.
  *
  * @property generations The number of generations for which the fitness should remain steady to meet the limit.
- *             A positive value is required to ensure a valid check.
+ *   A positive value is required to ensure a valid check.
  *
  * When the limit is reached, it signals that the population may have reached an evolutionary plateau,
  * potentially triggering the termination of the evolution process.
  *
- * Usage in an evolutionary algorithm setup might look like:
- * ```
- * val evolutionAlgorithm = Engine.builder { ... }
- *     .withLimit(SteadyGenerations(5))
- *     .build()
- * ```
- *
- * @throws ConstraintException if [generations] is not positive, ensuring the parameter is valid for the evolutionary process.
+ * @throws CompositeException if [generations] is not positive, ensuring the parameter is valid for the evolutionary
+ *   process.
  *
  * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 1.0.0
@@ -40,6 +35,7 @@ import cl.ravenhill.keen.util.listeners.records.IndividualRecord
  */
 data class SteadyGenerations<DNA, G>(val generations: Int) :
     ListenLimit<DNA, G>(object : AbstractEvolutionListener<DNA, G>() {
+
         override fun onGenerationFinished(population: Population<DNA, G>) {
             currentGenerationRecord.population.resulting = List(population.size) {
                 IndividualRecord(population[it].genotype, population[it].fitness)

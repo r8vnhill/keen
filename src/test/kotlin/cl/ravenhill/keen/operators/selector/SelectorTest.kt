@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.operators.selector
 
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.arbs.genetic.intPopulation
+import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -39,7 +39,7 @@ class SelectorTest : FreeSpec({
 
             "the selection count is negative" {
                 checkAll(
-                    Arb.intPopulation(),
+                    Arb.population(),
                     Arb.negativeInt(),
                     Arb.optimizer<Int, IntGene>()
                 ) { population, count, optimizer ->
@@ -54,7 +54,7 @@ class SelectorTest : FreeSpec({
 
         "should return [count] individuals from the population" {
             checkAll(
-                Arb.intPopulation(),
+                Arb.population(),
                 Arb.int(0..3),
                 Arb.optimizer<Int, IntGene>()
             ) { population, count, optimizer ->

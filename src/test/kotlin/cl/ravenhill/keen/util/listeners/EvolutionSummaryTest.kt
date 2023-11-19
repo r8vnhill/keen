@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.util.listeners
 
-import cl.ravenhill.keen.arbs.genetic.intPopulation
+import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.listeners.evolutionSummary
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.util.isNotNan
@@ -10,7 +10,6 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.nonNegativeInt
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.time.ExperimentalTime
@@ -23,7 +22,7 @@ class EvolutionSummaryTest : FreeSpec({
             "should assign the current generation" {
                 checkAll(
                     Arb.evolutionSummary<Int, IntGene>(),
-                    Arb.intPopulation()
+                    Arb.population()
                 ) { listener, population ->
                     listener.onGenerationStarted(population)
                     listener.currentGeneration shouldBe GenerationRecord<Int, IntGene>(1).apply {
@@ -39,8 +38,8 @@ class EvolutionSummaryTest : FreeSpec({
             "should update the resulting population" {
                 checkAll(
                     Arb.evolutionSummary<Int, IntGene>(),
-                    Arb.intPopulation(),
-                    Arb.intPopulation()
+                    Arb.population(),
+                    Arb.population()
                 ) { listener, initialPopulation, resultingPopulation ->
                     listener.onGenerationStarted(initialPopulation)
                     listener.onGenerationFinished(resultingPopulation)
@@ -53,7 +52,7 @@ class EvolutionSummaryTest : FreeSpec({
             "should compute the steady generations" {
                 checkAll(
                     Arb.evolutionSummary<Int, IntGene>(),
-                    Arb.intPopulation()
+                    Arb.population()
                 ) { listener, resultingPopulation ->
                     assume {
                         resultingPopulation.any { it.fitness.isNotNan() }.shouldBeTrue()
