@@ -62,5 +62,5 @@ open class ListenLimit<DNA, G>(
      *
      * @return `true` if the predicate condition is met, signaling the end of evolution; otherwise `false`.
      */
-    override fun invoke(): Boolean = predicate(listener)
+    override fun invoke(generation: Int): Boolean = if (generation == 0) false else predicate(listener)
 }

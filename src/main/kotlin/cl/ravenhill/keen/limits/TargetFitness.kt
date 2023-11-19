@@ -9,6 +9,7 @@ import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
+import cl.ravenhill.keen.util.listeners.records.IndividualRecord
 
 /**
  * A [Limit] that checks whether the genetic algorithm has reached the target fitness.
@@ -21,8 +22,19 @@ import cl.ravenhill.keen.util.listeners.records.GenerationRecord
  */
 data class TargetFitness<DNA, G>(val fitness: Double) : ListenLimit<DNA, G>(
     object : AbstractEvolutionListener<DNA, G>() {
+        override fun onGenerationStarted(population: Population<DNA, G>) {
+            currentGenerationRecord = GenerationRecord<DNA, G>(generations.size + 1).apply {
+                this.population.initial = List(population.size) {
+                    IndividualRecord(population[it].genotype, population[it].fitness)
+                }
+            }
+            evolution.generations += currentGenerationRecord
+        }
+
         override fun onGenerationFinished(population: Population<DNA, G>) {
-            currentGenerationRecord = GenerationRecord(generation)
+            currentGenerationRecord.population.resulting = List(population.size) {
+                IndividualRecord(population[it].genotype, population[it].fitness)
+            }
         }
     },
     {

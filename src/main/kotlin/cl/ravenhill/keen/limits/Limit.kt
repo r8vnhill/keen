@@ -46,7 +46,7 @@ interface Limit<DNA, G> where G : Gene<DNA, G> {
      * @param engine The [Evolver] instance running the genetic algorithm.
      * @return `true` if the algorithm should stop, otherwise `false`.
      */
-    operator fun invoke(): Boolean
+    operator fun invoke(generation: Int): Boolean
 }
 
 

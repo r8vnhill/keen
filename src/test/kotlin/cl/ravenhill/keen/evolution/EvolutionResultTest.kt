@@ -38,7 +38,7 @@ class EvolutionResultTest : FreeSpec({
         "when getting the best individual" - {
             "returns the best individual in the population" {
                 checkAll(
-                    Arb.population(),
+                    Arb.population(size = 1..50),
                     Arb.nonNegativeInt()
                 ) { population, generation ->
                     val result = EvolutionResult(FitnessMaximizer(), population, generation)

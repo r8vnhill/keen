@@ -61,7 +61,7 @@ fun run() {
     }
     engine.evolve()
     println(engine.listeners.first())
-    (engine.listeners.last() as EvolutionPlotter).displayFitness()
+    engine.listeners.filterIsInstance<EvolutionPlotter<*, *>>().first().displayFitness()
 }
 
 fun main() {

@@ -11,6 +11,8 @@ import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
@@ -80,6 +82,10 @@ class Engine<DNA, G : Gene<DNA, G>>(
     val interceptor: EvolutionInterceptor<DNA, G>,
 ) : Evolver<DNA, G> {
 
+    init {
+        limits.forEach { it.engine = this }
+    }
+
     // region : PROPERTIES  ------------------------------------------------------------------------
 
     private var evolutionResult: EvolutionResult<DNA, G> = EvolutionResult(optimizer, listOf(), 0)
@@ -100,7 +106,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onEvolutionStart() }
         var evolution = EvolutionState.empty<DNA, G>()
         var result = EvolutionResult(optimizer, evolution.population, generation)
-        while (limits.none { it() }) { // While none of the limits are met
+        while (limits.none { it(result.generation) }) { // While none of the limits are met
             result = evolve(evolution)
             evolution = result.next()
         }
@@ -140,15 +146,15 @@ class Engine<DNA, G : Gene<DNA, G>>(
         // (5) The survivors are selected from the evaluated population
         val survivors = selectSurvivors(evaluatedPopulation)
         // (6) The offspring is altered
-        val alteredOffspring = alter(offspring, evolution)
+        val alteredOffspring = alter(offspring.population, evolution)
         // (7) The altered offspring is merged with the survivors
-        val nextPopulation = survivors + alteredOffspring.population
+        val nextPopulation = survivors.population + alteredOffspring.population
         // (8) The next population is evaluated
         val pop = evaluate(EvolutionState(nextPopulation, generation), true)
-        evolutionResult = EvolutionResult(optimizer, pop, ++_generation)
+        evolutionResult = EvolutionResult(optimizer, pop.population, ++_generation)
         // (9) The result of the evolution is post-processed
         val afterResult = interceptor.after(evolutionResult)
-        listeners.forEach { it.onGenerationFinished(pop) }
+        listeners.forEach { it.onGenerationFinished(pop.population) }
         return afterResult
     }
 
@@ -198,24 +204,48 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
 
     /**
-     * Evaluates the fitness of the population.
+     * Evaluates the fitness of the population in the given evolutionary state.
      *
-     * @param state the current state of the evolution.
-     * @param force if true, the fitness will be evaluated even if it has already been evaluated.
-     * @return the evaluated population.
+     * This function assesses the fitness of each individual in the population, which is a critical
+     * aspect of the evolutionary process. The fitness evaluation is vital for subsequent selection,
+     * crossover, and mutation processes as it determines the suitability of each individual to the problem.
+     *
+     * ## Behavior:
+     * - **Population Size Constraint**: Ensures that the population size in the given state matches the
+     *   expected population size, maintaining consistency in the evolutionary process.
+     * - **Evaluation Process**: Conducts the fitness evaluation of the population. The evaluation is
+     *   performed on all individuals if `force` is true; otherwise, it evaluates only the unevaluated individuals.
+     * - **Post-Evaluation Constraints**: After evaluation, checks that the size of the evaluated
+     *   population matches the expected size and that all individuals have been evaluated.
+     *
+     * ## Usage:
+     * This function is generally invoked within the evolutionary engine in each generation of the evolutionary
+     * process. It plays a key role in providing the necessary fitness data that guides the generation and
+     * selection of new populations.
+     *
+     * @param state The current state of the evolution, containing the population to be evaluated.
+     * @param force A boolean flag indicating whether to force re-evaluation of the entire population.
+     *   If `false`, only unevaluated individuals are evaluated. If `true`, all individuals
+     *   are re-evaluated.
+     * @return An updated [EvolutionState] with the evaluated population and the current generation number.
+     * @throws CompositeException If constraints regarding population size or individual evaluation are not met.
+     *
+     * @see EvolutionState The state encapsulating the current population and generation number.
+     * @see Individual.isEvaluated Checks if an individual has already been evaluated.
+     * @see CollectionConstraintException The exception stored in the [CompositeException] thrown by this function.
      */
+    @Throws(CompositeException::class)
     fun evaluate(
         state: EvolutionState<DNA, G>,
         force: Boolean = false,
-    ): Population<DNA, G> {
+    ): EvolutionState<DNA, G> {
         constraints {
             "Population size must be the same as the expected population size" {
                 state.population must HaveSize(populationSize)
             }
         }
         listeners.forEach { it.onEvaluationStarted() }
-        return evaluator(state.population, force).apply {
-            listeners.forEach { it.onEvaluationFinished() }
+        val evaluated = evaluator(state.population, force).apply {
             constraints {
                 "Evaluated population size [${size}] doesn't match expected population size [$populationSize]" {
                     populationSize must BeEqualTo(size)
@@ -225,43 +255,78 @@ class Engine<DNA, G : Gene<DNA, G>>(
                 }
             }
         }
+        return EvolutionState(evaluated, state.generation)
     }
 
-
     /**
-     * Selects the offspring from the evaluated population.
+     * Selects offspring from the current population in a given evolutionary state.
      *
-     * @param population the evaluated population.
-     * @return the offspring.
+     * This function is pivotal in the genetic algorithm's process, as it determines which individuals
+     * from the current population will contribute to the next generation. The selection is based on the
+     * offspring selector ([offspringSelector]) configured in the engine, which typically selects individuals based
+     * on their fitness, thereby influencing the genetic traits passed on to the next generation.
+     *
+     * ## Behavior:
+     * - **Offspring Selection Notification**: Notifies all listeners that the offspring selection process
+     *   has started, marking the beginning of the selection phase.
+     * - **Offspring Selection Process**: Delegates the task of selecting offspring to the configured
+     *   offspring selector. The number of offspring to be selected is calculated based on the survival rate
+     *   and the total population size. This selection process is crucial for ensuring that desirable traits
+     *   are passed on to the next generation.
+     * - **Completion Notification**: Upon completing the selection process, listeners are notified that the
+     *   offspring selection phase has finished.
+     *
+     * ## Usage:
+     * The function is typically called within the evolutionary engine's loop to select the parents for the
+     * next generation. This selection step is vital for the genetic algorithm's progression, as it influences
+     * the direction and speed of evolution by determining which individuals will reproduce.
+     *
+     * @param state The current evolutionary state containing the population from which offspring are to be selected.
+     * @return An [EvolutionState] representing the state after offspring selection, containing the selected
+     *   offspring and maintaining the same generation number.
+     * @see Engine.offspringSelector The selector responsible for choosing offspring based on configured criteria.
      */
-    fun selectOffspring(population: Population<DNA, G>): Population<DNA, G> {
+    fun selectOffspring(state: EvolutionState<DNA, G>): EvolutionState<DNA, G> {
         listeners.forEach { it.onOffspringSelectionStarted() }
-        return offspringSelector(
-            population,
-            ((1 - survivalRate) * populationSize).floor(),
-            optimizer
-        ).also {
-            listeners.forEach { it.onOffspringSelectionFinished() }
-        }
+        val selected = offspringSelector(state.population, ((1 - survivalRate) * populationSize).floor(), optimizer)
+        listeners.forEach { it.onOffspringSelectionFinished() }
+        return EvolutionState(selected, state.generation)
     }
 
     /**
-     * Selects (asynchronously) the survivors from the evaluated population.
+     * Selects survivors from the current population within a given evolutionary state.
      *
-     * @param population the evaluated population.
-     * @return the survivors.
+     * This function is integral to the genetic algorithm's process, as it determines which individuals
+     * from the current generation will survive to the next. Survivor selection is a critical step in
+     * maintaining a healthy and fit population, ensuring the persistence of advantageous traits.
+     * The selection is carried out based on the survivor selector ([survivorSelector]) configured in the engine,
+     * which typically selects individuals based on their fitness and other criteria.
+     *
+     * ## Behavior:
+     * - **Survivor Selection Notification**: Notifies all listeners that the survivor selection process
+     *   has commenced, marking the start of this phase.
+     * - **Survivor Selection Process**: The task of selecting survivors is delegated to the configured
+     *   survivor selector. The number of survivors is calculated based on the survival rate and the total
+     *   population size. This process is crucial to ensure that only the most fit individuals are retained
+     *   for the next generation.
+     * - **Completion Notification**: After the selection process, listeners are informed that the survivor
+     *   selection phase has concluded.
+     *
+     * ## Usage:
+     * This function is generally invoked within the evolutionary engine during the generational transition
+     * phase. It plays a key role in determining which individuals will continue to the next generation,
+     * influencing the genetic diversity and fitness of future populations.
+     *
+     * @param state The current evolutionary state, containing the population from which survivors are to be selected.
+     * @return An [EvolutionState] representing the state after survivor selection, containing the selected
+     *   survivors and maintaining the same generation number.
+     * @see Engine.survivorSelector The selector used for choosing survivors based on configured criteria.
      */
-    fun selectSurvivors(population: List<Individual<DNA, G>>): Population<DNA, G> {
+    fun selectSurvivors(state: EvolutionState<DNA, G>): EvolutionState<DNA, G> {
         listeners.forEach { it.onSurvivorSelectionStarted() }
-        return survivorSelector(
-            population,
-            (survivalRate * populationSize).ceil(),
-            optimizer
-        ).also {
-            listeners.forEach {
-                it.onSurvivorSelectionFinished()
-            }
-        }
+        val selected = survivorSelector(state.population, (survivalRate * populationSize).ceil(), optimizer)
+        listeners.forEach { it.onSurvivorSelectionFinished() }
+        return EvolutionState(selected, state.generation)
     }
 
     /**
@@ -280,7 +345,6 @@ class Engine<DNA, G : Gene<DNA, G>>(
             .also {
                 listeners.forEach { it.onAlterationFinished() }
             }
-
     }
 
     /**
