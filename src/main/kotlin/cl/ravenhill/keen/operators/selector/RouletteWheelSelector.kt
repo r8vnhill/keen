@@ -51,7 +51,7 @@ class RouletteWheelSelector<DNA, G : Gene<DNA, G>>(override val sorted: Boolean 
         val totalFitness = adjustedFitness.sum()
 
         // Compute probabilities based on adjusted fitness.
-        if (totalFitness eq 0.0) {
+        if (totalFitness.isNaN() || totalFitness.isInfinite() || totalFitness eq 0.0) {
             return DoubleArray(population.size) { 1.0 / population.size }
         }
 

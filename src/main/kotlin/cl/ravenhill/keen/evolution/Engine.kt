@@ -153,10 +153,31 @@ class Engine<DNA, G : Gene<DNA, G>>(
     }
 
     /**
-     * Creates the initial population of the evolution.
+     * Initializes or continues the evolutionary process based on the given state.
      *
-     * @param state the starting state of the evolution at this generation.
-     * @return the initial population of the evolution.
+     * This function either starts the evolution from scratch or continues from an existing state.
+     * If the population in the provided state is empty, it indicates the start of the evolution.
+     * In this case, the function generates an initial population and commences the evolutionary process.
+     * Otherwise, the evolution continues from the given state.
+     *
+     * ## Behavior:
+     * - **Starting Evolution**: When the population in the state is empty, this function creates
+     *   an initial population of individuals using the genotype factory. The newly created population
+     *   is then used to form a new [EvolutionState], marking the start of the evolution process.
+     *   During this process, it notifies listeners about the initialization start and completion.
+     * - **Continuing Evolution**: If the state already contains a population, it implies the
+     *   evolution is already underway, and the function simply returns the provided state without
+     *   modifications.
+     *
+     * ## Usage:
+     * This function is typically called within the evolutionary engine to either initiate or
+     * continue the evolutionary process. It's an integral part of the overall evolution cycle.
+     *
+     * @param state The current state of the evolution. It contains the existing population and
+     *   the current generation number.
+     * @return An [EvolutionState] representing either the newly initialized state (with the
+     *   initial population and the same generation number as provided) or the original
+     *   state if the evolution is already underway.
      */
     fun startEvolution(state: EvolutionState<DNA, G>) = if (state.population.isEmpty()) {
         listeners.forEach { it.onInitializationStarted() }
@@ -174,6 +195,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
     } else {
         state
     }
+
 
     /**
      * Evaluates the fitness of the population.
@@ -207,17 +229,12 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
 
     /**
-     * Selects (asynchronously) the offspring from the evaluated population.
+     * Selects the offspring from the evaluated population.
      *
      * @param population the evaluated population.
      * @return the offspring.
      */
     fun selectOffspring(population: Population<DNA, G>): Population<DNA, G> {
-        constraints {
-            "Population [size=${population.size}] must not be empty" {
-                population mustNot BeEmpty
-            }
-        }
         listeners.forEach { it.onOffspringSelectionStarted() }
         return offspringSelector(
             population,

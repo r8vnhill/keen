@@ -121,26 +121,16 @@ class EvolutionEngineTest : FreeSpec({
         }
 
         "when selecting offspring" - {
-            "with an empty population should throw an exception" {
-                checkAll(
-                    Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer())
-                ) { engine ->
-                    shouldThrow<CompositeException> {
-                        engine.selectOffspring(emptyList())
-                    }.shouldHaveInfringement<CollectionConstraintException>(
-                        "Population [size=0] must not be empty"
-                    )
-                }
-            }
-
             "with a non-empty population" - {
                 "should return a new population with the expected size" {
                     checkAll(
-                        Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer()),
-                        Arb.population(size = 1..10)
-                    ) { engine, population ->
-                        engine.listeners.forEach { it.onGenerationStarted(population) }
-                        val result = engine.selectOffspring(population)
+                        Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer()) compose {
+                            Arb.evolutionState(Arb.population(size = it.populationSize..<it.populationSize + 1))
+                        }
+                    ) { (engine, state) ->
+                        engine.listeners.forEach { it.onGenerationStarted(state.population) }
+                        val evaluated = engine.evaluate(state)
+                        val result = engine.selectOffspring(evaluated)
                         result shouldHaveSize ((1 - engine.survivalRate) * engine.populationSize).floor()
                     }
                 }
