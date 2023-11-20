@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.examples.ga.optimization
 
-import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.EvolutionEngine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import kotlin.math.pow
@@ -15,7 +15,7 @@ private fun bukinN6(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap()
 }
 
 fun main() {
-    lateinit var engine: Engine<Double, DoubleGene>
+    lateinit var engine: EvolutionEngine<Double, DoubleGene>
     println("========= Random selector =========")
     repeat(2) {
         engine = createEngine(::bukinN6)

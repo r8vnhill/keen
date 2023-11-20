@@ -83,7 +83,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
  *   is logically consistent, as generations cannot be negative.
  *
  * ## Usage:
- * An `EvolutionState` instance is typically created and updated by the [Engine] class during the
+ * An `EvolutionState` instance is typically created and updated by the [EvolutionEngine] class during the
  * evolutionary process. It is passed to various components of the genetic algorithm, such as
  * [EvolutionListener]s, to provide context and information about the current state of the evolution.
  *
@@ -106,7 +106,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
  * @property size The number of individuals in the population.
  *
  * @see Individual
- * @see Engine
+ * @see EvolutionEngine
  * @author <https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @version 2.0.0
  * @since 1.0.0

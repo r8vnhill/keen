@@ -66,7 +66,7 @@ import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
  * @since 1.0.0
  * @version 2.0.0
  */
-class Engine<DNA, G : Gene<DNA, G>>(
+class EvolutionEngine<DNA, G : Gene<DNA, G>>(
     val genotypeFactory: Genotype.Factory<DNA, G>,
     val populationSize: Int,
     val survivalRate: Double,
@@ -283,7 +283,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param state The current evolutionary state containing the population from which offspring are to be selected.
      * @return An [EvolutionState] representing the state after offspring selection, containing the selected
      *   offspring and maintaining the same generation number.
-     * @see Engine.offspringSelector The selector responsible for choosing offspring based on configured criteria.
+     * @see EvolutionEngine.offspringSelector The selector responsible for choosing offspring based on configured criteria.
      */
     fun selectOffspring(state: EvolutionState<DNA, G>): EvolutionState<DNA, G> {
         listeners.forEach { it.onOffspringSelectionStarted() }
@@ -319,7 +319,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @param state The current evolutionary state, containing the population from which survivors are to be selected.
      * @return An [EvolutionState] representing the state after survivor selection, containing the selected
      *   survivors and maintaining the same generation number.
-     * @see Engine.survivorSelector The selector used for choosing survivors based on configured criteria.
+     * @see EvolutionEngine.survivorSelector The selector used for choosing survivors based on configured criteria.
      */
     fun selectSurvivors(state: EvolutionState<DNA, G>): EvolutionState<DNA, G> {
         listeners.forEach { it.onSurvivorSelectionStarted() }
@@ -345,7 +345,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
     }
 
     /**
-     * Builder for the [Engine] class.
+     * Builder for the [EvolutionEngine] class.
      *
      * @param DNA The type of the DNA of the Genotype.
      * @property fitnessFunction the fitness function used to evaluate the fitness of the
@@ -431,7 +431,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
 
         var listeners = mutableListOf<EvolutionListener<DNA, G>>()
 
-        fun make() = Engine(
+        fun make() = EvolutionEngine(
             genotypeFactory = genotypeFactory,
             populationSize = populationSize,
             survivalRate = survivalRate,

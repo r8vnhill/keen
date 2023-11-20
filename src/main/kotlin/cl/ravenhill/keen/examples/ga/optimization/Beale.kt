@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.examples.ga.optimization
 
-import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.EvolutionEngine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.operators.selector.RandomSelector
@@ -49,7 +49,7 @@ private fun beale(genotype: Genotype<Double, DoubleGene>): Double {
  * @version 2.0.0
  */
 fun main() {
-    lateinit var engine: Engine<Double, DoubleGene>
+    lateinit var engine: EvolutionEngine<Double, DoubleGene>
     println("========= Random selector =========")
     repeat(2) {
         engine = createEngine(::beale, selector = RandomSelector())

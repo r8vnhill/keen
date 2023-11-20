@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.EvolutionEngine
 import cl.ravenhill.keen.evolution.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.EvolutionListener
@@ -26,7 +26,7 @@ import cl.ravenhill.keen.util.listeners.EvolutionListener
  *
  * @constructor Initializes a `ListenLimit` with a specified [listener] and [predicate].
  *
- * @see Engine The evolution engine to which this limit applies.
+ * @see EvolutionEngine The evolution engine to which this limit applies.
  * @see EvolutionListener A listener interface for monitoring and reacting to the evolution process.
  *
  * ## Example

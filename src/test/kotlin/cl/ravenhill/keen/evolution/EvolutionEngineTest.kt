@@ -15,9 +15,8 @@ import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.operators.intAlterer
 import cl.ravenhill.keen.arbs.operators.mutator
-import cl.ravenhill.keen.assertions.`check Engine evolution start`
+import cl.ravenhill.keen.assertions.engine.`check Engine evolution start`
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.ceil
@@ -31,7 +30,6 @@ import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
-import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.long
 import io.kotest.property.assume
 import io.kotest.property.checkAll
@@ -212,7 +210,7 @@ class EvolutionEngineTest : FreeSpec({
             "the state is empty" - {
                 "should return a new state with the expected size" {
                     val state = EvolutionState.empty<Int, IntGene>()
-                    val engine = Engine.Factory<Int, IntGene>({ 1.0 }, Genotype.Factory()).make()
+                    val engine = EvolutionEngine.Factory<Int, IntGene>({ 1.0 }, Genotype.Factory()).make()
                     val result = engine.evolve(state)
                     result.size shouldBe engine.populationSize
                 }
@@ -220,7 +218,7 @@ class EvolutionEngineTest : FreeSpec({
                 "should return a new state with the expected individuals" {
                     Core.random = Random(11)
                     val state = EvolutionState.empty<Int, IntGene>()
-                    val engine = Engine.Factory<Int, IntGene>({ 1.0 }, Genotype.Factory()).apply {
+                    val engine = EvolutionEngine.Factory<Int, IntGene>({ 1.0 }, Genotype.Factory()).apply {
                         populationSize = 4
                     }.make()
                     val result = engine.evolve(state)

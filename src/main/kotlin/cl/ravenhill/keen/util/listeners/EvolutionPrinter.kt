@@ -87,27 +87,31 @@ class EvolutionPrinter<DNA, G : Gene<DNA, G>>(val every: Int) :
         }
     }
 
-    override fun toString(): String = if (evolution.generations.isEmpty()) {
-        "No generations have been processed yet."
-    } else {
-        """ === Generation $generation ===
-        |--> Average generation time: ${
-            evolution.generations.map { it.duration }.average()
-        } ms
-        |--> Max generation time: ${
-            evolution.generations.maxOfOrNull { it.duration }
-        } ms
-        |--> Min generation time: ${
-            evolution.generations.minOfOrNull { it.duration }
-        } ms
-        |--> Steady generations: ${generations.last().steady}
-        |--> Best fitness: ${generations.last().population.resulting.first().fitness}
-        |--> Worst fitness: ${generations.last().population.resulting.last().fitness}
-        |--> Average fitness: ${
-            generations.last().population.resulting.map { it.fitness }.average()
+    override fun toString() = "EvolutionPrinter(every=$every)"
+
+    override fun display(): Unit = println(
+        if (evolution.generations.isEmpty()) {
+            "No generations have been processed yet."
+        } else {
+            """ === Generation $generation ===
+            |--> Average generation time: ${
+                    evolution.generations.map { it.duration }.average()
+                } ms
+            |--> Max generation time: ${
+                    evolution.generations.maxOfOrNull { it.duration }
+                } ms
+            |--> Min generation time: ${
+                    evolution.generations.minOfOrNull { it.duration }
+                } ms
+            |--> Steady generations: ${generations.last().steady}
+            |--> Best fitness: ${generations.last().population.resulting.first().fitness}
+            |--> Worst fitness: ${generations.last().population.resulting.last().fitness}
+            |--> Average fitness: ${
+                    generations.last().population.resulting.map { it.fitness }.average()
+                }
+            |--> Fittest: ${generations.last().population.resulting.first().genotype}
+            |<<<>>>
+            """.trimMargin()
         }
-        |--> Fittest: ${generations.last().population.resulting.first().genotype}
-        |<<<>>>
-        """.trimMargin()
-    }
+    )
 }

@@ -6,12 +6,12 @@
 
 package cl.ravenhill.keen.builders
 
-import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.EvolutionEngine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
- * Creates a new [Engine] with the given [fitnessFunction], [genotype], and [init] block.
+ * Creates a new [EvolutionEngine] with the given [fitnessFunction], [genotype], and [init] block.
  *
  * __Usage:__
  * ```
@@ -30,11 +30,11 @@ import cl.ravenhill.keen.genetic.genes.Gene
  *  population size, alterers (e.g. mutation and crossover), and termination conditions (e.g.
  *  steady generations).
  *
- * @return An [Engine] instance that can be used to evolve a population towards better
+ * @return An [EvolutionEngine] instance that can be used to evolve a population towards better
  *  solutions.
  */
 fun <DNA, G: Gene<DNA, G>> engine(
     fitnessFunction: (Genotype<DNA, G>) -> Double,
     genotype: Genotype.Factory<DNA, G>,
-    init: Engine.Factory<DNA, G>.() -> Unit
-): Engine<DNA, G> = Engine.Factory(fitnessFunction, genotype).apply(init).make()
+    init: EvolutionEngine.Factory<DNA, G>.() -> Unit
+): EvolutionEngine<DNA, G> = EvolutionEngine.Factory(fitnessFunction, genotype).apply(init).make()

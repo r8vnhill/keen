@@ -5,10 +5,8 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.evolution.Engine
 import cl.ravenhill.keen.evolution.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.listeners.EvolutionListener
 
 /**
  * Represents a termination criterion for genetic algorithms, known as a `Limit`.

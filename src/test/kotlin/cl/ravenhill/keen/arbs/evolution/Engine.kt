@@ -1,13 +1,12 @@
 package cl.ravenhill.keen.arbs.evolution
 
-import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.arbs.limits.limit
 import cl.ravenhill.keen.arbs.listeners.evolutionListener
 import cl.ravenhill.keen.arbs.operators.selector
 import cl.ravenhill.keen.arbs.optimizer
-import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.EvolutionEngine
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -26,27 +25,25 @@ import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.pair
-import io.kotest.property.arbitrary.positiveInt
-import kotlin.random.Random
 
 /**
- * Generates an arbitrary instance of [Engine] for property-based testing in genetic algorithms.
+ * Generates an arbitrary instance of [EvolutionEngine] for property-based testing in genetic algorithms.
  *
- * This function leverages Kotest's [Arb] (Arbitrary) API to create diverse configurations of the [Engine]
+ * This function leverages Kotest's [Arb] (Arbitrary) API to create diverse configurations of the [EvolutionEngine]
  * class. It is particularly useful for testing various evolutionary scenarios with different parameters and
  * components in a genetic algorithm.
  *
- * The generated [Engine] instance includes a random set of key components necessary for running a genetic
+ * The generated [EvolutionEngine] instance includes a random set of key components necessary for running a genetic
  * algorithm, such as genotype factories, population size, selection strategies, alterers, and more.
  *
- * @return An [Arb] that produces instances of [Engine] with randomized configurations.
+ * @return An [Arb] that produces instances of [EvolutionEngine] with randomized configurations.
  */
 fun <T, G> Arb.Companion.engine(
     genotypeFactory: Arb<Genotype.Factory<T, G>>,
     alterer: Arb<Alterer<T, G>>,
     populationSize: Arb<Int> = int(1..100),
 ) where G : Gene<T, G> = arbitrary {
-    Engine(
+    EvolutionEngine(
         genotypeFactory = genotypeFactory.bind(),
         populationSize = populationSize.bind(),
         survivalRate = probability().bind(),
@@ -98,9 +95,9 @@ fun Arb.Companion.fitnessFunction(): Arb<(Genotype<Int, IntGene>) -> Double> = e
 )
 
 /**
- * Provides an arbitrary generator for creating factory instances of [Engine] for property-based testing.
+ * Provides an arbitrary generator for creating factory instances of [EvolutionEngine] for property-based testing.
  *
- * This generator allows for the creation of [Engine.Factory] instances with various configurations,
+ * This generator allows for the creation of [EvolutionEngine.Factory] instances with various configurations,
  * enabling extensive testing of genetic algorithms under different conditions. Each factory instance
  * can be customized with different components like fitness functions, genotype factories, population
  * sizes, limits, optimizers, alterers, selectors, survival rates, and listeners.
@@ -138,7 +135,7 @@ fun Arb.Companion.fitnessFunction(): Arb<(Genotype<Int, IntGene>) -> Double> = e
  * @param survivalRate An optional [Arb] that generates survival rate values.
  * @param listeners An optional [Arb] that generates a list of [EvolutionListener] instances.
  *
- * @return An [Arb] that generates instances of [Engine.Factory] with various configurations.
+ * @return An [Arb] that generates instances of [EvolutionEngine.Factory] with various configurations.
  */
 fun <T, G> Arb.Companion.evolutionEngineFactory(
     fitnessFunction: Arb<(Genotype<T, G>) -> Double>,
@@ -151,7 +148,7 @@ fun <T, G> Arb.Companion.evolutionEngineFactory(
     survivalRate: Arb<Double>? = probability(),
     listeners: Arb<MutableList<EvolutionListener<T, G>>>? = mutableList(evolutionListener(), 1..3),
 ) where G : Gene<T, G> = arbitrary {
-    Engine.Factory(
+    EvolutionEngine.Factory(
         fitnessFunction.bind(),
         genotypeFactory.bind()
     ).apply {

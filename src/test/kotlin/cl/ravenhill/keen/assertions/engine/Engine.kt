@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.assertions
+package cl.ravenhill.keen.assertions.engine
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.datatypes.compose
@@ -56,3 +56,5 @@ suspend fun FreeSpecContainerScope.`check Engine evolution start`() {
         }
     }
 }
+
+

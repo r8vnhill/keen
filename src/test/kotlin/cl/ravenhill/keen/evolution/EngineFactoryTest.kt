@@ -38,7 +38,7 @@ class EngineFactoryTest : FreeSpec({
                 checkAll(
                     Arb.intGenotypeFactory(), Arb.fitnessFunction()
                 ) { factory, fitnessFunction ->
-                    val engine = Engine.Factory(fitnessFunction, factory)
+                    val engine = EvolutionEngine.Factory(fitnessFunction, factory)
                     engine.genotypeFactory shouldBe factory
                 }
             }
@@ -49,7 +49,7 @@ class EngineFactoryTest : FreeSpec({
                 checkAll(
                     Arb.intGenotypeFactory(), Arb.fitnessFunction()
                 ) { factory, fitnessFunction ->
-                    val engine = Engine.Factory(fitnessFunction, factory)
+                    val engine = EvolutionEngine.Factory(fitnessFunction, factory)
                     engine.fitnessFunction shouldBe fitnessFunction
                 }
             }

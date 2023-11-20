@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.util.listeners
 
-import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.EvolutionEngine
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.util.listeners.records.GenerationRecord
@@ -131,7 +131,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      *
      * @see [onGenerationFinished] for handling the end of a generation.
      * @see [GenerationRecord] for details on the structure used for recording generation data.
-     * @see [Engine.evolve]
+     * @see [EvolutionEngine.evolve]
      */
     @ExperimentalTime
     override fun onGenerationStarted(population: Population<DNA, G>) {
@@ -169,7 +169,7 @@ class EvolutionSummary<DNA, G : Gene<DNA, G>> : AbstractEvolutionListener<DNA, G
      *                   evolutionary analysis.
      *
      * @see [onGenerationStarted] for initializing generation parameters.
-     * @see [Engine.evolve] for understanding the context within the overall evolutionary process.
+     * @see [EvolutionEngine.evolve] for understanding the context within the overall evolutionary process.
      */
     override fun onGenerationFinished(population: Population<DNA, G>) {
         // Calculate duration

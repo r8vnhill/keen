@@ -9,7 +9,7 @@ private fun himmelblau(g: Genotype<Double, DoubleGene>) = g.flatMap().let { (x, 
 }
 
 fun main() {
-    lateinit var engine: cl.ravenhill.keen.evolution.Engine<Double, DoubleGene>
+    lateinit var engine: cl.ravenhill.keen.evolution.EvolutionEngine<Double, DoubleGene>
     println("========= Random selector =========")
     repeat(2) {
         engine = createEngine(::himmelblau)

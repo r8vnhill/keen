@@ -9,7 +9,7 @@ import cl.ravenhill.keen.builders.chromosome
 import cl.ravenhill.keen.builders.doubles
 import cl.ravenhill.keen.builders.engine
 import cl.ravenhill.keen.builders.genotype
-import cl.ravenhill.keen.evolution.Engine
+import cl.ravenhill.keen.evolution.EvolutionEngine
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.DoubleGene
 import cl.ravenhill.keen.limits.SteadyGenerations
@@ -45,7 +45,7 @@ import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
  *
  * @param fitnessFunc The fitness function to be optimized.
  * @param range The range within which the double values of the genotype can vary.
- * @return A configured [Engine] instance.
+ * @return A configured [EvolutionEngine] instance.
  *
  * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
  * @since 2.0.0
@@ -53,7 +53,7 @@ import cl.ravenhill.keen.util.optimizer.FitnessMinimizer
  */
 fun createEngine(
     fitnessFunc: (Genotype<Double, DoubleGene>) -> Double,
-): Engine<Double, DoubleGene> {
+): EvolutionEngine<Double, DoubleGene> {
     return engine(
         fitnessFunc,
         genotype {
