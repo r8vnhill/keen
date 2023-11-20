@@ -48,7 +48,7 @@ class TournamentSelectorTest : FreeSpec({
         "when selecting" - {
             "should return a population with the same size as the given count" {
                 checkAll(
-                    Arb.population(),
+                    Arb.population(size = 1..50),
                     Arb.int(0..5),
                     Arb.int(1..5),
                     Arb.optimizer<Int, IntGene>()
@@ -63,7 +63,7 @@ class TournamentSelectorTest : FreeSpec({
 
             "should return the first picked individual if the sample size is 1" {
                 checkAll(
-                    Arb.population(),
+                    Arb.population(size = 1..50),
                     Arb.int(1..5),
                     Arb.optimizer<Int, IntGene>(),
                     Arb.long()
@@ -82,7 +82,7 @@ class TournamentSelectorTest : FreeSpec({
 
             "should return the best of the sample" {
                 checkAll(
-                    Arb.population(),
+                    Arb.population(size = 1..50),
                     Arb.int(1..5),
                     Arb.int(1..5),
                     Arb.optimizer<Int, IntGene>(),

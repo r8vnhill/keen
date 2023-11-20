@@ -53,7 +53,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
     val optimizer: IndividualOptimizer<DNA, G>,
     override val population: Population<DNA, G>,
     override val generation: Int
-) : EvolutionState<DNA, G>(population, generation) {
+) : EvolutionState<DNA, G>(generation, population) {
 
     val best: Individual<DNA, G> by lazy {
         constraints { "Cannot get the best individual of an empty population" { population mustNot BeEmpty } }
@@ -103,6 +103,7 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
  *
  * @property population A list of individuals representing the current population in this state.
  * @property generation The current generation number in the evolutionary process.
+ * @property size The number of individuals in the population.
  *
  * @see Individual
  * @see Engine
@@ -111,8 +112,8 @@ class EvolutionResult<DNA, G : Gene<DNA, G>>(
  * @since 1.0.0
  */
 open class EvolutionState<DNA, G : Gene<DNA, G>>(
-    open val population: List<Individual<DNA, G>>,
-    open val generation: Int
+    open val generation: Int,
+    open val population: Population<DNA, G>
 ) {
 
     init {
@@ -120,11 +121,25 @@ open class EvolutionState<DNA, G : Gene<DNA, G>>(
     }
 
     /**
+     * Secondary constructor for [EvolutionState] which allows initializing the state with a variable
+     * number of [Individual] objects.
+     *
+     * This constructor is useful for quickly setting up an [EvolutionState] with a predefined set of individuals,
+     * especially in testing or small-scale simulations where it's more convenient to specify individuals directly.
+     *
+     * @param generation The current generation number. Must be non-negative.
+     * @param individuals A variable number of [Individual] objects constituting the population.
+     */
+    constructor(generation: Int, vararg individuals: Individual<DNA, G>) : this(generation, individuals.toList())
+
+    val size get() = population.size
+
+    /**
      * Advances this state to the next generation.
      *
      * @return A new [EvolutionState] with the same population and incremented generation number.
      */
-    operator fun next() = EvolutionState(population, generation + 1)
+    operator fun next() = EvolutionState(generation + 1, population)
 
     /**
      * Provides a destructuring declaration for the population and generation components of this state.
@@ -159,6 +174,6 @@ open class EvolutionState<DNA, G : Gene<DNA, G>>(
          *
          * @return An empty [EvolutionState].
          */
-        fun <DNA, G : Gene<DNA, G>> empty(): EvolutionState<DNA, G> = EvolutionState(listOf(), 0)
+        fun <DNA, G : Gene<DNA, G>> empty(): EvolutionState<DNA, G> = EvolutionState(0, listOf())
     }
 }

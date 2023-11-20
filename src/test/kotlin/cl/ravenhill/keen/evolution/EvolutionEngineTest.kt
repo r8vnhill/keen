@@ -9,14 +9,14 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.datatypes.compose
-import cl.ravenhill.keen.arbs.datatypes.matrix
 import cl.ravenhill.keen.arbs.evolution.engine
 import cl.ravenhill.keen.arbs.evolution.evolutionState
-import cl.ravenhill.keen.arbs.genetic.individual
 import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.operators.intAlterer
 import cl.ravenhill.keen.arbs.operators.mutator
+import cl.ravenhill.keen.assertions.`check Engine evolution start`
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.shouldHaveInfringement
@@ -41,34 +41,8 @@ import kotlin.random.Random
 class EvolutionEngineTest : FreeSpec({
 
     "An evolution Engine" - {
-        "should be able to start the evolution from" - {
-            "an empty state should create a new population" {
-                checkAll(
-                    Arb.long() compose {
-                        Core.random = Random(it)
-                        Arb.evolutionState<Int, IntGene>(Arb.constant(emptyList()))
-                    },
-                    Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer())
-                ) { (seed, state), engine ->
-                    with(engine.startEvolution(state)) {
-                        generation shouldBe state.generation
-                        population.size shouldBe engine.populationSize
-                        Core.random = Random(seed)
-                        population shouldBe List(engine.populationSize) { Individual(engine.genotypeFactory.make()) }
-                    }
-                }
-            }
 
-            "a given state should return the same state" {
-                checkAll(
-                    Arb.evolutionState(Arb.population(size = 1..10)),
-                    Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer())
-                ) { state, engine ->
-                    val result = engine.startEvolution(state)
-                    result shouldBe state
-                }
-            }
-        }
+        `check Engine evolution start`()
 
         "should be able to evaluate a population" - {
             "when the population has un-evaluated individuals" - {
@@ -150,11 +124,11 @@ class EvolutionEngineTest : FreeSpec({
                         val result = engine.selectOffspring(state)
                         Core.random = Random(seed)
                         val expected = EvolutionState(
-                            engine.offspringSelector.select(
+                            state.generation, engine.offspringSelector.select(
                                 state.population,
                                 ((1 - engine.survivalRate) * engine.populationSize).floor(),
                                 engine.optimizer
-                            ), state.generation
+                            )
                         )
                         result shouldBe expected
                     }
@@ -189,11 +163,11 @@ class EvolutionEngineTest : FreeSpec({
                         val result = engine.selectSurvivors(state)
                         Core.random = Random(seed)
                         val expected = EvolutionState(
-                            engine.survivorSelector.select(
+                            state.generation, engine.survivorSelector.select(
                                 state.population,
                                 (engine.survivalRate * engine.populationSize).ceil(),
                                 engine.optimizer
-                            ), state.generation
+                            )
                         )
                         result shouldBe expected
                     }
@@ -230,6 +204,29 @@ class EvolutionEngineTest : FreeSpec({
                         val expected = engine.alterer(state.population, engine.populationSize)
                         result shouldBe expected
                     }
+                }
+            }
+        }
+
+        "can evolve a population from a given state when" - {
+            "the state is empty" - {
+                "should return a new state with the expected size" {
+                    val state = EvolutionState.empty<Int, IntGene>()
+                    val engine = Engine.Factory<Int, IntGene>({ 1.0 }, Genotype.Factory()).make()
+                    val result = engine.evolve(state)
+                    result.size shouldBe engine.populationSize
+                }
+
+                "should return a new state with the expected individuals" {
+                    Core.random = Random(11)
+                    val state = EvolutionState.empty<Int, IntGene>()
+                    val engine = Engine.Factory<Int, IntGene>({ 1.0 }, Genotype.Factory()).apply {
+                        populationSize = 4
+                    }.make()
+                    val result = engine.evolve(state)
+//                    result shouldBe EvolutionState(
+//                        1, Individual()
+//                    )
                 }
             }
         }

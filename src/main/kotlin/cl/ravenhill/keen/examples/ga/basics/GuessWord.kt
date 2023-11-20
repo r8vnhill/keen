@@ -17,9 +17,6 @@ import cl.ravenhill.keen.operators.mutator.strategies.RandomMutator
 import cl.ravenhill.keen.operators.selector.RouletteWheelSelector
 import cl.ravenhill.keen.util.listeners.EvolutionPrinter
 import cl.ravenhill.keen.util.listeners.EvolutionSummary
-import cl.ravenhill.keen.util.listeners.serializers.JsonEvolutionSerializer
-import java.io.File
-import kotlin.time.ExperimentalTime
 
 object GuessWordProblem {
     private const val TARGET = "Sopaipilla"

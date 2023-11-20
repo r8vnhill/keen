@@ -44,5 +44,5 @@ fun <T, G> Arb.Companion.evolutionState(
     population: Arb<Population<T, G>>,
     generation: Arb<Int> = nonNegativeInt()
 ) where G : Gene<T, G> = arbitrary {
-    EvolutionState(population.bind(), generation.bind())
+    EvolutionState(generation.bind(), population.bind())
 }

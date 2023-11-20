@@ -17,7 +17,6 @@ import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
-import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.GenerationCount
 import cl.ravenhill.keen.limits.Limit
@@ -133,7 +132,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @see EvolutionResult
      */
     fun evolve(start: EvolutionState<DNA, G>): EvolutionResult<DNA, G> {
-        listeners.forEach { it.onGenerationStarted(listOf()) }
+        listeners.forEach { it.onGenerationStarted(start.population) }
         // (1) The starting state of the evolution is pre-processed (if no method is hooked to
         // pre-process, it defaults to the identity function (EvolutionStart)
         val interceptedStart = interceptor.before(start)
@@ -150,7 +149,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         // (7) The altered offspring is merged with the survivors
         val nextPopulation = survivors.population + alteredOffspring.population
         // (8) The next population is evaluated
-        val pop = evaluate(EvolutionState(nextPopulation, generation), true)
+        val pop = evaluate(EvolutionState(generation, nextPopulation), true)
         evolutionResult = EvolutionResult(optimizer, pop.population, ++_generation)
         // (9) The result of the evolution is post-processed
         val afterResult = interceptor.after(evolutionResult)
@@ -193,8 +192,8 @@ class Engine<DNA, G : Gene<DNA, G>>(
             .take(populationSize)
             .toList()
         EvolutionState(
-            individuals,
-            generation
+            generation,
+            individuals
         ).also {
             listeners.forEach { it.onInitializationFinished() }
         }
@@ -255,7 +254,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
                 }
             }
         }
-        return EvolutionState(evaluated, state.generation)
+        return EvolutionState(state.generation, evaluated)
     }
 
     /**
@@ -290,7 +289,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onOffspringSelectionStarted() }
         val selected = offspringSelector(state.population, ((1 - survivalRate) * populationSize).floor(), optimizer)
         listeners.forEach { it.onOffspringSelectionFinished() }
-        return EvolutionState(selected, state.generation)
+        return EvolutionState(state.generation, selected)
     }
 
     /**
@@ -326,7 +325,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         listeners.forEach { it.onSurvivorSelectionStarted() }
         val selected = survivorSelector(state.population, (survivalRate * populationSize).ceil(), optimizer)
         listeners.forEach { it.onSurvivorSelectionFinished() }
-        return EvolutionState(selected, state.generation)
+        return EvolutionState(state.generation, selected)
     }
 
     /**

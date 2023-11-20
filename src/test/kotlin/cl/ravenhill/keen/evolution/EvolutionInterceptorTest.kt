@@ -14,7 +14,7 @@ class EvolutionInterceptorTest : FreeSpec({
 
     "An [EvolutionInterceptor]" - {
         "can be created with before and after functions" {
-            val before = { _: EvolutionState<Int, IntGene> -> EvolutionState<Int, IntGene>(emptyList(), 0) }
+            val before = { _: EvolutionState<Int, IntGene> -> EvolutionState<Int, IntGene>(0, emptyList()) }
             val after = { _: EvolutionResult<Int, IntGene> ->
                 EvolutionResult<Int, IntGene>(
                     FitnessMinimizer(),
