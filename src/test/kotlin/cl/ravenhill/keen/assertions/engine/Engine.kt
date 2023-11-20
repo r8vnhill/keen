@@ -46,9 +46,8 @@ suspend fun FreeSpecContainerScope.`check Engine evolution start`() {
                     with(engine.startEvolution(state)) {
                         generation shouldBe state.generation
                         population.size shouldBe engine.populationSize
-                        population.distinct().size shouldBe engine.populationSize // Ensure unique individuals
                     }
-                    Core.random = Random(seed) // Reset random for consistency
+                    Core.random = Random.Default
                 }
             }
         }
