@@ -146,7 +146,7 @@ class Engine<DNA, G : Gene<DNA, G>>(
         // (5) The survivors are selected from the evaluated population
         val survivors = selectSurvivors(evaluatedPopulation)
         // (6) The offspring is altered
-        val alteredOffspring = alter(offspring.population, evolution)
+        val alteredOffspring = alter(offspring)
         // (7) The altered offspring is merged with the survivors
         val nextPopulation = survivors.population + alteredOffspring.population
         // (8) The next population is evaluated
@@ -337,14 +337,12 @@ class Engine<DNA, G : Gene<DNA, G>>(
      * @return the altered population.
      */
     fun alter(
-        population: Population<DNA, G>,
         evolution: EvolutionState<DNA, G>,
     ): AltererResult<DNA, G> {
         listeners.forEach { it.onAlterationStarted() }
-        return alterer(population, evolution.generation)
-            .also {
-                listeners.forEach { it.onAlterationFinished() }
-            }
+        val altered = alterer(evolution.population, evolution.generation)
+        listeners.forEach { it.onAlterationFinished() }
+        return altered
     }
 
     /**

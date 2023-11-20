@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.arbs.evolution
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.arbs.datatypes.probability
 import cl.ravenhill.keen.arbs.limits.limit
@@ -26,6 +27,7 @@ import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.pair
 import io.kotest.property.arbitrary.positiveInt
+import kotlin.random.Random
 
 /**
  * Generates an arbitrary instance of [Engine] for property-based testing in genetic algorithms.

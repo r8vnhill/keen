@@ -6,7 +6,6 @@
 package cl.ravenhill.keen.assertions.util.listeners
 
 import cl.ravenhill.keen.arbs.datatypes.compose
-import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.ListenLimit
 import cl.ravenhill.keen.limits.ListenLimitTest
@@ -52,7 +51,7 @@ import io.kotest.property.checkAll
  *
  * @param T The type representing the genetic data or information.
  * @param G The type of [Gene] associated with the genetic data.
- * @param arbFactory A factory function that produces an [Arb] of [ListenLimit] instances.
+ * @param limitFactory A factory function that produces an [Arb] of [ListenLimit] instances.
  *                   The factory takes an integer representing the number of generations
  *                   and returns a corresponding [ListenLimit].
  * @param predicate A predicate function that takes an [EvolutionListener] and a count of generations.
@@ -61,16 +60,17 @@ import io.kotest.property.checkAll
  * @throws AssertionError if the limit's condition does not behave as expected according to the predicate.
  */
 suspend fun <T, G> `test ListenLimit with varying generations`(
-    arbFactory: (Int) -> Arb<ListenLimit<T, G>>,
+    limitFactory: (Int) -> Arb<ListenLimit<T, G>>,
     predicate: EvolutionListener<T, G>.(count: Int) -> Boolean
 ) where G : Gene<T, G> {
     checkAll(
-        Arb.int(1..100).compose { arbFactory(it) }, Arb.int(1..100)
+        Arb.int(1..100).compose { limitFactory(it) },
+        Arb.int(1..100)
     ) { (count, limit), generations ->
         limit.listener.onGenerationStarted(emptyList())
         repeat(generations) {
             limit.listener.onGenerationFinished(emptyList())
         }
-        limit() shouldBe limit.listener.predicate(count)
+        limit(generations) shouldBe limit.listener.predicate(count)
     }
 }
