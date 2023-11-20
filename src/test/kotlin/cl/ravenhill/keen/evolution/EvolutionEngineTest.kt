@@ -5,8 +5,6 @@
 
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.jakt.exceptions.CollectionConstraintException
-import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.datatypes.compose
 import cl.ravenhill.keen.arbs.evolution.engine
@@ -15,23 +13,18 @@ import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.operators.intAlterer
 import cl.ravenhill.keen.arbs.operators.mutator
+import cl.ravenhill.keen.assertions.engine.`check Engine evaluation`
 import cl.ravenhill.keen.assertions.engine.`check Engine evolution start`
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import cl.ravenhill.keen.shouldHaveInfringement
 import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.floor
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.long
-import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -42,58 +35,7 @@ class EvolutionEngineTest : FreeSpec({
 
         `check Engine evolution start`()
 
-        "should be able to evaluate a population" - {
-            "when the population has un-evaluated individuals" - {
-                "should return the same population if all individuals are evaluated" {
-                    checkAll(
-                        Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer()) compose {
-                            Arb.evolutionState(Arb.population(size = it.populationSize..<it.populationSize + 1))
-                        }
-                    ) { (engine, state) ->
-                        assume {
-                            state.population.all { it.isEvaluated() }.shouldBeTrue()
-                        }
-                        engine.listeners.forEach { it.onGenerationStarted(state.population) }
-                        val result = engine.evaluate(state)
-                        result.population.all { it.isEvaluated() }.shouldBeTrue()
-                        result.population shouldHaveSize engine.populationSize
-                    }
-                }
-
-                "should return a new population with all individuals evaluated" {
-                    checkAll(
-                        PropTestConfig(iterations = 50),
-                        Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer()) compose {
-                            Arb.evolutionState(Arb.population(size = it.populationSize..<it.populationSize + 1))
-                        }
-                    ) { (engine, state) ->
-                        assume {
-                            state.population.any { it.isNotEvaluated() }.shouldBeTrue()
-                        }
-                        engine.listeners.forEach { it.onGenerationStarted(state.population) }
-                        val result = engine.evaluate(state)
-                        result.population.all { it.isEvaluated() }.shouldBeTrue()
-                        result.population shouldHaveSize engine.populationSize
-                    }
-                }
-
-                "should throw an exception if the population size is not the expected by the engine" {
-                    checkAll(
-                        Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer()),
-                        Arb.evolutionState(Arb.population())
-                    ) { engine, state ->
-                        assume {
-                            state.population shouldNotHaveSize engine.populationSize
-                        }
-                        shouldThrow<CompositeException> {
-                            engine.evaluate(state)
-                        }.shouldHaveInfringement<CollectionConstraintException>(
-                            "Population size must be the same as the expected population size"
-                        )
-                    }
-                }
-            }
-        }
+        `check Engine evaluation`()
 
         "when selecting offspring" - {
             "with a non-empty population" - {
