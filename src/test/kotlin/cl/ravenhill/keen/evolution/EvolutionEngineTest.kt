@@ -5,29 +5,14 @@
 
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.datatypes.compose
-import cl.ravenhill.keen.arbs.evolution.engine
-import cl.ravenhill.keen.arbs.evolution.evolutionState
-import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
-import cl.ravenhill.keen.arbs.genetic.population
-import cl.ravenhill.keen.arbs.operators.mutator
+import cl.ravenhill.keen.assertions.engine.`check Engine alteration`
 import cl.ravenhill.keen.assertions.engine.`check Engine evaluation`
 import cl.ravenhill.keen.assertions.engine.`check Engine evolution start`
 import cl.ravenhill.keen.assertions.engine.`check Engine offspring selection`
+import cl.ravenhill.keen.assertions.engine.`check Engine single step evolution`
 import cl.ravenhill.keen.assertions.engine.`check Engine survivor selection`
-import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.shouldBe
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.long
-import io.kotest.property.checkAll
-import kotlin.random.Random
 
-@OptIn(ExperimentalKotest::class)
 class EvolutionEngineTest : FreeSpec({
 
     "An evolution Engine" - {
@@ -40,60 +25,8 @@ class EvolutionEngineTest : FreeSpec({
 
         `check Engine survivor selection`()
 
-        "when altering a population" - {
-            "with a non-empty population" - {
-                "should return a new population with the expected size" {
-                    checkAll(
-                        Arb.engine(Arb.intGenotypeFactory(), Arb.mutator<Int, IntGene>()) compose {
-                            Arb.evolutionState(Arb.population(size = it.populationSize..<it.populationSize + 1))
-                        }
-                    ) { (engine, state) ->
-                        engine.listeners.forEach { it.onGenerationStarted(state.population) }
-                        val evaluated = engine.evaluate(state)
-                        val result = engine.alter(evaluated)
-                        result.population shouldHaveSize engine.populationSize
-                    }
-                }
+        `check Engine alteration`()
 
-                "should return a new population with the expected individuals" {
-                    checkAll(
-                        Arb.long() compose {
-                            Core.random = Random(it)
-                            Arb.engine(Arb.intGenotypeFactory(), Arb.mutator<Int, IntGene>())
-                        },
-                        Arb.evolutionState(Arb.population(size = 1..10))
-                    ) { (seed, engine), state ->
-                        engine.listeners.forEach { it.onGenerationStarted(state.population) }
-                        val result = engine.alter(state)
-                        Core.random = Random(seed)
-                        val expected = engine.alterer(state.population, engine.populationSize)
-                        result shouldBe expected
-                    }
-                }
-            }
-        }
-
-        "can evolve a population from a given state when" - {
-            "the state is empty" - {
-                "should return a new state with the expected size" {
-                    val state = EvolutionState.empty<Int, IntGene>()
-                    val engine = EvolutionEngine.Factory<Int, IntGene>({ 1.0 }, Genotype.Factory()).make()
-                    val result = engine.evolve(state)
-                    result.size shouldBe engine.populationSize
-                }
-
-                "should return a new state with the expected individuals" {
-                    Core.random = Random(11)
-                    val state = EvolutionState.empty<Int, IntGene>()
-                    val engine = EvolutionEngine.Factory<Int, IntGene>({ 1.0 }, Genotype.Factory()).apply {
-                        populationSize = 4
-                    }.make()
-                    val result = engine.evolve(state)
-//                    result shouldBe EvolutionState(
-//                        1, Individual()
-//                    )
-                }
-            }
-        }
+        `check Engine single step evolution`()
     }
 })
