@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 val projectVersion: String by project
 val kotlinVersion: String by project
 val coroutinesVersion: String by project
