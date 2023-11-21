@@ -19,7 +19,6 @@ plugins {
     kotlin("jvm") version "1.9.20"
     `maven-publish`
     signing
-    id("com.diffplug.spotless") version "6.10.0"
     id("org.jetbrains.dokka") version "1.9.10"
     id("io.gitlab.arturbosch.detekt") version "1.23.3"
 }
