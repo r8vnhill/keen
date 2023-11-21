@@ -63,7 +63,7 @@ dependencies {
     // endregion DOKKA
 
     // region : -== DETEKT ==-
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
+//    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
     // endregion DETEKT
 }
 
@@ -89,10 +89,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
-detekt {
-    // Configures the detekt task to use the default detekt configuration
-    config.from(files("conf/detekt.yml"))
-}
+//detekt {
+//    // Configures the detekt task to use the default detekt configuration
+//    config.from(files("conf/detekt.yml"))
+//}
 
 publishing {
     repositories {
