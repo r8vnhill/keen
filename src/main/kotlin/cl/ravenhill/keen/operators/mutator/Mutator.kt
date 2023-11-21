@@ -1,126 +1,159 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.mutator
 
-import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.Population
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
+import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Phenotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.AbstractAlterer
+import cl.ravenhill.keen.operators.Alterer
 import cl.ravenhill.keen.operators.AltererResult
-import cl.ravenhill.keen.util.math.toIntProbability
-import kotlin.math.pow
-
+import cl.ravenhill.keen.util.eq
 
 /**
- * The mutator operator is responsible for mutating the [Genotype] of the [Phenotype]s in the
- * [Population].
- * There are two distinct roles for the mutator:
+ * Represents an interface for mutation operations on genes within a population.
  *
- * - Exploring the search space. This exploration is often slow compared to the crossover,
- * but in problems where crossover is disruptive this can be an important way to explore the
- * landscape.
+ * The mutator works at multiple levels of the genome hierarchy: individual, genotype, and
+ * chromosome.
+ * Mutation operations modify individual genes based on mutation-specific logic.
+ * This is essential for introducing new genetic variations within the population.
  *
- * - Maintaining diversity. Mutation prevents the population from correlating.
- * Even if most of the search is done by crossover, mutation is still important to provide the
- * diversity the crossover needs to work.
+ * @property chromosomeRate The probability of mutation for each chromosome.
  *
- * The mutation probability is the value that must be optimized.
- * The optimal value depends on the role mutation plays.
- * If the mutation is the main exploration mechanism, then the mutation probability should be high.
- *
- * @param DNA The type of the DNA
- * @constructor Creates a new [Mutator] with the given [probability]
+ * @param DNA The type of genetic data the gene represents.
+ * @param G The type of gene being mutated, parametrized by its DNA and its own type.
  */
-open class Mutator<DNA>(probability: Double) : AbstractAlterer<DNA>(probability) {
+interface Mutator<DNA, G : Gene<DNA, G>> : Alterer<DNA, G> {
+
+    val probability: Double
+    val chromosomeRate: Double
 
     /**
-     * Mutates a population.
+     * Performs mutation operations on the entire population.
      *
-     * @param population The population to mutate
-     * @param generation The current generation
-     * @return The mutated population
+     * @param population The current population of individuals.
+     * @param generation The current generation number.
+     * @return The result after applying mutation operations on the population.
      */
-    override fun invoke(population: Population<DNA>, generation: Int): AltererResult<DNA> {
-        val p = probability.pow(1 / 3.0)
-        val widenedProbability = p.toIntProbability()
+    override fun invoke(
+        population: Population<DNA, G>,
+        generation: Int,
+    ): AltererResult<DNA, G> {
+        if (probability eq 0.0) return AltererResult(population)
         val result = population.map {
-            if (Core.random.nextInt() < widenedProbability) {
-                mutatePhenotype(it, p, generation)
-            } else {
-                MutatorResult(it)
-            }
+            mutateIndividual(it)
         }
         return AltererResult(
-            result.map { it.result },
-            result.stream().mapToInt { it.mutations }.sum()
-        )
-    }
-
-    private fun mutatePhenotype(
-        phenotype: Phenotype<DNA>,
-        prob: Double,
-        generation: Int
-    ) = mutateGenotype(phenotype.genotype, prob).map {
-        Phenotype(it, generation)
-    }
-
-    private fun mutateGenotype(
-        genotype: Genotype<DNA>,
-        prob: Double
-    ): MutatorResult<Genotype<DNA>> {
-        val widenedProbability = prob.toIntProbability()
-        val result = genotype.sequence().map {
-            if (Core.random.nextInt() < widenedProbability) {
-                mutateChromosome(it, prob)
-            } else {
-                MutatorResult(it, 0)
-            }
-        }.toList()
-        return MutatorResult(
-            genotype.duplicate(result.map { it.result }),
-            result.stream()
-                .mapToInt { it.mutations }
-                .sum()
-        )
-    }
-
-    /**
-     * Mutates a chromosome and returns a [MutatorResult] with the mutated chromosome and the
-     * number of mutations.
-     */
-    protected open fun mutateChromosome(
-        chromosome: Chromosome<DNA>,
-        prob: Double
-    ): MutatorResult<Chromosome<DNA>> {
-        val widenedProbability = prob.toIntProbability()
-        val result = chromosome.sequence().map {
-            if (Core.random.nextInt() < widenedProbability) {
-                MutatorResult(mutateGene(it), 1)
-            } else {
-                MutatorResult(it)
-            }
-        }.toList()
-        return MutatorResult(
-            chromosome.duplicate(result.map { it.result }),
+            result.map { it.mutated },
             result.sumOf { it.mutations }
         )
     }
 
-    private fun mutateGene(gene: Gene<DNA>) = gene.mutate()
+    /**
+     * Mutates a given individual.
+     *
+     * @param individual The individual to be mutated.
+     * @return The mutated individual.
+     */
+    fun mutateIndividual(
+        individual: Individual<DNA, G>,
+    ): MutatorResult<DNA, G, Individual<DNA, G>> =
+        mutateGenotype(individual.genotype).map {
+            Individual(it)
+        }
 
-    override fun toString() = "Mutator { " +
-            "probability: $probability }"
+    /**
+     * Mutates a given genotype.
+     *
+     * @param genotype The genotype to be mutated.
+     * @return The result containing the mutated genotype and mutation count.
+     */
+    fun mutateGenotype(
+        genotype: Genotype<DNA, G>,
+    ): MutatorResult<DNA, G, Genotype<DNA, G>> {
+        val result = genotype.chromosomes.map { mutateChromosome(it) }
+        return MutatorResult(
+            Genotype(result.map { it.mutated }),
+            result.sumOf { it.mutations }
+        )
+    }
+
+    /**
+     * Mutates a given chromosome.
+     *
+     * @param chromosome The chromosome to be mutated.
+     * @return The result containing the mutated chromosome and mutation count.
+     */
+    fun mutateChromosome(
+        chromosome: Chromosome<DNA, G>,
+    ): MutatorResult<DNA, G, Chromosome<DNA, G>>
 }
 
-data class MutatorResult<T>(val result: T, val mutations: Int = 0) {
-    fun <B> map(block: (T) -> B) = MutatorResult(block(result), mutations)
+/**
+ * Provides a skeletal implementation of the [Mutator] interface to minimize the effort
+ * required to implement mutation operations.
+ *
+ * This abstract class checks and enforces the mutation probability to be between 0.0 and 1.0, ensuring valid
+ * probability values for mutation operations.
+ *
+ * @param DNA The type of genetic data the gene represents.
+ * @param G The type of gene being mutated,  parametrized by its DNA and its own type.
+ * @property probability The probability of mutation, which must be between 0.0 and 1.0.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+@Deprecated("Directly use the Mutator interface")
+abstract class AbstractMutator<DNA, G>(
+    probability: Double,
+    override val chromosomeRate: Double = 0.5
+) : AbstractAlterer<DNA, G>(probability), Mutator<DNA, G> where G : Gene<DNA, G> {
+
+    init {
+        constraints {
+            "The chromosome mutation probability [$chromosomeRate] must be in 0.0..1.0" {
+                chromosomeRate must BeInRange(0.0..1.0)
+            }
+        }
+    }
+}
+
+/**
+ * A [MutatorResult] is the result of a mutation operation.
+ *
+ * @param T The type of the mutated object
+ * @property mutated The result of a mutation operation.
+ * @property mutations The number of mutations performed.
+ * @constructor Creates a new [MutatorResult] with the given [mutated] object and the
+ * number of [mutations] performed (default 0).
+ */
+data class MutatorResult<DNA, G, T>(
+    val mutated: T,
+    val mutations: Int = 0
+) where T : GeneticMaterial<DNA, G>, G : Gene<DNA, G> {
+
+    init {
+        constraints {
+            "The number of mutations [$mutations] must be non-negative." {
+                mutations must BeAtLeast(0)
+            }
+        }
+    }
+
+    /**
+     * Applies the given [transform] function to the [mutated] object and returns the
+     * result.
+     */
+    fun <B : GeneticMaterial<DNA, G>> map(transform: (T) -> B) =
+        MutatorResult(transform(mutated), mutations)
 }

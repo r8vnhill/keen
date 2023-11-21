@@ -1,122 +1,85 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.InvalidStateException
-import cl.ravenhill.keen.prog.Reduceable
-import cl.ravenhill.keen.prog.functions.Add
+import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.prog.functions.Fun
-import cl.ravenhill.keen.prog.functions.GreaterThan
-import cl.ravenhill.keen.prog.functions.If
-import cl.ravenhill.keen.prog.functions.add
-import cl.ravenhill.keen.prog.functions.greaterThan
-import cl.ravenhill.keen.prog.functions.ifTrue
-import cl.ravenhill.keen.prog.terminals.EphemeralConstant
+import cl.ravenhill.keen.prog.generateProgramFull
+import cl.ravenhill.keen.prog.generateProgramGrowing
+import cl.ravenhill.keen.prog.generateProgramWith
 import cl.ravenhill.keen.prog.terminals.Terminal
-import cl.ravenhill.keen.prog.terminals.Variable
+import java.util.Objects
 
 /**
  * A [Gene] that represents a program tree.
  *
- * @param DNA The type of the value.
+ * This gene contains a program tree represented by a [Program] instance.
+ * It also contains a list of functions and a list of terminals that can be used to generate new
+ * programs during mutation or crossover.
+ * Additionally, it contains a list of generation methods that determine how new programs are
+ * created.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * Genetic programming is a type of evolutionary algorithm that evolves computer programs to solve a
+ * specific problem.
+ * In this case, the [ProgramGene] represents a single program in the population being evolved.
+ * The functions and terminals are the building blocks of the programs, and the generation methods
+ * are used to create new programs during mutation or crossover.
+ *
+ * @param DNA The type of the value.
+ * @param program The program tree represented by this gene.
+ * @property functions The list of functions that can be used to generate new programs.
+ * @property terminals The list of terminals that can be used to generate new programs.
+ * @property generationMethods The list of generation methods used to create new programs during
+ * mutation or crossover.
+ *
  * @since 2.0.0
  * @version 2.0.0
  */
-class ProgramGene<DNA> internal constructor(
-    program: Reduceable<DNA>,
-    private val functions: List<Fun<DNA>>,
-    private val terminals: List<Terminal<DNA>>,
-) : AbstractTreeGene<Reduceable<DNA>>(program, program.arity), Gene<Reduceable<DNA>> {
-
-    private val nodes = functions + terminals
-
-    override lateinit var children: List<Reduceable<DNA>>
-    override val depth: Int
-        get() = dna.depth
-
-    init {
-        if (program.depth > Core.maxProgramDepth) throw InvalidStateException("program") {
-            "The program's depth (${program.depth}) is greater than the maximum allowed depth (${Core.maxProgramDepth})."
-        }
-        // Stores the program in a list (breadth-first).
-        children = program.flatten()
-    }
-
-    /**
-     * Reduces the program tree to a single value.
-     *
-     * @param args Array<out DNA>
-     * @return DNA
-     */
-    operator fun invoke(vararg args: DNA): DNA = dna(args)
-
-    override fun generator(): Reduceable<DNA> {
-        // FIXME: Return a copy of the program.
-        // Get a random node from the valid nodes.
-        val op = nodes.random(Core.random).deepCopy()
-        generateChildren(op, op.depth + 1, nodes)
-        return op
-    }
-
-    /**
-     * Generates the children of the given node.
-     *
-     * @param op The node to generate the children for.
-     * @param depth The depth of the node.
-     * @param ops The valid nodes to generate the children from.
-     * @return The node with the children.
-     */
-    private fun generateChildren(
-        op: Reduceable<DNA>,
-        depth: Int,
-        ops: List<Reduceable<DNA>>
-    ): Reduceable<DNA> {
-        when (op) {
-            is Fun<DNA> -> {
-                // For each child of the node
-                for (i in 0 until op.arity) {
-                    // Creates a copy of a random node from the valid nodes.
-                    val child = if (depth < Core.maxProgramDepth) {
-                        ops.random(Core.random).copy()
-                    } else {
-                        terminals.random(Core.random).copy()
-                    }
-                    generateChildren(child, depth + 1, ops)
-                    op[i] = child
-                }
-            }
-
-            is Terminal<*> -> {
-                // Do nothing.
-            }
-
-            else -> throw InvalidStateException("type") { "The node is not a valid type (${op::class})" }
-        }
-        return op
-    }
-
-    override fun duplicate(dna: Reduceable<DNA>) =
-        ProgramGene(dna, functions, terminals)
-
-    override fun toString() = children[0].toString()
-}
-
-fun main() {
-    val gene = ProgramGene(
-        add(
-            EphemeralConstant { 1.0 },
-            add(EphemeralConstant { 2.0 },
-                ifTrue(
-                    greaterThan(
-                        Variable("x", 0),
-                        EphemeralConstant { 10.0 }),
-                    EphemeralConstant { 3.0 },
-                    EphemeralConstant { 4.0 })
-            )
-        ),
-        listOf(Add(), GreaterThan(), If()),
-        listOf(EphemeralConstant { Core.random.nextDouble() })
+data class ProgramGene<DNA>(
+    val program: Program<DNA>,
+    val functions: List<Fun<DNA>>,
+    val terminals: List<Terminal<DNA>>,
+    private val generationMethods: List<((
+        List<Terminal<DNA>>, List<Fun<DNA>>, Int, Int
+    ) -> Program<DNA>)> = listOf(
+        ::generateProgramGrowing, ::generateProgramFull
     )
-    println(gene.mutate())
+) : Gene<Program<DNA>, ProgramGene<DNA>> {
+
+    /**
+     * The program tree represented by this gene.
+     */
+    override val dna = program
+
+    // region : -== FACTORY METHODS ==-
+    /**
+     * Generates a new program tree by applying one of the [generationMethods] with the list of
+     * [terminals] and [functions] and the maximum depth specified.
+     */
+    override fun generator() =
+        generateProgramWith(generationMethods, terminals, functions, 1, Core.maxProgramDepth)
+
+    /**
+     * Creates a new instance of [ProgramGene] with the specified [dna], [functions], [terminals],
+     * and [generationMethods].
+     *
+     * @param dna The program tree for the new instance.
+     */
+    override fun withDna(dna: Program<DNA>) =
+        ProgramGene(dna.copy(), functions, terminals, generationMethods)
+    // endregion FACTORY METHODS
+
+    // region : -== IMPLEMENTATION OF [Any] ==-
+    /// Documentation inherited from [Any]
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is ProgramGene<*> -> false
+        else -> dna == other.dna
+    }
+
+    /// Documentation inherited from [Any]
+    override fun hashCode() = Objects.hash(ProgramGene::class, dna)
+
+    /// Documentation inherited from [Any]
+    override fun toString() = dna.toString()
+    // endregion IMPLEMENTATION OF [Any]
 }

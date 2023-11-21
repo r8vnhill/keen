@@ -1,24 +1,31 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.keen.internals.Verifiable
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.Verifiable
 
 /**
  * Any unit of genetic material used by the [cl.ravenhill.keen.evolution.Evolver].
  *
  * @param DNA  The type of the genetic material's value.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @version 2.0.0
+ * @since 2.0.0
  */
-interface GeneticMaterial<DNA> : Verifiable {
+interface GeneticMaterial<DNA, G : Gene<DNA, G>> : Verifiable {
 
     /**
      * Flattens the genetic material into a list of values.
      */
-    fun flatten(): List<DNA>
+    fun flatMap(transform: (DNA) -> DNA = { it }): List<DNA>
+
+    /**
+     * Returns a string representation of the genetic material.
+     */
+    fun toSimpleString() = toString()
 }

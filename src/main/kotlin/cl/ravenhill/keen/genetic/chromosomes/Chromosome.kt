@@ -1,36 +1,56 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
+import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.GeneticMaterial
 import cl.ravenhill.keen.genetic.genes.Gene
-import java.util.stream.IntStream
+import cl.ravenhill.keen.util.MultiStringFormat
+import kotlin.properties.Delegates
 
 /**
- * Sequence of genes.
+ * An ordered collection of genes that defines a specific genetic material.
  *
- * @param DNA   The type of the genes' values.
+ * A `Chromosome` is a sequence of [Gene]s, each of which contains a specific value of type [DNA].
+ * The `Chromosome` interface extends the [GeneticMaterial] interface and therefore provides a
+ * method to [flatMap] the chromosome into a list of [DNA] objects.
+ * It also implements the [Iterable] interface, allowing for easy iteration over the genes in the
+ * chromosome.
  *
- * @property genes  The genes of the chromosome.
- * @property size   The size of the chromosome.
+ * @param DNA The type of the genes' values.
+ * @param G The type of the genes.
+ * This parameter is needed to ensure type safety in the chromosome's operations and to provide a
+ * way to access the genes' specific data type [DNA].
+ * By specifying the gene type as a generic parameter, the Chromosome interface provides a flexible
+ * way of representing genetic data, allowing different types of genes to be used in different
+ * contexts
  *
- * @author <a href="https://github.com/r8vnhill">R8V</a>
+ * @property genes The genes of the chromosome, ordered from start to end.
+ * @property size The number of genes in the chromosome.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 2.0.0
  */
-interface Chromosome<DNA> : GeneticMaterial<DNA> {
+interface Chromosome<DNA, G> :
+    GeneticMaterial<DNA, G>,
+    Iterable<G>,
+    MultiStringFormat where G : Gene<DNA, G> {
 
-    val genes: List<Gene<DNA>>
+    val genes: List<G>
 
     val size: Int
         get() = genes.size
 
-    /// {@inheritDoc}
-    override fun verify() = genes.isNotEmpty() && genes.all { it.verify() }
+    /* Documentation inherited from [Verifiable]. */
+    override fun verify() = genes.all { it.verify() }
+
+    /* Documentation inherited from [Iterable]. */
+    override fun iterator() = genes.iterator()
 
     /**
      * Returns the gene at the given ``index``.
@@ -40,27 +60,52 @@ interface Chromosome<DNA> : GeneticMaterial<DNA> {
     /**
      * Returns a new chromosome with the given ``genes``.
      */
-    fun duplicate(genes: List<Gene<DNA>>): Chromosome<DNA>
+    fun withGenes(genes: List<G>): Chromosome<DNA, G>
 
-    fun sequence() = genes.asSequence()
+    /* Documentation inherited from [GeneticMaterial]. */
+    override fun flatMap(transform: (DNA) -> DNA): List<DNA> =
+        genes.fold(mutableListOf()) { acc, gene ->
+            acc.apply { addAll(gene.flatMap()) }
+        }
 
-    fun toDNA() = genes.map { it.dna }
+    /**
+     * Factory interface for creating [Chromosome] objects.
+     *
+     * @param DNA The type of the genes' values.
+     * @param G The type of [Gene] contained in the chromosome.
+     * @property executor The executor to use for creating [Gene] objects.
+     * @property size The number of genes in the chromosome.
+     */
+    interface Factory<DNA, G : Gene<DNA, G>> {
+        var executor: ConstructorExecutor<G>
 
-    override fun flatten(): List<DNA> = genes.fold(mutableListOf()) { acc, gene ->
-        acc.apply { addAll(gene.flatten()) }
+        var size: Int
+
+        /**
+         * Creates a new [Chromosome] object.
+         */
+        fun make(): Chromosome<DNA, G>
     }
 
     /**
-     * Builder for [Chromosome]s.
+     * An abstract implementation of the [Factory] interface for creating [Chromosome] objects.
      *
-     * @param DNA   The type of the genes' values.
+     * @param DNA The type of the genes' values.
+     * @param G The type of [Gene] contained in the chromosome.
+     * @property executor The executor to use for creating [Gene] objects.
+     * The default implementation uses a [SequentialConstructor] object.
      */
-    interface Factory<DNA> {
+    abstract class AbstractFactory<DNA, G : Gene<DNA, G>> : Factory<DNA, G> {
+        /* Documentation inherited from [Factory]. */
+        override var size: Int by Delegates.notNull()
 
-        /**
-         * Builds a new chromosome.
-         */
-        fun make(): Chromosome<DNA>
-
+        /* Documentation inherited from [Factory]. */
+        override var executor: ConstructorExecutor<G> = SequentialConstructor()
     }
+
+    /* Documentation inherited from [MultiStringFormat] */
+    override fun toSimpleString() = toString()
+
+    /* Documentation inherited from [MultiStringFormat] */
+    override fun toDetailedString() = toString()
 }

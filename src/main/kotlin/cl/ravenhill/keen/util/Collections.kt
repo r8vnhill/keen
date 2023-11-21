@@ -1,211 +1,155 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.util
 
-import cl.ravenhill.keen.Core
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
+import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeInRange
 
+/*****************************************************************************************
+ * This code includes a collection of extensions and functions for different types of
+ * collections in Kotlin.
+ ****************************************************************************************/
+
+// region : -== ARRAYS ==-
 /**
- * Subset permutation.
+ * Transforms the given array into an incremental array, where each value is the
+ * sum of the previous values.
  */
-object Subset {
-    /**
-     * Returns a random permutation of the given size.
-     *
-     * @param n the size of the permutation.
-     * @return a random permutation of the given size.
-     */
-    fun next(n: Int, size: Int): IntArray {
-        val subset = IntArray(size)
-        next(n, subset)
-        return subset
-    }
-
-    private fun next(n: Int, arr: IntArray) {
-        val k = arr.size
-        checkSubset(n, k)
-        if (k == n) {
-            for (i in 0 until k) {
-                arr[i] = i
-            }
-            return
-        }
-
-        if (k > n - k) {
-            subset0(n, n - k, arr)
-            invert(n, k, arr)
-        } else {
-            subset0(n, k, arr)
-        }
-    }
-
-    /**
-     * "Inverts" the given subset array `a`. The first n - k elements represents
-     * the set, which must not be part of the "inverted" subset. This is done by
-     * filling the array from the back, starting with the highest possible element,
-     * which is not part of the "forbidden" subset elements. The result is a
-     * subset array, filled with elements, which where not part of the original
-     * "forbidden" subset.
-     */
-    private fun invert(n: Int, k: Int, a: IntArray) {
-        var v = n - 1
-        var j = n - k - 1
-        var vi: Int
-
-        val ac: IntArray = a.copyOfRange(0, n - k)
-        for (i in k downTo 0) {
-            while (indexOf(ac, j, v).also { vi = it } != -1) {
-                --v
-                j = vi
-            }
-            a[i] = v--
-        }
-    }
-
-    private fun indexOf(a: IntArray, start: Int, value: Int): Int {
-        for (i in start downTo 0) {
-            if (a[i] < value) {
-                return -1
-            } else if (a[i] == value) {
-                return i
-            }
-        }
-        return -1
-    }
-
-    private fun subset0(n: Int, k: Int, a: IntArray) {
-        if (k == 0) {
-            a[0] = Core.random.nextInt(n)
-            return
-        }
-        // (A): Initialize a[i] to "zero" point for bin Ri.
-        for (i in 0 until k) {
-            a[i] = i * n / k
-        }
-        // (B)
-        var l: Int
-        var x: Int
-        for (c in 0 until k) {
-            do {
-                // Choose random x;
-                x = 1 + Core.random.nextInt(n)
-                // determine range Rl;
-                l = (x * k - 1) / n
-            } while (a[l] >= x) // accept or reject.
-            ++a[l]
-        }
-        var s = k
-        // (C) Move a[i] of nonempty bins to the left.
-        var m = 0
-        var p = 0
-        for (i in 0 until k) {
-            if (a[i] == i * n / k) {
-                a[i] = 0
-            } else {
-                ++p
-                m = a[i]
-                a[i] = 0
-                a[p - 1] = m
-            }
-        }
-        // (D) Determine l, set up space for Bl.
-
-        // (D) Determine l, set up space for Bl.
-        while (p > 0) {
-            l = 1 + (a[p - 1] * k - 1) / n
-            val ds = a[p - 1] - (l - 1) * n / k
-            a[p - 1] = 0
-            a[s - 1] = l
-            s -= ds
-            --p
-        }
-        // (E) If a[l] != 0, a new bin is to be processed.
-        var r = 0
-        var m0 = 0
-        for (ll in 1..k) {
-            l = k + 1 - ll
-            if (a[l - 1] != 0) {
-                r = l
-                m0 = 1 + (a[l - 1] - 1) * n / k
-                m = a[l - 1] * n / k - m0 + 1
-            }
-
-            // (F) Choose a random x.
-            x = m0 + Core.random.nextInt(m)
-            var i = l + 1
-
-            // (G) Check x against previously entered elements in bin;
-            //     increment x as it jumps over elements <= x.
-            while (i <= r && x >= a[i - 1]) {
-                ++x
-                a[i - 2] = a[i - 1]
-                ++i
-            }
-            a[i - 2] = x
-            --m
-        }
-        // Convert to zero based indexed arrays.
-        for (i in 0 until k) {
-            --a[i]
-        }
-    }
-
-    private fun checkSubset(n: Int, k: Int) {
-        k.validateAtLeast(1, "Subset size")
-        n.validateAtLeast(k)
-        k.validateSafeMultiplication(n) {
-            "n * subset.length [${n * k}] > Int.MAX_VALUE [${Int.MAX_VALUE}]"
-        }
+fun DoubleArray.incremental() {
+    for (i in 1 until this.size) {
+        this[i] += this[i - 1]
     }
 }
 
 /**
+ * Determines if the elements in the [DoubleArray] are sorted in ascending order.
+ *
+ * Iterates through the array from the second element to the last. For each element,
+ * it compares it with its preceding element. If any element is found to be less than
+ * its predecessor, the function returns `false`, indicating the array is not sorted.
+ */
+fun DoubleArray.isSorted(): Boolean = zip(drop(1)).all { (a, b) -> a <= b }
+
+// endregion ARRAYS
+
+// region : -== ITERABLE ==-
+/**
  * Returns a new list with the subtrahend subtracted from each element.
  */
-infix fun List<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
+infix fun Iterable<Double>.sub(subtrahend: Double) = this.map { it - subtrahend }
+
+/**
+ * Returns a map with the duplicates and their indices of an iterable.
+ *
+ * @return a map with the duplicates and their indices.
+ */
+val <T> Iterable<T>.duplicates: Map<T, List<Int>>
+    get() = withIndex() // add the index to each element in the iterable
+        .groupBy({ it.value }) { it.index } // group the elements by their value and collect their indices
+        .filterValues { it.size > 1 } // filter out any values that only appear once
+// endregion ITERABLE
+
+// region : -== LIST ==- :
+/**
+ * Returns a new list containing the elements of this list at the given [indices].
+ * The [indices] list may contain duplicate indices, in which case the corresponding elements will
+ * be included multiple times.
+ *
+ * @param indices the list of zero-based indices to retrieve elements from
+ * @return a new list containing the elements at the given indices, in the order they appear in the
+ *      [indices] list
+ * @throws IndexOutOfBoundsException if any index in [indices] is negative or greater than or equal
+ *      to the size of this list
+ * @see List.get
+ */
+operator fun <E> List<E>.get(indices: List<Int>) = indices.map { this[it] }
+
+/**
+ * Returns a new list that is the transpose of this list of lists.
+ *
+ * The resulting list has the same number of elements as the sublists of this list, and each element
+ * is a list that contains the i-th element of each sublist of this list.
+ *
+ * ## Example
+ *
+ * ```
+ * val matrix = listOf(
+ *     listOf(1, 2, 3),
+ *     listOf(4, 5, 6),
+ *     listOf(7, 8, 9)
+ * )
+ *
+ * val transposedMatrix = matrix.transpose()
+ *
+ * println(matrix) // [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+ * println(transposedMatrix) // [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+ * ```
+ *
+ * ## Note
+ *
+ * The sublists of this list must all have the same size, i.e. this list must be a valid matrix.
+ */
+fun <E> List<List<E>>.transpose(): List<List<E>> {
+    constraints {
+        "All sublists must have the same size" {
+            // If the list is empty, it is valid.
+            distinctBy { it.size } must HaveSize { it in 0..1}
+        }
+    }
+    return when {
+        isEmpty() -> emptyList()
+        else -> (0 until first().size).map { i -> map { it[i] } }
+    }
+}
+// endregion LIST
+
+// region : -== MUTABLE COLLECTION ==-
+/**
+ * Adds the given element to the collection if it is not already present.
+ *
+ * @return `true` if the element was added, `false` otherwise.
+ */
+fun <E> MutableCollection<E>.addIfAbsent(element: E) =
+    !this.contains(element) && this.add(element)
+
+/**
+ * Removes the first [n] elements from this collection.
+ *
+ * @param n the number of elements to remove.
+ * @return a list containing the removed elements.
+ */
+fun <E> MutableList<E>.dropFirst(n: Int): List<E> {
+    constraints {
+        "Size [$n] should be in range [0, $n]" { n must BeInRange(0..size) }
+    }
+    return (0 until n).map { removeFirst() }
+}
+// region : -== LIST ==-
 
 /**
  * Swaps the elements at the given indices in the receiver.
  */
 fun <E> MutableList<E>.swap(i: Int, j: Int) {
+    constraints {
+        "The list must not be empty" { this@swap mustNot BeEmpty }
+    }
+    constraints {
+        "i [$i] should be in range [0, ${this@swap.size})" {
+            i must BeInRange(0..<this@swap.size)
+        }
+        "j [$j] should be in range [0, ${this@swap.size})" {
+            j must BeInRange(0..<this@swap.size)
+        }
+    }
     if (i == j) return
     val tmp = this[i]
     this[i] = this[j]
     this[j] = tmp
 }
-
-/**
- * Swaps the elements in the range [start, end) from this list with the elements in the range
- * [otherStart, otherStart + (end - start)) from the other list.
- */
-fun <E> MutableList<E>.swap(
-    start: Int,
-    end: Int,
-    other: MutableList<E>,
-    otherStart: Int
-) {
-    this.checkIndex(start, end, otherStart, other.size)
-    var i = end - start
-    while (--i >= 0) {
-        val temp = this[i + start]
-        this[i + start] = other[otherStart + i]
-        other[otherStart + i] = temp
-    }
-}
-
-private fun <E> MutableList<E>.checkIndex(
-    start: Int,
-    end: Int,
-    otherStart: Int,
-    otherLength: Int
-) {
-    this.checkIndex(start, end)
-    otherStart.validateAtLeast(0) { "Start index [$otherStart] should be positive" }
-    otherLength.validateAtLeast(otherStart + (end - start)) {
-        "End index [$otherLength] should be at least otherStart + (end - start) " +
-                "[${otherStart + (end - start)}]"
-    }
-}
-
-private fun <E> MutableList<E>.checkIndex(start: Int, end: Int) {
-    start.validateAtLeast(0) { "Start index [$start] should be positive" }
-    size.validateAtLeast(end) { "End index [$end] should be at least the length [$size] of the list" }
-    end.validateAtLeast(start)
-}
+// endregion LIST
+// endregion MUTABLE COLLECTION

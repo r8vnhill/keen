@@ -1,53 +1,64 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.selector
 
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.SelectorException
-import cl.ravenhill.keen.genetic.Phenotype
-import cl.ravenhill.keen.util.optimizer.PhenotypeOptimizer
-import java.util.Objects
-import java.util.stream.Stream
+import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.util.optimizer.IndividualOptimizer
+import java.util.*
 
-class TournamentSelector<DNA>(private val sampleSize: Int) : AbstractSelector<DNA>() {
+/**
+ * A selector that chooses the fittest individuals from a population by comparing the fitness of
+ * randomly selected samples of individuals.
+ *
+ * The `TournamentSelector` selects a fixed number of individuals from the population, called the
+ * [sampleSize], and then compares their fitness values to determine the fittest individual.
+ * This process is repeated `count` times to generate a new population of selected individuals.
+ *
+ * @param sampleSize The number of individuals to sample for each selection.
+ * @param DNA The type of the genetic data of the individuals.
+ * @param G The type of the genes that make up the individuals.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 2.0.0
+ */
+class TournamentSelector<DNA, G : Gene<DNA, G>>(private val sampleSize: Int) :
+    AbstractSelector<DNA, G>() {
 
-    override fun select(
-        population: List<Phenotype<DNA>>,
-        count: Int,
-        optimizer: PhenotypeOptimizer<DNA>
-    ) = List(count) {
-        selectOneFrom(population, optimizer)
+    init {
+        constraints {
+            "The sample size [$sampleSize] must be positive" {
+                sampleSize must BePositive
+            }
+        }
     }
 
-    private fun selectOneFrom(
-        population: List<Phenotype<DNA>>,
-        optimizer: PhenotypeOptimizer<DNA>
-    ): Phenotype<DNA> {
-        return Stream.generate { population[Core.random.nextInt(population.size)] }
-            .limit(sampleSize.toLong())
-            .max(optimizer.comparator)
-            .orElseThrow {
-                SelectorException {
-                    "An error occurred while trying to select an individual by tournament selection"
-                }
-            }
-}
+    /* Documentation inherited from [Selector]  */
+    override fun select(
+        population: Population<DNA, G>,
+        count: Int,
+        optimizer: IndividualOptimizer<DNA, G>,
+    ) = (0..<count).map {
+        generateSequence { population[Core.random.nextInt(population.size)] }
+            .take(sampleSize)
+            .maxWith(optimizer.comparator)
+    }
+
+    /* Documentation inherited from [Any]   */
+    override fun toString() = "TournamentSelector(sampleSize=$sampleSize)"
 
     override fun equals(other: Any?) = when {
-        other === this -> true
-        other !is TournamentSelector<*> -> false
-        other::class != this::class -> false
-        other.sampleSize != this.sampleSize -> false
-        else -> true
+        this === other -> true
+        other !is TournamentSelector<*, *> -> false
+        else -> sampleSize == other.sampleSize
     }
-
-    override fun toString() = "TournamentSelector { sampleSize: $sampleSize }"
 
     override fun hashCode() = Objects.hash(TournamentSelector::class, sampleSize)
 }

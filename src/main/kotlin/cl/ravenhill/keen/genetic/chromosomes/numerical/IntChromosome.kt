@@ -1,78 +1,110 @@
 /*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.keen.genetic.chromosomes.numerical
 
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.AbstractChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
-import java.util.stream.Collectors
-import java.util.stream.IntStream
-import kotlin.properties.Delegates
+import cl.ravenhill.keen.util.MutableFilterCollection
+import cl.ravenhill.keen.util.MutableRangedCollection
 
 /**
  * A chromosome that contains a list of [IntGene]s.
+ * The genes represent the encoded variables of a solution in a genetic algorithm.
+ *
+ * The [range] and [filter] of a chromosome determine the valid values for each gene.
+ * The [range] is a [Pair] of [Int] that defines the minimum and maximum possible values for each
+ * gene. The predicate is a function that tests whether a given value satisfies the problem
+ * constraints for a gene.
+ * A gene is considered valid if its value is within the range and satisfies the predicate.
  *
  * @param genes The list of genes that this chromosome will contain.
  *
+ * @constructor Creates a new [IntChromosome] with the given [genes], [range], and [filter].
+ *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 2.0.0
  */
-class IntChromosome private constructor(
-    genes: List<IntGene>
-) : AbstractChromosome<Int>(genes) {
+data class IntChromosome(override val genes: List<IntGene>) :
+    AbstractChromosome<Int, IntGene>(genes) {
 
     /**
-     * Creates a new [IntChromosome] from a given [size], [range] and a [filter]
+     * Secondary constructor that allows for the creation of an [IntChromosome] instance
+     * using a variable number of [IntGene] arguments.
      *
-     * @param size The size of the chromosome.
-     * @param range The range of the genes.
-     * @param filter The filter to apply to the genes.
+     * @param genes Vararg of [IntGene] objects to be included in the chromosome.
      */
-    private constructor(size: Int, range: Pair<Int, Int>, filter: (Int) -> Boolean) : this(
-        (0 until size).map {
-            val rangeStream = IntStream.range(range.first, range.second).boxed()
-            IntGene(
-                rangeStream.filter { filter(it) }.collect(Collectors.toList()).random(Core.random),
-                range,
-                filter
-            )
-        }
-    )
+    constructor(vararg genes: IntGene) : this(genes.toList())
 
-    @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<Int>>) = IntChromosome(genes as List<IntGene>)
+    override fun withGenes(genes: List<IntGene>) = IntChromosome(genes)
 
+    override fun toSimpleString() =
+        "[${genes.joinToString(", ") { it.toSimpleString() }}]"
 
-    override fun toString() = "${genes.map { it.dna }}"
+    override fun toString(): String {
+        return "IntChromosome(genes=[${genes.joinToString(", ") { it.toSimpleString() }}])"
+    }
 
     /**
      * A [Chromosome.Factory] for [IntChromosome]s.
      *
-     * @property size The size of the chromosome.
-     * @property range The range of the genes.
      * @property filter The filter to apply to the genes.
      *
      * @constructor Creates a new [IntChromosome.Factory].
      */
-    class Factory : Chromosome.Factory<Int> {
+    class Factory :
+        Chromosome.AbstractFactory<Int, IntGene>(),
+        MutableRangedCollection<Int>,
+        MutableFilterCollection<Int> {
 
+        override var ranges = mutableListOf<ClosedRange<Int>>()
+        override var filters = mutableListOf<(Int) -> Boolean>()
+
+        @Deprecated("Use the list version instead", ReplaceWith("ranges += range"))
         var filter: (Int) -> Boolean = { true }
-        lateinit var range: Pair<Int, Int>
-        var size by Delegates.notNull<Int>()
 
-        override fun make() = IntChromosome(size, range, filter)
+        // / Documentation inherited from [Chromosome.Factory]
+        override fun make(): IntChromosome {
+            enforceConstraints()
+            when (ranges.size) {
+                0 -> ranges = MutableList(size) { Int.MIN_VALUE..Int.MAX_VALUE }
+                1 -> ranges = MutableList(size) { ranges.first() }
+            }
+            when (filters.size) {
+                0 -> filters = MutableList(size) { { _: Int -> true } }
+                1 -> filters = MutableList(size) { filters.first() }
+            }
+            return IntChromosome(
+                List(size) {
+                    IntGene(
+                        Core.random.nextInt(ranges[it].start, ranges[it].endInclusive),
+                        ranges[it],
+                        filters[it]
+                    )
+                }
+            )
+        }
 
-        override fun toString() = "IntChromosome.Builder { " +
-                "size: $size, " +
-                "range: $range," +
-                "filter: $filter }"
+        private fun enforceConstraints() {
+            constraints {
+                if (ranges.size > 1) {
+                    "Chromosome with multiple ranges must have equal number of ranges and genes" {
+                        ranges must HaveSize(size)
+                    }
+                }
+                if (filters.size > 1) {
+                    "Chromosome creation requires equal number of filters and genes" {
+                        filters must HaveSize(size)
+                    }
+                }
+            }
+        }
     }
 }

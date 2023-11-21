@@ -1,43 +1,68 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val projectVersion: String by project
+val kotlinVersion: String by project
+val coroutinesVersion: String by project
+val apacheLangVersion: String by project
+val tablesawVersion: String by project
+val kotlinxDatetimeVersion: String by project
+val kotlinxSerializationVersion: String by project
+val slf4jVersion: String by project
+val kotestVersion: String by project
+val systemLambdaVersion: String by project
+val kotestDatetimeVersion: String by project
+val dokkaVersion: String by project
+val detektVersion: String by project
+val jaktVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.9.20"
     `maven-publish`
-    `java-library`
     signing
     id("com.diffplug.spotless") version "6.10.0"
-    id("org.jetbrains.dokka") version "1.7.20"
+    id("org.jetbrains.dokka") version "1.9.10"
+    id("io.gitlab.arturbosch.detekt") version "1.23.3"
 }
 
 group = "cl.ravenhill"
 version = projectVersion
 
 repositories {
+    maven("https://www.jitpack.io") {
+        name = "jitpack"
+    }
     mavenCentral()
 }
 
 dependencies {
     // Kotlin / Kotlinx
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
     // Lang3
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("org.apache.commons:commons-lang3:$apacheLangVersion")
     // Tablesaw
-    api("tech.tablesaw:tablesaw-core:0.43.1")
+    api("tech.tablesaw:tablesaw-core:$tablesawVersion")
     @Suppress("VulnerableLibrariesLocal")
-    api("tech.tablesaw:tablesaw-jsplot:0.43.1")
+    api("tech.tablesaw:tablesaw-jsplot:$tablesawVersion")
     // SLF4J
-    implementation("org.slf4j:slf4j-simple:2.0.5")
+    implementation("org.slf4j:slf4j-simple:$slf4jVersion")
     // Kotest
-    implementation("io.kotest:kotest-framework-datatest:5.5.4")
-    implementation("io.kotest:kotest-assertions-core:5.5.4")
-    testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
-    testImplementation("io.kotest:kotest-property:5.5.4")
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.4")
+    testImplementation("com.github.stefanbirkner:system-lambda:$systemLambdaVersion")
+    testImplementation("io.kotest.extensions:kotest-property-datetime:$kotestDatetimeVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-framework-datatest:$kotestVersion")
+    testImplementation("io.kotest:kotest-property:$kotestVersion")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     // Dokka
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
+
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
+
+    implementation("com.github.r8vnhill:strait-jakt:$jaktVersion")
 }
 
 java {
@@ -49,8 +74,20 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "18"
+kotlin {
+    // Configures the JVM toolchain to use version 8 of the JDK
+    jvmToolchain(8)
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
+}
+
+
+detekt {
+    // Configures the detekt task to use the default detekt configuration
+    config.from(files("conf/detekt.yml"))
 }
 
 val ossrhRepositoryUrl = if (version.toString().endsWith("SNAPSHOT")) {
@@ -84,15 +121,5 @@ publishing {
             name = "ossrh"
             credentials(PasswordCredentials::class)
         }
-    }
-}
-
-signing {
-    sign(publishing.publications["mavenJava"])
-}
-
-tasks.javadoc {
-    if (JavaVersion.current().isJava9Compatible) {
-        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
     }
 }

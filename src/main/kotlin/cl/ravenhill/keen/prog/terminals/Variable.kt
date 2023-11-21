@@ -1,26 +1,37 @@
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.prog.terminals
 
-import cl.ravenhill.keen.InvalidStateException
-import cl.ravenhill.keen.prog.Reduceable
+import cl.ravenhill.keen.prog.Environment
 import java.util.*
 
+/**
+ * This class represents a variable with a name and an index that points to an argument in a list.
+ * The value of the variable is the argument at the given index.
+ *
+ * @param name The name of the variable.
+ * @param index The index of the argument that the variable points to.
+ * @param T The generic type of the variable's value.
+ *
+ * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 2.0.0
+ * @version 2.0.0
+ */
+data class Variable<T>(
+    val name: String,
+    val index: Int = 0
+) : Terminal<T> {
 
-class Variable<T>(private val name: String, val index: Int) : Terminal<T> {
-
-    override val arity: Int = 0
-
-    override fun copy(): Reduceable<T> = Variable(name, index)
-
-
-    override fun invoke(args: Array<out T>) = args[index]
-
+    // Inherited documentation from Any
     override fun toString() = name
 
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is Variable<*> -> false
-        else -> name == other.name && index == other.index
-    }
+    // Inherited documentation from Terminal<T>
+    override fun create() = Variable<T>(name, index)
 
-    override fun hashCode() = Objects.hash(Variable::class, name, index)
+    override fun invoke(environment: Environment<T>, args: List<T>): T {
+        TODO("Not yet implemented")
+    }
 }

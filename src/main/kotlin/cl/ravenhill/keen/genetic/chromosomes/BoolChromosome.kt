@@ -1,89 +1,135 @@
 /*
- * "Makarena" (c) by R8V.
- * "Makarena" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
+import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.genetic.genes.BoolGene
-import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.util.math.BitArray
-import cl.ravenhill.keen.util.math.bitArrayOf
-import cl.ravenhill.keen.util.math.roundUpToMultipleOf
-import java.util.Objects
+import cl.ravenhill.keen.util.roundUpToMultipleOf
+import kotlin.properties.Delegates
 
 /**
- * A chromosome of [BoolGene]s.
+ * A chromosome representing a binary sequence of genes, with each gene being either `true` or
+ * `false`.
+ * The probability of a gene being `true` can be specified during construction.
  *
- * @param genes The genes of this chromosome.
+ * @param genes The list of genes in the chromosome.
  *
- * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @constructor Creates a new `BoolChromosome` with the specified [genes].
+ *
+ * @see [BoolGene]
+ *
+ * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
+ * @since 1.0.0
+ * @version 2.0.0
  */
-class BoolChromosome private constructor(
-    genes: List<BoolGene>,
-    private val truesProbability: Double
-) : AbstractChromosome<Boolean>(genes) {
+data class BoolChromosome(
+    override val genes: List<BoolGene>,
+) : AbstractChromosome<Boolean, BoolGene>(genes) {
 
-    constructor(genes: BitArray, truesProbability: Double) : this(
-        genes.toBoolGeneList(),
-        truesProbability
+    /**
+     * A secondary constructor that creates a `BoolChromosome` with a specific size.
+     * The genes are initialized as random boolean values based on the given probability.
+     *
+     * @param size The number of genes in the chromosome.
+     * @param truesProbability The probability that a gene will be `true`.
+     */
+    constructor(size: Int, truesProbability: Double) : this(
+        List(size) {
+            if (Core.random.nextDouble() > truesProbability) {
+                BoolGene.True
+            } else {
+                BoolGene.False
+            }
+        }
+    ) {
+        constraints {
+            "The probability of a gene being true must be in the range [0.0, 1.0]" {
+                truesProbability must BeInRange(0.0..1.0)
+            }
+        }
+    }
+
+    /**
+     * Secondary constructor for creating a new [BoolChromosome] of the specified size.
+     *
+     * Each gene in the chromosome is randomly generated according to the specified
+     * [truesProbability].
+     *
+     * @param size The size of the chromosome to create.
+     * @param truesProbability The probability of each gene being `true`.
+     * This value should be a number between 0 and 1, inclusive.
+     * @param constructorExecutor The executor to use for creating the genes.
+     *
+     * @return A new `BoolChromosome` with randomly generated genes.
+     */
+    constructor(
+        size: Int,
+        truesProbability: Double,
+        constructorExecutor: ConstructorExecutor<BoolGene>
+    ) : this(
+        constructorExecutor(
+            constraints {
+                "The trues probability [$truesProbability] must be between 0 and 1, inclusive." {
+                    truesProbability must BeInRange(0.0..1.0)
+                }
+            }.let {
+                size
+            }
+        ) {
+            if (Core.random.nextDouble() < truesProbability) BoolGene.True else BoolGene.False
+        }
     )
 
-    /// {@inheritDoc}
+    // Documentation inherited from [Verifiable].
     override fun verify() = genes.isNotEmpty()
 
-    /**
-     * Returns the number of true genes in this chromosome.
-     */
-    fun trues() = genes.count { it == BoolGene.True }
-
-    /// {@inheritDoc}
-    @Suppress("UNCHECKED_CAST")
-    override fun duplicate(genes: List<Gene<Boolean>>) =
-        BoolChromosome(genes as List<BoolGene>, truesProbability)
-
-    /// {@inheritDoc}
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is BoolChromosome -> false
-        other::class != BoolChromosome::class -> false
-        genes != other.genes -> false
-        else -> true
-    }
-
-    /// {@inheritDoc}
-    override fun hashCode() = Objects.hash(BoolChromosome::class, genes)
-
-    /// {@inheritDoc}
-    override fun toString(): String {
-        var str = ""
-        genes.forEach { str += if (it == BoolGene.True) "1" else "0" }
-        return str.chunked(4).joinToString("|")
-            .padStart(genes.size.roundUpToMultipleOf(8), '0')
-    }
+    // Documentation inherited from [Chromosome].
+    override fun withGenes(genes: List<BoolGene>) = BoolChromosome(genes)
 
     /**
-     * Builder for [BoolChromosome]s.
+     * Returns a string representation of the chromosome in binary format.
+     * Each gene is represented by a bit: [BoolGene.True] is represented as '1' and [BoolGene.False]
+     * as '0'.
+     * The genes are grouped in sets of 4 bits, separated by '|'.
+     * The string is padded with '0's to make its length a multiple of 8.
      *
-     * @property size               The size of the chromosome to build.
-     * @property truesProbability   The probability of a gene being true.
-     *
-     * @constructor Creates a new builder for [BoolChromosome]s.
+     * @return a string representation of the chromosome in binary format.
      */
-    class Factory : Chromosome.Factory<Boolean> {
+    override fun toSimpleString(): String {
+        // Calculate the required size, rounding up to a multiple of 8.
+        val size = genes.size.roundUpToMultipleOf(8)
 
-        var truesProbability: Double = Double.NaN
+        // Create padding zeros to ensure the size is a multiple of 8.
+        val paddingZeros = List(size - genes.size) { "0" }
 
-        var size : Int = 0
+        // Convert genes to binary string and chunk them in groups of 8.
+        return (paddingZeros + genes.map { if (it == BoolGene.True) "1" else "0" })
+            .chunked(8) { it.joinToString(separator = "") }
+            .joinToString(separator = "|")
+    }
 
-        /// {@inheritDoc}
-        override fun make() = BoolChromosome(bitArrayOf(size, truesProbability), truesProbability)
+    override fun toString() = "BoolChromosome(genes=${toSimpleString()})"
 
-        /// {@inheritDoc}
-        override fun toString() =
-            "BoolChromosome.Builder { size: $size, truesProbability: $truesProbability }"
+    override fun toDetailedString() =
+        "BoolChromosome(genes=${genes.map { it.toDetailedString() }})"
+
+    /**
+     * Factory for [BoolChromosome]s.
+     *
+     * @property size The size of the chromosome to build.
+     * @property trueRate The probability of a gene being true.
+     */
+    class Factory : Chromosome.AbstractFactory<Boolean, BoolGene>() {
+
+        var trueRate: Double by Delegates.notNull()
+
+        // Documentation inherited from [Chromosome.Factory].
+        override fun make() = BoolChromosome(size, trueRate, executor)
     }
 }

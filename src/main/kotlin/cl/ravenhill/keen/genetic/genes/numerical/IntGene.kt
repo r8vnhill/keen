@@ -1,74 +1,91 @@
 /*
- * "Keen" (c) by R8V.
- * "Keen" is licensed under a
- * Creative Commons Attribution 4.0 International License.
- * You should have received a copy of the license along with this
- *  work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
-
 
 package cl.ravenhill.keen.genetic.genes.numerical
 
 import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import cl.ravenhill.keen.genetic.genes.ComparableGene
+import cl.ravenhill.keen.util.Ranged
+import cl.ravenhill.keen.util.nextIntInRange
 import java.util.*
-import java.util.stream.IntStream
 
 /**
- * [NumberGene] which holds a 32-bit integer number.
+ * A gene that stores a 32-bit floating point number value.
  *
- * @property dna The value of the gene.
- * @property range The range of the gene.
- * @property filter A filter function to apply to the gene's value.
+ * This gene represents a value within a specified range, and can be used to model discrete
+ * numerical parameters in genetic algorithms.
+ *
+ * @param dna The current value of this gene.
+ * @param range The range of valid values for this gene represented as a pair of [Int] values.
+ *     The first value represents the lower bound of the range (inclusive), and the second value
+ *     represents the upper bound of the range (exclusive).
+ * @param filter A predicate function that determines whether a number should be accepted as valid
+ *      for this gene.
+ *
+ * @property start The lower bound of the range (inclusive).
+ * @property end The upper bound of the range (exclusive).
  *
  * @see IntChromosome
  *
  * @author <a href="https://www.github.com/r8vnhill">R8V</a>
+ * @since 1.0.0
+ * @version 2.0.0
  */
-class IntGene(
+data class IntGene(
     override val dna: Int,
-    range: Pair<Int, Int>,
-    override val filter: (Int) -> Boolean = { true }
-) : NumberGene<Int>, ComparableGene<Int> {
-    private val start = range.first
-    private val end = range.second
-    private val range = IntStream.range(start, end).boxed()
+    override val range: ClosedRange<Int> = Int.MIN_VALUE..Int.MAX_VALUE,
+    override val filter: (Int) -> Boolean = { true },
+) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene>, Ranged<Int> {
 
-    /**
-     * Calculates the mean of this gene and the given one.
-     *
-     * This uses the fact that ``(x + y) = ((x & y) + (x | y)) = ((x ^ y) + 2 * (x & y))``.
-     * This operation is _overflow-safe_.
-     *
-     * __References:__
-     * - http://aggregate.org/MAGIC/#Average%20of%20Integers
-     *
-     * @param gene NumberGene<Int>
-     * @return IntGene
-     */
-    override fun mean(gene: NumberGene<Int>) =
-        duplicate((gene.dna and dna) + ((gene.dna xor dna) shr 1))
+    // region : Properties
+    val start = range.start
 
+    val end = range.endInclusive
+    // endregion
+
+    // region : NumberGene Interface Implementation
+    /* Documentation inherited from [NumberGene]    */
+    override fun average(genes: List<IntGene>) = withDna(
+        genes.fold(dna.toDouble() / (genes.size + 1)) { acc, gene ->
+            acc + gene.toDouble() / (genes.size + 1)
+        }.toInt()
+    )
+
+    /* Documentation inherited from [NumberGene]    */
     override fun toDouble() = dna.toDouble()
 
+    /* Documentation inherited from [NumberGene]    */
     override fun toInt() = dna
+    // endregion
 
-    override fun generator() = Core.random.nextInt(start, end)
+    // region : Gene Interface Implementation
+    /* Documentation inherited from [Gene]  */
+    override fun generator() = Core.random.nextIntInRange(range)
 
-    override fun duplicate(dna: Int) = IntGene(dna, start to end, filter)
+    /* Documentation inherited from [Gene]  */
+    override fun withDna(dna: Int) = IntGene(dna, range, filter)
+    // endregion
 
-    @Suppress("ConvertTwoComparisonsToRangeCheck")
-    override fun verify() = dna >= start && dna < end && filter(dna)
+    // region : Verifiable Interface Implementation
+    /* Documentation inherited from [Verifiable]    */
+    override fun verify() = dna in range && filter(dna)
+    // endregion
 
-    override fun toString() = "$dna"
+    override fun toSimpleString() = dna.toString()
 
     override fun equals(other: Any?) = when {
-        this === other -> true
+        other === this -> true
         other !is IntGene -> false
         other::class != IntGene::class -> false
-        else -> dna == other.dna
+        other.dna != dna -> false
+        other.range.start != range.start -> false
+        other.range.endInclusive != range.endInclusive -> false
+        else -> true
     }
 
-    override fun hashCode() = Objects.hash(IntGene::class, dna)
+    override fun hashCode() =
+        Objects.hash(IntGene::class, dna, range.start, range.endInclusive)
 }
