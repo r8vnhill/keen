@@ -49,8 +49,8 @@ fun Arb.Companion.fitnessFunction() = element(
 )
 
 fun <T, G> Arb.Companion.evolutionEngineFactory(
+    fitnessFunction: Arb<(Genotype<T, G>) -> Double>,
 
 ) where G : Gene<T, G> = arbitrary {
 
 }
-

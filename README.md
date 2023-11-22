@@ -1,14 +1,23 @@
-# Keen | Kotlin Genetic Algorithm Framework
+# Keen | Kotlin Evolutionary Computation Framework
 
 [![](https://jitpack.io/v/r8vnhill/keen.svg)](https://jitpack.io/#r8vnhill/keen)
+[![License](https://img.shields.io/badge/License-BSD_2--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
-![http://creativecommons.org/licenses/by/4.0/](https://i.creativecommons.org/l/by/4.0/88x31.png)
+![Keen logo](logos/TransparentBg.png)
 
-This work is licensed under a
-[Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+Keen is a framework for Kotlin that leverages evolutionary algorithms to solve optimization problems.
+It harnesses the power and expressiveness of Kotlin to provide an
+intuitive and efficient interface for researchers, scientists, and
+developers alike.
+With Keen, you can build and fine-tune complex evolutionary algorithms
+with just a few lines of code.
 
-**_Keen_** is a Kotlin genetic algorithms' and genetic programming framework heavily inspired by 
-[_Jenetics_](https://jenetics.io).
+Whether you are delving into genetic algorithms for the first time or are
+an experienced researcher looking for a Kotlin-native tool, Keen offers a
+streamlined experience without sacrificing depth or flexibility. Its
+modular architecture means you can easily extend or modify components,
+from selection and crossover methods to mutation and fitness evaluation.
+
 
 ## Installation
 
@@ -23,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.r8vnhill:keen:2.0-ALPHA-1")
+    implementation("com.github.r8vnhill:keen:2.0-ALPHA-2")
     /* ... */
 }
 ```
@@ -36,8 +45,8 @@ You can find the explanations of the code in the [wiki](https://github.com/r8vnh
 ### One Max (Ones Counting) Problem
 
 The _One Max_ problem is a well known problem widely used to exemplify the genetic algorithms'
-capabilities. 
-The problem consists of maximizing the number of ones in a bit string. 
+capabilities.
+The problem consists of maximizing the number of ones in a bit string.
 The following example shows how to solve the _One Max_ problem with _Keen_.
 
 #### Implementation
@@ -47,15 +56,17 @@ fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDoubl
 
 fun main() {
     val engine = engine(::count, genotype {
-        chromosomes = listOf(BoolChromosome.Factory(20, 0.15))
+        chromosome { booleans { size = 20; truesProbability = 0.15 } }
     }) {
         populationSize = 500
-        alterers = listOf(Mutator(0.55), SinglePointCrossover(0.06))
+        selector = TournamentSelector(sampleSize = 2)
+        alterers = listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.2))
         limits = listOf(GenerationCount(100), TargetFitness(20.0))
-        statistics = listOf(StatisticCollector())
+        statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
     engine.run()
-    println(engine.statistics[0])
+    println(engine.statistics.first())
+    (engine.statistics.last() as StatisticPlotter).displayFitness()
 }
 ```
 
@@ -87,6 +98,8 @@ fun main() {
 |--> Best fitness: 20.0
 ```
 
+![One Max Fitness Plot](doc/onemax_fitness.png)
+
 ### Word Guessing Problem
 
 The _Word Guessing_ problem is a problem where the goal is to guess a word of known length by just
@@ -95,48 +108,60 @@ being able to ask "how many characters are in the correct position?".
 #### Implementation
 
 ```kotlin
-private const val target = "Sopaipilla"
-
-private fun matches(genotype: Genotype<Char>) = genotype.chromosomes.first().genes
-    .filterIndexed { index, gene -> gene.dna == target[index] }
+private fun matches(genotype: Genotype<Char>) = genotype.flatten()
+    .filterIndexed { index, char -> char == TARGET[index] }
     .size.toDouble()
 
 fun main() {
     val engine = engine(::matches, genotype {
-        chromosomes = listOf(CharChromosome.Builder(10))
+        chromosome { chars { size = TARGET.length } }
     }) {
         populationSize = 500
+        survivorSelector = RouletteWheelSelector()
         alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
-        limits = listOf(TargetFitness(target.length.toDouble()))
-        statistics = listOf(StatisticPrinter(10), StatisticCollector())
+        limits = listOf(TargetFitness(TARGET.length.toDouble()))
+        statistics = listOf(StatisticPrinter(every = 10), StatisticPlotter())
     }
     val evolvedPopulation = engine.run()
-    println(evolvedPopulation.generation)
-    println(evolvedPopulation.best)
+    println("Solution found in ${evolvedPopulation.generation} generations")
+    println("Solution: ${evolvedPopulation.best?.genotype}")
+    println("With fitness: ${evolvedPopulation.best?.fitness}")
+    (engine.statistics.last() as StatisticPlotter).displayFitness()
 }
 ```
 
 ### Function Optimization Problem
 
-Here we want to find the minimum of the function ``f(x) = cos(1 / 2 + sin(x)) * cos(x)``.
+Here we want to find the minimum of the function ``f(x) = ln(cos(sin(it)) + sin(cos(it)))``.
 
 ```kotlin
-private fun fitnessFunction(x: Genotype<Double>): Double {
-    val value = x.chromosomes.first().genes.first().dna
-    return cos(0.5 + sin(value)) * cos(value)
-}
+private fun fitnessFunction(genotype: Genotype<Double>) = genotype.flatten().first()
+    .let {
+        ln(cos(sin(it)) + sin(cos(it)))
+    }
 
 fun main() {
     val engine = engine(::fitnessFunction, genotype {
-        chromosomes = listOf(DoubleChromosome.Builder(1, 0.0..(2 * Math.PI)))
+        chromosome { doubles { size = 1; range = (-2.0 * Math.PI) to (2 * Math.PI) } }
     }) {
         populationSize = 500
         optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.03), MeanCrossover(0.6))
-        statistics = listOf(StatisticPrinter(20), StatisticCollector())
+        alterers = listOf(Mutator(0.1), MeanCrossover(0.15))
+        limits = listOf(SteadyGenerations(20))
+        statistics = listOf(StatisticCollector(), StatisticPlotter())
     }
-    val evolvedPopulation = engine.run()
-    println(evolvedPopulation.generation)
-    println(evolvedPopulation.best)
+    engine.run()
+    println(engine.statistics.first())
+    (engine.statistics.last() as StatisticPlotter).displayFitness()
 }
 ```
+
+## Acknowledgements
+
+This project has benefited from the support provided by JetBrains. We're immensely grateful for their backing.
+
+<div style="text-align: center;">
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo." width="100">
+</div>
+
+A big thank you to [JetBrains](https://jb.gg/OpenSourceSupport) for their open-source support.
