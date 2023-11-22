@@ -7,8 +7,10 @@
 package cl.ravenhill.keen.arbs.evolution
 
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.next
@@ -45,3 +47,10 @@ fun Arb.Companion.fitnessFunction() = element(
         genotype.flatMap().sum().toDouble()
     }
 )
+
+fun <T, G> Arb.Companion.evolutionEngineFactory(
+
+) where G : Gene<T, G> = arbitrary {
+
+}
+

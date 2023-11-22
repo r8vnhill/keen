@@ -7,13 +7,11 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.arbs.evolution.fitnessFunction
+import cl.ravenhill.keen.arbs.genetic.chromosomes.intChromosomeFactory
 import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
-import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 
 class EngineFactoryTest : FreeSpec({
@@ -23,6 +21,23 @@ class EngineFactoryTest : FreeSpec({
                 checkAll(Arb.intGenotypeFactory(), Arb.fitnessFunction()) { genotypeFactory, fitnessFunction ->
                     val factory = EvolutionEngine.Factory(fitnessFunction, genotypeFactory)
                     factory.genotypeFactory shouldBe genotypeFactory
+                }
+            }
+        }
+
+        "should have a fitness function that" - {
+            "returns the value provided to the constructor" {
+                checkAll(Arb.intGenotypeFactory(), Arb.fitnessFunction()) { genotypeFactory, fitnessFunction ->
+                    val factory = EvolutionEngine.Factory(fitnessFunction, genotypeFactory)
+                    factory.fitnessFunction shouldBe fitnessFunction
+                }
+            }
+        }
+
+        "should have a population size that" - {
+            "starts at 50" {
+                checkAll(Arb.evolutionEngineFactory(Arb.fitnessFunction(), Arb.intChromosomeFactory(), populationSize = null)) { factory ->
+                    factory.populationSize shouldBe 50
                 }
             }
         }
