@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.keen.arbs.evolution.`test Engine evolution start`
+import cl.ravenhill.keen.assertions.evolution.`test Engine evolution start`
 import io.kotest.core.spec.style.FreeSpec
 
 

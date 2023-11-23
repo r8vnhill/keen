@@ -4,9 +4,11 @@
  */
 
 
-package cl.ravenhill.keen.arbs.evolution
+package cl.ravenhill.keen.assertions.evolution
 
 import cl.ravenhill.keen.Core
+import cl.ravenhill.keen.arbs.evolution.engine
+import cl.ravenhill.keen.arbs.evolution.evolutionState
 import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.genetic.population
 import cl.ravenhill.keen.arbs.operators.intAlterer
