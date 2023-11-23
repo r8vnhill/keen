@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.assertions.evolution
 
 import cl.ravenhill.keen.Core
-import cl.ravenhill.keen.arbs.evolution.engine
+import cl.ravenhill.keen.arbs.evolution.evolutionEngine
 import cl.ravenhill.keen.arbs.evolution.evolutionState
 import cl.ravenhill.keen.arbs.genetic.intGenotypeFactory
 import cl.ravenhill.keen.arbs.genetic.population
@@ -64,7 +64,7 @@ fun `test Engine evolution start`() = freeSpec {
                         Core.random = Random(it) // Ensure tests are reproducible
                         Arb.evolutionState<Int, IntGene>(Arb.constant(emptyList())).next()
                     },
-                    Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer())
+                    Arb.evolutionEngine(Arb.intGenotypeFactory(), Arb.intAlterer())
                 ) { state, engine ->
                     with(engine.startEvolution(state)) {
                         generation shouldBe state.generation
@@ -79,7 +79,7 @@ fun `test Engine evolution start`() = freeSpec {
             "should return the same state without changes" {
                 checkAll(
                     Arb.evolutionState(Arb.population(size = 1..10)),
-                    Arb.engine(Arb.intGenotypeFactory(), Arb.intAlterer())
+                    Arb.evolutionEngine(Arb.intGenotypeFactory(), Arb.intAlterer())
                 ) { state, engine ->
                     val result = engine.startEvolution(state)
                     result shouldBe state // Check if state is unchanged

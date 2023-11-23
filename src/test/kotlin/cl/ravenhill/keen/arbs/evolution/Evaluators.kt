@@ -6,13 +6,14 @@
 
 package cl.ravenhill.keen.arbs.evolution
 
+import cl.ravenhill.keen.Core
 import cl.ravenhill.keen.arbs.datatypes.real
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.genes.Gene
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.next
 
 fun <T, G> Arb.Companion.evaluator(arb: Arb<Double> = real()) where G : Gene<T, G> = arbitrary {
-    val bound = arb.bind()
-    SequentialEvaluator<T, G> { bound }
+    SequentialEvaluator<T, G> { arb.next() }
 }

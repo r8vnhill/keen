@@ -14,6 +14,7 @@ import cl.ravenhill.keen.arbs.operators.selector
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.evolution.EvolutionEngine
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
+import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -35,32 +36,76 @@ import io.kotest.property.arbitrary.pair
 /**
  * Generates an arbitrary instance of [EvolutionEngine] for property-based testing in genetic algorithms.
  *
- * This function leverages Kotest's [Arb] (Arbitrary) API to create diverse configurations of the [EvolutionEngine]
- * class. It is particularly useful for testing various evolutionary scenarios with different parameters and
- * components in a genetic algorithm.
+ * This function creates [EvolutionEngine] instances with customizable configurations, making it ideal for testing a
+ * wide range of evolutionary scenarios. Each component of the engine, such as the genotype factory, selectors,
+ * alterers, and others, can be tailored using separate arbitraries, allowing for extensive customization.
  *
- * The generated [EvolutionEngine] instance includes a random set of key components necessary for running a genetic
- * algorithm, such as genotype factories, population size, selection strategies, alterers, and more.
+ * ## Example Usage:
+ * ```
+ * // Creating an arbitrary evolution engine with custom configurations
+ * val engineArb = Arb.evolutionEngine(
+ *     genotypeFactory = Arb.intGenotypeFactory(),
+ *     alterer = Arb.intAlterer(),
+ *     populationSize = Arb.int(50..100),
+ *     // Additional configurations...
+ * )
+ * val engine = engineArb.bind() // Instance of EvolutionEngine with customized settings
+ * ```
  *
- * @return An [Arb] that produces instances of [EvolutionEngine] with randomized configurations.
+ * This function is especially useful for conducting property-based testing on various configurations
+ * of evolutionary engines, ensuring robustness and adaptability across different setups and parameters.
+ *
+ * @param T The type representing the genetic data or information.
+ * @param G The type of [Gene] associated with the genetic data.
+ * @param genotypeFactory An [Arb]<[Genotype.Factory]> instance for generating genotype factories.
+ * @param alterer An [Arb]<[Alterer]> instance for generating alterer objects.
+ * @param populationSize An [Arb]<[Int]> instance for generating population sizes; defaults to `int(1..100)`.
+ * @param survivalRate An [Arb]<[Double]> instance for generating survival rates; defaults to `probability()`.
+ * @param offspringSelector An [Arb]<[Selector]> instance for generating offspring selectors; defaults to `selector()`.
+ * @param limits An [Arb]<[List]<[Limit]>> instance for generating lists of limit conditions; defaults to
+ *   `list(limit(), 1..3)`.
+ * @param survivorSelector An [Arb]<[Selector]> instance for generating survivor selectors; defaults to `selector()`.
+ * @param optimizer An [Arb]<[IndividualOptimizer]> instance for generating optimizer objects; defaults to
+ *   `optimizer()`.
+ * @param listeners An [Arb]<[MutableList]<[EvolutionListener]>> instance for generating lists of evolution listeners;
+ *   defaults to `mutableList(evolutionListener(), 1..3)`.
+ * @param evaluator An [Arb]<[EvaluationExecutor]> instance for generating evaluation executor objects; defaults to
+ *   `evaluator()`.
+ * @return An [Arb]<[EvolutionEngine]> that generates instances of [EvolutionEngine] with various configurations for
+ *   property-based testing.
+ *
+ * @see Arb.Companion.probability
+ * @see Arb.Companion.selector
+ * @see Arb.Companion.limit
+ * @see Arb.Companion.optimizer
+ * @see Arb.Companion.evolutionListener
+ * @see Arb.Companion.evaluator
+ * @see Arb.Companion.list
+ * @see Arb.Companion.mutableList
  */
-fun <T, G> Arb.Companion.engine(
+fun <T, G> Arb.Companion.evolutionEngine(
     genotypeFactory: Arb<Genotype.Factory<T, G>>,
     alterer: Arb<Alterer<T, G>>,
     populationSize: Arb<Int> = int(1..100),
+    survivalRate: Arb<Double> = probability(),
+    offspringSelector: Arb<Selector<T, G>> = selector(),
+    limits: Arb<List<Limit<T, G>>> = list(limit(), 1..3),
+    survivorSelector: Arb<Selector<T, G>> = selector(),
+    optimizer: Arb<IndividualOptimizer<T, G>> = optimizer(),
+    listeners: Arb<MutableList<EvolutionListener<T, G>>> = mutableList(evolutionListener(), 1..3),
+    evaluator: Arb<EvaluationExecutor<T, G>> = evaluator(),
 ) where G : Gene<T, G> = arbitrary {
     EvolutionEngine(
         genotypeFactory = genotypeFactory.bind(),
         populationSize = populationSize.bind(),
-        survivalRate = probability().bind(),
-        selector = selector<T, G>().bind(),
-        offspringSelector = selector<T, G>().bind(),
+        survivalRate = survivalRate.bind(),
+        offspringSelector = offspringSelector.bind(),
         alterer = alterer.bind(),
-        limits = list(limit<T, G>(), 1..3).bind(),
-        survivorSelector = selector<T, G>().bind(),
-        optimizer = optimizer<T, G>().bind(),
-        listeners = mutableList(evolutionListener<T, G>(), 1..3).bind(),
-        evaluator = evaluator<T, G>().bind(),
+        limits = limits.bind(),
+        survivorSelector = survivorSelector.bind(),
+        optimizer = optimizer.bind(),
+        listeners = listeners.bind(),
+        evaluator = evaluator.bind(),
         interceptor = EvolutionInterceptor.identity()
     )
 }
