@@ -13,6 +13,7 @@ import cl.ravenhill.keen.arbs.listeners.evolutionListener
 import cl.ravenhill.keen.arbs.operators.selector
 import cl.ravenhill.keen.arbs.optimizer
 import cl.ravenhill.keen.evolution.EvolutionEngine
+import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
@@ -30,6 +31,39 @@ import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.next
 import io.kotest.property.arbitrary.pair
+
+/**
+ * Generates an arbitrary instance of [EvolutionEngine] for property-based testing in genetic algorithms.
+ *
+ * This function leverages Kotest's [Arb] (Arbitrary) API to create diverse configurations of the [EvolutionEngine]
+ * class. It is particularly useful for testing various evolutionary scenarios with different parameters and
+ * components in a genetic algorithm.
+ *
+ * The generated [EvolutionEngine] instance includes a random set of key components necessary for running a genetic
+ * algorithm, such as genotype factories, population size, selection strategies, alterers, and more.
+ *
+ * @return An [Arb] that produces instances of [EvolutionEngine] with randomized configurations.
+ */
+fun <T, G> Arb.Companion.engine(
+    genotypeFactory: Arb<Genotype.Factory<T, G>>,
+    alterer: Arb<Alterer<T, G>>,
+    populationSize: Arb<Int> = int(1..100),
+) where G : Gene<T, G> = arbitrary {
+    EvolutionEngine(
+        genotypeFactory = genotypeFactory.bind(),
+        populationSize = populationSize.bind(),
+        survivalRate = probability().bind(),
+        selector = selector<T, G>().bind(),
+        offspringSelector = selector<T, G>().bind(),
+        alterer = alterer.bind(),
+        limits = list(limit<T, G>(), 1..3).bind(),
+        survivorSelector = selector<T, G>().bind(),
+        optimizer = optimizer<T, G>().bind(),
+        listeners = mutableList(evolutionListener<T, G>(), 1..3).bind(),
+        evaluator = evaluator<T, G>().bind(),
+        interceptor = EvolutionInterceptor.identity()
+    )
+}
 
 /**
  * Provides an arbitrary generator for fitness functions used in genetic algorithms.
@@ -56,11 +90,13 @@ import io.kotest.property.arbitrary.pair
  *
  * @return An [Arb] that generates different types of fitness functions for [Genotype]s with [IntGene].
  */
-fun Arb.Companion.fitnessFunction() = element(
-    { _: Genotype<Int, IntGene> -> 0.0 },
-    { _: Genotype<Int, IntGene> -> double().next() },
-    { genotype: Genotype<Int, IntGene> ->
-        genotype.flatMap().sum().toDouble()
+fun Arb.Companion.fitnessFunction(): Arb<(Genotype<Int, IntGene>) -> Double> = element(
+    { _: Genotype<Int, IntGene> ->
+        0.0
+    }, { _: Genotype<Int, IntGene> ->
+        double().next()
+    }, { genotype: Genotype<Int, IntGene> ->
+        genotype.chromosomes.sumOf { chromosome -> chromosome.genes.sumOf { it.dna } }.toDouble()
     }
 )
 
@@ -113,7 +149,7 @@ fun <T, G> Arb.Companion.evolutionEngineFactory(
     populationSize: Arb<Int>? = int(1..100),
     limits: Arb<List<Limit<T, G>>>? = list(limit(), 1..3),
     optimizer: Arb<IndividualOptimizer<T, G>>? = optimizer(),
-    alterers: Arb<List<Alterer<T, G>>>? = constant(emptyList()),
+    alterers: Arb<List<Alterer<T, G>>>? = Arb.constant(emptyList()),
     selectors: Arb<Pair<Selector<T, G>?, Selector<T, G>?>> = pair(selector(), selector()),
     survivalRate: Arb<Double>? = probability(),
     listeners: Arb<MutableList<EvolutionListener<T, G>>>? = mutableList(evolutionListener(), 1..3),

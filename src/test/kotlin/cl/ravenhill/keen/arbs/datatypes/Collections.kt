@@ -8,6 +8,7 @@ package cl.ravenhill.keen.arbs.datatypes
 
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.merge
 
@@ -201,3 +202,36 @@ fun <T> Arb.Companion.orderedPair(
     strict: Boolean = false,
     reversed: Boolean = false,
 ) where T : Comparable<T> = orderedPair(arb, arb, strict, reversed)
+
+/**
+ * Generates an arbitrary list of elements of type [E].
+ *
+ * This function creates lists of elements where the type of each element and the size of the list
+ * are determined by the provided arbitraries [gen] and [size], respectively. It is particularly
+ * useful for property-based testing where you need to test functions or algorithms with lists of
+ * various lengths and contents.
+ *
+ * ## Usage:
+ * - To generate a list of integers with a size between 5 and 10:
+ *   ```kotlin
+ *   val intListArb = Arb.list(Arb.int(), 5..10)
+ *   val intList = intListArb.bind() // Resulting list will have a size between 5 and 10
+ *   ```
+ *
+ * - To generate a list of strings with the default size range (0 to 100):
+ *   ```kotlin
+ *   val stringListArb = Arb.list(Arb.string())
+ *   val stringList = stringListArb.bind() // Resulting list will have a size between 0 and 100
+ *   ```
+ *
+ * This function is versatile and can be used in a wide range of testing scenarios, especially when
+ * the tested code operates on collections and the impact of collection size is significant.
+ *
+ * @param E The type of elements in the generated list.
+ * @param gen An [Arb]<[E]> that generates elements of type [E] for the list.
+ * @param size An [Arb]<[Int]> specifying the possible size range of the list. Defaults to a range of 0 to 100.
+ * @return An [Arb] that generates lists of type [E] with sizes and elements determined by the specified arbitraries.
+ */
+fun <E> Arb.Companion.list(gen: Arb<E>, size: Arb<Int> = int(0..100)) = arbitrary {
+    List(size.bind()) { gen.bind() }
+}

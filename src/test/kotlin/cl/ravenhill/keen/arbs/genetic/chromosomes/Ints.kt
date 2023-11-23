@@ -1,62 +1,96 @@
 /*
- *  Copyright (c) 2023, Ignacio Slater M.
- *  2-Clause BSD License.
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.arbs.genetic.chromosomes
 
 import cl.ravenhill.keen.arbs.datatypes.mutableList
 import cl.ravenhill.keen.arbs.datatypes.orderedPair
+import cl.ravenhill.keen.arbs.genetic.intGene
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.numerical.IntChromosome
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
+import io.kotest.property.arbitrary.next
+
+/**
+ * Generates an arbitrary [IntChromosome] instance.
+ *
+ * This function creates an arbitrary [IntChromosome] populated with genes
+ * derived from the [intGene] function within a range of 0 to 100.
+ *
+ * @receiver The companion object of the [Arb] class, which provides factory methods
+ *           for creating arbitrary instances of various types.
+ *
+ * @return An arbitrary instance of [IntChromosome] with genes in the specified range.
+ */
+fun Arb.Companion.intChromosome() = arbitrary {
+    IntChromosome(list(intGene(), 0..5).bind())
+}
+
+fun Arb.Companion.intChromosome(size: Arb<Int>) = arbitrary {
+    size.bind().let {
+        IntChromosome(list(intGene(), it..it + 1).bind())
+    }
+}
 
 /**
  * Generates an arbitrary factory for creating instances of [IntChromosome].
  *
- * This function constructs a [IntChromosome.Factory], which can then be used to produce
- * [IntChromosome] objects with specified characteristics. The size and range of values
- * for each gene in the chromosome are determined by the `sizeRange` parameter.
+ * This function provides a way to generate [IntChromosome.Factory] instances with varied configurations,
+ * allowing for flexibility in testing and simulation scenarios that involve integer chromosomes.
+ * It utilizes Kotest's property-based testing framework for generating random sizes and range pairs for
+ * the chromosomes.
  *
- * ## Functionality:
- * - The `sizeRange` parameter provides a mechanism to specify both the size of the chromosome
- *   (i.e., the number of genes it contains) and the range of integer values each gene can hold.
- * - The size is determined by the first element of the pair, while the second element provides
- *   a list of integer ranges, with each range corresponding to a gene in the chromosome.
+ * The factory produced by this function is capable of creating [IntChromosome] instances with a specified
+ * size and a set of ranges. These ranges define the permissible values for the genes within the chromosome.
  *
- * ## Example Usage:
+ * ## Usage Scenario:
+ * In a genetic algorithm simulation, the `intGenotypeFactory` function utilizes `intChromosomeFactory`
+ * to create a [Genotype.Factory] with multiple chromosomes, each having different configurations.
+ *
+ * ### Example:
+ * ```kotlin
+ * fun Arb.Companion.intGenotypeFactory() = arbitrary {
+ *     Genotype.Factory<Int, IntGene>().apply {
+ *         repeat(5) {
+ *             chromosomes += intChromosomeFactory().bind()
+ *         }
+ *     }
+ * }
  * ```
- * // Creating a factory for IntChromosome with a size of 5 and specific gene value ranges
- * val chromosomeFactoryArb = Arb.intChromosomeFactory(
- *     Arb.constant(5 to mutableList(orderedPair(Arb.int(0..10), strict = true), 5..5))
- * )
- * val chromosomeFactory = chromosomeFactoryArb.bind()
- * // Creating an IntChromosome using the factory
- * val chromosome = chromosomeFactory.make()
- * // The resulting chromosome will have 5 genes, each with values in the specified ranges
- * ```
+ * In this example, `intGenotypeFactory` calls `intChromosomeFactory` five times to create a genotype
+ * with diverse chromosome configurations, each potentially having different sizes and gene value ranges.
  *
- * This function is particularly useful for testing scenarios that require chromosomes with
- * integer genes and configurable sizes and value ranges.
+ * @param sizeRange An [Arb] of [Pair]<[Int], [MutableList]<[Pair]<[Int], [Int]>>> that generates
+ *                  arbitrary sizes and corresponding range pairs for the chromosomes. Each pair represents
+ *                  the size of a chromosome and its value ranges.
  *
- * @param sizeRange An [Arb] that generates pairs of chromosome size and a list of integer value ranges.
- *                  Each pair consists of the size of the chromosome and a corresponding list of ranges
- *                  for the genes. The default range for chromosome size is set from 0 to 10.
- * @return An [Arb] that generates instances of [IntChromosome.Factory] for producing chromosomes
- *         with specified sizes and gene value ranges.
+ * @return An [Arb] that produces instances of [IntChromosome.Factory], each capable of creating
+ *         [IntChromosome] instances with specified sizes and gene value ranges.
+ * @see compose
  */
 fun Arb.Companion.intChromosomeFactory(
-    sizeRange: Arb<Pair<Int, Arb<MutableList<Pair<Int, Int>>>>> = int(0..10).map { size ->
-        size to mutableList(orderedPair(int(), strict = true), size..size)
-    },
+    sizeRange: Arb<Pair<Int, MutableList<Pair<Int, Int>>>> = int(0..10).map {
+        it to mutableList(
+            Arb.orderedPair(
+                int(),
+                strict = true
+            ), it..<it + 1
+        ).next()
+    }
 ) = arbitrary {
     val (size, ranges) = sizeRange.bind()
     IntChromosome.Factory().apply {
         this.size = size
-        this.ranges = ranges.bind().map { (min, max) ->
-            min..max
+        this.ranges = ranges.let { ranges ->
+            ranges.map { (min, max) ->
+                min..max
+            }
         }.toMutableList()
     }
 }
