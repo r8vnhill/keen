@@ -9,6 +9,7 @@ package cl.ravenhill.keen.evolution
 import cl.ravenhill.keen.assertions.evolution.`test Engine evaluation`
 import cl.ravenhill.keen.assertions.evolution.`test Engine evolution start`
 import cl.ravenhill.keen.assertions.evolution.`test Engine offspring selection`
+import cl.ravenhill.keen.assertions.evolution.`test Engine survivor selection`
 import io.kotest.core.spec.style.FreeSpec
 
 
@@ -17,4 +18,5 @@ class EvolutionEngineTest : FreeSpec({
     include(`test Engine evolution start`())
     include(`test Engine evaluation`())
     include(`test Engine offspring selection`())
+    include(`test Engine survivor selection`())
 })
