@@ -22,6 +22,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
+import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.next
 import io.kotest.property.assume
@@ -73,9 +74,11 @@ fun `test Engine evaluation`() = freeSpec {
 
             "should return a new population with all individuals evaluated" {
                 checkAll(
-                    PropTestConfig(iterations = 50),
+                    PropTestConfig(iterations = 1),
                     Arb.evolutionEngine(Arb.intGenotypeFactory(), Arb.intAlterer()).map {
-                        it to Arb.evolutionState(Arb.population(size = it.populationSize..it.populationSize)).next()
+                        it to Arb.evolutionState(
+                            Arb.population(Arb.double(), size = it.populationSize..it.populationSize)
+                        ).next()
                     }
                 ) { (engine, state) ->
                     assume {

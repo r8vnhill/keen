@@ -16,6 +16,7 @@ import cl.ravenhill.keen.evolution.EvolutionEngine
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.numerical.IntGene
 import cl.ravenhill.keen.operators.selector.Selector
+import cl.ravenhill.keen.util.ceil
 import cl.ravenhill.keen.util.floor
 import io.kotest.core.spec.style.freeSpec
 import io.kotest.matchers.shouldBe
@@ -54,7 +55,8 @@ import kotlin.reflect.KProperty1
 private fun `test Engine selection`(
     propertyName: String,
     select: EvolutionEngine<Int, IntGene>.(EvolutionState<Int, IntGene>) -> EvolutionState<Int, IntGene>,
-    selector: KProperty1<EvolutionEngine<Int, IntGene>, Selector<Int, IntGene>>
+    selector: KProperty1<EvolutionEngine<Int, IntGene>, Selector<Int, IntGene>>,
+    countFn: (EvolutionEngine<Int, IntGene>) -> Int,
 ) = freeSpec {
     "An Evolution Engine" - {
         "when selecting $propertyName" - {
@@ -67,7 +69,7 @@ private fun `test Engine selection`(
                         engine.listeners.forEach { it.onGenerationStarted(state.population) }
                         val evaluated = engine.evaluate(state)
                         val result = engine.select(evaluated)
-                        result.population.size shouldBe ((1 - engine.survivalRate) * engine.populationSize).floor()
+                        result.population.size shouldBe countFn(engine)
                     }
                 }
 
@@ -87,13 +89,13 @@ private fun `test Engine selection`(
                     ) { (seed, engine, state) ->
                         engine.listeners.forEach { it.onGenerationStarted(state.population) }
                         val evaluated = engine.evaluate(state)
-                        val result = engine.selectOffspring(evaluated)
+                        val result = engine.select(evaluated)
                         Core.random = Random(seed)
                         val expected = EvolutionState(
                             state.generation,
                             selector.get(engine).select(
                                 evaluated.population,
-                                ((1 - engine.survivalRate) * engine.populationSize).floor(),
+                                countFn(engine),
                                 engine.optimizer
                             )
                         )
@@ -133,7 +135,7 @@ fun `test Engine offspring selection`() = `test Engine selection`(
     "offspring",
     EvolutionEngine<Int, IntGene>::selectOffspring,
     EvolutionEngine<Int, IntGene>::offspringSelector
-)
+) { ((1 - it.survivalRate) * it.populationSize).floor() }
 
 /**
  * Test suite for evaluating the survivor selection process within an [EvolutionEngine].
@@ -163,4 +165,4 @@ fun `test Engine survivor selection`() = `test Engine selection`(
     "survivor",
     EvolutionEngine<Int, IntGene>::selectSurvivors,
     EvolutionEngine<Int, IntGene>::survivorSelector
-)
+) { (it.survivalRate * it.populationSize).ceil() }

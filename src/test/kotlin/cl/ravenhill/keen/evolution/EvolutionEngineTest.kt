@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.assertions.evolution.`test Engine alteration`
 import cl.ravenhill.keen.assertions.evolution.`test Engine evaluation`
 import cl.ravenhill.keen.assertions.evolution.`test Engine evolution start`
 import cl.ravenhill.keen.assertions.evolution.`test Engine offspring selection`
@@ -19,4 +20,5 @@ class EvolutionEngineTest : FreeSpec({
     include(`test Engine evaluation`())
     include(`test Engine offspring selection`())
     include(`test Engine survivor selection`())
+    include(`test Engine alteration`())
 })
