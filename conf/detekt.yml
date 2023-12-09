@@ -654,9 +654,14 @@ style:
 complexity:
   LongParameterList:
     active: false
+    functionThreshold: 15
+    constructorThreshold: 15
   CognitiveComplexMethod:
     active: true
   ReplaceSafeCallChainWithRun:
     active: true
   StringLiteralDuplication:
     active: true
+  TooManyFunctions:
+    active: false
+    threshold: 20

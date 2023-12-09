@@ -6,17 +6,18 @@
 ![Keen logo](logos/TransparentBg.png)
 
 Keen is a framework for Kotlin that leverages evolutionary algorithms to solve optimization problems.
-It harnesses the power and expressiveness of Kotlin to provide an 
-intuitive and efficient interface for researchers, scientists, and 
+It harnesses the power and expressiveness of Kotlin to provide an
+intuitive and efficient interface for researchers, scientists, and
 developers alike.
-With Keen, you can build and fine-tune complex evolutionary algorithms 
+With Keen, you can build and fine-tune complex evolutionary algorithms
 with just a few lines of code.
 
 Whether you are delving into genetic algorithms for the first time or are
 an experienced researcher looking for a Kotlin-native tool, Keen offers a
-streamlined experience without sacrificing depth or flexibility. Its 
-modular architecture means you can easily extend or modify components, 
+streamlined experience without sacrificing depth or flexibility. Its
+modular architecture means you can easily extend or modify components,
 from selection and crossover methods to mutation and fitness evaluation.
+
 
 ## Installation
 
@@ -44,8 +45,8 @@ You can find the explanations of the code in the [wiki](https://github.com/r8vnh
 ### One Max (Ones Counting) Problem
 
 The _One Max_ problem is a well known problem widely used to exemplify the genetic algorithms'
-capabilities. 
-The problem consists of maximizing the number of ones in a bit string. 
+capabilities.
+The problem consists of maximizing the number of ones in a bit string.
 The following example shows how to solve the _One Max_ problem with _Keen_.
 
 #### Implementation

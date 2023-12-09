@@ -1,6 +1,7 @@
  # ChatGPT Rules
 
 This chat is about keen, an evolutionary computation framework for kotlin
+
 ## Rules
 
 ### 1. Markdown Formatting for Code Snippets and Documentation
@@ -19,21 +20,16 @@ to make it more readable and easier to understand.
 When writing documentation, **ALWAYS** answer accordingly to the first rule to maintain 
 consistency and professionalism.
 
-### 3. Preservation of Original Intent in Code Modification
-
-When modifying code, you should ALWAYS preserve any comments that start with `///` to maintain 
-the original intent of the code, while adding your own comments to explain any changes.
-
-### 5. Preferred Use of @property Tag for Documenting Public Variables
+### 3. Preferred Use of @property Tag for Documenting Public Variables
 
 When documenting classes, prefer using the `@property` tag for public variables instead of 
 documenting them in the class' body
 
-### 6. Preferred Use of Reference Links over Monospace
+### 4. Preferred Use of Reference Links over Monospace
 
 Prefer using references (like [IntToInt]) instead of monospace (like `IntToInt`) where adequate
 
-### 7. Usage examples
+### 5. Usage examples
 
 When providing examples usages on the docstring comments, you should follow the following syntax
 
@@ -41,7 +37,9 @@ When providing examples usages on the docstring comments, you should follow the 
 /**
  * Documentation.
  *
- * ## Examples
+ * ## Usage:
+ * Usage details and scenarios.
+ * 
  * ### Example 1: Details
  * ```
  * // example 1 code
@@ -52,15 +50,8 @@ When providing examples usages on the docstring comments, you should follow the 
  * ```
  * @tags
  */
-fun foo(params) {
-    elements.forEach(action)
+fun foo(params) = elements.forEach(action)
 ```
 
 Note that the examples must be placed before the @tags.
 Examples of @tags include @param, @return, @throws, etc.
-
-### 8. Author and version
-
-When documenting a class, object or interface, you should always include the @author, @since and @version tags.
-
-Never include example in classes that end with "Test"
