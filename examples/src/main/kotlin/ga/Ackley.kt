@@ -18,8 +18,6 @@ import cl.ravenhill.keen.listeners.EvolutionPlotter
 import cl.ravenhill.keen.listeners.EvolutionSummary
 import cl.ravenhill.keen.operators.crossover.AverageCrossover
 import cl.ravenhill.keen.operators.mutation.RandomMutator
-import cl.ravenhill.keen.operators.selection.RandomSelector
-import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.FitnessMinRanker
 import kotlin.math.PI
 import kotlin.math.cos
@@ -61,8 +59,7 @@ private fun ackley(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().
     val sumOfSquares = x.pow(2) + y.pow(2)
     val cosComponent = cos(C * x) + cos(C * y)
 
-    -A * exp(-B * sqrt(D * sumOfSquares)) -
-          exp(D * cosComponent) + EULER_NUMBER + A
+    -A * exp(-B * sqrt(D * sumOfSquares)) - exp(D * cosComponent) + EULER_NUMBER + A
 }
 
 private const val POPULATION_SIZE = 500
@@ -84,8 +81,6 @@ fun main() {
     }) {
         populationSize = POPULATION_SIZE
         ranker = FitnessMinRanker()
-        parentSelector = TournamentSelector()
-        survivorSelector = TournamentSelector()
         alterers += listOf(RandomMutator(MUTATION_RATE), AverageCrossover(geneRate = 0.5))
         limits += listOf(SteadyGenerations(generations = 50), MaxGenerations(500))
         listeners += summary + plotter

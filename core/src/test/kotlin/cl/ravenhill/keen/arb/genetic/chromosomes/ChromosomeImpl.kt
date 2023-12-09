@@ -143,11 +143,18 @@ fun <T, G> Arb.Companion.numberChromosomeFactory(
     object : NumberChromosome.Factory<T, G> {
         override var executor: ConstructorExecutor<G> = SequentialConstructor()
         override var size = boundSize
+        override val defaultRange: ClosedRange<T>
+            get() = TODO("Not yet implemented")
+
         override fun make() = object : NumberChromosome<T, G> {
             override val genes: List<G>
                 get() = genes
 
             override fun duplicateWithGenes(genes: List<G>): Nothing = throw NotImplementedError("Undefined")
+        }
+
+        override fun createChromosome(): Chromosome<T, G> {
+            TODO("Not yet implemented")
         }
 
         override var ranges: MutableList<ClosedRange<T>> = mutableListOf()

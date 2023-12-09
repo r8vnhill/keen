@@ -126,7 +126,7 @@ class EvolutionSummary<T, G>(val precision: Duration.() -> Long = Duration::inWh
     |--> Min generation time: ${generations.minOfOrNull { it.duration }} ms
     |--> Generation: ${evolution.generations.last().generation}
     |--> Steady generations: ${evolution.generations.last().steady}
-    |--> Fittest: ${fittest.genotype}
+    |--> Fittest: ${fittest.genotype.toSimpleString()}
     |--> Best fitness: ${fittest.fitness}
     """.trimIndent()
     )

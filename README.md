@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.r8vnhill:keen:2.0-ALPHA-2")
+    implementation("com.github.r8vnhill:keen:core:1.0.0")
     /* ... */
 }
 ```
@@ -52,109 +52,61 @@ The following example shows how to solve the _One Max_ problem with _Keen_.
 #### Implementation
 
 ```kotlin
-fun count(genotype: Genotype<Boolean>) = genotype.flatten().count { it }.toDouble()
+private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatMap().count { it }.toDouble()
 
 fun main() {
-    val engine = engine(::count, genotype {
-        chromosome { booleans { size = 20; truesProbability = 0.15 } }
+    val engine = evolutionEngine(::count, genotype {
+        chromosomeOf {
+            booleans {
+                size = 20
+                trueRate = 0.15
+            }
+        }
     }) {
         populationSize = 500
-        selector = TournamentSelector(sampleSize = 2)
-        alterers = listOf(Mutator(probability = 0.55), SinglePointCrossover(probability = 0.2))
-        limits = listOf(GenerationCount(100), TargetFitness(20.0))
-        statistics = listOf(StatisticCollector(), StatisticPlotter())
+        alterers += listOf(BitFlipMutator(individualRate = 0.5), SinglePointCrossover(chromosomeRate = 0.6))
+        limits += listOf(MaxGenerations(100), TargetFitness(20.0))
+        listeners += listOf(EvolutionSummary(), EvolutionPlotter())
     }
-    engine.run()
-    println(engine.statistics.first())
-    (engine.statistics.last() as StatisticPlotter).displayFitness()
+    engine.evolve()
+    engine.listeners.forEach { it.display() }
 }
 ```
 
 #### Output
 
 ```text
------------- Statistics Collector -------------
--------------- Selection Times ----------------
-|--> Offspring Selection
-|   |--> Average: 1.5 ms
-|   |--> Max: 16 ms
-|   |--> Min: 0 ms
-|--> Survivor Selection
-|   |--> Average: 1.5 ms
-|   |--> Max: 16 ms
-|   |--> Min: 0 ms
---------------- Alteration Times --------------
-|--> Average: 3.5625 ms
-|--> Max: 42 ms
+------------ Evolution Summary ---------------
+|--> Initialization time: 16 ms
+------------- Evaluation Times ----------------
+|--> Average: 0.23076923076923078 ms
+|--> Max: 1 ms
 |--> Min: 0 ms
+-------------- Selection Times ----------------
+|   |--> Offspring Selection
+|   |   |--> Average: 0.6153846153846154 ms
+|   |   |--> Max: 8 ms
+|   |   |--> Min: 0 ms
+|   |--> Survivor Selection
+|   |   |--> Average: 0.0 ms
+|   |   |--> Max: 0 ms
+|   |   |--> Min: 0 ms
+--------------- Alteration Times --------------
+|--> Average: 3.3846153846153846 ms
+|--> Max: 19 ms
+|--> Min: 1 ms
 -------------- Evolution Results --------------
-|--> Total time: 632 ms
-|--> Average generation time: 19.375 ms
-|--> Max generation time: 190 ms
-|--> Min generation time: 3 ms
-|--> Generation: 32
+|--> Total time: 113 ms
+|--> Average generation time: 7.3076923076923075 ms
+|--> Max generation time: 57 ms
+|--> Min generation time: 2 ms
+|--> Generation: 13
 |--> Steady generations: 0
-|--> Fittest: {  [ 1111|1111|1111|1111|1111 ]  -> 20.0 }
+|--> Fittest: [1111 1111 1111 1111 1111]
 |--> Best fitness: 20.0
 ```
 
-![One Max Fitness Plot](doc/onemax_fitness.png)
-
-### Word Guessing Problem
-
-The _Word Guessing_ problem is a problem where the goal is to guess a word of known length by just
-being able to ask "how many characters are in the correct position?".
-
-#### Implementation
-
-```kotlin
-private fun matches(genotype: Genotype<Char>) = genotype.flatten()
-    .filterIndexed { index, char -> char == TARGET[index] }
-    .size.toDouble()
-
-fun main() {
-    val engine = engine(::matches, genotype {
-        chromosome { chars { size = TARGET.length } }
-    }) {
-        populationSize = 500
-        survivorSelector = RouletteWheelSelector()
-        alterers = listOf(Mutator(0.03), SinglePointCrossover(0.06))
-        limits = listOf(TargetFitness(TARGET.length.toDouble()))
-        statistics = listOf(StatisticPrinter(every = 10), StatisticPlotter())
-    }
-    val evolvedPopulation = engine.run()
-    println("Solution found in ${evolvedPopulation.generation} generations")
-    println("Solution: ${evolvedPopulation.best?.genotype}")
-    println("With fitness: ${evolvedPopulation.best?.fitness}")
-    (engine.statistics.last() as StatisticPlotter).displayFitness()
-}
-```
-
-### Function Optimization Problem
-
-Here we want to find the minimum of the function ``f(x) = ln(cos(sin(it)) + sin(cos(it)))``.
-
-```kotlin
-private fun fitnessFunction(genotype: Genotype<Double>) = genotype.flatten().first()
-    .let {
-        ln(cos(sin(it)) + sin(cos(it)))
-    }
-
-fun main() {
-    val engine = engine(::fitnessFunction, genotype {
-        chromosome { doubles { size = 1; range = (-2.0 * Math.PI) to (2 * Math.PI) } }
-    }) {
-        populationSize = 500
-        optimizer = FitnessMinimizer()
-        alterers = listOf(Mutator(0.1), MeanCrossover(0.15))
-        limits = listOf(SteadyGenerations(20))
-        statistics = listOf(StatisticCollector(), StatisticPlotter())
-    }
-    engine.run()
-    println(engine.statistics.first())
-    (engine.statistics.last() as StatisticPlotter).displayFitness()
-}
-```
+![One Max Fitness Plot](docs/onemax.png)
 
 ## Acknowledgements
 

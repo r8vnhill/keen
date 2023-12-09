@@ -32,7 +32,7 @@ private const val TRUE_RATE = 0.15
 /**
  * The target fitness value at which the evolution will stop. Set to 50.0.
  */
-private const val TARGET_FITNESS = 50.0
+private const val TARGET_FITNESS = CHROMOSOME_SIZE.toDouble()
 
 /**
  * The maximum number of generations for the evolution. Set to 500.
