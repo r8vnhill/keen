@@ -18,7 +18,7 @@ data object Matyas : OptimizationProblem {
     private const val MAX = 10.0
     override val ranges: List<ClosedRange<Double>> = listOf(MIN..MAX, MIN..MAX)
 
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
         0.26 * (x.pow(2) + y.pow(2)) - 0.48 * x * y
     }
 }

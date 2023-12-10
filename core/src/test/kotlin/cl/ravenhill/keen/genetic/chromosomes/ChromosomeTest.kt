@@ -9,7 +9,6 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
 import cl.ravenhill.keen.arb.genetic.genes.gene
-import cl.ravenhill.keen.genetic.genes.Gene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -65,7 +64,7 @@ class ChromosomeTest : FreeSpec({
 
         "should transform its genes correctly" {
             checkAll(Arb.chromosome()) { chromosome ->
-                val transformedChromosome = chromosome.flatMap { it * 2 }
+                val transformedChromosome = chromosome.flatten()
                 transformedChromosome shouldContainExactly chromosome.genes.map { it.value * 2 }
             }
         }

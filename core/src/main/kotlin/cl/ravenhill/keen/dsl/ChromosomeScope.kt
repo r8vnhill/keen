@@ -10,9 +10,11 @@
 package cl.ravenhill.keen.dsl
 
 import cl.ravenhill.keen.genetic.chromosomes.BooleanChromosome
+import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
+import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.genetic.genes.Gene
 
 
@@ -48,7 +50,7 @@ class ChromosomeScope<T>
  *
  * ### Example:
  * ```kotlin
- * val genotype = genotype {
+ * val genotype = genotypeOf {
  *     chromosomeOf {
  *         doubles {
  *           // Configuration of the double chromosome...
@@ -76,16 +78,12 @@ fun <T, G> GenotypeScope<T, G>.chromosomeOf(
 ) where G : Gene<T, G> = chromosomes.add(ChromosomeScope<T>().lazyFactory())
 
 /**
- * Configures and creates a `BooleanChromosome.Factory` within a `ChromosomeScope<Boolean>`.
+ * Configures and creates a [BooleanChromosome.Factory] within a [ChromosomeScope]<[Boolean]>.
  *
  * This function provides a convenient way to create a `BooleanChromosome.Factory` instance with custom configurations
- * specified within a `ChromosomeScope<Boolean>`. It allows for the succinct setup of a factory for `BooleanChromosome`
+ * specified within a `ChromosomeScope<Boolean>`. It allows for the succinct setup of a factory for [BooleanChromosome]
  * instances using a builder pattern. The `builder` lambda provides the configuration mechanism, where you can set
  * various properties like `trueRate` and `size` for the factory.
- *
- * ## Parameters:
- * - `builder`: A lambda function with `BooleanChromosome.Factory` as its receiver, allowing for custom configuration
- *   of the factory.
  *
  * ## Usage:
  * This function is typically used within a genotype building block, where a chromosome of boolean values is needed.
@@ -94,7 +92,7 @@ fun <T, G> GenotypeScope<T, G>.chromosomeOf(
  *
  * ### Example:
  * ```kotlin
- * genotype {
+ * val genotype = genotypeOf {
  *     chromosomeOf {
  *         booleans {
  *             size = 10
@@ -107,10 +105,48 @@ fun <T, G> GenotypeScope<T, G>.chromosomeOf(
  * `BooleanChromosome` instances of size 10, with a 70% probability of each gene being `true`. The `make` method is then
  * used to create a chromosome based on these specifications.
  *
+ * @param builder A lambda function with `BooleanChromosome.Factory` as its receiver, allowing for custom configuration
+ *    of the factory.
  * @return A configured `BooleanChromosome.Factory` instance.
  */
 fun ChromosomeScope<Boolean>.booleans(builder: BooleanChromosome.Factory.() -> Unit) =
     BooleanChromosome.Factory().apply(builder)
+
+/**
+ * Configures and creates a [CharChromosome.Factory] within a [ChromosomeScope]<[Char]>.
+ *
+ * This function provides a convenient way to create a `CharChromosome.Factory` instance with custom configurations
+ * specified within a `ChromosomeScope<Char>`. It allows for the succinct setup of a factory for [CharChromosome]
+ * instances using a builder pattern. The `builder` lambda provides the configuration mechanism, where you can set
+ * various properties like `ranges`, `filters`, and `size` for the factory.
+ *
+ * ## Usage:
+ * This function is typically used within a genotype building block, where a chromosome of character values is needed.
+ * The `builder` lambda enables detailed configuration of the chromosome factory, including aspects like gene ranges,
+ * filters, and other properties relevant to a chromosome of character values.
+ *
+ * ### Example:
+ * ```kotlin
+ * val genotype = genotypeOf {
+ *     chromosomeOf {
+ *         chars {
+ *             size = 10
+ *             ranges += 'a'..'z'
+ *             filters += { it.isLowerCase() }
+ *         }
+ *     }
+ * }
+ * ```
+ * In this example, a factory is configured within a `ChromosomeScope<Char>` to create `CharChromosome` instances of
+ * size 10, with each gene having a range of 'a' to 'z' and a filter that ensures each character is lowercase. The
+ * factory is then used to create a chromosome based on these specifications.
+ *
+ * @param builder A lambda function with `CharChromosome.Factory` as its receiver, allowing for custom configuration
+ *    of the factory.
+ * @return A configured `CharChromosome.Factory` instance.
+ */
+fun ChromosomeScope<Char>.chars(builder: CharChromosome.Factory.() -> Unit) =
+    CharChromosome.Factory().apply(builder)
 
 /**
  * Defines a chromosome of double values within a genotype building process.
@@ -126,7 +162,7 @@ fun ChromosomeScope<Boolean>.booleans(builder: BooleanChromosome.Factory.() -> U
  *
  * ### Example:
  * ```kotlin
- * genotype {
+ * genotypeOf {
  *     chromosomeOf {
  *         doubles {
  *             size = 5
@@ -161,7 +197,7 @@ fun ChromosomeScope<Double>.doubles(builder: DoubleChromosome.Factory.() -> Unit
  *
  * ### Example:
  * ```kotlin
- * genotype {
+ * genotypeOf {
  *     chromosomeOf {
  *         integers {
  *             size = 5

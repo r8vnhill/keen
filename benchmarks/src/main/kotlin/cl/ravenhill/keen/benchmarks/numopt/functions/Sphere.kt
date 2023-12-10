@@ -7,7 +7,6 @@ package cl.ravenhill.keen.benchmarks.numopt.functions
 
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
-import kotlin.math.pow
 
 data object Sphere : OptimizationProblem {
 
@@ -18,5 +17,5 @@ data object Sphere : OptimizationProblem {
     private const val MAX = 5.12
     override val ranges: List<ClosedRange<Double>> = listOf(MIN..MAX, MIN..MAX)
 
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap { it.pow(2) }.sum()
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().sum()
 }

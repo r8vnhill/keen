@@ -20,7 +20,7 @@ data object Easom : OptimizationProblem {
     private const val MIN = -100.0
     private const val MAX = 100.0
     override val ranges: List<ClosedRange<Double>> = listOf(MIN..MAX, MIN..MAX)
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
         -cos(x) * cos(y) * exp(-(x - PI).pow(2) - (y - PI).pow(2))
     }
 }

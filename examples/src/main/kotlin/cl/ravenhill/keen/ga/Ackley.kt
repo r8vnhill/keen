@@ -4,12 +4,12 @@
  */
 
 
-package ga
+package cl.ravenhill.keen.ga
 
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.doubles
 import cl.ravenhill.keen.dsl.evolutionEngine
-import cl.ravenhill.keen.dsl.genotype
+import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.limits.MaxGenerations
@@ -55,7 +55,7 @@ private val EULER_NUMBER = exp(1.0)     // Euler's number, used in the Ackley fu
  * ```
  * In this example, the Ackley function is calculated for a genotype with two genes representing the coordinates.
  */
-private fun ackley(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+private fun ackley(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
     val sumOfSquares = x.pow(2) + y.pow(2)
     val cosComponent = cos(C * x) + cos(C * y)
 
@@ -71,7 +71,7 @@ private val range = LO..HI
 fun main() {
     val summary = EvolutionSummary<Double, DoubleGene>()
     val plotter = EvolutionPlotter<Double, DoubleGene>()
-    val engine = evolutionEngine(::ackley, genotype {
+    val engine = evolutionEngine(::ackley, genotypeOf {
         chromosomeOf {
             doubles {
                 size = 2

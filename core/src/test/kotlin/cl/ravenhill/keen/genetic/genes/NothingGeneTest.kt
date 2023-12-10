@@ -23,7 +23,7 @@ class NothingGeneTest : FreeSpec({
                 }
 
                 "flattening" {
-                    `check that an Absurd Operation is thrown`(NothingGene::flatMap)
+                    `check that an Absurd Operation is thrown`(NothingGene::flatten)
                 }
             }
         }

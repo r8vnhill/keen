@@ -9,6 +9,7 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.chromosomes.ChromosomeUtils
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome.Factory
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 
@@ -159,7 +160,7 @@ data class IntChromosome(override val genes: List<IntGene>) : NumberChromosome<I
          *
          * ## Assumptions:
          * - [ranges] and [filters] lists are pre-adjusted to align with the chromosome size, as per the
-         *   [adjustRangesAndFilters] method.
+         *   [ChromosomeUtils.adjustRangesAndFilters] method.
          *
          * @return A newly created [IntChromosome] with genes conforming to the set constraints.
          */
@@ -174,7 +175,7 @@ data class IntChromosome(override val genes: List<IntGene>) : NumberChromosome<I
             return IntChromosome(
                 executor(size) { index ->
                     IntGene(
-                        Domain.random.nextInt(ranges[index].start, ranges[index].endInclusive + 1),
+                        Domain.random.nextInt(ranges[index].start, ranges[index].endInclusive),
                         ranges[index],
                         filters[index]
                     )

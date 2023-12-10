@@ -21,7 +21,7 @@ data object McCormick : OptimizationProblem {
     private const val MAX_Y = 4.0
     override val ranges: List<ClosedRange<Double>> = listOf(MIN_X..MAX_X, MIN_Y..MAX_Y)
 
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
         sin(x + y) + (x - y).pow(2) - 1.5 * x + 2.5 * y + 1.0
     }
 }

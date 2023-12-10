@@ -12,7 +12,7 @@ import cl.ravenhill.keen.benchmarks.numopt.functions.OptimizationProblem
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.doubles
 import cl.ravenhill.keen.dsl.evolutionEngine
-import cl.ravenhill.keen.dsl.genotype
+import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.limits.MaxGenerations
@@ -62,7 +62,7 @@ fun createEngine(
     selectOp: Selector<Double, DoubleGene>,
     summary: EvolutionSummary<Double, DoubleGene>,
     ranges: List<ClosedRange<Double>>,
-) = evolutionEngine(function, genotype {
+) = evolutionEngine(function, genotypeOf {
     chromosomeOf {
         doubles {
             this.ranges += ranges
@@ -100,7 +100,7 @@ private fun run(
             warmup = false
         } else {
             with(summaryListener) {
-                fittests += fittest.toIndividual().flatMap()
+                fittests += fittest.toIndividual().flatten()
                 errors += abs(fittest.fitness - problem.target)
                 with(evolution) {
                     selectionTimes += generations.map { it.parentSelection.duration / 1_000_000.0 }

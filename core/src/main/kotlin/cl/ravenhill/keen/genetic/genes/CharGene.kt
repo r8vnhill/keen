@@ -33,7 +33,7 @@ import java.util.Objects
  */
 data class CharGene(
     override val value: Char,
-    override val range: CharRange = ' '..'z',
+    override val range: ClosedRange<Char> = ' '..'z',
     override val filter: (Char) -> Boolean = { true },
 ) : ComparableGene<Char, CharGene>, Ranged<Char>, Filterable<Char> {
 

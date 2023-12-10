@@ -4,12 +4,12 @@
  */
 
 
-package ga
+package cl.ravenhill.keen.ga
 
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
-import cl.ravenhill.keen.dsl.genotype
+import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.dsl.integers
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
@@ -119,7 +119,7 @@ fun main() {
     val plotter = EvolutionPlotter<Int, IntGene>()
     val engine = evolutionEngine(
         ::fitnessFunction,
-        genotype {
+        genotypeOf {
             repeat(meetings.size) {
                 chromosomeOf {
                     integers {

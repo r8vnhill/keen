@@ -39,10 +39,6 @@ import java.util.*
  *
  * @constructor Creates a new individual with the specified genotype and fitness.
  *   The fitness is a measure of how well the individual's genotype performs in the given problem context.
- *
- * @author <https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @version 2.0.0
- * @since 2.0.0
  */
 data class Individual<T, G>(val genotype: Genotype<T, G>, val fitness: Double = Double.NaN) :
     GeneticMaterial<T, G> where G : Gene<T, G> {
@@ -83,38 +79,34 @@ data class Individual<T, G>(val genotype: Genotype<T, G>, val fitness: Double = 
     override fun verify() = genotype.verify() && fitness.isNotNaN()
 
     /**
-     * Applies a specified transformation function to each gene's value within an individual's genotype, accumulating
-     * the results into a list.
+     * Flattens the individual's genotype into a list containing all the genetic values.
      *
-     * This method serves as an essential tool for manipulating and analyzing genetic data in evolutionary algorithms.
-     * By iterating over each gene in the genotype, it enables the collective processing or modification of gene values,
-     * thereby facilitating complex genetic operations and analyzes.
-     *
-     * ## Functionality:
-     * - Iterates over each gene in the genotype.
-     * - Applies the provided [transform] function to each gene's value.
-     * - Collects the resulting transformed values into a new list.
+     * This method aggregates the genetic values from each gene in the individual's genotype into a single list.
+     * It provides a streamlined way to access and manipulate the individual's entire set of genetic data as a
+     * unified collection. This functionality is especially useful in genetic algorithms for operations like
+     * fitness evaluation, genetic analysis, or mutation, where working with a flat list of genetic values is
+     * more convenient.
      *
      * ## Usage:
-     * This method finds utility in various stages of an evolutionary algorithm, including during fitness evaluation,
-     * mutation, or when custom transformations are required for genetic data analysis or visualization.
+     * The `flatten` function can be applied in various scenarios within evolutionary algorithms, particularly
+     * when an individual's complete genetic makeup needs to be evaluated or modified as a whole.
      *
      * ### Example:
+     * Assuming an individual with a genotype of character genes:
+     * ```kotlin
+     * class CharGene(val char: Char) : Gene<Char, CharGene> {
+     *     // Implementation of other methods...
+     * }
+     * val chromosome = Chromosome(listOf(CharGene('G'), CharGene('A')))
+     * val individual = Individual(Genotype(listOf(chromosome)))
+     * val flattenedGenes = individual.flatten() // Returns ['G', 'A']
      * ```
-     * val individual = Individual(genotype, fitness)
-     * // Applying a transformation function to double each gene's value
-     * val transformedValues = individual.flatMap { geneValue -> geneValue * 2 }
-     * // Result: List of transformed gene values
-     * ```
-     * In this example, `flatMap` doubles each gene's value in the individual's genotype, resulting in a list of these
-     * transformed values for subsequent processing or analysis.
+     * In this example, the `flatten` method consolidates the genetic values ('G', 'A') from the individual's
+     * genotype into a single list, making it easier to process the genes collectively.
      *
-     * @param transform A function that defines the transformation applied to each gene's value. It takes a value of
-     *   type [T] and returns a transformed value, also of type [T]. By default, it is the identity function.
-     * @return A list containing the transformed values, each derived by applying [transform] to every gene's value in
-     *   the genotype.
+     * @return A list containing the aggregated genetic values from the individual's genotype.
      */
-    override fun flatMap(transform: (T) -> T): List<T> = genotype.flatMap(transform)
+    override fun flatten(): List<T> = genotype.flatten()
 
     /**
      * Determines whether the fitness value of the individual has been evaluated.

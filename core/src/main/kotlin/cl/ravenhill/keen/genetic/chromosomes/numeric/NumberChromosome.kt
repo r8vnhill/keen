@@ -9,6 +9,7 @@ package cl.ravenhill.keen.genetic.chromosomes.numeric
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.chromosomes.ChromosomeUtils
 import cl.ravenhill.keen.genetic.chromosomes.numeric.NumberChromosome.Factory
 import cl.ravenhill.keen.genetic.genes.numeric.NumberGene
 import cl.ravenhill.keen.mixins.FilterMutableListContainer
@@ -101,8 +102,8 @@ interface NumberChromosome<T, G> : Chromosome<T, G> where T : Number, T : Compar
         val defaultRange: ClosedRange<T>
 
         override fun make(): Chromosome<T, G> {
-            enforceConstraints()
-            adjustRangesAndFilters(
+            ChromosomeUtils.enforceConstraints(ranges, filters, size)
+            ChromosomeUtils.adjustRangesAndFilters(
                 size,
                 ranges,
                 defaultRange,
@@ -115,42 +116,5 @@ interface NumberChromosome<T, G> : Chromosome<T, G> where T : Number, T : Compar
         }
 
         fun createChromosome(): Chromosome<T, G>
-
-        /**
-         * Validates and enforces constraints on the chromosome configuration. Ensures consistency between the number of
-         * genes, ranges, and filters.
-         */
-        fun enforceConstraints() {
-            constraints {
-                if (ranges.size > 1) {
-                    "Chromosome with multiple ranges must have the same number of genes as ranges" {
-                        ranges must HaveSize(size)
-                    }
-                }
-                if (filters.size > 1) {
-                    "Chromosome with multiple filters must have the same number of genes as filters" {
-                        filters must HaveSize(size)
-                    }
-                }
-            }
-        }
-
-        fun adjustRangesAndFilters(
-            size: Int,
-            ranges: MutableList<ClosedRange<T>>,
-            defaultRange: ClosedRange<T>,
-            filters: MutableList<(T) -> Boolean>,
-            defaultFilter: (T) -> Boolean,
-        ): Pair<MutableList<ClosedRange<T>>, MutableList<(T) -> Boolean>> {
-            return when (ranges.size) {
-                0 -> MutableList(size) { defaultRange }
-                1 -> MutableList(size) { ranges.first() }
-                else -> ranges
-            } to when (filters.size) {
-                0 -> MutableList(size) { { _: T -> true } }
-                1 -> MutableList(size) { filters.first() }
-                else -> filters
-            }
-        }
     }
 }

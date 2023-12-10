@@ -53,10 +53,6 @@ import kotlin.properties.Delegates
  *
  * @property genes A list of genes that make up the chromosome.
  * @property size The size of the chromosome, determined by the number of genes it contains.
- *
- * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @version 2.0.0
- * @since 1.0.0
  */
 interface Chromosome<T, G> : GeneticMaterial<T, G>, Collection<G> where G : Gene<T, G> {
 
@@ -288,42 +284,33 @@ interface Chromosome<T, G> : GeneticMaterial<T, G>, Collection<G> where G : Gene
     operator fun get(index: Int): G = genes[index]
 
     /**
-     * Applies a transformation function to each gene's value in the chromosome and accumulates the results.
+     * Flattens the chromosome into a list of its basic elements.
      *
-     * This method is crucial for performing collective transformations on the genetic material within a chromosome. It
-     * iterates over each gene in the chromosome, applies a transformation function to the gene's value, and then
-     * aggregates the transformed values into a new list. This approach is particularly useful in evolutionary
-     * algorithms where modifications or analyses of gene values are necessary.
-     *
-     * ## Functionality:
-     * - Iterates through each gene in the chromosome.
-     * - Applies the provided [transform] function to the value of each gene.
-     * - Collects and returns the transformed values in a new list.
+     * This method transforms the structured chromosome, which is a collection of genes, into a flat list of its basic
+     * elements. It is particularly useful when operations or evaluations on the genetic algorithm need to be performed
+     * at the level of individual genetic elements, rather than on the structured chromosome as a whole. This flattening
+     * process is essential for scenarios like fitness evaluations, where each gene's value might contribute
+     * individually to the overall fitness score.
      *
      * ## Usage:
-     * This method can be employed in various stages of a genetic algorithm, such as fitness evaluation or mutation,
-     * where gene values need to be processed or altered en masse. It allows for the application of complex
-     * transformations to genetic data and aggregation of the results.
+     * In the context of a genetic algorithm, this method can be used to access the individual elements of the
+     * chromosome for processes like fitness evaluation, mutation, or crossover.
      *
      * ### Example:
-     * ```
+     * ```kotlin
      * class MyChromosome(val myGenes: List<MyGene>) : Chromosome<MyDataType, MyGene> {
      *     // Other implementations...
      * }
      *
      * val chromosome = MyChromosome(listOf(MyGene(1), MyGene(2), MyGene(3)))
-     * // Applying a transformation function to double each gene's value
-     * val transformedValues = chromosome.flatMap { it * 2 }
-     * // The result is a list of transformed gene values: [2, 4, 6]
+     * val flattenedGenes = chromosome.flatten() // Returns a List<MyDataType> representing individual gene values
      * ```
-     * In this example, `flatMap` is used to apply a transformation (doubling the value) to each gene in `MyChromosome`.
-     * The result is a list of these transformed values.
+     * In this example, `flattenedGenes` will be a list of data types (`MyDataType`), each representing an individual
+     * gene's value within the `MyChromosome`.
      *
-     * @param transform A function that takes a value of type [T] and returns a transformed value of the same type.
-     * @return A list containing the transformed values obtained by applying [transform] to each gene's value in the
-     *   chromosome.
+     * @return A list of type [T] elements representing the flattened genetic material of the chromosome.
      */
-    override fun flatMap(transform: (T) -> T): List<T> = genes.flatMap { gene -> gene.flatMap(transform) }
+    override fun flatten(): List<T> = genes.flatMap { gene -> gene.flatten() }
 
     /**
      * Generates a simple string representation of the chromosome's genes.

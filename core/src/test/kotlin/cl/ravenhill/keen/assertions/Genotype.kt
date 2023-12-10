@@ -158,10 +158,10 @@ fun `test Genotype behaviour`() = freeSpec {
 
         "can be flat-mapped" {
             checkAll(Arb.genotype()) { genotype ->
-                val flatMapped = genotype.flatMap { it + 1 }
+                val flatMapped = genotype.flatten()
                 flatMapped.size shouldBe genotype.sumOf { it.size }
                 flatMapped.forEachIndexed { index, value ->
-                    value shouldBe genotype.flatMap()[index] + 1
+                    value shouldBe genotype.flatten()[index] + 1
                 }
             }
         }

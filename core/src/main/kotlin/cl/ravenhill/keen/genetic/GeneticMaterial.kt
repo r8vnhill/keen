@@ -23,8 +23,7 @@ import cl.ravenhill.keen.mixins.Verifiable
  *   verification logic.
  * - **String Representations**: Inherits `toSimpleString` and `toDetailedString` from
  *   `MultiStringFormat`, providing flexibility in how genetic material is represented as a string.
- * - **Transformation**: Includes a `flatMap` method, enabling transformations of the genetic
- *   material.
+ * - **Flattening**: Provides a method to flatten the genetic material into a list of its basic elements.
  *
  * ## Usage:
  * This interface is meant to be implemented by classes that represent genetic material, such as
@@ -33,21 +32,32 @@ import cl.ravenhill.keen.mixins.Verifiable
  *
  * @param T The type of the genetic data.
  * @param G The specific type of `Gene` that encapsulates the genetic data.
- *
- * @author <https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @version 2.0.0
- * @since 2.0.0
  */
 interface GeneticMaterial<T, G> : Verifiable, MultiStringFormat where G : Gene<T, G> {
 
     /**
-     * Transforms the genetic material using a specified function and returns a list of the transformed elements.
+     * Flattens the genetic material into a list of its basic elements.
      *
-     * The `flatMap` method applies a transformation function to the genetic material and returns the results
-     * as a list. This method is useful for manipulating or analyzing the genetic data.
+     * This method provides a way to transform the structured genetic material, such as a chromosome or a collection of
+     * genes, into a flat list of its basic elements (e.g., the individual genetic values). It's particularly useful in
+     * scenarios where operations or evaluations on the genetic algorithm need to be performed at the level of
+     * individual genetic elements, rather than on the structured genetic material as a whole.
      *
-     * @param transform A transformation function to be applied to the genetic data. Defaults to the identity function.
-     * @return A list containing the transformed genetic data.
+     * ## Usage:
+     * In the context of a genetic algorithm, this method can be used to access the individual elements of the genetic
+     * material for processes like fitness evaluation, mutation, or crossover.
+     *
+     * ### Example:
+     * ```kotlin
+     * val geneticMaterial: GeneticMaterial<Char, CharGene> = // Some genetic material
+     * val flattenedGenes = geneticMaterial.flatten() // Returns a List<Char> representing individual genes
+     * ```
+     * In this example, `flattenedGenes` will be a list of characters, each representing an individual gene within the
+     * genetic material.
+     *
+     * @return A list of type [T] elements representing the flattened genetic material.
      */
-    fun flatMap(transform: (T) -> T = { it }): List<T>
+    fun flatten(): List<T>
+
+    fun <U> flatMap(f: (T) -> U): List<U> = flatten().map(f)
 }

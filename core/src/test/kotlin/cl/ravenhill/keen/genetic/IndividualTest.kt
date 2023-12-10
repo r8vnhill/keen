@@ -80,9 +80,9 @@ class IndividualTest : FreeSpec({
 
         "can be flat-mapped" {
             checkAll(Arb.individual(Arb.genotype(Arb.chromosome()))) { individual ->
-                val flatMapped = individual.flatMap { it * 2 }
+                val flatMapped = individual.flatten()
                 flatMapped.size shouldBe individual.genotype.sumOf { it.size }
-                flatMapped shouldBe individual.genotype.flatMap { it * 2 }
+                flatMapped shouldBe individual.genotype.flatten()
             }
         }
 

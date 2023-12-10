@@ -20,7 +20,7 @@ data object Rastrigin : OptimizationProblem {
     private const val MAX = 5.12
     override val ranges: List<ClosedRange<Double>> = listOf(MIN..MAX, MIN..MAX)
 
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
         20 + x.pow(2) - 10 * x * cos(2 * PI * x) + y.pow(2) - 10 * y * cos(2 * PI * y)
     }
 }

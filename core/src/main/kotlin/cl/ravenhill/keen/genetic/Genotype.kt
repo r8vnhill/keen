@@ -34,10 +34,6 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @property size The total count of chromosomes within the genotype.
  *
  * @constructor Constructs a genotype from a list or varargs of chromosomes.
- *
- * @author <https://www.github.com/r8vnhill>Ignacio Slater M.</a>
- * @version 2.0.0
- * @since 1.0.0
  */
 data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
     GeneticMaterial<T, G>, Collection<Chromosome<T, G>> where G : Gene<T, G> {
@@ -139,36 +135,35 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
      */
     override fun iterator() = chromosomes.iterator()
 
-
     /**
-     * Applies a transformation function to each gene's value within the genotype and aggregates the results.
+     * Flattens the genotype into a list containing all the genetic values from its chromosomes.
      *
-     * This method is a powerful tool for manipulating and analyzing the genetic information encapsulated
-     * within the genotype. It works by applying a specified transformation function to each gene's value
-     * across all chromosomes and then collects the results into a single, flattened list.
+     * This method aggregates all the genetic values from each chromosome within the genotype into a single list.
+     * It is particularly useful in contexts where a consolidated view of all genetic data across chromosomes is needed,
+     * such as in fitness evaluation or genetic analysis. The `flatten` method simplifies the process of extracting
+     * and combining genetic values from multiple chromosomes into one contiguous collection.
      *
-     * This approach is particularly useful for scenarios requiring a collective analysis or transformation of
-     * the genetic data at the gene level, regardless of the chromosomal boundaries.
+     * ## Usage:
+     * The `flatten` function can be used in various genetic algorithm operations, especially those that require
+     * a holistic view of the genetic makeup of an individual represented by the genotype.
      *
-     * ## Usage Example:
-     * ```
-     * // Assuming Genotype is initialized with chromosomes containing genes
-     * val genotype = Genotype(/* ... */)
-     *
-     * // Applying a transformation to each gene's value and collecting the results
-     * val transformedValues = genotype.flatMap { geneValue ->
-     *     // Transformation logic here
-     *     transformGeneValue(geneValue)
+     * ### Example:
+     * Assuming a genotype composed of chromosomes with character genes:
+     * ```kotlin
+     * class CharGene(val char: Char) : Gene<Char, CharGene> {
+     *     // Implementation of other methods...
      * }
+     * val chromosome1 = Chromosome(listOf(CharGene('H'), CharGene('e')))
+     * val chromosome2 = Chromosome(listOf(CharGene('l'), CharGene('l'), CharGene('o')))
+     * val genotype = Genotype(listOf(chromosome1, chromosome2))
+     * val flattenedValues = genotype.flatten() // Returns ['H', 'e', 'l', 'l', 'o']
      * ```
-     * In the above example, the `flatMap` method is used to apply a custom transformation function to each
-     * gene's value in the genotype. The resulting values from this transformation are then aggregated into a
-     * single list, `transformedValues`, which contains the transformed data from all genes in the genotype.
+     * In this example, the `flatten` method combines the genetic values ('H', 'e', 'l', 'l', 'o') from
+     * both chromosomes in the genotype into a single list.
      *
-     * @param transform A function to apply to each gene's value within the genotype.
-     * @return A list containing the results of applying the transformation function to each gene's value.
+     * @return A list containing the aggregated genetic values from all chromosomes in the genotype.
      */
-    override fun flatMap(transform: (T) -> T) = chromosomes.flatMap { it.flatMap(transform) }
+    override fun flatten() = chromosomes.flatMap { it.flatten() }
 
     /**
      * Accesses the chromosome at the specified index within the genotype.

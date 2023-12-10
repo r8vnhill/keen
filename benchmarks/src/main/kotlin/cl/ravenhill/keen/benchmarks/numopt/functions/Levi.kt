@@ -16,7 +16,7 @@ data object Levi : OptimizationProblem {
     override val target = 0.0
     override val ranges = listOf(-10.0..10.0, -10.0..10.0)
 
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
         sin(3 * PI * x).pow(2) + (x - 1).pow(2) * (1 + sin(3 * PI * y).pow(2)) +
               (y - 1).pow(2) * (1 + sin(2 * PI * y).pow(2))
     }

@@ -18,7 +18,7 @@ data object Rosenbrock : OptimizationProblem {
     private const val MAX = 2.048
     override val ranges: List<ClosedRange<Double>> = listOf(MIN..MAX, MIN..MAX)
 
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
         100 * (y - x.pow(2)).pow(2) + (1 - x).pow(2)
     }
 }

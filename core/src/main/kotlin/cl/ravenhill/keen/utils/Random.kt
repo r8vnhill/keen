@@ -12,7 +12,6 @@ import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.jakt.constraints.ints.BeAtMost
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.jakt.constraints.strings.HaveLength
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.ConstraintException
@@ -41,8 +40,8 @@ import kotlin.random.Random
  *   should be excluded. Defaults to a lambda that accepts all characters.
  * @return A randomly generated character that falls within the specified range and satisfies the filter condition.
  */
-fun Random.nextChar(range: CharRange = Char.MIN_VALUE..Char.MAX_VALUE, filter: (Char) -> Boolean = { true }) =
-    generateSequence { range.random(this) }.filter(filter).first()
+fun Random.nextChar(range: ClosedRange<Char> = Char.MIN_VALUE..Char.MAX_VALUE, filter: (Char) -> Boolean = { true }) =
+    generateSequence { (range.start..range.endInclusive).random(this) }.filter(filter).first()
 
 /**
  * Generates a random `String` of a specified length, within a specified character range, and satisfying an optional

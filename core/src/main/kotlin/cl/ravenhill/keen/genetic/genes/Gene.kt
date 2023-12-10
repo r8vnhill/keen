@@ -138,44 +138,34 @@ interface Gene<T, G> : GeneticMaterial<T, G>, SelfReferential<G>, MultiStringFor
     fun duplicateWithValue(value: T): G
 
     /**
-     * Transforms the gene's value using a provided function and returns a list containing the transformed value.
+     * Flattens the gene into a list containing its genetic value.
      *
-     * This method is particularly useful in evolutionary algorithms for applying a transformation to the value
-     * encapsulated within a gene. It enables the gene's value to be manipulated or processed in some way, and then
-     * encapsulates the result in a new list. This is especially valuable when a series of operations need to be applied
-     * to genetic data, and the intermediate or final results need to be collected in a list.
-     *
-     * ## Functionality:
-     * - The method applies the [transform] function to the gene's value.
-     * - It then encapsulates the transformed value in a new list and returns it.
+     * This function is part of the `Gene` interface and is used to transform the gene's value into a list format.
+     * It is particularly useful in contexts where genes need to be processed or analyzed as a collection of values,
+     * even if they contain only a single piece of genetic data. The `flatten` method ensures that genes can be
+     * uniformly treated as collections, simplifying operations that work on genetic structures.
      *
      * ## Usage:
-     * This method can be used in scenarios where the gene's value needs to be transformed or processed,
-     * and the result needs to be collected in a list format. This could be for further processing steps in
-     * the algorithm or for aggregating results.
+     * The `flatten` function can be used in various genetic algorithm operations, such as fitness evaluation, where
+     * genes need to be aggregated or compared as collections of values.
      *
      * ### Example:
-     * Implementing `flatMap` in a gene representing a numeric value:
+     * Assuming a gene representing a numeric value:
      * ```kotlin
      * class NumericGene(val number: Int) : Gene<Int, NumericGene> {
-     *     // Other implementations...
-     *
-     *     override fun flatMap(transform: (Int) -> Int): List<Int> = listOf(transform(number))
+     *     // Implementation of other methods...
      * }
      *
      * val gene = NumericGene(10)
-     * val transformedList = gene.flatMap { it * 2 } // List containing the value 20
+     * val flattenedValue = gene.flatten() // Returns [10]
      * ```
-     * In this example, `flatMap` is used to double the value of the `NumericGene` and then encapsulate
-     * the result (20) in a list.
+     * In this example, the `flatten` method transforms the `NumericGene`'s value into a list containing the single
+     * integer value. This allows the gene's value to be treated as a collection, which can be useful in various
+     * genetic algorithm contexts.
      *
-     * @param transform A function that defines how the gene's value should be transformed. This function
-     *   takes a value of type [T] and returns a transformed value, also of type [T].
-     * @return A list containing the transformed value. The list will have exactly one element, which is the
-     *   result of applying [transform] to the gene's value.
+     * @return A list containing the single genetic value of the gene.
      */
-    override fun flatMap(transform: (T) -> T): List<T> = listOf(transform(value))
-
+    override fun flatten(): List<T> = listOf(value)
 
     /**
      * Converts the value of the object to a simple string representation.

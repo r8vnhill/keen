@@ -49,7 +49,7 @@ data object Ackley : OptimizationProblem {
      * @param genotype The genotype to be evaluated, consisting of `Double` values.
      * @return The calculated fitness value according to the Ackley function.
      */
-    override fun invoke(genotype: Genotype<Double, DoubleGene>): Double = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>): Double = genotype.flatten().let { (x, y) ->
         -A * exp(-B * sqrt(D * (x.pow(2) + y.pow(2)))) -
               exp(D * (cos(C * x) + cos(C * y))) + exp(1.0) + A
     }

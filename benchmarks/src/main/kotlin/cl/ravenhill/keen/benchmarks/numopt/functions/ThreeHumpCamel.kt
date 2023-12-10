@@ -18,7 +18,7 @@ data object ThreeHumpCamel : OptimizationProblem {
         private const val MAX = 5.0
         override val ranges: List<ClosedRange<Double>> = listOf(MIN..MAX, MIN..MAX)
 
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
         2 * x.pow(2) - 1.05 * x.pow(4) + x.pow(6) / 6 + x * y + y.pow(2)
     }
 }

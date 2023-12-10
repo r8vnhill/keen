@@ -48,7 +48,7 @@ class GenotypeScope<DNA, G : Gene<DNA, G>> {
  * @return A [Genotype.Factory] instance that contains the [Chromosome.Factory]s created by the
  *  [init] block.
  */
-fun <T, G> genotype(init: GenotypeScope<T, G>.() -> Unit) where G : Gene<T, G> =
+fun <T, G> genotypeOf(init: GenotypeScope<T, G>.() -> Unit) where G : Gene<T, G> =
     Genotype.Factory<T, G>().apply {
         chromosomes.addAll(GenotypeScope<T, G>().apply(init).chromosomes)
     }

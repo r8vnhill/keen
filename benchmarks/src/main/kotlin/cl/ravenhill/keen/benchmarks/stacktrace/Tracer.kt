@@ -9,7 +9,7 @@ package cl.ravenhill.keen.benchmarks.stacktrace
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
-import cl.ravenhill.keen.dsl.genotype
+import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.MaxGenerations
@@ -34,7 +34,7 @@ class Tracer<T : Throwable>(
 ) {
     private val engine = evolutionEngine(
         ::fitnessFunction,
-        genotype {
+        genotypeOf {
             chromosomeOf {
                 KFunctionChromosome.Factory(10) {
                     KFunctionGene(functions.random(Domain.random), functions)
@@ -55,7 +55,7 @@ class Tracer<T : Throwable>(
         val program = minimize(result).population
             .groupBy { it.fitness }
             .maxByOrNull { it.key }?.value
-            ?.minByOrNull { it.flatMap().size }
+            ?.minByOrNull { it.flatten().size }
         return MinimalCrashReproduction(program!!)
     }
 

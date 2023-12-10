@@ -22,7 +22,7 @@ data object Beale : OptimizationProblem {
     private const val B = 2.25
     private const val C = 2.625
 
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
         (A - x + x * y).pow(n = 2) + (B - x + x * y.pow(n = 2)).pow(2) + (C - x + x * y.pow(n = 3)).pow(n = 2)
     }
 }

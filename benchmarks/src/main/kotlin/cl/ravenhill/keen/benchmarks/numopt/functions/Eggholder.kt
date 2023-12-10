@@ -16,7 +16,7 @@ data object Eggholder : OptimizationProblem {
     override val target = -959.6407
     override val ranges: List<ClosedRange<Double>> = listOf(-512.0..512.0, -512.0..512.0)
 
-    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatMap().let { (x, y) ->
+    override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
         -(y + 47) * sin(sqrt(abs(x / 2 + (y + 47)))) - x * sin(sqrt(abs(x - (y + 47))))
     }
 }

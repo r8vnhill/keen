@@ -1,9 +1,14 @@
-package ga
+/*
+ * Copyright (c) 2023, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
+package cl.ravenhill.keen.ga
 
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
-import cl.ravenhill.keen.dsl.genotype
+import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.limits.MaxGenerations
@@ -12,7 +17,6 @@ import cl.ravenhill.keen.listeners.EvolutionPlotter
 import cl.ravenhill.keen.listeners.EvolutionSummary
 import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.mutation.BitFlipMutator
-import cl.ravenhill.keen.operators.mutation.RandomMutator
 
 /**
  * The size of the population in each generation. Set to 100.
@@ -42,7 +46,7 @@ private const val MAX_GENERATIONS = 500
 /**
  * A function that calculates the fitness of a genotype by counting the number of `true` genes.
  */
-private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatMap().count { it }.toDouble()
+private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
 
 /**
  * Implementation of the OneMax Problem using a genetic algorithm.
@@ -65,7 +69,7 @@ private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatMap()
  * summary.
  */
 fun main() {
-    val engine = evolutionEngine(::count, genotype {
+    val engine = evolutionEngine(::count, genotypeOf {
         chromosomeOf {
             booleans {
                 size = CHROMOSOME_SIZE
