@@ -14,8 +14,8 @@ import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.listeners.EvolutionPlotter
 import cl.ravenhill.keen.listeners.EvolutionSummary
-import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutation.RandomMutator
+import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
 
 /**
  * The target word that the genetic algorithm aims to evolve towards.

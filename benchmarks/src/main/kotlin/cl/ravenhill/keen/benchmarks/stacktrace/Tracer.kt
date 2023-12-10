@@ -15,9 +15,9 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.listeners.EvolutionListener
-import cl.ravenhill.keen.operators.crossover.Crossover
-import cl.ravenhill.keen.operators.mutation.Mutator
-import cl.ravenhill.keen.operators.mutation.RandomMutator
+import cl.ravenhill.keen.operators.alteration.crossover.Crossover
+import cl.ravenhill.keen.operators.alteration.mutation.Mutator
+import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass

@@ -15,8 +15,8 @@ import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.listeners.EvolutionPlotter
 import cl.ravenhill.keen.listeners.EvolutionSummary
-import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutation.BitFlipMutator
+import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 
 /**
  * The size of the population in each generation. Set to 100.

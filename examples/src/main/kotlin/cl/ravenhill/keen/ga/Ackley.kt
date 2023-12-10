@@ -16,8 +16,8 @@ import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.listeners.EvolutionPlotter
 import cl.ravenhill.keen.listeners.EvolutionSummary
-import cl.ravenhill.keen.operators.crossover.AverageCrossover
-import cl.ravenhill.keen.operators.mutation.RandomMutator
+import cl.ravenhill.keen.operators.alteration.crossover.AverageCrossover
+import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
 import cl.ravenhill.keen.ranking.FitnessMinRanker
 import kotlin.math.PI
 import kotlin.math.cos

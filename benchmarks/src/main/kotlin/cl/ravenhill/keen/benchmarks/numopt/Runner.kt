@@ -18,8 +18,8 @@ import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.listeners.EvolutionSummary
-import cl.ravenhill.keen.operators.crossover.AverageCrossover
-import cl.ravenhill.keen.operators.mutation.RandomMutator
+import cl.ravenhill.keen.operators.alteration.crossover.AverageCrossover
+import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
 import cl.ravenhill.keen.operators.selection.RandomSelector
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selection.Selector

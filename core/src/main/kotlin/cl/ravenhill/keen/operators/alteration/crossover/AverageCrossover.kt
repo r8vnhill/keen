@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.operators.crossover
+package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.keen.genetic.genes.numeric.NumberGene
 

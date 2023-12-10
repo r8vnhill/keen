@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.operators.crossover
+package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange

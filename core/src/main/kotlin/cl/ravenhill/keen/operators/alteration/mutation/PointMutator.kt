@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.operators.mutation
+package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange

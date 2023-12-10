@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.operators.mutation
+package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ExperimentalKeen

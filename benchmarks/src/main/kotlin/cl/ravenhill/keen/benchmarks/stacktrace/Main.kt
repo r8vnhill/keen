@@ -9,13 +9,13 @@ package cl.ravenhill.keen.benchmarks.stacktrace
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.listeners.EvolutionPlotter
 import cl.ravenhill.keen.listeners.EvolutionSummary
-import cl.ravenhill.keen.operators.crossover.CombineCrossover
-import cl.ravenhill.keen.operators.crossover.Crossover
-import cl.ravenhill.keen.operators.crossover.SinglePointCrossover
-import cl.ravenhill.keen.operators.mutation.InversionMutator
-import cl.ravenhill.keen.operators.mutation.Mutator
-import cl.ravenhill.keen.operators.mutation.RandomMutator
-import cl.ravenhill.keen.operators.mutation.SwapMutator
+import cl.ravenhill.keen.operators.alteration.crossover.CombineCrossover
+import cl.ravenhill.keen.operators.alteration.crossover.Crossover
+import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.alteration.mutation.InversionMutator
+import cl.ravenhill.keen.operators.alteration.mutation.Mutator
+import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
+import cl.ravenhill.keen.operators.alteration.mutation.SwapMutator
 import kotlin.reflect.KFunction
 
 
