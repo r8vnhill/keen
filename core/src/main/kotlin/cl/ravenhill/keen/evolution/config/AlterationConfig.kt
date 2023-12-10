@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.evolution.config
 
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.alterers.Alterer
+import cl.ravenhill.keen.operators.alteration.Alterer
 
 /**
  * Configuration class for specifying genetic alteration operations in an evolutionary algorithm.

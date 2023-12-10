@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.operators.alterers
+package cl.ravenhill.keen.operators.alteration
 
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene

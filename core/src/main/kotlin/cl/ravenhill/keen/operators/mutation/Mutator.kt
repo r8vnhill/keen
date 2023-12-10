@@ -14,7 +14,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.alterers.Alterer
+import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.utils.eq
 
 
