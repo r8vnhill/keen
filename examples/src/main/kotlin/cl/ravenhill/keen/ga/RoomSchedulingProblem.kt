@@ -30,23 +30,6 @@ import kotlin.random.Random
  * time management systems. The time values are represented as integers, which could correspond to various
  * time formats such as hours of the day, minutes since midnight, or other domain-specific representations.
  *
- * ## Characteristics:
- * - **Start Time**: The beginning time of the meeting. Represented as an integer.
- * - **End Time**: The time when the meeting concludes. Also represented as an integer.
- *   It's assumed that the end time is always equal to or later than the start time.
- * - **Duration**: Can be calculated as the difference between the end and start times.
- *
- * ## Usage:
- * `Meeting` can be used in applications where scheduling or time management is a key feature.
- * For instance, in a calendar app to represent the timeslot of a meeting or in an algorithm
- * for meeting room scheduling.
- *
- * ### Example:
- * Creating a `Meeting` instance to represent a meeting from 10:00 AM to 11:00 AM (assuming time is in hours):
- * ```kotlin
- * val morningMeeting = Meeting(10, 11)
- * ```
- *
  * @property start The start time of the meeting.
  * @property end The end time of the meeting. It should be greater than or equal to `start`.
  * @constructor Creates a new `Meeting` instance with the specified start and end times.
