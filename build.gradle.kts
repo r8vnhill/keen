@@ -20,11 +20,19 @@ allprojects {
 }
 
 subprojects {
+    apply(plugin = "java")
+    apply(plugin = "maven-publish")
+
     repositories {
         mavenCentral()
-        maven("https://www.jitpack.io") {
+        maven("https://jitpack.io") {
             name = "jitpack"
         }
+    }
+
+    java {
+        withSourcesJar()
+        withJavadocJar()
     }
 }
 

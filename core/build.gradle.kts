@@ -30,19 +30,12 @@ dependencies {
     implementation("org.jetbrains.lets-plot:lets-plot-common:$letsPlotVersion")
     implementation("org.jetbrains.lets-plot:platf-awt:$letsPlotVersion")
     implementation("org.jetbrains.lets-plot:lets-plot-compose:$letsPlotSkiaVersion")
-    implementation("org.slf4j:slf4j-simple:2.0.9")  // Enable logging to console
+    implementation("org.slf4j:slf4j-simple:$slf4jVersion")
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
 }
 
 tasks.test {
     useJUnitPlatform()
-}
-
-java {
-    // Generates a Javadoc jar file containing the Javadoc for this project's public API
-    withJavadocJar()
-    // Generates a sources jar file containing the sources for this project
-    withSourcesJar()
 }
 
 publishing {
