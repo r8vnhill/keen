@@ -18,6 +18,7 @@ plugins {
     id("org.jetbrains.compose")
     id("org.jetbrains.dokka")
     kotlin("jvm")
+    signing
 }
 
 dependencies {
@@ -41,6 +42,10 @@ tasks.test {
 publishing {
     publications {
         create<MavenPublication>("maven") {
+            groupId = "cl.ravenhill"
+            artifactId = "keen"
+            version = project.version.toString()
+            from(components["kotlin"])  // or maybe components["java"]
             pom {
                 name.set("Keen")
                 description.set("A Kotlin library for Evolutionary Computation")
@@ -52,10 +57,13 @@ publishing {
                     }
                 }
             }
-            groupId = "cl.ravenhill"
-            artifactId = "keen"
-            version = project.version.toString()
-            from(components["java"])
+        }
+    }
+
+    if (!project.version.toString().endsWith("SNAPSHOT")) {
+        signing {
+            useGpgCmd()
+            sign(publications)
         }
     }
 }
