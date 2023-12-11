@@ -25,14 +25,12 @@ from selection and crossover methods to mutation and fitness evaluation.
 
 ```kotlin
 repositories {
-    maven {
-        url = uri("https://jitpack.io")
-    }
+    mavenCentral()
     /* ... */
 }
 
 dependencies {
-    implementation("com.github.r8vnhill:keen:core:1.0.0")
+    implementation("cl.ravenhill:keen-core:1.0.0")
     /* ... */
 }
 ```
