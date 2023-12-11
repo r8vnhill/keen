@@ -11,10 +11,13 @@ val letsPlotVersion = extra["lets-plot.version"] as String
 val letsPlotKotlinVersion = extra["lets-plot.kotlin.version"] as String
 val slf4jVersion = extra["slf4j.version"] as String
 val letsPlotSkiaVersion = extra["lets-plot.skia.version"] as String
+val dokkaVersion = extra["dokka.version"] as String
 
 plugins {
-    kotlin("jvm")
+    `maven-publish`
     id("org.jetbrains.compose")
+    id("org.jetbrains.dokka")
+    kotlin("jvm")
 }
 
 dependencies {
@@ -28,7 +31,7 @@ dependencies {
     implementation("org.jetbrains.lets-plot:platf-awt:$letsPlotVersion")
     implementation("org.jetbrains.lets-plot:lets-plot-compose:$letsPlotSkiaVersion")
     implementation("org.slf4j:slf4j-simple:2.0.9")  // Enable logging to console
-
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
 }
 
 tasks.test {
@@ -42,3 +45,24 @@ java {
     withSourcesJar()
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            pom {
+                name.set("Keen")
+                description.set("A Kotlin library for Evolutionary Computation")
+                url.set("https://github.com/r8vnhill/keen")
+                licenses {
+                    license {
+                        name.set("BSD 2-Clause License")
+                        url.set("https://opensource.org/licenses/BSD-2-Clause")
+                    }
+                }
+            }
+            groupId = "cl.ravenhill"
+            artifactId = "keen"
+            version = project.version.toString()
+            from(components["java"])
+        }
+    }
+}

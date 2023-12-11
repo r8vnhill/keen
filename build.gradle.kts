@@ -3,6 +3,7 @@
  * 2-Clause BSD License.
  */
 
+val dokkaVersion = extra["dokka.version"] as String
 
 plugins {
     kotlin("jvm")
@@ -13,10 +14,17 @@ repositories {
     mavenCentral()
 }
 
+allprojects {
+    group = "cl.ravenhill.keen"
+    version = extra["keen.version"] as String
+}
+
 subprojects {
     repositories {
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
+        maven("https://www.jitpack.io") {
+            name = "jitpack"
+        }
     }
 }
 
