@@ -61,7 +61,7 @@ fun main() {
 //    example2(RandomMutator(individualRate = 0.2), SinglePointCrossover(chromosomeRate = 0.5))
 //    example2(RandomMutator(individualRate = 0.2), CombineCrossover({ it.random(Domain.random)}))
 //    example2(SwapMutator(individualRate = 0.3), SinglePointCrossover(chromosomeRate = 0.5))
-    example2(SwapMutator(individualRate = 0.3), CombineCrossover({ it.random(Domain.random)}))
+    example2(SwapMutator(individualRate = 0.3), CombineCrossover({ it.random(Domain.random) }))
 //    example2(InversionMutator(individualRate = 0.3), SinglePointCrossover(chromosomeRate = 0.5))
 //    example2(InversionMutator(individualRate = 0.3), CombineCrossover({ it.random(Domain.random)}))
 }

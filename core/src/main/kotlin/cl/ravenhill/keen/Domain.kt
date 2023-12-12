@@ -7,15 +7,13 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.keen.Domain.DEFAULT_MAX_PROGRAM_DEPTH
-import cl.ravenhill.keen.Domain.DEFAULT_POPULATION_SIZE
 import cl.ravenhill.keen.Domain.DEFAULT_SURVIVAL_RATE
-import cl.ravenhill.keen.Domain.DEFAULT_TOURNAMENT_SIZE
 import cl.ravenhill.keen.Domain.environments
 import cl.ravenhill.keen.Domain.equalityThreshold
 import cl.ravenhill.keen.Domain.maxProgramDepth
 import cl.ravenhill.keen.Domain.random
 import cl.ravenhill.keen.prog.Environment
+import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.utils.eq
 import kotlin.random.Random
 
@@ -44,22 +42,26 @@ import kotlin.random.Random
  *
  * @property DEFAULT_POPULATION_SIZE The standard size for populations in genetic algorithms, set to 50.
  * @property DEFAULT_SURVIVAL_RATE The standard rate of survival for individuals in a population, set to 0.4.
- * @property DEFAULT_TOURNAMENT_SIZE The standard size for tournaments in genetic selection, set to 3.
  * @property equalityThreshold The threshold for floating-point equality comparisons, set to 0.0001. This value is
  *   used in scenarios where floating-point values are compared for equality, such as in the [Double.eq] method.
  * @property random A universal [Random] instance used for stochastic processes, ensuring consistent randomization
  *   strategies and allowing for reproducibility when using a specific seed.
  * @property environments A map of environments by their identifiers, providing access to shared variables and
  *   configurations across different components of the library.
- * @property DEFAULT_MAX_PROGRAM_DEPTH The default maximum depth for program trees, set to 7. This value is used to
- *   prevent the creation of overly complex and computationally expensive programs.
  * @property maxProgramDepth The maximum depth for program trees, defaults to 7. This value is used to prevent the
  *   creation of overly complex and computationally expensive programs.
  */
 object Domain {
+    @Deprecated(
+        "Use the constant associated with the engine instead",
+        ReplaceWith("EvolutionEngine.Factory.DEFAULT_POPULATION_SIZE")
+    )
     const val DEFAULT_POPULATION_SIZE = 50
+    @Deprecated(
+        "Use the constant associated with the engine instead",
+        ReplaceWith("EvolutionEngine.Factory.DEFAULT_SURVIVAL_RATE")
+    )
     const val DEFAULT_SURVIVAL_RATE = 0.4
-    const val DEFAULT_TOURNAMENT_SIZE = 3
     private const val DEFAULT_EQUALITY_THRESHOLD = 0.0001
     var equalityThreshold = DEFAULT_EQUALITY_THRESHOLD
     var random: Random = Random.Default
@@ -68,10 +70,7 @@ object Domain {
     val environments = mutableMapOf<String, Environment<*>>()
 
     @ExperimentalKeen
-    const val DEFAULT_MAX_PROGRAM_DEPTH = 7
-
-    @ExperimentalKeen
-    var maxProgramDepth = DEFAULT_MAX_PROGRAM_DEPTH
+    var maxProgramDepth = Program.DEFAULT_MAX_DEPTH
         set(value) {
             constraints { "The maximum program depth [$value] must be positive" { value must BePositive } }
             field = value

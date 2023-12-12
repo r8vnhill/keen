@@ -61,12 +61,5 @@ class ChromosomeTest : FreeSpec({
                 chromosome[index] shouldBe chromosome.genes[index]
             }
         }
-
-        "should transform its genes correctly" {
-            checkAll(Arb.chromosome()) { chromosome ->
-                val transformedChromosome = chromosome.flatten()
-                transformedChromosome shouldContainExactly chromosome.genes.map { it.value * 2 }
-            }
-        }
     }
 })

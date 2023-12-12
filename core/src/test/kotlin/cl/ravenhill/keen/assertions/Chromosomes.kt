@@ -27,9 +27,9 @@ import kotlin.random.Random
 /**
  * Validates genes of a chromosome by applying a specified validation function on each gene.
  *
- * This function creates a factory for chromosomes using the provided `factoryBuilder` function,
- * then constructs chromosomes of various sizes within the provided size range (default is 1 to 100),
- * and finally applies the `validate` function on each gene of the chromosome.
+ * This function creates a factory for chromosomes using the provided `factoryBuilder` function, then constructs
+ * chromosomes of various sizes within the provided size range (default is 1 to 100), and finally applies the [validate]
+ * function on each gene of the chromosome.
  *
  * @param sizeRange The range of chromosome sizes for which to run validations, default is from 1 to 100.
  * @param factoryBuilder A lambda function that returns an instance of `Chromosome.Factory<T, G>`.

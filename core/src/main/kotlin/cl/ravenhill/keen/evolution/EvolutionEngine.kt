@@ -519,10 +519,9 @@ class EvolutionEngine<T, G>(
      * @param G The type of gene in the individuals' genotypes.
      * @property fitnessFunction A function that computes the fitness of a genotype.
      * @property genotypeFactory A factory for creating genotypes.
-     * @property populationSize The size of the population in each generation. Defaults to
-     *   [Domain.DEFAULT_POPULATION_SIZE].
+     * @property populationSize The size of the population in each generation. Defaults to [DEFAULT_POPULATION_SIZE].
      * @property survivalRate The proportion of the population to survive each generation. Defaults to
-     *   [Domain.DEFAULT_SURVIVAL_RATE].
+     *   [DEFAULT_SURVIVAL_RATE].
      * @property parentSelector A [Selector] used to choose individuals for producing offspring.
      * @property survivorSelector A [Selector] used to choose individuals that will survive to the next generation.
      * @property alterers A list of [Alterer] instances that perform genetic operations like mutation and crossover.
@@ -537,19 +536,19 @@ class EvolutionEngine<T, G>(
         val genotypeFactory: Genotype.Factory<T, G>,
     ) where G : Gene<T, G> {
 
-        var populationSize: Int = Domain.DEFAULT_POPULATION_SIZE
+        var populationSize: Int = DEFAULT_POPULATION_SIZE
             set(value) = constraints {
                 "Population size ($value) must be positive." { value must BePositive }
             }.let { field = value }
 
-        var survivalRate: Double = Domain.DEFAULT_SURVIVAL_RATE
+        var survivalRate: Double = DEFAULT_SURVIVAL_RATE
             set(value) = constraints {
                 "Survival rate ($value) must be between 0 and 1." { value must BeInRange(0.0..1.0) }
             }.let { field = value }
 
-        var parentSelector: Selector<T, G> = TournamentSelector(Domain.DEFAULT_TOURNAMENT_SIZE)
+        var parentSelector: Selector<T, G> = TournamentSelector()
 
-        var survivorSelector: Selector<T, G> = TournamentSelector(Domain.DEFAULT_TOURNAMENT_SIZE)
+        var survivorSelector: Selector<T, G> = TournamentSelector()
 
         var alterers: MutableList<Alterer<T, G>> = mutableListOf()
 
@@ -586,5 +585,17 @@ class EvolutionEngine<T, G>(
                 limits, ranker, listeners, evaluator.creator(fitnessFunction), interceptor
             )
         )
+
+        companion object {
+            /**
+             * Default population size for an evolutionary algorithm. Set to 50.
+             */
+            const val DEFAULT_POPULATION_SIZE = 50
+
+            /**
+             * Default survival rate for an evolutionary algorithm. Set to 0.4.
+             */
+            const val DEFAULT_SURVIVAL_RATE = 0.4
+        }
     }
 }

@@ -310,7 +310,7 @@ class SubtreeCrossover<V, T, G>(
     private fun enforcePreconditions(chromosomes: List<Chromosome<T, G>>) = constraints {
         "The crossover operator requires two chromosomes." { chromosomes must HaveSize(2) }
         chromosomes.forEach { chromosome ->
-            "The parents must have the same size" { chromosomes must HaveSize(chromosomes[0].size) }
+            "The parents must have the same size" { chromosome must HaveSize(chromosomes[0].size) }
             chromosome.forEach { gene ->
                 "The gene's arity (${gene.value.arity}) must match the gene's children (${gene.value.children.size})" {
                     gene.value.children must HaveSize(gene.value.arity)

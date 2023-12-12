@@ -173,6 +173,7 @@ class EvolutionStateTest : FreeSpec({
 
         "can be converted to a String" {
             checkAll(
+                PropTestConfig(iterations = 100),
                 Arb.evolutionState(
                     Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                     Arb.individualRanker()

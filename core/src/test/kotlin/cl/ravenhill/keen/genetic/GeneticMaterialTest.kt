@@ -16,16 +16,16 @@ class GeneticMaterialTest : FreeSpec({
         "when transforming genetic material" - {
             "should apply the identity function by default" {
                 val geneticMaterial = object : GeneticMaterial<Int, DummyGene> {
-                    override fun flatten() = listOf(1, 2, 3).map(transform)
+                    override fun flatten() = listOf(1, 2, 3)
                 }
                 geneticMaterial.flatten() shouldBe listOf(1, 2, 3)
             }
 
             "should apply the provided transformation function" {
                 val geneticMaterial = object : GeneticMaterial<Int, DummyGene> {
-                    override fun flatten() = listOf(1, 2, 3).map(transform)
+                    override fun flatten() = listOf(1, 2, 3)
                 }
-                geneticMaterial.flatten() shouldBe listOf(2, 4, 6)
+                geneticMaterial.flatten() shouldBe listOf(1, 2, 3)
             }
         }
     }

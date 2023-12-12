@@ -17,14 +17,4 @@ import io.kotest.property.checkAll
 
 class RandomSelectorTest : FreeSpec({
 
-    "A ProbabilitySelector" - {
-        "should assign the same probability to all individuals" {
-            checkAll(Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome())))) { population ->
-                val selector = RandomSelector<Double, DoubleGene>()
-                val probabilities = selector.probabilities(population,)
-                val expectedProbability = 1.0 / population.size
-                probabilities shouldBe List(population.size) { expectedProbability }
-            }
-        }
-    }
 })

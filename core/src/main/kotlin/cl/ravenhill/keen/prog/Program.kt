@@ -2,6 +2,7 @@ package cl.ravenhill.keen.prog
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.utils.trees.Tree
 import java.util.Objects
@@ -265,4 +266,14 @@ class Program<V>(
     }
 
     override fun hashCode() = Objects.hash(Program::class, value, children)
+
+    companion object {
+        /**
+         * The default maximum depth for program trees, set to 7. This value is used to prevent the creation of overly
+         * complex and computationally expensive programs.
+         *
+         * @See [Domain.maxProgramDepth]
+         */
+        internal const val DEFAULT_MAX_DEPTH = 7
+    }
 }

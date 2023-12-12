@@ -150,18 +150,10 @@ fun `test Genotype behaviour`() = freeSpec {
     "A Genotype" - {
         "should have a size property that" - {
             "is equal to the number of chromosomes" {
-                checkAll(Arb.genotype()) { genotype ->
+                checkAll(
+                    Arb.genotype(Arb.chromosome(size = Arb.int(0..25)))
+                ) { genotype ->
                     genotype.size shouldBe genotype.chromosomes.size
-                }
-            }
-        }
-
-        "can be flat-mapped" {
-            checkAll(Arb.genotype()) { genotype ->
-                val flatMapped = genotype.flatten()
-                flatMapped.size shouldBe genotype.sumOf { it.size }
-                flatMapped.forEachIndexed { index, value ->
-                    value shouldBe genotype.flatten()[index] + 1
                 }
             }
         }

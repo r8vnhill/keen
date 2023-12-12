@@ -49,7 +49,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
  * @param T The type of data encapsulated by the genes within the individuals.
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.
  */
-class TournamentSelector<T, G>(private val tournamentSize: Int = 3) : Selector<T, G> where G : Gene<T, G> {
+class TournamentSelector<T, G>(private val tournamentSize: Int = DEFAULT_SIZE) : Selector<T, G> where G : Gene<T, G> {
 
     init {
         constraints {
@@ -96,4 +96,9 @@ class TournamentSelector<T, G>(private val tournamentSize: Int = 3) : Selector<T
                 .maxWithOrNull(ranker.comparator)
                 ?: throw SelectionException { "Tournament selection failed to find a max individual" }
         }
+
+    companion object {
+        /** The default size of the tournaments. Set to 3. */
+        const val DEFAULT_SIZE = 3
+    }
 }

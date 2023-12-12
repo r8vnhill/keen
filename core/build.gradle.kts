@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+
 /*
  * Copyright (c) 2023, Ignacio Slater M.
  * 2-Clause BSD License.
@@ -22,30 +24,48 @@ plugins {
 }
 
 dependencies {
-    implementation(compose.desktop.currentOs)
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
     implementation("com.github.r8vnhill:strait-jakt:$jaktVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
+    implementation("org.jetbrains.lets-plot:lets-plot-common:$letsPlotVersion")
+    implementation("org.jetbrains.lets-plot:lets-plot-compose:$letsPlotSkiaVersion")
+    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-kernel:$letsPlotKotlinVersion")
+    implementation("org.jetbrains.lets-plot:platf-awt:$letsPlotVersion")
+    implementation("org.slf4j:slf4j-simple:$slf4jVersion")
+    implementation(compose.desktop.currentOs)
     testImplementation("io.kotest:kotest-property:$kotestVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-kernel:$letsPlotKotlinVersion")
-    implementation("org.jetbrains.lets-plot:lets-plot-common:$letsPlotVersion")
-    implementation("org.jetbrains.lets-plot:platf-awt:$letsPlotVersion")
-    implementation("org.jetbrains.lets-plot:lets-plot-compose:$letsPlotSkiaVersion")
-    implementation("org.slf4j:slf4j-simple:$slf4jVersion")
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
 }
 
 tasks.test {
     useJUnitPlatform()
 }
 
+tasks.withType<DokkaTask>().configureEach {
+    outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
+}
+
+val dokkaHtml by tasks.getting(DokkaTask::class)
+
+val dokkaJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from(dokkaHtml.outputDirectory)
+}
+
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets["main"].allSource)
+}
+
 publishing {
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("mavenJava") {
             groupId = "cl.ravenhill"
-            artifactId = "keen"
+            artifactId = "keen-core"
             version = project.version.toString()
-            from(components["kotlin"])  // or maybe components["java"]
+            from(components["kotlin"])
+            artifact(dokkaJar)
+            artifact(sourcesJar)
             pom {
                 name.set("Keen")
                 description.set("A Kotlin library for Evolutionary Computation")
@@ -56,6 +76,18 @@ publishing {
                         url.set("https://opensource.org/licenses/BSD-2-Clause")
                     }
                 }
+                scm {
+                    url.set("https://github.com/r8vnhill/keen")
+                    connection.set("scm:git:git://github.com/r8vnhill/keen.git")
+                    developerConnection.set("scm:git:ssh://github.com/r8vnhill/keen.git")
+                }
+                developers {
+                    developer {
+                        id.set("r8vnhill")
+                        name.set("Ignacio Slater M.")
+                        email.set("reachme@ravenhill.cl")
+                    }
+                }
             }
         }
     }
@@ -64,6 +96,29 @@ publishing {
         signing {
             useGpgCmd()
             sign(publications)
+        }
+    }
+
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = if (project.version.toString().endsWith("SNAPSHOT")) {
+                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            } else {
+                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            }
+            credentials {
+                username = if (System.getProperty("os.name").startsWith("Windows")) {
+                    System.getenv("SonatypeUsername")
+                } else {
+                    System.getenv("SONATYPE_USERNAME")
+                }.apply { check(!isNullOrEmpty()) { "Sonatype username not found." } }
+                password = if (System.getProperty("os.name").startsWith("Windows")) {
+                    System.getenv("SonatypePassword")
+                } else {
+                    System.getenv("SONATYPE_PASSWORD")
+                }.apply { check(!isNullOrEmpty()) { "Sonatype password not found." } }
+            }
         }
     }
 }
