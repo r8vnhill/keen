@@ -35,4 +35,3 @@ import cl.ravenhill.jakt.constraints.collections.CollectionConstraint
 data object BePermutation : CollectionConstraint<Any> {
     override val validator: (Collection<*>) -> Boolean = { it.distinct().size == it.size }
 }
-
