@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.ranking
 
-import cl.ravenhill.keen.arb.genetic.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.individual

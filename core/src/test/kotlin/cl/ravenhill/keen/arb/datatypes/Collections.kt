@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.arb.genetic.datatypes
+package cl.ravenhill.keen.arb.datatypes
 
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

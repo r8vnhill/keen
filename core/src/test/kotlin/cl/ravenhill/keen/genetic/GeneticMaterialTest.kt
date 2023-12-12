@@ -6,31 +6,22 @@
 
 package cl.ravenhill.keen.genetic
 
+import cl.ravenhill.keen.arb.genetic.geneticMaterial
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
+import io.kotest.property.checkAll
 
 class GeneticMaterialTest : FreeSpec({
     "A GeneticMaterial object" - {
-        "when transforming genetic material" - {
-            "should apply the identity function by default" {
-                val geneticMaterial = object : GeneticMaterial<Int, DummyGene> {
-                    override fun flatten() = listOf(1, 2, 3)
-                }
-                geneticMaterial.flatten() shouldBe listOf(1, 2, 3)
-            }
-
-            "should apply the provided transformation function" {
-                val geneticMaterial = object : GeneticMaterial<Int, DummyGene> {
-                    override fun flatten() = listOf(1, 2, 3)
-                }
-                geneticMaterial.flatten() shouldBe listOf(1, 2, 3)
+        "can be flat-mapped" {
+            checkAll(Arb.geneticMaterial<Int, IntGene>(Arb.int(-100, 100))) { material ->
+                val flatMapped = material.flatMap { it * 2 }
+                flatMapped shouldBe material.flatten().map { it * 2 }
             }
         }
     }
-}) {
-    private class DummyGene(override val value: Int) : Gene<Int, DummyGene> {
-        override fun duplicateWithValue(value: Int) = DummyGene(value)
-    }
-}
+})

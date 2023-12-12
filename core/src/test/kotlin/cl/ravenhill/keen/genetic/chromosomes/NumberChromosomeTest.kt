@@ -9,7 +9,7 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.genetic.chromosomes.numberChromosomeFactory
-import cl.ravenhill.keen.arb.genetic.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.assertions.shouldHaveInfringement
 import io.kotest.assertions.fail

@@ -15,6 +15,7 @@ import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.NumberChromosome
+import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.genetic.genes.numeric.NumberGene
 import io.kotest.property.Arb
@@ -70,6 +71,13 @@ fun Arb.Companion.chromosome(
     gene: Arb<DummyGene> = Arb.gene(isValid = isValid),
 ) = arbitrary {
     ChromosomeImpl(List(size.bind()) { gene.bind() })
+}
+
+// TODO: Add documentation
+fun Arb.Companion.nothingChromosome(
+    size: Arb<Int> = int(0..10),
+) = arbitrary {
+    NothingChromosome(List(size.bind()) { NothingGene })
 }
 
 /**

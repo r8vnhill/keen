@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.genetic.genes.numeric
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.arb.genetic.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.utils.nextDoubleInRange
 import io.kotest.core.spec.style.FreeSpec

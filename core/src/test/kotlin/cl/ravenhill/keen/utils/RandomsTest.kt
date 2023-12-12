@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.utils
 
-import cl.ravenhill.keen.arb.genetic.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.shouldBeInRange
 import io.kotest.core.spec.style.FreeSpec

@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.arb.genetic.genes
 
 import cl.ravenhill.jakt.utils.DoubleRange
-import cl.ravenhill.keen.arb.genetic.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.property.Arb

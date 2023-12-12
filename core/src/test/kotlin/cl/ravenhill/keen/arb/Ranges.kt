@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.arb
 
-import cl.ravenhill.keen.arb.genetic.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.orderedPair
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 
