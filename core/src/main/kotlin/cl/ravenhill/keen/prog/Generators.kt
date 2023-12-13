@@ -210,6 +210,10 @@ fun <T> generateProgram(
     min: Int,
     max: Int,
     condition: (Int, Int) -> Boolean,
-) = Tree.generate(terminals to functions, min, max, condition, ::Program) { funNode, children ->
-    Program(funNode, children)
-}
+) = Tree.generate(
+    nodes = terminals to functions,
+    depths = min to max,
+    condition = condition,
+    leafFactory = ::Program,
+    intermediateFactory = ::Program
+)

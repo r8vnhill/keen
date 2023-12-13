@@ -64,12 +64,12 @@ import cl.ravenhill.keen.ExperimentalKeen
 @ExperimentalKeen
 fun <V, L, I, T> Tree.Companion.generate(
     nodes: Pair<List<L>, List<I>>,
-    min: Int,
-    max: Int,
+    depths: Pair<Int, Int>,
     condition: (Int, Int) -> Boolean,
     leafFactory: (L) -> T,
     intermediateFactory: (I, List<T>) -> T,
 ): T where L : Leaf<V>, I : Intermediate<V>, T : Tree<V, T> {
+    val (min, max) = depths
     val leafs = nodes.first
     val intermediates = nodes.second
     constraints {
