@@ -7,6 +7,7 @@ package cl.ravenhill.keen.arb.genetic.genes
 
 import cl.ravenhill.jakt.utils.DoubleRange
 import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.property.Arb
@@ -67,6 +68,33 @@ data class DummyGene(
 fun Arb.Companion.gene(value: Arb<Int> = int(), isValid: Arb<Boolean> = boolean()) = arbitrary {
     DummyGene(value.bind(), isValid.bind())
 }
+
+/**
+ * Creates an arbitrary generator for `BooleanGene`.
+ *
+ * This function is an extension to the `Arb.Companion` object and is used to generate instances of `BooleanGene`,
+ * which is a simple representation of a gene with boolean values. It provides a convenient way to create genes
+ * that can either be `True` or `False`, mirroring the behavior of binary genetic traits.
+ *
+ * ## Usage:
+ * This generator is particularly useful in scenarios involving genetic algorithms or simulations where binary
+ * genetic traits are being modeled. It allows for the creation of genes that are either `True` or `False` based
+ * on the provided arbitrary.
+ *
+ * ### Example:
+ * ```kotlin
+ * val booleanGeneGen = Arb.booleanGene()
+ * val booleanGene = booleanGeneGen.bind() // Generates either BooleanGene.True or BooleanGene.False
+ * ```
+ *
+ * @param value`: An `Arb<Boolean>` which provides the source of boolean values. By default, it uses a standard boolean
+ *   arbitrary that generates `true` or `false` values with equal probability.
+ * @return An `Arb<BooleanGene>`, capable of generating `BooleanGene` instances based on the provided boolean values.
+ */
+fun Arb.Companion.booleanGene(value: Arb<Boolean> = boolean()) = arbitrary {
+    if (value.bind()) BooleanGene.True else BooleanGene.False
+}
+
 
 /**
  * Generates an arbitrary instance of [DoubleGene] for property-based testing in genetic algorithms.

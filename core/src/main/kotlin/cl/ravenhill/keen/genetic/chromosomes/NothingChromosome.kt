@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.arb.genetic.chromosomes
+package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.genetic.genes.NothingGene
 
