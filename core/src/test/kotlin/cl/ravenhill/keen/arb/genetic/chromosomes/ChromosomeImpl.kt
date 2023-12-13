@@ -74,7 +74,6 @@ fun Arb.Companion.chromosome(
     ChromosomeImpl(List(size.bind()) { gene.bind() })
 }
 
-// TODO: Add documentation
 fun Arb.Companion.nothingChromosome(
     size: Arb<Int> = int(0..10),
 ) = arbitrary {

@@ -5,18 +5,19 @@ import org.jetbrains.dokka.gradle.DokkaTask
  * 2-Clause BSD License.
  */
 
-val kotestVersion = extra["kotest.version"] as String
-val jaktVersion = extra["jakt.version"] as String
-val kotlinxDatetimeVersion = extra["kotlinx.datetime.version"] as String
-val javafxVersion = extra["javafx.version"] as String
-val letsPlotVersion = extra["lets-plot.version"] as String
-val letsPlotKotlinVersion = extra["lets-plot.kotlin.version"] as String
-val slf4jVersion = extra["slf4j.version"] as String
-val letsPlotSkiaVersion = extra["lets-plot.skia.version"] as String
 val dokkaVersion = extra["dokka.version"] as String
+val jaktVersion = extra["jakt.version"] as String
+val javafxVersion = extra["javafx.version"] as String
+val kotestVersion = extra["kotest.version"] as String
+val kotlinxDatetimeVersion = extra["kotlinx.datetime.version"] as String
+val letsPlotKotlinVersion = extra["lets-plot.kotlin.version"] as String
+val letsPlotSkiaVersion = extra["lets-plot.skia.version"] as String
+val letsPlotVersion = extra["lets-plot.version"] as String
+val slf4jVersion = extra["slf4j.version"] as String
 
 plugins {
     `maven-publish`
+    id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.compose")
     id("org.jetbrains.dokka")
     kotlin("jvm")

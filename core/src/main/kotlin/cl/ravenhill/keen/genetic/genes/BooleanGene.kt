@@ -75,7 +75,7 @@ sealed interface BooleanGene : Gene<Boolean, BooleanGene> {
     /**
      * Returns the Boolean value of the gene.
      */
-    fun toBool() = value
+    fun toBoolean() = value
 
     /**
      * Returns 1 if the gene's value is `true`, otherwise 0.
