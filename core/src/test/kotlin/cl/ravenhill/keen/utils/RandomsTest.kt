@@ -9,6 +9,10 @@ package cl.ravenhill.keen.utils
 import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.shouldBeInRange
+import cl.ravenhill.keen.assertions.`test next int in range`
+import cl.ravenhill.keen.assertions.`test random char`
+import cl.ravenhill.keen.assertions.`test random indices`
+import cl.ravenhill.keen.assertions.`test subset`
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -22,6 +26,15 @@ import kotlin.random.Random
 class RandomsTest : FreeSpec({
 
     "A Random number generator" - {
+
+        `test random char`()
+
+        `test next int in range`()
+
+//        `test random indices`()
+
+        `test subset`()
+
         "when generating a random double within a range" - {
             "should return a value within the range" {
                 checkAll(

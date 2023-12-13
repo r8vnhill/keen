@@ -103,41 +103,5 @@ class IndividualTest : FreeSpec({
                 }
             }
         }
-
-        "can be converted to a simple string" {
-            fail("Not implemented")
-        }
-
-        "can be converted to a string" {
-            fail("Not implemented")
-        }
-
-        "can be converted to a detailed string" {
-            fail("Not implemented")
-        }
-
-        "when checking equality" - {
-            "should be reflexive" {
-                fail("Not implemented")
-            }
-
-            "should be symmetric" {
-                fail("Not implemented")
-            }
-
-            "should be transitive" {
-                fail("Not implemented")
-            }
-        }
-
-        "when checking hash codes" - {
-            "should be consistent with equals" {
-                fail("Not implemented")
-            }
-
-            "should be different for non-equal individuals" {
-                fail("Not implemented")
-            }
-        }
     }
 })

@@ -11,6 +11,7 @@ import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.jakt.constraints.ints.BeAtMost
+import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
@@ -18,6 +19,7 @@ import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import java.util.*
 import kotlin.random.Random
+import cl.ravenhill.jakt.constraints.ints.BeInRange as IntBeInRange
 
 /**
  * Generates a random `Char` within a specified range, with an optional filtering condition.
@@ -42,36 +44,6 @@ import kotlin.random.Random
  */
 fun Random.nextChar(range: ClosedRange<Char> = Char.MIN_VALUE..Char.MAX_VALUE, filter: (Char) -> Boolean = { true }) =
     generateSequence { (range.start..range.endInclusive).random(this) }.filter(filter).first()
-
-/**
- * Generates a random `String` of a specified length, within a specified character range, and satisfying an optional
- * filter condition.
- *
- * This extension function for the `Random` class allows for the creation of a random string. The length of the string,
- * the range of characters to include, and a filter function for the generated strings can all be specified. The
- * function repeatedly generates random strings until one satisfies the filter condition.
- *
- * ## Example:
- * ```
- * val string = Random.nextString(5) { it.length == 3 } // Random 3-character string
- * ```
- * In the first example, `randomString` will be a random string of 5 lowercase letters.
- * In the second example, `numericString` will be a random string of 3 digits.
- *
- * @param maxLength The maximum length of the string to generate. Defaults to 9.
- * @param range The range of characters to use for generating the string. Defaults to the full range of `Char` from
- *   `Char.MIN_VALUE` to `Char.MAX_VALUE`.
- * @param filter An optional lambda function that returns `true` for acceptable strings and `false` for those that
- *   should be excluded. Defaults to a lambda that accepts all strings.
- * @return A randomly generated string that meets the specified criteria. The string will have the specified length,
- *   consist of characters from the given range, and satisfy the filter condition.
- */
-fun Random.nextString(
-    maxLength: Int = 9,
-    range: CharRange = Char.MIN_VALUE..Char.MAX_VALUE,
-    filter: (String) -> Boolean = { true },
-) = generateSequence { List(nextInt(0, maxLength)) { nextChar(range) }.joinToString("") }.filter(filter).first()
-
 
 /**
  * Generates a random double within a specified range.
@@ -160,12 +132,15 @@ fun Random.nextIntInRange(range: ClosedRange<Int>) = nextInt(range.start, range.
  */
 fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int> {
     constraints {
-        "The pick probability [$pickProbability] must be in 0.0..1.0" {
+        "The pick probability ($pickProbability) must be in the range [0, 1]" {
             pickProbability must BeInRange(0.0..1.0)
         }
+        "The start index ($start) must be less than the end index ($end)" { start must BeAtMost(end - 1) }
+        "The end index ($end) must be greater than or equal to 0" { end mustNot BeNegative }
+        "The start index ($start) must be greater than or equal to 0" { start mustNot BeNegative }
     }
     // Selects the indices using the provided probability.
-    return (start until end).filter { nextDouble() < pickProbability }
+    return (start..<end).filter { nextDouble() < pickProbability }
 }
 
 /**
@@ -203,9 +178,13 @@ fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int>
  */
 fun Random.indices(size: Int, end: Int, start: Int = 0): List<Int> {
     constraints {
-        "The size [$size] must be at most the size of the range [${end - start}]." {
+        "The size ($size) must be at most the size of the range (${end - start})." {
             size must BeAtMost(end - start)
         }
+        "The size ($size) must be greater than 0." { size must BePositive }
+        "The end index ($end) must be greater than or equal to 0." { end mustNot BeNegative }
+        "The start index ($start) must be greater than or equal to 0." { start mustNot BeNegative }
+        "The start index ($start) must be less than the end index ($end)." { start must BeAtMost(end - 1) }
     }
     val remainingIndices = List(end - start) { start + it }.toMutableList()
     return List(size) {
@@ -290,15 +269,20 @@ fun <T> Random.subsets(
         if (exclusive) {
             // If exclusive, takes the first `size` elements from the list.
             // Each element is used only once.
-            subsets.add(remainingElements.drop(size))
+            subsets += remainingElements.dropFirst(size)
         } else {
             // If not exclusive, creates a subset of the given size.
             val subset = createNonExclusiveSubset(elements, remainingElements, size)
-            subsets.add(subset)
+            subsets += subset
         }
         i++
     }
     return subsets
+}
+
+fun <E> MutableList<E>.dropFirst(n: Int): List<E> {
+    constraints { "Size [$n] should be in range [0, $n]" { n must IntBeInRange(0..size) } }
+    return (0 until n).map { removeFirst() }
 }
 
 /**
