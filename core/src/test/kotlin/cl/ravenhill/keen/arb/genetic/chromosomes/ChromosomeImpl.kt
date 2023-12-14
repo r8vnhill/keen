@@ -7,15 +7,18 @@
 package cl.ravenhill.keen.arb.genetic.chromosomes
 
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
+import cl.ravenhill.keen.arb.genetic.genes.booleanGene
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.arb.genetic.genes.gene
 import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
+import cl.ravenhill.keen.genetic.chromosomes.BooleanChromosome
 import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.NumberChromosome
+import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
@@ -54,26 +57,19 @@ class ChromosomeImpl(override val genes: List<DummyGene>) : Chromosome<Int, Dumm
     override fun duplicateWithGenes(genes: List<DummyGene>) = ChromosomeImpl(genes.map { it.copy() })
 }
 
-/**
- * Generates an arbitrary [ChromosomeImpl] for property-based testing.
- *
- * This function creates instances of [ChromosomeImpl] with a specified number of [DummyGene]
- * objects. Each gene within the chromosome is generated randomly based on the provided [gene]
- * arbitrary. This function is particularly useful for testing genetic algorithms where
- * chromosome behavior needs to be simulated without complex logic.
- *
- * @param size An [Arb]<[Int]> generator for the size (number of genes) of the chromosome.
- *             Defaults to a range from 0 to 10.
- * @param gene An [Arb]<[DummyGene]> generator for the individual genes of the chromosome.
- *
- * @return An [Arb] that generates [ChromosomeImpl] instances with a randomized list of genes.
- */
 fun Arb.Companion.chromosome(
     size: Arb<Int> = int(0..10),
     isValid: Arb<Boolean> = boolean(),
     gene: Arb<DummyGene> = Arb.gene(isValid = isValid),
 ) = arbitrary {
     ChromosomeImpl(List(size.bind()) { gene.bind() })
+}
+
+fun Arb.Companion.booleanChromosome(
+    size: Arb<Int> = int(0..10),
+    gene: Arb<BooleanGene> = booleanGene(),
+) = arbitrary {
+    BooleanChromosome(List(size.bind()) { gene.bind() })
 }
 
 fun Arb.Companion.nothingChromosome(
