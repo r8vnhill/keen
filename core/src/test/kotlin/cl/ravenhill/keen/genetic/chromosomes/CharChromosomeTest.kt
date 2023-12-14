@@ -8,37 +8,37 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.keen.arb.genetic.chromosomes.charChromosome
 import cl.ravenhill.keen.arb.genetic.genes.charGene
 import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.assertions.`test that a gene can be duplicated with a new set of genes`
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
+import cl.ravenhill.keen.assertions.`test chromosome gene consistency`
 import cl.ravenhill.keen.assertions.`validate all genes against single filter`
 import cl.ravenhill.keen.assertions.`validate all genes against single range`
 import cl.ravenhill.keen.assertions.`validate genes with specified range and factory`
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.utils.nextChar
-import cl.ravenhill.keen.utils.nextDoubleInRange
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.char
-import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 
 class CharChromosomeTest : FreeSpec({
 
     "A Char Chromosome instance" - {
-        "should have a genes property that is set according to the constructor" {
-            checkAll(Arb.list(Arb.charGene(), 0..10)) { genes ->
-                val chromosome = CharChromosome(genes)
-                chromosome.genes shouldBe genes
+        "should have a genes property that " - {
+            "is set according to the constructor" {
+                `test chromosome gene consistency`(Arb.charGene()) { CharChromosome(it) }
+            }
+
+            "is set according to the vararg constructor" {
+                `test chromosome gene consistency`(Arb.charGene()) { CharChromosome(*it.toTypedArray()) }
             }
         }
 
         "can be duplicated with a new set of genes" {
-            checkAll(Arb.charChromosome(), Arb.list(Arb.charGene(), 0..10)) { chromosome, newGenes ->
-                val duplicatedChromosome = chromosome.duplicateWithGenes(newGenes)
-                duplicatedChromosome.genes shouldBe newGenes
-            }
+            `test that a gene can be duplicated with a new set of genes`(Arb.charChromosome(), Arb.charGene())
         }
 
         "can be converted to a Simple String " {

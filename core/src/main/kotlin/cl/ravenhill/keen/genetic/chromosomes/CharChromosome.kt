@@ -37,6 +37,26 @@ import cl.ravenhill.keen.utils.nextChar
 data class CharChromosome(override val genes: List<CharGene>) : Chromosome<Char, CharGene> {
 
     /**
+     * Creates a new instance of `CharChromosome` with the specified `CharGene` objects.
+     *
+     * This constructor allows for the creation of a new `CharChromosome` instance using a variable number of `CharGene`
+     * objects. It takes a list of `CharGene` objects as varargs and initializes the class with that list.
+     *
+     * ## Usage:
+     * ```
+     * val gene1 = CharGene('A')
+     * val gene2 = CharGene('B')
+     * val gene3 = CharGene('C')
+     * val chromosome = CharChromosome(gene1, gene2, gene3)
+     * ```
+     * In this example, `chromosome` will be a new instance of `CharChromosome` created with the provided genes `gene1`,
+     * `gene2`, and `gene3`.
+     *
+     * @param genes The `CharGene` objects to be used in the chromosome.
+     */
+    constructor(vararg genes: CharGene) : this(genes.toList())
+
+    /**
      * Creates a duplicate of the current `CharChromosome` instance with a specified list of `CharGene` objects.
      *
      * This method allows for the creation of a new `CharChromosome` instance using a different set of genes.

@@ -6,10 +6,13 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.assertions.`test that a gene can be duplicated with a new set of genes`
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
+import cl.ravenhill.keen.assertions.`test chromosome gene consistency`
 import cl.ravenhill.keen.assertions.`validate all genes against single filter`
 import cl.ravenhill.keen.assertions.`validate all genes against single range`
 import cl.ravenhill.keen.assertions.`validate genes with specified range and factory`
@@ -17,37 +20,25 @@ import cl.ravenhill.keen.genetic.chromosomes.numeric.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.utils.nextDoubleInRange
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filterNot
-import io.kotest.property.arbitrary.list
-import io.kotest.property.checkAll
 
 class DoubleChromosomeTest : FreeSpec({
 
     "A Double Chromosome" - {
         "should have a genes property that" - {
             "is set to a list provided in the constructor" {
-                checkAll(Arb.list(Arb.doubleGene())) { genes ->
-                    DoubleChromosome(genes).genes shouldBe genes
-                }
+                `test chromosome gene consistency`(Arb.doubleGene()) { DoubleChromosome(it) }
             }
 
             "is set to the vararg provided in the constructor" {
-                checkAll(Arb.list(Arb.doubleGene())) { genes ->
-                    DoubleChromosome(*genes.toTypedArray()).genes shouldBe genes
-                }
+                `test chromosome gene consistency`(Arb.doubleGene()) { DoubleChromosome(*it.toTypedArray()) }
             }
         }
 
         "should be able to create a new chromosome with the provided genes" {
-            checkAll(Arb.list(Arb.doubleGene())) { genes ->
-                val chromosome = DoubleChromosome(genes)
-                val newGenes = genes.map { it.copy() }
-                val newChromosome = chromosome.duplicateWithGenes(newGenes)
-                newChromosome.genes shouldBe newGenes
-            }
+            `test that a gene can be duplicated with a new set of genes`(Arb.doubleChromosome(), Arb.doubleGene())
         }
     }
 

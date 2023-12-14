@@ -11,25 +11,26 @@ import cl.ravenhill.keen.arb.genetic.genes.booleanGene
 import cl.ravenhill.keen.arb.genetic.genes.charGene
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.arb.genetic.genes.gene
+import cl.ravenhill.keen.arb.genetic.genes.intGene
 import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.BooleanChromosome
 import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
-import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.DoubleChromosome
+import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.NumberChromosome
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.genetic.genes.CharGene
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.genetic.genes.numeric.NumberGene
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
-import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filter
@@ -120,6 +121,10 @@ fun Arb.Companion.doubleChromosome(
     gene: Arb<DoubleGene> = doubleGene(),
 ) = arbitrary {
     DoubleChromosome(List(size.bind()) { gene.bind() })
+}
+
+fun Arb.Companion.intChromosome(size: Arb<Int> = int(0..5), gene: Arb<IntGene> = intGene()) = arbitrary {
+    IntChromosome(List(size.bind()) { gene.bind() })
 }
 
 /**

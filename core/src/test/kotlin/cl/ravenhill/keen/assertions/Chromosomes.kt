@@ -219,3 +219,23 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
         chromosome.genes shouldBe expected
     }
 }
+
+suspend fun <T, G> `test chromosome gene consistency`(
+    arb: Arb<G>,
+    factoryBuilder: (List<G>) -> Chromosome<T, G>,
+) where G : Gene<T, G> {
+    checkAll(Arb.list(arb, 0..10)) { genes ->
+        val chromosome = factoryBuilder(genes)
+        chromosome.genes shouldBe genes
+    }
+}
+
+suspend fun <T, G> `test that a gene can be duplicated with a new set of genes`(
+    chromosome: Arb<Chromosome<T, G>>,
+    gene: Arb<G>,
+) where G : Gene<T, G> {
+    checkAll(chromosome, Arb.list(gene, 0..10)) { sourceChromosome, newGenes ->
+        val duplicatedChromosome = sourceChromosome.duplicateWithGenes(newGenes)
+        duplicatedChromosome.genes shouldBe newGenes
+    }
+}
