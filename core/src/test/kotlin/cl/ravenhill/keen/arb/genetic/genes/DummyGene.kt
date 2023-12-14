@@ -12,6 +12,7 @@ import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
@@ -151,4 +152,12 @@ fun Arb.Companion.doubleGene(
     filter: (Double) -> Boolean = { true },
 ) = arbitrary {
     DoubleGene(value.bind(), range.bind(), filter)
+}
+
+fun Arb.Companion.intGene(
+    value: Arb<Int> = int(),
+    range: Arb<ClosedRange<Int>> = range(int(), int()),
+    filter: (Int) -> Boolean = { true },
+) = arbitrary {
+    IntGene(value.bind(), range.bind(), filter)
 }

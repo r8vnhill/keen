@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.genetic.genes.numeric
 
+import cl.ravenhill.keen.arb.genetic.genes.intGene
+import cl.ravenhill.keen.assertions.`test that a gene can duplicate itself`
 import cl.ravenhill.keen.assertions.`test that a gene can generate a value`
 import cl.ravenhill.keen.assertions.`test that the gene filter is set to the expected filter`
 import cl.ravenhill.keen.assertions.`test that the gene range is set to the expected range`
@@ -30,5 +32,7 @@ class IntGeneTest : FreeSpec({
         `test that a gene can generate a value`(
             Arb.int(), { IntGene(it) }, { random, range -> random.nextIntInRange(range) }
         )
+
+        `test that a gene can duplicate itself`(Arb.int(), Arb.intGene())
     }
 })

@@ -7,6 +7,7 @@
 package cl.ravenhill.keen.assertions
 
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.exceptions.AbsurdOperation
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -17,42 +18,13 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-/**
- * Tests that the provided block of code throws an `AbsurdOperation` exception.
- *
- * This function is designed for use in test scenarios where `AbsurdOperation` is expected to be thrown. It verifies
- * that the execution of the given block leads to the specified exception. This is particularly useful when testing
- * theoretical or exceptional cases in the implementation, such as operations involving `NothingGene`.
- *
- * ## Usage:
- * Use this function in unit tests where `AbsurdOperation` is the expected outcome. The function encapsulates the
- * pattern of expecting an exception in a concise and readable form, making tests cleaner and more expressive.
- *
- * ### Example:
- * ```kotlin
- * // In a test suite
- * "attempting to duplicate NothingGene" should {
- *     "throw AbsurdOperation" {
- *         check that an Absurd Operation is thrown {
- *             NothingGene.duplicateWithValue( /* No valid value can be provided */ )
- *         }
- *     }
- * }
- * ```
- * In this test example, the function is used to assert that an `AbsurdOperation` exception is thrown when attempting
- * to duplicate a `NothingGene`. The syntax makes it clear what behavior is being tested and what the expected outcome
- * is.
- *
- * @param block The block of code that is expected to throw an `AbsurdOperation`. This block contains the operation
- *   or function call that should lead to the exception.
- * @throws AbsurdOperation if the provided block does indeed throw this exception, indicating the test passes.
- */
 fun `check that an Absurd Operation is thrown`(block: () -> Unit) = shouldThrow<AbsurdOperation>(block)
 
 suspend fun <T, G> FreeSpecContainerScope.`test that the gene value is set to the expected value`(
@@ -117,8 +89,21 @@ suspend fun <T, G> FreeSpecContainerScope.`test that a gene can generate a value
         checkAll(arb, Arb.long().map { Random(it) to Random(it) }) { value, (r1, r2) ->
             Domain.random = r1
             val gene = geneFactory(value)
-            Domain.random = r2
             gene.generator() shouldBe generator(r2, gene.range)
+        }
+    }
+}
+
+suspend fun <T, G> FreeSpecContainerScope.`test that a gene can duplicate itself`(
+    arb: Arb<T>,
+    gene: Arb<G>
+) where G : Gene<T, G>, G: Ranged<T>, G: Filterable<T> {
+    "can create a copy with a different value" {
+        checkAll(gene, arb) { gene, newValue ->
+            val copy = gene.duplicateWithValue(newValue)
+            copy.value shouldBe newValue
+            copy.range shouldBe gene.range
+            copy.filter shouldBe gene.filter
         }
     }
 }

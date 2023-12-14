@@ -9,6 +9,7 @@ package cl.ravenhill.keen.genetic.genes.numeric
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
+import cl.ravenhill.keen.assertions.`test that a gene can duplicate itself`
 import cl.ravenhill.keen.assertions.`test that a gene can generate a value`
 import cl.ravenhill.keen.assertions.`test that the gene filter is set to the expected filter`
 import cl.ravenhill.keen.assertions.`test that the gene range is set to the expected range`
@@ -133,14 +134,7 @@ class DoubleGeneTest : FreeSpec({
             { random, range -> random.nextDoubleInRange(range) }
         )
 
-        "can create a copy with a different value" {
-            checkAll(Arb.doubleGene(), Arb.double()) { gene, newValue ->
-                val copy = gene.duplicateWithValue(newValue)
-                copy.value shouldBe newValue
-                copy.range shouldBe gene.range
-                copy.filter shouldBe gene.filter
-            }
-        }
+        `test that a gene can duplicate itself`(Arb.double(), Arb.doubleGene())
 
         "can verify its validity when" - {
             "the value is within the range and satisfies the filter" {
