@@ -348,7 +348,7 @@ interface Chromosome<T, G> : GeneticMaterial<T, G>, Collection<G> where G : Gene
      *   about each gene.
      */
     override fun toDetailedString() =
-        "${this::class.simpleName}(genes=${genes.map { it.toDetailedString() }}"
+        "${this::class.simpleName}(genes=${genes.map { it.toDetailedString() }})"
 
     /**
      * A factory interface for creating chromosome instances.
