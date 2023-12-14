@@ -8,17 +8,20 @@ package cl.ravenhill.keen.arb.genetic.chromosomes
 
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genes.booleanGene
+import cl.ravenhill.keen.arb.genetic.genes.charGene
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.arb.genetic.genes.gene
 import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.BooleanChromosome
+import cl.ravenhill.keen.genetic.chromosomes.CharChromosome
 import cl.ravenhill.keen.genetic.chromosomes.NothingChromosome
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.DoubleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.NumberChromosome
 import cl.ravenhill.keen.genetic.genes.BooleanGene
+import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
@@ -70,6 +73,13 @@ fun Arb.Companion.booleanChromosome(
     gene: Arb<BooleanGene> = booleanGene(),
 ) = arbitrary {
     BooleanChromosome(List(size.bind()) { gene.bind() })
+}
+
+fun Arb.Companion.charChromosome(
+    size: Arb<Int> = int(0..10),
+    gene: Arb<CharGene> = Arb.charGene(),
+) = arbitrary {
+    CharChromosome(List(size.bind()) { gene.bind() })
 }
 
 fun Arb.Companion.nothingChromosome(
