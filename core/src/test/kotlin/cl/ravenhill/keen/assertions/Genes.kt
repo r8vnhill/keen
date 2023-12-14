@@ -16,9 +16,13 @@ import cl.ravenhill.keen.mixins.Filterable
 import cl.ravenhill.keen.mixins.Ranged
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.filter
+import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map

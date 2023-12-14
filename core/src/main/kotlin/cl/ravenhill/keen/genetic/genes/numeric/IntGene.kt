@@ -232,7 +232,7 @@ data class IntGene(
      *   function.
      */
     override fun toDetailedString() =
-        "IntGene(value=$value, range=$range, filter=$filter@${System.identityHashCode(filter)})"
+        "IntGene(value=$value, range=$range, filter=($filter)@${System.identityHashCode(filter)})"
 
     /**
      * Determines whether another object is equal to this `IntGene` instance.

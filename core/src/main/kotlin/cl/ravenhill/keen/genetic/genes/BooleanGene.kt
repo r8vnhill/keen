@@ -57,9 +57,6 @@ sealed interface BooleanGene : Gene<Boolean, BooleanGene> {
      * the gene while allowing for a change in its value. This is particularly useful in genetic algorithms during
      * crossover or mutation operations, where new gene instances with modified values are required.
      *
-     * ## Parameters:
-     * - `value`: The Boolean value (`true` or `false`) for the new `BooleanGene` instance.
-     *
      * ## Usage:
      * ```
      * val gene = BooleanGene.True
@@ -68,6 +65,7 @@ sealed interface BooleanGene : Gene<Boolean, BooleanGene> {
      * ```
      * In this example, `duplicatedGene` is created as a duplicate of `gene` but with a value of `false`.
      *
+     * @param value The Boolean value (`true` or `false`) for the new `BooleanGene` instance.
      * @return A new `BooleanGene` instance with the specified Boolean value.
      */
     override fun duplicateWithValue(value: Boolean) = if (value) True else False
