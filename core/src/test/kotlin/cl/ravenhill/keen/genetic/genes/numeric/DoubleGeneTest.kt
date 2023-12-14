@@ -9,6 +9,10 @@ package cl.ravenhill.keen.genetic.genes.numeric
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
+import cl.ravenhill.keen.assertions.`test that a gene can generate a value`
+import cl.ravenhill.keen.assertions.`test that the gene filter is set to the expected filter`
+import cl.ravenhill.keen.assertions.`test that the gene range is set to the expected range`
+import cl.ravenhill.keen.assertions.`test that the gene value is set to the expected value`
 import cl.ravenhill.keen.utils.nextDoubleInRange
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -31,6 +35,23 @@ import kotlin.random.Random
 class DoubleGeneTest : FreeSpec({
 
     "A Double Gene" - {
+        `test that the gene value is set to the expected value`(Arb.double()) { DoubleGene(it) }
+
+        `test that the gene range is set to the expected range`(
+            Arb.double(),
+            -Double.MAX_VALUE..Double.MAX_VALUE,
+            { DoubleGene(it) },
+            { v, r -> DoubleGene(v, r) }
+        )
+
+        `test that the gene filter is set to the expected filter`(
+            Arb.double(),
+            { DoubleGene(it) },
+            { v, f -> DoubleGene(v, filter = f) }
+        ) {
+            it % 2 == 0.0
+        }
+
         "can be converted to" - {
             "an Int" {
                 checkAll<Double> { d ->
@@ -48,6 +69,16 @@ class DoubleGeneTest : FreeSpec({
                 checkAll<Double> { d ->
                     DoubleGene(d).toString() shouldBe
                           "DoubleGene(value=$d, range=-1.7976931348623157E308..1.7976931348623157E308)"
+                }
+            }
+
+            "a Detailed String" {
+                checkAll<Double> { d ->
+                    DoubleGene(d).toDetailedString() shouldBe
+                          "DoubleGene(" +
+                          "value=$d, " +
+                          "range=-1.7976931348623157E308..1.7976931348623157E308, " +
+                          "filter=(kotlin.Double) -> kotlin.Boolean)"
                 }
             }
         }
@@ -96,13 +127,11 @@ class DoubleGeneTest : FreeSpec({
             }
         }
 
-        "can generate a random value" {
-            checkAll(Arb.doubleGene(), Arb.long().map { Random(it) to Random(it) }) { gene, (r1, r2) ->
-                Domain.random = r1
-                val expected = r2.nextDoubleInRange(gene.range)
-                gene.generator() shouldBe expected
-            }
-        }
+        `test that a gene can generate a value`(
+            Arb.double(),
+            { DoubleGene(it) },
+            { random, range -> random.nextDoubleInRange(range) }
+        )
 
         "can create a copy with a different value" {
             checkAll(Arb.doubleGene(), Arb.double()) { gene, newValue ->

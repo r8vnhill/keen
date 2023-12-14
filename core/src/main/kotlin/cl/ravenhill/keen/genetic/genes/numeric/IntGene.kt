@@ -63,7 +63,7 @@ import java.util.*
  */
 data class IntGene(
     override val value: Int,
-    override val range: ClosedRange<Int>,
+    override val range: ClosedRange<Int> = Int.MIN_VALUE..Int.MAX_VALUE,
     override val filter: (Int) -> Boolean = { true },
 ) : NumberGene<Int, IntGene>, ComparableGene<Int, IntGene>, Ranged<Int> {
 

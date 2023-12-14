@@ -336,99 +336,113 @@ private suspend fun FreeSpecContainerScope.`test random indices with valid input
     }
 }
 
-@OptIn(ExperimentalKotest::class)
+
 suspend fun FreeSpecContainerScope.`test subset`() {
     "when picking a subset of elements" - {
-        "return a list of random subsets of the given size containing all elements" {
-            checkAll(Arb.list(Arb.any(), 1..50).map {
-                it to Arb.int(1..it.size).next()
-            }, Arb.random()) { (elements, size), random ->
-                val subsets = random.subsets(elements, size, false)
-                assertSoftly {
-                    subsets.forEach { it.size shouldBe size }
-                    subsets.flatten() shouldContainAll elements
-                }
+        `test subsets with valid inputs`()
+        `test subsets with exclusivity`()
+        `test subsets maximum limit`()
+        `test subsets exceptions`()
+    }
+}
+
+private suspend fun FreeSpecContainerScope.`test subsets with valid inputs`() {
+    "return a list of random subsets of the given size containing all elements" {
+        checkAll(Arb.list(Arb.any(), 1..50).map {
+            it to Arb.int(1..it.size).next()
+        }, Arb.random()) { (elements, size), random ->
+            val subsets = random.subsets(elements, size, false)
+            assertSoftly {
+                subsets.forEach { it.size shouldBe size }
+                subsets.flatten() shouldContainAll elements
             }
         }
+    }
+}
 
-        "return random subsets of specified size with all unique elements if exclusivity is true." {
+private suspend fun FreeSpecContainerScope.`test subsets with exclusivity`() {
+    "return random subsets of specified size with all unique elements if exclusivity is true." {
+        checkAll(
+            Arb.list(Arb.any(), 1..100).map { it to Arb.divisor(it.size).next() },
+            Arb.random()
+        ) { (elements, size), random ->
+            val subsets = random.subsets(elements, size, true)
+            assertSoftly {
+                subsets.forEach { it.size shouldBe size }
+                subsets.flatten().size shouldBe elements.size
+                subsets.flatten() shouldContainAll elements
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalKotest::class)
+private suspend fun FreeSpecContainerScope.`test subsets maximum limit`() {
+    "return a list of at most the given number of subsets" {
+        checkAll(
+            PropTestConfig(iterations = 50),
+            Arb.list(Arb.any(), 1..100).map { it to Arb.int(1..it.size).next() },
+            Arb.positiveInt(),
+            Arb.random()
+        ) { (elements, size), limit, rng ->
+            val subsets = rng.subsets(elements, size, false, limit)
+            subsets.size shouldBeLessThanOrEqual limit
+        }
+    }
+}
+
+private suspend fun FreeSpecContainerScope.`test subsets exceptions`() {
+    "throw an exception if" - {
+        "the elements list is empty" {
             checkAll(
-                Arb.list(Arb.any(), 1..100).map { it to Arb.divisor(it.size).next() },
-                Arb.random()
-            ) { (elements, size), random ->
-                val subsets = random.subsets(elements, size, true)
-                assertSoftly {
-                    subsets.forEach { it.size shouldBe size }
-                    subsets.flatten().size shouldBe elements.size
-                    subsets.flatten() shouldContainAll elements
-                }
+                Arb.positiveInt(), Arb.boolean(), Arb.random()
+            ) { size, exclusivity, rng ->
+                shouldThrow<CompositeException> {
+                    rng.subsets(emptyList<Any>(), size, exclusivity)
+                }.shouldHaveInfringement<CollectionConstraintException>("The input list must not be empty.")
             }
         }
 
-        "return a list of at most the given number of subsets" {
+        "the subsets size is non-positive" {
             checkAll(
-                PropTestConfig(iterations = 50),
-                Arb.list(Arb.any(), 1..100).map { it to Arb.int(1..it.size).next() },
-                Arb.positiveInt(),
-                Arb.random()
-            ) { (elements, size), limit, rng ->
-                val subsets = rng.subsets(elements, size, false, limit)
-                subsets.size shouldBeLessThanOrEqual limit
+                Arb.list(Arb.any(), 1..100), Arb.nonPositiveInt(), Arb.boolean(), Arb.random()
+            ) { elements, size, exclusivity, rng ->
+                val ex = shouldThrow<CompositeException> {
+                    rng.subsets(elements, size, exclusivity)
+                }
+                with(ex.throwables.first()) {
+                    shouldBeInstanceOf<IntConstraintException>()
+                    message shouldBe "The subset size [$size] must be at least 1"
+                }
             }
         }
 
-        "throw an exception if" - {
-            "the elements list is empty" {
-                checkAll(
-                    Arb.positiveInt(), Arb.boolean(), Arb.random()
-                ) { size, exclusivity, rng ->
-                    shouldThrow<CompositeException> {
-                        rng.subsets(emptyList<Any>(), size, exclusivity)
-                    }.shouldHaveInfringement<CollectionConstraintException>("The input list must not be empty.")
-                }
+        "the elements list's size is not valid when exclusivity is required" {
+            checkAll(
+                PropTestConfig(maxDiscardPercentage = 30),
+                Arb.list(Arb.any(), 1..100)
+                    .map { it to Arb.int(1..it.size).next() },
+                Arb.random()
+            ) { (elements, size), rng ->
+                assume(elements.size % size != 0)
+                shouldThrow<CompositeException> {
+                    rng.subsets(elements, size, true)
+                }.shouldHaveInfringement<ConstraintException>(
+                    "Subset count [${elements.size}] must be a multiple of size [$size] for exclusivity."
+                )
             }
+        }
 
-            "the subsets size is non-positive" {
-                checkAll(
-                    Arb.list(Arb.any(), 1..100), Arb.nonPositiveInt(), Arb.boolean(), Arb.random()
-                ) { elements, size, exclusivity, rng ->
-                    val ex = shouldThrow<CompositeException> {
-                        rng.subsets(elements, size, exclusivity)
-                    }
-                    with(ex.throwables.first()) {
-                        shouldBeInstanceOf<IntConstraintException>()
-                        message shouldBe "The subset size [$size] must be at least 1"
-                    }
+        "the limit is non-positive" {
+            checkAll(
+                Arb.list(Arb.any(), 1..100), Arb.nonPositiveInt(), Arb.boolean(), Arb.random()
+            ) { elements, limit, exclusivity, rng ->
+                val ex = shouldThrow<CompositeException> {
+                    rng.subsets(elements, elements.size, exclusivity, limit)
                 }
-            }
-
-            "the elements list's size is not valid when exclusivity is required" {
-                checkAll(
-                    PropTestConfig(maxDiscardPercentage = 30),
-                    Arb.list(Arb.any(), 1..100)
-                        .map { it to Arb.int(1..it.size).next() },
-                    Arb.random()
-                ) { (elements, size), rng ->
-                    assume(elements.size % size != 0)
-                    shouldThrow<CompositeException> {
-                        rng.subsets(elements, size, true)
-                    }.shouldHaveInfringement<ConstraintException>(
-                        "Subset count [${elements.size}] must be a multiple of size [$size] for exclusivity."
-                    )
-                }
-            }
-
-            "the limit is non-positive" {
-                checkAll(
-                    Arb.list(Arb.any(), 1..100), Arb.nonPositiveInt(), Arb.boolean(), Arb.random()
-                ) { elements, limit, exclusivity, rng ->
-                    val ex = shouldThrow<CompositeException> {
-                        rng.subsets(elements, elements.size, exclusivity, limit)
-                    }
-                    with(ex.throwables.first()) {
-                        shouldBeInstanceOf<IntConstraintException>()
-                        message shouldBe "The limit [$limit] must be at least 1."
-                    }
+                with(ex.throwables.first()) {
+                    shouldBeInstanceOf<IntConstraintException>()
+                    message shouldBe "The limit [$limit] must be at least 1."
                 }
             }
         }
