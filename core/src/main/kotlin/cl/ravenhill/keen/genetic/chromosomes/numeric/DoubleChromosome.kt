@@ -12,6 +12,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.DoubleChromosome.Factory
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
+import cl.ravenhill.keen.utils.nextDoubleInRange
 
 
 /**
@@ -143,7 +144,7 @@ data class DoubleChromosome(override val genes: List<DoubleGene>) : NumberChromo
 
         override var filters = mutableListOf<(Double) -> Boolean>()
 
-        override val defaultRange = Double.MIN_VALUE..Double.MAX_VALUE
+        override val defaultRange = -Double.MAX_VALUE..Double.MAX_VALUE
 
 
         /**
@@ -177,7 +178,7 @@ data class DoubleChromosome(override val genes: List<DoubleGene>) : NumberChromo
             return DoubleChromosome(
                 executor(size) { index ->
                     DoubleGene(
-                        Domain.random.nextDouble(ranges[index].start, ranges[index].endInclusive),
+                        Domain.random.nextDoubleInRange(ranges[index]),
                         ranges[index],
                         filters[index]
                     )

@@ -7,12 +7,15 @@ package cl.ravenhill.keen.arb.genetic.genes
 
 import cl.ravenhill.jakt.utils.DoubleRange
 import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.genetic.genes.BooleanGene
+import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
+import io.kotest.property.arbitrary.char
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.filterNot
@@ -95,6 +98,13 @@ fun Arb.Companion.booleanGene(value: Arb<Boolean> = boolean()) = arbitrary {
     if (value.bind()) BooleanGene.True else BooleanGene.False
 }
 
+fun Arb.Companion.charGene(
+    value: Arb<Char> = char(),
+    range: Arb<ClosedRange<Char>> = range(char(), char()),
+    filter: (Char) -> Boolean = { true },
+) = arbitrary {
+    CharGene(value.bind(), range.bind(), filter)
+}
 
 /**
  * Generates an arbitrary instance of [DoubleGene] for property-based testing in genetic algorithms.

@@ -15,10 +15,12 @@ import cl.ravenhill.keen.assertions.`validate all genes against single range`
 import cl.ravenhill.keen.assertions.`validate genes with specified range and factory`
 import cl.ravenhill.keen.genetic.chromosomes.numeric.DoubleChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
+import cl.ravenhill.keen.utils.nextDoubleInRange
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 
@@ -58,7 +60,9 @@ class DoubleChromosomeTest : FreeSpec({
             }
 
             "with an explicit range should use the provided range" {
-                `validate all genes against single range`(Arb.range(Arb.double(), Arb.double())) {
+                `validate all genes against single range`(
+                    Arb.range(Arb.double(), Arb.double()).filterNot { it.start.isNaN() || it.endInclusive.isNaN() }
+                ) {
                     DoubleChromosome.Factory()
                 }
             }
@@ -78,7 +82,7 @@ class DoubleChromosomeTest : FreeSpec({
             "with valid ranges and filters should create a chromosome with genes that satisfy the constraints" {
                 `validate genes with specified range and factory`(
                     Arb.range(Arb.double(), Arb.double()), { rng, ranges, index ->
-                        DoubleGene(rng.nextDouble(ranges[index].start, ranges[index].endInclusive))
+                        DoubleGene(rng.nextDoubleInRange(ranges[index]), ranges[index])
                     }) { DoubleChromosome.Factory() }
             }
         }

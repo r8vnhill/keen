@@ -13,6 +13,7 @@ import cl.ravenhill.keen.mixins.FilterMutableListContainer
 import cl.ravenhill.keen.mixins.Filterable
 import cl.ravenhill.keen.mixins.RangeMutableListContainer
 import cl.ravenhill.keen.mixins.Ranged
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
@@ -203,17 +204,18 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
       G : Gene<T, G>, G : Filterable<T>, G : Ranged<T>,
       F : Chromosome.Factory<T, G>, F : RangeMutableListContainer<T> {
     checkAll(
-        Arb.list(arb).map { it.toMutableList() },
+        Arb.list(arb, 1..50).map { it.toMutableList() },
         Arb.long().map { Random(it) to Random(it) }
     ) { ranges, (r1, r2) ->
         Domain.random = r1
         val factory = factoryBuilder()
         factory.ranges = ranges
         factory.size = ranges.size
-        factory.make().genes.forEachIndexed { index, gene ->
-            gene.range shouldBe ranges[index]
-            gene.value shouldBe geneFactory(r2, ranges, index).value
+        val chromosome = factory.make()
+        val expected = List(ranges.size) { index ->
+            geneFactory(r2, ranges, index)
         }
+        chromosome shouldHaveSize ranges.size
+        chromosome.genes shouldBe expected
     }
 }
-

@@ -39,7 +39,7 @@ import io.kotest.property.arbitrary.arbitrary
  * @return An [Arb] that generates closed ranges of type [T].
  */
 fun <T> Arb.Companion.range(a: Arb<T>, b: Arb<T>) where T : Comparable<T> = arbitrary {
-    orderedPair(a, b).bind().let { (start, end) ->
+    orderedPair(a, b, strict = true).bind().let { (start, end) ->
         start..end
     }
 }
