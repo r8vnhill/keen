@@ -16,50 +16,49 @@ import cl.ravenhill.keen.ExperimentalKeen
 
 
 /**
- * Generates a random tree structure within specified height constraints. This function is part of the experimental
- * features in the Keen library and is designed for creating tree structures with a controlled variation in height.
+ * Generates a random tree structure within specified height constraints as part of the experimental features
+ * in the Keen library. It is designed to create tree structures with controlled variation in height.
  *
  * ## Functionality:
- * - Creates a tree by randomly selecting leaf ([L]) and intermediate ([I]) nodes based on given lists.
- * - The height of the tree is determined randomly within the specified minimum ([min]) and maximum ([max]) bounds.
- * - A [condition] function is used to guide the decision of creating leaf or intermediate nodes at each level.
- * - Factories provided in [factories] are used to construct the actual leaf and intermediate nodes.
+ * - Constructs a tree by randomly selecting between leaf ([L]) and intermediate ([I]) nodes from provided lists.
+ * - The tree's height is determined randomly but constrained within the specified minimum and maximum heights
+ *   ([depths]).
+ * - Utilizes a [condition] function at each level to decide between creating a leaf or an intermediate node.
+ * - Employs [leafFactory] and [intermediateFactory] functions to construct the actual leaf and intermediate nodes.
  *
  * ## Constraints:
- * - Ensures that there is at least one leaf node in the provided list.
- * - Validates that both the minimum and maximum heights are positive, and the maximum height is greater than the
- *   minimum height.
+ * - Requires at least one leaf node in the leaf list to ensure a valid tree structure.
+ * - Enforces that both minimum and maximum heights are positive integers, with the maximum being greater than the
+ *   minimum.
  *
  * ## Usage:
- * This method is useful for generating varied tree structures for testing purposes, simulations, or any scenario where
- * random yet controlled tree structures are needed. Particularly useful in genetic programming or tree-based algorithm
- * development.
+ * Ideal for generating diverse tree structures in testing, simulations, genetic programming, or algorithm development
+ * where random yet controlled tree structures are essential.
  *
  * ### Example:
- * ```
+ * ```kotlin
  * val tree = Tree.generate(
  *     nodes = listOfLeaves to listOfIntermediates,
- *     min = 2,
- *     max = 5,
+ *     depths = 2 to 5,
  *     condition = { maxHeight, depth -> depth >= maxHeight },
- *     factories = leafFactory to intermediateFactory
+ *     leafFactory = { leaf -> /* create leaf node */ },
+ *     intermediateFactory = { intermediate, children -> /* create intermediate node */ }
  * )
- * // tree is a randomly generated Tree instance with height between 2 and 5
+ * // Generates a Tree instance with height between 2 and 5
  * ```
  *
- * @param nodes A pair of lists containing leaf nodes (`List<L>`) and intermediate nodes (`List<I>`).
- * @param min The minimum height of the tree to be generated.
- * @param max The maximum height of the tree to be generated.
- * @param condition A function that determines whether to create a leaf or an intermediate node.
- * @param leafFactory A function that takes an [L] object from the list of leafs and returns a new instance of type
- *   [T], representing a leaf node in the tree.
- * @param intermediateFactory A function that takes an [I] object from the list of intermediates, and a list of child
- *   nodes of type [T], and returns a new instance of type [T], representing an intermediate node in the tree.
- * @param V The type of value held by the tree nodes.
- * @param L The leaf node type, extending `Leaf<V>`.
- * @param I The intermediate node type, extending `Intermediate<V>`.
- * @param T The type of the tree itself, extending the `Tree` interface.
- * @return A newly generated tree of type `T` within the specified height constraints.
+ * @param nodes A pair of lists containing leaf nodes ([List]<[L]>) and intermediate nodes ([List]<[I]>).
+ * @param depths A pair specifying the minimum and maximum heights of the tree (inclusive).
+ * @param condition A function that determines the creation of a leaf or an intermediate node based on the current
+ *   depth and the maximum height.
+ * @param leafFactory A function that constructs a leaf node of type [T] from an [L] object.
+ * @param intermediateFactory A function that constructs an intermediate node of type [T] from an [I] object and a list
+ *   of child nodes.
+ * @param V The type parameter representing the value type held by the tree nodes.
+ * @param L The leaf node type, derived from `Leaf<V>`.
+ * @param I The intermediate node type, derived from `Intermediate<V>`.
+ * @param T The tree type, derived from the `Tree<V, T>` interface.
+ * @return A newly generated tree of type `T` conforming to the specified height constraints.
  */
 @ExperimentalKeen
 fun <V, L, I, T> Tree.Companion.generate(

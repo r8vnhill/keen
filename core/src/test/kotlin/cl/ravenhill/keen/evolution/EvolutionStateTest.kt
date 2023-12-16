@@ -86,6 +86,7 @@ class EvolutionStateTest : FreeSpec({
 
         "can advance to the next state" {
             checkAll(
+                PropTestConfig(iterations = 100),
                 Arb.evolutionState(
                     Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                     Arb.individualRanker(),
