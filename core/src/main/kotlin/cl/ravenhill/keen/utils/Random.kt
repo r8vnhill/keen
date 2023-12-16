@@ -132,10 +132,10 @@ fun Random.nextIntInRange(range: ClosedRange<Int>) = nextInt(range.start, range.
  */
 fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int> {
     constraints {
-        "The pick probability ($pickProbability) must be in the range [0, 1]" {
+        "The pick probability ($pickProbability) must be in the range ${0.0..1.0}" {
             pickProbability must BeInRange(0.0..1.0)
         }
-        "The start index ($start) must be less than the end index ($end)" { start must BeAtMost(end - 1) }
+        "The end ($end) must be greater than or equal to the start ($start)" { start must BeAtMost(end - 1) }
         "The end index ($end) must be greater than or equal to 0" { end mustNot BeNegative }
         "The start index ($start) must be greater than or equal to 0" { start mustNot BeNegative }
     }
