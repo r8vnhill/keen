@@ -178,10 +178,10 @@ fun Random.indices(pickProbability: Double, end: Int, start: Int = 0): List<Int>
  */
 fun Random.indices(size: Int, end: Int, start: Int = 0): List<Int> {
     constraints {
+        "The size ($size) must be greater than or equal to 0" { size mustNot BeNegative }
         "The size ($size) must be at most the size of the range (${end - start})." {
             size must BeAtMost(end - start)
         }
-        "The size ($size) must be greater than 0." { size must BePositive }
         "The end index ($end) must be greater than or equal to 0." { end mustNot BeNegative }
         "The start index ($start) must be greater than or equal to 0." { start mustNot BeNegative }
         "The start index ($start) must be less than the end index ($end)." { start must BeAtMost(end - 1) }

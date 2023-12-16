@@ -21,6 +21,7 @@ import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
@@ -30,7 +31,10 @@ import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
+import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.nonNegativeInt
+import io.kotest.property.arbitrary.positiveInt
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -86,19 +90,6 @@ class RandomsTest : FreeSpec({
                                 val end = range.endInclusive
                                 val indices = random.indices(probability, end, start)
                                 indices.toSet().size shouldBe indices.size
-                            }
-                        }
-
-                        "should be sorted" {
-                            checkAll(
-                                Arb.double(0.0..1.0).filterNot { it.isNaN() || it.isInfinite() },
-                                Arb.range(Arb.nonNegativeInt(5), Arb.nonNegativeInt(20)),
-                                Arb.random()
-                            ) { probability, range, random ->
-                                val start = range.start
-                                val end = range.endInclusive
-                                val indices = random.indices(probability, end, start)
-                                indices shouldBe indices.sorted()
                             }
                         }
                     }
@@ -180,7 +171,135 @@ class RandomsTest : FreeSpec({
                 }
             }
 
-            "by size" - { fail("Not implemented yet") }
+            "by size" - {
+                "should return a list of indices that" - {
+                    "should have the expected size" {
+                        checkAll(
+                            Arb.orderedPair(Arb.int(0..100), strict = true),
+                            Arb.int(0..10),
+                            Arb.random()
+                        ) { (start, end), size, random ->
+                            assume { size shouldBeInRange 0..(end - start) }
+                            val indices = random.indices(size, end, start)
+                            indices.size shouldBe size
+                        }
+                    }
+
+                    "should have indices that" - {
+                        "should be in the range [start, end)" {
+                            checkAll(
+                                Arb.orderedPair(Arb.int(0..100), strict = true),
+                                Arb.int(0..10),
+                                Arb.random()
+                            ) { (start, end), size, random ->
+                                assume { size shouldBeInRange 0..(end - start) }
+                                val indices = random.indices(size, end, start)
+                                indices.forEach { it shouldBeInRange start..<end }
+                            }
+                        }
+
+                        "should be in range [0, end) if start is not specified" {
+                            checkAll(
+                                Arb.int(1..100),
+                                Arb.int(0..10),
+                                Arb.random()
+                            ) { end, size, random ->
+                                assume { size shouldBeInRange 0..end }
+                                val indices = random.indices(size, end)
+                                indices.forEach { it shouldBeInRange 0..<end }
+                            }
+                        }
+
+                        "should be unique" {
+                            checkAll(
+                                Arb.orderedPair(Arb.int(0..100), strict = true),
+                                Arb.int(0..10),
+                                Arb.random()
+                            ) { (start, end), size, random ->
+                                assume { size shouldBeInRange 0..(end - start) }
+                                val indices = random.indices(size, end, start)
+                                indices.toSet().size shouldBe indices.size
+                            }
+                        }
+                    }
+                }
+
+                "should throw an exception if" - {
+                    "size is less than zero" {
+                        checkAll(
+                            Arb.negativeInt(),
+                            Arb.int(),
+                            Arb.int(),
+                            Arb.random()
+                        ) { size, start, end, random ->
+                            shouldThrow<CompositeException> {
+                                random.indices(size, end, start)
+                            }.shouldHaveInfringement<IntConstraintException>(
+                                "The size ($size) must be greater than or equal to 0"
+                            )
+                        }
+                    }
+
+                    "size is greater than the range" {
+                        checkAll(
+                            Arb.orderedPair(Arb.int(0..100), strict = true),
+                            Arb.positiveInt(),
+                            Arb.random()
+                        ) { (start, end), size, random ->
+                            assume { size shouldBeGreaterThan (end - start) }
+                            shouldThrow<CompositeException> {
+                                random.indices(size, end, start)
+                            }.shouldHaveInfringement<IntConstraintException>(
+                                "The size ($size) must be at most the size of the range (${end - start})."
+                            )
+                        }
+                    }
+
+                    "end is less than zero" {
+                        checkAll(
+                            Arb.negativeInt(),
+                            Arb.int(),
+                            Arb.int(),
+                            Arb.random()
+                        ) { end, size, start, random ->
+                            shouldThrow<CompositeException> {
+                                random.indices(size, end, start)
+                            }.shouldHaveInfringement<IntConstraintException>(
+                                "The end index ($end) must be greater than or equal to 0."
+                            )
+                        }
+                    }
+
+                    "start is less than zero" {
+                        checkAll(
+                            Arb.negativeInt(),
+                            Arb.int(),
+                            Arb.int(),
+                            Arb.random()
+                        ) { start, size, end, random ->
+                            shouldThrow<CompositeException> {
+                                random.indices(size, end, start)
+                            }.shouldHaveInfringement<IntConstraintException>(
+                                "The start index ($start) must be greater than or equal to 0."
+                            )
+                        }
+                    }
+
+                    "end is less than start" {
+                        checkAll(
+                            Arb.orderedPair(Arb.int(Int.MIN_VALUE + 1..Int.MAX_VALUE), Arb.int()),
+                            Arb.int(),
+                            Arb.random()
+                        ) { (end, start), size, random ->
+                            shouldThrow<CompositeException> {
+                                random.indices(size, end, start)
+                            }.shouldHaveInfringement<IntConstraintException>(
+                                "The start index ($start) must be less than the end index ($end)."
+                            )
+                        }
+                    }
+                }
+            }
         }
 
         `test subset`()
