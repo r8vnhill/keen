@@ -65,6 +65,7 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
     constructor(vararg chromosomes: Chromosome<T, G>) : this(chromosomes.toList())
 
     override val size = chromosomes.size
+
     override fun isEmpty() = chromosomes.isEmpty()
 
     override fun containsAll(elements: Collection<Chromosome<T, G>>) = chromosomes.containsAll(elements)

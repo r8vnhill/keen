@@ -8,7 +8,9 @@ package cl.ravenhill.keen.arb
 
 import cl.ravenhill.keen.arb.datatypes.orderedPair
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.filter
+import io.kotest.property.arbitrary.filterNot
+import io.kotest.property.arbitrary.map
 
 /**
  * Generates an arbitrary closed range of comparable elements.
@@ -38,8 +40,5 @@ import io.kotest.property.arbitrary.arbitrary
  *
  * @return An [Arb] that generates closed ranges of type [T].
  */
-fun <T> Arb.Companion.range(a: Arb<T>, b: Arb<T>) where T : Comparable<T> = arbitrary {
-    orderedPair(a, b, strict = true).bind().let { (start, end) ->
-        start..end
-    }
-}
+fun <T> Arb.Companion.range(a: Arb<T>, b: Arb<T>) where T : Comparable<T> =
+    orderedPair(a, b).map { (start, end) -> start..end }.filterNot { it.start >= it.endInclusive }

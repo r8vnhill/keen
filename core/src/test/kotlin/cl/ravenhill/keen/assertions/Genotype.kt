@@ -13,6 +13,7 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
+import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.assertions.throwables.shouldThrow

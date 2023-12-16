@@ -13,7 +13,7 @@ import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.listeners.generationRecord
 import cl.ravenhill.keen.arb.listeners.individualRecord
 import cl.ravenhill.keen.arb.listeners.populationRecord
-import cl.ravenhill.keen.assertions.shouldHaveInfringement
+import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowUnit

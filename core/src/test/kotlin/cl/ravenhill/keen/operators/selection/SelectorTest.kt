@@ -16,7 +16,7 @@ import cl.ravenhill.keen.arb.genetic.individual
 import cl.ravenhill.keen.arb.genetic.population
 import cl.ravenhill.keen.arb.individualRanker
 import cl.ravenhill.keen.arb.operators.selector
-import cl.ravenhill.keen.assertions.shouldHaveInfringement
+import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.assertions.throwables.shouldThrow

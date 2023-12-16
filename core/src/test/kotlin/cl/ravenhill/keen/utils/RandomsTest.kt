@@ -8,7 +8,7 @@ package cl.ravenhill.keen.utils
 
 import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.random
-import cl.ravenhill.keen.assertions.shouldBeInRange
+import cl.ravenhill.keen.assertions.should.shouldBeInRange
 import cl.ravenhill.keen.assertions.`test next int in range`
 import cl.ravenhill.keen.assertions.`test random char`
 import cl.ravenhill.keen.assertions.`test random indices`

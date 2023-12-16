@@ -6,13 +6,14 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.arb.datatypes.nonNaNDouble
 import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.arb.range
-import cl.ravenhill.keen.assertions.`test that a gene can be duplicated with a new set of genes`
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
 import cl.ravenhill.keen.assertions.`test chromosome gene consistency`
+import cl.ravenhill.keen.assertions.`test that a gene can be duplicated with a new set of genes`
 import cl.ravenhill.keen.assertions.`validate all genes against single filter`
 import cl.ravenhill.keen.assertions.`validate all genes against single range`
 import cl.ravenhill.keen.assertions.`validate genes with specified range and factory`
@@ -52,10 +53,8 @@ class DoubleChromosomeTest : FreeSpec({
 
             "with an explicit range should use the provided range" {
                 `validate all genes against single range`(
-                    Arb.range(Arb.double(), Arb.double()).filterNot { it.start.isNaN() || it.endInclusive.isNaN() }
-                ) {
-                    DoubleChromosome.Factory()
-                }
+                    Arb.range(Arb.nonNaNDouble(), Arb.nonNaNDouble())
+                ) { DoubleChromosome.Factory() }
             }
 
             "without an explicit filter should default all genes to the filter { true }" {
@@ -65,7 +64,9 @@ class DoubleChromosomeTest : FreeSpec({
             }
 
             "with an explicit filter should use the provided filter" {
-                `validate all genes against single filter`(Arb.double(), { true }) {
+                `validate all genes against single filter`(
+                    Arb.double().filterNot { it.isNaN() || it.isInfinite() },
+                    { true }) {
                     DoubleChromosome.Factory()
                 }
             }

@@ -16,6 +16,8 @@ import cl.ravenhill.keen.arb.datatypes.divisor
 import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.assertions.should.shouldBeInRange
+import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.utils.indices
 import cl.ravenhill.keen.utils.nextChar
 import cl.ravenhill.keen.utils.nextIntInRange

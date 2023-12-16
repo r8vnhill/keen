@@ -9,7 +9,7 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.keen.arb.genetic.chromosomes.booleanChromosome
 import cl.ravenhill.keen.arb.genetic.genes.booleanGene
-import cl.ravenhill.keen.assertions.shouldHaveInfringement
+import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec

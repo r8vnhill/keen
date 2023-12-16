@@ -9,6 +9,7 @@ package cl.ravenhill.keen.utils
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeAtMost
 import cl.ravenhill.jakt.constraints.ints.BeInRange
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
@@ -63,9 +64,15 @@ infix fun Iterable<Double>.sub(subtrahend: Double) = this.map { it - subtrahend 
 @Throws(CompositeException::class, CollectionConstraintException::class)
 operator fun <E> List<E>.get(indices: ClosedRange<Int>): List<E> {
     constraints {
-        "The range must be within the list's indices" {
+        "The list must not be empty" { this@get mustNot BeEmpty }
+        "The start index (${indices.start}) must be in range ${this@get.indices}" {
             indices.start must BeInRange(this@get.indices)
+        }
+        "The end index (${indices.endInclusive}) must be in range ${this@get.indices}" {
             indices.endInclusive must BeInRange(this@get.indices)
+        }
+        "The start index (${indices.start}) must be less than or equal to the end index (${indices.endInclusive})" {
+            indices.start must BeAtMost(indices.endInclusive)
         }
     }
     return subList(indices.start, indices.endInclusive + 1)
@@ -171,14 +178,11 @@ fun <E> List<List<E>>.transpose(): List<List<E>> {
 @Throws(CompositeException::class, CollectionConstraintException::class, IntConstraintException::class)
 fun <E> MutableList<E>.swap(i: Int, j: Int) {
     constraints {
-        "The list must not be empty" {
-            this@swap mustNot BeEmpty
-        }
-        "Indices must be within range [0, ${this@swap.size})" {
-            i must BeInRange(0 until this@swap.size)
-            j must BeInRange(0 until this@swap.size)
-        }
+        "The list must not be empty" { this@swap mustNot BeEmpty }
+        "The first index ($i) must be in range ${this@swap.indices}" { i must BeInRange(this@swap.indices) }
+        "The second index ($j) must be in range ${this@swap.indices}" { j must BeInRange(this@swap.indices) }
     }
-    if (i == j) return
-    this[i] = this[j].also { this[j] = this[i] }
+    if (i != j) {
+        this[i] = this[j].also { this[j] = this[i] }
+    }
 }

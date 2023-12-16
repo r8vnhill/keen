@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.assertions
+package cl.ravenhill.keen.assertions.should
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.ConstraintException

@@ -59,7 +59,11 @@ fun Double.isNotNaN() = !isNaN()
  * @return `true` if the absolute difference between the receiver and the argument `d` is less than the equality
  *   threshold; `false` otherwise.
  */
-infix fun Double.eq(d: Double): Boolean =  abs(this - d) < Domain.equalityThreshold
+infix fun Double.eq(d: Double): Boolean = if (this == d) {
+    true
+} else {
+    abs(this - d) < Domain.equalityThreshold
+}
 
 /**
  * Rounds up the current integer to the nearest multiple of a specified integer.

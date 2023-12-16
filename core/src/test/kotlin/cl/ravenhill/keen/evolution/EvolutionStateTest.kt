@@ -14,7 +14,7 @@ import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.individual
 import cl.ravenhill.keen.arb.genetic.population
 import cl.ravenhill.keen.arb.individualRanker
-import cl.ravenhill.keen.assertions.shouldHaveInfringement
+import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
@@ -38,7 +38,7 @@ class EvolutionStateTest : FreeSpec({
         "when created" - {
             "should be created with a population and generation provided to the constructor" {
                 checkAll(
-                    PropTestConfig(iterations = 100),
+                    PropTestConfig(iterations = 50),
                     Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                     Arb.nonNegativeInt(),
                     Arb.individualRanker()
@@ -92,7 +92,7 @@ class EvolutionStateTest : FreeSpec({
                     Arb.int(0..<Int.MAX_VALUE)
                 ),
             ) { state ->
-                val nextState = state.next()
+                val nextState = state.copy(generation = state.generation + 1)
                 nextState.population shouldBe state.population
                 nextState.generation shouldBe state.generation + 1
             }

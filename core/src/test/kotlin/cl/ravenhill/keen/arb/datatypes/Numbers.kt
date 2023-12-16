@@ -8,6 +8,9 @@ package cl.ravenhill.keen.arb.datatypes
 
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.filterNot
+import io.kotest.property.arbitrary.pair
 
 
 /**
@@ -46,3 +49,58 @@ fun Arb.Companion.divisor(number: Int) = arbitrary { rs ->
         1
     }
 }
+
+/**
+ * Creates an arbitrary generator for [Double] values excluding [Double.NaN] (Not a Number).
+ *
+ * This function extends the [Arb.Companion] object to generate `Double` values while ensuring they are not `NaN`.
+ * It filters out `NaN` values from the provided arbitrary generator of `Double` ([arb]). By default, it uses the
+ * standard `double()` ([Arb.Companion.double]) arbitrary generator. This is particularly useful in contexts where
+ * ``NaN`` values are not desired or valid, such as in mathematical computations or when dealing with strictly numerical
+ * datasets.
+ *
+ * ## Usage:
+ * Utilize this function in property-based testing scenarios where ``NaN`` values need to be excluded. It provides a
+ * convenient way to ensure that the generated `Double` values are always numbers.
+ *
+ * ### Example:
+ * ```kotlin
+ * val nonNaNDoubleGen = Arb.nonNaNDouble()
+ * val randomDouble = nonNaNDoubleGen.bind() // Generates a random Double that is not NaN
+ * ```
+ * In this example, `nonNaNDoubleGen` is an arbitrary that generates `Double` values, ensuring that they are never NaN.
+ *
+ * @param arb An optional [Arb]<[Double]> to be filtered for non-NaN values. Defaults to the standard `double()`
+ * ([Arb.Companion.double]) generator.
+ * @return An [Arb]<[Double]> that generates non-``NaN`` `Double` values.
+ */
+fun Arb.Companion.nonNaNDouble(arb: Arb<Double> = double()) = arb.filterNot { it.isNaN() }
+
+/**
+ * Creates an arbitrary generator for pairs of non-`NaN` [Double] values.
+ *
+ * This function extends the [Arb.Companion] object to generate pairs of `Double` values, with both elements in the
+ * pair being non-`NaN`. It utilizes the [Arb.Companion.nonNaNDouble] function to filter out `NaN` values from the
+ * provided arbitrary generator of `Double` ([arb]). The resulting arbitrary generator produces pairs where each
+ * element is a valid `Double` value, excluding `NaN`. This is particularly useful in scenarios where pairs of
+ * numerical `Double` values are required, and `NaN` values are not permissible, such as in mathematical operations or
+ * data analyses that require valid numeric inputs.
+ *
+ * ## Usage:
+ * Employ this function in property-based testing scenarios where pairs of `Double` values are needed, and it is
+ * crucial to ensure that none of the values are `NaN`. It provides a straightforward way to obtain pairs of valid
+ * numerical `Double` values for testing purposes.
+ *
+ * ### Example:
+ * ```kotlin
+ * val nonNaNDoublePairGen = Arb.nonNaNDoublePair(Arb.double())
+ * val randomPair = nonNaNDoublePairGen.bind() // Generates a random pair of non-`NaN` Double values
+ * ```
+ * In this example, `nonNaNDoublePairGen` is an arbitrary that generates pairs of `Double` values, ensuring that both
+ * elements in each pair are never `NaN`.
+ *
+ * @param arb The [Arb]<[Double]> to be used as the base generator for creating non-`NaN` `Double` pairs. Typically,
+ * this is a standard `double()` generator.
+ * @return An [Arb]<[Pair]<[Double], [Double]>> that generates pairs of non-`NaN` `Double` values.
+ */
+fun Arb.Companion.nonNaNDoublePair(arb: Arb<Double>) = Arb.pair(Arb.nonNaNDouble(arb), Arb.nonNaNDouble(arb))

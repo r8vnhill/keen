@@ -7,15 +7,16 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.keen.Domain.DEFAULT_SURVIVAL_RATE
 import cl.ravenhill.keen.Domain.environments
 import cl.ravenhill.keen.Domain.equalityThreshold
 import cl.ravenhill.keen.Domain.maxProgramDepth
 import cl.ravenhill.keen.Domain.random
+import cl.ravenhill.keen.exceptions.constraints.BeNaN
 import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.utils.eq
 import kotlin.random.Random
+import cl.ravenhill.jakt.constraints.doubles.BeAtLeast as DoubleBeAtLeast
 
 
 /**
@@ -57,13 +58,25 @@ object Domain {
         ReplaceWith("EvolutionEngine.Factory.DEFAULT_POPULATION_SIZE")
     )
     const val DEFAULT_POPULATION_SIZE = 50
+
     @Deprecated(
         "Use the constant associated with the engine instead",
         ReplaceWith("EvolutionEngine.Factory.DEFAULT_SURVIVAL_RATE")
     )
     const val DEFAULT_SURVIVAL_RATE = 0.4
-    private const val DEFAULT_EQUALITY_THRESHOLD = 0.0001
+
+    const val DEFAULT_EQUALITY_THRESHOLD = 0.0001
     var equalityThreshold = DEFAULT_EQUALITY_THRESHOLD
+        set(value) {
+            constraints {
+                "The equality threshold ($value) must be greater than or equal to zero" {
+                   value must DoubleBeAtLeast(0.0)
+                   value mustNot BeNaN
+                }
+            }
+            field = value
+        }
+
     var random: Random = Random.Default
 
     @ExperimentalKeen

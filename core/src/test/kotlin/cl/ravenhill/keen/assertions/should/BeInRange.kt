@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.assertions
+package cl.ravenhill.keen.assertions.should
 
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult

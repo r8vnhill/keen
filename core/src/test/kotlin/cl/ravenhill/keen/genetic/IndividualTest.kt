@@ -7,8 +7,10 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.individual
+import cl.ravenhill.keen.arb.genetic.population
 import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -101,6 +103,15 @@ class IndividualTest : FreeSpec({
                 checkAll(Arb.individual(Arb.genotype(Arb.chromosome()), Arb.constant(Double.NaN))) { individual ->
                     individual.isEvaluated() shouldBe false
                 }
+            }
+        }
+    }
+
+    "A Population of Individuals" - {
+        "should have a fitness property that is equal to the list of fitness values of the individuals" {
+            val individualArb = Arb.individual(Arb.genotype(Arb.nothingChromosome()))
+            checkAll(Arb.population(individualArb)) { population ->
+                population.fitness shouldBe population.map { it.fitness }
             }
         }
     }

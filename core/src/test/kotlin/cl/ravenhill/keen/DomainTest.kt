@@ -7,15 +7,17 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arb.random
-import cl.ravenhill.keen.assertions.shouldHaveInfringement
+import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.prog.Program
 import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.positiveInt
@@ -36,10 +38,25 @@ class DomainTest : FreeSpec({
                 Domain.equalityThreshold shouldBe 0.0001
             }
 
-            "can be changed" {
-                checkAll(Arb.double().filterNot { it.isNaN() }) { threshold ->
+            "can be set to a positive value" {
+                checkAll(Arb.double().filter { it > 0 }) { threshold ->
                     Domain.equalityThreshold = threshold
                     Domain.equalityThreshold shouldBe threshold
+                }
+            }
+
+            "can be set to 0" {
+                Domain.equalityThreshold = 0.0
+                Domain.equalityThreshold shouldBe 0.0
+            }
+
+            "should throw an exception if set to a value that's not greater than or equal to zero" {
+                checkAll(Arb.double().filterNot { it >= 0 }) { threshold ->
+                    shouldThrowUnit<CompositeException> {
+                        Domain.equalityThreshold = threshold
+                    }.shouldHaveInfringement<DoubleConstraintException>(
+                        "The equality threshold ($threshold) must be greater than or equal to zero"
+                    )
                 }
             }
         }
