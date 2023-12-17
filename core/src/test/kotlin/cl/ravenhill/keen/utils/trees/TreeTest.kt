@@ -275,7 +275,7 @@ class TreeTest : FreeSpec({
  * @constructor Creates a new instance of [TypedIntermediate] with the specified [arity].
  */
 @OptIn(ExperimentalKeen::class)
-private data class TypedIntermediate<T>(override val arity: Int, override val contents: T? = null) : Intermediate<T>
+data class TypedIntermediate<T>(override val arity: Int, override val contents: T? = null) : Intermediate<T>
 
 /**
  * Represents a leaf node in a typed tree structure.

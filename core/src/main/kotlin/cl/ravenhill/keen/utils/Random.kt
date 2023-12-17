@@ -97,7 +97,10 @@ fun Random.nextDoubleInRange(range: ClosedRange<Double>) = nextDouble(range.star
  *   lower and upper bounds for the random value.
  * @return A random integer value that falls within the specified range.
  */
-fun Random.nextIntInRange(range: ClosedRange<Int>) = nextInt(range.start, range.endInclusive)
+fun Random.nextIntInRange(range: ClosedRange<Int>): Int {
+    constraints { "Cannot generate a random integer within an empty range" { constraint { !range.isEmpty() } } }
+    return nextInt(range.start, range.endInclusive)
+}
 
 /**
  * Generates a list of indices based on a specified probability.

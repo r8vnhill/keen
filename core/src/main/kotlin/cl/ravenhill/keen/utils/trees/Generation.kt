@@ -8,11 +8,10 @@ package cl.ravenhill.keen.utils.trees
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
-import cl.ravenhill.jakt.constraints.ints.BeAtLeast
-import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.utils.nextIntInRange
 
 
 /**
@@ -22,7 +21,7 @@ import cl.ravenhill.keen.ExperimentalKeen
  * ## Functionality:
  * - Constructs a tree by randomly selecting between leaf ([L]) and intermediate ([I]) nodes from provided lists.
  * - The tree's height is determined randomly but constrained within the specified minimum and maximum heights
- *   ([depths]).
+ *   ([heightRange]).
  * - Utilizes a [condition] function at each level to decide between creating a leaf or an intermediate node.
  * - Employs [leafFactory] and [intermediateFactory] functions to construct the actual leaf and intermediate nodes.
  *
@@ -48,7 +47,7 @@ import cl.ravenhill.keen.ExperimentalKeen
  * ```
  *
  * @param nodes A pair of lists containing leaf nodes ([List]<[L]>) and intermediate nodes ([List]<[I]>).
- * @param depths A pair specifying the minimum and maximum heights of the tree (inclusive).
+ * @param heightRange A pair specifying the minimum and maximum heights of the tree (inclusive).
  * @param condition A function that determines the creation of a leaf or an intermediate node based on the current
  *   depth and the maximum height.
  * @param leafFactory A function that constructs a leaf node of type [T] from an [L] object.
@@ -63,26 +62,20 @@ import cl.ravenhill.keen.ExperimentalKeen
 @ExperimentalKeen
 fun <V, L, I, T> Tree.Companion.generate(
     nodes: Pair<List<L>, List<I>>,
-    depths: Pair<Int, Int>,
-    condition: (Int, Int) -> Boolean,
+    heightRange: IntRange,
+    condition: (maxHeight: Int, currentDepth: Int) -> Boolean,
     leafFactory: (L) -> T,
     intermediateFactory: (I, List<T>) -> T,
-): T where L : Leaf<V>, I : Intermediate<V>, T : Tree<V, T> {
-    val (min, max) = depths
+): T where L : Leaf<V>, I : Intermediate<V>, T : Tree<Node<V>, T> {
     val leafs = nodes.first
-    val intermediates = nodes.second
     constraints {
         "There should be at least one leaf node." { leafs mustNot BeEmpty }
-        "The minimum height must be positive." { min must BePositive }
-        "The maximum height must be positive." { max must BePositive }
-        "The maximum height [$max] must be greater than the minimum height [$min]." {
-            min mustNot BeEqualTo(Int.MAX_VALUE)
-            max must BeAtLeast(min + 1)
-        }
+        "The minimum height (${heightRange.first}) must be positive." { heightRange.first must BePositive }
+        "The maximum height (${heightRange.last}) must be positive." { heightRange.last must BePositive }
     }
-    val height = Domain.random.nextInt(min, max)
+    val height = Domain.random.nextIntInRange(heightRange)
     return generateRecursive(
-        leafs to intermediates,
+        nodes,
         0,
         height,
         condition,
@@ -138,8 +131,8 @@ private fun <V, T, I, L> Tree.Companion.generateRecursive(
     depth: Int,
     maxHeight: Int,
     condition: (maxHeight: Int, depth: Int) -> Boolean,
-    factories: Pair<(L) -> T, (I, List<T>) -> T>
-): T where L : Leaf<V>, I : Intermediate<V>, T : Tree<V, T> {
+    factories: Pair<(L) -> T, (I, List<T>) -> T>,
+): T where L : Leaf<V>, I : Intermediate<V>, T : Tree<Node<V>, T> {
     val leafs = nodes.first
     val intermediates = nodes.second
     // Create an empty list to store children of the current node

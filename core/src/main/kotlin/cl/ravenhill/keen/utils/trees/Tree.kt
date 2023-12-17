@@ -52,7 +52,7 @@ import cl.ravenhill.keen.mixins.SelfReferential
  * @see ExperimentalKeen for the experimental status of this interface.
  */
 @ExperimentalKeen
-interface Tree<V, T> : SelfReferential<T>, Collection<T>, MultiStringFormat where T : Tree<V, T> {
+interface Tree<V, T> : SelfReferential<T>, Iterable<T>, MultiStringFormat where T : Tree<V, T> {
 
     val value: V
 
@@ -64,7 +64,7 @@ interface Tree<V, T> : SelfReferential<T>, Collection<T>, MultiStringFormat wher
 
     val height: Int get() = if (children.isEmpty()) 0 else children.maxOfOrNull { it.height }!! + 1
 
-    override val size: Int get() = nodes.size
+    val size: Int get() = nodes.size
 
     val descendants: List<T> get() = drop(1)
 
@@ -92,7 +92,7 @@ interface Tree<V, T> : SelfReferential<T>, Collection<T>, MultiStringFormat wher
      *
      * @return A randomly selected node from the tree, of type [T].
      */
-    fun random(): T = random(Domain.random)
+    fun random(): T = nodes.random(Domain.random)
 
     /**
      * Finds the index range of the first node in the tree that satisfies a given predicate, including the indices of
@@ -167,48 +167,6 @@ interface Tree<V, T> : SelfReferential<T>, Collection<T>, MultiStringFormat wher
      * @return A new instance of type [T], representing the newly created node.
      */
     fun createNode(value: V, children: List<T>): T
-
-    /**
-     * Determines whether a specified element is present in the tree. This function overrides the `contains` method of
-     * the `Collection` interface and checks if the given element is part of the tree's nodes.
-     *
-     * ## Usage:
-     * This method is used to verify the presence of a specific node within the tree. It can be helpful in scenarios
-     * such as searching for a particular node, validating tree integrity, or ensuring uniqueness of nodes in certain
-     * operations.
-     *
-     * @param element The node of type [T] whose presence in the tree is to be checked.
-     * @return `true` if the element is part of the tree's nodes, `false` otherwise.
-     */
-    override fun contains(element: T) = nodes.contains(element)
-
-    /**
-     * Determines whether the tree contains all elements of a specified collection. This method overrides the
-     * `containsAll` method from the `Collection` interface. It is used to verify if every element in the given
-     * collection is a part of the tree's node structure.
-     *
-     * ## Usage:
-     * This method is particularly useful for operations that require validation of multiple nodes' presence within the
-     * tree. It is applicable in scenarios such as ensuring the completeness of a subtree, verifying that a set of nodes
-     * belongs to a particular branch, or confirming that certain conditions are met by multiple nodes in the tree.
-     *
-     * @param elements The collection of nodes to be checked for presence in the tree.
-     * @return `true` if all elements in the specified collection are part of the tree, `false` otherwise.
-     */
-    override fun containsAll(elements: Collection<T>) = nodes.containsAll(elements)
-
-    /**
-     * Determines whether the tree is empty. This method overrides the `isEmpty` method from the `Collection` interface.
-     * It checks if the tree's [nodes] list, which represents all nodes in the tree, is empty.
-     *
-     * ## Usage:
-     * This method is useful for quickly determining whether a tree structure contains any nodes. It can be used in
-     * various scenarios such as initializing operations on a tree, validating tree structures, or as a condition in
-     * tree traversal algorithms.
-     *
-     * @return `true` if the tree has no nodes, `false` otherwise.
-     */
-    override fun isEmpty() = nodes.isEmpty()
 
     /**
      * Provides an iterator over the nodes of the tree. This method overrides the `iterator` method from the
