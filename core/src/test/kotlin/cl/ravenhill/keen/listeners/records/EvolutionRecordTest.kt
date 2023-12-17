@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.records
+package cl.ravenhill.keen.listeners.records
 
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.listeners.evolutionRecord

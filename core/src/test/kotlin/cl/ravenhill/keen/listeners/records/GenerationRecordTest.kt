@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.records
+package cl.ravenhill.keen.listeners.records
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
