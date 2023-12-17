@@ -49,13 +49,11 @@ import cl.ravenhill.keen.ranking.IndividualRanker
  * @param T The type of data encapsulated by the genes within the individuals.
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.
  */
-class TournamentSelector<T, G>(private val tournamentSize: Int = DEFAULT_SIZE) : Selector<T, G> where G : Gene<T, G> {
+class TournamentSelector<T, G>(val tournamentSize: Int = DEFAULT_SIZE) : Selector<T, G> where G : Gene<T, G> {
 
     init {
         constraints {
-            "The tournament size ($tournamentSize) must be positive" {
-                tournamentSize must BePositive
-            }
+            "The tournament size ($tournamentSize) must be positive" { tournamentSize must BePositive }
         }
     }
 
@@ -90,7 +88,7 @@ class TournamentSelector<T, G>(private val tournamentSize: Int = DEFAULT_SIZE) :
      * @return A list of individuals selected through tournament selection.
      */
     override fun select(population: Population<T, G>, count: Int, ranker: IndividualRanker<T, G>) =
-        (0 until count).map {
+        (0..<count).map {
             generateSequence { population[Domain.random.nextInt(population.size)] }
                 .take(tournamentSize)
                 .maxWithOrNull(ranker.comparator)
