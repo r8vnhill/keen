@@ -14,6 +14,7 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 
 class FitnessMinRankerTest : FreeSpec({
@@ -46,6 +47,14 @@ class FitnessMinRankerTest : FreeSpec({
                 Arb.double()
             ) { g1, g2, f ->
                 FitnessMinRanker<Nothing, NothingGene>()(Individual(g1, f), Individual(g2, f)) shouldBe 0
+            }
+        }
+
+        "should have a fitness transform method that inverts the fitness of an individual" {
+            checkAll(Arb.list(Arb.double())) { fitness ->
+                FitnessMinRanker<Nothing, NothingGene>().fitnessTransform(fitness).forEachIndexed { i, f ->
+                    f shouldBe fitness.sum() - fitness[i]
+                }
             }
         }
     }
