@@ -7,11 +7,16 @@
 package cl.ravenhill.keen.ranking
 
 import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.individual
 import cl.ravenhill.keen.arb.genetic.population
+import cl.ravenhill.keen.arb.individualRanker
+import cl.ravenhill.keen.arb.ranker
 import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.genes.NothingGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
 import io.kotest.matchers.shouldBe
@@ -19,6 +24,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filterNot
+import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.next
 import io.kotest.property.checkAll
@@ -27,8 +33,9 @@ class IndividualRankerTest : FreeSpec({
 
     "An Individual Ranker" - {
         "should have a comparator that works according to the invoke method" {
-            checkAll(Arb.individual(Arb.genotype()), Arb.individual(Arb.genotype())) { i1, i2 ->
-                DummyRanker().comparator.compare(i1, i2) shouldBe DummyRanker()(i1, i2)
+            val individualArb = Arb.individual(Arb.genotype(Arb.nothingChromosome()))
+            checkAll(individualArb, individualArb, Arb.ranker<Nothing, NothingGene>()) { i1, i2, ranker ->
+                ranker.comparator.compare(i1, i2) shouldBe ranker(i1, i2)
             }
         }
 
@@ -70,6 +77,12 @@ class IndividualRankerTest : FreeSpec({
                     DummyRanker()(i1, i2) shouldBeGreaterThanOrEqualTo 0
                 }
             }
+        }
+
+        "should have a fitness transformation method that returns the same list" {
+             checkAll(Arb.ranker<Nothing, NothingGene>(), Arb.list(Arb.double())) { ranker, fitness ->
+                 ranker.fitnessTransform(fitness) shouldBe fitness
+             }
         }
     }
 })
