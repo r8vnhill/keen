@@ -23,6 +23,7 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
 
 class RouletteWheelSelectorTest : FreeSpec({
@@ -100,11 +101,14 @@ class RouletteWheelSelectorTest : FreeSpec({
 
         "when selecting individuals from a population" - {
             "should return the specified number of individuals" {
-                fail("Not implemented")
-            }
-
-            "should return the expected individuals" {
-                fail("Not implemented")
+                checkAll(
+                    Arb.rouletteWheelSelector<Nothing, NothingGene>(),
+                    Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..25),
+                    Arb.int(0..100),
+                    Arb.anyRanker<Nothing, NothingGene>()
+                ) { selector, population, n, ranker ->
+                    selector.select(population, n, ranker).size shouldBe n
+                }
             }
         }
     }

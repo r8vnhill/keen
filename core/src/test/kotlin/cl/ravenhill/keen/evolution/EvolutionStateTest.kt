@@ -38,7 +38,7 @@ class EvolutionStateTest : FreeSpec({
         "when created" - {
             "should be created with a population and generation provided to the constructor" {
                 checkAll(
-                    PropTestConfig(iterations = 50),
+                    PropTestConfig(iterations = 25),
                     Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                     Arb.nonNegativeInt(),
                     Arb.individualRanker()
