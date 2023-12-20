@@ -1,6 +1,6 @@
 # Keen | Kotlin Evolutionary Computation Framework
 
-[![](https://jitpack.io/v/r8vnhill/keen.svg)](https://jitpack.io/#r8vnhill/keen)
+[![Maven Central](https://img.shields.io/maven-central/v/cl.ravenhill/keen-core.svg)](https://search.maven.org/artifact/cl.ravenhill/keen-core)
 [![License](https://img.shields.io/badge/License-BSD_2--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
 ![Keen logo](logos/TransparentBg.png)
@@ -25,14 +25,12 @@ from selection and crossover methods to mutation and fitness evaluation.
 
 ```kotlin
 repositories {
-    maven {
-        url = uri("https://jitpack.io")
-    }
+    mavenCentral()
     /* ... */
 }
 
 dependencies {
-    implementation("com.github.r8vnhill:keen:core:1.0.0")
+    implementation("cl.ravenhill:keen-core:1.0.0")
     /* ... */
 }
 ```
