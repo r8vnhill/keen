@@ -63,12 +63,8 @@ open class CombineCrossover<T, G>(
     // Initial validation and constraints
     init {
         constraints {
-            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0" {
-                chromosomeRate must BeInRange(0.0..1.0)
-            }
-            "The gene rate [$geneRate] must be in 0.0..1.0" {
-                geneRate must BeInRange(0.0..1.0)
-            }
+            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0" { chromosomeRate must BeInRange(0.0..1.0) }
+            "The gene rate [$geneRate] must be in 0.0..1.0" { geneRate must BeInRange(0.0..1.0) }
         }
     }
 

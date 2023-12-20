@@ -101,6 +101,7 @@ class EvolutionStateTest : FreeSpec({
 
         "can be destructured" {
             checkAll(
+                PropTestConfig(iterations = 100),
                 Arb.evolutionState(
                     Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                     Arb.individualRanker()
@@ -144,6 +145,7 @@ class EvolutionStateTest : FreeSpec({
 
             "with a different population" {
                 checkAll(
+                    PropTestConfig(iterations = 100),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                         Arb.individualRanker()

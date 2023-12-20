@@ -13,6 +13,7 @@ import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.pair
 
 
+// region : -=================================== INT ==================================================================-
 /**
  * Creates an arbitrary generator for divisors of a given number.
  *
@@ -49,7 +50,9 @@ fun Arb.Companion.divisor(number: Int) = arbitrary { rs ->
         1
     }
 }
+// endregion INT
 
+// region : -================================= DOUBLE =================================================================-
 /**
  * Creates an arbitrary generator for [Double] values excluding [Double.NaN] (Not a Number).
  *
@@ -104,3 +107,34 @@ fun Arb.Companion.nonNaNDouble(arb: Arb<Double> = double()) = arb.filterNot { it
  * @return An [Arb]<[Pair]<[Double], [Double]>> that generates pairs of non-`NaN` `Double` values.
  */
 fun Arb.Companion.nonNaNDoublePair(arb: Arb<Double>) = Arb.pair(Arb.nonNaNDouble(arb), Arb.nonNaNDouble(arb))
+
+/**
+ * Creates an arbitrary generator for probability values.
+ *
+ * This function is a part of the [Arb.Companion] object, and it generates double values between 0.0 and 1.0,
+ * representing probabilities. These values are particularly useful in contexts where a probability value is required,
+ * such as in the implementation of genetic algorithms or stochastic processes. The generated values exclude NaN
+ * (Not a Number) and infinite values to ensure valid probability figures.
+ *
+ * ## Functionality:
+ * - Generates double values in the range 0.0 to 1.0.
+ * - Ensures that the generated values are neither NaN nor infinite, which are invalid for probability calculations.
+ *
+ * ## Usage:
+ * Use this generator to obtain probability values for scenarios where stochastic elements are involved, such as
+ * random decision-making in simulations, genetic algorithms, or other probabilistic models.
+ *
+ * ### Example:
+ * ```kotlin
+ * val probabilityGen = Arb.probability()
+ * val probabilityValue = probabilityGen.bind() // Generates a probability value between 0.0 and 1.0
+ * // Use probabilityValue in a context where a valid probability is required
+ * ```
+ * In this example, `probabilityGen` is an arbitrary that generates a valid probability value. This value can be used in
+ * various applications where a random but controlled element is needed, ensuring the validity and reliability of the
+ * probability used.
+ *
+ * @return An [Arb]<[Double]> that generates double values between 0.0 and 1.0, excluding NaN and infinite values.
+ */
+fun Arb.Companion.probability() = double(0.0..1.0).filterNot { it.isNaN() || it.isInfinite() }
+// endregion DOUBLE

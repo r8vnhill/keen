@@ -90,21 +90,20 @@ interface Mutator<T, G> : Alterer<T, G> where G : Gene<T, G> {
      *         potentially altered individuals.
      */
     override fun invoke(state: EvolutionState<T, G>, outputSize: Int): EvolutionState<T, G> {
+        constraints {
+            "The output size ($outputSize) must be equal to the population size (${state.population.size})" {
+                outputSize must BeEqualTo(state.population.size)
+            }
+        }
         if (individualRate eq 0.0) return state
         val result = state.population.map {
-            if (Domain.random.nextDouble() > chromosomeRate) {
+            if (Domain.random.nextDouble() > individualRate) {
                 it
             } else {
                 mutateIndividual(it)
             }
         }
-        return EvolutionState(state.generation, state.ranker, result).apply {
-            constraints {
-                "The size of the population after mutation [$size] must be equal to the output size [$outputSize]" {
-                    size must BeEqualTo(outputSize)
-                }
-            }
-        }
+        return state.copy(population = result)
     }
 
     /**
@@ -141,7 +140,11 @@ interface Mutator<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * @return A new [Individual] instance with a mutated genotype. The fitness value is reset to `Double.NaN`.
      */
     fun mutateIndividual(individual: Individual<T, G>): Individual<T, G> =
-        Individual(Genotype(individual.genotype.map { mutateChromosome(it) }), Double.NaN)
+        Individual(Genotype(if (Domain.random.nextDouble() > chromosomeRate) {
+            individual.genotype.chromosomes
+        } else {
+            individual.genotype.map { mutateChromosome(it) }
+        }), Double.NaN)
 
 
     /**

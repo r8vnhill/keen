@@ -39,10 +39,14 @@ import cl.ravenhill.keen.genetic.genes.numeric.NumberGene
 class AverageCrossover<T, G>(
     chromosomeRate: Double = 1.0,
     geneRate: Double = 1.0,
+    numParents: Int = 2,
+    exclusivity: Boolean = false
 ) : CombineCrossover<T, G>(
     { genes: List<G> ->
         genes[0].average(genes.drop(1))
     },
     chromosomeRate,
-    geneRate
+    geneRate,
+    numParents,
+    exclusivity
 ) where T : Number, G : NumberGene<T, G>

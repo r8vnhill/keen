@@ -60,69 +60,8 @@ class Program<V>(
 
     val root: Program<V> = nodes.first()
 
-    /**
-     * Creates and returns a new instance of the `Program` class with a specified reducible expression and list of
-     * children.
-     *
-     * This method overrides the `createNode` method from the `Tree` interface, providing a way to construct new
-     * `Program` nodes with given values and children. It utilizes the [copy] function to facilitate the creation of
-     * the new node.
-     *
-     * ## Functionality:
-     * - Constructs a new `Program` instance that encapsulates the provided reducible expression (`value`) and the
-     *   specified list of children (`children`).
-     *
-     * ## Usage:
-     * The `createNode` method is particularly useful in scenarios involving tree manipulation, such as in genetic
-     * programming, where new program trees or subtrees need to be constructed dynamically based on evolving conditions
-     * or operations.
-     *
-     * ### Example:
-     * ```
-     * val program: Program<MyValueType> = ...
-     * val newReducible: Reducible<MyValueType> = ...
-     * val newChildren: List<Program<MyValueType>> = ...
-     * val newNode = program.createNode(newReducible, newChildren)
-     * // newNode is now a new Program instance with the specified value and children
-     * ```
-     *
-     * @param value The reducible expression to be used as the value of the new node.
-     * @param children The list of child `Program` instances to be attached to the new node.
-     * @return A new `Program` instance with the given value and children.
-     */
     override fun createNode(value: Reducible<V>, children: List<Program<V>>) = copy(value, children)
 
-    /**
-     * Evaluates the program by invoking its reducible expression with a specified environment and a set of arguments.
-     *
-     * This operator function enables the `Program` class to act as an executable entity within a computational context,
-     * following the principles of functional programming.
-     *
-     * ## Functionality:
-     * - Applies the reducible expression (`value`) of the program to the given environment and arguments.
-     * - For each child in the `children` list, recursively invokes the child program with the same environment and
-     *   arguments.
-     * - The results of these child invocations are passed as a list of arguments to the parent program's reducible
-     *   expression.
-     * - Returns the result of evaluating the reducible expression with these arguments.
-     *
-     * ## Usage:
-     * This operator function is critical in scenarios where the program needs to be executed or evaluated,
-     * particularly in computational models such as genetic programming, or complex expression evaluations. It allows
-     * for the dynamic execution of hierarchical program structures.
-     *
-     * ### Example:
-     * ```
-     * val program: Program<MyValueType> = ...
-     * val environment: Environment<MyValueType> = ...
-     * val result = program(environment, arg1, arg2, arg3)
-     * // result holds the outcome of evaluating the program with the provided arguments
-     * ```
-     *
-     * @param environment The `Environment<V>` in which the program operates.
-     * @param args A variable number of arguments of type `V` used in the program's evaluation.
-     * @return The result of evaluating the program's reducible expression with the given environment and arguments.
-     */
     operator fun invoke(environment: Environment<V>, vararg args: V): V =
         value(environment, children.map { it(environment, *args) })
 

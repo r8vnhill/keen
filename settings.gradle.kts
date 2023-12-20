@@ -7,7 +7,7 @@
  */
 
 rootProject.name = "keen"
-include(":core", ":examples", ":benchmarks")
+include(":keen-core", ":examples", ":benchmarks")
 
 pluginManagement {
     repositories {
