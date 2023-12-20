@@ -40,5 +40,7 @@ import io.kotest.property.arbitrary.map
  *
  * @return An [Arb] that generates closed ranges of type [T].
  */
-fun <T> Arb.Companion.range(a: Arb<T>, b: Arb<T>) where T : Comparable<T> =
-    orderedPair(a, b).map { (start, end) -> start..end }.filterNot { it.start >= it.endInclusive }
+fun <T> Arb.Companion.range(a: Arb<T>, b: Arb<T>) where T : Comparable<T> = orderedPair(a, b)
+    .map { (start, end) -> start..end }
+    .filter { it != -0.0..0.0 }
+    .filter { it.endInclusive > it.start }

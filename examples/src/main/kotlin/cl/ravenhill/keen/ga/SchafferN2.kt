@@ -18,27 +18,33 @@ import cl.ravenhill.keen.listeners.EvolutionPlotter
 import cl.ravenhill.keen.listeners.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.AverageCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
+import cl.ravenhill.keen.operators.selection.RandomSelector
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
+import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.FitnessMinRanker
 import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
-fun booth(gt: Genotype<Double, DoubleGene>) = gt.flatten().let { (x, y) ->
-    (x + 2 * y - 7).pow(2) + (2 * x + y - 5).pow(2)
+fun schaffer2(gt: Genotype<Double, DoubleGene>) = gt.flatten().let { (x, y) ->
+    val a = sin(sqrt(x.pow(2) + y.pow(2))).pow(2) - 0.5
+    val b = 1 + 0.001 * (x.pow(2) + y.pow(2)).pow(2)
+    0.5 + a / b
 }
 
 fun main() {
     val engine = evolutionEngine(::schaffer2, genotypeOf {
         chromosomeOf {
             doubles {
-                ranges += -10.0..10.0
+                ranges += -100.0..100.0
                 size = 2
             }
         }
     }) {
         ranker = FitnessMinRanker()
         populationSize = 500
-        parentSelector = RouletteWheelSelector()
-        survivorSelector = RouletteWheelSelector()
+        parentSelector = TournamentSelector()
+        survivorSelector = TournamentSelector()
         alterers += listOf(RandomMutator(0.1), AverageCrossover(0.3))
         listeners += listOf(EvolutionSummary(), EvolutionPlotter())
         limits += listOf(SteadyGenerations(50), MaxGenerations(500))

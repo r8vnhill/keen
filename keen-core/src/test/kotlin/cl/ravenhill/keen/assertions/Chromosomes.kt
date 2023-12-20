@@ -7,15 +7,19 @@
 package cl.ravenhill.keen.assertions
 
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ResetDomainRandomListener
+import cl.ravenhill.keen.arb.rngPair
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.mixins.FilterMutableListContainer
 import cl.ravenhill.keen.mixins.Filterable
 import cl.ravenhill.keen.mixins.RangeMutableListContainer
 import cl.ravenhill.keen.mixins.Ranged
+import io.kotest.common.ExperimentalKotest
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.long
@@ -195,6 +199,7 @@ suspend fun <T, G, F> `validate all genes against single filter`(
  * @param F Represents the type of the chromosome factory which should support a mutable
  *          collection of ranges.
  */
+@OptIn(ExperimentalKotest::class)
 suspend fun <T, G, F> `validate genes with specified range and factory`(
     arb: Arb<ClosedRange<T>>,
     geneFactory: (Random, List<ClosedRange<T>>, Int) -> G,
@@ -204,8 +209,9 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
       G : Gene<T, G>, G : Filterable<T>, G : Ranged<T>,
       F : Chromosome.Factory<T, G>, F : RangeMutableListContainer<T> {
     checkAll(
+        PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
         Arb.list(arb, 1..50).map { it.toMutableList() },
-        Arb.long().map { Random(it) to Random(it) }
+        Arb.rngPair()
     ) { ranges, (r1, r2) ->
         Domain.random = r1
         val factory = factoryBuilder()
