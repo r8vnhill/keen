@@ -140,11 +140,13 @@ interface Mutator<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * @return A new [Individual] instance with a mutated genotype. The fitness value is reset to `Double.NaN`.
      */
     fun mutateIndividual(individual: Individual<T, G>): Individual<T, G> =
-        Individual(Genotype(if (Domain.random.nextDouble() > chromosomeRate) {
-            individual.genotype.chromosomes
-        } else {
-            individual.genotype.map { mutateChromosome(it) }
-        }), Double.NaN)
+        Individual(Genotype(individual.genotype.map {
+            if (Domain.random.nextDouble() > chromosomeRate) {
+                it
+            } else {
+                mutateChromosome(it)
+            }
+        }))
 
 
     /**
