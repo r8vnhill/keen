@@ -10,6 +10,8 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeInRange
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -234,41 +236,30 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
      *
      * @return A string representing the genotype's chromosomes in a simple, human-readable format.
      */
+    @Deprecated(
+        "Use the toString method instead",
+        ReplaceWith("toString()")
+    )
     override fun toSimpleString() =
         chromosomes.joinToString(separator = ", ", prefix = "[", postfix = "]") { it.toSimpleString() }
 
 
-    /**
-     * Provides a detailed string representation of the genotype.
-     *
-     * This method constructs a comprehensive string that encapsulates the overall structure and content of the
-     * genotype.
-     * It is designed to give a clear and detailed overview of the genotype, specifically highlighting its chromosome
-     * composition. The method is particularly useful when a more descriptive representation of the genotype is
-     * required, such as in detailed logs, diagnostic messages, or for debugging purposes.
-     *
-     * ## Structure:
-     * - The representation includes the class name (`Genotype`) followed by a concise representation of its
-     *   chromosomes.
-     * - The `toSimpleString()` method is used to represent the chromosomes, providing a summary that is both
-     *   informative and compact.
-     *
-     * ## Usage Example:
-     * ```
-     * // Assuming a Genotype with specific chromosomes
-     * val genotype = Genotype(/* ... */)
-     *
-     * // Getting the detailed string representation of the genotype
-     * val detailedString = genotype.toString()
-     * // Output might look like: "Genotype(chromosomes=[Chromosome1, Chromosome2, Chromosome3])"
-     * ```
-     * In this example, `toString` generates a string that not only mentions it is a `Genotype` object but also gives a
-     * quick look at its chromosomes' composition, offering a balance between detail and brevity.
-     *
-     * @return A detailed string representation of the genotype, including its class name and a summary of its
-     *   chromosomes.
-     */
-    override fun toString() = "Genotype(chromosomes=${toSimpleString()})"
+    override fun toString() = toString(Domain.toStringMode)
+
+    private fun toString(mode: ToStringMode): String = when (mode) {
+        ToStringMode.SIMPLE -> {
+            chromosomes.joinToString(separator = ", ", prefix = "[", postfix = "]") { it.toSimpleString() }
+        }
+
+        ToStringMode.DEFAULT -> "Genotype(chromosomes=${toString(ToStringMode.SIMPLE)})"
+        ToStringMode.DETAILED -> "Genotype(chromosomes=${
+            chromosomes.joinToString(
+                prefix = "[ ",
+                postfix = " ]",
+                separator = ", "
+            ) { it.toDetailedString() }
+        })"
+    }
 
 
     /**
@@ -303,13 +294,11 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
      * @return A string that comprehensively represents the genotype, including detailed descriptions of each
      *   chromosome.
      */
-    override fun toDetailedString() = "Genotype(chromosomes=${
-        chromosomes.joinToString(
-            prefix = "[ ",
-            postfix = " ]",
-            separator = ", "
-        ) { it.toDetailedString() }
-    })"
+    @Deprecated(
+        "Use the toString method instead",
+        ReplaceWith("toString()")
+    )
+    override fun toDetailedString() = toString(ToStringMode.DETAILED)
 
     /**
      * A factory for constructing [Genotype] instances with customizable chromosome configurations.
