@@ -19,9 +19,6 @@ allprojects {
 subprojects {
     repositories {
         mavenCentral()
-        maven("https://jitpack.io") {
-            name = "jitpack"
-        }
     }
 }
 

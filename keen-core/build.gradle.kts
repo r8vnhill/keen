@@ -26,7 +26,7 @@ plugins {
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
-    implementation("com.github.r8vnhill:strait-jakt:$jaktVersion")
+    implementation("cl.ravenhill:strait-jakt:$jaktVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
     implementation("org.jetbrains.lets-plot:lets-plot-common:$letsPlotVersion")
     implementation("org.jetbrains.lets-plot:lets-plot-compose:$letsPlotSkiaVersion")

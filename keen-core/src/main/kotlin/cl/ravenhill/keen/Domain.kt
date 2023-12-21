@@ -45,6 +45,8 @@ import cl.ravenhill.jakt.constraints.doubles.BeAtLeast as DoubleBeAtLeast
  * @property DEFAULT_SURVIVAL_RATE The standard rate of survival for individuals in a population, set to 0.4.
  * @property equalityThreshold The threshold for floating-point equality comparisons, set to 0.0001. This value is
  *   used in scenarios where floating-point values are compared for equality, such as in the [Double.eq] method.
+ * @property toStringMode The mode used for converting objects to their string representation, defaults to
+ *   [ToStringMode.DEFAULT].
  * @property random A universal [Random] instance used for stochastic processes, ensuring consistent randomization
  *   strategies and allowing for reproducibility when using a specific seed.
  * @property environments A map of environments by their identifiers, providing access to shared variables and
@@ -79,6 +81,8 @@ object Domain {
 
     var random: Random = Random.Default
 
+    var toStringMode = ToStringMode.DEFAULT
+
     @ExperimentalKeen
     val environments = mutableMapOf<String, Environment<*>>()
 
@@ -89,7 +93,4 @@ object Domain {
             field = value
         }
 
-    enum class ToStringMode {
-        SIMPLE, DEFAULT, DETAILED
-    }
 }
