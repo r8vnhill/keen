@@ -8,9 +8,12 @@ package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainRandomListener
+import cl.ravenhill.keen.arb.anyRanker
+import cl.ravenhill.keen.arb.evolution.evolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.individual
+import cl.ravenhill.keen.arb.genetic.population
 import cl.ravenhill.keen.arb.operators.baseMutator
 import cl.ravenhill.keen.arb.rngPair
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
@@ -72,6 +75,22 @@ class MutatorTest : FreeSpec({
                         } else {
                             chromosome shouldBe chromosome.duplicateWithGenes(individual.genotype[index].reversed())
                         }
+                    }
+                }
+            }
+        }
+
+        "when mutating a population" - {
+            "should perform no mutations if the probability is 0" {
+                checkAll(
+                    Arb.baseMutator<Int, IntGene>(chromosomeRate = Arb.constant(0.0)),
+                    Arb.evolutionState(
+                        Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
+                        Arb.anyRanker()
+                    )
+                ) { mutator, state ->
+                    with(mutator(state, state.population.size)) {
+                        population shouldBe state.population
                     }
                 }
             }

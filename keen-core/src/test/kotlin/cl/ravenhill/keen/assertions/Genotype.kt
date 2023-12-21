@@ -11,6 +11,7 @@ import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosomeFactory
+import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
@@ -169,7 +170,7 @@ fun `test Genotype behaviour`() = freeSpec {
             }
 
             "should throw an exception if the index is out of bounds" {
-                checkAll(Arb.genotype().map {
+                checkAll(Arb.genotype(Arb.intChromosome()).map {
                     it to Arb.int().filter { index -> index !in 0..it.size }.next()
                 }) { (genotype, index) ->
                     shouldThrow<CompositeException> {

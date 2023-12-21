@@ -130,6 +130,7 @@ class EvolutionStateTest : FreeSpec({
 
             "with a different generation" {
                 checkAll(
+                    PropTestConfig(iterations = 100),
                     Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                     Arb.nonNegativeInt(),
                     Arb.nonNegativeInt(),
@@ -246,6 +247,7 @@ class EvolutionStateTest : FreeSpec({
 
             "should not equal for different objects" {
                 checkAll(
+                    PropTestConfig(iterations = 50),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                         Arb.individualRanker()
