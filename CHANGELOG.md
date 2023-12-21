@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.1] - 2023-12-21
 
 ### Added
 - [EXPERIMENTAL] **UniformCrossover Class in Keen-Core Module** (UniformCrossover.kt)
@@ -24,3 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **MultiStringFormat Interface Methods**
   - **Changes**: The `toSimpleString()` and `toDetailedString()` methods in the `MultiStringFormat` interface have been marked as deprecated.
   - **Rationale**: This change encourages the use of the standard `toString()` method for string representations, aligning with more conventional practices in Kotlin.
+
+### Updated
+- **Jakt Version in Gradle Properties**
+  - **Details**: The `jakt` version in the `gradle.properties` file has been updated to `1.4.0`.
+  - **Impact**: This update ensures that the project is aligned with the latest features, optimizations, and bug fixes available in the `jakt` version `1.4.0`.
+  - **File Affected**: `gradle.properties`
