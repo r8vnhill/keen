@@ -92,5 +92,4 @@ object Domain {
             constraints { "The maximum program depth [$value] must be positive" { value must BePositive } }
             field = value
         }
-
 }

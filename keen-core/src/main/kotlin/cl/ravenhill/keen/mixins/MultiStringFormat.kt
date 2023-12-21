@@ -35,11 +35,8 @@ package cl.ravenhill.keen.mixins
  * implementations for `toSimpleString` and `toDetailedString`. `toSimpleString` returns
  * just the `name` field, while `toDetailedString` provides a more detailed representation
  * of the object.
- *
- * @author <https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @version 2.0.0
- * @since 2.0.0
  */
+@Deprecated("Use the standard toString method instead")
 interface MultiStringFormat {
     /**
      * Provides a simple string representation of the object.
@@ -47,6 +44,7 @@ interface MultiStringFormat {
      *
      * @return A simple string representation of the object.
      */
+    @Deprecated("Use the standard toString method instead", ReplaceWith("toString()"))
     fun toSimpleString(): String = toString()
 
     /**
@@ -55,5 +53,6 @@ interface MultiStringFormat {
      *
      * @return A detailed string representation of the object.
      */
+    @Deprecated("Use the standard toString method instead", ReplaceWith("toString()"))
     fun toDetailedString(): String = toString()
 }
