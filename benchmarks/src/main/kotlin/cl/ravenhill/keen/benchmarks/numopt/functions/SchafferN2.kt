@@ -8,6 +8,8 @@ package cl.ravenhill.keen.benchmarks.numopt.functions
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 data object SchafferN2 : OptimizationProblem {
 
@@ -19,6 +21,6 @@ data object SchafferN2 : OptimizationProblem {
     override val ranges: List<ClosedRange<Double>> = listOf(MIN..MAX, MIN..MAX)
 
     override fun invoke(genotype: Genotype<Double, DoubleGene>) = genotype.flatten().let { (x, y) ->
-        0.5 + ((x.pow(2) + y.pow(2)).pow(2) - 0.5) / (1 + 0.001 * (x.pow(2) + y.pow(2))).pow(2)
+        0.5 + (sin(sqrt(x.pow(2) + y.pow(2))).pow(2) - 0.5) / (1 + 0.001 * (x.pow(2) + y.pow(2)).pow(2))
     }
 }

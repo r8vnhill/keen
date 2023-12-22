@@ -2,9 +2,6 @@
  * Copyright (c) 2023, Ignacio Slater M.
  * 2-Clause BSD License.
  */
-
-val dokkaVersion = extra["dokka.version"] as String
-
 plugins {
     kotlin("jvm")
     id("io.gitlab.arturbosch.detekt")
@@ -20,19 +17,8 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
-
     repositories {
         mavenCentral()
-        maven("https://jitpack.io") {
-            name = "jitpack"
-        }
-    }
-
-    java {
-        withSourcesJar()
-        withJavadocJar()
     }
 }
 

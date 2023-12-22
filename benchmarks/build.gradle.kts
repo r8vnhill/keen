@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(mapOf("path" to ":core")))
+    implementation(project(mapOf("path" to ":keen-core")))
     implementation(kotlin("reflect"))
 }
