@@ -94,6 +94,49 @@ class MutatorTest : FreeSpec({
                     }
                 }
             }
+
+            "should mutate all chromosomes if the probability is 1" {
+                checkAll(
+                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                    Arb.baseMutator<Int, IntGene>(individualRate = Arb.constant(1.0)),
+                    Arb.evolutionState(
+                        Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
+                        Arb.anyRanker()
+                    ),
+                    Arb.rngPair()
+                ) { mutator, state, (rng1, rng2) ->
+                    Domain.random = rng1
+                    val mutated = mutator(state, state.population.size)
+                    Domain.random = rng2
+                    mutated.population.forEachIndexed { i, individual ->
+                        Domain.random.nextDouble()  // Skip the individual rate check
+                        individual shouldBe mutator.mutateIndividual(state.population[i])
+                    }
+                }
+            }
+
+            "should mutate individuals according to the individual rate" {
+                checkAll(
+                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                    Arb.baseMutator<Int, IntGene>(),
+                    Arb.evolutionState(
+                        Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
+                        Arb.anyRanker()
+                    ),
+                    Arb.rngPair()
+                ) { mutator, state, (rng1, rng2) ->
+                    Domain.random = rng1
+                    val mutated = mutator(state, state.population.size)
+                    Domain.random = rng2
+                    mutated.population.forEachIndexed { i, individual ->
+                        if (Domain.random.nextDouble() > mutator.individualRate) {
+                            individual shouldBe state.population[i]
+                        } else {
+                            individual shouldBe mutator.mutateIndividual(state.population[i])
+                        }
+                    }
+                }
+            }
         }
     }
 })

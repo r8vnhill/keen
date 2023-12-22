@@ -14,6 +14,7 @@ import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.alteration.mutation.Mutator
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.next
 
 /**
@@ -101,3 +102,42 @@ fun <T, G> Arb.Companion.baseMutator(
     }
 }
 
+/**
+ * Creates an arbitrary generator that selects a mutator with configurable mutation rates.
+ *
+ * As part of the [Arb.Companion] object, this function provides a means to generate an instance of a
+ * [Mutator]<[T], [G]> chosen from a predefined set of mutators. It utilizes the [choice] function to select from
+ * these mutators. The primary focus of this function is to offer versatility in mutation operations within genetic
+ * algorithms by allowing the selection of different mutator types. The [individualRate] and [chromosomeRate]
+ * parameters determine the likelihood of mutations occurring at the individual and chromosome levels, respectively.
+ *
+ * ## Functionality:
+ * - Chooses a mutator from a set of predefined mutators with given mutation rates.
+ * - The mutation rates, `individualRate` and `chromosomeRate`, are probabilities that range from 0.0 to 1.0.
+ *
+ * ## Usage:
+ * This function is useful in scenarios where a genetic algorithm requires varying mutation strategies. By providing a
+ * range of mutators to choose from, it allows for more dynamic and adaptive mutation processes. The function is
+ * particularly beneficial in experiments and simulations where the impact of different mutation approaches needs to
+ * be assessed.
+ *
+ * ### Example:
+ * ```kotlin
+ * val anyMutatorGen = Arb.anyMutator<Int, SomeGeneClass>()
+ * val selectedMutator = anyMutatorGen.bind() // Randomly selects a Mutator instance from available options
+ * // Use selectedMutator in a genetic algorithm for applying mutations
+ * ```
+ * In this example, `anyMutatorGen` is used to randomly select a `Mutator` instance from available mutators,
+ * facilitating varied mutation strategies in a genetic algorithm. This allows for a flexible approach to introducing
+ * genetic variations, tailored to specific requirements or experimental setups.
+ *
+ * @param T The type parameter representing the value type in the gene.
+ * @param G The gene type, extending `Gene<T, G>`.
+ * @param individualRate An optional [Arb]<[Double]> for the individual mutation rate. Defaults to a probability value.
+ * @param chromosomeRate An optional [Arb]<[Double]> for the chromosome mutation rate. Defaults to a probability value.
+ * @return An [Arb]<[Mutator]<[T], [G]>> for randomly selecting a `Mutator` instance with varying mutation rates.
+ */
+fun <T, G> Arb.Companion.anyMutator(
+    individualRate: Arb<Double> = Arb.probability(),
+    chromosomeRate: Arb<Double> = Arb.probability(),
+) where G : Gene<T, G> = choice(baseMutator<T, G>(individualRate, chromosomeRate))
