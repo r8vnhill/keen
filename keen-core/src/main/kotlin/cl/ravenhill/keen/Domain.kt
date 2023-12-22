@@ -5,13 +5,14 @@
 
 package cl.ravenhill.keen
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.doubles.BeNaN
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Domain.environments
 import cl.ravenhill.keen.Domain.equalityThreshold
 import cl.ravenhill.keen.Domain.maxProgramDepth
 import cl.ravenhill.keen.Domain.random
-import cl.ravenhill.keen.exceptions.constraints.BeNaN
 import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.utils.eq
@@ -68,6 +69,7 @@ object Domain {
     const val DEFAULT_SURVIVAL_RATE = 0.4
 
     const val DEFAULT_EQUALITY_THRESHOLD = 0.0001
+    @OptIn(ExperimentalJakt::class)
     var equalityThreshold = DEFAULT_EQUALITY_THRESHOLD
         set(value) {
             constraints {

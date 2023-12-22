@@ -11,6 +11,7 @@ import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.alteration.Alterer
+import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 import cl.ravenhill.keen.operators.alteration.mutation.Mutator
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
@@ -100,6 +101,50 @@ fun <T, G> Arb.Companion.baseMutator(
         override fun mutateChromosome(chromosome: Chromosome<T, G>) =
             chromosome.duplicateWithGenes(chromosome.reversed())
     }
+}
+
+/**
+ * Creates an arbitrary generator for [BitFlipMutator]<[G]> instances with configurable mutation rates.
+ *
+ * This function, part of the [Arb.Companion] object, generates arbitrary instances of `BitFlipMutator<G>`.
+ * A `BitFlipMutator` is a specific type of mutator used in genetic algorithms, particularly effective for genes
+ * represented as [Boolean] values (binary genes). It operates by flipping the state of a gene (from true to false or
+ * vice versa) based on given mutation rates. The [individualRate], [chromosomeRate], and [geneRate] parameters control
+ * the probability of mutation at various levels – individual, chromosome, and gene, respectively.
+ *
+ * ## Functionality:
+ * - Generates `BitFlipMutator` instances capable of flipping gene states in a binary chromosome.
+ * - Mutation rates for individuals, chromosomes, and genes are specified by `individualRate`, `chromosomeRate`,
+ *   and `geneRate`, with each being a probability ranging from 0.0 to 1.0.
+ *
+ * ## Usage:
+ * This function is ideal for scenarios involving genetic algorithms with binary representation of genes. The
+ * `BitFlipMutator` is particularly suited for problems where minor alterations (bit flips) can lead to significant
+ * changes in an individual's fitness. It allows for fine-tuning of the mutation process across different levels of
+ * genetic structure.
+ *
+ * ### Example:
+ * ```kotlin
+ * val bitFlipMutatorGen = Arb.bitFlipMutator<BooleanGene>()
+ * val bitFlipMutator = bitFlipMutatorGen.bind() // Generates a BitFlipMutator instance with default mutation rates
+ * // Use bitFlipMutator in a genetic algorithm to apply bit flip mutations
+ * ```
+ * In this example, `bitFlipMutatorGen` generates a `BitFlipMutator` instance. This mutator can be employed in a
+ * genetic algorithm to introduce mutations by flipping the bits of Boolean genes, controlled by the specified
+ * mutation rates.
+ *
+ * @param G The gene type, extending `Gene<Boolean, G>`.
+ * @param individualRate An optional [Arb]<[Double]> for the individual mutation rate. Defaults to a probability value.
+ * @param chromosomeRate An optional [Arb]<[Double]> for the chromosome mutation rate. Defaults to a probability value.
+ * @param geneRate An optional [Arb]<[Double]> for the gene mutation rate. Defaults to a probability value.
+ * @return An [Arb]<[BitFlipMutator]<[G]>> for generating `BitFlipMutator` instances with configurable mutation rates.
+ */
+fun <G> Arb.Companion.bitFlipMutator(
+    individualRate: Arb<Double> = Arb.probability(),
+    chromosomeRate: Arb<Double> = Arb.probability(),
+    geneRate: Arb<Double> = Arb.probability(),
+): Arb<BitFlipMutator<G>> where G : Gene<Boolean, G> = arbitrary {
+    BitFlipMutator(individualRate.bind(), chromosomeRate.bind(), geneRate.bind())
 }
 
 /**
