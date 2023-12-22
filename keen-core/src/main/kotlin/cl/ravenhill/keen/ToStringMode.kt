@@ -21,7 +21,8 @@ package cl.ravenhill.keen
  *
  * ## Usage:
  * This enum can be used to control the verbosity and level of detail of an object's `toString` method. Depending on the
- * chosen mode, the output of `toString` can vary significantly, ranging from a simple summary to a detailed description.
+ * chosen mode, the output of `toString` can vary significantly, ranging from a simple summary to a detailed
+ * description.
  *
  * ### Example:
  * ```kotlin

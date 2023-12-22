@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [Unreleased]
+
+### Added
+
+- **Unbounded Knapsack Problem Implementation in Kotlin**
+  - **Overview**: Implemented a solution for the unbounded knapsack problem as a practical example of using the Keen
+    genetic algorithm library in Kotlin. This includes the creation of specific classes and the computation of a
+    fitness function tailored for this problem.
+  - **Details**: The solution features a custom fitness function, specialized chromosomes and genes designed for the 
+    knapsack problem, as well as evolutionary constraints and execution logic integral to the genetic algorithm.
+
 ## [1.0.1] - 2023-12-21
 
 ### Added

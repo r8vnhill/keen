@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation("cl.ravenhill:keen-core:1.0.0")
+    implementation("cl.ravenhill:keen-core:1.0.1")
     /* ... */
 }
 ```
