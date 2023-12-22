@@ -72,10 +72,10 @@ class BitFlipMutator<G>(
             "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 individualRate must BeInRange(0.0..1.0)
             }
-            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0"(::MutatorConfigException) {
+            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "The gene rate [$geneRate] must be in 0.0..1.0"(::MutatorConfigException) {
+            "The gene rate ($geneRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 geneRate must BeInRange(0.0..1.0)
             }
         }
@@ -136,6 +136,21 @@ class BitFlipMutator<G>(
         gene
     }
 
+    /**
+     * Companion object for default mutation rate constants.
+     *
+     * This companion object defines default rate constants used in mutators in evolutionary computation. These
+     * constants represent default probabilities for mutation at different levels of genetic structure: individual,
+     * chromosome, and gene. They are used as default values when specific rates are not provided during mutator
+     * configuration.
+     *
+     * @property DEFAULT_INDIVIDUAL_RATE The default mutation rate for individuals. This constant is set at 0.5,
+     *   representing a 50% probability that an individual will undergo mutation.
+     * @property DEFAULT_CHROMOSOME_RATE The default mutation rate for chromosomes. Set at 0.5, it indicates a 50%
+     *   chance that a chromosome within an individual will be mutated.
+     * @property DEFAULT_GENE_RATE The default rate for gene-level mutations. Also set at 0.5, it denotes a 50%
+     *   likelihood of mutating a specific gene within a chromosome.
+     */
     companion object {
         const val DEFAULT_INDIVIDUAL_RATE = 0.5
         const val DEFAULT_CHROMOSOME_RATE = 0.5
