@@ -6,17 +6,14 @@
 ![Keen logo](logos/TransparentBg.png)
 
 Keen is a framework for Kotlin that leverages evolutionary algorithms to solve optimization problems.
-It harnesses the power and expressiveness of Kotlin to provide an
-intuitive and efficient interface for researchers, scientists, and
-developers alike.
-With Keen, you can build and fine-tune complex evolutionary algorithms
-with just a few lines of code.
+It harnesses the power and expressiveness of Kotlin to provide an intuitive and efficient interface for researchers,
+scientists, and developers alike.
+With Keen, you can build and fine-tune complex evolutionary algorithms with just a few lines of code.
 
-Whether you are delving into genetic algorithms for the first time or are
-an experienced researcher looking for a Kotlin-native tool, Keen offers a
-streamlined experience without sacrificing depth or flexibility. Its
-modular architecture means you can easily extend or modify components,
-from selection and crossover methods to mutation and fitness evaluation.
+Whether you are delving into genetic algorithms for the first time or are an experienced researcher looking for a 
+Kotlin-native tool, Keen offers a streamlined experience without sacrificing depth or flexibility. Its modular
+architecture means you can easily extend or modify components, from selection and crossover methods to mutation and 
+fitness evaluation.
 
 
 ## Installation
@@ -30,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    implementation("cl.ravenhill:keen-core:1.0.2")
+    implementation("cl.ravenhill:keen-core:1.0.2") // Replace with the latest version
     /* ... */
 }
 ```
