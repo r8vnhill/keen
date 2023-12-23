@@ -6,9 +6,11 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -52,26 +54,28 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * the same as the original one.
  *
  * @param G The type of gene, specifically a Boolean gene in this context.
- * @param individualRate The probability of an individual being mutated.
+ * @param individualRate The probability of an individual being mutated. This is the first level of selection for
+ *   mutation. Defaults to [DEFAULT_INDIVIDUAL_RATE].
  * @param chromosomeRate The probability of choosing a chromosome within an individual for mutation.
  * @param geneRate The probability of flipping a gene's value in a chosen chromosome.
  */
+@OptIn(ExperimentalJakt::class)
 class BitFlipMutator<G>(
-    override val individualRate: Double,
-    override val chromosomeRate: Double = 0.5,
-    override val geneRate: Double = 0.5,
+    override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
+    override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
+    override val geneRate: Double = DEFAULT_GENE_RATE
 ) : GeneMutator<Boolean, G> where G : Gene<Boolean, G> {
 
     init {
         // Validation constraints for mutation probabilities
         constraints {
-            "The individual rate [$individualRate] must be in 0.0..1.0" {
+            "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 individualRate must BeInRange(0.0..1.0)
             }
-            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0" {
+            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "The gene rate [$geneRate] must be in 0.0..1.0" {
+            "The gene rate ($geneRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 geneRate must BeInRange(0.0..1.0)
             }
         }
@@ -130,5 +134,26 @@ class BitFlipMutator<G>(
         gene.duplicateWithValue(!gene.value)
     } else {
         gene
+    }
+
+    /**
+     * Companion object for default mutation rate constants.
+     *
+     * This companion object defines default rate constants used in mutators in evolutionary computation. These
+     * constants represent default probabilities for mutation at different levels of genetic structure: individual,
+     * chromosome, and gene. They are used as default values when specific rates are not provided during mutator
+     * configuration.
+     *
+     * @property DEFAULT_INDIVIDUAL_RATE The default mutation rate for individuals. This constant is set at 0.5,
+     *   representing a 50% probability that an individual will undergo mutation.
+     * @property DEFAULT_CHROMOSOME_RATE The default mutation rate for chromosomes. Set at 0.5, it indicates a 50%
+     *   chance that a chromosome within an individual will be mutated.
+     * @property DEFAULT_GENE_RATE The default rate for gene-level mutations. Also set at 0.5, it denotes a 50%
+     *   likelihood of mutating a specific gene within a chromosome.
+     */
+    companion object {
+        const val DEFAULT_INDIVIDUAL_RATE = 0.5
+        const val DEFAULT_CHROMOSOME_RATE = 0.5
+        const val DEFAULT_GENE_RATE = 0.5
     }
 }

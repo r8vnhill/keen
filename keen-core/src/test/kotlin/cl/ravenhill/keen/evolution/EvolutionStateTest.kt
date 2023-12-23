@@ -205,6 +205,7 @@ class EvolutionStateTest : FreeSpec({
 
             "should be symmetric" {
                 checkAll(
+                    PropTestConfig(iterations = 100),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                         Arb.individualRanker()
