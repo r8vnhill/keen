@@ -11,6 +11,7 @@ import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
+import cl.ravenhill.keen.listeners.records.IndividualRecord
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
@@ -61,4 +62,7 @@ abstract class AbstractEvolutionListener<T, G> : EvolutionListener<T, G> where G
     protected lateinit var currentGeneration: GenerationRecord<T, G>
     @ExperimentalTime
     override var timeSource: TimeSource = TimeSource.Monotonic
+    val fittest: IndividualRecord<T, G>
+        get() = ranker.sort(evolution.generations.last().population.offspring.map { it.toIndividual() }).first()
+            .let { IndividualRecord(it.genotype, it.fitness) }
 }

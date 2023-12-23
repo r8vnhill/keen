@@ -5,6 +5,7 @@
 plugins {
     kotlin("jvm")
     id("io.gitlab.arturbosch.detekt")
+    id("org.jetbrains.compose") apply false
 }
 
 repositories {
