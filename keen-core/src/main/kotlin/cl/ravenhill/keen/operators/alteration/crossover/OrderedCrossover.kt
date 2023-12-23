@@ -73,7 +73,7 @@ import cl.ravenhill.keen.utils.indices
  */
 class OrderedCrossover<T, G>(
     override val chromosomeRate: Double,
-    override val exclusivity: Boolean
+    override val exclusivity: Boolean = false
 ) : PermutationCrossover<T, G> where G : Gene<T, G> {
     override val numOffspring = 2
     override val numParents = 2
