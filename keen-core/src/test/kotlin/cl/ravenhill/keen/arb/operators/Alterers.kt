@@ -9,7 +9,9 @@ package cl.ravenhill.keen.arb.operators
 import cl.ravenhill.keen.arb.datatypes.probability
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 import cl.ravenhill.keen.operators.alteration.mutation.Mutator
@@ -148,41 +150,40 @@ fun <G> Arb.Companion.bitFlipMutator(
 }
 
 /**
- * Creates an arbitrary generator that selects a mutator with configurable mutation rates.
+ * Creates an arbitrary generator for selecting a mutator with configurable mutation rates from a set of available
+ * mutators.
  *
- * As part of the [Arb.Companion] object, this function provides a means to generate an instance of a
- * [Mutator]<[T], [G]> chosen from a predefined set of mutators. It utilizes the [choice] function to select from
- * these mutators. The primary focus of this function is to offer versatility in mutation operations within genetic
- * algorithms by allowing the selection of different mutator types. The [individualRate] and [chromosomeRate]
- * parameters determine the likelihood of mutations occurring at the individual and chromosome levels, respectively.
+ * Part of the [Arb.Companion] object, this function facilitates the generation of either a [baseMutator] or
+ * [bitFlipMutator], depending on the outcome of a random choice. This approach allows for dynamic mutation strategies
+ * within genetic algorithms, especially useful when different types of mutation are desired across different runs or
+ * scenarios.
  *
  * ## Functionality:
- * - Chooses a mutator from a set of predefined mutators with given mutation rates.
- * - The mutation rates, `individualRate` and `chromosomeRate`, are probabilities that range from 0.0 to 1.0.
+ * - Randomly selects between a `baseMutator` for [IntGene] and a `bitFlipMutator` for [BooleanGene].
+ * - The `baseMutator` is configured with the provided [individualRate] and [chromosomeRate].
+ * - The `bitFlipMutator` does not require specific rate configurations as it operates on binary genes.
  *
  * ## Usage:
- * This function is useful in scenarios where a genetic algorithm requires varying mutation strategies. By providing a
- * range of mutators to choose from, it allows for more dynamic and adaptive mutation processes. The function is
- * particularly beneficial in experiments and simulations where the impact of different mutation approaches needs to
- * be assessed.
+ * This function is ideally used in scenarios where there is a need to employ different types of mutation strategies
+ * in a genetic algorithm. By providing a choice between different mutators, it allows for a more varied and potentially
+ * more effective evolutionary process.
  *
  * ### Example:
  * ```kotlin
- * val anyMutatorGen = Arb.anyMutator<Int, SomeGeneClass>()
- * val selectedMutator = anyMutatorGen.bind() // Randomly selects a Mutator instance from available options
- * // Use selectedMutator in a genetic algorithm for applying mutations
+ * val mutator = Arb.anyMutator()
+ * // This will randomly select and create either a baseMutator or a bitFlipMutator
  * ```
- * In this example, `anyMutatorGen` is used to randomly select a `Mutator` instance from available mutators,
- * facilitating varied mutation strategies in a genetic algorithm. This allows for a flexible approach to introducing
- * genetic variations, tailored to specific requirements or experimental setups.
+ * In this example, `mutator` will be an instance of either `baseMutator<Int, IntGene>` or `bitFlipMutator<BooleanGene>`,
+ * chosen randomly, providing varied mutation strategies within the genetic algorithm.
  *
- * @param T The type parameter representing the value type in the gene.
- * @param G The gene type, extending `Gene<T, G>`.
- * @param individualRate An optional [Arb]<[Double]> for the individual mutation rate. Defaults to a probability value.
- * @param chromosomeRate An optional [Arb]<[Double]> for the chromosome mutation rate. Defaults to a probability value.
- * @return An [Arb]<[Mutator]<[T], [G]>> for randomly selecting a `Mutator` instance with varying mutation rates.
+ * @param individualRate An optional [Arb]<[Double]> for the individual mutation rate, used for `baseMutator`.
+ *                       Defaults to a probability value.
+ * @param chromosomeRate An optional [Arb]<[Double]> for the chromosome mutation rate, used for `baseMutator`.
+ *                       Defaults to a probability value.
+ * @return An arbitrary generator for either a `baseMutator` or `bitFlipMutator`, selected randomly.
  */
-fun <T, G> Arb.Companion.anyMutator(
+fun Arb.Companion.anyMutator(
     individualRate: Arb<Double> = Arb.probability(),
     chromosomeRate: Arb<Double> = Arb.probability(),
-) where G : Gene<T, G> = choice(baseMutator<T, G>(individualRate, chromosomeRate))
+) = choice(baseMutator<Int, IntGene>(individualRate, chromosomeRate))
+
