@@ -4,9 +4,10 @@
  */
 
 
-package cl.ravenhill.keen.ga.knapsack.unbounded
+package cl.ravenhill.keen.ga.knapsack
 
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.BooleanGene
 import kotlin.math.abs
 
 /**
@@ -44,4 +45,42 @@ fun UnboundedKnapsackProblem.fitnessFunction(genotype: Genotype<Pair<Int, Int>, 
     } else {
         0.0
     }
+}
+
+/**
+ * Calculates the fitness value of a given genotype for the Zero-One Knapsack Problem.
+ *
+ * This function evaluates the fitness of a genotype, representing a possible solution to the Zero-One Knapsack Problem.
+ * In this problem, each item can either be included in the knapsack or left out, indicated by a Boolean value in the
+ * genotype. The fitness is calculated based on the total profit of items included in the knapsack, adjusted by a
+ * penalty if the total weight of these items exceeds the maximum allowable weight
+ * ([ZeroOneKnapsackProblem.MAX_WEIGHT]).
+ *
+ * ## Functionality:
+ * - The genotype, representing a binary selection (inclusion or exclusion) of items, is paired with the actual items.
+ * - The total profit (`profit`) is calculated as the sum of the values (profits) of items that are included in the
+ *   knapsack.
+ * - The total weight (`weight`) is the sum of the weights of items that are included.
+ * - A penalty is applied if the total weight exceeds `MAX_WEIGHT`. The penalty is the excess weight over `MAX_WEIGHT`.
+ * - The fitness is calculated as the total profit minus any weight penalty.
+ *
+ * ## Usage:
+ * This function is crucial in evaluating how effectively a particular genotype solves the Zero-One Knapsack Problem. It
+ * is an integral part of the genetic algorithm's selection process, as genotypes with higher fitness values are more
+ * likely to be chosen for reproduction.
+ *
+ * @param genotype The genotype to be evaluated, consisting of `BooleanGene` objects where `true` indicates inclusion
+ *   of an item in the knapsack.
+ * @return The fitness value of the genotype, calculated based on the total profit of included items, adjusted for
+ *   penalties due to excess weight.
+ */
+fun ZeroOneKnapsackProblem.fitnessFunction(genotype: Genotype<Boolean, BooleanGene>): Double {
+    val profit = genotype.flatten().zip(items).sumOf { (isInBag, item) ->
+        if (isInBag) item.first else 0
+    }
+    val weight = genotype.flatten().zip(items).sumOf { (isInBag, item) ->
+        if (isInBag) item.second else 0
+    }
+    val penalty = if (weight > MAX_WEIGHT) weight - MAX_WEIGHT else 0
+    return (profit - penalty).toDouble()
 }

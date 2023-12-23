@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.ga.knapsack.unbounded
+package cl.ravenhill.keen.ga.knapsack
 
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ExperimentalKeen

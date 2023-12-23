@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.ga.knapsack.unbounded
+package cl.ravenhill.keen.ga.knapsack
 
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 
