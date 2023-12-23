@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    implementation("cl.ravenhill:keen-core:1.0.2") // Replace with the latest version
+    implementation("cl.ravenhill:keen-core:1.0.3") // Replace with the latest version
     /* ... */
 }
 ```
