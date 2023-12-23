@@ -5,8 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2023-12-22
 
-## [1.0.2]
+### Added
+
+- **Zero-One Knapsack Problem Implementation using Genetic Algorithm**
+  - **Files Added**:
+    - `MainZeroOne.kt`: Contains the main logic and execution flow for the Zero-One Knapsack Problem using genetic algorithms.
+    - `ZeroOneKnapsackProblem.kt`: Includes detailed functions and documentation related to the implementation of evolutionary computation for the Zero-One Knapsack Problem.
+  - **Overview**: This update introduces a comprehensive implementation of the Zero-One Knapsack Problem, leveraging the principles of genetic algorithms. It expands the framework's capability in solving classical optimization problems using evolutionary computation techniques.
+  - **Package Update**: The existing package structure, particularly those related to the Unbounded Knapsack Problem, has been updated to accommodate and integrate the new implementation, ensuring consistency and coherence in the framework's overall design and functionality.
+
+## [1.0.2] - 2023-12-22
 
 ### Added
 
