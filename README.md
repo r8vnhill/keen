@@ -40,10 +40,12 @@ project using Gradle Kotlin DSL.
 First, define the versions of Keen and Compose in your `gradle.properties` file. Make sure to replace these with the 
 latest versions available.
 
-```kotlin
-// gradle.properties
-keen.version=1.1.0  // Keen framework version. Replace with the latest version.
-compose.version=1.5.11  // Compose version for the EvolutionPlotter. Replace at your discretion.
+```
+# gradle.properties
+# Keen framework version. Replace with the latest version.
+keen.version=1.1.0
+# Compose version for the EvolutionPlotter. Replace at your discretion.
+compose.version=1.5.11
 ```
 
 #### Step 2: Configure Plugin Management in `settings.gradle.kts`
@@ -69,7 +71,7 @@ pluginManagement {
 In your build script, configure the necessary plugins, repositories, and dependencies.
 
 ```kotlin
-val keenVersion: String by extra["keen.version"] as String  // Retrieve the Keen version defined earlier.
+val keenVersion: String = extra["keen.version"] as String  // Retrieve the Keen version defined earlier.
 
 plugins {
     /* ... */
@@ -109,25 +111,50 @@ The following example shows how to solve the _One Max_ problem with _Keen_.
 #### Implementation
 
 ```kotlin
-private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatMap().count { it }.toDouble()
+import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.dsl.booleans
+import cl.ravenhill.keen.dsl.chromosomeOf
+import cl.ravenhill.keen.dsl.evolutionEngine
+import cl.ravenhill.keen.dsl.genotypeOf
+import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.BooleanGene
+import cl.ravenhill.keen.limits.MaxGenerations
+import cl.ravenhill.keen.limits.TargetFitness
+import cl.ravenhill.keen.listeners.EvolutionPlotter
+import cl.ravenhill.keen.listeners.EvolutionSummary
+import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
+import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
+import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
+import cl.ravenhill.keen.operators.selection.TournamentSelector
 
+private const val POPULATION_SIZE = 100
+private const val CHROMOSOME_SIZE = 50
+private const val TRUE_RATE = 0.15
+private const val TARGET_FITNESS = CHROMOSOME_SIZE.toDouble()
+private const val MAX_GENERATIONS = 500
+private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
+@OptIn(ExperimentalKeen::class)
 fun main() {
-    val engine = evolutionEngine(::count, genotype {
-        chromosomeOf {
-            booleans {
-                size = 20
-                trueRate = 0.15
-            }
-        }
-    }) {
-        populationSize = 500
-        alterers += listOf(BitFlipMutator(individualRate = 0.5), SinglePointCrossover(chromosomeRate = 0.6))
-        limits += listOf(MaxGenerations(100), TargetFitness(20.0))
-        listeners += listOf(EvolutionSummary(), EvolutionPlotter())
+  val engine = evolutionEngine(::count, genotypeOf {
+    chromosomeOf {
+      booleans {
+        size = CHROMOSOME_SIZE
+        trueRate = TRUE_RATE
+      }
     }
-    engine.evolve()
-    engine.listeners.forEach { it.display() }
+  }) {
+    populationSize = POPULATION_SIZE
+    parentSelector = RouletteWheelSelector()
+    survivorSelector = TournamentSelector()
+    alterers += listOf(BitFlipMutator(individualRate = 0.5), UniformCrossover(chromosomeRate = 0.6))
+    limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
+    listeners += listOf(EvolutionSummary(), EvolutionPlotter())
+  }
+  engine.evolve()
+  engine.listeners.forEach { it.display() }
 }
+
 ```
 
 #### Output
