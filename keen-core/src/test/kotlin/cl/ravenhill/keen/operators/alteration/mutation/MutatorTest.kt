@@ -34,7 +34,7 @@ class MutatorTest : FreeSpec({
         "when mutating an individual" - {
             "should perform no mutations if the probability is 0" {
                 checkAll(
-                    Arb.anyMutator<Int, IntGene>(chromosomeRate = Arb.constant(0.0)),
+                    Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
                     Arb.individual(Arb.genotype(Arb.intChromosome()))
                 ) { mutator, individual ->
                     with(mutator.mutateIndividual(individual)) {
@@ -84,7 +84,7 @@ class MutatorTest : FreeSpec({
         "when mutating a population" - {
             "should perform no mutations if the probability is 0" {
                 checkAll(
-                    Arb.anyMutator<Int, IntGene>(chromosomeRate = Arb.constant(0.0)),
+                    Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
                         Arb.anyRanker()
@@ -99,7 +99,7 @@ class MutatorTest : FreeSpec({
             "should mutate all chromosomes if the probability is 1" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
-                    Arb.anyMutator<Int, IntGene>(individualRate = Arb.constant(1.0)),
+                    Arb.anyMutator(individualRate = Arb.constant(1.0)),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
                         Arb.anyRanker()
@@ -119,7 +119,7 @@ class MutatorTest : FreeSpec({
             "should mutate individuals according to the individual rate" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
-                    Arb.anyMutator<Int, IntGene>(),
+                    Arb.anyMutator(),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
                         Arb.anyRanker()

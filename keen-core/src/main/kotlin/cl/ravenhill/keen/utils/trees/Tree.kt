@@ -290,6 +290,7 @@ interface Tree<V, T> : SelfReferential<T>, Iterable<T>, MultiStringFormat where 
      *
      * @return A detailed string representation of the tree.
      */
+    @Deprecated("Use toString() instead.", ReplaceWith("toString()"))
     override fun toDetailedString() = "${this::class.simpleName}(" +
           "value=$value, size=$size, arity=$arity, height=$height, children=$children, descendants=$descendants)"
 
