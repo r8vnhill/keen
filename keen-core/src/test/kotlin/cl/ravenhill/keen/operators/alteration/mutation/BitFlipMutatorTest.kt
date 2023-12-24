@@ -7,6 +7,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.datatypes.probability
+import cl.ravenhill.keen.arb.genetic.chromosomes.booleanChromosome
 import cl.ravenhill.keen.arb.operators.bitFlipMutator
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
@@ -15,6 +16,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.checkAll
@@ -138,6 +140,17 @@ class BitFlipMutatorTest : FreeSpec({
         checkAll(Arb.bitFlipMutator<BooleanGene>()) { mutator ->
             mutator.mutateGene(BooleanGene.True) shouldBe BooleanGene.False
             mutator.mutateGene(BooleanGene.False) shouldBe BooleanGene.True
+        }
+    }
+
+    "When mutating a chromosome" - {
+        "should perform no mutations if the probability is 0" {
+            checkAll(
+                Arb.bitFlipMutator<BooleanGene>(chromosomeRate = Arb.constant(0.0)),
+                Arb.booleanChromosome()
+            ) { mutator, chromosome ->
+                mutator.mutateChromosome(chromosome) shouldBe chromosome
+            }
         }
     }
 })
