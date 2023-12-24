@@ -171,5 +171,24 @@ class BitFlipMutatorTest : FreeSpec({
                 }
             }
         }
+
+        "should mutate genes according to the gene rate" {
+            checkAll(
+                PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                Arb.bitFlipMutator<BooleanGene>(),
+                Arb.booleanChromosome(),
+                Arb.rngPair()
+            ) { mutator, chromosome, (rng1, rng2) ->
+                Domain.random = rng1
+                val mutated = mutator.mutateChromosome(chromosome)
+                mutated.forEachIndexed { index, booleanGene ->
+                    if (rng2.nextDouble() > mutator.geneRate) {
+                        booleanGene shouldBe chromosome[index]
+                    } else {
+                        booleanGene shouldBe !chromosome[index]
+                    }
+                }
+            }
+        }
     }
 })
