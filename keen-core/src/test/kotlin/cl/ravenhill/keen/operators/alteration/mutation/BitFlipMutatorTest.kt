@@ -6,21 +6,27 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ResetDomainRandomListener
 import cl.ravenhill.keen.arb.datatypes.probability
 import cl.ravenhill.keen.arb.genetic.chromosomes.booleanChromosome
 import cl.ravenhill.keen.arb.operators.bitFlipMutator
+import cl.ravenhill.keen.arb.rngPair
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.checkAll
 
+@OptIn(ExperimentalKotest::class)
 class BitFlipMutatorTest : FreeSpec({
 
     "A Bit-Flip Mutator instance" - {
@@ -146,10 +152,23 @@ class BitFlipMutatorTest : FreeSpec({
     "When mutating a chromosome" - {
         "should perform no mutations if the probability is 0" {
             checkAll(
-                Arb.bitFlipMutator<BooleanGene>(chromosomeRate = Arb.constant(0.0)),
+                Arb.bitFlipMutator<BooleanGene>(geneRate = Arb.constant(0.0)),
                 Arb.booleanChromosome()
             ) { mutator, chromosome ->
                 mutator.mutateChromosome(chromosome) shouldBe chromosome
+            }
+        }
+
+        "should mutate all genes if the probability is 1" {
+            checkAll(
+                PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                Arb.bitFlipMutator<BooleanGene>(geneRate = Arb.constant(1.0)),
+                Arb.booleanChromosome(),
+            ) { mutator, chromosome ->
+                val mutated = mutator.mutateChromosome(chromosome)
+                mutated.forEachIndexed { index, booleanGene ->
+                    booleanGene shouldBe !chromosome[index]
+                }
             }
         }
     }

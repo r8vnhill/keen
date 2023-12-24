@@ -13,6 +13,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator.Companion.DEFAULT_INDIVIDUAL_RATE
 
 
 /**
@@ -63,7 +64,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 class BitFlipMutator<G>(
     override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
     override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
-    override val geneRate: Double = DEFAULT_GENE_RATE
+    override val geneRate: Double = DEFAULT_GENE_RATE,
 ) : GeneMutator<Boolean, G> where G : Gene<Boolean, G> {
 
     init {
@@ -104,11 +105,13 @@ class BitFlipMutator<G>(
      *   occurs.
      */
     override fun mutateChromosome(chromosome: Chromosome<Boolean, G>) =
-        if (Domain.random.nextDouble() < chromosomeRate) {
-            chromosome.duplicateWithGenes(chromosome.genes.map { mutateGene(it) })
-        } else {
-            chromosome
-        }
+        chromosome.duplicateWithGenes(chromosome.genes.map {
+            if (Domain.random.nextDouble() > geneRate) {
+                it
+            } else {
+                mutateGene(it)
+            }
+        })
 
     /**
      * Mutates a gene by flipping its Boolean value.
