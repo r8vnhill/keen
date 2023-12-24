@@ -7,6 +7,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.datatypes.probability
+import cl.ravenhill.keen.arb.operators.bitFlipMutator
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.BooleanGene
@@ -130,6 +131,13 @@ class BitFlipMutatorTest : FreeSpec({
                     )
                 }
             }
+        }
+    }
+
+    "Can mutate a gene" {
+        checkAll(Arb.bitFlipMutator<BooleanGene>()) { mutator ->
+            mutator.mutateGene(BooleanGene.True) shouldBe BooleanGene.False
+            mutator.mutateGene(BooleanGene.False) shouldBe BooleanGene.True
         }
     }
 })

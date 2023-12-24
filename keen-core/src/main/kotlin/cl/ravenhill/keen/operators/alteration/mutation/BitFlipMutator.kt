@@ -130,11 +130,7 @@ class BitFlipMutator<G>(
      * @return A new gene instance with the flipped value if mutation occurs, or the original gene if no mutation
      *   happens.
      */
-    override fun mutateGene(gene: G): G = if (Domain.random.nextDouble() < geneRate) {
-        gene.duplicateWithValue(!gene.value)
-    } else {
-        gene
-    }
+    override fun mutateGene(gene: G): G = gene.duplicateWithValue(!gene.value)
 
     /**
      * Companion object for default mutation rate constants.
