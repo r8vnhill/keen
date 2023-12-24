@@ -128,27 +128,23 @@ import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 
-private const val POPULATION_SIZE = 100
-private const val CHROMOSOME_SIZE = 50
-private const val TRUE_RATE = 0.15
-private const val TARGET_FITNESS = CHROMOSOME_SIZE.toDouble()
-private const val MAX_GENERATIONS = 500
 private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
+
 @OptIn(ExperimentalKeen::class)
 fun main() {
   val engine = evolutionEngine(::count, genotypeOf {
     chromosomeOf {
       booleans {
-        size = CHROMOSOME_SIZE
-        trueRate = TRUE_RATE
+        size = 50
+        trueRate = 0.15
       }
     }
   }) {
-    populationSize = POPULATION_SIZE
+    populationSize = 500
     parentSelector = RouletteWheelSelector()
     survivorSelector = TournamentSelector()
     alterers += listOf(BitFlipMutator(individualRate = 0.5), UniformCrossover(chromosomeRate = 0.6))
-    limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
+    limits += listOf(MaxGenerations(500), TargetFitness(TARGET_FITNESS))
     listeners += listOf(EvolutionSummary(), EvolutionPlotter())
   }
   engine.evolve()
