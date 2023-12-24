@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.selection
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ResetDomainRandomListener
+import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
@@ -18,7 +18,6 @@ import cl.ravenhill.keen.arb.genetic.population
 import cl.ravenhill.keen.arb.operators.tournamentSelector
 import cl.ravenhill.keen.arb.rngPair
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
-import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
@@ -69,7 +68,7 @@ class TournamentSelectorTest : FreeSpec({
 
             "should return the expected individuals" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.tournamentSelector<Int, IntGene>(),
                     Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome())), 1..25),
                     Arb.int(0..100),

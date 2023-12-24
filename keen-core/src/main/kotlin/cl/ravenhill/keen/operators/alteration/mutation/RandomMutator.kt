@@ -6,9 +6,11 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.utils.eq
@@ -52,18 +54,22 @@ import cl.ravenhill.keen.utils.eq
  * @param chromosomeRate The probability of a chromosome undergoing mutation.
  * @param geneRate The probability of an individual gene within a chromosome being mutated.
  */
+@OptIn(ExperimentalJakt::class)
 class RandomMutator<T, G>(
-    override val individualRate: Double,
-    override val chromosomeRate: Double = 0.5,
-    override val geneRate: Double = 0.5,
+    override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
+    override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
+    override val geneRate: Double = DEFAULT_GENE_RATE
 ) : GeneMutator<T, G> where G : Gene<T, G> {
 
     init {
         constraints {
-            "The chromosome mutation probability [$chromosomeRate] must be in 0.0..1.0" {
+            "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigException) {
+                individualRate must BeInRange(0.0..1.0)
+            }
+            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "The gene rate [$geneRate] must be in 0.0..1.0" {
+            "The gene rate ($geneRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 geneRate must BeInRange(0.0..1.0)
             }
         }
@@ -119,5 +125,11 @@ class RandomMutator<T, G>(
         geneRate eq 0.0 -> gene
         Domain.random.nextDouble() > geneRate -> gene
         else -> gene.mutate()
+    }
+
+    companion object {
+        const val DEFAULT_INDIVIDUAL_RATE = 0.5
+        const val DEFAULT_CHROMOSOME_RATE = 0.5
+        const val DEFAULT_GENE_RATE = 0.5
     }
 }

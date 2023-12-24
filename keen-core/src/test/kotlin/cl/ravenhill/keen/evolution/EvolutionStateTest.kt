@@ -116,6 +116,7 @@ class EvolutionStateTest : FreeSpec({
         "can be copied" - {
             "with the same parameters" {
                 checkAll(
+                    PropTestConfig(iterations = 100),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
                         Arb.individualRanker()

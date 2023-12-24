@@ -13,9 +13,11 @@ import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.prog.Program
 import io.kotest.assertions.throwables.shouldThrowUnit
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.filterNot
@@ -24,7 +26,7 @@ import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
-@OptIn(ExperimentalKeen::class)
+@OptIn(ExperimentalKeen::class, ExperimentalKotest::class)
 class DomainTest : FreeSpec({
 
     afterEach {
@@ -39,7 +41,10 @@ class DomainTest : FreeSpec({
             }
 
             "can be set to a positive value" {
-                checkAll(Arb.double().filter { it > 0 }) { threshold ->
+                checkAll(
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
+                    Arb.double().filter { it > 0 }
+                ) { threshold ->
                     Domain.equalityThreshold = threshold
                     Domain.equalityThreshold shouldBe threshold
                 }
