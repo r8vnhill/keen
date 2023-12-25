@@ -74,4 +74,8 @@ class RandomMutatorTest : FreeSpec({
         Domain.random = Random(420)
         mutated shouldBe gene.mutate()
     }
+
+    "When mutating a chromosome" - {
+
+    }
 })
