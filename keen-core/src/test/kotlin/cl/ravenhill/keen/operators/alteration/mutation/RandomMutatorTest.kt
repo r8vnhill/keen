@@ -30,4 +30,20 @@ class RandomMutatorTest : FreeSpec({
             }.shouldHaveInfringement<MutatorConfigException>("The individual rate (1.1) must be in 0.0..1.0")
         }
     }
+
+    "Should have a chromosome rate property that" - {
+        "defaults to [RandomMutator.DEFAULT_CHROMOSOME_RATE]" {
+            RandomMutator<Nothing, NothingGene>().chromosomeRate shouldBe RandomMutator.DEFAULT_CHROMOSOME_RATE
+        }
+
+        "can be set to a value between 0 and 1" {
+            RandomMutator<Nothing, NothingGene>(chromosomeRate = 0.3).chromosomeRate shouldBe 0.3
+        }
+
+        "should throw an exception if set to a value that's not between 0 and 1" {
+            shouldThrow<CompositeException> {
+                RandomMutator<Nothing, NothingGene>(chromosomeRate = 1.1)
+            }.shouldHaveInfringement<MutatorConfigException>("The chromosome rate (1.1) must be in 0.0..1.0")
+        }
+    }
 })
