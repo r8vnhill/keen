@@ -15,22 +15,84 @@ Kotlin-native tool, Keen offers a streamlined experience without sacrificing dep
 architecture means you can easily extend or modify components, from selection and crossover methods to mutation and 
 fitness evaluation.
 
+## Table of Contents
+
+- [Installation](#installation)
+  - [Gradle Kotlin DSL Setup](#gradle-kotlin-dsl-setup)
+    - [Step 1: Specify Versions in `gradle.properties`](#step-1-specify-versions-in-gradleproperties)
+    - [Step 2: Configure Plugin Management in `settings.gradle.kts`](#step-2-configure-plugin-management-in-settingsgradlekts)
+    - [Step 3: Configure Project Plugins, Repositories, and Dependencies](#step-3-configure-project-plugins-repositories-and-dependencies)
+  - [Additional Notes](#additional-notes)
+- [Examples](#examples)
+  - [One Max (Ones Counting) Problem](#one-max-ones-counting-problem)
+    - [Implementation](#implementation)
+    - [Output](#output)
+- [Acknowledgements](#acknowledgements)
 
 ## Installation
 
-### Gradle Kotlin DSL
+This section guides you through the process of setting up the Keen framework and the EvolutionPlotter in your Kotlin 
+project using Gradle Kotlin DSL.
+
+### Gradle Kotlin DSL Setup
+
+#### Step 1: Specify Versions in `gradle.properties`
+First, define the versions of Keen and Compose in your `gradle.properties` file. Make sure to replace these with the 
+latest versions available.
 
 ```kotlin
+// gradle.properties
+keen.version=1.1.0  // Keen framework version. Replace with the latest version.
+compose.version=1.5.11  // Compose version for the EvolutionPlotter. Replace at your discretion.
+```
+
+#### Step 2: Configure Plugin Management in `settings.gradle.kts`
+This step is essential only if you plan to use the EvolutionPlotter. Here, you configure the plugin management for the
+Compose plugin.
+
+```kotlin
+// settings.gradle.kts
+pluginManagement {
+    repositories {
+        gradlePluginPortal()  // Standard Gradle plugin repository.
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")  // Repository for JetBrains Compose.
+        google()  // Google's Maven repository, sometimes needed for dependencies.
+    }
+
+    plugins {
+        id("org.jetbrains.compose") version extra["compose.version"] as String  // Apply the Compose plugin with the specified version.
+    }
+}
+```
+
+#### Step 3: Configure Project Plugins, Repositories, and Dependencies
+In your build script, configure the necessary plugins, repositories, and dependencies.
+
+```kotlin
+val keenVersion: String by extra["keen.version"] as String  // Retrieve the Keen version defined earlier.
+
+plugins {
+    /* ... */
+    id("org.jetbrains.compose") // Include this only if using the EvolutionPlotter.
+}
+
 repositories {
-    mavenCentral()
+    mavenCentral()  // Maven Central repository for most dependencies.
     /* ... */
 }
 
 dependencies {
-    implementation("cl.ravenhill:keen-core:1.0.3") // Replace with the latest version
+    implementation("cl.ravenhill:keen-core:$keenVersion")  // Keen core library dependency.
+    implementation(compose.desktop.currentOs)   // Compose dependency, required for the EvolutionPlotter.
     /* ... */
 }
 ```
+
+### Additional Notes:
+- Ensure that the versions specified in `gradle.properties` are compatible with your project setup.
+- The `pluginManagement` block in `settings.gradle.kts` is crucial for resolving the Compose plugin, especially if 
+  you're using features like the EvolutionPlotter.
+- Remember to sync your Gradle project after making changes to these files to apply the configurations.
 
 ## Examples
 

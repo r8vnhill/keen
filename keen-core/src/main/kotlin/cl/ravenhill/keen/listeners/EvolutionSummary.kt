@@ -54,10 +54,6 @@ import kotlin.time.ExperimentalTime
 class EvolutionSummary<T, G>(val precision: Duration.() -> Long = Duration::inWholeMilliseconds) :
         AbstractEvolutionListener<T, G>() where G : Gene<T, G> {
 
-    val fittest: IndividualRecord<T, G>
-        get() = ranker.sort(evolution.generations.last().population.offspring.map { it.toIndividual() }).first()
-            .let { IndividualRecord(it.genotype, it.fitness) }
-
     /**
      * Displays a detailed summary of the evolutionary process on the console.
      *

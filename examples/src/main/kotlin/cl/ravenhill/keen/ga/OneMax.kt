@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.ga
 
+import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
@@ -16,7 +17,10 @@ import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.listeners.EvolutionPlotter
 import cl.ravenhill.keen.listeners.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
+import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
+import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
+import cl.ravenhill.keen.operators.selection.TournamentSelector
 
 /**
  * The size of the population in each generation. Set to 100.
@@ -68,6 +72,7 @@ private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten()
  * In this implementation, executing `main` will initiate the genetic algorithm process and output the evolution
  * summary.
  */
+@OptIn(ExperimentalKeen::class)
 fun main() {
     val engine = evolutionEngine(::count, genotypeOf {
         chromosomeOf {
@@ -78,7 +83,9 @@ fun main() {
         }
     }) {
         populationSize = POPULATION_SIZE
-        alterers += listOf(BitFlipMutator(individualRate = 0.5), SinglePointCrossover(chromosomeRate = 0.6))
+        parentSelector = RouletteWheelSelector()
+        survivorSelector = TournamentSelector()
+        alterers += listOf(BitFlipMutator(individualRate = 0.5), UniformCrossover(chromosomeRate = 0.6))
         limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
         listeners += listOf(EvolutionSummary(), EvolutionPlotter())
     }

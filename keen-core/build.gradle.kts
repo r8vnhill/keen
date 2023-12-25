@@ -33,7 +33,7 @@ dependencies {
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-kernel:$letsPlotKotlinVersion")
     implementation("org.jetbrains.lets-plot:platf-awt:$letsPlotVersion")
     implementation("org.slf4j:slf4j-simple:$slf4jVersion")
-    implementation(compose.desktop.currentOs)
+    implementation(compose.desktop.common)
     testImplementation("io.kotest:kotest-property:$kotestVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-framework-datatest:$kotestVersion")
