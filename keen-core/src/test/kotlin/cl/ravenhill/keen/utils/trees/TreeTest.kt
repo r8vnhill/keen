@@ -11,6 +11,7 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
@@ -39,6 +40,7 @@ class TreeTest : FreeSpec({
         leafNodeC = TypedTree(TypedLeaf('c'))
         singleElementTree = TypedTree(TypedLeaf('a'))
         multiElementTree = TypedTree(TypedIntermediate(2, 'a'), listOf(intermediateNodeB, leafNodeC))
+        Domain.toStringMode = ToStringMode.SIMPLE
     }
 
     /**
@@ -79,7 +81,7 @@ class TreeTest : FreeSpec({
         }
 
         "can be converted to a detailed string representation" {
-            singleElementTree.toDetailedString() shouldBe "TypedTree(" +
+            singleElementTree.toString() shouldBe "TypedTree(" +
                   "value=TypedLeaf(contents=a), " +
                   "size=1, " +
                   "arity=0, " +
@@ -176,7 +178,7 @@ class TreeTest : FreeSpec({
         }
 
         "can be converted to a detailed string representation" {
-            multiElementTree.toDetailedString() shouldBe "TypedTree(" +
+            multiElementTree.toString() shouldBe "TypedTree(" +
                   "value=TypedIntermediate(arity=2, contents=a), " +
                   "size=4, " +
                   "arity=2, " +
