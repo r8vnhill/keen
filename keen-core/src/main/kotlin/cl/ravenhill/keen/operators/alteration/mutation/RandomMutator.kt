@@ -69,7 +69,7 @@ class RandomMutator<T, G>(
             "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "The gene rate [$geneRate] must be in 0.0..1.0" {
+            "The gene rate ($geneRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 geneRate must BeInRange(0.0..1.0)
             }
         }
