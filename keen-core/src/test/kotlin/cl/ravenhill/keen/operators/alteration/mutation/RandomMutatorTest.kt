@@ -6,12 +6,15 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.NothingGene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import kotlin.random.Random
 
 class RandomMutatorTest : FreeSpec({
 
@@ -61,5 +64,14 @@ class RandomMutatorTest : FreeSpec({
                 RandomMutator<Nothing, NothingGene>(geneRate = 1.1)
             }.shouldHaveInfringement<MutatorConfigException>("The gene rate (1.1) must be in 0.0..1.0")
         }
+    }
+
+    "Can mutate a gene" {
+        val mutator = RandomMutator<Int, IntGene>()
+        val gene = IntGene(0)
+        Domain.random = Random(420)
+        val mutated = mutator.mutateGene(gene)
+        Domain.random = Random(420)
+        mutated shouldBe gene.mutate()
     }
 })
