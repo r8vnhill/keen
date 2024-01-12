@@ -1,4 +1,12 @@
- # ChatGPT Rules
+# ChatGPT Usage Rules
+
+You are free to use this tool (or similar) for any purpose, provided that you follow the project standards and rules.
+
+The following is a template you can use to start a new chat (take into account that there's no guarantee that the
+answers provided by the tool will be correct, so it is THE DEVELOPER'S RESPONSIBILITY to check the answers and
+correct them if necessary):
+
+---
 
 This chat is about keen, an evolutionary computation framework for kotlin
 

@@ -7,6 +7,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.arb.datatypes.probability
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -14,13 +15,20 @@ import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.property.Arb
+import io.kotest.property.checkAll
 import kotlin.random.Random
 
 class RandomMutatorTest : FreeSpec({
 
     "Should have an individual rate property that" - {
         "defaults to [RandomMutator.DEFAULT_INDIVIDUAL_RATE]" {
-            RandomMutator<Nothing, NothingGene>().individualRate shouldBe RandomMutator.DEFAULT_INDIVIDUAL_RATE
+            checkAll(Arb.probability(), Arb.probability()) { individualRate, chromosomeRate ->
+                RandomMutator<Nothing, NothingGene>(
+                    individualRate,
+                    chromosomeRate
+                ).individualRate shouldBe individualRate
+            }
         }
 
         "can be set to a value between 0 and 1" {
@@ -73,9 +81,5 @@ class RandomMutatorTest : FreeSpec({
         val mutated = mutator.mutateGene(gene)
         Domain.random = Random(420)
         mutated shouldBe gene.mutate()
-    }
-
-    "When mutating a chromosome" - {
-
     }
 })
