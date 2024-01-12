@@ -11,6 +11,7 @@ import io.kotest.property.PropTestConfig
 import io.kotest.property.PropertyContext
 import io.kotest.property.checkAll as kotestCheckAll
 
+// THIS FILE IS NEEDED TO AVOID A BUG IN INTELLIJ IDEA
 suspend fun <A, B, C, D, E, F, G, H, I, J> checkAll(
     genA: Gen<A>,
     genB: Gen<B>,

@@ -16,6 +16,9 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.filter
+import io.kotest.property.arbitrary.withEdgecases
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -32,8 +35,11 @@ class RandomMutatorTest : FreeSpec({
         }
 
         "can be set to a value between 0 and 1" {
-            checkAll(Arb.probability(), Arb.probability(), Arb.probability()) {
-                individualRate, chromosomeRate, geneRate ->
+            checkAll(
+                Arb.probability(),
+                Arb.probability(),
+                Arb.probability()
+            ) { individualRate, chromosomeRate, geneRate ->
                 RandomMutator<Nothing, NothingGene>(
                     individualRate,
                     chromosomeRate,
@@ -43,9 +49,21 @@ class RandomMutatorTest : FreeSpec({
         }
 
         "should throw an exception if set to a value that's not between 0 and 1" {
-            shouldThrow<CompositeException> {
-                RandomMutator<Nothing, NothingGene>(1.1)
-            }.shouldHaveInfringement<MutatorConfigException>("The individual rate (1.1) must be in 0.0..1.0")
+            checkAll(
+                Arb.double().filter { it !in 0.0..1.0 }.withEdgecases(),
+                Arb.probability(),
+                Arb.probability(),
+            ) { individualRate, chromosomeRate, geneRate ->
+                shouldThrow<CompositeException> {
+                    RandomMutator<Nothing, NothingGene>(
+                        individualRate,
+                        chromosomeRate,
+                        geneRate
+                    )
+                }.shouldHaveInfringement<MutatorConfigException>(
+                    "The individual rate ($individualRate) must be in 0.0..1.0"
+                )
+            }
         }
     }
 
