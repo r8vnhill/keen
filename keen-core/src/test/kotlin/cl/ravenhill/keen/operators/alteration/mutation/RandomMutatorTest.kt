@@ -8,6 +8,8 @@ package cl.ravenhill.keen.operators.alteration.mutation
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.datatypes.probability
+import cl.ravenhill.keen.arb.genetic.genes.intGene
+import cl.ravenhill.keen.arb.operators.randomMutator
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -18,6 +20,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filter
+import io.kotest.property.arbitrary.long
+import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.withEdgecases
 import io.kotest.property.checkAll
 import kotlin.random.Random
@@ -154,11 +158,15 @@ class RandomMutatorTest : FreeSpec({
     }
 
     "Can mutate a gene" {
-        val mutator = RandomMutator<Int, IntGene>()
-        val gene = IntGene(0)
-        Domain.random = Random(420)
-        val mutated = mutator.mutateGene(gene)
-        Domain.random = Random(420)
-        mutated shouldBe gene.mutate()
+        checkAll(
+            Arb.intGene(),
+            Arb.randomMutator<Int, IntGene>(),
+            Arb.long().map { seed -> Random(seed) to Random(seed) }
+        ) { intGene, mutator, (r1, r2) ->
+            Domain.random = r1
+            val mutated = mutator.mutateGene(intGene)
+            val expected = r2.nextInt(intGene.range.start, intGene.range.endInclusive)
+            mutated shouldBe IntGene(expected, intGene.range)
+        }
     }
 })

@@ -11,6 +11,7 @@ import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import cl.ravenhill.keen.mixins.Ranged
 import cl.ravenhill.keen.utils.nextIntInRange
@@ -199,20 +200,40 @@ data class IntGene(
     override fun toInt() = value
 
     /**
-     * Provides a string representation of the `IntGene` instance.
+     * Overrides the default `toString` method to provide a string representation of the `IntGene` object.
      *
-     * ## Format:
-     * The string representation is formatted as:
-     * ```
-     * "IntGene(value=<value>, range=<range>)"
-     * ```
-     * where `<value>` is replaced with the actual integer value of the gene, and `<range>` is replaced with the
-     * string representation of the gene's permissible range.
+     * ## Usage:
+     * This method is used to get a human-readable representation of the `IntGene` instance.
+     * The format of the output depends on the [Domain.toStringMode] setting.
      *
-     * @return A string representation of the `IntGene` instance, including its value and range.
+     * ### Example 1: SIMPLE Mode
+     * When `Domain.toStringMode` is set to `ToStringMode.SIMPLE`, it returns just the value of the gene.
+     * ```
+     * println(intGeneInstance)  // Output might be just the value, e.g., "5"
+     * ```
+     *
+     * ### Example 2: DEFAULT Mode
+     * When `Domain.toStringMode` is set to `ToStringMode.DEFAULT`, it returns a detailed description including the
+     * value and range.
+     * ```
+     * println(intGeneInstance)  // Output: "IntGene(value=5, range=1..10)"
+     * ```
+     *
+     * ### Example 3: DETAILED Mode
+     * When `Domain.toStringMode` is set to `ToStringMode.DETAILED`, it returns the most detailed description, including
+     * value, range, and filter details.
+     * ```
+     * println(intGeneInstance)  // Output: "IntGene(value=5, range=1..10, filter=(...))"
+     * ```
+     *
+     * @return A string representation of the `IntGene` object. The format varies based on the `Domain.toStringMode`.
      */
-    override fun toString() = "IntGene(value=$value, range=$range)"
-
+    override fun toString() = when (Domain.toStringMode) {
+        ToStringMode.SIMPLE -> value.toString()
+        ToStringMode.DEFAULT -> "IntGene(value=$value, range=$range)"
+        ToStringMode.DETAILED ->
+            "IntGene(value=$value, range=$range, filter=($filter)@${System.identityHashCode(filter)})"
+    }
 
     /**
      * Provides a detailed string representation of the `IntGene` instance.
@@ -231,6 +252,7 @@ data class IntGene(
      * @return A detailed string representation of the `IntGene` instance, including its value, range, and filter
      *   function.
      */
+    @Deprecated("Use the standard toString method instead", replaceWith = ReplaceWith("toString()"))
     override fun toDetailedString() =
         "IntGene(value=$value, range=$range, filter=($filter)@${System.identityHashCode(filter)})"
 
