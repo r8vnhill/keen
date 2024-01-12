@@ -32,7 +32,14 @@ class RandomMutatorTest : FreeSpec({
         }
 
         "can be set to a value between 0 and 1" {
-            RandomMutator<Nothing, NothingGene>(0.3).individualRate shouldBe 0.3
+            checkAll(Arb.probability(), Arb.probability(), Arb.probability()) {
+                individualRate, chromosomeRate, geneRate ->
+                RandomMutator<Nothing, NothingGene>(
+                    individualRate,
+                    chromosomeRate,
+                    geneRate
+                ).individualRate shouldBe individualRate
+            }
         }
 
         "should throw an exception if set to a value that's not between 0 and 1" {
