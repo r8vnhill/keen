@@ -13,8 +13,8 @@ import cl.ravenhill.keen.arb.genetic.genes.intGene
 import cl.ravenhill.keen.arb.operators.randomMutator
 import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
-import cl.ravenhill.keen.assertions.`test chromosome rate property`
-import cl.ravenhill.keen.assertions.`test individual rate property`
+import cl.ravenhill.keen.assertions.operators.`test chromosome rate property`
+import cl.ravenhill.keen.assertions.operators.`test individual rate property`
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
@@ -43,7 +43,7 @@ class RandomMutatorTest : FreeSpec({
             )
         }, ::RandomMutator
     ) { rate ->
-        ""
+        "The individual rate ($rate) must be in 0.0..1.0"
     })
 
     include(`test chromosome rate property`(

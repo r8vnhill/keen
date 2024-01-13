@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.assertions
+package cl.ravenhill.keen.assertions.operators
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.datatypes.probability
@@ -44,11 +44,7 @@ fun <T, G> `test individual rate property`(
     exceptionMessage: (Double) -> String
 ) where G : Gene<T, G> = freeSpec {
     "Should have an individual rate property that" - {
-        "defaults to [$defaultName]" {
-            checkAll(Arb.probability(), Arb.probability()) { chromosomeRate, geneRate ->
-                mutatorFactory1(chromosomeRate, geneRate).individualRate shouldBe defaultValue
-            }
-        }
+        `defaults to default rate`(defaultName, defaultValue, mutatorFactory1) { individualRate }
 
         "can be set to a value between 0 and 1" {
             checkAll(
@@ -68,9 +64,7 @@ fun <T, G> `test individual rate property`(
             ) { individualRate, chromosomeRate, geneRate ->
                 shouldThrow<CompositeException> {
                     mutatorFactory2(individualRate, chromosomeRate, geneRate)
-                }.shouldHaveInfringement<MutatorConfigException>(
-                    "The individual rate ($individualRate) must be in 0.0..1.0"
-                )
+                }.shouldHaveInfringement<MutatorConfigException>(exceptionMessage(individualRate))
             }
         }
     }
@@ -98,9 +92,9 @@ fun <T, G> `test chromosome rate property`(
     exceptionMessage: (Double) -> String
 ) where G : Gene<T, G> = freeSpec {
     "Should have a chromosome rate property that" - {
-        `defaults to default rate`(defaultName, defaultValue, defaultValueFactory)
+        `defaults to default rate`(defaultName, defaultValue, defaultValueFactory) { chromosomeRate }
 
-        `can be set to a value between 0 and 1`(completeFactory)
+        `can be set to a value between 0 and 1`(completeFactory) { chromosomeRate }
 
         `throws an exception if set to a value outside of 0 to 1`(completeFactory, exceptionMessage)
     }
@@ -120,11 +114,13 @@ fun <T, G> `test chromosome rate property`(
  * @param defaultValueFactory A lambda function to create instances of Mutator with varied configurations.
  */
 private suspend fun FreeSpecContainerScope.`defaults to default rate`(
-    defaultName: String, defaultValue: Double, defaultValueFactory: (Double, Double) -> Mutator<*, *>,
+    defaultName: String, defaultValue: Double,
+    defaultValueFactory: (Double, Double) -> Mutator<*, *>,
+    rateProperty: Mutator<*, *>.() -> Double
 ) {
     "defaults to [$defaultName]" {
         checkAll(Arb.probability(), Arb.probability()) { rate1, rate2 ->
-            defaultValueFactory(rate1, rate2).chromosomeRate shouldBe defaultValue
+            defaultValueFactory(rate1, rate2).rateProperty() shouldBe defaultValue
         }
     }
 }
@@ -145,6 +141,7 @@ private suspend fun FreeSpecContainerScope.`defaults to default rate`(
  */
 private suspend fun <T, G> FreeSpecContainerScope.`can be set to a value between 0 and 1`(
     completeFactory: (Double, Double, Double) -> Mutator<T, G>,
+    rateProperty: Mutator<T, G>.() -> Double
 ) where G : Gene<T, G> {
     "can be set to a value between 0 and 1" {
         checkAll(
@@ -152,7 +149,7 @@ private suspend fun <T, G> FreeSpecContainerScope.`can be set to a value between
             Arb.probability(),
             Arb.probability()
         ) { rate1, rate2, rate3 ->
-            completeFactory(rate2, rate1, rate3).chromosomeRate shouldBe rate2
+            completeFactory(rate2, rate1, rate3).rateProperty() shouldBe rate2
         }
     }
 }
