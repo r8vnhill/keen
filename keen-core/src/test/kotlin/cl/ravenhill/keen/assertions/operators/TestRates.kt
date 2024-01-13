@@ -96,7 +96,6 @@ fun <T, G> `test chromosome rate property`(
  *
  * ## Usage
  * This function should be called within a `freeSpec` testing block. It orchestrates a series of assertions to verify the correct behavior of the gene rate property in a `GeneMutator`.
- * ```
  *
  * @param defaultName Descriptive name of the default gene rate property for readability.
  * @param defaultValue Double value expected to be the default for the gene rate property.

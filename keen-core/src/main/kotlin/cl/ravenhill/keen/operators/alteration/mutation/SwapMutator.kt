@@ -68,10 +68,10 @@ class SwapMutator<T, G>(
 
     init {
         constraints {
-            "The swap rate [$swapRate] must be in 0.0..1.0"(::MutatorConfigException) {
+            "The swap rate ($swapRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 swapRate must BeInRange(0.0..1.0)
             }
-            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0"(::MutatorConfigException) {
+            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
             "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigException) {

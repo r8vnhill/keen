@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
+import cl.ravenhill.keen.assertions.operators.`test chromosome rate property`
 import cl.ravenhill.keen.assertions.operators.`test individual rate property`
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.operators.alteration.mutation.SwapMutator
@@ -25,4 +26,19 @@ class SwapMutatorTest : FreeSpec({
     ) { rate ->
         "The individual rate ($rate) must be in 0.0..1.0"
     })
+
+    include(`test chromosome rate property`(
+        "SwapMutator.DEFAULT_CHROMOSOME_RATE",
+        SwapMutator.DEFAULT_CHROMOSOME_RATE,
+        { individualRate, swapRate ->
+            SwapMutator<Nothing, NothingGene>(
+                individualRate = individualRate,
+                swapRate = swapRate
+            )
+        },
+        { chromosomeRate, individualRate, swapRate -> SwapMutator(individualRate, chromosomeRate, swapRate) }
+    ) { rate ->
+        "The chromosome rate ($rate) must be in 0.0..1.0"
+    })
+
 })
