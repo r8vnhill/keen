@@ -33,39 +33,21 @@ import io.kotest.property.checkAll
  * @param G The type of the genes, which should inherit from `Gene<T, G>`.
  * @param defaultName The name of the default value for comparison in tests.
  * @param defaultValue The expected default value of the individual rate.
- * @param mutatorFactory1 A factory function to create a mutator given chromosome and gene rates.
- * @param mutatorFactory2 A factory function to create a mutator given individual, chromosome, and gene rates.
+ * @param defaultFactory A factory function to create a mutator given chromosome and gene rates.
+ * @param completeFactory A factory function to create a mutator given individual, chromosome, and gene rates.
+ * @param exceptionMessage A lambda function that takes a Double parameter and returns a String. This is used to
+ *   generate the expected exception message for the test.
  */
 fun <T, G> `test individual rate property`(
     defaultName: String,
     defaultValue: Double,
-    mutatorFactory1: (Double, Double) -> Mutator<T, G>,
-    mutatorFactory2: (Double, Double, Double) -> Mutator<T, G>,
+    defaultFactory: (Double, Double) -> Mutator<T, G>,
+    completeFactory: (Double, Double, Double) -> Mutator<T, G>,
     exceptionMessage: (Double) -> String
 ) where G : Gene<T, G> = freeSpec {
-    "Should have an individual rate property that" - {
-        `defaults to default rate`(defaultName, defaultValue, mutatorFactory1) { individualRate }
-
-        "can be set to a value between 0 and 1" {
-            checkAll(
-                /* individualRate = */ Arb.probability(),
-                /* chromosomeRate = */ Arb.probability(),
-                /* geneRate = */ Arb.probability()
-            ) { individualRate, chromosomeRate, geneRate ->
-                mutatorFactory2(individualRate, chromosomeRate, geneRate).individualRate shouldBe individualRate
-            }
-        }
-
-        "should throw an exception if set to a value that's not between 0 and 1" {
-            checkAll(
-                /* individualRate = */ Arb.double().filter { it !in 0.0..1.0 }.withEdgecases(),
-                /* chromosomeRate = */ Arb.probability(),
-                /* geneRate = */ Arb.probability(),
-            ) { individualRate, chromosomeRate, geneRate ->
-                shouldThrow<CompositeException> {
-                    mutatorFactory2(individualRate, chromosomeRate, geneRate)
-                }.shouldHaveInfringement<MutatorConfigException>(exceptionMessage(individualRate))
-            }
+    "individual rate" - {
+        `test rate property`(defaultName, defaultValue, defaultFactory, completeFactory, exceptionMessage) {
+            individualRate
         }
     }
 }
@@ -92,12 +74,44 @@ fun <T, G> `test chromosome rate property`(
     exceptionMessage: (Double) -> String
 ) where G : Gene<T, G> = freeSpec {
     "Should have a chromosome rate property that" - {
-        `defaults to default rate`(defaultName, defaultValue, defaultValueFactory) { chromosomeRate }
-
-        `can be set to a value between 0 and 1`(completeFactory) { chromosomeRate }
-
-        `throws an exception if set to a value outside of 0 to 1`(completeFactory, exceptionMessage)
+        `test rate property`(defaultName, defaultValue, defaultValueFactory, completeFactory, exceptionMessage) {
+            chromosomeRate
+        }
     }
+}
+
+/**
+ * Extension function for `FreeSpecContainerScope` to comprehensively test a rate property of a mutator.
+ *
+ * ## Overview
+ * This function consolidates multiple tests for a rate property (e.g., chromosome rate) in a mutator. It checks that
+ * the rate property has a default value, can be set within a valid range (0 to 1), and throws an exception for values
+ * outside this range.
+ *
+ * @param defaultName The name of the default rate property being tested. This is used primarily for display purposes
+ *   in test output.
+ * @param defaultValue The expected default value of the rate property.
+ * @param defaultValueFactory A factory function to create a mutator given two rate parameters. Used to test the
+ *   default value of the rate property.
+ * @param completeFactory A factory function to create a mutator given three rate parameters. Used for testing setting
+ *   the rate within a valid range and for exception testing.
+ * @param exceptionMessage A function that returns the expected exception message given an invalid rate value.
+ * @param T The type of the individuals in the genetic algorithm.
+ * @param G The type of the genes, inheriting from `Gene<T, G>`.
+ */
+private suspend fun <G, T> FreeSpecContainerScope.`test rate property`(
+    defaultName: String,
+    defaultValue: Double,
+    defaultValueFactory: (Double, Double) -> Mutator<T, G>,
+    completeFactory: (Double, Double, Double) -> Mutator<T, G>,
+    exceptionMessage: (Double) -> String,
+    rateProperty: Mutator<T, G>.() -> Double
+) where G : Gene<T, G> {
+    `defaults to default rate`(defaultName, defaultValue, defaultValueFactory, rateProperty)
+
+    `can be set to a value between 0 and 1`(completeFactory, rateProperty)
+
+    `throws an exception if set to a value outside of 0 to 1`(completeFactory, exceptionMessage)
 }
 
 /**
@@ -113,11 +127,11 @@ fun <T, G> `test chromosome rate property`(
  * @param defaultValue The expected default value of the rate property.
  * @param defaultValueFactory A lambda function to create instances of Mutator with varied configurations.
  */
-private suspend fun FreeSpecContainerScope.`defaults to default rate`(
+private suspend fun <T, G> FreeSpecContainerScope.`defaults to default rate`(
     defaultName: String, defaultValue: Double,
-    defaultValueFactory: (Double, Double) -> Mutator<*, *>,
-    rateProperty: Mutator<*, *>.() -> Double
-) {
+    defaultValueFactory: (Double, Double) -> Mutator<T, G>,
+    rateProperty: Mutator<T, G>.() -> Double
+) where G : Gene<T, G> {
     "defaults to [$defaultName]" {
         checkAll(Arb.probability(), Arb.probability()) { rate1, rate2 ->
             defaultValueFactory(rate1, rate2).rateProperty() shouldBe defaultValue
