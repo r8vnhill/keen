@@ -13,6 +13,7 @@ import cl.ravenhill.keen.arb.genetic.genes.intGene
 import cl.ravenhill.keen.arb.operators.randomMutator
 import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
+import cl.ravenhill.keen.assertions.`test chromosome rate property`
 import cl.ravenhill.keen.assertions.`test individual rate property`
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -40,52 +41,19 @@ class RandomMutatorTest : FreeSpec({
                 chromosomeRate = chromosomeRate,
                 geneRate = geneRate
             )
-        },
-        { individualRate, chromosomeRate, geneRate -> RandomMutator(individualRate, chromosomeRate, geneRate) }
-    ))
-
-    "Should have a chromosome rate property that" - {
-        "defaults to [RandomMutator.DEFAULT_CHROMOSOME_RATE]" {
-            checkAll(Arb.probability(), Arb.probability()) { individualRate, geneRate ->
-                RandomMutator<Nothing, NothingGene>(
-                    individualRate,
-                    geneRate = geneRate
-                ).chromosomeRate shouldBe RandomMutator.DEFAULT_CHROMOSOME_RATE
-            }
         }
+    ) { individualRate, chromosomeRate, geneRate -> RandomMutator(individualRate, chromosomeRate, geneRate) })
 
-        "can be set to a value between 0 and 1" {
-            checkAll(
-                Arb.probability(),
-                Arb.probability(),
-                Arb.probability()
-            ) { individualRate, chromosomeRate, geneRate ->
-                RandomMutator<Nothing, NothingGene>(
-                    individualRate,
-                    chromosomeRate,
-                    geneRate
-                ).chromosomeRate shouldBe chromosomeRate
-            }
+    include(`test chromosome rate property`(
+        "RandomMutator.DEFAULT_CHROMOSOME_RATE",
+        RandomMutator.DEFAULT_CHROMOSOME_RATE,
+        { individualRate, geneRate ->
+            RandomMutator<Nothing, NothingGene>(
+                individualRate = individualRate,
+                geneRate = geneRate
+            )
         }
-
-        "should throw an exception if set to a value that's not between 0 and 1" {
-            checkAll(
-                Arb.probability(),
-                Arb.double().filter { it !in 0.0..1.0 }.withEdgecases(),
-                Arb.probability(),
-            ) { individualRate, chromosomeRate, geneRate ->
-                shouldThrow<CompositeException> {
-                    RandomMutator<Nothing, NothingGene>(
-                        individualRate,
-                        chromosomeRate,
-                        geneRate
-                    )
-                }.shouldHaveInfringement<MutatorConfigException>(
-                    "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"
-                )
-            }
-        }
-    }
+    ) { individualRate, chromosomeRate, geneRate -> RandomMutator(individualRate, chromosomeRate, geneRate) })
 
     "Should have a gene rate property that" - {
         "defaults to [RandomMutator.DEFAULT_GENE_RATE]" {

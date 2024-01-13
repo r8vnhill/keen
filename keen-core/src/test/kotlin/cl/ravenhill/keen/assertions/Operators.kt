@@ -11,7 +11,9 @@ import cl.ravenhill.keen.arb.datatypes.probability
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.operators.alteration.mutation.Mutator
+import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.freeSpec
 import io.kotest.matchers.shouldBe
@@ -73,6 +75,59 @@ fun <T, G> `test individual rate property`(
                     mutatorFactory2(individualRate, chromosomeRate, geneRate)
                 }.shouldHaveInfringement<MutatorConfigException>(
                     "The individual rate ($individualRate) must be in 0.0..1.0"
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Tests the chromosome rate property of a given mutator.
+ *
+ * ## Overview
+ * This function tests the behavior of the chromosome rate property in a mutator. It verifies that the property
+ * has a default value, correctly accepts valid values, and throws exceptions for invalid values.
+ *
+ * @param T The type of the individuals in the genetic algorithm.
+ * @param G The type of the genes, which should inherit from `Gene<T, G>`.
+ * @param defaultName The name of the default value for comparison in tests.
+ * @param defaultValue The expected default value of the chromosome rate.
+ * @param mutatorFactory1 A factory function to create a mutator given individual and gene rates.
+ * @param mutatorFactory2 A factory function to create a mutator given individual, chromosome, and gene rates.
+ */
+fun <T, G> `test chromosome rate property`(
+    defaultName: String,
+    defaultValue: Double,
+    mutatorFactory1: (Double, Double) -> Mutator<T, G>,
+    mutatorFactory2: (Double, Double, Double) -> Mutator<T, G>,
+) where G : Gene<T, G> = freeSpec {
+    "Should have a chromosome rate property that" - {
+        "defaults to [$defaultName]" {
+            checkAll(Arb.probability(), Arb.probability()) { individualRate, geneRate ->
+                mutatorFactory1(individualRate, geneRate).chromosomeRate shouldBe defaultValue
+            }
+        }
+
+        "can be set to a value between 0 and 1" {
+            checkAll(
+                Arb.probability(),
+                Arb.probability(),
+                Arb.probability()
+            ) { individualRate, chromosomeRate, geneRate ->
+                mutatorFactory2(individualRate, chromosomeRate, geneRate).chromosomeRate shouldBe chromosomeRate
+            }
+        }
+
+        "should throw an exception if set to a value that's not between 0 and 1" {
+            checkAll(
+                Arb.probability(),
+                Arb.double().filter { it !in 0.0..1.0 }.withEdgecases(),
+                Arb.probability(),
+            ) { individualRate, chromosomeRate, geneRate ->
+                shouldThrow<CompositeException> {
+                    mutatorFactory2(individualRate, chromosomeRate, geneRate)
+                }.shouldHaveInfringement<MutatorConfigException>(
+                    "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"
                 )
             }
         }
