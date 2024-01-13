@@ -6,11 +6,13 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.utils.indices
@@ -57,21 +59,22 @@ import cl.ravenhill.keen.utils.swap
  * @throws CompositeException containing all the exceptions thrown by the constraints.
  * @throws DoubleConstraintException if any of the mutation rates is not within the range [0.0, 1.0].
  */
+@OptIn(ExperimentalJakt::class)
 class SwapMutator<T, G>(
-    override val individualRate: Double = 0.2,
-    override val chromosomeRate: Double = 0.5,
-    val swapRate: Double = 0.5
+    override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
+    override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
+    val swapRate: Double = DEFAULT_SWAP_RATE
 ) : Mutator<T, G> where G : Gene<T, G> {
 
     init {
         constraints {
-            "The swap rate [$swapRate] must be in 0.0..1.0" {
+            "The swap rate [$swapRate] must be in 0.0..1.0"(::MutatorConfigException) {
                 swapRate must BeInRange(0.0..1.0)
             }
-            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0" {
+            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0"(::MutatorConfigException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "The individual rate [$individualRate] must be in 0.0..1.0" {
+            "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 individualRate must BeInRange(0.0..1.0)
             }
         }
@@ -109,5 +112,11 @@ class SwapMutator<T, G>(
             Domain.random.nextInt(genes.size).apply { genes.swap(it, this) }
         }
         return chromosome.duplicateWithGenes(genes)
+    }
+
+    companion object {
+        const val DEFAULT_INDIVIDUAL_RATE = 0.5
+        const val DEFAULT_CHROMOSOME_RATE = 0.5
+        const val DEFAULT_SWAP_RATE = 0.5
     }
 }

@@ -11,6 +11,7 @@ import cl.ravenhill.keen.arb.datatypes.probability
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.alteration.mutation.GeneMutator
 import cl.ravenhill.keen.operators.alteration.mutation.Mutator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.freeSpec
@@ -73,9 +74,48 @@ fun <T, G> `test chromosome rate property`(
     completeFactory: (Double, Double, Double) -> Mutator<T, G>,
     exceptionMessage: (Double) -> String
 ) where G : Gene<T, G> = freeSpec {
-    "Should have a chromosome rate property that" - {
+    "chromosome rate" - {
         `test rate property`(defaultName, defaultValue, defaultValueFactory, completeFactory, exceptionMessage) {
             chromosomeRate
+        }
+    }
+}
+
+/**
+ * Function to test the gene rate property of a `GeneMutator`.
+ *
+ * ## Overview
+ * This function provides a structured approach to test the gene rate property of a `GeneMutator`. It validates that the gene rate has a default value, can be set within a valid range (0 to 1), and ensures proper exception handling for values outside this range.
+ *
+ * ## Parameters
+ * - `defaultName`: The name of the default gene rate property being tested, used for display purposes in test output.
+ * - `defaultValue`: The expected default value of the gene rate property.
+ * - `defaultValueFactory`: A factory function to create a `GeneMutator` given two rate parameters. This is used to test the default value of the gene rate.
+ * - `completeFactory`: A factory function to create a `GeneMutator` given three rate parameters. This is used for testing the gene rate within a valid range and for exception testing.
+ * - `exceptionMessage`: A function that returns the expected exception message for an invalid gene rate.
+ *
+ * ## Usage
+ * This function should be called within a `freeSpec` testing block. It orchestrates a series of assertions to verify the correct behavior of the gene rate property in a `GeneMutator`.
+ * ```
+ *
+ * @param defaultName Descriptive name of the default gene rate property for readability.
+ * @param defaultValue Double value expected to be the default for the gene rate property.
+ * @param defaultValueFactory Lambda function to create instances of `GeneMutator` for testing the default gene rate.
+ * @param completeFactory Lambda function for creating `GeneMutator` instances for testing valid range and exception handling.
+ * @param exceptionMessage Function providing the expected exception message for invalid gene rate values.
+ * @param T The type of the individuals in the genetic algorithm.
+ * @param G The type of the genes, inheriting from `Gene<T, G>`.
+ */
+fun <T, G> `test gene rate property`(
+    defaultName: String,
+    defaultValue: Double,
+    defaultValueFactory: (Double, Double) -> GeneMutator<T, G>,
+    completeFactory: (Double, Double, Double) -> GeneMutator<T, G>,
+    exceptionMessage: (Double) -> String
+) where G : Gene<T, G> = freeSpec {
+    "Should have a gene rate property that" - {
+        `test rate property`(defaultName, defaultValue, defaultValueFactory, completeFactory, exceptionMessage) {
+            geneRate
         }
     }
 }
@@ -99,14 +139,14 @@ fun <T, G> `test chromosome rate property`(
  * @param T The type of the individuals in the genetic algorithm.
  * @param G The type of the genes, inheriting from `Gene<T, G>`.
  */
-private suspend fun <G, T> FreeSpecContainerScope.`test rate property`(
+private suspend fun <G, T, M> FreeSpecContainerScope.`test rate property`(
     defaultName: String,
     defaultValue: Double,
-    defaultValueFactory: (Double, Double) -> Mutator<T, G>,
-    completeFactory: (Double, Double, Double) -> Mutator<T, G>,
+    defaultValueFactory: (Double, Double) -> M,
+    completeFactory: (Double, Double, Double) -> M,
     exceptionMessage: (Double) -> String,
-    rateProperty: Mutator<T, G>.() -> Double
-) where G : Gene<T, G> {
+    rateProperty: M.() -> Double
+) where G : Gene<T, G>, M : Mutator<T, G> {
     `defaults to default rate`(defaultName, defaultValue, defaultValueFactory, rateProperty)
 
     `can be set to a value between 0 and 1`(completeFactory, rateProperty)
@@ -127,11 +167,11 @@ private suspend fun <G, T> FreeSpecContainerScope.`test rate property`(
  * @param defaultValue The expected default value of the rate property.
  * @param defaultValueFactory A lambda function to create instances of Mutator with varied configurations.
  */
-private suspend fun <T, G> FreeSpecContainerScope.`defaults to default rate`(
+private suspend fun <T, G, M> FreeSpecContainerScope.`defaults to default rate`(
     defaultName: String, defaultValue: Double,
-    defaultValueFactory: (Double, Double) -> Mutator<T, G>,
-    rateProperty: Mutator<T, G>.() -> Double
-) where G : Gene<T, G> {
+    defaultValueFactory: (Double, Double) -> M,
+    rateProperty: M.() -> Double
+) where G : Gene<T, G>, M : Mutator<T, G> {
     "defaults to [$defaultName]" {
         checkAll(Arb.probability(), Arb.probability()) { rate1, rate2 ->
             defaultValueFactory(rate1, rate2).rateProperty() shouldBe defaultValue
@@ -153,10 +193,10 @@ private suspend fun <T, G> FreeSpecContainerScope.`defaults to default rate`(
  * @param T The type of the individuals in the genetic algorithm.
  * @param G The type of the genes, which should inherit from `Gene<T, G>`.
  */
-private suspend fun <T, G> FreeSpecContainerScope.`can be set to a value between 0 and 1`(
-    completeFactory: (Double, Double, Double) -> Mutator<T, G>,
-    rateProperty: Mutator<T, G>.() -> Double
-) where G : Gene<T, G> {
+private suspend fun <T, G, M> FreeSpecContainerScope.`can be set to a value between 0 and 1`(
+    completeFactory: (Double, Double, Double) -> M,
+    rateProperty: M.() -> Double
+) where G : Gene<T, G>, M : Mutator<T, G> {
     "can be set to a value between 0 and 1" {
         checkAll(
             Arb.probability(),

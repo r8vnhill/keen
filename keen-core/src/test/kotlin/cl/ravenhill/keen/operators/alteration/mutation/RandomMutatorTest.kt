@@ -5,29 +5,22 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
-import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.arb.datatypes.probability
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genes.intGene
 import cl.ravenhill.keen.arb.operators.randomMutator
 import cl.ravenhill.keen.arb.random
-import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.assertions.operators.`test chromosome rate property`
+import cl.ravenhill.keen.assertions.operators.`test gene rate property`
 import cl.ravenhill.keen.assertions.operators.`test individual rate property`
-import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.constant
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
-import io.kotest.property.arbitrary.withEdgecases
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -60,48 +53,19 @@ class RandomMutatorTest : FreeSpec({
         "The chromosome rate ($rate) must be in 0.0..1.0"
     })
 
-    "Should have a gene rate property that" - {
-        "defaults to [RandomMutator.DEFAULT_GENE_RATE]" {
-            checkAll(Arb.probability(), Arb.probability()) { individualRate, chromosomeRate ->
-                RandomMutator<Nothing, NothingGene>(
-                    individualRate,
-                    chromosomeRate
-                ).geneRate shouldBe RandomMutator.DEFAULT_GENE_RATE
-            }
-        }
-
-        "can be set to a value between 0 and 1" {
-            checkAll(
-                Arb.probability(),
-                Arb.probability(),
-                Arb.probability()
-            ) { individualRate, chromosomeRate, geneRate ->
-                RandomMutator<Nothing, NothingGene>(
-                    individualRate,
-                    chromosomeRate,
-                    geneRate
-                ).geneRate shouldBe geneRate
-            }
-        }
-
-        "should throw an exception if set to a value that's not between 0 and 1" {
-            checkAll(
-                Arb.probability(),
-                Arb.probability(),
-                Arb.double().filter { it !in 0.0..1.0 }.withEdgecases(),
-            ) { individualRate, chromosomeRate, geneRate ->
-                shouldThrow<CompositeException> {
-                    RandomMutator<Nothing, NothingGene>(
-                        individualRate,
-                        chromosomeRate,
-                        geneRate
-                    )
-                }.shouldHaveInfringement<MutatorConfigException>(
-                    "The gene rate ($geneRate) must be in 0.0..1.0"
-                )
-            }
-        }
-    }
+    include(`test gene rate property`(
+        "RandomMutator.DEFAULT_GENE_RATE",
+        RandomMutator.DEFAULT_GENE_RATE,
+        { individualRate, chromosomeRate ->
+            RandomMutator<Nothing, NothingGene>(
+                individualRate = individualRate,
+                chromosomeRate = chromosomeRate
+            )
+        },
+        { geneRate, individualRate, chromosomeRate -> RandomMutator(individualRate, chromosomeRate, geneRate) }
+    ) { rate ->
+        "The gene rate ($rate) must be in 0.0..1.0"
+    })
 
     "Can mutate a gene" {
         checkAll(
