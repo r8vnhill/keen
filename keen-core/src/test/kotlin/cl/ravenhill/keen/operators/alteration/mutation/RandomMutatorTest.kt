@@ -8,8 +8,10 @@ package cl.ravenhill.keen.operators.alteration.mutation
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.datatypes.probability
+import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genes.intGene
 import cl.ravenhill.keen.arb.operators.randomMutator
+import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -18,6 +20,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.long
@@ -167,6 +170,55 @@ class RandomMutatorTest : FreeSpec({
             val mutated = mutator.mutateGene(intGene)
             val expected = r2.nextInt(intGene.range.start, intGene.range.endInclusive)
             mutated shouldBe IntGene(expected, intGene.range)
+        }
+    }
+
+    "Can mutate a chromosome" - {
+        "when the gene rate is 1.0 mutates all genes" {
+            checkAll(
+                Arb.randomMutator<Int, IntGene>(geneRate = Arb.constant(1.0)),
+                Arb.intChromosome(),
+                Arb.long().map { seed -> Random(seed) to Random(seed) }
+            ) { mutator, intChromosome, (r1, r2) ->
+                Domain.random = r1
+                val mutated = mutator.mutateChromosome(intChromosome)
+                val expected = intChromosome.genes.map {
+                    r2.nextDouble() // Advances the random number generator
+                    r2.nextInt(it.range.start, it.range.endInclusive)
+                }
+                mutated.genes.map { it.value } shouldBe expected
+            }
+        }
+
+        "when the gene rate is 0.0 doesn't mutate any gene" {
+            checkAll(
+                Arb.randomMutator<Int, IntGene>(geneRate = Arb.constant(0.0)),
+                Arb.intChromosome(),
+                Arb.random()
+            ) { mutator, intChromosome, rng ->
+                Domain.random = rng
+                val mutated = mutator.mutateChromosome(intChromosome)
+                mutated shouldBe intChromosome
+            }
+        }
+
+        "according to an arbitrary gene rate" {
+            checkAll(
+                Arb.randomMutator<Int, IntGene>(),
+                Arb.intChromosome(),
+                Arb.long().map { seed -> Random(seed) to Random(seed) }
+            ) { mutator, intChromosome, (r1, r2) ->
+                Domain.random = r1
+                val mutated = mutator.mutateChromosome(intChromosome)
+                val expected = intChromosome.genes.map {
+                    if (r2.nextDouble() < mutator.geneRate) {
+                        r2.nextInt(it.range.start, it.range.endInclusive)
+                    } else {
+                        it.value
+                    }
+                }
+                mutated.genes.map { it.value } shouldBe expected
+            }
         }
     }
 })
