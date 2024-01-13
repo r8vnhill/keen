@@ -41,8 +41,10 @@ class RandomMutatorTest : FreeSpec({
                 chromosomeRate = chromosomeRate,
                 geneRate = geneRate
             )
-        }
-    ) { individualRate, chromosomeRate, geneRate -> RandomMutator(individualRate, chromosomeRate, geneRate) })
+        }, ::RandomMutator
+    ) { rate ->
+        ""
+    })
 
     include(`test chromosome rate property`(
         "RandomMutator.DEFAULT_CHROMOSOME_RATE",
@@ -52,8 +54,11 @@ class RandomMutatorTest : FreeSpec({
                 individualRate = individualRate,
                 geneRate = geneRate
             )
-        }
-    ) { individualRate, chromosomeRate, geneRate -> RandomMutator(individualRate, chromosomeRate, geneRate) })
+        },
+        { chromosomeRate, individualRate, geneRate -> RandomMutator(individualRate, chromosomeRate, geneRate) }
+    ) { rate ->
+        "The chromosome rate ($rate) must be in 0.0..1.0"
+    })
 
     "Should have a gene rate property that" - {
         "defaults to [RandomMutator.DEFAULT_GENE_RATE]" {
