@@ -13,7 +13,6 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.utils.eq
 
 /**
  * A mutator that randomly applies mutations to chromosomes and genes in an evolutionary algorithm.
@@ -58,7 +57,7 @@ import cl.ravenhill.keen.utils.eq
 class RandomMutator<T, G>(
     override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
     override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
-    override val geneRate: Double = DEFAULT_GENE_RATE
+    override val geneRate: Double = DEFAULT_GENE_RATE,
 ) : GeneMutator<T, G> where G : Gene<T, G> {
 
     init {
@@ -75,11 +74,19 @@ class RandomMutator<T, G>(
         }
     }
 
-    override fun mutateChromosome(chromosome: Chromosome<T, G>) = chromosome.duplicateWithGenes(
-        chromosome.genes.map { gene ->
-            if (Domain.random.nextDouble() < geneRate) mutateGene(gene) else gene
-        }
-    )
+    override fun mutateChromosome(chromosome: Chromosome<T, G>): ChromosomeMutationResult<T, G> {
+        var mutations = 0
+        return ChromosomeMutationResult(chromosome.duplicateWithGenes(
+            chromosome.genes.map { gene ->
+                if (Domain.random.nextDouble() < geneRate) {
+                    mutations++
+                    mutateGene(gene)
+                } else {
+                    gene
+                }
+            }
+        ), mutations)
+    }
 
     override fun mutateGene(gene: G) = gene.mutate()
 

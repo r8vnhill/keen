@@ -133,8 +133,8 @@ class PointMutator<V, T, G>(
      * @param chromosome The chromosome to be potentially mutated.
      * @return A new chromosome with the same structure as the original, but potentially containing mutated genes.
      */
-    override fun mutateChromosome(chromosome: Chromosome<T, G>): Chromosome<T, G> {
+    override fun mutateChromosome(chromosome: Chromosome<T, G>): ChromosomeMutationResult<T, G> {
         val genes = chromosome.map { mutateGene(it) }
-        return chromosome.duplicateWithGenes(genes)
+        return ChromosomeMutationResult(chromosome.duplicateWithGenes(genes), 1)
     }
 }

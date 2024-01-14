@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.listeners
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.EvolutionListener.Companion.computeSteadyGenerations
 import cl.ravenhill.keen.listeners.records.GenerationRecord

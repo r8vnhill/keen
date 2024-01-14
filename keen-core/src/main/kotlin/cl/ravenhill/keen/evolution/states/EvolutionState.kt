@@ -4,7 +4,7 @@
  */
 
 
-package cl.ravenhill.keen.evolution
+package cl.ravenhill.keen.evolution.states
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeNegative
@@ -46,15 +46,12 @@ import java.util.*
  * @param G The specific type of gene.
  * @param generation The current generation number in the evolutionary process.
  * @param population The population of individuals at the current generation.
+ * @param ranker The [IndividualRanker] used to rank individuals in the population.
  *
  * @constructor Creates an instance of `EvolutionState` with the specified generation number and population.
  * @throws CompositeException containing an [IntConstraintException] if the generation number is negative.
  *
  * @see Individual for the structure representing individuals in the population.
- *
- * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @version 2.0.0
- * @since 1.0.0
  */
 open class EvolutionState<T, G>(
     val generation: Int,

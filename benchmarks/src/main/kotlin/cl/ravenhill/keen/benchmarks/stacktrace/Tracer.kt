@@ -10,7 +10,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
 import cl.ravenhill.keen.dsl.genotypeOf
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness

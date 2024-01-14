@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.arb.operators
 
 import cl.ravenhill.keen.arb.datatypes.probability
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.genetic.genes.Gene

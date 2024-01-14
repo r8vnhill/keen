@@ -105,13 +105,17 @@ class SwapMutator<T, G>(
      * @return a new instance of Chromosome<T, G> with genes swapped based on the mutation logic.
      * @receiver the current instance of the mutator.
      */
-    override fun mutateChromosome(chromosome: Chromosome<T, G>): Chromosome<T, G> {
+    override fun mutateChromosome(chromosome: Chromosome<T, G>): ChromosomeMutationResult<T, G> {
+        var mutations = 0
         val genes = chromosome.toMutableList()
         val indices = Domain.random.indices(swapRate, genes.size)
         indices.forEach {
-            Domain.random.nextInt(genes.size).apply { genes.swap(it, this) }
+            Domain.random.nextInt(genes.size).apply {
+                mutations++
+                genes.swap(it, this)
+            }
         }
-        return chromosome.duplicateWithGenes(genes)
+        return ChromosomeMutationResult(chromosome.duplicateWithGenes(genes), mutations)
     }
 
     /**

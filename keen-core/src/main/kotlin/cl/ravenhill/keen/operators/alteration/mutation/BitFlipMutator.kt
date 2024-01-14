@@ -83,35 +83,51 @@ class BitFlipMutator<G>(
     }
 
     /**
-     * Mutates a chromosome by potentially flipping the value of its genes.
+     * Mutates a chromosome by potentially flipping the value of its genes and returns the mutation result.
      *
-     * This method operates on a single chromosome and decides whether to mutate it based on the [chromosomeRate].
-     * If the chromosome is selected for mutation, each gene within the chromosome is evaluated for mutation
-     * through the [mutateGene] method.
+     * This method operates on a single chromosome, deciding whether to mutate it based on the [chromosomeRate]. If the
+     * chromosome is selected for mutation, each gene within it is evaluated for mutation through the [mutateGene]
+     * method. The result of this process is encapsulated in a `ChromosomeMutationResult` object.
      *
      * ## Mutation Process:
      * 1. **Mutation Decision**: Determines whether the chromosome will undergo mutation based on [chromosomeRate].
-     * 2. **Gene Mutation**: If the chromosome is selected, each gene within the chromosome is passed to [mutateGene],
-     *    which decides whether to flip the gene's value.
-     * 3. **Chromosome Duplication**: A new chromosome is created with the potentially mutated genes. This ensures that
-     *    the original chromosome remains unaltered, adhering to the principles of immutability.
+     * 2. **Gene Mutation**: If the chromosome is selected, each gene within it is passed to [mutateGene], which decides
+     *   whether to flip the gene's value.
+     * 3. **Chromosome Duplication and Mutation Count**: A new chromosome is created with the potentially mutated genes,
+     *   and the number of mutations applied is recorded. This approach ensures that the original chromosome remains
+     *   unaltered, adhering to the principles of immutability.
      *
      * ## Usage:
-     * This method is internally invoked by the `BitFlipMutator` during the mutation phase of a genetic algorithm.
-     * It is not typically called directly in user code.
+     * This method is primarily invoked by the `BitFlipMutator` during the mutation phase of a genetic algorithm. It is
+     * not typically called directly by user code but is integral to the internal workings of certain mutation
+     * strategies.
      *
-     * @param chromosome The chromosome to potentially mutate. It contains a sequence of Boolean genes.
-     * @return A new chromosome instance with potentially mutated genes, or the original chromosome if no mutation
-     *   occurs.
+     * ### Example:
+     * ```kotlin
+     * val chromosome = /* An existing chromosome of Boolean genes */
+     * val mutationResult = bitFlipMutator.mutateChromosome(chromosome)
+     * // mutationResult contains the mutated chromosome and the count of mutations applied
+     * ```
+     * In this example, `mutateChromosome` is applied to a Boolean chromosome. It returns a `ChromosomeMutationResult`
+     * object that includes the new, mutated chromosome and the total number of mutations applied. This result is
+     * important for tracking the changes made during the mutation phase and for further processing in the genetic
+     * algorithm.
+     *
+     * @param chromosome The chromosome to potentially mutate, containing a sequence of Boolean genes.
+     * @return A `ChromosomeMutationResult<Boolean, G>` instance, which includes a new chromosome with potentially
+     *   mutated genes and the total count of mutations applied.
      */
-    override fun mutateChromosome(chromosome: Chromosome<Boolean, G>) =
-        chromosome.duplicateWithGenes(chromosome.genes.map {
+    override fun mutateChromosome(chromosome: Chromosome<Boolean, G>): ChromosomeMutationResult<Boolean, G> {
+        var mutations = 0
+        return ChromosomeMutationResult(chromosome.duplicateWithGenes(chromosome.genes.map {
             if (Domain.random.nextDouble() > geneRate) {
                 it
             } else {
+                mutations++
                 mutateGene(it)
             }
-        })
+        }), mutations)
+    }
 
     /**
      * Mutates a gene by flipping its Boolean value.

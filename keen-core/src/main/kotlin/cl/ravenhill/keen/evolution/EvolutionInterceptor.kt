@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 
 

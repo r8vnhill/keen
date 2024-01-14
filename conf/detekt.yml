@@ -57,9 +57,9 @@ comments:
     licenseTemplateFile: 'license.template'
     licenseTemplateIsRegex: false
   CommentOverPrivateFunction:
-    active: false
+    active: true
   CommentOverPrivateProperty:
-    active: false
+    active: true
   DeprecatedBlockTag:
     active: false
   EndOfSentenceFormat:

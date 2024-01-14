@@ -9,7 +9,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -144,46 +144,50 @@ interface Mutator<T, G> : Alterer<T, G> where G : Gene<T, G> {
             if (Domain.random.nextDouble() > chromosomeRate) {
                 it
             } else {
-                mutateChromosome(it)
+                mutateChromosome(it).subject
             }
         }))
 
 
     /**
-     * Performs mutation on a given chromosome.
+     * Performs mutation on a given chromosome and returns the mutation result.
      *
-     * This method is a critical part of the genetic mutation process in evolutionary algorithms. It takes a chromosome
-     * as input and applies mutation logic to it, resulting in a new chromosome with altered genetic information. The
-     * specifics of the mutation process depend on the implementation and can range from slight alterations to
-     * significant changes in the genetic makeup of the chromosome.
+     * This method is crucial in the genetic mutation process within evolutionary algorithms. It accepts a chromosome
+     * as input and applies mutation logic to it. The result is a `ChromosomeMutationResult` containing a new
+     * chromosome with altered genetic information. The nature and extent of these alterations depend on the specific
+     * implementation of the mutation logic.
      *
      * ## Key Functionality:
      * - **Chromosome Transformation**: Alters the genetic structure of the input chromosome. This could involve
      *   modifying one or more genes within the chromosome.
      * - **Genetic Diversity**: Introduces variations in the genetic material, contributing to the genetic diversity of
-     *   the population. This is essential for exploring new genetic configurations and avoiding premature convergence
-     *   to local optima.
-     * - **Generation of New Chromosome**: Produces a new chromosome instance with the mutated genes, ensuring that the
-     *   original chromosome remains unchanged.
+     *   the population. This is key to exploring new genetic configurations and preventing premature convergence to
+     *   local optima.
+     * - **Generation of New Chromosome**: Produces a new instance of `ChromosomeMutationResult` with the mutated
+     *   chromosome. This ensures that the original chromosome remains unaltered, encapsulating the mutations within
+     *   the result.
      *
      * ## Usage:
-     * This method is typically invoked as part of the mutation phase in a genetic algorithm, where it's applied to
-     * chromosomes of individuals in the population. It plays a vital role in enabling genetic algorithms to search
-     * effectively through the solution space.
+     * This method is typically used during the mutation phase of a genetic algorithm, where it's applied to the
+     * chromosomes of individuals in the population. Its role in introducing genetic variation is pivotal for the
+     * effective search and exploration of the solution space in genetic algorithms.
      *
      * ### Example:
      * ```kotlin
      * val chromosome = /* An existing chromosome */
-     * val mutatedChromosome = mutator.mutateChromosome(chromosome)
-     * // mutatedChromosome now contains the mutated version of the original chromosome
+     * val mutationResult = mutator.mutateChromosome(chromosome)
+     * val (mutatedChromosome, mutationCount) = mutationResult
+     * // mutatedChromosome now contains a mutated version of the original chromosome
+     * // mutationCount contains the number of mutations applied to the chromosome
      * ```
-     * In this example, `mutateChromosome` is called on an existing chromosome, producing a new chromosome that carries
-     * the mutations. This new chromosome can then be used to form a new individual or replace the existing one in the
-     * population, depending on the evolutionary strategy.
+     * In this example, `mutateChromosome` is invoked on an existing chromosome. It returns a
+     * `ChromosomeMutationResult` object, which includes the new, mutated chromosome and the count of mutations
+     * applied. This result can then be utilized to form a new individual or to update an existing one in the
+     * population, based on the evolutionary strategy.
      *
      * @param chromosome The [Chromosome] to be mutated.
-     * @return A new [Chromosome] instance representing the result of the mutation. This instance differs from the
-     *   original in its genetic composition.
+     * @return A [ChromosomeMutationResult] instance representing the outcome of the mutation. This object contains a
+     *   new chromosome with its genetic composition altered and the total number of mutations applied.
      */
-    fun mutateChromosome(chromosome: Chromosome<T, G>): Chromosome<T, G>
+    fun mutateChromosome(chromosome: Chromosome<T, G>): ChromosomeMutationResult<T, G>
 }

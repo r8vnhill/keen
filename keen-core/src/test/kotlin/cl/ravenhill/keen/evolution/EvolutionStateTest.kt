@@ -15,6 +15,7 @@ import cl.ravenhill.keen.arb.genetic.individual
 import cl.ravenhill.keen.arb.genetic.population
 import cl.ravenhill.keen.arb.individualRanker
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec

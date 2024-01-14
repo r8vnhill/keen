@@ -98,28 +98,29 @@ class InversionMutator<T, G>(
      * @param chromosome The chromosome to potentially mutate. It is a generic type with gene type G and value type T.
      * @return A new instance of `Chromosome<T, G>` with a potentially inverted gene sequence.
      */
-    override fun mutateChromosome(chromosome: Chromosome<T, G>): Chromosome<T, G> {
+    override fun mutateChromosome(chromosome: Chromosome<T, G>): ChromosomeMutationResult<T, G> {
         if (Domain.random.nextDouble() > chromosomeRate) {
-            return chromosome
-        }
-        val genes = chromosome.genes
-        var start = 0
-        var end = chromosome.size - 1
-        for (i in chromosome.indices) {
-            if (Domain.random.nextDouble() < inversionBoundaryProbability) {
-                start = i
-                break
+            return ChromosomeMutationResult(chromosome, 0)
+        } else {
+            val genes = chromosome.genes
+            var start = 0
+            var end = chromosome.size - 1
+            for (i in chromosome.indices) {
+                if (Domain.random.nextDouble() < inversionBoundaryProbability) {
+                    start = i
+                    break
+                }
             }
-        }
-        for (i in start..<chromosome.size) {
-            if (Domain.random.nextDouble() > inversionBoundaryProbability) {
-                end = i
-                break
+            for (i in start..<chromosome.size) {
+                if (Domain.random.nextDouble() > inversionBoundaryProbability) {
+                    end = i
+                    break
+                }
             }
+            return ChromosomeMutationResult(chromosome.duplicateWithGenes(
+                invert(genes, start, end)
+            ), end - start)
         }
-        return chromosome.duplicateWithGenes(
-            invert(genes, start, end)
-        )
     }
 
     private fun invert(genes: List<G>, start: Int, end: Int): List<G> {

@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.operators
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 
 

@@ -28,7 +28,7 @@ class SubtreeMutator<V, T, G>(
         }
     }
 
-    override fun mutateChromosome(chromosome: Chromosome<T, G>): Chromosome<T, G> {
+    override fun mutateChromosome(chromosome: Chromosome<T, G>): ChromosomeMutationResult<T, G> {
         TODO("Not yet implemented")
     }
 }
