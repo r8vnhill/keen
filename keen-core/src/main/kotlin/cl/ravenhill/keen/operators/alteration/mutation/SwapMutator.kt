@@ -63,7 +63,7 @@ import cl.ravenhill.keen.utils.swap
 class SwapMutator<T, G>(
     override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
     override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
-    val swapRate: Double = DEFAULT_SWAP_RATE
+    val swapRate: Double = DEFAULT_SWAP_RATE,
 ) : Mutator<T, G> where G : Gene<T, G> {
 
     init {
@@ -114,6 +114,13 @@ class SwapMutator<T, G>(
         return chromosome.duplicateWithGenes(genes)
     }
 
+    /**
+     * Companion object containing the default values for the mutation rates.
+     *
+     * @property DEFAULT_INDIVIDUAL_RATE the default mutation rate at the level of individuals.
+     * @property DEFAULT_CHROMOSOME_RATE the default mutation rate at the level of chromosomes.
+     * @property DEFAULT_SWAP_RATE the default rate at which genes are swapped within a chromosome.
+     */
     companion object {
         const val DEFAULT_INDIVIDUAL_RATE = 0.5
         const val DEFAULT_CHROMOSOME_RATE = 0.5

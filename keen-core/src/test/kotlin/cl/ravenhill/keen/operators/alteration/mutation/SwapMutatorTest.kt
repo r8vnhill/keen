@@ -5,12 +5,21 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
+import cl.ravenhill.keen.arb.operators.swapMutator
 import cl.ravenhill.keen.assertions.operators.`test chromosome rate property`
 import cl.ravenhill.keen.assertions.operators.`test individual rate property`
 import cl.ravenhill.keen.genetic.genes.NothingGene
-import cl.ravenhill.keen.operators.alteration.mutation.SwapMutator
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.constant
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.long
+import io.kotest.property.checkAll
+import kotlin.random.Random
 
 class SwapMutatorTest : FreeSpec({
 
@@ -41,4 +50,19 @@ class SwapMutatorTest : FreeSpec({
         "The chromosome rate ($rate) must be in 0.0..1.0"
     })
 
+    "Mutating a chromosome" - {
+        "when swap rate is 0.0" - {
+            "should not alter the chromosome" {
+                checkAll(
+                    Arb.swapMutator<Int, IntGene>(swapRate = Arb.constant(0.0)),
+                    Arb.intChromosome(size = Arb.int(1..5)),
+                    Arb.long()
+                ) { mutator, chromosome, seed ->
+                    Domain.random = Random(seed)
+                    val mutated = mutator.mutateChromosome(chromosome)
+                    mutated shouldBe chromosome
+                }
+            }
+        }
+    }
 })
