@@ -6,11 +6,13 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -51,15 +53,16 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @throws CompositeException containing all the exceptions thrown by the constraints.
  * @throws DoubleConstraintException if any of the rates are not within the specified range.
  */
+@OptIn(ExperimentalJakt::class)
 class InversionMutator<T, G>(
-    override val individualRate: Double,
-    override val chromosomeRate: Double = 0.5,
-    val inversionBoundaryProbability: Double = 0.5,
+    override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
+    override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
+    val inversionBoundaryProbability: Double = DEFAULT_INVERSION_BOUNDARY_PROBABILITY
 ) : Mutator<T, G> where G : Gene<T, G> {
 
     init {
         constraints {
-            "Individual rate must be within the range [0.0, 1.0]" {
+            "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 individualRate must BeInRange(0.0..1.0)
             }
             "Chromosome rate must be within the range [0.0, 1.0]" {
@@ -137,5 +140,11 @@ class InversionMutator<T, G>(
         }
 
         return invertedGenes
+    }
+
+    companion object {
+        const val DEFAULT_INDIVIDUAL_RATE = 0.5
+        const val DEFAULT_CHROMOSOME_RATE = 0.5
+        const val DEFAULT_INVERSION_BOUNDARY_PROBABILITY = 0.5
     }
 }
