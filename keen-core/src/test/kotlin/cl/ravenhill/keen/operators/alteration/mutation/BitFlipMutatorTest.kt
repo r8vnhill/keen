@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ResetDomainRandomListener
+import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.genetic.chromosomes.booleanChromosome
 import cl.ravenhill.keen.arb.operators.bitFlipMutator
 import cl.ravenhill.keen.arb.rngPair
@@ -78,17 +78,20 @@ class BitFlipMutatorTest : FreeSpec({
                 Arb.bitFlipMutator<BooleanGene>(geneRate = Arb.constant(0.0)),
                 Arb.booleanChromosome()
             ) { mutator, chromosome ->
-                mutator.mutateChromosome(chromosome) shouldBe chromosome
+                val (mutated, mutations) = mutator.mutateChromosome(chromosome)
+                mutations shouldBe 0
+                mutated shouldBe chromosome
             }
         }
 
         "should mutate all genes if the probability is 1" {
             checkAll(
-                PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                PropTestConfig(listeners = listOf(ResetDomainListener)),
                 Arb.bitFlipMutator<BooleanGene>(geneRate = Arb.constant(1.0)),
                 Arb.booleanChromosome(),
             ) { mutator, chromosome ->
-                val mutated = mutator.mutateChromosome(chromosome)
+                val (mutated, mutations) = mutator.mutateChromosome(chromosome)
+                mutations shouldBe chromosome.size
                 mutated.forEachIndexed { index, booleanGene ->
                     booleanGene shouldBe !chromosome[index]
                 }
@@ -97,13 +100,13 @@ class BitFlipMutatorTest : FreeSpec({
 
         "should mutate genes according to the gene rate" {
             checkAll(
-                PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                PropTestConfig(listeners = listOf(ResetDomainListener)),
                 Arb.bitFlipMutator<BooleanGene>(),
                 Arb.booleanChromosome(),
                 Arb.rngPair()
             ) { mutator, chromosome, (rng1, rng2) ->
                 Domain.random = rng1
-                val mutated = mutator.mutateChromosome(chromosome)
+                val (mutated, mutations) = mutator.mutateChromosome(chromosome)
                 mutated.forEachIndexed { index, booleanGene ->
                     if (rng2.nextDouble() > mutator.geneRate) {
                         booleanGene shouldBe chromosome[index]

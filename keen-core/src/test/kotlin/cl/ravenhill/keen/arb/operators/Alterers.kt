@@ -14,6 +14,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
+import cl.ravenhill.keen.operators.alteration.mutation.ChromosomeMutationResult
 import cl.ravenhill.keen.operators.alteration.mutation.Mutator
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
@@ -101,7 +102,7 @@ fun <T, G> Arb.Companion.baseMutator(
         override val individualRate = individualRate.next()
         override val chromosomeRate = chromosomeRate.next()
         override fun mutateChromosome(chromosome: Chromosome<T, G>) =
-            chromosome.duplicateWithGenes(chromosome.reversed())
+            ChromosomeMutationResult(chromosome.duplicateWithGenes(chromosome.reversed()), 1)
     }
 }
 

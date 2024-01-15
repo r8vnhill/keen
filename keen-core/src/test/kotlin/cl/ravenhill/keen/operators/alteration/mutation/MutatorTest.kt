@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ResetDomainRandomListener
+import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.evolution.evolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
@@ -46,7 +46,7 @@ class MutatorTest : FreeSpec({
 
             "should mutate all chromosomes if the probability is 1" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.baseMutator<Int, IntGene>(chromosomeRate = Arb.constant(1.0)),
                     Arb.individual(Arb.genotype(Arb.intChromosome())),
                     Arb.rngPair()
@@ -62,7 +62,7 @@ class MutatorTest : FreeSpec({
 
             "should mutate chromosomes according to the chromosome rate" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.baseMutator<Int, IntGene>(),
                     Arb.individual(Arb.genotype(Arb.intChromosome())),
                     Arb.rngPair()
@@ -98,7 +98,7 @@ class MutatorTest : FreeSpec({
 
             "should mutate all chromosomes if the probability is 1" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.anyMutator(individualRate = Arb.constant(1.0)),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
@@ -118,7 +118,7 @@ class MutatorTest : FreeSpec({
 
             "should mutate individuals according to the individual rate" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.anyMutator(),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),

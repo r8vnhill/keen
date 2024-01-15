@@ -54,14 +54,13 @@ comments:
   active: true
   AbsentOrWrongFileLicense:
     active: true
-    licenseTemplateFile: 'license.template'
     licenseTemplateIsRegex: false
   CommentOverPrivateFunction:
-    active: true
-  CommentOverPrivateProperty:
-    active: true
-  DeprecatedBlockTag:
     active: false
+  CommentOverPrivateProperty:
+    active: false
+  DeprecatedBlockTag:
+    active: true
   EndOfSentenceFormat:
     active: false
     endOfSentenceFormat: '([.?!][ \t\n\r\f<])|([.?!:]$)'

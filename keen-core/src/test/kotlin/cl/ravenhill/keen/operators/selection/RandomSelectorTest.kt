@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.operators.selection
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ResetDomainRandomListener
+import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
@@ -16,7 +16,6 @@ import cl.ravenhill.keen.arb.genetic.population
 import cl.ravenhill.keen.arb.rngPair
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
-import io.kotest.assertions.fail
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -42,7 +41,7 @@ class RandomSelectorTest : FreeSpec({
 
             "should return the expected individuals" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome())), 1..25),
                     Arb.int(0..100),
                     Arb.anyRanker<Int, IntGene>(),

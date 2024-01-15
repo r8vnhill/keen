@@ -6,7 +6,6 @@
 
 package cl.ravenhill.keen
 
-import io.kotest.core.test.TestCase
 import io.kotest.property.PropTestListener
 import kotlin.random.Random
 
@@ -39,7 +38,7 @@ import kotlin.random.Random
  * In this example, `ResetDomainRandomListener` is added to the `listeners` parameter of the `PropTestConfig`
  * object, ensuring that `Domain.random` is reset to `Random.Default` after each invocation of the test body.
  */
-object ResetDomainRandomListener : PropTestListener {
+object ResetDomainListener : PropTestListener {
 
     /**
      * Overrides the `afterTest` ([PropTestListener.afterTest]]) function to reset the [Domain.random] to its default
@@ -58,5 +57,6 @@ object ResetDomainRandomListener : PropTestListener {
      */
     override suspend fun afterTest() {
         Domain.random = Random.Default
+        Domain.equalityThreshold = Domain.DEFAULT_EQUALITY_THRESHOLD
     }
 }

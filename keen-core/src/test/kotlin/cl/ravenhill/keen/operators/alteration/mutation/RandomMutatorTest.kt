@@ -88,7 +88,7 @@ class RandomMutatorTest : FreeSpec({
                 Arb.long().map { seed -> Random(seed) to Random(seed) }
             ) { mutator, intChromosome, (r1, r2) ->
                 Domain.random = r1
-                val mutated = mutator.mutateChromosome(intChromosome)
+                val (mutated, mutations) = mutator.mutateChromosome(intChromosome)
                 val expected = intChromosome.genes.map {
                     r2.nextDouble() // Advances the random number generator
                     r2.nextInt(it.range.start, it.range.endInclusive)
@@ -116,7 +116,7 @@ class RandomMutatorTest : FreeSpec({
                 Arb.long().map { seed -> Random(seed) to Random(seed) }
             ) { mutator, intChromosome, (r1, r2) ->
                 Domain.random = r1
-                val mutated = mutator.mutateChromosome(intChromosome)
+                val (mutated, mutations) = mutator.mutateChromosome(intChromosome)
                 val expected = intChromosome.genes.map {
                     if (r2.nextDouble() < mutator.geneRate) {
                         r2.nextInt(it.range.start, it.range.endInclusive)
