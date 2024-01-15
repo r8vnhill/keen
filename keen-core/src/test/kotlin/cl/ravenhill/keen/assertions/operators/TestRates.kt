@@ -138,7 +138,7 @@ fun <T, G> `test gene rate property`(
  * @param T The type of the individuals in the genetic algorithm.
  * @param G The type of the genes, inheriting from `Gene<T, G>`.
  */
-private suspend fun <G, T, M> FreeSpecContainerScope.`test rate property`(
+suspend fun <G, T, M> FreeSpecContainerScope.`test rate property`(
     defaultName: String,
     defaultValue: Double,
     defaultValueFactory: (Double, Double) -> M,

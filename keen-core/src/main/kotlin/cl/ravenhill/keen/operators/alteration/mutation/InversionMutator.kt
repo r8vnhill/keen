@@ -65,10 +65,12 @@ class InversionMutator<T, G>(
             "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 individualRate must BeInRange(0.0..1.0)
             }
-            "Chromosome rate must be within the range [0.0, 1.0]" {
+            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "Inversion boundary probability must be within the range [0.0, 1.0]" {
+            "The inversion boundary probability ($inversionBoundaryProbability) must be in 0.0..1.0"(
+                ::MutatorConfigException
+            ) {
                 inversionBoundaryProbability must BeInRange(0.0..1.0)
             }
         }
