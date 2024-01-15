@@ -44,6 +44,15 @@ class CrossoverTest : FreeSpec({
                     }
                 }
             }
+
+            "crosses the expected number of chromosomes" {
+                checkAll(
+                    Arb.baseCrossover<Nothing, NothingGene>(),
+                    Arb.list(Arb.genotype(Arb.nothingChromosome()))
+                ) { crossover, genotypes ->
+
+                }
+            }
         }
     }
 })

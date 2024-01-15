@@ -17,7 +17,6 @@ import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.assertions.`test next int in range`
 import cl.ravenhill.keen.assertions.`test random char`
 import cl.ravenhill.keen.assertions.`test subset`
-import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
@@ -103,7 +102,7 @@ class RandomsTest : FreeSpec({
                             val start = range.start
                             val end = range.endInclusive
                             val indices = rng1.indices(probability, end, start)
-                            val expectedIndices = (start..<end).filter { rng2.nextDouble() < probability }
+                            val expectedIndices = indices(rng2, probability, end, start)
                             indices shouldBe expectedIndices
                         }
                     }
@@ -331,3 +330,41 @@ class RandomsTest : FreeSpec({
         }
     }
 })
+
+/**
+ * Generates a list of indices based on a specified probability, used as a model in PBT for testing
+ * [Random.indices].
+ *
+ * ## Overview
+ * This function serves as a reference implementation for generating a list of indices, where each
+ * index in a specified range has a probability of being included in the list. It is primarily used
+ * as a model in property-based testing (PBT) to validate the behavior of the `Random.indices`
+ * function.
+ *
+ * ## Process
+ * The function iterates over a range from [start] to [end], and for each index, it uses a [Random]
+ * instance to decide (based on [pickProbability]) whether to include that index in the resulting
+ * list. Notably, this implementation differs from `Random.indices` by prepending selected indices
+ * to the list and then reversing the entire list at the end. This approach is chosen to avoid
+ * replicating the same implementation as `Random.indices`, offering an alternative method for the
+ * same outcome, which is particularly useful in property-based testing to validate consistency.
+ *
+ * @param random The `Random` instance used for generating random numbers.
+ * @param pickProbability The probability with which each index in the range is picked.
+ * @param end The end of the range (exclusive).
+ * @param start The start of the range (inclusive).
+ * @return A list of indices, each included based on the specified `pickProbability`.
+ */
+private fun indices(random: Random, pickProbability: Double, end: Int, start: Int): List<Int> {
+    var indices = listOf<Int>()
+    // Iterate over the range from start to end
+    for (i in start until end) {
+        // Decide if the current index should be included based on pickProbability
+        if (random.nextDouble() < pickProbability) {
+            // Prepend the index to the list of indices
+            indices = listOf(i) + indices
+        }
+    }
+    // Reverse the list to maintain the original order, since elements were prepended
+    return indices.reversed()
+}

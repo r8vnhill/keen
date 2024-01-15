@@ -120,11 +120,11 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * @param parentGenotypes The list of parent genotypes from which to generate offspring.
      * @return A list of offspring genotypes produced by the crossover of the parent genotypes.
      * @throws CompositeException containing all the exceptions thrown by the constraints.
-     * @throws CollectionConstraintException if the size of the [parentGenotypes] list doesn't match the number of
+     * @throws CrossoverInvocationException if the size of the [parentGenotypes] list doesn't match the number of
      *   parents ([numParents]).
      */
     @OptIn(ExperimentalJakt::class)
-    @Throws(CompositeException::class, CollectionConstraintException::class)
+    @Throws(CompositeException::class, CrossoverInvocationException::class)
     fun crossover(parentGenotypes: List<Genotype<T, G>>): List<Genotype<T, G>> {
         constraints {
             val size = parentGenotypes.size
