@@ -9,12 +9,15 @@ package cl.ravenhill.keen.operators.alteration.mutation
 import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
+import cl.ravenhill.jakt.constraints.ints.IntConstraint
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.utils.swap
+import cl.ravenhill.jakt.constraints.ints.BeInRange as IntBeInRange
 
 /**
  * Represents an inversion mutator in genetic algorithms. This mutator selectively inverts sections of chromosomes
@@ -54,10 +57,10 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @throws DoubleConstraintException if any of the rates are not within the specified range.
  */
 @OptIn(ExperimentalJakt::class)
-class InversionMutator<T, G>(
+data class InversionMutator<T, G>(
     override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
     override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
-    val inversionBoundaryProbability: Double = DEFAULT_INVERSION_BOUNDARY_PROBABILITY
+    val inversionBoundaryProbability: Double = DEFAULT_INVERSION_BOUNDARY_PROBABILITY,
 ) : Mutator<T, G> where G : Gene<T, G> {
 
     init {
@@ -104,46 +107,91 @@ class InversionMutator<T, G>(
      * @return A new instance of `Chromosome<T, G>` with a potentially inverted gene sequence.
      */
     override fun mutateChromosome(chromosome: Chromosome<T, G>): ChromosomeMutationResult<T, G> {
-        if (Domain.random.nextDouble() > chromosomeRate) {
-            return ChromosomeMutationResult(chromosome, 0)
-        } else {
-            val genes = chromosome.genes
-            var start = 0
-            var end = chromosome.size - 1
-            for (i in chromosome.indices) {
-                if (Domain.random.nextDouble() < inversionBoundaryProbability) {
-                    start = i
-                    break
-                }
-            }
-            for (i in start..<chromosome.size) {
-                if (Domain.random.nextDouble() > inversionBoundaryProbability) {
-                    end = i
-                    break
-                }
-            }
-            return ChromosomeMutationResult(chromosome.duplicateWithGenes(
-                invert(genes, start, end)
-            ), end - start)
-        }
+        val genes = chromosome.genes
+        val (start, end) = getInversionBoundary(chromosome.indices)
+        return ChromosomeMutationResult(
+            subject = chromosome.duplicateWithGenes(invert(genes, start, end)),
+            mutations = end - start + 1 // Number of genes subject to inversion
+        )
     }
 
+    internal fun getInversionBoundary(indices: IntRange): Pair<Int, Int> {
+        var start = 0
+        var end = 0
+        for (i in indices) {
+            if (Domain.random.nextDouble() < inversionBoundaryProbability) {
+                start = i
+                break
+            }
+        }
+        for (i in start..<indices.last) {
+            if (Domain.random.nextDouble() > inversionBoundaryProbability) {
+                end = i
+                break
+            }
+        }
+        return start to end
+    }
+
+    /**
+     * Inverts a specified segment of genes within a chromosome.
+     *
+     * ## Overview
+     * This function takes a list of genes and inverts the order of genes within a specified segment. The segment is
+     * defined by the `start` and `end` indices. This inversion is a crucial operation in genetic algorithms for
+     * introducing variability and helping the algorithm to explore different genetic configurations.
+     *
+     * ## Process
+     * - The function iterates over half of the specified segment range.
+     * - For each position in this range, it calculates the corresponding index from the opposite end of the segment.
+     * - It then swaps the genes at these two indices.
+     * - This process effectively reverses the order of genes within the specified segment.
+     *
+     * @param genes The list of genes to be inverted.
+     * @param start The starting index of the segment to invert.
+     * @param end The ending index of the segment to invert.
+     * @return A list of genes with the specified segment inverted.
+     */
     private fun invert(genes: List<G>, start: Int, end: Int): List<G> {
-        val invertedGenes = genes.toMutableList()
-
-        // Iterate over half the range of genes to swap their positions.
-        for (i in start until (start + (end - start + 1) / 2)) {
-            // Calculate the corresponding index to swap with.
-            val j = end - (i - start)
-            // Swap the positions of the genes at indices i and j.
-            val tmp = invertedGenes[i]
-            invertedGenes[i] = invertedGenes[j]
-            invertedGenes[j] = tmp
+        constraints {
+            "The start index ($start) must be in 0..${genes.size - 1}"(::MutatorConfigException) {
+                start must IntBeInRange(genes.indices)
+            }
+            "The end index ($end) must be in 0..${genes.size - 1}"(::MutatorConfigException) {
+                end must IntBeInRange(genes.indices)
+            }
         }
-
-        return invertedGenes
+        return genes.subList(0, start) + genes.subList(start, end + 1).reversed() + genes.subList(end + 1, genes.size)
     }
 
+    /**
+     * Companion object for the [InversionMutator] class.
+     *
+     * ## Overview
+     * This companion object defines default values for the mutation rates and inversion boundary probability used in
+     * the ``InversionMutator`` class. These defaults provide a baseline for typical usage scenarios and can be
+     * overridden when creating instances of ``InversionMutator``.
+     *
+     * ## Usage:
+     * These constants are used as default parameters for the ``InversionMutator`` class. They are particularly useful
+     * when specific mutation rates and probabilities are not provided during the instantiation of an
+     * ``InversionMutator`` object.
+     *
+     * ## Significance
+     * Providing default rates and probabilities is essential for simplifying the usage of the ``InversionMutator``
+     * class. It allows users to quickly instantiate an ``InversionMutator`` with sensible defaults, making the class
+     * more accessible, especially for those new to evolutionary algorithms or when quick setup is desired.
+     * Additionally, having standardized default rates ensures consistency across different uses and applications of the
+     * ``InversionMutator``.
+     *
+     * @property DEFAULT_INDIVIDUAL_RATE the default mutation rate at the individual level. This rate determines how
+     *   frequently individual entities in the population are considered for mutation.
+     * @property DEFAULT_CHROMOSOME_RATE the default mutation rate at the chromosome level. This rate influences the
+     *   likelihood of a chromosome being selected for inversion mutation.
+     * @property DEFAULT_INVERSION_BOUNDARY_PROBABILITY the default probability for determining the boundaries of an
+     *   inversion segment within a chromosome. This rate affects how likely each gene is to be the start or end of the
+     *   inversion segment.
+     */
     companion object {
         const val DEFAULT_INDIVIDUAL_RATE = 0.5
         const val DEFAULT_CHROMOSOME_RATE = 0.5

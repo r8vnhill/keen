@@ -86,11 +86,9 @@ data class RandomContext(val seed: Long, val random: Random)
  * @return A list of `RandomContext` instances with progressively smaller seeds, aiding in the identification of simpler failing cases.
  */
 val randomShrinker = Shrinker<RandomContext> { randomContext ->
-    generateSequence(randomContext) {
-        val newSeed = randomContext.seed / 2
-        RandomContext(newSeed, Random(newSeed))
-    }.take(1000)
-        .toList()
+    generateSequence(randomContext) { (seed, _) ->
+        if (seed == 0L) null else RandomContext(seed / 2, Random(seed / 2))
+    }.toList()
 }
 
 /**

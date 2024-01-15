@@ -58,5 +58,6 @@ object ResetDomainListener : PropTestListener {
     override suspend fun afterTest() {
         Domain.random = Random.Default
         Domain.equalityThreshold = Domain.DEFAULT_EQUALITY_THRESHOLD
+        Domain.toStringMode = ToStringMode.DEFAULT
     }
 }

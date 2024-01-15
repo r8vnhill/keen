@@ -8,6 +8,8 @@ package cl.ravenhill.keen.genetic.chromosomes.numeric
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode
+import cl.ravenhill.keen.ToStringMode.*
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.ChromosomeUtils
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome.Factory
@@ -101,6 +103,11 @@ data class IntChromosome(override val genes: List<IntGene>) : NumberChromosome<I
      */
     override fun duplicateWithGenes(genes: List<IntGene>) = IntChromosome(genes)
 
+    override fun toString() = when (Domain.toStringMode) {
+        SIMPLE -> "[${genes.joinToString(", ") { it.value.toString() }}]"
+        DEFAULT -> "IntChromosome(genes=$genes)"
+        DETAILED -> "IntChromosome(genes=$genes)"
+    }
     /**
      * Factory class for creating [IntChromosome] instances.
      *
