@@ -152,7 +152,7 @@ data class InversionMutator<T, G>(
      * @param end The ending index of the segment to invert.
      * @return A list of genes with the specified segment inverted.
      */
-    private fun invert(genes: List<G>, start: Int, end: Int): List<G> {
+    internal fun invert(genes: List<G>, start: Int, end: Int): List<G> {
         constraints {
             "The start index ($start) must be in 0..${genes.size - 1}"(::MutatorConfigException) {
                 start must IntBeInRange(genes.indices)

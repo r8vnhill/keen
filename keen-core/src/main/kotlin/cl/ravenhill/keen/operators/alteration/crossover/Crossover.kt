@@ -6,12 +6,14 @@
 
 package cl.ravenhill.keen.operators.alteration.crossover
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.exceptions.CrossoverInvocationException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -121,12 +123,14 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * @throws CollectionConstraintException if the size of the [parentGenotypes] list doesn't match the number of
      *   parents ([numParents]).
      */
+    @OptIn(ExperimentalJakt::class)
     @Throws(CompositeException::class, CollectionConstraintException::class)
     fun crossover(parentGenotypes: List<Genotype<T, G>>): List<Genotype<T, G>> {
         constraints {
-            "The number of inputs (${parentGenotypes.size}) must be equal to the number of parents ($numParents)" {
-                parentGenotypes must HaveSize(numParents)
-            }
+            val size = parentGenotypes.size
+            "The number of genotypes ($size) doesn't match the number of parents (${numParents})"(
+                ::CrossoverInvocationException
+            ) { parentGenotypes must HaveSize(numParents) }
         }
         val size = parentGenotypes.first().size
         // Select random indices of chromosomes to recombine
