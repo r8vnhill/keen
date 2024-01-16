@@ -41,6 +41,8 @@ Prefer using references (like [IntToInt]) instead of monospace (like `IntToInt`)
 
 When providing examples usages on the docstring comments, you should follow the following syntax
 
+Functions:
+
 ```kotlin
 /**
  * Brief description of the function
@@ -55,13 +57,11 @@ When providing examples usages on the docstring comments, you should follow the 
  * Usage details and scenarios.
  * 
  * ### Example 1: Details
- * ```
- * // example 1 code
- * ```
+ * example 1 code
+ * 
  * ### Example 2: Details
- * ```
- * // example 2 code
- * ```
+ * Example 2 code
+ * 
  * @param T Generic type
  * @param params Parameters
  * @return The result
@@ -69,4 +69,39 @@ When providing examples usages on the docstring comments, you should follow the 
 fun <T> foo(params) = elements.forEach(action)
 ```
 
+Classes:
+
+```kotlin
+/**
+ * Brief description of the class
+ * 
+ * ## Overview:
+ * Overview of the class
+ * 
+ * ## Any other section:
+ * ...
+ * 
+ * ## Usage:
+ * Usage details and scenarios.
+ * 
+ * ### Example 1: Details
+ * Example 1 code
+ * 
+ * ### Example 2: Details
+ * Example 2 code
+ * 
+ * @param T Generic type
+ * @param params Parameters
+ * @property property1 Public properties are documented with @property
+ * @return The result
+ */
+ class Foo<T>(params) {
+    val property1: Int = 0
+    /**
+     * Private properties are documented in the class body
+     */
+    private val property2: Int = 0
+    // ...
+ }
+```
 Note that the examples must be placed before the @tags.
