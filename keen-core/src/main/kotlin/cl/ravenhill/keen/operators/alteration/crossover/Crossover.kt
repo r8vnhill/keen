@@ -9,7 +9,6 @@ package cl.ravenhill.keen.operators.alteration.crossover
 import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
-import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.states.EvolutionState
@@ -81,7 +80,7 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
         // Recombine the selected individuals to produce offspring
         val recombined = mutableListOf<Individual<T, G>>()
         while (recombined.size < outputSize) {
-            crossover(parents.random(Domain.random).map { it.genotype }).forEach {
+            crossover(parents.random(Domain.random).map { it.genotype }).subject.forEach {
                 recombined += Individual(it)
             }
         }
@@ -91,25 +90,27 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
     /**
      * Performs crossover on a list of parent genotypes to produce offspring genotypes.
      *
-     * This function is a core component of evolutionary algorithms, where it simulates the biological process of
-     * crossover seen in reproduction. It combines parts of genotypes (genetic makeup) from two or more parents to
-     * produce one or more offspring genotypes. The crossover operation is controlled by the probability of selecting
-     * chromosomes from parents for recombination.
+     * ## Overview
+     * This function is a core component of evolutionary algorithms, simulating the biological process of
+     * crossover seen in reproduction. It combines genetic elements from parent genotypes to produce offspring
+     * genotypes. The crossover operation is influenced by the probability of selecting chromosomes from parents
+     * for recombination, controlled by the [chromosomeRate].
      *
-     * ## Constraints:
+     * ## Constraints
      * - The size of the [parentGenotypes] list must match the predefined number of parents ([numParents]).
+     * - All parent genotypes must have the same number of chromosomes.
      *
-     * ## Process:
-     * 1. Randomly selects indices of chromosomes from the parent genotypes based on the [chromosomeRate].
-     * 2. Creates a collection of chromosomes, each containing chromosomes at the same index from each parent.
-     * 3. Recombines these chromosomes to create new chromosome sequences.
-     * 4. Constructs new genotypes from these recombined chromosomes.
+     * ## Process
+     * 1. Validates that the number of parent genotypes matches [numParents] and all have the same number of chromosomes.
+     * 2. Randomly selects indices of chromosomes for recombination based on the [chromosomeRate].
+     * 3. Creates new genotypes by recombining chromosomes from the parents at the selected indices.
+     * 4. Constructs offspring genotypes with these new chromosome sequences.
      *
-     * ## Usage:
-     * This method is used in the crossover stage of evolutionary algorithms. It's particularly important for
-     * maintaining genetic diversity and allowing the algorithm to explore a broader range of solutions.
+     * ## Usage
+     * This method is crucial in the crossover stage of evolutionary algorithms, playing a vital role in
+     * maintaining genetic diversity and enabling exploration of a broader range of solutions.
      *
-     * ### Example:
+     * ### Example
      * ```
      * val parent1 = Genotype(listOf(Chromosome1(), Chromosome2()))
      * val parent2 = Genotype(listOf(Chromosome3(), Chromosome4()))
@@ -120,17 +121,20 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * @param parentGenotypes The list of parent genotypes from which to generate offspring.
      * @return A list of offspring genotypes produced by the crossover of the parent genotypes.
      * @throws CompositeException containing all the exceptions thrown by the constraints.
-     * @throws CrossoverInvocationException if the size of the [parentGenotypes] list doesn't match the number of
-     *   parents ([numParents]).
+     * @throws CrossoverInvocationException if the number of parent genotypes doesn't match [numParents] or if
+     *   the genotypes have varying numbers of chromosomes.
      */
     @OptIn(ExperimentalJakt::class)
     @Throws(CompositeException::class, CrossoverInvocationException::class)
-    fun crossover(parentGenotypes: List<Genotype<T, G>>): List<Genotype<T, G>> {
+    fun crossover(parentGenotypes: List<Genotype<T, G>>): GenotypeCrossoverResult<T, G> {
         constraints {
             val size = parentGenotypes.size
             "The number of genotypes ($size) doesn't match the number of parents (${numParents})"(
                 ::CrossoverInvocationException
             ) { parentGenotypes must HaveSize(numParents) }
+            "The number of chromosomes in each genotype must be the same"(::CrossoverInvocationException) {
+                parentGenotypes.distinctBy { it.size } must HaveSize(1)
+            }
         }
         val size = parentGenotypes.first().size
         // Select random indices of chromosomes to recombine
@@ -140,16 +144,18 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
         // Recombine the selected chromosomes
         val offspringChromosomes = chromosomes.map { crossoverChromosomes(it) }.transpose()
         // Create new genotypes from the recombined chromosomes
-        return offspringChromosomes.map {
-            var i = 0
-            Genotype(parentGenotypes[0].mapIndexed { index, chromosome ->
-                if (index in chromosomeIndices) {
-                    it[i++]
-                } else {
-                    chromosome
-                }
-            })
-        }
+        return GenotypeCrossoverResult(
+            offspringChromosomes.map {
+                var i = 0
+                Genotype(parentGenotypes[0].mapIndexed { index, chromosome ->
+                    if (index in chromosomeIndices) {
+                        it[i++]
+                    } else {
+                        chromosome
+                    }
+                })
+            }, chromosomes.size
+        )
     }
 
     /**

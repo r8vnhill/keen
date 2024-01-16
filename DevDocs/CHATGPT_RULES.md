@@ -43,8 +43,14 @@ When providing examples usages on the docstring comments, you should follow the 
 
 ```kotlin
 /**
- * Documentation.
- *
+ * Brief description of the function
+ * 
+ * ## Overview:
+ * Overview of the function
+ * 
+ * ## Any other section:
+ * ...
+ * 
  * ## Usage:
  * Usage details and scenarios.
  * 
@@ -56,10 +62,11 @@ When providing examples usages on the docstring comments, you should follow the 
  * ```
  * // example 2 code
  * ```
- * @tags
+ * @param T Generic type
+ * @param params Parameters
+ * @return The result
  */
-fun foo(params) = elements.forEach(action)
+fun <T> foo(params) = elements.forEach(action)
 ```
 
 Note that the examples must be placed before the @tags.
-Examples of @tags include @param, @return, @throws, etc.

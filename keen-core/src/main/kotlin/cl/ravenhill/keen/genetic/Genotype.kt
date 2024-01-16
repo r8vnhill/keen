@@ -202,7 +202,7 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
     @Throws(CompositeException::class)
     operator fun get(index: Int): Chromosome<T, G> {
         constraints {
-            "The index [$index] must be in the range [0, $size)" {
+            "Index ($index) must be in 0..<$size when accessing chromosomes by index in a genotype (${this@Genotype})" {
                 index must BeInRange(0..chromosomes.lastIndex)
             }
         }

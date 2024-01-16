@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.arb.operators
 
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.alteration.crossover.Crossover
@@ -22,6 +23,9 @@ fun <T, G> Arb.Companion.baseCrossover(): Arb<Crossover<T, G>> where G : Gene<T,
         override val numParents: Int by lazy { int(1..10).next() }
         override val chromosomeRate: Double by lazy { double(0.0, 1.0).next() }
         override val exclusivity: Boolean by lazy { boolean().next() }
+
+        @Suppress("RedundantOverride")  // This override is needed to avoid a compilation error
+        override fun crossover(parentGenotypes: List<Genotype<T, G>>) = super.crossover(parentGenotypes)
 
         override fun crossoverChromosomes(chromosomes: List<Chromosome<T, G>>) = chromosomes.take(numOffspring)
     }

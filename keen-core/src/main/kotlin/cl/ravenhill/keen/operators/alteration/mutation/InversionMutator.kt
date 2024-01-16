@@ -142,17 +142,27 @@ data class InversionMutator<T, G>(
      * introducing variability and helping the algorithm to explore different genetic configurations.
      *
      * ## Process
-     * - The function iterates over half of the specified segment range.
-     * - For each position in this range, it calculates the corresponding index from the opposite end of the segment.
-     * - It then swaps the genes at these two indices.
+     * - First, the function validates that the `start` and `end` indices are within the valid range of the gene list.
+     * - It then creates a new list of genes by concatenating three segments:
+     *   - The genes before the `start` index.
+     *   - The genes between the `start` and `end` indices, reversed.
+     *   - The genes after the `end` index.
      * - This process effectively reverses the order of genes within the specified segment.
+     *
+     * ## Constraints
+     * - `start` and `end` must be within the valid index range of the `genes` list. If the indices are out of range,
+     *   a `MutatorConfigException` is thrown.
+     *
+     * ## Usage
+     * Use this function to invert a segment of a chromosome in a genetic algorithm, especially when gene order plays
+     * a significant role in the algorithm's process.
      *
      * @param genes The list of genes to be inverted.
      * @param start The starting index of the segment to invert.
      * @param end The ending index of the segment to invert.
      * @return A list of genes with the specified segment inverted.
      */
-    internal fun invert(genes: List<G>, start: Int, end: Int): List<G> {
+    private fun invert(genes: List<G>, start: Int, end: Int): List<G> {
         constraints {
             "The start index ($start) must be in 0..${genes.size - 1}"(::MutatorConfigException) {
                 start must IntBeInRange(genes.indices)
