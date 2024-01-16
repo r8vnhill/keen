@@ -9,6 +9,7 @@ package cl.ravenhill.keen.operators.alteration.crossover
 import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.states.EvolutionState
@@ -74,7 +75,13 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * @return An updated [EvolutionState] containing the newly produced offspring, with a population size equal to
      * `outputSize`.
      */
+    @OptIn(ExperimentalJakt::class)
     override fun invoke(state: EvolutionState<T, G>, outputSize: Int): EvolutionState<T, G> {
+        constraints {
+            "The number of offspring ($outputSize) mismatches with the crossover output ($numOffspring)"(
+                ::CrossoverInvocationException
+            ) { outputSize must BeEqualTo(numOffspring) }
+        }
         // Select a subset of individuals to recombine using the provided probability and other parameters
         val parents = Domain.random.subsets(state.population, numParents, exclusivity)
         // Recombine the selected individuals to produce offspring

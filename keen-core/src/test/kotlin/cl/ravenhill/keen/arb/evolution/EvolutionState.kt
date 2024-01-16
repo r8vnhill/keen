@@ -9,6 +9,7 @@ package cl.ravenhill.keen.arb.evolution
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.ranking.IndividualRanker
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

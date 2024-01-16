@@ -9,9 +9,14 @@ package cl.ravenhill.keen.operators.alteration.crossover
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.evolution.evolutionState
+import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
+import cl.ravenhill.keen.arb.genetic.individual
+import cl.ravenhill.keen.arb.genetic.population
+import cl.ravenhill.keen.arb.individualRanker
 import cl.ravenhill.keen.arb.operators.baseCrossover
 import cl.ravenhill.keen.arb.randomContext
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
@@ -31,6 +36,7 @@ import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.ints.shouldBeInRange
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
@@ -128,6 +134,29 @@ class CrossoverTest : FreeSpec({
                     Domain.random = Random(seed)
                     val expected = crossover(crossover, genotypes)
                     result shouldBe expected
+                }
+            }
+        }
+
+        "when crossing populations" - {
+            "fails if he output size is not the same as the offspring size" {
+                val arbPopulation= Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome())))
+                checkAll(
+                    Arb.validCrossover(Arb.doubleChromosome()),
+                    Arb.evolutionState(arbPopulation, Arb.individualRanker()),
+                    Arb.int()
+                ) { (crossover, _), state, size ->
+                    assume {
+                        size shouldNotBe crossover.numOffspring
+                    }
+                    withClue("Offspring size: $size; Crossover offspring size: ${crossover.numOffspring}") {
+                        shouldThrow<CompositeException> {
+                            crossover(state, size)
+                        }.shouldHaveInfringement<CrossoverInvocationException>(
+                            "The number of offspring ($size) mismatches with the crossover output " +
+                                  "(${crossover.numOffspring})"
+                        )
+                    }
                 }
             }
         }
