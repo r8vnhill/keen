@@ -17,11 +17,11 @@ import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.next
 
-fun <T, G> Arb.Companion.baseCrossover(): Arb<Crossover<T, G>> where G : Gene<T, G> = arbitrary {
+fun <T, G> Arb.Companion.baseCrossover(chromosomeRate: Arb<Double> = double(0.0, 1.0)): Arb<Crossover<T, G>> where G : Gene<T, G> = arbitrary {
     object : Crossover<T, G> {
         override val numOffspring: Int by lazy { int(1..10).next() }
         override val numParents: Int by lazy { int(1..10).next() }
-        override val chromosomeRate: Double by lazy { double(0.0, 1.0).next() }
+        override val chromosomeRate: Double by lazy { chromosomeRate.next() }
         override val exclusivity: Boolean by lazy { boolean().next() }
 
         @Suppress("RedundantOverride")  // This override is needed to avoid a compilation error

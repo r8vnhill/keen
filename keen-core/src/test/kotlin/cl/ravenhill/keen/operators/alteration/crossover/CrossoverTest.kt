@@ -20,6 +20,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.utils.indices
 import cl.ravenhill.keen.utils.transpose
 import io.kotest.assertions.throwables.shouldThrow
@@ -34,6 +35,7 @@ import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.constant
+import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
@@ -88,14 +90,30 @@ class CrossoverTest : FreeSpec({
                 }
             }
 
-            "crosses the expected number of chromosomes" {
-                checkAll(
-                    PropTestConfig(minSuccess = 800, maxFailure = 200),
-                    Arb.validCrossover(Arb.intChromosome())
-                ) { (crossover, genotypes) ->
-                    val result = crossover.crossover(genotypes)
-                    val expected = (crossover.chromosomeRate * genotypes.first().size).toInt()
-                    result.crosses shouldBeInRange expected - 1..expected + 1
+            "crosses the expected number of chromosomes when" - {
+                "the chromosome rate is 0.0" {
+                    checkAll(Arb.validCrossover(Arb.intChromosome(), Arb.constant(0.0))) { (crossover, genotypes) ->
+                        val result = crossover.crossover(genotypes)
+                        result.crosses shouldBe 0
+                    }
+                }
+
+                "the chromosome rate is 1.0" {
+                    checkAll(Arb.validCrossover(Arb.intChromosome(), Arb.constant(1.0))) { (crossover, genotypes) ->
+                        val result = crossover.crossover(genotypes)
+                        result.crosses shouldBe genotypes.first().size
+                    }
+                }
+
+                "the chromosome rate is arbitrary" {
+                    checkAll(
+                        PropTestConfig(minSuccess = 800, maxFailure = 200),
+                        Arb.validCrossover(Arb.intChromosome())
+                    ) { (crossover, genotypes) ->
+                        val result = crossover.crossover(genotypes)
+                        val expected = (crossover.chromosomeRate * genotypes.first().size).toInt()
+                        result.crosses shouldBeInRange expected - 1..expected + 1
+                    }
                 }
             }
 
@@ -125,9 +143,12 @@ class CrossoverTest : FreeSpec({
  * @param chromosome An [Arb]<[Chromosome]<[T], [G]>> instance representing the arbitrary chromosome generator.
  * @return A Pair of a [Crossover] instance and a list of [Genotype] objects.
  */
-private fun <T, G> Arb.Companion.validCrossover(chromosome: Arb<Chromosome<T, G>>) where G : Gene<T, G> = arbitrary {
+private fun <T, G> Arb.Companion.validCrossover(
+    chromosome: Arb<Chromosome<T, G>>,
+    chromosomeRate: Arb<Double> = double(0.0, 1.0),
+) where G : Gene<T, G> = arbitrary {
     val size = int(1..10).bind()
-    val crossover = baseCrossover<T, G>().bind()
+    val crossover = baseCrossover<T, G>(chromosomeRate).bind()
     val genotypes = list(genotype(chromosome, constant(size)), crossover.numParents..crossover.numParents).bind()
     crossover to genotypes
 }
