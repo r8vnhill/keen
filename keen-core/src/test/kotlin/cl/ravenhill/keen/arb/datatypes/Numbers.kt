@@ -9,6 +9,7 @@ package cl.ravenhill.keen.arb.datatypes
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.pair
 
@@ -137,4 +138,17 @@ fun Arb.Companion.nonNaNDoublePair(arb: Arb<Double>) = Arb.pair(Arb.nonNaNDouble
  * @return An [Arb]<[Double]> that generates double values between 0.0 and 1.0, excluding NaN and infinite values.
  */
 fun Arb.Companion.probability() = double(0.0..1.0).filterNot { it.isNaN() || it.isInfinite() }
+
+/**
+ * Generates an arbitrary `Double` intended to represent an invalid probability value for property-based testing. This
+ * function is an extension of the `Arb` companion object.
+ *
+ * ## Overview:
+ * The function produces a `Double` that falls outside the valid probability range (0.0 to 1.0), including negative
+ * values, values greater than 1, `NaN` (Not a Number), and infinite values. This is particularly useful for testing
+ * scenarios where invalid probability values need to be handled or rejected.
+ *
+ * @return An `Arb<Double>` instance that generates Double values representing invalid probabilities.
+ */
+fun Arb.Companion.invalidProbability() = double().filter { it < 0.0 || it > 1.0 || it.isNaN() || it.isInfinite() }
 // endregion DOUBLE

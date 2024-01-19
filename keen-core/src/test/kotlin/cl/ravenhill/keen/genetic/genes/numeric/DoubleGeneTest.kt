@@ -7,6 +7,7 @@
 package cl.ravenhill.keen.genetic.genes.numeric
 
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.assertions.`test that a gene can duplicate itself`
@@ -16,6 +17,7 @@ import cl.ravenhill.keen.assertions.`test that the gene range is set to the expe
 import cl.ravenhill.keen.assertions.`test that the gene value is set to the expected value`
 import cl.ravenhill.keen.utils.nextDoubleInRange
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.withData
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
@@ -63,23 +65,6 @@ class DoubleGeneTest : FreeSpec({
             "a Double" {
                 checkAll<Double> { d ->
                     DoubleGene(d).toDouble() shouldBe d
-                }
-            }
-
-            "a String" {
-                checkAll<Double> { d ->
-                    DoubleGene(d).toString() shouldBe
-                          "DoubleGene(value=$d, range=-1.7976931348623157E308..1.7976931348623157E308)"
-                }
-            }
-
-            "a Detailed String" {
-                checkAll<Double> { d ->
-                    DoubleGene(d).toDetailedString() shouldBe
-                          "DoubleGene(" +
-                          "value=$d, " +
-                          "range=-1.7976931348623157E308..1.7976931348623157E308, " +
-                          "filter=(kotlin.Double) -> kotlin.Boolean)"
                 }
             }
         }

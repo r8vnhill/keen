@@ -10,8 +10,10 @@ import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genes.booleanGene
 import cl.ravenhill.keen.arb.genetic.genes.charGene
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
+import cl.ravenhill.keen.arb.genetic.genes.doubleGeneShrinker
 import cl.ravenhill.keen.arb.genetic.genes.gene
 import cl.ravenhill.keen.arb.genetic.genes.intGene
+import cl.ravenhill.keen.arb.randomShrinker
 import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
@@ -28,7 +30,9 @@ import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.genetic.genes.numeric.NumberGene
+import cl.ravenhill.keen.utils.transpose
 import io.kotest.property.Arb
+import io.kotest.property.Shrinker
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.constant
@@ -89,6 +93,24 @@ fun Arb.Companion.nothingChromosome(
     NothingChromosome(List(size.bind()) { NothingGene })
 }
 
+
+val doubleChromosomeShrinker = Shrinker<DoubleChromosome> { chromosome ->
+    when {
+        chromosome.isEmpty() -> emptyList()
+        else -> {
+            val geneShrinker = doubleGeneShrinker
+            val genes: List<List<DoubleGene>> = chromosome.map { geneShrinker.shrink(it) }.transpose()
+            listOf(
+                chromosome.copy(genes = chromosome.take(1)),
+                chromosome.copy(genes = chromosome.take(chromosome.size / 2)),
+                chromosome.copy(genes = chromosome.drop(1)),
+                chromosome.copy(genes = chromosome.drop(chromosome.size / 2)),
+                *genes.map { chromosome.copy(genes = it) }.toTypedArray()
+            )
+        }
+    }
+}
+
 /**
  * Generates an arbitrary [DoubleChromosome] for property-based testing in genetic algorithms.
  *
@@ -119,13 +141,41 @@ fun Arb.Companion.nothingChromosome(
 fun Arb.Companion.doubleChromosome(
     size: Arb<Int> = int(0..5),
     gene: Arb<DoubleGene> = doubleGene(),
-) = arbitrary {
+) = arbitrary(doubleChromosomeShrinker) {
     DoubleChromosome(List(size.bind()) { gene.bind() })
 }
 
-fun Arb.Companion.intChromosome(size: Arb<Int> = int(0..5), gene: Arb<IntGene> = intGene()) = arbitrary {
+/**
+ * Generates an arbitrary [IntChromosome] for property-based testing. This function is an extension of the
+ * [Arb.Companion] object.
+ *
+ * ## Overview:
+ * The function creates an `IntChromosome` where the number of genes and the genes themselves are randomly determined
+ * based on provided arbitraries for size and gene.
+ *
+ * ## Usage:
+ * Use this function to generate random `IntChromosome` instances for testing algorithms that work with genetic
+ * representations. The flexibility in specifying size and gene type allows for diverse test scenarios.
+ *
+ * ### Example:
+ * ```kotlin
+ * val intChromosomeArb = Arb.intChromosome()
+ * val intChromosome = intChromosomeArb.bind() // Generates a random IntChromosome
+ * ```
+ *
+ * @param size An [Arb]<[Int]> instance representing the arbitrary generator for chromosome size. Defaults to a range of
+ *   0 to 5.
+ * @param gene An [Arb]<[IntGene]> instance representing the arbitrary generator for the genes in the chromosome.
+ *   Defaults to [intGene].
+ * @return An `Arb<IntChromosome>` instance that generates random `IntChromosome` objects.
+ */
+fun Arb.Companion.intChromosome(
+    size: Arb<Int> = int(0..5),
+    gene: Arb<IntGene> = intGene(),
+) = arbitrary {
     IntChromosome(List(size.bind()) { gene.bind() })
 }
+
 
 /**
  * Generates an arbitrary [Chromosome.Factory] for property-based testing.

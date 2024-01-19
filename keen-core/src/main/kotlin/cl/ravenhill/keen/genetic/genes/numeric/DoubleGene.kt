@@ -11,6 +11,7 @@ import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import cl.ravenhill.keen.mixins.Ranged
 import cl.ravenhill.keen.utils.nextDoubleInRange
@@ -193,21 +194,21 @@ data class DoubleGene(
      */
     override fun verify() = value in range && filter(value)
 
-
     /**
-     * Returns a string representation of the DoubleGene object.
+     * Provides a string representation of a `DoubleGene` instance. This method is overridden to display different
+     * levels of detail based on the current [Domain.toStringMode] setting.
      *
-     * @return A string representation of the DoubleGene object, including its value and range.
+     * @return A string representation of the `DoubleGene` instance, varying in detail according to the
+     *   [Domain.toStringMode] setting.
      */
-    override fun toString() = "DoubleGene(value=$value, range=$range)"
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun toString() = when (Domain.toStringMode) {
+        ToStringMode.SIMPLE -> value.toString()
+        ToStringMode.DEFAULT -> "DoubleGene(value=$value, range=$range)"
+        ToStringMode.DETAILED ->
+            "DoubleGene(value=$value, range=$range, filter=$filter@${System.identityHashCode(filter).toHexString()})"
+    }
 
-    /**
-     * Returns a detailed string representation of the DoubleGene object.
-     *
-     * @return A string representation of the DoubleGene object including its value,
-     *   range, and filter.
-     */
-    override fun toDetailedString() = "DoubleGene(value=$value, range=$range, filter=$filter)"
 
     /**
      * Determines whether the provided object is equal to this `DoubleGene`.

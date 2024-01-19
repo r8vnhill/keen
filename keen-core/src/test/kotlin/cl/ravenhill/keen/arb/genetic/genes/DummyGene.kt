@@ -5,7 +5,6 @@
 
 package cl.ravenhill.keen.arb.genetic.genes
 
-import cl.ravenhill.jakt.utils.DoubleRange
 import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.genetic.genes.BooleanGene
@@ -14,6 +13,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.property.Arb
+import io.kotest.property.Shrinker
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.char
@@ -23,6 +23,7 @@ import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.next
+import kotlin.math.absoluteValue
 
 /**
  * A dummy implementation of the [Gene] interface for testing purposes.
@@ -107,7 +108,18 @@ fun Arb.Companion.charGene(
     CharGene(value.bind(), range.bind(), filter)
 }
 
+
+val doubleGeneShrinker = Shrinker<DoubleGene> { (value, range, filter) ->
+    val newValue = value / 2
+    when {
+        newValue < range.start -> listOf(DoubleGene(range.start, range, filter))
+        newValue.absoluteValue < 10 * Double.MIN_VALUE -> emptyList()
+        else -> listOf(DoubleGene(newValue, range, filter))
+    }
+}
+
 /**
+ *
  * Generates an arbitrary instance of [DoubleGene] for property-based testing in genetic algorithms.
  *
  * This function creates [DoubleGene] instances with configurable value ranges and optional custom filtering.
@@ -144,16 +156,31 @@ fun Arb.Companion.charGene(
  * @return An [Arb] that generates [DoubleGene] instances with the specified configurations.
  */
 fun Arb.Companion.doubleGene(
-    range: Arb<DoubleRange> = orderedPair(double().filterNot { it.isNaN() || it.isInfinite() })
+    range: Arb<ClosedFloatingPointRange<Double>> = orderedPair(double().filterNot { it.isNaN() || it.isInfinite() })
         .filter { (lo, hi) -> lo < hi }.map { (lo, hi) -> lo..hi },
     value: Arb<Double> = range.map {
         double(it).next()
     },
     filter: (Double) -> Boolean = { true },
-) = arbitrary {
+) = arbitrary(doubleGeneShrinker) {
     DoubleGene(value.bind(), range.bind(), filter)
 }
 
+/**
+ * Generates an arbitrary [IntGene] for property-based testing. This function is an extension of the [Arb] companion
+ * object.
+ *
+ * ## Overview:
+ * The function creates an `IntGene` with randomly determined value, range, and a filter function. The [value] and
+ * [range] are generated based on provided arbitraries, and the `filter` allows for additional constraints on the gene
+ * value.
+ *
+ * @param value An [Arb]<[Int]> instance representing the arbitrary generator for gene value. Defaults to [int].
+ * @param range An `Arb<ClosedRange<Int>>` instance representing the arbitrary generator for the gene's value range.
+ *   Defaults to a range of `int()`.
+ * @param filter A function to filter the gene values. Defaults to allowing all values (`{ true }`).
+ * @return An `Arb<IntGene>` instance that generates random `IntGene` objects.
+ */
 fun Arb.Companion.intGene(
     value: Arb<Int> = int(),
     range: Arb<ClosedRange<Int>> = range(int(), int()),

@@ -14,6 +14,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.mixins.Filterable
 import cl.ravenhill.keen.mixins.Ranged
+import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
 import io.kotest.matchers.booleans.shouldBeFalse

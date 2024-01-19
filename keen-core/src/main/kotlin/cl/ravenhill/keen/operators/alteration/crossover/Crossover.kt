@@ -75,7 +75,6 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * @return An updated [EvolutionState] containing the newly produced offspring, with a population size equal to
      * `outputSize`.
      */
-    @OptIn(ExperimentalJakt::class)
     override fun invoke(state: EvolutionState<T, G>, outputSize: Int): EvolutionState<T, G> {
         constraints {
             "The number of offspring ($outputSize) mismatches with the crossover output ($numOffspring)"(
@@ -87,9 +86,9 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
         // Recombine the selected individuals to produce offspring
         val recombined = mutableListOf<Individual<T, G>>()
         while (recombined.size < outputSize) {
-            crossover(parents.random(Domain.random).map { it.genotype }).subject.forEach {
-                recombined += Individual(it)
-            }
+            val randomParents = parents.random(Domain.random).map { it.genotype }
+            val crossed = crossover(randomParents).subject
+            crossed.forEach { recombined += Individual(it) }
         }
         return state.copy(population = recombined.take(outputSize))
     }

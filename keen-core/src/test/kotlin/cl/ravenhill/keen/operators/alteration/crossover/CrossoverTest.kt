@@ -20,18 +20,23 @@ import cl.ravenhill.keen.arb.individualRanker
 import cl.ravenhill.keen.arb.operators.baseCrossover
 import cl.ravenhill.keen.arb.randomContext
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.exceptions.CrossoverInvocationException
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
-import cl.ravenhill.keen.genetic.genes.numeric.IntGene
+import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.utils.indices
+import cl.ravenhill.keen.utils.subsets
 import cl.ravenhill.keen.utils.transpose
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.ints.shouldBeInRange
@@ -140,7 +145,7 @@ class CrossoverTest : FreeSpec({
 
         "when crossing populations" - {
             "fails if he output size is not the same as the offspring size" {
-                val arbPopulation= Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome())))
+                val arbPopulation = Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome())))
                 checkAll(
                     Arb.validCrossover(Arb.doubleChromosome()),
                     Arb.evolutionState(arbPopulation, Arb.individualRanker()),
@@ -157,6 +162,31 @@ class CrossoverTest : FreeSpec({
                                   "(${crossover.numOffspring})"
                         )
                     }
+                }
+            }
+
+            "returns the expected number of offspring" {
+                checkAll(Arb.validCrossoverState()) { (crossover, state) ->
+                    val result = crossover(state, crossover.numOffspring)
+                    result.population shouldHaveSize crossover.numOffspring
+                }
+            }
+
+            // FIXME This test fails, the output size of the crossover is sometimes smaller than the expected size.
+            "returns the expected offspring" {
+                checkAll(
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
+                    Arb.validCrossoverState(),
+                    Arb.randomContext()
+                ) { (crossover, state), (seed, rng) ->
+                    Domain.random = rng
+                    println("Population size: ${state.population.size}; Offspring size: ${crossover.numOffspring}")
+                    val result = crossover(state, crossover.numOffspring)
+                    println("Result size: ${result.size}")
+                    Domain.random = Random(seed)
+                    val expected = crossover(crossover, state.population)
+                    println("Expected size: ${expected.size}")
+                    result.population shouldBe expected
                 }
             }
         }
@@ -180,6 +210,14 @@ private fun <T, G> Arb.Companion.validCrossover(
     val crossover = baseCrossover<T, G>(chromosomeRate).bind()
     val genotypes = list(genotype(chromosome, constant(size)), crossover.numParents..crossover.numParents).bind()
     crossover to genotypes
+}
+
+private fun Arb.Companion.validCrossoverState() = arbitrary {
+    val size = int(1..10).bind()
+    val crossover = baseCrossover<Double, DoubleGene>(numParents = int(1..size), exclusivity = constant(false)).bind()
+    val population = population(individual(genotype(doubleChromosome(), constant(size))), 1..25)
+    val ranker = individualRanker()
+    crossover to evolutionState(population, ranker).bind()
 }
 
 /**
@@ -229,4 +267,22 @@ private fun <T, G> crossover(
             })
         }, chromosomes.size
     )
+}
+
+private fun <T, G> crossover(
+    cx: Crossover<T, G>,
+    population: Population<T, G>,
+): Population<T, G> where G : Gene<T, G> {
+    val parents = Domain.random.subsets(population, cx.numParents, false)
+    fun recursiveCrossover(
+        parents: List<List<Individual<T, G>>>,
+        acc: List<List<Genotype<T, G>>> = listOf(),
+    ): List<List<Genotype<T, G>>> {
+        if (acc.size > cx.numOffspring) return acc
+        val randomParents = parents.random(Domain.random).map { it.genotype }
+        val crossed = cx.crossover(randomParents).subject
+        return recursiveCrossover(parents, acc + listOf(crossed))
+    }
+    return recursiveCrossover(parents).flatten().map { Individual(it) }
+//        .take(cx.numOffspring)
 }
