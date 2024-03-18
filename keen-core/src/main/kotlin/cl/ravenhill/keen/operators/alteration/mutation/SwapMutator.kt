@@ -59,7 +59,6 @@ import cl.ravenhill.keen.utils.swap
  * @throws CompositeException containing all the exceptions thrown by the constraints.
  * @throws DoubleConstraintException if any of the mutation rates is not within the range [0.0, 1.0].
  */
-@OptIn(ExperimentalJakt::class)
 class SwapMutator<T, G>(
     override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
     override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,

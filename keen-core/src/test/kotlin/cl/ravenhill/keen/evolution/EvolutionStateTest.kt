@@ -85,6 +85,15 @@ class EvolutionStateTest : FreeSpec({
             }
         }
 
+        "can check for emptiness" - {
+            "when it is empty" {
+                checkAll(Arb.individualRanker()) { ranker ->
+                    val state = EvolutionState.empty(ranker)
+                    state.isEmpty() shouldBe true
+                }
+            }
+        }
+
         "can advance to the next state" {
             checkAll(
                 PropTestConfig(iterations = 100),

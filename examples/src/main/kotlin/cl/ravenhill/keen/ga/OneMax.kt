@@ -77,8 +77,8 @@ fun main() {
     val engine = evolutionEngine(::count, genotypeOf {
         chromosomeOf {
             booleans {
-                size = CHROMOSOME_SIZE
-                trueRate = TRUE_RATE
+                size = 20
+                trueRate = 0.15
             }
         }
     }) {

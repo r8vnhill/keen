@@ -55,7 +55,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  */
 open class CombineCrossover<T, G>(
     val combiner: (List<G>) -> G,
-    override val chromosomeRate: Double = 1.0,
+    override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
     val geneRate: Double = 1.0,
     override val numParents: Int = 2,
     override val exclusivity: Boolean = false,
@@ -154,5 +154,15 @@ open class CombineCrossover<T, G>(
                 chromosomes[0][i]
             }
         }
+    }
+
+    /**
+     * The `Companion` class contains a companion object for the `CombineCrossover` class.
+     *
+     * @property DEFAULT_CHROMOSOME_RATE The default value for the chromosome rate. This is a constant value that
+     *   is used when no other rate is specified.
+     */
+    companion object {
+        const val DEFAULT_CHROMOSOME_RATE = 1.0
     }
 }
