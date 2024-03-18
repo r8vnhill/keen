@@ -201,6 +201,22 @@ class EvolutionStateTest : FreeSpec({
             }
         }
 
+        "can be mapped" {
+            checkAll(
+                PropTestConfig(iterations = 100),
+                Arb.evolutionState(
+                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                    Arb.individualRanker()
+                )
+            ) { state ->
+                val mapped = state.map { it }
+                mapped.population shouldBe state.population
+                mapped.generation shouldBe state.generation
+                mapped.ranker shouldBe state.ranker
+                mapped.size shouldBe state.size
+            }
+        }
+
         "can be converted to a String" {
             checkAll(
                 PropTestConfig(iterations = 100),
