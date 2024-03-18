@@ -19,6 +19,8 @@ import cl.ravenhill.keen.evolution.states.EvolutionState
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -89,7 +91,19 @@ class EvolutionStateTest : FreeSpec({
             "when it is empty" {
                 checkAll(Arb.individualRanker()) { ranker ->
                     val state = EvolutionState.empty(ranker)
-                    state.isEmpty() shouldBe true
+                    state.isEmpty().shouldBeTrue()
+                }
+            }
+
+            "when it is not empty" {
+                checkAll(
+                    PropTestConfig(iterations = 100),
+                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome())), 1..100),
+                    Arb.nonNegativeInt(),
+                    Arb.individualRanker()
+                ) { population, generation, ranker ->
+                    val state = EvolutionState(generation, ranker, population)
+                    state.isEmpty().shouldBeFalse()
                 }
             }
         }
