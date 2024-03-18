@@ -108,7 +108,7 @@ class EvolutionStateTest : FreeSpec({
             }
         }
 
-        "can advance to the next state" {
+        "can create a copy with a new generation" {
             checkAll(
                 PropTestConfig(iterations = 100),
                 Arb.evolutionState(
@@ -116,8 +116,9 @@ class EvolutionStateTest : FreeSpec({
                     Arb.individualRanker(),
                     Arb.int(0..<Int.MAX_VALUE)
                 ),
-            ) { state ->
-                val nextState = state.copy(generation = state.generation + 1)
+                Arb.int()
+            ) { state, newGeneration ->
+                val nextState = state.copy(generation = newGeneration)
                 nextState.population shouldBe state.population
                 nextState.generation shouldBe state.generation + 1
             }
