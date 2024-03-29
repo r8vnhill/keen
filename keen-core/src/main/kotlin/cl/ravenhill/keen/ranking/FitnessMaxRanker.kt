@@ -75,4 +75,14 @@ class FitnessMaxRanker<T, G> : IndividualRanker<T, G> where G : Gene<T, G> {
      *   and (3) zero indicates that both individuals have equal fitness.
      */
     override fun invoke(first: Individual<T, G>, second: Individual<T, G>) = first.fitness.compareTo(second.fitness)
+
+    override fun toString() = "FitnessMaxRanker"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FitnessMaxRanker<*, *>) return false
+        return true
+    }
+
+    override fun hashCode() = FitnessMaxRanker::class.hashCode()
 }

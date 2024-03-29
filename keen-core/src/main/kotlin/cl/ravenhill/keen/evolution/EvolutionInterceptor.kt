@@ -7,6 +7,7 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.genetic.genes.Gene
+import java.util.*
 
 
 /**
@@ -56,6 +57,16 @@ class EvolutionInterceptor<T, G>(
     val before: (EvolutionState<T, G>) -> EvolutionState<T, G>,
     val after: (EvolutionState<T, G>) -> EvolutionState<T, G>,
 ) where G : Gene<T, G> {
+
+    override fun toString() = "EvolutionInterceptor(before=$before, after=$after)"
+
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is EvolutionInterceptor<*, *> -> false
+        else -> before == other.before && after == other.after
+    }
+
+    override fun hashCode() = Objects.hash(EvolutionInterceptor::class, before, after)
 
     companion object {
 

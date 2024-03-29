@@ -169,6 +169,15 @@ interface EvaluationExecutor<T, G> : KeenExecutor where G : Gene<T, G> {
          *                   of [EvaluationExecutor].
          */
         override lateinit var creator: ((Genotype<T, G>) -> Double) -> EvaluationExecutor<T, G>
+
+        override fun toString() = "EvaluationExecutor.Factory(creator=$creator)"
+
+        override fun equals(other: Any?) = when {
+            this === other -> true
+            other !is Factory<*, *> -> false
+            creator != other.creator -> false
+            else -> true
+        }
     }
 }
 
