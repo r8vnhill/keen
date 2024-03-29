@@ -88,3 +88,11 @@ fun <T, G> Arb.Companion.genotype(
     val numChromosomes = size.bind()
     Genotype(list(chromosome, numChromosomes..numChromosomes).bind())
 }
+
+fun <T, G> Arb.Companion.genotypeFactory(
+    chromosomeFactory: Arb<List<Chromosome.Factory<T, G>>>
+): Arb<Genotype.Factory<T, G>> where G : Gene<T, G> = arbitrary {
+    Genotype.Factory<T, G>().apply {
+        chromosomeFactory.bind().forEach { chromosomes += it }
+    }
+}

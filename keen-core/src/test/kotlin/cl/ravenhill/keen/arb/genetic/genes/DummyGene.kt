@@ -154,6 +154,18 @@ fun Arb.Companion.doubleGene(
     DoubleGene(value.bind(), range.bind(), filter)
 }
 
+/**
+ * Creates an arbitrary generator for `IntGene` instances, suitable for property-based testing.
+ * This generator allows customization of the gene's value, its valid range, and a filter function
+ * for additional value constraints. It's an extension function of the `Arb` companion object.
+ *
+ * @param value An `Arb<Int>` generator for the gene's value. Defaults to a generator for any `Int`.
+ * @param range An `Arb<ClosedRange<Int>>` generator for the gene's valid range. Defaults to a
+ *              generator that produces any `ClosedRange<Int>`.
+ * @param filter A predicate function to apply additional constraints on the gene's value. Defaults
+ *               to a function that accepts all values.
+ * @return An `Arb<IntGene>` that generates `IntGene` instances with the specified properties.
+ */
 fun Arb.Companion.intGene(
     value: Arb<Int> = int(),
     range: Arb<ClosedRange<Int>> = range(int(), int()),
