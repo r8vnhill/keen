@@ -20,6 +20,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
                 val factory = EvolutionEngine.Factory(fitnessFunction, genotypeFactory)
                 factory.genotypeFactory shouldBe genotypeFactory
                 factory.fitnessFunction shouldBe fitnessFunction
+                factory.populationSize shouldBe EvolutionEngine.Factory.DEFAULT_POPULATION_SIZE
             }
         }
     }
