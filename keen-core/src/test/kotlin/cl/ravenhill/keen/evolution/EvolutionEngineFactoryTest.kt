@@ -1,15 +1,14 @@
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.keen.arb.genetic.chromosomes.chromosomeFactory
 import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.genotypeFactory
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
-import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
 
 class EvolutionEngineFactoryTest : FreeSpec({
@@ -32,6 +31,21 @@ class EvolutionEngineFactoryTest : FreeSpec({
                     interceptor shouldBe EvolutionEngine.Factory.defaultInterceptor()
                 }
             }
+        }
+    }
+
+    "Setting the population size" - {
+        "to a positive value mutates the property" {
+            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(Arb.doubleChromosomeFactory()))
+            checkAll(Arb.positiveInt(), arbGenotypeFactory) { size, genotypeFactory ->
+                EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                    populationSize = size
+                }
+            }
+        }
+
+        "to a negative value throws an exception" {
+            TODO()
         }
     }
 })
