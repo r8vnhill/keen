@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
@@ -17,6 +18,7 @@ import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
+import cl.ravenhill.keen.exceptions.EngineException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -535,14 +537,18 @@ class EvolutionEngine<T, G>(
         val genotypeFactory: Genotype.Factory<T, G>,
     ) where G : Gene<T, G> {
 
+        @OptIn(ExperimentalJakt::class)
         var populationSize: Int = DEFAULT_POPULATION_SIZE
             set(value) = constraints {
-                "Population size ($value) must be positive." { value must BePositive }
+                "Population size ($value) must be positive."(::EngineException) { value must BePositive }
             }.let { field = value }
 
+        @OptIn(ExperimentalJakt::class)
         var survivalRate: Double = DEFAULT_SURVIVAL_RATE
             set(value) = constraints {
-                "Survival rate ($value) must be between 0 and 1." { value must BeInRange(0.0..1.0) }
+                "Survival rate ($value) must be between 0 and 1."(::EngineException) {
+                    value must BeInRange(0.0..1.0)
+                }
             }.let { field = value }
 
         var parentSelector: Selector<T, G> = defaultParentSelector()

@@ -1,14 +1,17 @@
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.genotypeFactory
+import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
+import cl.ravenhill.keen.exceptions.EngineException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.positiveInt
+import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 
 class EvolutionEngineFactoryTest : FreeSpec({
@@ -45,7 +48,66 @@ class EvolutionEngineFactoryTest : FreeSpec({
         }
 
         "to a negative value throws an exception" {
-            TODO()
+            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(Arb.doubleChromosomeFactory()))
+            checkAll(Arb.negativeInt(), arbGenotypeFactory) { size, genotypeFactory ->
+                shouldThrow<CompositeException> {
+                    EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                        populationSize = size
+                    }
+                }.shouldHaveInfringement<EngineException>("Population size ($size) must be positive.")
+            }
+        }
+
+        "to zero throws an exception" {
+            checkAll(Arb.genotypeFactory(Arb.list(Arb.doubleChromosomeFactory()))) { genotypeFactory ->
+                shouldThrow<CompositeException> {
+                    EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                        populationSize = 0
+                    }
+                }.shouldHaveInfringement<EngineException>("Population size (0) must be positive.")
+            }
+        }
+    }
+
+    "Setting the survival rate" - {
+        "to a value between 0 and 1 mutates the property" {
+            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(Arb.doubleChromosomeFactory()))
+            checkAll(
+                Arb.double(0.0..1.0, false).filterNot { it == 0.0 || it == 1.0 },
+                arbGenotypeFactory
+            ) { rate, genotypeFactory ->
+                EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                    survivalRate = rate
+                }
+            }
+        }
+
+        "to a value less than 0 throws an exception" {
+            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(Arb.doubleChromosomeFactory()))
+            checkAll(
+                Arb.negativeDouble(includeNonFiniteEdgeCases = false),
+                arbGenotypeFactory
+            ) { rate, genotypeFactory ->
+                shouldThrow<CompositeException> {
+                    EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                        survivalRate = rate
+                    }
+                }.shouldHaveInfringement<EngineException>("Survival rate ($rate) must be between 0 and 1.")
+            }
+        }
+
+        "to a value greater than 1 throws an exception" {
+            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(Arb.doubleChromosomeFactory()))
+            checkAll(
+                Arb.double(1.0..Double.MAX_VALUE, false).filterNot { it == 1.0 },
+                arbGenotypeFactory
+            ) { rate, genotypeFactory ->
+                shouldThrow<CompositeException> {
+                    EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                        survivalRate = rate
+                    }
+                }.shouldHaveInfringement<EngineException>("Survival rate ($rate) must be between 0 and 1.")
+            }
         }
     }
 })
