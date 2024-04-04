@@ -20,13 +20,11 @@ import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 
 object KeenArb {
-    fun populationConfig() = populationConfig(
-        Arb.genotypeFactory(Arb.list(Arb.doubleChromosomeFactory())),
-        Arb.int(0..100)
-    )
 
     fun probability(): Arb<Double> = Arb.double(0.0..1.0, includeNonFiniteEdgeCases = false)
-    fun arbTournamentSelector(): Arb<TournamentSelector<Double, DoubleGene>> = Arb.tournamentSelector()
+    fun arbTournamentSelector(): Arb<TournamentSelector<Double, DoubleGene>> =
+        KeenArb.tournamentSelector<Double, DoubleGene>()
+
     fun arbRouletteWheelSelector(): Arb<RouletteWheelSelector<Double, DoubleGene>> = Arb.rouletteWheelSelector()
     fun selectionConfig(): Arb<SelectionConfig<Double, DoubleGene>> = Arb.selectionConfig(
         probability(),

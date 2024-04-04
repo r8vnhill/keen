@@ -65,11 +65,13 @@ private fun populationConfig() = KeenArb.populationConfig(
     Arb.int(0..100)
 )
 
-private fun probabilityArb(): Arb<Double> = Arb.double(0.0..1.0, includeNonFiniteEdgeCases = false)
-private fun arbTournamentSelector(): Arb<TournamentSelector<Double, DoubleGene>> = Arb.tournamentSelector()
+private fun probability(): Arb<Double> = Arb.double(0.0..1.0, includeNonFiniteEdgeCases = false)
+private fun arbTournamentSelector(): Arb<TournamentSelector<Double, DoubleGene>> =
+    KeenArb.tournamentSelector()
+
 private fun arbRouletteWheelSelector(): Arb<RouletteWheelSelector<Double, DoubleGene>> = Arb.rouletteWheelSelector()
 private fun selectionConfig(): Arb<SelectionConfig<Double, DoubleGene>> = Arb.selectionConfig(
-    probabilityArb(),
+    probability(),
     arbTournamentSelector(),
     arbRouletteWheelSelector()
 )

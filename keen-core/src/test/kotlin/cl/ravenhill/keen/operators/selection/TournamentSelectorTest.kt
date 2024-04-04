@@ -70,7 +70,7 @@ class TournamentSelectorTest : FreeSpec({
             "should return the expected individuals" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
-                    Arb.tournamentSelector<Int, IntGene>(),
+                    KeenArb.tournamentSelector<Int, IntGene>(),
                     Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome())), 1..25),
                     Arb.int(0..100),
                     KeenArb.anyRanker<Int, IntGene>(),
