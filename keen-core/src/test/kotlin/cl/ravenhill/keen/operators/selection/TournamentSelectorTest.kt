@@ -9,6 +9,7 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
@@ -60,7 +61,7 @@ class TournamentSelectorTest : FreeSpec({
                 checkAll(
                     Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..25),
                     Arb.int(0..100),
-                    Arb.anyRanker<Nothing, NothingGene>()
+                    KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { population, n, ranker ->
                     TournamentSelector<Nothing, NothingGene>().select(population, n, ranker).size shouldBe n
                 }
@@ -72,7 +73,7 @@ class TournamentSelectorTest : FreeSpec({
                     Arb.tournamentSelector<Int, IntGene>(),
                     Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome())), 1..25),
                     Arb.int(0..100),
-                    Arb.anyRanker<Int, IntGene>(),
+                    KeenArb.anyRanker<Int, IntGene>(),
                     Arb.rngPair()
                 ) { selector, population, n, ranker, (rng1, rng2) ->
                     Domain.random = rng1

@@ -8,6 +8,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.evolution.evolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
@@ -87,7 +88,7 @@ class MutatorTest : FreeSpec({
                     Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
-                        Arb.anyRanker()
+                        KeenArb.anyRanker()
                     )
                 ) { mutator, state ->
                     with(mutator(state, state.population.size)) {
@@ -102,7 +103,7 @@ class MutatorTest : FreeSpec({
                     Arb.anyMutator(individualRate = Arb.constant(1.0)),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
-                        Arb.anyRanker()
+                        KeenArb.anyRanker()
                     ),
                     Arb.rngPair()
                 ) { mutator, state, (rng1, rng2) ->
@@ -122,7 +123,7 @@ class MutatorTest : FreeSpec({
                     Arb.anyMutator(),
                     Arb.evolutionState(
                         Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
-                        Arb.anyRanker()
+                        KeenArb.anyRanker()
                     ),
                     Arb.rngPair()
                 ) { mutator, state, (rng1, rng2) ->

@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.ranking
 
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.datatypes.orderedPair
 import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
@@ -35,7 +36,7 @@ class IndividualRankerTest : FreeSpec({
     "An Individual Ranker" - {
         "should have a comparator that works according to the invoke method" {
             val individualArb = Arb.individual(Arb.genotype(Arb.nothingChromosome()))
-            checkAll(individualArb, individualArb, Arb.ranker<Nothing, NothingGene>()) { i1, i2, ranker ->
+            checkAll(individualArb, individualArb, KeenArb.ranker<Nothing, NothingGene>()) { i1, i2, ranker ->
                 ranker.comparator.compare(i1, i2) shouldBe ranker(i1, i2)
             }
         }
@@ -81,7 +82,7 @@ class IndividualRankerTest : FreeSpec({
         }
 
         "should have a fitness transformation method that returns the same list" {
-             checkAll(Arb.ranker<Nothing, NothingGene>(), Arb.list(Arb.double())) { ranker, fitness ->
+             checkAll(KeenArb.ranker<Nothing, NothingGene>(), Arb.list(Arb.double())) { ranker, fitness ->
                  ranker.fitnessTransform(fitness) shouldBe fitness
              }
         }

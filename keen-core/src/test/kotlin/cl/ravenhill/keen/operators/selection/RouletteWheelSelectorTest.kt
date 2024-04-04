@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.operators.selection
 
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
@@ -44,7 +45,7 @@ class RouletteWheelSelectorTest : FreeSpec({
                 checkAll(
                     Arb.rouletteWheelSelector<Nothing, NothingGene>(),
                     Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..100),
-                    Arb.anyRanker<Nothing, NothingGene>()
+                    KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { selector, population, ranker ->
                     val probabilities = selector.probabilities(population, ranker)
                     probabilities.sum() shouldBeEq 1.0
@@ -105,7 +106,7 @@ class RouletteWheelSelectorTest : FreeSpec({
                     Arb.rouletteWheelSelector<Nothing, NothingGene>(),
                     Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..25),
                     Arb.int(0..100),
-                    Arb.anyRanker<Nothing, NothingGene>()
+                    KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { selector, population, n, ranker ->
                     selector.select(population, n, ranker).size shouldBe n
                 }

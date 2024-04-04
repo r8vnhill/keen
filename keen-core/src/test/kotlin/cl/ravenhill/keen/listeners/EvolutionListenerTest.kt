@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.listeners
 
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.evolution.evolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
@@ -25,8 +26,8 @@ class EvolutionListenerTest : FreeSpec({
         "should do nothing for all events" {
             val populationArb = Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())))
             checkAll(
-                Arb.evolutionListener(Arb.anyRanker<Nothing, NothingGene>(), Arb.evolutionRecord()),
-                Arb.evolutionState(populationArb, Arb.anyRanker())
+                Arb.evolutionListener(KeenArb.anyRanker<Nothing, NothingGene>(), Arb.evolutionRecord()),
+                Arb.evolutionState(populationArb, KeenArb.anyRanker())
             ) { listener, state ->
                 listener.onEvolutionEnded(state) shouldBe Unit
                 listener.onEvolutionStarted(state) shouldBe Unit
@@ -47,8 +48,8 @@ class EvolutionListenerTest : FreeSpec({
 
         "can be concatenated" {
             checkAll(
-                Arb.evolutionListener(Arb.anyRanker<Nothing, NothingGene>(), Arb.evolutionRecord()),
-                Arb.evolutionListener(Arb.anyRanker<Nothing, NothingGene>(), Arb.evolutionRecord()),
+                Arb.evolutionListener(KeenArb.anyRanker<Nothing, NothingGene>(), Arb.evolutionRecord()),
+                Arb.evolutionListener(KeenArb.anyRanker<Nothing, NothingGene>(), Arb.evolutionRecord()),
             ) { l1, l2 ->
                 (l1 + l2) shouldBe listOf(l1, l2)
             }

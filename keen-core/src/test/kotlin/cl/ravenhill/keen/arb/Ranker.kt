@@ -81,7 +81,7 @@ fun Arb.Companion.individualRanker(): Arb<IndividualRanker<Double, DoubleGene>> 
  * @param G The gene type, extending `Gene<T, G>`.
  * @return An [Arb]<[IndividualRanker]<[T], [G]>> that generates `IndividualRanker` instances.
  */
-fun <T, G> Arb.Companion.ranker(): Arb<IndividualRanker<T, G>> where G : Gene<T, G> = arbitrary {
+fun <T, G> KeenArb.ranker(): Arb<IndividualRanker<T, G>> where G : Gene<T, G> = arbitrary {
     object : IndividualRanker<T, G> {
         override fun invoke(first: Individual<T, G>, second: Individual<T, G>) = first.fitness.compareTo(second.fitness)
     }
@@ -119,5 +119,6 @@ fun <T, G> Arb.Companion.ranker(): Arb<IndividualRanker<T, G>> where G : Gene<T,
  * @param G The gene type, extending `Gene<T, G>`.
  * @return An [Arb]<[IndividualRanker]<[T], [G]>> that generates various types of `IndividualRanker` instances.
  */
-fun <T, G> Arb.Companion.anyRanker(): Arb<IndividualRanker<T, G>> where G : Gene<T, G> =
+fun <T, G> KeenArb.anyRanker(): Arb<IndividualRanker<T, G>> where G : Gene<T, G> = with(Arb) {
     choice(ranker(), constant(FitnessMaxRanker()), constant(FitnessMinRanker()))
+}
