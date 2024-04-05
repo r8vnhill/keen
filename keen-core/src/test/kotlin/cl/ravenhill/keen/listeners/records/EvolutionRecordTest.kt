@@ -7,19 +7,16 @@
 package cl.ravenhill.keen.listeners.records
 
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
-import cl.ravenhill.keen.arb.listeners.evolutionRecord
-import cl.ravenhill.keen.listeners.records.EvolutionRecord
+import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
 
 class EvolutionRecordTest : FreeSpec({
 
     "An Evolution Record" - {
         "can be created with a generation number" {
-            checkAll(Arb.evolutionRecord<Int, DummyGene>()) { record ->
+            checkAll(arbEvolutionRecord<Int, DummyGene>()) { record ->
                 record shouldBe EvolutionRecord(record.generations)
             }
         }

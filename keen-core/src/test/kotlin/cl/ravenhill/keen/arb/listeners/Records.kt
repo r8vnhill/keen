@@ -167,7 +167,7 @@ fun <T, G> Arb.Companion.generationRecord(
  *
  * @return An [Arb] that generates [EvolutionRecord] instances with specified generation records and starting time.
  */
-fun <T, G> Arb.Companion.evolutionRecord(
+fun <T, G> arbEvolutionRecord(
     generation: Arb<GenerationRecord<T, G>>? = null,
     startTime: TimeMark? = TestTimeSource().markNow()
 ) where G : Gene<T, G> = arbitrary {

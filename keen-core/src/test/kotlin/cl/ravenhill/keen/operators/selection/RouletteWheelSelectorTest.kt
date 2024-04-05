@@ -11,7 +11,7 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.individual
 import cl.ravenhill.keen.arb.genetic.population
-import cl.ravenhill.keen.arb.operators.rouletteWheelSelector
+import cl.ravenhill.keen.arb.operators.arbRouletteWheelSelector
 import cl.ravenhill.keen.assertions.should.shouldBeEq
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
@@ -19,7 +19,6 @@ import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.FitnessMinRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
-import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
@@ -43,7 +42,7 @@ class RouletteWheelSelectorTest : FreeSpec({
         "when assigning a probability to each individual" - {
             "should return a list of probabilities that sum 1" {
                 checkAll(
-                    Arb.rouletteWheelSelector<Nothing, NothingGene>(),
+                    arbRouletteWheelSelector<Nothing, NothingGene>(),
                     Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..100),
                     KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { selector, population, ranker ->
@@ -103,7 +102,7 @@ class RouletteWheelSelectorTest : FreeSpec({
         "when selecting individuals from a population" - {
             "should return the specified number of individuals" {
                 checkAll(
-                    Arb.rouletteWheelSelector<Nothing, NothingGene>(),
+                    arbRouletteWheelSelector<Nothing, NothingGene>(),
                     Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..25),
                     Arb.int(0..100),
                     KeenArb.anyRanker<Nothing, NothingGene>()

@@ -6,7 +6,6 @@
 
 package cl.ravenhill.keen.arb.operators
 
-import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
@@ -88,7 +87,7 @@ fun <T, G> Arb.Companion.selector(): Arb<Selector<T, G>> where G : Gene<T, G> = 
  * @return An [Arb]<[TournamentSelector]<[T], [G]>> for generating `TournamentSelector` instances with varying
  *         tournament sizes.
  */
-fun <T, G> KeenArb.tournamentSelector(
+fun <T, G> arbTournamentSelector(
     tournamentSize: Arb<Int> = Arb.int(1..5)
 ) where G : Gene<T, G> = arbitrary {
     TournamentSelector<T, G>(tournamentSize.bind())
@@ -129,8 +128,8 @@ fun <T, G> KeenArb.tournamentSelector(
  *   individuals are sorted by fitness.
  * @return An [Arb]<[RouletteWheelSelector]<[T], [G]>> for generating `RouletteWheelSelector` instances.
  */
-fun <T, G> Arb.Companion.rouletteWheelSelector(
-    sorted: Arb<Boolean> = boolean(),
+fun <T, G> arbRouletteWheelSelector(
+    sorted: Arb<Boolean> = Arb.boolean(),
 ) where G : Gene<T, G> = arbitrary {
     RouletteWheelSelector<T, G>(sorted.bind())
 }

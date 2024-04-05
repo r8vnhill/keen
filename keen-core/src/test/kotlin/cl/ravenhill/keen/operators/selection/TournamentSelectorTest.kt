@@ -16,7 +16,7 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.individual
 import cl.ravenhill.keen.arb.genetic.population
-import cl.ravenhill.keen.arb.operators.tournamentSelector
+import cl.ravenhill.keen.arb.operators.arbTournamentSelector
 import cl.ravenhill.keen.arb.rngPair
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -70,7 +70,7 @@ class TournamentSelectorTest : FreeSpec({
             "should return the expected individuals" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
-                    KeenArb.tournamentSelector<Int, IntGene>(),
+                    arbTournamentSelector<Int, IntGene>(),
                     Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome())), 1..25),
                     Arb.int(0..100),
                     KeenArb.anyRanker<Int, IntGene>(),

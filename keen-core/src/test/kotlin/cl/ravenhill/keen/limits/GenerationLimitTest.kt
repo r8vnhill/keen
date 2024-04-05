@@ -7,8 +7,7 @@ package cl.ravenhill.keen.limits
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.arb.KeenArb
-import cl.ravenhill.keen.arb.limits.generationLimit
+import cl.ravenhill.keen.arb.limits.arbGenerationLimit
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import io.kotest.assertions.throwables.shouldThrow
@@ -40,7 +39,7 @@ class GenerationLimitTest : FreeSpec({
 
         "should have an engine property that" - {
             "is null when the limit is created" {
-                checkAll(KeenArb.generationLimit<Nothing, NothingGene>()) { limit ->
+                checkAll(arbGenerationLimit<Nothing, NothingGene>()) { limit ->
                     limit.engine shouldBe null
                 }
             }

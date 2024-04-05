@@ -39,7 +39,7 @@ import io.kotest.property.arbitrary.arbitrary
  * @param T The type of the value that the Gene represents.
  * @param G The type of the Gene, constrained to be a subclass of `Gene<T, G>`.
  */
-fun <T, G> KeenArb.populationConfig(
+fun <T, G> arbPopulationConfig(
     genotypeFactory: Arb<Genotype.Factory<T, G>>,
     populationSize: Arb<Int>,
 ): Arb<PopulationConfig<T, G>> where G : Gene<T, G> = arbitrary {
@@ -61,7 +61,7 @@ fun <T, G> KeenArb.populationConfig(
  * @param T The type of the value that the Gene represents.
  * @param G The type of the Gene, constrained to be a subclass of `Gene<T, G>`.
  */
-fun <T, G> Arb.Companion.selectionConfig(
+fun <T, G> arbSelectionConfig(
     survivalRate: Arb<Double>,
     parentSelector: Arb<Selector<T, G>>,
     survivorSelector: Arb<Selector<T, G>>,
@@ -73,7 +73,7 @@ fun <T, G> Arb.Companion.selectionConfig(
     )
 }
 
-fun <T, G> Arb.Companion.alterationConfig(
+fun <T, G> arbAlterationConfig(
     alterers: Arb<List<Alterer<T, G>>>
 ): Arb<AlterationConfig<T, G>> where G : Gene<T, G> = arbitrary {
     AlterationConfig(alterers.bind())

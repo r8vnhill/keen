@@ -4,13 +4,13 @@ import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.evolution.*
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.arbGenotypeFactory
-import cl.ravenhill.keen.arb.limits.generationLimit
-import cl.ravenhill.keen.arb.listeners.evolutionListener
-import cl.ravenhill.keen.arb.listeners.evolutionRecord
-import cl.ravenhill.keen.arb.operators.alterer
-import cl.ravenhill.keen.arb.operators.rouletteWheelSelector
-import cl.ravenhill.keen.arb.operators.tournamentSelector
-import cl.ravenhill.keen.arb.ranker
+import cl.ravenhill.keen.arb.limits.arbGenerationLimit
+import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
+import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
+import cl.ravenhill.keen.arb.operators.arbAlterer
+import cl.ravenhill.keen.arb.operators.arbRouletteWheelSelector
+import cl.ravenhill.keen.arb.arbRanker
+import cl.ravenhill.keen.arb.operators.arbTournamentSelector
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
@@ -20,7 +20,6 @@ import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.Alterer
-import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.IndividualRanker
 import io.kotest.core.spec.style.FreeSpec
@@ -60,30 +59,27 @@ class EvolutionEngineTest : FreeSpec({
 })
 
 
-private fun populationConfig() = KeenArb.populationConfig(
+private fun populationConfig() = arbPopulationConfig(
     arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory())),
     Arb.int(0..100)
 )
 
 private fun probability(): Arb<Double> = Arb.double(0.0..1.0, includeNonFiniteEdgeCases = false)
-private fun arbTournamentSelector(): Arb<TournamentSelector<Double, DoubleGene>> =
-    KeenArb.tournamentSelector()
-
-private fun arbRouletteWheelSelector(): Arb<RouletteWheelSelector<Double, DoubleGene>> = Arb.rouletteWheelSelector()
-private fun selectionConfig(): Arb<SelectionConfig<Double, DoubleGene>> = Arb.selectionConfig(
+private fun tournamentSelector(): Arb<TournamentSelector<Double, DoubleGene>> = arbTournamentSelector()
+private fun selectionConfig(): Arb<SelectionConfig<Double, DoubleGene>> = arbSelectionConfig(
     probability(),
-    arbTournamentSelector(),
+    tournamentSelector(),
     arbRouletteWheelSelector()
 )
 
-private fun alterers(): Arb<List<Alterer<Double, DoubleGene>>> = Arb.list(Arb.alterer())
-private fun alterationConfig(): Arb<AlterationConfig<Double, DoubleGene>> = Arb.alterationConfig(alterers())
+private fun alterers(): Arb<List<Alterer<Double, DoubleGene>>> = Arb.list(arbAlterer())
+private fun alterationConfig(): Arb<AlterationConfig<Double, DoubleGene>> = arbAlterationConfig(alterers())
 
-private fun limits(): Arb<List<Limit<Double, DoubleGene>>> = Arb.list(KeenArb.generationLimit())
-private fun ranker(): Arb<IndividualRanker<Double, DoubleGene>> = KeenArb.ranker()
+private fun limits(): Arb<List<Limit<Double, DoubleGene>>> = Arb.list(arbGenerationLimit())
+private fun ranker(): Arb<IndividualRanker<Double, DoubleGene>> = arbRanker()
 private fun listeners(
     ranker: Arb<IndividualRanker<Double, DoubleGene>>
-): Arb<List<EvolutionListener<Double, DoubleGene>>> = Arb.list(Arb.evolutionListener(ranker, Arb.evolutionRecord()))
+): Arb<List<EvolutionListener<Double, DoubleGene>>> = Arb.list(arbEvolutionListener(ranker, arbEvolutionRecord()))
 
 private fun evaluator(): Arb<EvaluationExecutor<Double, DoubleGene>> = arbitrary {
     SequentialEvaluator { _ -> 1.0 }

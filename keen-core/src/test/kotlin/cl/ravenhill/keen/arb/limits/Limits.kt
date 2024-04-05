@@ -6,7 +6,6 @@
 
 package cl.ravenhill.keen.arb.limits
 
-import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.MaxGenerations
 import io.kotest.property.Arb
@@ -42,6 +41,6 @@ import io.kotest.property.arbitrary.int
  * @return An `Arb<GenerationLimit<T, G>>` capable of generating `GenerationLimit` instances with random
  *         generation counts.
  */
-fun <T, G> KeenArb.generationLimit(generations: Arb<Int> = Arb.int()) where G : Gene<T, G> = arbitrary {
+fun <T, G> arbGenerationLimit(generations: Arb<Int> = Arb.int()) where G : Gene<T, G> = arbitrary {
     MaxGenerations<T, G>(generations.bind())
 }

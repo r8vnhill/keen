@@ -53,7 +53,7 @@ import kotlin.time.TimeSource
  * @param evolution An [Arb]<[EvolutionRecord]<[T], [G]>> used to generate the evolution record component of the listener.
  * @return An [Arb]<[EvolutionListener]<[T], [G]>> that generates `EvolutionListener` instances.
  */
-fun <T, G> Arb.Companion.evolutionListener(
+fun <T, G> arbEvolutionListener(
     ranker: Arb<IndividualRanker<T, G>>,
     evolution: Arb<EvolutionRecord<T, G>>,
 ): Arb<EvolutionListener<T, G>> where G : Gene<T, G> = arbitrary {

@@ -52,7 +52,7 @@ import io.kotest.property.arbitrary.next
  * @param G The gene type, extending `Gene<T, G>`.
  * @return An [Arb]<[Alterer]<[T], [G]>> for generating `Alterer` instances.
  */
-fun <T, G> Arb.Companion.alterer(): Arb<Alterer<T, G>> where G : Gene<T, G> = arbitrary {
+fun <T, G> arbAlterer(): Arb<Alterer<T, G>> where G : Gene<T, G> = arbitrary {
     object : Alterer<T, G> {
         override fun invoke(state: EvolutionState<T, G>, outputSize: Int) =
             state.copy(population = state.population.take(outputSize))
