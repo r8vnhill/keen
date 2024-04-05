@@ -2,7 +2,7 @@ package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
-import cl.ravenhill.keen.arb.genetic.genotypeFactory
+import cl.ravenhill.keen.arb.genetic.arbGenotypeFactory
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.EngineException
 import cl.ravenhill.keen.genetic.Genotype
@@ -17,7 +17,7 @@ import io.kotest.property.checkAll
 class EvolutionEngineFactoryTest : FreeSpec({
     "Can be created with" - {
         "a fitness function and a genotype factory" {
-            checkAll(Arb.genotypeFactory(Arb.list(arbDoubleChromosomeFactory()))) { genotypeFactory ->
+            checkAll(arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))) { genotypeFactory ->
                 val fitnessFunction = { _: Genotype<Double, DoubleGene> -> 0.0 }
                 with(EvolutionEngine.Factory(fitnessFunction, genotypeFactory)) {
                     this.genotypeFactory shouldBe genotypeFactory
@@ -39,7 +39,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
 
     "Setting the population size" - {
         "to a positive value mutates the property" {
-            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
+            val arbGenotypeFactory = arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
             checkAll(Arb.positiveInt(), arbGenotypeFactory) { size, genotypeFactory ->
                 EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
                     populationSize = size
@@ -48,7 +48,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
         }
 
         "to a negative value throws an exception" {
-            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
+            val arbGenotypeFactory = arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
             checkAll(Arb.negativeInt(), arbGenotypeFactory) { size, genotypeFactory ->
                 shouldThrow<CompositeException> {
                     EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
@@ -59,7 +59,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
         }
 
         "to zero throws an exception" {
-            checkAll(Arb.genotypeFactory(Arb.list(arbDoubleChromosomeFactory()))) { genotypeFactory ->
+            checkAll(arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))) { genotypeFactory ->
                 shouldThrow<CompositeException> {
                     EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
                         populationSize = 0
@@ -71,7 +71,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
 
     "Setting the survival rate" - {
         "to a value between 0 and 1 mutates the property" {
-            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
+            val arbGenotypeFactory = arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
             checkAll(
                 Arb.double(0.0..1.0, false).filterNot { it == 0.0 || it == 1.0 },
                 arbGenotypeFactory
@@ -83,7 +83,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
         }
 
         "to a value less than 0 throws an exception" {
-            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
+            val arbGenotypeFactory = arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
             checkAll(
                 Arb.negativeDouble(includeNonFiniteEdgeCases = false),
                 arbGenotypeFactory
@@ -97,7 +97,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
         }
 
         "to a value greater than 1 throws an exception" {
-            val arbGenotypeFactory = Arb.genotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
+            val arbGenotypeFactory = arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
             checkAll(
                 Arb.double(1.0..Double.MAX_VALUE, false).filterNot { it == 1.0 },
                 arbGenotypeFactory

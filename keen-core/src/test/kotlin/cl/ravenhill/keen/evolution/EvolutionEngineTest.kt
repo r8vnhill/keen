@@ -3,7 +3,7 @@ package cl.ravenhill.keen.evolution
 import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.evolution.*
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
-import cl.ravenhill.keen.arb.genetic.genotypeFactory
+import cl.ravenhill.keen.arb.genetic.arbGenotypeFactory
 import cl.ravenhill.keen.arb.limits.generationLimit
 import cl.ravenhill.keen.arb.listeners.evolutionListener
 import cl.ravenhill.keen.arb.listeners.evolutionRecord
@@ -61,7 +61,7 @@ class EvolutionEngineTest : FreeSpec({
 
 
 private fun populationConfig() = KeenArb.populationConfig(
-    Arb.genotypeFactory(Arb.list(arbDoubleChromosomeFactory())),
+    arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory())),
     Arb.int(0..100)
 )
 

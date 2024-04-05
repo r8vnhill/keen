@@ -89,9 +89,8 @@ fun <T, G> Arb.Companion.genotype(
     Genotype(list(chromosome, numChromosomes..numChromosomes).bind())
 }
 
-fun <T, G> Arb.Companion.genotypeFactory(
+fun <T, G> arbGenotypeFactory(
     chromosomeFactory: Arb<List<Chromosome.Factory<T, G>>>,
-    populationSize: Arb<Int>? = null,
 ): Arb<Genotype.Factory<T, G>> where G : Gene<T, G> = arbitrary {
     Genotype.Factory<T, G>().apply {
         chromosomeFactory.bind().forEach { chromosomes += it }
