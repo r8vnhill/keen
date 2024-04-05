@@ -7,15 +7,13 @@
 package cl.ravenhill.keen.ranking
 
 import cl.ravenhill.keen.arb.KeenArb
-import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
-import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.individual
 import cl.ravenhill.keen.arb.genetic.population
-import cl.ravenhill.keen.arb.individualRanker
 import cl.ravenhill.keen.arb.ranker
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -44,7 +42,7 @@ class IndividualRankerTest : FreeSpec({
         "when invoked to compare two individuals should" - {
             "return 1 if the first individual is better than the second" {
                 checkAll(
-                    Arb.orderedPair(Arb.double(), strict = true, reverted = true).map {
+                    arbOrderedPair(Arb.double(), strict = true, reverted = true).map {
                         Arb.individual(Arb.genotype(), Arb.constant(it.first)).next() to
                               Arb.individual(Arb.genotype(), Arb.constant(it.second)).next()
                     }) { (i1, i2) ->
@@ -54,7 +52,7 @@ class IndividualRankerTest : FreeSpec({
 
             "return -1 if the first individual is better than the second" {
                 checkAll(
-                    Arb.orderedPair(Arb.double(), strict = true).map {
+                    arbOrderedPair(Arb.double(), strict = true).map {
                         Arb.individual(Arb.genotype(), Arb.constant(it.first)).next() to
                               Arb.individual(Arb.genotype(), Arb.constant(it.second)).next()
                     }) { (i1, i2) ->

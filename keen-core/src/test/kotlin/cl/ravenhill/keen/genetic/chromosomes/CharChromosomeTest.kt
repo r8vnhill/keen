@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.arb.genetic.chromosomes.charChromosome
 import cl.ravenhill.keen.arb.genetic.genes.charGene
-import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.assertions.`test that a gene can be duplicated with a new set of genes`
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
@@ -96,7 +96,7 @@ class CharChromosomeTest : FreeSpec({
             }
             "with an explicit range should use the provided range" {
                 `validate all genes against single range`(
-                    Arb.range(Arb.char(), Arb.char())
+                    arbRange(Arb.char(), Arb.char())
                 ) {
                     CharChromosome.Factory()
                 }
@@ -116,7 +116,7 @@ class CharChromosomeTest : FreeSpec({
 
             "with valid ranges and filters should create a chromosome with genes that satisfy the constraints" {
                 `validate genes with specified range and factory`(
-                    Arb.range(Arb.char(), Arb.char()),
+                    arbRange(Arb.char(), Arb.char()),
                     { rng, ranges, index ->
                         CharGene(rng.nextChar(ranges[index]), ranges[index])
                     }) { CharChromosome.Factory() }

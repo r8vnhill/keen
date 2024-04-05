@@ -10,7 +10,7 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.ExperimentalKeen
-import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.assertions.should.shouldBeInRange
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
@@ -32,7 +32,7 @@ class GenerationTest : FreeSpec({
             checkAll(
                 Arb.list(Arb.char().map { TypedLeaf(it) }, 1..10),
                 Arb.list(Arb.pair(Arb.char(), Arb.int(1..3)).map { (v, a) -> TypedIntermediate(a, v) }, 1..10),
-                Arb.range(Arb.int(1..4), Arb.int(2..5))
+                arbRange(Arb.int(1..4), Arb.int(2..5))
             ) { leaves, intermediates, heights ->
                 val condition = { maxHeight: Int, currentDepth: Int -> currentDepth >= maxHeight }
                 val leafFactory = { leaf: Leaf<Char> -> TypedTree(leaf) }
@@ -54,7 +54,7 @@ class GenerationTest : FreeSpec({
             "if there are no leaf generators" {
                 checkAll(
                     Arb.list(Arb.pair(Arb.char(), Arb.int(1..3)).map { (v, a) -> TypedIntermediate(a, v) }, 1..10),
-                    Arb.range(Arb.int(1..4), Arb.int(2..5))
+                    arbRange(Arb.int(1..4), Arb.int(2..5))
                 ) { intermediates, heights ->
                     val condition = { maxHeight: Int, currentDepth: Int -> currentDepth >= maxHeight }
                     val leafFactory = { leaf: Leaf<Char> -> TypedTree(leaf) }

@@ -9,15 +9,14 @@ package cl.ravenhill.keen.utils
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.arb.arbRange
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.random
-import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.assertions.should.shouldBeInRange
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.assertions.`test next int in range`
 import cl.ravenhill.keen.assertions.`test random char`
 import cl.ravenhill.keen.assertions.`test subset`
-import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
@@ -54,7 +53,7 @@ class RandomsTest : FreeSpec({
                         checkAll(
                             PropTestConfig(maxFailure = 300, minSuccess = 700),
                             Arb.double(0.0..1.0).filterNot { it.isNaN() || it.isInfinite() },
-                            Arb.range(Arb.nonNegativeInt(5), Arb.nonNegativeInt(20)),
+                            arbRange(Arb.nonNegativeInt(5), Arb.nonNegativeInt(20)),
                             Arb.random()
                         ) { probability, range, random ->
                             val start = range.start
@@ -70,7 +69,7 @@ class RandomsTest : FreeSpec({
                         "should be in the range [start, end)" {
                             checkAll(
                                 Arb.double(0.0..1.0).filterNot { it.isNaN() || it.isInfinite() },
-                                Arb.range(Arb.nonNegativeInt(5), Arb.nonNegativeInt(20)),
+                                arbRange(Arb.nonNegativeInt(5), Arb.nonNegativeInt(20)),
                                 Arb.random()
                             ) { probability, range, random ->
                                 val start = range.start
@@ -83,7 +82,7 @@ class RandomsTest : FreeSpec({
                         "should be unique" {
                             checkAll(
                                 Arb.double(0.0..1.0).filterNot { it.isNaN() || it.isInfinite() },
-                                Arb.range(Arb.nonNegativeInt(5), Arb.nonNegativeInt(20)),
+                                arbRange(Arb.nonNegativeInt(5), Arb.nonNegativeInt(20)),
                                 Arb.random()
                             ) { probability, range, random ->
                                 val start = range.start
@@ -97,7 +96,7 @@ class RandomsTest : FreeSpec({
                     "should have the expected indices" {
                         checkAll(
                             Arb.double(0.0..1.0).filterNot { it.isNaN() || it.isInfinite() },
-                            Arb.range(Arb.nonNegativeInt(5), Arb.nonNegativeInt(20)),
+                            arbRange(Arb.nonNegativeInt(5), Arb.nonNegativeInt(20)),
                             Arb.long().map { Random(it) to Random(it) }
                         ) { probability, range, (rng1, rng2) ->
                             val start = range.start
@@ -128,7 +127,7 @@ class RandomsTest : FreeSpec({
                     "end is less than or equal to start" {
                         checkAll(
                             Arb.double(0.0..1.0).filterNot { it.isNaN() || it.isInfinite() },
-                            Arb.orderedPair(Arb.int(Int.MIN_VALUE + 1..Int.MAX_VALUE), Arb.int()),
+                            arbOrderedPair(Arb.int(Int.MIN_VALUE + 1..Int.MAX_VALUE), Arb.int()),
                             Arb.random()
                         ) { probability, (end, start), random ->
                             shouldThrow<CompositeException> {
@@ -175,7 +174,7 @@ class RandomsTest : FreeSpec({
                 "should return a list of indices that" - {
                     "should have the expected size" {
                         checkAll(
-                            Arb.orderedPair(Arb.int(0..100), strict = true),
+                            arbOrderedPair(Arb.int(0..100), strict = true),
                             Arb.int(0..10),
                             Arb.random()
                         ) { (start, end), size, random ->
@@ -188,7 +187,7 @@ class RandomsTest : FreeSpec({
                     "should have indices that" - {
                         "should be in the range [start, end)" {
                             checkAll(
-                                Arb.orderedPair(Arb.int(0..100), strict = true),
+                                arbOrderedPair(Arb.int(0..100), strict = true),
                                 Arb.int(0..10),
                                 Arb.random()
                             ) { (start, end), size, random ->
@@ -212,7 +211,7 @@ class RandomsTest : FreeSpec({
 
                         "should be unique" {
                             checkAll(
-                                Arb.orderedPair(Arb.int(0..100), strict = true),
+                                arbOrderedPair(Arb.int(0..100), strict = true),
                                 Arb.int(0..10),
                                 Arb.random()
                             ) { (start, end), size, random ->
@@ -242,7 +241,7 @@ class RandomsTest : FreeSpec({
 
                     "size is greater than the range" {
                         checkAll(
-                            Arb.orderedPair(Arb.int(0..100), strict = true),
+                            arbOrderedPair(Arb.int(0..100), strict = true),
                             Arb.positiveInt(),
                             Arb.random()
                         ) { (start, end), size, random ->
@@ -287,7 +286,7 @@ class RandomsTest : FreeSpec({
 
                     "end is less than start" {
                         checkAll(
-                            Arb.orderedPair(Arb.int(Int.MIN_VALUE + 1..Int.MAX_VALUE), Arb.int()),
+                            arbOrderedPair(Arb.int(Int.MIN_VALUE + 1..Int.MAX_VALUE), Arb.int()),
                             Arb.int(),
                             Arb.random()
                         ) { (end, start), size, random ->
@@ -308,7 +307,7 @@ class RandomsTest : FreeSpec({
             "should return a value within the range" {
                 checkAll(
                     Arb.random(),
-                    Arb.orderedPair(Arb.double().filterNot { it.isNaN() || it.isInfinite() })
+                    arbOrderedPair(Arb.double().filterNot { it.isNaN() || it.isInfinite() })
                         .filter { (lo, hi) -> lo < hi }
                 ) { random, (lo, hi) ->
                     val range = lo..hi
@@ -320,7 +319,7 @@ class RandomsTest : FreeSpec({
             "should return the expected value" {
                 checkAll(
                     Arb.long(),
-                    Arb.orderedPair(Arb.double().filterNot { it.isNaN() || it.isInfinite() })
+                    arbOrderedPair(Arb.double().filterNot { it.isNaN() || it.isInfinite() })
                         .filter { (lo, hi) -> lo < hi }
                 ) { seed, (lo, hi) ->
                     val range = lo..hi

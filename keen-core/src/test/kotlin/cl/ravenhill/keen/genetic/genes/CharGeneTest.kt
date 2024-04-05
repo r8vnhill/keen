@@ -6,8 +6,8 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.arb.genetic.genes.charGene
-import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.utils.nextChar
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -42,7 +42,7 @@ class CharGeneTest : FreeSpec({
             }
 
             "can be set using the constructor" {
-                checkAll(Arb.char(), Arb.range(Arb.char(), Arb.char())) { value, range ->
+                checkAll(Arb.char(), arbRange(Arb.char(), Arb.char())) { value, range ->
                     val gene = CharGene(value, range)
                     gene.range shouldBe range
                 }
@@ -58,7 +58,7 @@ class CharGeneTest : FreeSpec({
             }
 
             "can be set using the constructor" {
-                checkAll(Arb.char(), Arb.range(Arb.char(), Arb.char())) { value, range ->
+                checkAll(Arb.char(), arbRange(Arb.char(), Arb.char())) { value, range ->
                     val gene = CharGene(value, range) { it in range }
                     gene.filter(value) shouldBe (value in range)
                 }
@@ -86,7 +86,7 @@ class CharGeneTest : FreeSpec({
         "when verifying" - {
             "should return true if the value is within the range and passes the filter" {
                 checkAll(
-                    Arb.charGene(range = Arb.range(Arb.char(), Arb.char()), filter = { it.isLetter() })
+                    Arb.charGene(range = arbRange(Arb.char(), Arb.char()), filter = { it.isLetter() })
                         .filter { it.value in it.range && it.filter(it.value) }
                 ) { gene ->
                     gene.verify() shouldBe true
@@ -95,7 +95,7 @@ class CharGeneTest : FreeSpec({
 
             "should return false if the value is not within the range" {
                 checkAll(
-                    Arb.charGene(range = Arb.range(Arb.char(), Arb.char())).filter { it.value !in it.range }
+                    Arb.charGene(range = arbRange(Arb.char(), Arb.char())).filter { it.value !in it.range }
                 ) { gene ->
                     gene.verify() shouldBe false
                 }

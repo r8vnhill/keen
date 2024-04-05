@@ -6,13 +6,13 @@
 
 package cl.ravenhill.keen.arb.genetic.chromosomes
 
+import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genes.booleanGene
 import cl.ravenhill.keen.arb.genetic.genes.charGene
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.arb.genetic.genes.gene
 import cl.ravenhill.keen.arb.genetic.genes.intGene
-import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.BooleanChromosome
@@ -207,7 +207,7 @@ fun <T, G> Arb.Companion.numberChromosomeFactory(
  * ### Example:
  * Generating a factory for creating [DoubleChromosome] instances with specific ranges and filters:
  * ```kotlin
- * val chromosomeFactoryArb = Arb.doubleChromosomeFactory(
+ * val chromosomeFactoryArb = arbDoubleChromosomeFactory(
  *     ranges = Arb.list(range(Arb.double(0.0, 1.0), Arb.double(1.0, 2.0)), 0..5).map { it.toMutableList() },
  *     filters = Arb.list(constant { value: Double -> value > 0.5 }, 0..5).map { it.toMutableList() }
  * )
@@ -219,18 +219,18 @@ fun <T, G> Arb.Companion.numberChromosomeFactory(
  *
  * @return An [Arb] that generates instances of [DoubleChromosome.Factory].
  */
-fun Arb.Companion.doubleChromosomeFactory(
-    size: Arb<Int> = int(1..5),
+fun arbDoubleChromosomeFactory(
+    size: Arb<Int> = Arb.int(1..5),
     ranges: ((size: Int) -> Arb<MutableList<ClosedRange<Double>>>)? = {
-        list(
-            range(double(), double()).filter { range ->
+        Arb.list(
+            arbRange(Arb.double(), Arb.double()).filter { range ->
                 range.start < range.endInclusive && range.start.isFinite() && range.endInclusive.isFinite()
             },
             it..it
         ).map { ls -> ls.toMutableList() }
     },
     filters: ((size: Int) -> Arb<MutableList<(Double) -> Boolean>>)? = {
-        list(constant { _: Double -> true }, it..it).map { ls -> ls.toMutableList() }
+        Arb.list(Arb.constant { _: Double -> true }, it..it).map { ls -> ls.toMutableList() }
     },
 ): Arb<DoubleChromosome.Factory> = arbitrary {
     DoubleChromosome.Factory().apply {

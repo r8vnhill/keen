@@ -9,8 +9,8 @@ package cl.ravenhill.keen.assertions
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
-import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
@@ -192,7 +192,7 @@ fun `test Genotype Factory behaviour`() = freeSpec {
             }
 
             "can be modified" {
-                checkAll(Arb.list(Arb.doubleChromosomeFactory(), 0..25)) { factories ->
+                checkAll(Arb.list(arbDoubleChromosomeFactory(), 0..25)) { factories ->
                     val factory = Genotype.Factory<Double, DoubleGene>()
                     factory.chromosomes += factories
                     factory.chromosomes shouldBe factories
@@ -201,7 +201,7 @@ fun `test Genotype Factory behaviour`() = freeSpec {
         }
 
         "should be able to create a Genotype with the chromosomes added to the factory" {
-            checkAll(Arb.list(Arb.doubleChromosomeFactory(), 0..25), Arb.long().map {
+            checkAll(Arb.list(arbDoubleChromosomeFactory(), 0..25), Arb.long().map {
                 Random(it) to Random(it)
             }) { factories, (rng1, rng2) ->
                 val factory = Genotype.Factory<Double, DoubleGene>().apply {

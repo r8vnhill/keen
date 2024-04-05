@@ -7,7 +7,6 @@
 package cl.ravenhill.keen.arb.datatypes
 
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.pair
 
@@ -41,12 +40,12 @@ import io.kotest.property.arbitrary.pair
  *
  * @return An [Arb] that generates ordered pairs of type [T].
  */
-fun <T> Arb.Companion.orderedPair(
+fun <T> arbOrderedPair(
     a: Arb<T>,
     b: Arb<T>,
     strict: Boolean = false,
     reversed: Boolean = false,
-) where T : Comparable<T> = pair(a, b).filter { (first, second) ->
+) where T : Comparable<T> = Arb.pair(a, b).filter { (first, second) ->
     if (strict) first != second else true
 }.filter { (first, second) ->
     if (reversed) first >= second else first <= second
@@ -81,8 +80,8 @@ fun <T> Arb.Companion.orderedPair(
  *
  * @return An [Arb] that generates ordered pairs of type [T].
  */
-fun <T> Arb.Companion.orderedPair(
+fun <T> arbOrderedPair(
     gen: Arb<T>,
     strict: Boolean = false,
     reverted: Boolean = false,
-) where T : Comparable<T> = orderedPair(gen, gen, strict, reverted)
+) where T : Comparable<T> = arbOrderedPair(gen, gen, strict, reverted)

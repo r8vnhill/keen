@@ -12,10 +12,10 @@ import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arb.any
+import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.arb.datatypes.divisor
-import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.random
-import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.assertions.should.shouldBeInRange
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.utils.indices
@@ -92,14 +92,14 @@ suspend fun FreeSpecContainerScope.`test random char`() {
         }
 
         "with an explicit range should return a value within the range" {
-            checkAll(Arb.random(), Arb.range(Arb.char(), Arb.char()).filterNot { it.isEmpty() }) { random, range ->
+            checkAll(Arb.random(), arbRange(Arb.char(), Arb.char()).filterNot { it.isEmpty() }) { random, range ->
                 val value = random.nextChar(range)
                 value shouldBeInRange range
             }
         }
 
         "without an explicit filter should return a value within the provided range" {
-            checkAll(Arb.random(), Arb.range(Arb.char(), Arb.char()).filterNot { it.isEmpty() }) { random, range ->
+            checkAll(Arb.random(), arbRange(Arb.char(), Arb.char()).filterNot { it.isEmpty() }) { random, range ->
                 val value = random.nextChar { it in range }
                 value shouldBeInRange range
             }
@@ -140,7 +140,7 @@ suspend fun FreeSpecContainerScope.`test next int in range`() {
         "should return a value within the range" {
             checkAll(
                 Arb.random(),
-                Arb.range(Arb.int(), Arb.int()).filter { it.start < it.endInclusive }
+                arbRange(Arb.int(), Arb.int()).filter { it.start < it.endInclusive }
             ) { random, range ->
                 val value = random.nextIntInRange(range)
                 value shouldBeInRange range
@@ -240,7 +240,7 @@ private suspend fun FreeSpecContainerScope.`test random indices when start index
     "should throw an exception if the start index is greater than the end index" {
         checkAll(
             Arb.random(),
-            Arb.orderedPair(Arb.int(), Arb.int(), reversed = true),
+            arbOrderedPair(Arb.int(), Arb.int(), reversed = true),
             Arb.double()
         ) { random, (start, end), pickProbability ->
             shouldThrow<CompositeException> {
@@ -275,7 +275,7 @@ private suspend fun FreeSpecContainerScope.`test random indices invalid probabil
     "should throw an exception if the pick probability is not in the range [0, 1]" {
         checkAll(
             Arb.random(),
-            Arb.orderedPair(Arb.int(), Arb.int(), reversed = true),
+            arbOrderedPair(Arb.int(), Arb.int(), reversed = true),
             Arb.double().filterNot { it in 0.0..1.0 }
         ) { random, (start, end), pickProbability ->
             shouldThrow<CompositeException> {
@@ -323,7 +323,7 @@ private suspend fun FreeSpecContainerScope.`test random indices with valid input
     "should return a list of indices" {
         checkAll(
             Arb.long().map { Random(it) to Random(it) },
-            Arb.orderedPair(Arb.int(0..50), Arb.int(0..50), strict = true),
+            arbOrderedPair(Arb.int(0..50), Arb.int(0..50), strict = true),
             Arb.double(0.0..1.0).filterNot { it.isNaN() || it.isInfinite() }
         ) { (r1, r2), (start, end), pickProbability ->
             val indices = r1.indices(pickProbability, end, start)

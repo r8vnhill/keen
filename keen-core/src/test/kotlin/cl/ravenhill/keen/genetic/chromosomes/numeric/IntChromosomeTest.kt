@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.genetic.chromosomes.numeric
 
+import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genes.intGene
-import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
 import cl.ravenhill.keen.assertions.`test chromosome gene consistency`
@@ -94,7 +94,7 @@ class IntChromosomeTest : FreeSpec({
             }
 
             "with an explicit range should use the provided range" {
-                `validate all genes against single range`(Arb.range(Arb.int(), Arb.int())) {
+                `validate all genes against single range`(arbRange(Arb.int(), Arb.int())) {
                     IntChromosome.Factory()
                 }
             }
@@ -113,7 +113,7 @@ class IntChromosomeTest : FreeSpec({
 
             "with valid ranges and filters should create a chromosome with genes that satisfy the constraints" {
                 `validate genes with specified range and factory`(
-                    Arb.range(Arb.int(), Arb.int()), { rng, ranges, index ->
+                    arbRange(Arb.int(), Arb.int()), { rng, ranges, index ->
                         IntGene(rng.nextIntInRange(ranges[index]), ranges[index])
                     }) { IntChromosome.Factory() }
             }

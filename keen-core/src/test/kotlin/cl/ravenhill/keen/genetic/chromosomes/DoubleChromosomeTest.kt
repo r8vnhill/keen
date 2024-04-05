@@ -6,10 +6,10 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.arb.datatypes.nonNaNDouble
 import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
-import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
 import cl.ravenhill.keen.assertions.`test chromosome gene consistency`
@@ -53,7 +53,7 @@ class DoubleChromosomeTest : FreeSpec({
 
             "with an explicit range should use the provided range" {
                 `validate all genes against single range`(
-                    Arb.range(Arb.nonNaNDouble(), Arb.nonNaNDouble())
+                    arbRange(Arb.nonNaNDouble(), Arb.nonNaNDouble())
                 ) { DoubleChromosome.Factory() }
             }
 
@@ -73,7 +73,7 @@ class DoubleChromosomeTest : FreeSpec({
 
             "with valid ranges and filters should create a chromosome with genes that satisfy the constraints" {
                 `validate genes with specified range and factory`(
-                    Arb.range(Arb.double(), Arb.double()), { rng, ranges, index ->
+                    arbRange(Arb.double(), Arb.double()), { rng, ranges, index ->
                         DoubleGene(rng.nextDoubleInRange(ranges[index]), ranges[index])
                     }) { DoubleChromosome.Factory() }
             }

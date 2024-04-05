@@ -5,9 +5,8 @@
 
 package cl.ravenhill.keen.dsl
 
-import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosomeFactory
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
-import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
@@ -24,7 +23,7 @@ class GenotypeScopeTest : FreeSpec({
             }
 
             "can be modified" {
-                checkAll(Arb.list(Arb.doubleChromosomeFactory())) { factories ->
+                checkAll(Arb.list(arbDoubleChromosomeFactory())) { factories ->
                     val scope = GenotypeScope<Double, DoubleGene>()
                     factories.forEach { scope.chromosomes += it }
                     scope.chromosomes shouldBe factories

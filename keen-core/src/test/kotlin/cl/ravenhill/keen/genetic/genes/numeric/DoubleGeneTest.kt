@@ -6,8 +6,7 @@
 
 package cl.ravenhill.keen.genetic.genes.numeric
 
-import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.assertions.`test that a gene can duplicate itself`
 import cl.ravenhill.keen.assertions.`test that a gene can generate a value`
@@ -27,11 +26,9 @@ import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
 import io.kotest.property.assume
 import io.kotest.property.checkAll
-import kotlin.random.Random
 
 class DoubleGeneTest : FreeSpec({
 
@@ -161,7 +158,7 @@ class DoubleGeneTest : FreeSpec({
         "can be averaged" - {
             checkAll(
                 Arb.doubleGene(
-                    range = Arb.orderedPair(Arb.double(-100.0..100.0).filterNot { it.isNaN() })
+                    range = arbOrderedPair(Arb.double(-100.0..100.0).filterNot { it.isNaN() })
                         .filter { it.first < it.second }
                         .map { it.first..it.second }),
                 Arb.list(Arb.doubleGene(), 1..10)

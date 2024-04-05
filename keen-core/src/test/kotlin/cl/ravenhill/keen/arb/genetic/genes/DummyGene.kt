@@ -6,8 +6,8 @@
 package cl.ravenhill.keen.arb.genetic.genes
 
 import cl.ravenhill.jakt.utils.DoubleRange
-import cl.ravenhill.keen.arb.datatypes.orderedPair
-import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.arb.arbRange
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -101,7 +101,7 @@ fun Arb.Companion.booleanGene(value: Arb<Boolean> = boolean()) = arbitrary {
 
 fun Arb.Companion.charGene(
     value: Arb<Char> = char(),
-    range: Arb<ClosedRange<Char>> = range(char(), char()),
+    range: Arb<ClosedRange<Char>> = arbRange(char(), char()),
     filter: (Char) -> Boolean = { true },
 ) = arbitrary {
     CharGene(value.bind(), range.bind(), filter)
@@ -144,7 +144,7 @@ fun Arb.Companion.charGene(
  * @return An [Arb] that generates [DoubleGene] instances with the specified configurations.
  */
 fun Arb.Companion.doubleGene(
-    range: Arb<DoubleRange> = orderedPair(double().filterNot { it.isNaN() || it.isInfinite() })
+    range: Arb<DoubleRange> = arbOrderedPair(double().filterNot { it.isNaN() || it.isInfinite() })
         .filter { (lo, hi) -> lo < hi }.map { (lo, hi) -> lo..hi },
     value: Arb<Double> = range.map {
         double(it).next()
@@ -168,7 +168,7 @@ fun Arb.Companion.doubleGene(
  */
 fun Arb.Companion.intGene(
     value: Arb<Int> = int(),
-    range: Arb<ClosedRange<Int>> = range(int(), int()),
+    range: Arb<ClosedRange<Int>> = arbRange(int(), int()),
     filter: (Int) -> Boolean = { true },
 ) = arbitrary {
     IntGene(value.bind(), range.bind(), filter)

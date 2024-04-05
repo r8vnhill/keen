@@ -6,10 +6,9 @@
 
 package cl.ravenhill.keen.arb
 
-import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.map
 
 /**
@@ -28,7 +27,7 @@ import io.kotest.property.arbitrary.map
  * ### Example:
  * Generating a range of integers:
  * ```kotlin
- * val intRangeArb = Arb.range(Arb.int(0..100), Arb.int(101..200))
+ * val intRangeArb = arbRange(Arb.int(0..100), Arb.int(101..200))
  * val intRange = intRangeArb.bind() // Produces a closed range where start <= end
  * ```
  * In this example, `intRangeArb` will generate ranges where the start is an integer between 0 and 100,
@@ -40,7 +39,7 @@ import io.kotest.property.arbitrary.map
  *
  * @return An [Arb] that generates closed ranges of type [T].
  */
-fun <T> Arb.Companion.range(a: Arb<T>, b: Arb<T>) where T : Comparable<T> = orderedPair(a, b)
+fun <T> arbRange(a: Arb<T>, b: Arb<T>) where T : Comparable<T> = arbOrderedPair(a, b)
     .map { (start, end) -> start..end }
     .filter { it != -0.0..0.0 }
     .filter { it.endInclusive > it.start }

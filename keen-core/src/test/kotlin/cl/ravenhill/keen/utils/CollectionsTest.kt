@@ -10,9 +10,9 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arb.any
-import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.arb.arbRange
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.matrix
-import cl.ravenhill.keen.arb.range
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.assertions.`test invalid index in swap`
 import io.kotest.assertions.throwables.shouldThrow
@@ -50,7 +50,7 @@ class CollectionsTest : FreeSpec({
         "when accessing a sublist" - {
             "should return a list with the elements in the specified range" {
                 checkAll(Arb.list(Arb.any(), 2..10).map { list ->
-                    val range = Arb.range(Arb.int(list.indices), Arb.int(list.indices)).next()
+                    val range = arbRange(Arb.int(list.indices), Arb.int(list.indices)).next()
                     range to list
                 }) { (range, list) ->
                     list[range].apply {
@@ -63,7 +63,7 @@ class CollectionsTest : FreeSpec({
             }
 
             "should throw an exception if the list is empty" {
-                checkAll(Arb.range(Arb.int(), Arb.int())) { range ->
+                checkAll(arbRange(Arb.int(), Arb.int())) { range ->
                     shouldThrow<CompositeException> {
                         emptyList<Any>()[range]
                     }.shouldHaveInfringement<CollectionConstraintException>("The list must not be empty")
@@ -103,7 +103,7 @@ class CollectionsTest : FreeSpec({
             "should throw an exception if the start index is greater than the end index" {
                 checkAll(
                     Arb.list(Arb.any(), 1..10),
-                    Arb.orderedPair(Arb.int(), Arb.int(), strict = true, reversed = true)
+                    arbOrderedPair(Arb.int(), Arb.int(), strict = true, reversed = true)
                 ) { list, (start, end) ->
                     shouldThrow<CompositeException> {
                         list[start..end]
@@ -118,7 +118,7 @@ class CollectionsTest : FreeSpec({
             "should swap the elements at the given indices" {
                 checkAll(Arb.list(Arb.any(), 2..10).map { list ->
                     list.toMutableList() to
-                          Arb.range(Arb.int(list.indices), Arb.int(list.indices)).next()
+                          arbRange(Arb.int(list.indices), Arb.int(list.indices)).next()
                 }) { (list, range) ->
                     val expected = list.toList()
                     list.swap(range.start, range.endInclusive)

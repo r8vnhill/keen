@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.ranking
 
-import cl.ravenhill.keen.arb.datatypes.orderedPair
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.genetic.Individual
@@ -24,7 +24,7 @@ class FitnessMinRankerTest : FreeSpec({
             checkAll(
                 Arb.genotype(Arb.nothingChromosome()),
                 Arb.genotype(Arb.nothingChromosome()),
-                Arb.orderedPair(Arb.double(), strict = true)
+                arbOrderedPair(Arb.double(), strict = true)
             ) { g1, g2, (f1, f2) ->
                 FitnessMinRanker<Nothing, NothingGene>()(Individual(g1, f1), Individual(g2, f2)) shouldBe 1
             }
@@ -34,7 +34,7 @@ class FitnessMinRankerTest : FreeSpec({
             checkAll(
                 Arb.genotype(Arb.nothingChromosome()),
                 Arb.genotype(Arb.nothingChromosome()),
-                Arb.orderedPair(Arb.double(), strict = true, reverted = true)
+                arbOrderedPair(Arb.double(), strict = true, reverted = true)
             ) { g1, g2, (f1, f2) ->
                 FitnessMinRanker<Nothing, NothingGene>()(Individual(g1, f1), Individual(g2, f2)) shouldBe -1
             }

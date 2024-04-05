@@ -1,10 +1,7 @@
 package cl.ravenhill.keen.arb
 
 import cl.ravenhill.keen.arb.evolution.alterationConfig
-import cl.ravenhill.keen.arb.evolution.populationConfig
 import cl.ravenhill.keen.arb.evolution.selectionConfig
-import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosomeFactory
-import cl.ravenhill.keen.arb.genetic.genotypeFactory
 import cl.ravenhill.keen.arb.operators.alterer
 import cl.ravenhill.keen.arb.operators.rouletteWheelSelector
 import cl.ravenhill.keen.arb.operators.tournamentSelector
@@ -16,7 +13,6 @@ import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 
 object KeenArb {
