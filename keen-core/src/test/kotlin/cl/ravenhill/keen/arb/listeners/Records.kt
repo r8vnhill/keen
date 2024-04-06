@@ -139,25 +139,6 @@ fun <T, G> Arb.Companion.generationRecord(
  * process, including records of each generation. It allows for the customization of generation records and the
  * starting time, providing a comprehensive view of the evolutionary algorithm's progress and states.
  *
- * ## Usage:
- * This generator is useful in property-based testing frameworks for simulating and analyzing the evolution
- * process in genetic algorithms. It facilitates the creation of detailed records that encompass the evolution
- * history, including the changes and developments across generations.
- *
- * ### Example:
- * Creating an evolution record with a specific generation record:
- * ```kotlin
- * val evolutionRecordArb = Arb.evolutionRecord(
- *     generation = Arb.generationRecord(/* ... */) // Arbitrary generator for generation records
- *     // Optional parameter for startTime can be provided
- * )
- * val evolutionRecord = evolutionRecordArb.bind()
- * // The resulting evolutionRecord will include the specified generation records
- * ```
- *
- * This function is particularly beneficial for scenarios where a detailed analysis of the evolutionary
- * process is required, including tracking the progression over multiple generations.
- *
  * @param T The type representing the genetic data or information.
  * @param G The type of [Gene] associated with the genetic data.
  * @param generation An optional [Arb] that generates [GenerationRecord] instances. If not provided, no generation
