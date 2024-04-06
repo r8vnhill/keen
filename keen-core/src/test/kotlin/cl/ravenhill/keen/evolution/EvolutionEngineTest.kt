@@ -1,21 +1,28 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.arb.KeenArb
+import cl.ravenhill.keen.arb.arbRanker
 import cl.ravenhill.keen.arb.evolution.*
-import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.arbGenotypeFactory
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
+import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
+import cl.ravenhill.keen.arb.genetic.genotype
+import cl.ravenhill.keen.arb.genetic.individual
+import cl.ravenhill.keen.arb.genetic.population
 import cl.ravenhill.keen.arb.limits.arbGenerationLimit
 import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
 import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
 import cl.ravenhill.keen.arb.operators.arbAlterer
 import cl.ravenhill.keen.arb.operators.arbRouletteWheelSelector
-import cl.ravenhill.keen.arb.arbRanker
 import cl.ravenhill.keen.arb.operators.arbTournamentSelector
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
+import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
+import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.EvolutionListener
@@ -55,6 +62,26 @@ class EvolutionEngineTest : FreeSpec({
                 }
             }
         }
+
+        "when starting evolution" - {
+            "returns the same state if it already started" {
+                checkAll(
+                    engine(
+                        populationConfig(),
+                        selectionConfig(),
+                        alterationConfig(),
+                        evolutionConfig()
+                    ),
+                    nonEmptyState()
+                ) { engine, state ->
+                    with(engine) { }
+                }
+            }
+
+            "returns a new state if it hasn't started" {
+
+            }
+        }
     }
 })
 
@@ -85,7 +112,7 @@ private fun evaluator(): Arb<EvaluationExecutor<Double, DoubleGene>> = arbitrary
     SequentialEvaluator { _ -> 1.0 }
 }
 
-fun evolutionConfig(): Arb<EvolutionConfig<Double, DoubleGene>> {
+private fun evolutionConfig(): Arb<EvolutionConfig<Double, DoubleGene>> {
     val ranker = ranker()
     return KeenArb.evolutionConfig(
         limits(),
@@ -95,3 +122,23 @@ fun evolutionConfig(): Arb<EvolutionConfig<Double, DoubleGene>> {
         arbitrary { EvolutionInterceptor(before = { it }, after = { it }) }
     )
 }
+
+private fun engine(
+    populationConfig: Arb<PopulationConfig<Double, DoubleGene>>,
+    selectionConfig: Arb<SelectionConfig<Double, DoubleGene>>,
+    alterationConfig: Arb<AlterationConfig<Double, DoubleGene>>,
+    evolutionConfig: Arb<EvolutionConfig<Double, DoubleGene>>
+): Arb<EvolutionEngine<Double, DoubleGene>> = arbitrary {
+    EvolutionEngine(
+        populationConfig.bind(),
+        selectionConfig.bind(),
+        alterationConfig.bind(),
+        evolutionConfig.bind()
+    )
+}
+
+private fun individual(): Arb<Individual<Double, DoubleGene>> = Arb.individual(Arb.genotype(Arb.doubleChromosome()))
+private fun nonEmptyPopulation(): Arb<Population<Double, DoubleGene>> = Arb.population(individual(), 1..100)
+
+private fun nonEmptyState(): Arb<EvolutionState<Double, DoubleGene>> =
+    Arb.evolutionState(nonEmptyPopulation(), ranker())
