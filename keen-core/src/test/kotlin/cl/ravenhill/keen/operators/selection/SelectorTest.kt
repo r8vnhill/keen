@@ -10,10 +10,10 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arb.evolution.evolutionState
-import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.individualRanker
 import cl.ravenhill.keen.arb.operators.selector
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
@@ -52,8 +52,8 @@ class SelectorTest : FreeSpec({
                     Arb.selector<Double, DoubleGene>(),
                     Arb.negativeInt(),
                     Arb.evolutionState(
-                        Arb.population(
-                            Arb.individual(Arb.genotype(Arb.doubleChromosome())),
+                        arbPopulation(
+                            arbIndividual(Arb.genotype(arbDoubleChromosome())),
                             1..10
                         ),
                         Arb.individualRanker(),
@@ -72,8 +72,8 @@ class SelectorTest : FreeSpec({
             checkAll(
                 Arb.selector<Double, DoubleGene>(),
                 Arb.evolutionState(
-                    Arb.population(
-                        Arb.individual(Arb.genotype(Arb.doubleChromosome())),
+                    arbPopulation(
+                        arbIndividual(Arb.genotype(arbDoubleChromosome())),
                         1..10
                     ),
                     Arb.individualRanker(),

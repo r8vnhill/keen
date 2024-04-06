@@ -8,9 +8,7 @@ package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
-import cl.ravenhill.keen.arb.genetic.genes.doubleGene
 import cl.ravenhill.keen.arb.genetic.genes.gene
-import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe

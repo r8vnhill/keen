@@ -11,8 +11,8 @@ import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.evolution.evolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
 import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -24,7 +24,7 @@ import io.kotest.property.checkAll
 class EvolutionListenerTest : FreeSpec({
     "An Evolution Listener" - {
         "should do nothing for all events" {
-            val populationArb = Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())))
+            val populationArb = arbPopulation(arbIndividual(Arb.genotype(Arb.nothingChromosome())))
             checkAll(
                 arbEvolutionListener(KeenArb.anyRanker<Nothing, NothingGene>(), arbEvolutionRecord()),
                 Arb.evolutionState(populationArb, KeenArb.anyRanker())

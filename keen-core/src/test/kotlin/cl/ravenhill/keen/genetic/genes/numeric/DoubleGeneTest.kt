@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.genetic.genes.numeric
 
 import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
-import cl.ravenhill.keen.arb.genetic.genes.doubleGene
+import cl.ravenhill.keen.arb.genetic.genes.arbDoubleGene
 import cl.ravenhill.keen.assertions.`test that a gene can duplicate itself`
 import cl.ravenhill.keen.assertions.`test that a gene can generate a value`
 import cl.ravenhill.keen.assertions.`test that the gene filter is set to the expected filter`
@@ -83,7 +83,7 @@ class DoubleGeneTest : FreeSpec({
 
         "equality should" - {
             "be reflexive" {
-                checkAll(Arb.doubleGene()) { g ->
+                checkAll(arbDoubleGene()) { g ->
                     g shouldBe g
                 }
             }
@@ -118,7 +118,7 @@ class DoubleGeneTest : FreeSpec({
             }
 
             "not have the same hash code as another gene with a different value" {
-                checkAll(Arb.doubleGene(), Arb.doubleGene()) { g1, g2 ->
+                checkAll(arbDoubleGene(), arbDoubleGene()) { g1, g2 ->
                     assume { g1 shouldNotBe g2 }
                     g1 shouldNotHaveSameHashCodeAs g2
                 }
@@ -131,11 +131,11 @@ class DoubleGeneTest : FreeSpec({
             { random, range -> random.nextDoubleInRange(range) }
         )
 
-        `test that a gene can duplicate itself`(Arb.double(), Arb.doubleGene())
+        `test that a gene can duplicate itself`(Arb.double(), arbDoubleGene())
 
         "can verify its validity when" - {
             "the value is within the range and satisfies the filter" {
-                checkAll(Arb.doubleGene().filter {
+                checkAll(arbDoubleGene().filter {
                     it.value in it.range && it.filter(it.value)
                 }) { gene ->
                     gene.verify().shouldBeTrue()
@@ -143,13 +143,13 @@ class DoubleGeneTest : FreeSpec({
             }
 
             "the value is outside the range" {
-                checkAll(Arb.doubleGene().filter { it.value !in it.range }) { gene ->
+                checkAll(arbDoubleGene().filter { it.value !in it.range }) { gene ->
                     gene.verify().shouldBeFalse()
                 }
             }
 
             "the value does not satisfy the filter" {
-                checkAll(Arb.doubleGene { it > 0 }, Arb.double().filterNot { it > 0 }) { gene, newValue ->
+                checkAll(arbDoubleGene { it > 0 }, Arb.double().filterNot { it > 0 }) { gene, newValue ->
                     gene.copy(value = newValue).verify().shouldBeFalse()
                 }
             }
@@ -157,11 +157,11 @@ class DoubleGeneTest : FreeSpec({
 
         "can be averaged" - {
             checkAll(
-                Arb.doubleGene(
+                arbDoubleGene(
                     range = arbOrderedPair(Arb.double(-100.0..100.0).filterNot { it.isNaN() })
                         .filter { it.first < it.second }
                         .map { it.first..it.second }),
-                Arb.list(Arb.doubleGene(), 1..10)
+                Arb.list(arbDoubleGene(), 1..10)
             ) { gene, genes ->
                 val expected = (genes.sumOf { it.value } + gene.value) / (genes.size + 1)
                 gene.average(genes) shouldBe gene.copy(value = expected)

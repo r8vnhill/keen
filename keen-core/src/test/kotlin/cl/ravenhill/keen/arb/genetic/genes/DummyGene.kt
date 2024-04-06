@@ -143,11 +143,11 @@ fun Arb.Companion.charGene(
  *
  * @return An [Arb] that generates [DoubleGene] instances with the specified configurations.
  */
-fun Arb.Companion.doubleGene(
-    range: Arb<DoubleRange> = arbOrderedPair(double().filterNot { it.isNaN() || it.isInfinite() })
+fun arbDoubleGene(
+    range: Arb<DoubleRange> = arbOrderedPair(Arb.double().filterNot { it.isNaN() || it.isInfinite() })
         .filter { (lo, hi) -> lo < hi }.map { (lo, hi) -> lo..hi },
     value: Arb<Double> = range.map {
-        double(it).next()
+        Arb.double(it).next()
     },
     filter: (Double) -> Boolean = { true },
 ) = arbitrary {

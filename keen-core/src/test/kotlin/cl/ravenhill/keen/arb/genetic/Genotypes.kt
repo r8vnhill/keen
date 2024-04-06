@@ -84,10 +84,16 @@ fun Arb.Companion.genotype(
 fun <T, G> Arb.Companion.genotype(
     chromosome: Arb<Chromosome<T, G>>,
     size: Arb<Int> = int(0..5),
+) where G : Gene<T, G> = arbGenotype(chromosome, size)
+
+fun <T, G> arbGenotype(
+    chromosome: Arb<Chromosome<T, G>>,
+    size: Arb<Int> = Arb.int(0..5),
 ) where G : Gene<T, G> = arbitrary {
     val numChromosomes = size.bind()
-    Genotype(list(chromosome, numChromosomes..numChromosomes).bind())
+    Genotype(Arb.list(chromosome, numChromosomes..numChromosomes).bind())
 }
+
 
 fun <T, G> arbGenotypeFactory(
     chromosomeFactory: Arb<List<Chromosome.Factory<T, G>>>,

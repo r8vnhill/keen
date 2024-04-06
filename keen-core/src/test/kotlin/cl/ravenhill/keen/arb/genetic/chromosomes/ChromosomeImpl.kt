@@ -10,7 +10,7 @@ import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genes.booleanGene
 import cl.ravenhill.keen.arb.genetic.genes.charGene
-import cl.ravenhill.keen.arb.genetic.genes.doubleGene
+import cl.ravenhill.keen.arb.genetic.genes.arbDoubleGene
 import cl.ravenhill.keen.arb.genetic.genes.gene
 import cl.ravenhill.keen.arb.genetic.genes.intGene
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
@@ -116,9 +116,9 @@ fun Arb.Companion.nothingChromosome(
  *   Defaults to [doubleGene()], which generates arbitrary instances of [DoubleGene].
  * @return An [Arb] that generates instances of [DoubleChromosome] with a specified number of genes.
  */
-fun Arb.Companion.doubleChromosome(
-    size: Arb<Int> = int(0..5),
-    gene: Arb<DoubleGene> = doubleGene(),
+fun arbDoubleChromosome(
+    size: Arb<Int> = Arb.int(0..5),
+    gene: Arb<DoubleGene> = arbDoubleGene(),
 ) = arbitrary {
     DoubleChromosome(List(size.bind()) { gene.bind() })
 }

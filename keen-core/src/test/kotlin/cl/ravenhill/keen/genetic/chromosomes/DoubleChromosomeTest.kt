@@ -8,8 +8,8 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.arb.datatypes.nonNaNDouble
-import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
-import cl.ravenhill.keen.arb.genetic.genes.doubleGene
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
+import cl.ravenhill.keen.arb.genetic.genes.arbDoubleGene
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
 import cl.ravenhill.keen.assertions.`test chromosome gene consistency`
@@ -30,16 +30,16 @@ class DoubleChromosomeTest : FreeSpec({
     "A Double Chromosome" - {
         "should have a genes property that" - {
             "is set to a list provided in the constructor" {
-                `test chromosome gene consistency`(Arb.doubleGene()) { DoubleChromosome(it) }
+                `test chromosome gene consistency`(arbDoubleGene()) { DoubleChromosome(it) }
             }
 
             "is set to the vararg provided in the constructor" {
-                `test chromosome gene consistency`(Arb.doubleGene()) { DoubleChromosome(*it.toTypedArray()) }
+                `test chromosome gene consistency`(arbDoubleGene()) { DoubleChromosome(*it.toTypedArray()) }
             }
         }
 
         "should be able to create a new chromosome with the provided genes" {
-            `test that a gene can be duplicated with a new set of genes`(Arb.doubleChromosome(), Arb.doubleGene())
+            `test that a gene can be duplicated with a new set of genes`(arbDoubleChromosome(), arbDoubleGene())
         }
     }
 

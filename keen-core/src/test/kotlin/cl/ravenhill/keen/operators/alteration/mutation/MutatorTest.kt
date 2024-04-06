@@ -13,8 +13,8 @@ import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.evolution.evolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.operators.anyMutator
 import cl.ravenhill.keen.arb.operators.baseMutator
 import cl.ravenhill.keen.arb.rngPair
@@ -36,7 +36,7 @@ class MutatorTest : FreeSpec({
             "should perform no mutations if the probability is 0" {
                 checkAll(
                     Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
-                    Arb.individual(Arb.genotype(Arb.intChromosome()))
+                    arbIndividual(Arb.genotype(Arb.intChromosome()))
                 ) { mutator, individual ->
                     with(mutator.mutateIndividual(individual)) {
                         fitness.shouldBeNaN()
@@ -49,7 +49,7 @@ class MutatorTest : FreeSpec({
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.baseMutator<Int, IntGene>(chromosomeRate = Arb.constant(1.0)),
-                    Arb.individual(Arb.genotype(Arb.intChromosome())),
+                    arbIndividual(Arb.genotype(Arb.intChromosome())),
                     Arb.rngPair()
                 ) { mutator, individual, (rng1, rng2) ->
                     Domain.random = rng1
@@ -65,7 +65,7 @@ class MutatorTest : FreeSpec({
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.baseMutator<Int, IntGene>(),
-                    Arb.individual(Arb.genotype(Arb.intChromosome())),
+                    arbIndividual(Arb.genotype(Arb.intChromosome())),
                     Arb.rngPair()
                 ) { mutator, individual, (rng1, rng2) ->
                     Domain.random = rng1
@@ -87,7 +87,7 @@ class MutatorTest : FreeSpec({
                 checkAll(
                     Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome()))),
                         KeenArb.anyRanker()
                     )
                 ) { mutator, state ->
@@ -102,7 +102,7 @@ class MutatorTest : FreeSpec({
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.anyMutator(individualRate = Arb.constant(1.0)),
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome()))),
                         KeenArb.anyRanker()
                     ),
                     Arb.rngPair()
@@ -122,7 +122,7 @@ class MutatorTest : FreeSpec({
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.anyMutator(),
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome()))),
                         KeenArb.anyRanker()
                     ),
                     Arb.rngPair()

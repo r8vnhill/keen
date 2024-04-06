@@ -49,7 +49,7 @@ import io.kotest.property.arbitrary.list
  *
  * @return An [Arb] that generates instances of [Individual] with the specified genotype and fitness configurations.
  */
-fun <T, G> Arb.Companion.individual(
+fun <T, G> arbIndividual(
     genotype: Arb<Genotype<T, G>>,
     fitness: Arb<Double> = Arb.double().filterNot { it.isNaN() },
 ) where G : Gene<T, G> = arbitrary {
@@ -87,5 +87,8 @@ fun <T, G> Arb.Companion.individual(
  * @param size An [IntRange] specifying the possible size range of the population. Defaults to a range of 0 to 50.
  * @return An [Arb] that generates lists of [Individual] instances, representing populations of varying sizes.
  */
-fun <T, G> Arb.Companion.population(individual: Arb<Individual<T, G>>, size: IntRange = 0..25) where G : Gene<T, G> =
-    list(individual, size)
+fun <T, G> arbPopulation(
+    individual: Arb<Individual<T, G>>,
+    size: IntRange = 0..25
+): Arb<List<Individual<T, G>>> where G : Gene<T, G> =
+    Arb.list(individual, size)

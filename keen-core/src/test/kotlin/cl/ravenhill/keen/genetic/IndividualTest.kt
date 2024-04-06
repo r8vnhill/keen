@@ -9,9 +9,8 @@ package cl.ravenhill.keen.genetic
 import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
-import io.kotest.assertions.fail
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.shouldBe
@@ -49,7 +48,7 @@ class IndividualTest : FreeSpec({
         "when verifying" - {
             "should return true if the genotype is valid and the fitness is not NaN" {
                 checkAll(
-                    Arb.individual(
+                    arbIndividual(
                         Arb.genotype(
                             Arb.chromosome(isValid = Arb.constant(true)),
                             size = Arb.int(1..10)
@@ -62,7 +61,7 @@ class IndividualTest : FreeSpec({
 
             "should return false if the genotype is invalid" {
                 checkAll(
-                    Arb.individual(
+                    arbIndividual(
                         Arb.genotype(
                             Arb.chromosome(size = Arb.int(1..10), isValid = Arb.constant(false)),
                             size = Arb.int(1..10)
@@ -74,14 +73,14 @@ class IndividualTest : FreeSpec({
             }
 
             "should return false if the fitness is NaN" {
-                checkAll(Arb.individual(Arb.genotype(Arb.chromosome()), Arb.constant(Double.NaN))) { individual ->
+                checkAll(arbIndividual(Arb.genotype(Arb.chromosome()), Arb.constant(Double.NaN))) { individual ->
                     individual.verify() shouldBe false
                 }
             }
         }
 
         "can be flat-mapped" {
-            checkAll(Arb.individual(Arb.genotype(Arb.chromosome()))) { individual ->
+            checkAll(arbIndividual(Arb.genotype(Arb.chromosome()))) { individual ->
                 val flatMapped = individual.flatten()
                 flatMapped.size shouldBe individual.genotype.sumOf { it.size }
                 flatMapped shouldBe individual.genotype.flatten()
@@ -91,7 +90,7 @@ class IndividualTest : FreeSpec({
         "when checking if the individual is evaluated" - {
             "should return true if the fitness is not NaN" {
                 checkAll(
-                    Arb.individual(
+                    arbIndividual(
                         Arb.genotype(Arb.chromosome()),
                         Arb.double().filterNot { it.isNaN() })
                 ) { individual ->
@@ -100,7 +99,7 @@ class IndividualTest : FreeSpec({
             }
 
             "should return false if the fitness is NaN" {
-                checkAll(Arb.individual(Arb.genotype(Arb.chromosome()), Arb.constant(Double.NaN))) { individual ->
+                checkAll(arbIndividual(Arb.genotype(Arb.chromosome()), Arb.constant(Double.NaN))) { individual ->
                     individual.isEvaluated() shouldBe false
                 }
             }
@@ -109,8 +108,8 @@ class IndividualTest : FreeSpec({
 
     "A Population of Individuals" - {
         "should have a fitness property that is equal to the list of fitness values of the individuals" {
-            val individualArb = Arb.individual(Arb.genotype(Arb.nothingChromosome()))
-            checkAll(Arb.population(individualArb)) { population ->
+            val individualArb = arbIndividual(Arb.genotype(Arb.nothingChromosome()))
+            checkAll(arbPopulation(individualArb)) { population ->
                 population.fitness shouldBe population.map { it.fitness }
             }
         }

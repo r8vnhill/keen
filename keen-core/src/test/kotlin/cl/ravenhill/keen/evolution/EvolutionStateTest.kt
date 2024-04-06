@@ -9,10 +9,10 @@ package cl.ravenhill.keen.evolution
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arb.evolution.evolutionState
-import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.individualRanker
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
@@ -39,7 +39,7 @@ class EvolutionStateTest : FreeSpec({
             "should be created with a population and generation provided to the constructor" {
                 checkAll(
                     PropTestConfig(iterations = 25),
-                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.nonNegativeInt(),
                     Arb.individualRanker()
                 ) { population, generation, ranker ->
@@ -52,7 +52,7 @@ class EvolutionStateTest : FreeSpec({
             "should be created with the population and generation provided to the vararg constructor" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.nonNegativeInt(),
                     Arb.individualRanker()
                 ) { population, generation, ranker ->
@@ -65,7 +65,7 @@ class EvolutionStateTest : FreeSpec({
             "should throw an exception when the generation is negative" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.negativeInt(),
                     Arb.individualRanker()
                 ) { population, generation, ranker ->
@@ -88,7 +88,7 @@ class EvolutionStateTest : FreeSpec({
             checkAll(
                 PropTestConfig(iterations = 100),
                 Arb.evolutionState(
-                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.individualRanker(),
                     Arb.int(0..<Int.MAX_VALUE)
                 ),
@@ -103,7 +103,7 @@ class EvolutionStateTest : FreeSpec({
             checkAll(
                 PropTestConfig(iterations = 100),
                 Arb.evolutionState(
-                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.individualRanker()
                 ),
             ) { state ->
@@ -118,7 +118,7 @@ class EvolutionStateTest : FreeSpec({
                 checkAll(
                     PropTestConfig(iterations = 100),
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
                 ) { state ->
@@ -132,7 +132,7 @@ class EvolutionStateTest : FreeSpec({
             "with a different generation" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.nonNegativeInt(),
                     Arb.nonNegativeInt(),
                     Arb.individualRanker()
@@ -149,10 +149,10 @@ class EvolutionStateTest : FreeSpec({
                 checkAll(
                     PropTestConfig(iterations = 100),
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     ),
-                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                 ) { state, newPopulation ->
                     val copy = state.copy(population = newPopulation)
                     copy.population shouldBe newPopulation
@@ -165,7 +165,7 @@ class EvolutionStateTest : FreeSpec({
                 checkAll(
                     PropTestConfig(iterations = 100),
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     ), Arb.individualRanker()
                 ) { state, newRanker ->
@@ -181,7 +181,7 @@ class EvolutionStateTest : FreeSpec({
             checkAll(
                 PropTestConfig(iterations = 100),
                 Arb.evolutionState(
-                    Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.individualRanker()
                 )
             ) { state ->
@@ -197,7 +197,7 @@ class EvolutionStateTest : FreeSpec({
             "should be reflexive" {
                 checkAll(
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
                 ) { state ->
@@ -209,7 +209,7 @@ class EvolutionStateTest : FreeSpec({
                 checkAll(
                     PropTestConfig(iterations = 100),
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
                 ) { state ->
@@ -222,7 +222,7 @@ class EvolutionStateTest : FreeSpec({
             "should be transitive" {
                 checkAll(
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
                 ) { state ->
@@ -239,7 +239,7 @@ class EvolutionStateTest : FreeSpec({
             "should equal for equal objects" {
                 checkAll(
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
                 ) { state ->
@@ -252,11 +252,11 @@ class EvolutionStateTest : FreeSpec({
                 checkAll(
                     PropTestConfig(iterations = 50),
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     ),
                     Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.doubleChromosome()))),
+                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
                 ) { state1, state2 ->

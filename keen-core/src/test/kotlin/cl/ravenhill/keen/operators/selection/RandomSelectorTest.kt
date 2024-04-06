@@ -12,8 +12,8 @@ import cl.ravenhill.keen.arb.anyRanker
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.rngPair
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
@@ -32,7 +32,7 @@ class RandomSelectorTest : FreeSpec({
         "when selecting individuals from a population" - {
             "should return the specified number of individuals" {
                 checkAll(
-                    Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..25),
+                    arbPopulation(arbIndividual(Arb.genotype(Arb.nothingChromosome())), 1..25),
                     Arb.int(0..100),
                     KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { population, n, ranker ->
@@ -43,7 +43,7 @@ class RandomSelectorTest : FreeSpec({
             "should return the expected individuals" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
-                    Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome())), 1..25),
+                    arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome())), 1..25),
                     Arb.int(0..100),
                     KeenArb.anyRanker<Int, IntGene>(),
                     Arb.rngPair()

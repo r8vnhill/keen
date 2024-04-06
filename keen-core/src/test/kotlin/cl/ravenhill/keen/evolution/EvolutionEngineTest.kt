@@ -3,12 +3,9 @@ package cl.ravenhill.keen.evolution
 import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.arbRanker
 import cl.ravenhill.keen.arb.evolution.*
-import cl.ravenhill.keen.arb.genetic.arbGenotypeFactory
+import cl.ravenhill.keen.arb.genetic.*
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
-import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
-import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.limits.arbGenerationLimit
 import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
 import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
@@ -74,14 +71,33 @@ class EvolutionEngineTest : FreeSpec({
                     ),
                     nonEmptyState()
                 ) { engine, state ->
-                    with(engine) { }
+                    with(engine) {
+                        val newState = startEvolution(state)
+                        newState shouldBe state
+                    }
                 }
             }
 
             "returns a new state if it hasn't started" {
-
+                checkAll(
+                    engine(
+                        populationConfig(),
+                        selectionConfig(),
+                        alterationConfig(),
+                        evolutionConfig()
+                    ),
+                    ranker()
+                ) { engine, ranker ->
+                    with(engine) {
+                        val state = EvolutionState.empty(ranker)
+                        val newState = startEvolution(state)
+                        newState.size shouldBe populationSize
+                    }
+                }
             }
         }
+
+
     }
 })
 
@@ -137,8 +153,8 @@ private fun engine(
     )
 }
 
-private fun individual(): Arb<Individual<Double, DoubleGene>> = Arb.individual(Arb.genotype(Arb.doubleChromosome()))
-private fun nonEmptyPopulation(): Arb<Population<Double, DoubleGene>> = Arb.population(individual(), 1..100)
+private fun individual(): Arb<Individual<Double, DoubleGene>> = arbIndividual(arbGenotype(arbDoubleChromosome()))
+private fun nonEmptyPopulation(): Arb<Population<Double, DoubleGene>> = arbPopulation(individual(), 1..100)
 
 private fun nonEmptyState(): Arb<EvolutionState<Double, DoubleGene>> =
     Arb.evolutionState(nonEmptyPopulation(), ranker())
