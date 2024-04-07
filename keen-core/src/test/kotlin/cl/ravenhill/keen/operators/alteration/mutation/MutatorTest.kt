@@ -10,7 +10,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
-import cl.ravenhill.keen.arb.evolution.evolutionState
+import cl.ravenhill.keen.arb.evolution.arbEvolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
@@ -86,7 +86,7 @@ class MutatorTest : FreeSpec({
             "should perform no mutations if the probability is 0" {
                 checkAll(
                     Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome()))),
                         KeenArb.anyRanker()
                     )
@@ -101,7 +101,7 @@ class MutatorTest : FreeSpec({
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.anyMutator(individualRate = Arb.constant(1.0)),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome()))),
                         KeenArb.anyRanker()
                     ),
@@ -121,7 +121,7 @@ class MutatorTest : FreeSpec({
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
                     Arb.anyMutator(),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome()))),
                         KeenArb.anyRanker()
                     ),

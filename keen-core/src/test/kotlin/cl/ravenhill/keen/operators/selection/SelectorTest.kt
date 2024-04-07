@@ -9,7 +9,7 @@ package cl.ravenhill.keen.operators.selection
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.arb.evolution.evolutionState
+import cl.ravenhill.keen.arb.evolution.arbEvolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
@@ -51,7 +51,7 @@ class SelectorTest : FreeSpec({
                 checkAll(
                     Arb.selector<Double, DoubleGene>(),
                     Arb.negativeInt(),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(
                             arbIndividual(Arb.genotype(arbDoubleChromosome())),
                             1..10
@@ -71,7 +71,7 @@ class SelectorTest : FreeSpec({
         "should select the specified number of individuals" {
             checkAll(
                 Arb.selector<Double, DoubleGene>(),
-                Arb.evolutionState(
+                arbEvolutionState(
                     arbPopulation(
                         arbIndividual(Arb.genotype(arbDoubleChromosome())),
                         1..10

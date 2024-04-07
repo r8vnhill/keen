@@ -49,8 +49,8 @@ import io.kotest.property.arbitrary.nonNegativeInt
  * @return An [Arb] that generates [EvolutionState] instances, each representing a state in an evolutionary process with
  *   a specific generation number and population.
  */
-fun <T, G> Arb.Companion.evolutionState(
+fun <T, G> arbEvolutionState(
     population: Arb<Population<T, G>>,
     ranker: Arb<IndividualRanker<T, G>>,
-    generation: Arb<Int> = nonNegativeInt(),
+    generation: Arb<Int> = Arb.nonNegativeInt(),
 ) where G : Gene<T, G> = arbitrary { EvolutionState(generation.bind(), ranker.bind(), population.bind()) }

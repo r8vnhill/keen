@@ -29,10 +29,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 
 class EvolutionEngineTest : FreeSpec({
@@ -97,7 +94,25 @@ class EvolutionEngineTest : FreeSpec({
             }
         }
 
-
+        "when evaluating a population" - {
+            "returns a state with all individuals evaluated" {
+                checkAll(
+                    engine(
+                        populationConfig(),
+                        selectionConfig(),
+                        alterationConfig(),
+                        evolutionConfig()
+                    ).map { engine ->
+                        engine to state(engine.populationSize).next()
+                    }
+                ) { (engine, state) ->
+                    with(engine) {
+                        val newState = evaluatePopulation(state)
+                        newState.population.all { it.isEvaluated() }
+                    }
+                }
+            }
+        }
     }
 })
 
@@ -157,4 +172,7 @@ private fun individual(): Arb<Individual<Double, DoubleGene>> = arbIndividual(ar
 private fun nonEmptyPopulation(): Arb<Population<Double, DoubleGene>> = arbPopulation(individual(), 1..100)
 
 private fun nonEmptyState(): Arb<EvolutionState<Double, DoubleGene>> =
-    Arb.evolutionState(nonEmptyPopulation(), ranker())
+    arbEvolutionState(nonEmptyPopulation(), ranker())
+
+private fun state(size: Int): Arb<EvolutionState<Double, DoubleGene>> =
+    arbEvolutionState(arbPopulation(individual(), size..size), ranker())

@@ -8,7 +8,7 @@ package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.arb.evolution.evolutionState
+import cl.ravenhill.keen.arb.evolution.arbEvolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
@@ -87,7 +87,7 @@ class EvolutionStateTest : FreeSpec({
         "can advance to the next state" {
             checkAll(
                 PropTestConfig(iterations = 100),
-                Arb.evolutionState(
+                arbEvolutionState(
                     arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.individualRanker(),
                     Arb.int(0..<Int.MAX_VALUE)
@@ -102,7 +102,7 @@ class EvolutionStateTest : FreeSpec({
         "can be destructured" {
             checkAll(
                 PropTestConfig(iterations = 100),
-                Arb.evolutionState(
+                arbEvolutionState(
                     arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.individualRanker()
                 ),
@@ -117,7 +117,7 @@ class EvolutionStateTest : FreeSpec({
             "with the same parameters" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
@@ -148,7 +148,7 @@ class EvolutionStateTest : FreeSpec({
             "with a different population" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     ),
@@ -164,7 +164,7 @@ class EvolutionStateTest : FreeSpec({
             "with a different ranker" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     ), Arb.individualRanker()
@@ -180,7 +180,7 @@ class EvolutionStateTest : FreeSpec({
         "can be converted to a String" {
             checkAll(
                 PropTestConfig(iterations = 100),
-                Arb.evolutionState(
+                arbEvolutionState(
                     arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                     Arb.individualRanker()
                 )
@@ -196,7 +196,7 @@ class EvolutionStateTest : FreeSpec({
         "equality" - {
             "should be reflexive" {
                 checkAll(
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
@@ -208,7 +208,7 @@ class EvolutionStateTest : FreeSpec({
             "should be symmetric" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
@@ -221,7 +221,7 @@ class EvolutionStateTest : FreeSpec({
 
             "should be transitive" {
                 checkAll(
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
@@ -238,7 +238,7 @@ class EvolutionStateTest : FreeSpec({
         "hashing" - {
             "should equal for equal objects" {
                 checkAll(
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )
@@ -251,11 +251,11 @@ class EvolutionStateTest : FreeSpec({
             "should not equal for different objects" {
                 checkAll(
                     PropTestConfig(iterations = 50),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     ),
-                    Arb.evolutionState(
+                    arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
                         Arb.individualRanker()
                     )

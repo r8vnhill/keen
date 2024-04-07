@@ -8,7 +8,7 @@ package cl.ravenhill.keen.listeners
 
 import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
-import cl.ravenhill.keen.arb.evolution.evolutionState
+import cl.ravenhill.keen.arb.evolution.arbEvolutionState
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
@@ -27,7 +27,7 @@ class EvolutionListenerTest : FreeSpec({
             val populationArb = arbPopulation(arbIndividual(Arb.genotype(Arb.nothingChromosome())))
             checkAll(
                 arbEvolutionListener(KeenArb.anyRanker<Nothing, NothingGene>(), arbEvolutionRecord()),
-                Arb.evolutionState(populationArb, KeenArb.anyRanker())
+                arbEvolutionState(populationArb, KeenArb.anyRanker())
             ) { listener, state ->
                 listener.onEvolutionEnded(state) shouldBe Unit
                 listener.onEvolutionStarted(state) shouldBe Unit
