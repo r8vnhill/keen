@@ -1,17 +1,22 @@
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.arbRanker
 import cl.ravenhill.keen.arb.evolution.*
-import cl.ravenhill.keen.arb.genetic.*
-import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
+import cl.ravenhill.keen.arb.genetic.arbGenotype
+import cl.ravenhill.keen.arb.genetic.arbGenotypeFactory
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.arb.limits.arbGenerationLimit
 import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
 import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
 import cl.ravenhill.keen.arb.operators.arbAlterer
 import cl.ravenhill.keen.arb.operators.arbRouletteWheelSelector
 import cl.ravenhill.keen.arb.operators.arbTournamentSelector
+import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
@@ -31,6 +36,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
+import kotlin.math.floor
+import kotlin.random.Random
 
 class EvolutionEngineTest : FreeSpec({
     "The engine" - {
@@ -109,6 +116,51 @@ class EvolutionEngineTest : FreeSpec({
                     with(engine) {
                         val newState = evaluatePopulation(state)
                         newState.population.all { it.isEvaluated() }
+                    }
+                }
+            }
+        }
+
+        "when selecting parents" - {
+            "selects the expected number of parents" {
+                checkAll(
+                    engine(
+                        populationConfig(),
+                        selectionConfig(),
+                        alterationConfig(),
+                        evolutionConfig()
+                    ).map { engine ->
+                        engine to nonEmptyState().next()
+                    }
+                ) { (engine, state) ->
+                    with(engine) {
+                        val newState = selectParents(state)
+                        newState.population.size shouldBe floor((1 - survivalRate) * populationSize).toInt()
+                    }
+                }
+            }
+
+            "selects parents with the expected selector" {
+                checkAll(
+                    engine(
+                        populationConfig(),
+                        selectionConfig(),
+                        alterationConfig(),
+                        evolutionConfig()
+                    ).map { engine ->
+                        engine to nonEmptyState().next()
+                    },
+                    Arb.long().map { Random(it) to Random(it) }
+                ) { (engine, state), (r1, r2) ->
+                    with(engine) {
+                        Domain.random = r1
+                        val newState = selectParents(state)
+                        Domain.random = r2
+                        newState.population shouldBe parentSelector.select(
+                            state.population,
+                            newState.population.size,
+                            ranker
+                        )
                     }
                 }
             }
