@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.arb.genetic
 
-import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -49,7 +49,7 @@ fun Arb.Companion.genotype(
     chromosomeSize: Arb<Int> = int(0..5),
 ) = arbitrary {
     val numChromosomes = size.bind()
-    Genotype(list(chromosome(size = chromosomeSize, isValid = isValid), numChromosomes..numChromosomes).bind())
+    Genotype(list(arbChromosome(size = chromosomeSize, isValid = isValid), numChromosomes..numChromosomes).bind())
 }
 
 /**

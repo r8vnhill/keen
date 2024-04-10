@@ -61,11 +61,11 @@ class ChromosomeImpl(override val genes: List<DummyGene>) : Chromosome<Int, Dumm
     override fun duplicateWithGenes(genes: List<DummyGene>) = ChromosomeImpl(genes.map { it.copy() })
 }
 
-fun Arb.Companion.chromosome(
-    size: Arb<Int> = int(0..10),
-    isValid: Arb<Boolean> = boolean(),
+fun arbChromosome(
+    size: Arb<Int> = Arb.int(0..10),
+    isValid: Arb<Boolean> = Arb.boolean(),
     gene: Arb<DummyGene> = Arb.gene(isValid = isValid),
-) = arbitrary {
+): Arb<Chromosome<Int, DummyGene>> = arbitrary {
     ChromosomeImpl(List(size.bind()) { gene.bind() })
 }
 

@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.ranking
 
 import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
-import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
@@ -70,7 +70,7 @@ class IndividualRankerTest : FreeSpec({
         }
 
         "can sort a population of individuals according to the ranking criteria" {
-            checkAll(arbPopulation(arbIndividual(Arb.genotype(Arb.chromosome())))) { population ->
+            checkAll(arbPopulation(arbIndividual(Arb.genotype(arbChromosome())))) { population ->
                 val sorted = DummyRanker().sort(population)
                 sorted.zipWithNext { i1, i2 ->
                     DummyRanker()(i1, i2) shouldBeGreaterThanOrEqualTo 0

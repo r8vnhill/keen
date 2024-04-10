@@ -10,7 +10,7 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
-import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
@@ -56,13 +56,13 @@ import kotlin.random.Random
 fun `test Genotype creation`() = freeSpec {
     "When creating a Genotype" - {
         "with a list of chromosomes then the genotype should have the same chromosomes" {
-            checkAll(Arb.list(Arb.chromosome())) { chromosomes ->
+            checkAll(Arb.list(arbChromosome())) { chromosomes ->
                 Genotype(chromosomes).chromosomes shouldBe chromosomes
             }
         }
 
         "with chromosomes as varargs then the genotype should have the same chromosomes" {
-            checkAll(Arb.list(Arb.chromosome())) { chromosomes ->
+            checkAll(Arb.list(arbChromosome())) { chromosomes ->
                 Genotype(*chromosomes.toTypedArray()).chromosomes shouldBe chromosomes
             }
         }
@@ -153,7 +153,7 @@ fun `test Genotype behaviour`() = freeSpec {
         "should have a size property that" - {
             "is equal to the number of chromosomes" {
                 checkAll(
-                    Arb.genotype(Arb.chromosome(size = Arb.int(0..25)))
+                    Arb.genotype(arbChromosome(size = Arb.int(0..25)))
                 ) { genotype ->
                     genotype.size shouldBe genotype.chromosomes.size
                 }
