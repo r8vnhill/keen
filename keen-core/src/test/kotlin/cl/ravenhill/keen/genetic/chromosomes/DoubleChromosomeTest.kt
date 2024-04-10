@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.arb.arbRange
-import cl.ravenhill.keen.arb.datatypes.nonNaNDouble
+import cl.ravenhill.keen.arb.datatypes.arbNonNaNDouble
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.genes.arbDoubleGene
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
@@ -53,7 +53,7 @@ class DoubleChromosomeTest : FreeSpec({
 
             "with an explicit range should use the provided range" {
                 `validate all genes against single range`(
-                    arbRange(Arb.nonNaNDouble(), Arb.nonNaNDouble())
+                    arbRange(arbNonNaNDouble(), arbNonNaNDouble())
                 ) { DoubleChromosome.Factory() }
             }
 

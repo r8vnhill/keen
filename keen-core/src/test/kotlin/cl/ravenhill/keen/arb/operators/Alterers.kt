@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.arb.operators
 
-import cl.ravenhill.keen.arb.datatypes.probability
+import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -44,8 +44,8 @@ fun <T, G> arbAlterer(): Arb<Alterer<T, G>> where G : Gene<T, G> = arbitrary {
  * @return An `Arb<Mutator<T, G>>` for generating `Mutator` instances with varying mutation rates.
  */
 fun <T, G> arbBaseMutator(
-    individualRate: Arb<Double> = Arb.probability(),
-    chromosomeRate: Arb<Double> = Arb.probability(),
+    individualRate: Arb<Double> = arbProbability(),
+    chromosomeRate: Arb<Double> = arbProbability(),
 ): Arb<Mutator<T, G>> where G : Gene<T, G> = arbitrary {
     object : Mutator<T, G> {
         override val individualRate = individualRate.next()
@@ -65,9 +65,9 @@ fun <T, G> arbBaseMutator(
  * @return An `Arb<BitFlipMutator<G>>` for generating `BitFlipMutator` instances with configurable mutation rates.
  */
 fun <G> arbBitFlipMutator(
-    individualRate: Arb<Double> = Arb.probability(),
-    chromosomeRate: Arb<Double> = Arb.probability(),
-    geneRate: Arb<Double> = Arb.probability(),
+    individualRate: Arb<Double> = arbProbability(),
+    chromosomeRate: Arb<Double> = arbProbability(),
+    geneRate: Arb<Double> = arbProbability(),
 ): Arb<BitFlipMutator<G>> where G : Gene<Boolean, G> = arbitrary {
     BitFlipMutator(individualRate.bind(), chromosomeRate.bind(), geneRate.bind())
 }
@@ -83,6 +83,6 @@ fun <G> arbBitFlipMutator(
  * @return An arbitrary generator for either a `baseMutator` or `bitFlipMutator`, selected randomly.
  */
 fun arbAnyMutator(
-    individualRate: Arb<Double> = Arb.probability(),
-    chromosomeRate: Arb<Double> = Arb.probability(),
+    individualRate: Arb<Double> = arbProbability(),
+    chromosomeRate: Arb<Double> = arbProbability(),
 )= Arb.choice(arbBaseMutator<Int, IntGene>(individualRate, chromosomeRate))

@@ -13,7 +13,7 @@ import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.arb.any
 import cl.ravenhill.keen.arb.arbRange
-import cl.ravenhill.keen.arb.datatypes.divisor
+import cl.ravenhill.keen.arb.datatypes.arbDivisor
 import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.should.shouldBeInRange
@@ -365,7 +365,7 @@ private suspend fun FreeSpecContainerScope.`test subsets with valid inputs`() {
 private suspend fun FreeSpecContainerScope.`test subsets with exclusivity`() {
     "return random subsets of specified size with all unique elements if exclusivity is true." {
         checkAll(
-            Arb.list(Arb.any(), 1..100).map { it to Arb.divisor(it.size).next() },
+            Arb.list(Arb.any(), 1..100).map { it to arbDivisor(it.size).next() },
             Arb.random()
         ) { (elements, size), random ->
             val subsets = random.subsets(elements, size, true)

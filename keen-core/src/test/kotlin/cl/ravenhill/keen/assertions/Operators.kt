@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.assertions
 
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.keen.arb.datatypes.probability
+import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -60,7 +60,7 @@ fun <T, G> `test Mutator individual rate property`(
 ) where G : Gene<T, G> = freeSpec {
     "Should have an individual rate property that" - {
         "defaults to ${default.first}" {
-            checkAll(Arb.probability(), Arb.probability()) { chromosomeRate, geneRate ->
+            checkAll(arbProbability(), arbProbability()) { chromosomeRate, geneRate ->
                 val mutator = defaultBuilder(chromosomeRate, geneRate)
                 mutator.individualRate shouldBe default.second
             }
@@ -68,9 +68,9 @@ fun <T, G> `test Mutator individual rate property`(
 
         "can be set to a value between 0 and 1" {
             checkAll(
-                Arb.probability(),
-                Arb.probability(),
-                Arb.probability()
+                arbProbability(),
+                arbProbability(),
+                arbProbability()
             ) { individualRate, chromosomeRate, geneRate ->
                 val mutator = completeBuilder(individualRate, chromosomeRate, geneRate)
                 mutator.individualRate shouldBe individualRate
@@ -138,7 +138,7 @@ fun <T, G> `test Mutator chromosome rate property`(
 ) where G: Gene<T, G> = freeSpec {
     "Should have a chromosome rate property that" - {
         "defaults to ${default.first}" {
-            checkAll(Arb.probability(), Arb.probability()) { individualRate, geneRate ->
+            checkAll(arbProbability(), arbProbability()) { individualRate, geneRate ->
                 val mutator = defaultBuilder(individualRate, geneRate)
                 mutator.chromosomeRate shouldBe default.second
             }
@@ -146,9 +146,9 @@ fun <T, G> `test Mutator chromosome rate property`(
 
         "can be set to a value between 0 and 1" {
             checkAll(
-                Arb.probability(),
-                Arb.probability(),
-                Arb.probability()
+                arbProbability(),
+                arbProbability(),
+                arbProbability()
             ) { individualRate, chromosomeRate, geneRate ->
                 val mutator = completeBuilder(individualRate, chromosomeRate, geneRate)
                 mutator.chromosomeRate shouldBe chromosomeRate
@@ -216,7 +216,7 @@ fun <T, G> `test Gene Mutator gene rate`(
 ) where G: Gene<T, G> = freeSpec {
     "Should have a gene rate property that" - {
         "defaults to ${default.first}" {
-            checkAll(Arb.probability(), Arb.probability()) { chromosomeRate, geneRate ->
+            checkAll(arbProbability(), arbProbability()) { chromosomeRate, geneRate ->
                 val mutator = defaultBuilder(chromosomeRate, geneRate)
                 mutator.geneRate shouldBe default.second
             }
@@ -224,9 +224,9 @@ fun <T, G> `test Gene Mutator gene rate`(
 
         "can be set to a value between 0 and 1" {
             checkAll(
-                Arb.probability(),
-                Arb.probability(),
-                Arb.probability()
+                arbProbability(),
+                arbProbability(),
+                arbProbability()
             ) { individualRate, chromosomeRate, geneRate ->
                 val mutator = completeBuilder(individualRate, chromosomeRate, geneRate)
                 mutator.geneRate shouldBe geneRate
