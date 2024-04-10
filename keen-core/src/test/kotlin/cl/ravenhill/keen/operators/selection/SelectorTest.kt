@@ -14,7 +14,7 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
-import cl.ravenhill.keen.arb.individualRanker
+import cl.ravenhill.keen.arb.arbIndividualRanker
 import cl.ravenhill.keen.arb.operators.selector
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.evolution.EvolutionState
@@ -36,7 +36,7 @@ class SelectorTest : FreeSpec({
             "the population is empty" {
                 checkAll(
                     Arb.selector<Double, DoubleGene>(),
-                    Arb.individualRanker(),
+                    arbIndividualRanker(),
                     Arb.int()
                 ) { selector, ranker, count ->
                     shouldThrow<CompositeException> {
@@ -56,7 +56,7 @@ class SelectorTest : FreeSpec({
                             arbIndividual(Arb.genotype(arbDoubleChromosome())),
                             1..10
                         ),
-                        Arb.individualRanker(),
+                        arbIndividualRanker(),
                     )
                 ) { selector, count, state ->
                     shouldThrow<CompositeException> {
@@ -76,7 +76,7 @@ class SelectorTest : FreeSpec({
                         arbIndividual(Arb.genotype(arbDoubleChromosome())),
                         1..10
                     ),
-                    Arb.individualRanker(),
+                    arbIndividualRanker(),
                 ).map {
                     it to Arb.int(1..it.size).next()
                 }

@@ -8,12 +8,12 @@ package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.arb.arbIndividualRanker
 import cl.ravenhill.keen.arb.evolution.arbEvolutionState
-import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
-import cl.ravenhill.keen.arb.genetic.genotype
+import cl.ravenhill.keen.arb.genetic.arbGenotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
-import cl.ravenhill.keen.arb.individualRanker
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
@@ -39,9 +39,9 @@ class EvolutionStateTest : FreeSpec({
             "should be created with a population and generation provided to the constructor" {
                 checkAll(
                     PropTestConfig(iterations = 25),
-                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
+                    doublePopulation(),
                     Arb.nonNegativeInt(),
-                    Arb.individualRanker()
+                    arbIndividualRanker()
                 ) { population, generation, ranker ->
                     val state = EvolutionState(generation, ranker, population)
                     state.population shouldBe population
@@ -52,9 +52,9 @@ class EvolutionStateTest : FreeSpec({
             "should be created with the population and generation provided to the vararg constructor" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
+                    doublePopulation(),
                     Arb.nonNegativeInt(),
-                    Arb.individualRanker()
+                    arbIndividualRanker()
                 ) { population, generation, ranker ->
                     val state = EvolutionState(generation, ranker, *population.toTypedArray())
                     state.population shouldBe population
@@ -65,9 +65,9 @@ class EvolutionStateTest : FreeSpec({
             "should throw an exception when the generation is negative" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
+                    doublePopulation(),
                     Arb.negativeInt(),
-                    Arb.individualRanker()
+                    arbIndividualRanker()
                 ) { population, generation, ranker ->
                     shouldThrow<CompositeException> {
                         EvolutionState(generation, ranker, population)
@@ -77,7 +77,7 @@ class EvolutionStateTest : FreeSpec({
         }
 
         "can be initialized as empty" {
-            checkAll(Arb.individualRanker()) { ranker ->
+            checkAll(arbIndividualRanker()) { ranker ->
                 val state = EvolutionState.empty(ranker)
                 state.population.shouldBeEmpty()
                 state.generation shouldBe 0
@@ -88,8 +88,8 @@ class EvolutionStateTest : FreeSpec({
             checkAll(
                 PropTestConfig(iterations = 100),
                 arbEvolutionState(
-                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                    Arb.individualRanker(),
+                    doublePopulation(),
+                    arbIndividualRanker(),
                     Arb.int(0..<Int.MAX_VALUE)
                 ),
             ) { state ->
@@ -102,10 +102,7 @@ class EvolutionStateTest : FreeSpec({
         "can be destructured" {
             checkAll(
                 PropTestConfig(iterations = 100),
-                arbEvolutionState(
-                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                    Arb.individualRanker()
-                ),
+                doublesEvolutionState(),
             ) { state ->
                 val (gen, pop) = state
                 gen shouldBe state.generation
@@ -117,10 +114,8 @@ class EvolutionStateTest : FreeSpec({
             "with the same parameters" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    arbEvolutionState(
-                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                        Arb.individualRanker()
-                    )
+                    doublesEvolutionState()
+
                 ) { state ->
                     val copy = state.copy()
                     copy.population shouldBe state.population
@@ -132,10 +127,10 @@ class EvolutionStateTest : FreeSpec({
             "with a different generation" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
+                    doublePopulation(),
                     Arb.nonNegativeInt(),
                     Arb.nonNegativeInt(),
-                    Arb.individualRanker()
+                    arbIndividualRanker()
                 ) { population, generation, newGeneration, ranker ->
                     val state = EvolutionState(generation, ranker, population)
                     val copy = state.copy(generation = newGeneration)
@@ -148,11 +143,8 @@ class EvolutionStateTest : FreeSpec({
             "with a different population" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    arbEvolutionState(
-                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                        Arb.individualRanker()
-                    ),
-                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
+                    doublesEvolutionState(),
+                    doublePopulation(),
                 ) { state, newPopulation ->
                     val copy = state.copy(population = newPopulation)
                     copy.population shouldBe newPopulation
@@ -164,10 +156,8 @@ class EvolutionStateTest : FreeSpec({
             "with a different ranker" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    arbEvolutionState(
-                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                        Arb.individualRanker()
-                    ), Arb.individualRanker()
+                    doublesEvolutionState(),
+                    arbIndividualRanker()
                 ) { state, newRanker ->
                     val copy = state.copy(ranker = newRanker)
                     copy.population shouldBe state.population
@@ -180,27 +170,19 @@ class EvolutionStateTest : FreeSpec({
         "can be converted to a String" {
             checkAll(
                 PropTestConfig(iterations = 100),
-                arbEvolutionState(
-                    arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                    Arb.individualRanker()
-                )
+                doublesEvolutionState()
             ) { state ->
                 val str = state.toString()
                 str shouldBe
-                      "EvolutionState(" +
-                      "generation=${state.generation}, " +
-                      "population=${state.population.map { it.toSimpleString() }})"
+                        "EvolutionState(" +
+                        "generation=${state.generation}, " +
+                        "population=${state.population.map { it.toSimpleString() }})"
             }
         }
 
         "equality" - {
             "should be reflexive" {
-                checkAll(
-                    arbEvolutionState(
-                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                        Arb.individualRanker()
-                    )
-                ) { state ->
+                checkAll(doublesEvolutionState()) { state ->
                     state shouldBe state
                 }
             }
@@ -208,10 +190,7 @@ class EvolutionStateTest : FreeSpec({
             "should be symmetric" {
                 checkAll(
                     PropTestConfig(iterations = 100),
-                    arbEvolutionState(
-                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                        Arb.individualRanker()
-                    )
+                    doublesEvolutionState()
                 ) { state ->
                     val copy = state.copy()
                     state shouldBe copy
@@ -221,10 +200,7 @@ class EvolutionStateTest : FreeSpec({
 
             "should be transitive" {
                 checkAll(
-                    arbEvolutionState(
-                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                        Arb.individualRanker()
-                    )
+                    doublesEvolutionState()
                 ) { state ->
                     val copy = state.copy()
                     val copy2 = copy.copy()
@@ -238,10 +214,7 @@ class EvolutionStateTest : FreeSpec({
         "hashing" - {
             "should equal for equal objects" {
                 checkAll(
-                    arbEvolutionState(
-                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                        Arb.individualRanker()
-                    )
+                    doublesEvolutionState()
                 ) { state ->
                     val copy = state.copy()
                     state shouldHaveSameHashCodeAs copy
@@ -251,14 +224,8 @@ class EvolutionStateTest : FreeSpec({
             "should not equal for different objects" {
                 checkAll(
                     PropTestConfig(iterations = 50),
-                    arbEvolutionState(
-                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                        Arb.individualRanker()
-                    ),
-                    arbEvolutionState(
-                        arbPopulation(arbIndividual(Arb.genotype(arbDoubleChromosome()))),
-                        Arb.individualRanker()
-                    )
+                    doublesEvolutionState(),
+                    doublesEvolutionState()
                 ) { state1, state2 ->
                     assume { state1 shouldNotBe state2 }
                     state1 shouldNotHaveSameHashCodeAs state2
@@ -267,3 +234,11 @@ class EvolutionStateTest : FreeSpec({
         }
     }
 })
+
+private fun doubleGenotype() = arbGenotype(arbDoubleChromosome())
+
+private fun doubleIndividual() = arbIndividual(doubleGenotype())
+
+private fun doublePopulation() = arbPopulation(doubleIndividual())
+
+private fun doublesEvolutionState() = arbEvolutionState(doublePopulation(), arbIndividualRanker())

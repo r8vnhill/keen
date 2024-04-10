@@ -81,11 +81,27 @@ fun Arb.Companion.genotype(
  *   Defaults to a range of 0 to 5, allowing genotypes with up to 5 chromosomes.
  * @return An [Arb] that generates instances of [Genotype] with a specified number of chromosomes.
  */
+@Deprecated("Use arbGenotype instead", ReplaceWith("arbGenotype(chromosome, size)"))
 fun <T, G> Arb.Companion.genotype(
     chromosome: Arb<Chromosome<T, G>>,
     size: Arb<Int> = int(0..5),
 ) where G : Gene<T, G> = arbGenotype(chromosome, size)
 
+/**
+ * Creates an arbitrary generator for `Genotype<T, G>` instances, intended for property-based testing in the context of
+ * evolutionary algorithms.
+ *
+ * @param T The type parameter representing the value type within the gene.
+ * @param G The gene type, constrained to be a subclass of `Gene<T, G>`.
+ * @param chromosome
+ *  An `Arb<Chromosome<T, G>>` instance for generating the chromosomes within the genotype. It defines the type and
+ *  characteristics of each chromosome.
+ * @param size
+ *  An optional `Arb<Int>` instance that specifies the number of chromosomes in the genotype, with a default range of 0
+ *  to 5. This parameter allows for the customization of genotype size in the generated instances.
+ * @return An `Arb<Genotype<T, G>>` that produces `Genotype` instances with the specified number and configuration of
+ *  chromosomes.
+ */
 fun <T, G> arbGenotype(
     chromosome: Arb<Chromosome<T, G>>,
     size: Arb<Int> = Arb.int(0..5),
@@ -93,7 +109,6 @@ fun <T, G> arbGenotype(
     val numChromosomes = size.bind()
     Genotype(Arb.list(chromosome, numChromosomes..numChromosomes).bind())
 }
-
 
 fun <T, G> arbGenotypeFactory(
     chromosomeFactory: Arb<List<Chromosome.Factory<T, G>>>,
