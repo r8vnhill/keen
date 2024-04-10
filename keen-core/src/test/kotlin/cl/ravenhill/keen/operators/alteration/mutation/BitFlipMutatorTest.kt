@@ -8,7 +8,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.genetic.chromosomes.booleanChromosome
-import cl.ravenhill.keen.arb.operators.bitFlipMutator
+import cl.ravenhill.keen.arb.operators.arbBitFlipMutator
 import cl.ravenhill.keen.arb.rngPair
 import cl.ravenhill.keen.assertions.`test Gene Mutator gene rate`
 import cl.ravenhill.keen.assertions.`test Mutator individual rate property`
@@ -62,7 +62,7 @@ class BitFlipMutatorTest : FreeSpec({
 
     "A Bit-Flip Mutator instance" - {
         "can mutate a gene" {
-            checkAll(Arb.bitFlipMutator<BooleanGene>()) { mutator ->
+            checkAll(arbBitFlipMutator<BooleanGene>()) { mutator ->
                 mutator.mutateGene(BooleanGene.True) shouldBe BooleanGene.False
                 mutator.mutateGene(BooleanGene.False) shouldBe BooleanGene.True
             }
@@ -71,7 +71,7 @@ class BitFlipMutatorTest : FreeSpec({
         "when mutating a chromosome" - {
             "should perform no mutations if the gene rate is set to 0" {
                 checkAll(
-                    Arb.bitFlipMutator<BooleanGene>(geneRate = Arb.constant(0.0)),
+                    arbBitFlipMutator<BooleanGene>(geneRate = Arb.constant(0.0)),
                     Arb.booleanChromosome()
                 ) { mutator, chromosome ->
                     mutator.mutateChromosome(chromosome) shouldBe chromosome
@@ -80,7 +80,7 @@ class BitFlipMutatorTest : FreeSpec({
 
             "should mutate all genes if the gene rate is set to 1" {
                 checkAll(
-                    Arb.bitFlipMutator<BooleanGene>(geneRate = Arb.constant(1.0)),
+                    arbBitFlipMutator<BooleanGene>(geneRate = Arb.constant(1.0)),
                     Arb.booleanChromosome()
                 ) { mutator, chromosome ->
                     mutator.mutateChromosome(chromosome) shouldBe chromosome.map { !it }
@@ -90,7 +90,7 @@ class BitFlipMutatorTest : FreeSpec({
             "should mutate some genes if the gene rate is set to a value between 0 and 1" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
-                    Arb.bitFlipMutator<BooleanGene>(),
+                    arbBitFlipMutator<BooleanGene>(),
                     Arb.booleanChromosome(),
                     Arb.rngPair()
                 ) { mutator, chromosome, (rng1, rng2) ->

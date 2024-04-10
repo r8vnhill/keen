@@ -15,8 +15,8 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
-import cl.ravenhill.keen.arb.operators.anyMutator
-import cl.ravenhill.keen.arb.operators.baseMutator
+import cl.ravenhill.keen.arb.operators.arbAnyMutator
+import cl.ravenhill.keen.arb.operators.arbBaseMutator
 import cl.ravenhill.keen.arb.rngPair
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.common.ExperimentalKotest
@@ -35,7 +35,7 @@ class MutatorTest : FreeSpec({
         "when mutating an individual" - {
             "should perform no mutations if the probability is 0" {
                 checkAll(
-                    Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
+                    arbAnyMutator(chromosomeRate = Arb.constant(0.0)),
                     arbIndividual(Arb.genotype(Arb.intChromosome()))
                 ) { mutator, individual ->
                     with(mutator.mutateIndividual(individual)) {
@@ -48,7 +48,7 @@ class MutatorTest : FreeSpec({
             "should mutate all chromosomes if the probability is 1" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
-                    Arb.baseMutator<Int, IntGene>(chromosomeRate = Arb.constant(1.0)),
+                    arbBaseMutator<Int, IntGene>(chromosomeRate = Arb.constant(1.0)),
                     arbIndividual(Arb.genotype(Arb.intChromosome())),
                     Arb.rngPair()
                 ) { mutator, individual, (rng1, rng2) ->
@@ -64,7 +64,7 @@ class MutatorTest : FreeSpec({
             "should mutate chromosomes according to the chromosome rate" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
-                    Arb.baseMutator<Int, IntGene>(),
+                    arbBaseMutator<Int, IntGene>(),
                     arbIndividual(Arb.genotype(Arb.intChromosome())),
                     Arb.rngPair()
                 ) { mutator, individual, (rng1, rng2) ->
@@ -85,7 +85,7 @@ class MutatorTest : FreeSpec({
         "when mutating a population" - {
             "should perform no mutations if the probability is 0" {
                 checkAll(
-                    Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
+                    arbAnyMutator(chromosomeRate = Arb.constant(0.0)),
                     arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome()))),
                         KeenArb.anyRanker()
@@ -100,7 +100,7 @@ class MutatorTest : FreeSpec({
             "should mutate all chromosomes if the probability is 1" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
-                    Arb.anyMutator(individualRate = Arb.constant(1.0)),
+                    arbAnyMutator(individualRate = Arb.constant(1.0)),
                     arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome()))),
                         KeenArb.anyRanker()
@@ -120,7 +120,7 @@ class MutatorTest : FreeSpec({
             "should mutate individuals according to the individual rate" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
-                    Arb.anyMutator(),
+                    arbAnyMutator(),
                     arbEvolutionState(
                         arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome()))),
                         KeenArb.anyRanker()
