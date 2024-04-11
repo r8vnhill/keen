@@ -6,14 +6,15 @@
 
 package cl.ravenhill.keen.genetic.genes.numeric
 
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.ToStringMode
+import cl.ravenhill.keen.arb.datatypes.arbNonNaNDouble
 import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.genetic.genes.arbDoubleGene
-import cl.ravenhill.keen.assertions.`test that a gene can duplicate itself`
-import cl.ravenhill.keen.assertions.`test that a gene can generate a value`
-import cl.ravenhill.keen.assertions.`test that the gene filter is set to the expected filter`
-import cl.ravenhill.keen.assertions.`test that the gene range is set to the expected range`
-import cl.ravenhill.keen.assertions.`test that the gene value is set to the expected value`
+import cl.ravenhill.keen.assertions.*
 import cl.ravenhill.keen.utils.nextDoubleInRange
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -22,14 +23,12 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.matchers.types.shouldNotHaveSameHashCodeAs
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.filterNot
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.map
+import io.kotest.property.PropTestConfig
+import io.kotest.property.arbitrary.*
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
+@OptIn(ExperimentalKotest::class)
 class DoubleGeneTest : FreeSpec({
 
     "A Double Gene" - {
@@ -64,19 +63,28 @@ class DoubleGeneTest : FreeSpec({
             }
 
             "a String" {
-                checkAll<Double> { d ->
+                checkAll(PropTestConfig(listeners = listOf(ResetDomainListener)), Arb.double()) { d ->
+                    Domain.toStringMode = ToStringMode.DEFAULT
                     DoubleGene(d).toString() shouldBe
-                          "DoubleGene(value=$d, range=-1.7976931348623157E308..1.7976931348623157E308)"
+                            "DoubleGene(value=$d, range=-1.7976931348623157E308..1.7976931348623157E308)"
                 }
             }
 
             "a Detailed String" {
-                checkAll<Double> { d ->
-                    DoubleGene(d).toDetailedString() shouldBe
-                          "DoubleGene(" +
-                          "value=$d, " +
-                          "range=-1.7976931348623157E308..1.7976931348623157E308, " +
-                          "filter=(kotlin.Double) -> kotlin.Boolean)"
+                checkAll(PropTestConfig(listeners = listOf(ResetDomainListener)), Arb.double()) { d ->
+                    Domain.toStringMode = ToStringMode.DETAILED
+                    DoubleGene(d).toString() shouldBe
+                            "DoubleGene(" +
+                            "value=$d, " +
+                            "range=-1.7976931348623157E308..1.7976931348623157E308, " +
+                            "filter=(kotlin.Double) -> kotlin.Boolean)"
+                }
+            }
+
+            "a Simple String" {
+                checkAll(PropTestConfig(listeners = listOf(ResetDomainListener)), Arb.double()) { d ->
+                    Domain.toStringMode = ToStringMode.SIMPLE
+                    DoubleGene(d).toString() shouldBe d.toString()
                 }
             }
         }
@@ -89,7 +97,7 @@ class DoubleGeneTest : FreeSpec({
             }
 
             "be symmetric" {
-                checkAll(Arb.double().filterNot { it.isNaN() }) { d ->
+                checkAll(arbNonNaNDouble()) { d ->
                     val g1 = DoubleGene(d)
                     val g2 = DoubleGene(d)
                     g1 shouldBe g2
@@ -98,7 +106,7 @@ class DoubleGeneTest : FreeSpec({
             }
 
             "be transitive" {
-                checkAll(Arb.double().filterNot { it.isNaN() }) { d ->
+                checkAll(arbNonNaNDouble()) { d ->
                     val g1 = DoubleGene(d)
                     val g2 = DoubleGene(d)
                     val g3 = DoubleGene(d)
@@ -135,15 +143,19 @@ class DoubleGeneTest : FreeSpec({
 
         "can verify its validity when" - {
             "the value is within the range and satisfies the filter" {
-                checkAll(arbDoubleGene().filter {
-                    it.value in it.range && it.filter(it.value)
-                }) { gene ->
+                checkAll(
+                    arbDoubleGene()
+                        .filter { it.value in it.range && it.filter(it.value) }
+                ) { gene ->
                     gene.verify().shouldBeTrue()
                 }
             }
 
             "the value is outside the range" {
-                checkAll(arbDoubleGene().filter { it.value !in it.range }) { gene ->
+                checkAll(
+                    arbDoubleGene()
+                        .filter { it.value !in it.range }
+                ) { gene ->
                     gene.verify().shouldBeFalse()
                 }
             }

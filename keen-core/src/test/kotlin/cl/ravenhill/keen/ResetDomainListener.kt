@@ -47,5 +47,6 @@ object ResetDomainListener : PropTestListener {
         Domain.random = Random.Default
         Domain.maxProgramDepth = Program.DEFAULT_MAX_DEPTH
         Domain.equalityThreshold = Domain.DEFAULT_EQUALITY_THRESHOLD
+        Domain.toStringMode = ToStringMode.DEFAULT
     }
 }

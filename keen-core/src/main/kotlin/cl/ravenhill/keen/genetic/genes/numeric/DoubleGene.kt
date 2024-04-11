@@ -11,6 +11,7 @@ import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.genetic.genes.ComparableGene
 import cl.ravenhill.keen.mixins.Ranged
 import cl.ravenhill.keen.utils.nextDoubleInRange
@@ -199,7 +200,11 @@ data class DoubleGene(
      *
      * @return A string representation of the DoubleGene object, including its value and range.
      */
-    override fun toString() = "DoubleGene(value=$value, range=$range)"
+    override fun toString() = when(Domain.toStringMode) {
+        ToStringMode.SIMPLE -> value.toString()
+        ToStringMode.DEFAULT -> "DoubleGene(value=$value, range=$range)"
+        else -> "DoubleGene(value=$value, range=$range, filter=$filter)"
+    }
 
     /**
      * Returns a detailed string representation of the DoubleGene object.
@@ -207,6 +212,7 @@ data class DoubleGene(
      * @return A string representation of the DoubleGene object including its value,
      *   range, and filter.
      */
+    @Deprecated("Use the standard toString method instead", replaceWith = ReplaceWith("toString()"))
     override fun toDetailedString() = "DoubleGene(value=$value, range=$range, filter=$filter)"
 
     /**
