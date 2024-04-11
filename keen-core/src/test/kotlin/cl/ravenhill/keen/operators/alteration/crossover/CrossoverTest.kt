@@ -89,6 +89,6 @@ private val genericCrossover: Crossover<Int, IntGene> = object : Crossover<Int, 
     override val exclusivity: Boolean = false
 
     override fun crossoverChromosomes(chromosomes: List<Chromosome<Int, IntGene>>): List<Chromosome<Int, IntGene>> {
-        TODO("Not yet implemented")
+        TODO("Never called")
     }
 }
