@@ -127,7 +127,9 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
     @Throws(CompositeException::class, CollectionConstraintException::class)
     fun crossover(parentGenotypes: List<Genotype<T, G>>): List<Genotype<T, G>> {
         constraints {
-            "The number of inputs (${parentGenotypes.size}) must be equal to the number of parents ($numParents)" {
+            "The number of inputs (${parentGenotypes.size}) must be equal to the number of parents ($numParents)"(
+                ::CrossoverException
+            ) {
                 parentGenotypes must HaveSize(numParents)
             }
             "Genotypes must have the same number of chromosomes"(::CrossoverException) {
