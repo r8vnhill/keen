@@ -8,10 +8,7 @@ package cl.ravenhill.keen.genetic
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.assertions.`test Genotype Factory behaviour`
-import cl.ravenhill.keen.assertions.`test Genotype behavior`
-import cl.ravenhill.keen.assertions.`test Genotype creation`
-import cl.ravenhill.keen.assertions.`test Genotype verification`
+import cl.ravenhill.keen.assertions.*
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
@@ -31,20 +28,9 @@ class GenotypeTest : FreeSpec({
     include(`test Genotype verification`())
     include(`test Genotype behavior`())
     include(`test Genotype Factory behaviour`())
+    include(`test Genotype emptiness`())
 
     "A Genotype instance" - {
-        "when testing for emptiness" - {
-            "should be empty if the genes list is empty" {
-                Genotype<Nothing, NothingGene>(emptyList()).isEmpty().shouldBeTrue()
-            }
-
-            "should not be empty if the genes list is not empty" {
-                checkAll(Arb.list(arbNothingChromosome(), 1..10)) { chromosomes ->
-                    Genotype(chromosomes).isEmpty().shouldBeFalse()
-                }
-            }
-        }
-
         "when testing if it contains a chromosome" - {
             "should return true if the chromosome is in the genotype" {
                 checkAll(Arb.genotype(arbIntChromosome())) { genotype ->

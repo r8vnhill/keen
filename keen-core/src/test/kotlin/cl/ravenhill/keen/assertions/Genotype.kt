@@ -13,11 +13,13 @@ import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.genetic.arbGenotype
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
@@ -30,7 +32,6 @@ import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
-import kotlin.random.Random
 
 /**
  * Tests the creation of `Genotype` instances to ensure they are correctly initialized with chromosomes.
@@ -204,6 +205,20 @@ fun `test Genotype Factory behaviour`() = freeSpec {
                 val genotype = factory.make()
                 Domain.random = rng2
                 genotype shouldBe Genotype(factories.map { it.make() })
+            }
+        }
+    }
+}
+
+fun `test Genotype emptiness`() = freeSpec {
+    "When testing if a Genotype is empty it" - {
+        "should be empty if the genes list is empty" {
+            Genotype<Nothing, NothingGene>(emptyList()).isEmpty().shouldBeTrue()
+        }
+
+        "should not be empty if the genes list is not empty" {
+            checkAll(Arb.list(arbNothingChromosome(), 1..10)) { chromosomes ->
+                Genotype(chromosomes).isEmpty().shouldBeFalse()
             }
         }
     }
