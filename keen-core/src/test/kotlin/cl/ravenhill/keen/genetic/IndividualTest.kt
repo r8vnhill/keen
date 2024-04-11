@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
-import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
@@ -108,7 +108,7 @@ class IndividualTest : FreeSpec({
 
     "A Population of Individuals" - {
         "should have a fitness property that is equal to the list of fitness values of the individuals" {
-            val individualArb = arbIndividual(Arb.genotype(Arb.nothingChromosome()))
+            val individualArb = arbIndividual(Arb.genotype(arbNothingChromosome()))
             checkAll(arbPopulation(individualArb)) { population ->
                 population.fitness shouldBe population.map { it.fitness }
             }

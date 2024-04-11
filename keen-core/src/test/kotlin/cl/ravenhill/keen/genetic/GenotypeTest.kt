@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
-import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.assertions.`test Genotype Factory behaviour`
 import cl.ravenhill.keen.assertions.`test Genotype behaviour`
@@ -39,7 +39,7 @@ class GenotypeTest : FreeSpec({
             }
 
             "should not be empty if the genes list is not empty" {
-                checkAll(Arb.list(Arb.nothingChromosome(), 1..10)) { chromosomes ->
+                checkAll(Arb.list(arbNothingChromosome(), 1..10)) { chromosomes ->
                     Genotype(chromosomes).isEmpty().shouldBeFalse()
                 }
             }

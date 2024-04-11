@@ -7,7 +7,7 @@ package cl.ravenhill.keen.operators.selection
 
 import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
-import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
@@ -43,7 +43,7 @@ class RouletteWheelSelectorTest : FreeSpec({
             "should return a list of probabilities that sum 1" {
                 checkAll(
                     arbRouletteWheelSelector<Nothing, NothingGene>(),
-                    arbPopulation(arbIndividual(Arb.genotype(Arb.nothingChromosome())), 1..100),
+                    arbPopulation(arbIndividual(Arb.genotype(arbNothingChromosome())), 1..100),
                     KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { selector, population, ranker ->
                     val probabilities = selector.probabilities(population, ranker)
@@ -103,7 +103,7 @@ class RouletteWheelSelectorTest : FreeSpec({
             "should return the specified number of individuals" {
                 checkAll(
                     arbRouletteWheelSelector<Nothing, NothingGene>(),
-                    arbPopulation(arbIndividual(Arb.genotype(Arb.nothingChromosome())), 1..25),
+                    arbPopulation(arbIndividual(Arb.genotype(arbNothingChromosome())), 1..25),
                     Arb.int(0..100),
                     KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { selector, population, n, ranker ->

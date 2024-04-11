@@ -8,7 +8,7 @@ package cl.ravenhill.keen.ranking
 
 import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
-import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
@@ -32,7 +32,7 @@ class IndividualRankerTest : FreeSpec({
 
     "An Individual Ranker" - {
         "should have a comparator that works according to the invoke method" {
-            val individualArb = arbIndividual(Arb.genotype(Arb.nothingChromosome()))
+            val individualArb = arbIndividual(Arb.genotype(arbNothingChromosome()))
             checkAll(individualArb, individualArb, arbRanker<Nothing, NothingGene>()) { i1, i2, ranker ->
                 ranker.comparator.compare(i1, i2) shouldBe ranker(i1, i2)
             }

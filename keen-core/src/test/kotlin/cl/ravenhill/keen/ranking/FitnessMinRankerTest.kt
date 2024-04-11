@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.ranking
 
 import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
-import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -22,8 +22,8 @@ class FitnessMinRankerTest : FreeSpec({
     "A FitnessMinRanker instance" - {
         "should return 1 if the fitness of the first individual is greater than the second" {
             checkAll(
-                Arb.genotype(Arb.nothingChromosome()),
-                Arb.genotype(Arb.nothingChromosome()),
+                Arb.genotype(arbNothingChromosome()),
+                Arb.genotype(arbNothingChromosome()),
                 arbOrderedPair(Arb.double(), strict = true)
             ) { g1, g2, (f1, f2) ->
                 FitnessMinRanker<Nothing, NothingGene>()(Individual(g1, f1), Individual(g2, f2)) shouldBe 1
@@ -32,8 +32,8 @@ class FitnessMinRankerTest : FreeSpec({
 
         "should return -1 if the fitness of the first individual is less than the second" {
             checkAll(
-                Arb.genotype(Arb.nothingChromosome()),
-                Arb.genotype(Arb.nothingChromosome()),
+                Arb.genotype(arbNothingChromosome()),
+                Arb.genotype(arbNothingChromosome()),
                 arbOrderedPair(Arb.double(), strict = true, reverted = true)
             ) { g1, g2, (f1, f2) ->
                 FitnessMinRanker<Nothing, NothingGene>()(Individual(g1, f1), Individual(g2, f2)) shouldBe -1
@@ -42,8 +42,8 @@ class FitnessMinRankerTest : FreeSpec({
 
         "should return 0 if the fitness of the first individual is equal to the second" {
             checkAll(
-                Arb.genotype(Arb.nothingChromosome()),
-                Arb.genotype(Arb.nothingChromosome()),
+                Arb.genotype(arbNothingChromosome()),
+                Arb.genotype(arbNothingChromosome()),
                 Arb.double()
             ) { g1, g2, f ->
                 FitnessMinRanker<Nothing, NothingGene>()(Individual(g1, f), Individual(g2, f)) shouldBe 0

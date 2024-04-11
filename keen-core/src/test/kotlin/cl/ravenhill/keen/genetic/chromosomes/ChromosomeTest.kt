@@ -9,7 +9,7 @@ package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
-import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genes.gene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -68,7 +68,7 @@ class ChromosomeTest : FreeSpec({
 
         "when testing for emptiness" - {
             "should return true when the chromosome is empty" {
-                checkAll(Arb.nothingChromosome(size = Arb.constant(0))) { chromosome ->
+                checkAll(arbNothingChromosome(size = Arb.constant(0))) { chromosome ->
                     chromosome.isEmpty().shouldBeTrue()
                 }
             }

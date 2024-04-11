@@ -9,13 +9,15 @@ package cl.ravenhill.keen.assertions
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
+import cl.ravenhill.keen.arb.genetic.arbGenotype
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.freeSpec
@@ -23,14 +25,7 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.constant
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.long
-import io.kotest.property.arbitrary.map
-import io.kotest.property.arbitrary.next
-import io.kotest.property.assume
+import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -111,7 +106,7 @@ fun `test Genotype verification`() = freeSpec {
             }
 
             "all chromosomes are valid" {
-                checkAll(Arb.genotype(isValid = Arb.constant(true))) { genotype ->
+                checkAll(validGenotype()) { genotype ->
                     genotype.verify().shouldBeTrue()
                 }
             }
@@ -119,11 +114,7 @@ fun `test Genotype verification`() = freeSpec {
 
         "should return false if" - {
             "any chromosome is invalid" {
-                checkAll(Arb.genotype()) { genotype ->
-                    assume {
-                        genotype.chromosomes.isNotEmpty()
-                        genotype.chromosomes.any { !it.verify() }.shouldBeTrue()
-                    }
+                checkAll(invalidGenotype()) { genotype ->
                     genotype.verify().shouldBeFalse()
                 }
             }
@@ -153,7 +144,7 @@ fun `test Genotype behaviour`() = freeSpec {
         "should have a size property that" - {
             "is equal to the number of chromosomes" {
                 checkAll(
-                    Arb.genotype(arbChromosome(size = Arb.int(0..25)))
+                    arbGenotype(arbChromosome(size = Arb.int(0..25)))
                 ) { genotype ->
                     genotype.size shouldBe genotype.chromosomes.size
                 }
@@ -170,7 +161,7 @@ fun `test Genotype behaviour`() = freeSpec {
             }
 
             "should throw an exception if the index is out of bounds" {
-                checkAll(Arb.genotype(Arb.intChromosome()).map {
+                checkAll(arbGenotype(Arb.intChromosome()).map {
                     it to Arb.int().filter { index -> index !in 0..it.size }.next()
                 }) { (genotype, index) ->
                     shouldThrow<CompositeException> {
@@ -216,3 +207,11 @@ fun `test Genotype Factory behaviour`() = freeSpec {
         }
     }
 }
+
+private fun validChromosome(): Arb<Chromosome<Int, DummyGene>> = arbChromosome(isValid = Arb.constant(true))
+
+private fun validGenotype(): Arb<Genotype<Int, DummyGene>> = arbGenotype(validChromosome())
+
+private fun invalidGenotype(): Arb<Genotype<Int, DummyGene>> =
+    arbGenotype(arbChromosome())
+        .filter { genotype -> genotype.chromosomes.isNotEmpty() && genotype.chromosomes.any { !it.verify() } }

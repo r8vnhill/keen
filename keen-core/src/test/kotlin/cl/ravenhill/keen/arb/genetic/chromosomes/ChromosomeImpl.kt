@@ -83,8 +83,19 @@ fun Arb.Companion.charChromosome(
     CharChromosome(List(size.bind()) { gene.bind() })
 }
 
-fun Arb.Companion.nothingChromosome(
-    size: Arb<Int> = int(0..10),
+/**
+ * Generates an arbitrary generator for `NothingChromosome` instances, designed for property-based testing in scenarios
+ * where a chromosome with no functional genes is required. It's particularly useful for simulating edge cases or
+ * default states in evolutionary algorithm testing.
+ *
+ * @param size
+ *  An optional `Arb<Int>` instance that specifies the number of `NothingGene` elements in the chromosome, with a
+ *  default range of 0 to 10.
+ * @return An `Arb<NothingChromosome>` that produces `NothingChromosome` instances with the specified number of
+ *  `NothingGene` elements.
+ */
+fun arbNothingChromosome(
+    size: Arb<Int> = Arb.int(0..10),
 ) = arbitrary {
     NothingChromosome(List(size.bind()) { NothingGene })
 }
