@@ -6,12 +6,14 @@
 
 package cl.ravenhill.keen.genetic
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeInRange
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ToStringMode
+import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -180,7 +182,7 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
      *   list).
      * - If the index is valid, the method returns the chromosome located at that index.
      * - If the index is outside the valid range, it throws a [CompositeException] containing an
-     *   [IntConstraintException] to indicate the violation of index bounds.
+     *   [InvalidIndexException] to indicate the violation of index bounds.
      *
      * ## Usage Example:
      * ```
@@ -197,12 +199,13 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
      * @param index The zero-based index of the chromosome to retrieve. Must be within the range of the genotype's
      *   chromosome list size.
      * @return The chromosome located at the specified index in the genotype.
-     * @throws CompositeException containing [IntConstraintException] if the index is outside the valid range.
+     * @throws CompositeException containing [InvalidIndexException] if the index is outside the valid range.
      */
-    @Throws(CompositeException::class)
+    @OptIn(ExperimentalJakt::class)
+    @Throws(CompositeException::class, InvalidIndexException::class)
     operator fun get(index: Int): Chromosome<T, G> {
         constraints {
-            "The index [$index] must be in the range [0, $size)" {
+            "The index [$index] must be in the range [0, $size)"(::InvalidIndexException) {
                 index must BeInRange(0..chromosomes.lastIndex)
             }
         }

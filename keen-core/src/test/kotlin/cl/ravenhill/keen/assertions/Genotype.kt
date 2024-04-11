@@ -14,6 +14,7 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
+import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
@@ -138,7 +139,7 @@ fun `test Genotype verification`() = freeSpec {
  * - **Index Access**: Confirms that chromosomes can be correctly accessed by index and that appropriate
  *   exceptions are thrown for invalid indices.
  */
-fun `test Genotype behaviour`() = freeSpec {
+fun `test Genotype behavior`() = freeSpec {
     "A Genotype" - {
         "should have a size property that" - {
             "is equal to the number of chromosomes" {
@@ -161,7 +162,7 @@ fun `test Genotype behaviour`() = freeSpec {
                 checkAll(genotypeAndInvalidIndex()) { (genotype, index) ->
                     shouldThrow<CompositeException> {
                         genotype[index]
-                    }.shouldHaveInfringement<IntConstraintException>(
+                    }.shouldHaveInfringement<InvalidIndexException>(
                         "The index [$index] must be in the range [0, ${genotype.size})"
                     )
                 }

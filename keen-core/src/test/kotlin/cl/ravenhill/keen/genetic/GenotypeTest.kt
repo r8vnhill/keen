@@ -9,7 +9,7 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.assertions.`test Genotype Factory behaviour`
-import cl.ravenhill.keen.assertions.`test Genotype behaviour`
+import cl.ravenhill.keen.assertions.`test Genotype behavior`
 import cl.ravenhill.keen.assertions.`test Genotype creation`
 import cl.ravenhill.keen.assertions.`test Genotype verification`
 import cl.ravenhill.keen.genetic.genes.NothingGene
@@ -29,7 +29,7 @@ import io.kotest.property.checkAll
 class GenotypeTest : FreeSpec({
     include(`test Genotype creation`())
     include(`test Genotype verification`())
-    include(`test Genotype behaviour`())
+    include(`test Genotype behavior`())
     include(`test Genotype Factory behaviour`())
 
     "A Genotype instance" - {
