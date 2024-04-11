@@ -11,12 +11,13 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.genetic.arbGenotype
+import cl.ravenhill.keen.arb.genetic.arbInvalidGenotype
+import cl.ravenhill.keen.arb.genetic.arbValidGenotype
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
-import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetic.Genotype
@@ -114,7 +115,7 @@ fun `test Genotype verification`() = freeSpec {
             }
 
             "all chromosomes are valid" {
-                checkAll(validGenotype()) { genotype ->
+                checkAll(arbValidGenotype()) { genotype ->
                     genotype.verify().shouldBeTrue()
                 }
             }
@@ -122,7 +123,7 @@ fun `test Genotype verification`() = freeSpec {
 
         "should return false if" - {
             "any chromosome is invalid" {
-                checkAll(invalidGenotype()) { genotype ->
+                checkAll(arbInvalidGenotype()) { genotype ->
                     genotype.verify().shouldBeFalse()
                 }
             }
@@ -306,14 +307,6 @@ fun `test Genotype contains`() = freeSpec {
         }
     }
 }
-
-private fun validChromosome(): Arb<Chromosome<Int, DummyGene>> = arbChromosome(isValid = Arb.constant(true))
-
-private fun validGenotype(): Arb<Genotype<Int, DummyGene>> = arbGenotype(validChromosome())
-
-private fun invalidGenotype(): Arb<Genotype<Int, DummyGene>> =
-    arbGenotype(arbChromosome())
-        .filter { genotype -> genotype.chromosomes.isNotEmpty() && genotype.chromosomes.any { !it.verify() } }
 
 private fun genotype(): Arb<Genotype<Int, DummyGene>> = arbGenotype(arbChromosome())
 

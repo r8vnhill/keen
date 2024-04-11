@@ -7,14 +7,12 @@
 package cl.ravenhill.keen.arb.genetic
 
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
+import cl.ravenhill.keen.arb.genetic.genes.DummyGene
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.boolean
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.*
 
 /**
  * Generates an arbitrary [Genotype] for property-based testing.
@@ -79,3 +77,10 @@ fun <T, G> arbGenotypeFactory(
         chromosomeFactory.bind().forEach { chromosomes += it }
     }
 }
+
+fun arbValidChromosome(): Arb<Chromosome<Int, DummyGene>> = arbChromosome(isValid = Arb.constant(true))
+
+fun arbValidGenotype(): Arb<Genotype<Int, DummyGene>> = arbGenotype(arbValidChromosome())
+fun arbInvalidGenotype(): Arb<Genotype<Int, DummyGene>> =
+    arbGenotype(arbChromosome())
+        .filter { genotype -> genotype.chromosomes.isNotEmpty() && genotype.chromosomes.any { !it.verify() } }
