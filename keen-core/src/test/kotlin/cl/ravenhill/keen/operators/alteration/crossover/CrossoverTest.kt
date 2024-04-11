@@ -7,10 +7,12 @@ import cl.ravenhill.keen.arb.operators.arbBaseCrossover
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.CrossoverException
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.withData
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.*
@@ -24,6 +26,7 @@ class CrossoverTest : FreeSpec({
                 offspring shouldHaveSize crossover.numOffspring
             }
         }
+
         "should throw an exception if" - {
             "the number of parents is different from the inputs" {
                 checkAll(mismatchedCrossoverPairs()) { (crossover, parents) ->
@@ -32,6 +35,29 @@ class CrossoverTest : FreeSpec({
                     }.shouldHaveInfringement<CrossoverException>(
                         "The number of inputs (${parents.size}) must be equal to the number of parents " +
                                 "(${crossover.numParents})"
+                    )
+                }
+            }
+
+            "the genotypes have different number of chromosomes" - {
+                withData(
+                    genericCrossover to listOf(
+                        Genotype(IntChromosome(IntGene(1))),
+                        Genotype(IntChromosome(IntGene(1)), IntChromosome(IntGene(1)))
+                    ),
+                    genericCrossover to listOf(
+                        Genotype(IntChromosome(IntGene(1)), IntChromosome(IntGene(1))),
+                        Genotype(IntChromosome(IntGene(1)))
+                    ),
+                    genericCrossover to listOf(
+                        Genotype(IntChromosome(IntGene(1)), IntChromosome(IntGene(1))),
+                        Genotype(IntChromosome(IntGene(1)), IntChromosome(IntGene(1)), IntChromosome(IntGene(1)))
+                    )
+                ) { (crossover, parents) ->
+                    shouldThrow<CompositeException> {
+                        crossover.crossover(parents)
+                    }.shouldHaveInfringement<CrossoverException>(
+                        "Genotypes must have the same number of chromosomes"
                     )
                 }
             }
@@ -54,4 +80,15 @@ private fun mismatchedCrossoverPairs() = arbBaseCrossover<Int, IntGene>().flatMa
     Arb.list(arbGenotype(arbIntChromosome(Arb.int(5..5)))).filter {
         it.size != crossover.numParents
     }.map { parents -> crossover to parents }
+}
+
+private val genericCrossover: Crossover<Int, IntGene> = object : Crossover<Int, IntGene> {
+    override val numOffspring: Int = 2
+    override val numParents: Int = 2
+    override val chromosomeRate: Double = 0.5
+    override val exclusivity: Boolean = false
+
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<Int, IntGene>>): List<Chromosome<Int, IntGene>> {
+        TODO("Not yet implemented")
+    }
 }
