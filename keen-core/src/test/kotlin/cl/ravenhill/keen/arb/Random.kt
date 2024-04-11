@@ -38,29 +38,10 @@ fun Arb.Companion.random(seed: Arb<Long> = long()) = arbitrary {
 /**
  * Creates an arbitrary generator for pairs of [Random] instances with the same seed.
  *
- * This function is part of the [Arb.Companion] object and is designed to generate pairs of `Random` objects
- * initialized with the same seed value. The seed value is provided by the optional arbitrary generator [seed],
- * which defaults to the `long()` ([Arb.Companion.long] generator. This approach ensures that both `Random` instances in
- * the pair will produce the same sequence of random values, which is useful in scenarios requiring reproducible random
- * behavior.
- *
- * ## Usage:
- * Utilize this arbitrary in testing scenarios where you need two `Random` instances with identical behavior,
- * such as in simulations, randomized algorithms, or any case where reproducibility of random sequences is important.
- *
- * ### Example:
- * ```kotlin
- * val rngPairGen = Arb.rngPair()
- * val (rng1, rng2) = rngPairGen.bind() // Generates a pair of Random instances with the same seed
- * // rng1 and rng2 will produce the same sequence of random values
- * ```
- * In this example, `rngPairGen` is an arbitrary that generates a pair of `Random` instances. Both instances
- * are initialized with the same seed value, thus producing identical sequences of random values.
- *
- * @param seed An optional [Arb]<[Long]> to provide seed values for the `Random` instances. Defaults to `long()`
- *   ([Arb.Companion.long]
- * @return An [Arb]<[Pair]<[Random], [Random]>> that generates pairs of `Random` instances with the same seed.
+ * @param seed An optional `Arb<Long>` to provide seed values for the `Random` instances. Defaults to `long()`
+ *   ([Arb.Companion.long])
+ * @return An `Arb<Pair<Random, Random>>` that generates pairs of `Random` instances with the same seed.
  */
-fun Arb.Companion.rngPair(seed: Arb<Long> = long()) = arbitrary {
+fun arbRngPair(seed: Arb<Long> = Arb.long()) = arbitrary {
     seed.bind().let { Random(it) to Random(it) }
 }

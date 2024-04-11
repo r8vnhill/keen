@@ -14,7 +14,7 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
-import cl.ravenhill.keen.arb.rngPair
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.common.ExperimentalKotest
@@ -46,7 +46,7 @@ class RandomSelectorTest : FreeSpec({
                     arbPopulation(arbIndividual(Arb.genotype(arbIntChromosome())), 1..25),
                     Arb.int(0..100),
                     KeenArb.anyRanker<Int, IntGene>(),
-                    Arb.rngPair()
+                    arbRngPair()
                 ) { population, n, ranker, (rng1, rng2) ->
                     Domain.random = rng1
                     val selected = RandomSelector<Int, IntGene>().select(population, n, ranker)

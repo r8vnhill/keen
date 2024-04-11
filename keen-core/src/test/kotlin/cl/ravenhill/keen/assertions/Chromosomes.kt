@@ -8,7 +8,7 @@ package cl.ravenhill.keen.assertions
 
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
-import cl.ravenhill.keen.arb.rngPair
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.mixins.FilterMutableListContainer
@@ -210,7 +210,7 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
     checkAll(
         PropTestConfig(listeners = listOf(ResetDomainListener)),
         Arb.list(arb, 1..50).map { it.toMutableList() },
-        Arb.rngPair()
+        arbRngPair()
     ) { ranges, (r1, r2) ->
         Domain.random = r1
         val factory = factoryBuilder()

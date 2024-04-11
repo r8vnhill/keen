@@ -17,7 +17,7 @@ import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.operators.arbAnyMutator
 import cl.ravenhill.keen.arb.operators.arbBaseMutator
-import cl.ravenhill.keen.arb.rngPair
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
@@ -50,7 +50,7 @@ class MutatorTest : FreeSpec({
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
                     arbBaseMutator<Int, IntGene>(chromosomeRate = Arb.constant(1.0)),
                     arbIndividual(Arb.genotype(arbIntChromosome())),
-                    Arb.rngPair()
+                    arbRngPair()
                 ) { mutator, individual, (rng1, rng2) ->
                     Domain.random = rng1
                     val mutated = mutator.mutateIndividual(individual)
@@ -66,7 +66,7 @@ class MutatorTest : FreeSpec({
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
                     arbBaseMutator<Int, IntGene>(),
                     arbIndividual(Arb.genotype(arbIntChromosome())),
-                    Arb.rngPair()
+                    arbRngPair()
                 ) { mutator, individual, (rng1, rng2) ->
                     Domain.random = rng1
                     val mutated = mutator.mutateIndividual(individual)
@@ -105,7 +105,7 @@ class MutatorTest : FreeSpec({
                         arbPopulation(arbIndividual(Arb.genotype(arbIntChromosome()))),
                         KeenArb.anyRanker()
                     ),
-                    Arb.rngPair()
+                    arbRngPair()
                 ) { mutator, state, (rng1, rng2) ->
                     Domain.random = rng1
                     val mutated = mutator(state, state.population.size)
@@ -125,7 +125,7 @@ class MutatorTest : FreeSpec({
                         arbPopulation(arbIndividual(Arb.genotype(arbIntChromosome()))),
                         KeenArb.anyRanker()
                     ),
-                    Arb.rngPair()
+                    arbRngPair()
                 ) { mutator, state, (rng1, rng2) ->
                     Domain.random = rng1
                     val mutated = mutator(state, state.population.size)

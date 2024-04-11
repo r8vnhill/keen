@@ -17,7 +17,7 @@ import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.operators.arbTournamentSelector
-import cl.ravenhill.keen.arb.rngPair
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
@@ -74,7 +74,7 @@ class TournamentSelectorTest : FreeSpec({
                     arbPopulation(arbIndividual(Arb.genotype(arbIntChromosome())), 1..25),
                     Arb.int(0..100),
                     KeenArb.anyRanker<Int, IntGene>(),
-                    Arb.rngPair()
+                    arbRngPair()
                 ) { selector, population, n, ranker, (rng1, rng2) ->
                     Domain.random = rng1
                     val selected = selector.select(population, n, ranker)

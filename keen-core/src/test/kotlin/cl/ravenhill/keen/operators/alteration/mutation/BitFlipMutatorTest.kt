@@ -9,7 +9,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.genetic.chromosomes.booleanChromosome
 import cl.ravenhill.keen.arb.operators.arbBitFlipMutator
-import cl.ravenhill.keen.arb.rngPair
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.assertions.`test Gene Mutator gene rate`
 import cl.ravenhill.keen.assertions.`test Mutator individual rate property`
 import cl.ravenhill.keen.assertions.`test Mutator chromosome rate property`
@@ -92,7 +92,7 @@ class BitFlipMutatorTest : FreeSpec({
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
                     arbBitFlipMutator<BooleanGene>(),
                     Arb.booleanChromosome(),
-                    Arb.rngPair()
+                    arbRngPair()
                 ) { mutator, chromosome, (rng1, rng2) ->
                     Domain.random = rng1
                     val mutated = mutator.mutateChromosome(chromosome)

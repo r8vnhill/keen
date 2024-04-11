@@ -7,8 +7,9 @@
 package cl.ravenhill.keen.assertions
 
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.genetic.arbGenotype
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
@@ -19,12 +20,14 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.freeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 import kotlin.random.Random
@@ -171,6 +174,7 @@ fun `test Genotype behavior`() = freeSpec {
     }
 }
 
+@OptIn(ExperimentalKotest::class)
 fun `test Genotype Factory behaviour`() = freeSpec {
     "A Genotype Factory" - {
         "should have a list of chromosomes that" - {
@@ -179,7 +183,7 @@ fun `test Genotype Factory behaviour`() = freeSpec {
             }
 
             "can be modified" {
-                checkAll(Arb.list(arbDoubleChromosomeFactory(), 0..25)) { factories ->
+                checkAll(chromosomeFactories()) { factories ->
                     val factory = Genotype.Factory<Double, DoubleGene>()
                     factory.chromosomes += factories
                     factory.chromosomes shouldBe factories
@@ -188,9 +192,11 @@ fun `test Genotype Factory behaviour`() = freeSpec {
         }
 
         "should be able to create a Genotype with the chromosomes added to the factory" {
-            checkAll(Arb.list(arbDoubleChromosomeFactory(), 0..25), Arb.long().map {
-                Random(it) to Random(it)
-            }) { factories, (rng1, rng2) ->
+            checkAll(
+                PropTestConfig(listeners = listOf(ResetDomainListener)),
+                chromosomeFactories(),
+                arbRngPair()
+            ) { factories, (rng1, rng2) ->
                 val factory = Genotype.Factory<Double, DoubleGene>().apply {
                     chromosomes += factories
                 }
@@ -199,7 +205,6 @@ fun `test Genotype Factory behaviour`() = freeSpec {
                 Domain.random = rng2
                 genotype shouldBe Genotype(factories.map { it.make() })
             }
-            Domain.random = Random.Default
         }
     }
 }
@@ -220,3 +225,6 @@ private fun genotypeAndInvalidIndex(): Arb<Pair<Genotype<Int, DummyGene>, Int>> 
             val index = Arb.int(genotype.size..genotype.size + 10)
             index.map { genotype to it }
         }
+
+private fun chromosomeFactories(): Arb<List<Chromosome.Factory<Double, DoubleGene>>> =
+    Arb.list(arbDoubleChromosomeFactory(), 0..25)
