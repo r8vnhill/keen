@@ -13,24 +13,28 @@ import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.genetic.arbGenotype
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
+import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.freeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.collections.*
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.*
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 /**
@@ -175,6 +179,17 @@ fun `test Genotype behavior`() = freeSpec {
     }
 }
 
+/**
+ * Executes a suite of tests on the `Genotype.Factory` class to ensure its correct functionality within Keen.
+ *
+ * ## Test Scenarios:
+ * - **Empty Chromosome List**: A `Genotype.Factory` should start with no chromosomes, ensuring no unintended genetic
+ * information is present.
+ * - **Modifiable Chromosome List**: The factory must allow adding new chromosome factories, enabling customization of
+ * the genetic structure.
+ * - **Correct Genotype Creation**: Upon invoking `make()`, the factory should produce a `Genotype` with all added
+ * chromosomes, reflecting accurate genetic assembly.
+ */
 @OptIn(ExperimentalKotest::class)
 fun `test Genotype Factory behaviour`() = freeSpec {
     "A Genotype Factory" - {
@@ -210,6 +225,16 @@ fun `test Genotype Factory behaviour`() = freeSpec {
     }
 }
 
+/**
+ * Executes tests to verify the `isEmpty` method of the `Genotype` class, ensuring it accurately reflects the presence
+ * or absence of genes.
+ *
+ * ## Test Scenarios:
+ * - **Empty Genotype**: Confirms that a `Genotype` initialized with an empty list of chromosomes is properly considered
+ * empty.
+ * - **Non-Empty Genotype**: Asserts that a `Genotype` containing one or more chromosomes is not deemed empty,
+ * reflecting the presence of genetic data.
+ */
 fun `test Genotype emptiness`() = freeSpec {
     "When testing if a Genotype is empty it" - {
         "should be empty if the genes list is empty" {
@@ -219,6 +244,64 @@ fun `test Genotype emptiness`() = freeSpec {
         "should not be empty if the genes list is not empty" {
             checkAll(Arb.list(arbNothingChromosome(), 1..10)) { chromosomes ->
                 Genotype(chromosomes).isEmpty().shouldBeFalse()
+            }
+        }
+    }
+}
+
+/**
+ * Conducts comprehensive tests to assess the `contains` method functionality within the `Genotype` class, ensuring it
+ * accurately identifies the presence of specific chromosomes or a collection thereof.
+ *
+ * ## Test Scenarios:
+ * - **Single Chromosome Presence**: Checks that `contains` truthfully reports the presence of a chromosome within the
+ * genotype.
+ * - **Single Chromosome Absence**: Validates that `contains` correctly indicates when a chromosome is not part of the
+ * genotype.
+ * - **Multiple Chromosomes Presence**: Ensures that `containsAll` confirms the inclusion of an entire list of
+ * chromosomes in the genotype.
+ * - **Partial Chromosome List Presence**: Affirms that `containsAll` accurately detects when not all chromosomes from a
+ * list are in the genotype.
+ */
+@OptIn(ExperimentalKotest::class)
+fun `test Genotype contains`() = freeSpec {
+    "When checking if a Genotype contains" - {
+        "a chromosome" - {
+            "should return true if the chromosome is in the genotype" {
+                checkAll(intGenotype()) { genotype ->
+                    genotype.forEach { chromosome ->
+                        chromosome shouldBeIn genotype
+                    }
+                }
+            }
+
+            "should return false if the chromosome is not in the genotype" {
+                checkAll(
+                    PropTestConfig(maxDiscardPercentage = 30),
+                    intGenotype(),
+                    arbIntChromosome()
+                ) { genotype, chromosome ->
+                    assume { chromosome shouldNotBeIn genotype.chromosomes }
+                    chromosome shouldNotBeIn genotype
+                }
+            }
+        }
+
+        "all chromosomes in a list" - {
+            "should return true if all chromosomes are in the genotype" {
+                checkAll(intGenotype()) { genotype ->
+                    genotype shouldContainAll genotype.chromosomes
+                }
+            }
+
+            "should return false if any chromosome is not in the genotype" {
+                checkAll(
+                    intGenotype(),
+                    arbIntChromosome(size = Arb.int(1..5))
+                ) { genotype, chromosome ->
+                    assume { chromosome shouldNotBeIn genotype.chromosomes }
+                    genotype shouldNotContainAll genotype.chromosomes + chromosome
+                }
             }
         }
     }
@@ -243,3 +326,5 @@ private fun genotypeAndInvalidIndex(): Arb<Pair<Genotype<Int, DummyGene>, Int>> 
 
 private fun chromosomeFactories(): Arb<List<Chromosome.Factory<Double, DoubleGene>>> =
     Arb.list(arbDoubleChromosomeFactory(), 0..25)
+
+private fun intGenotype(): Arb<Genotype<Int, IntGene>> = arbGenotype(arbIntChromosome())
