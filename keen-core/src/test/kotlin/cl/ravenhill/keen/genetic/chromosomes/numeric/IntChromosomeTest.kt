@@ -6,8 +6,8 @@
 package cl.ravenhill.keen.genetic.chromosomes.numeric
 
 import cl.ravenhill.keen.arb.arbRange
-import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
-import cl.ravenhill.keen.arb.genetic.genes.intGene
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
+import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
 import cl.ravenhill.keen.assertions.`test chromosome gene consistency`
@@ -28,16 +28,16 @@ class IntChromosomeTest : FreeSpec({
     "An Int Chromosome instance" - {
         "should have a genes property that" - {
             "is set according to the constructor" {
-                `test chromosome gene consistency`(Arb.intGene()) { IntChromosome(it) }
+                `test chromosome gene consistency`(arbIntGene()) { IntChromosome(it) }
             }
 
             "is set according to the vararg constructor" {
-                `test chromosome gene consistency`(Arb.intGene()) { IntChromosome(*it.toTypedArray()) }
+                `test chromosome gene consistency`(arbIntGene()) { IntChromosome(*it.toTypedArray()) }
             }
         }
 
         "can be duplicated with a new set of genes" {
-            `test that a gene can be duplicated with a new set of genes`(Arb.intChromosome(), Arb.intGene())
+            `test that a gene can be duplicated with a new set of genes`(arbIntChromosome(), arbIntGene())
         }
     }
 

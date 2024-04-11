@@ -166,9 +166,9 @@ fun arbDoubleGene(
  *               to a function that accepts all values.
  * @return An `Arb<IntGene>` that generates `IntGene` instances with the specified properties.
  */
-fun Arb.Companion.intGene(
-    value: Arb<Int> = int(),
-    range: Arb<ClosedRange<Int>> = arbRange(int(), int()),
+fun arbIntGene(
+    value: Arb<Int> = Arb.int(),
+    range: Arb<ClosedRange<Int>> = arbRange(Arb.int(), Arb.int()),
     filter: (Int) -> Boolean = { true },
 ) = arbitrary {
     IntGene(value.bind(), range.bind(), filter)

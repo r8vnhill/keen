@@ -5,7 +5,7 @@
 
 package cl.ravenhill.keen.genetic
 
-import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.assertions.`test Genotype Factory behaviour`
@@ -47,7 +47,7 @@ class GenotypeTest : FreeSpec({
 
         "when testing if it contains a chromosome" - {
             "should return true if the chromosome is in the genotype" {
-                checkAll(Arb.genotype(Arb.intChromosome())) { genotype ->
+                checkAll(Arb.genotype(arbIntChromosome())) { genotype ->
                     genotype.forEach { chromosome ->
                         genotype.contains(chromosome).shouldBeTrue()
                     }
@@ -57,8 +57,8 @@ class GenotypeTest : FreeSpec({
             "should return false if the chromosome is not in the genotype" {
                 checkAll(
                     PropTestConfig(maxDiscardPercentage = 30),
-                    Arb.genotype(Arb.intChromosome()),
-                    Arb.intChromosome()
+                    Arb.genotype(arbIntChromosome()),
+                    arbIntChromosome()
                 ) { genotype, chromosome ->
                     assume { chromosome shouldNotBeIn genotype.chromosomes }
                     genotype.contains(chromosome).shouldBeFalse()
@@ -68,15 +68,15 @@ class GenotypeTest : FreeSpec({
 
         "when testing if it contains all chromosomes in a list" - {
             "should return true if all chromosomes are in the genotype" {
-                checkAll(Arb.genotype(Arb.intChromosome())) { genotype ->
+                checkAll(Arb.genotype(arbIntChromosome())) { genotype ->
                     genotype.containsAll(genotype.chromosomes).shouldBeTrue()
                 }
             }
 
             "should return false if any chromosome is not in the genotype" {
                 checkAll(
-                    Arb.genotype(Arb.intChromosome()),
-                    Arb.intChromosome(size = Arb.int(1..5))
+                    Arb.genotype(arbIntChromosome()),
+                    arbIntChromosome(size = Arb.int(1..5))
                 ) { genotype, chromosome ->
                     assume { chromosome shouldNotBeIn genotype.chromosomes }
                     genotype.containsAll(genotype.chromosomes + chromosome).shouldBeFalse()

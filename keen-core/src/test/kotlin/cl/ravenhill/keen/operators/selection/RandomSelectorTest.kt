@@ -9,7 +9,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
-import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
@@ -43,7 +43,7 @@ class RandomSelectorTest : FreeSpec({
             "should return the expected individuals" {
                 checkAll(
                     PropTestConfig(listeners = listOf(ResetDomainListener)),
-                    arbPopulation(arbIndividual(Arb.genotype(Arb.intChromosome())), 1..25),
+                    arbPopulation(arbIndividual(Arb.genotype(arbIntChromosome())), 1..25),
                     Arb.int(0..100),
                     KeenArb.anyRanker<Int, IntGene>(),
                     Arb.rngPair()

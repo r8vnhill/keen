@@ -12,9 +12,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.genetic.arbGenotype
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
-import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
 import cl.ravenhill.keen.arb.genetic.genes.DummyGene
-import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -23,6 +21,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.freeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.*
@@ -143,17 +142,15 @@ fun `test Genotype behaviour`() = freeSpec {
     "A Genotype" - {
         "should have a size property that" - {
             "is equal to the number of chromosomes" {
-                checkAll(
-                    arbGenotype(arbChromosome(size = Arb.int(0..25)))
-                ) { genotype ->
-                    genotype.size shouldBe genotype.chromosomes.size
+                checkAll(arbGenotype(arbChromosome(size = Arb.int(0..25)))) { genotype ->
+                    genotype shouldHaveSize genotype.chromosomes.size
                 }
             }
         }
 
         "when accessing a chromosome by index" - {
             "should return the chromosome at the given index" {
-                checkAll(Arb.genotype()) { genotype ->
+                checkAll(genotype()) { genotype ->
                     genotype.forEachIndexed { index, chromosome ->
                         genotype[index] shouldBe chromosome
                     }
@@ -161,9 +158,7 @@ fun `test Genotype behaviour`() = freeSpec {
             }
 
             "should throw an exception if the index is out of bounds" {
-                checkAll(arbGenotype(Arb.intChromosome()).map {
-                    it to Arb.int().filter { index -> index !in 0..it.size }.next()
-                }) { (genotype, index) ->
+                checkAll(genotypeAndInvalidIndex()) { (genotype, index) ->
                     shouldThrow<CompositeException> {
                         genotype[index]
                     }.shouldHaveInfringement<IntConstraintException>(
@@ -215,3 +210,12 @@ private fun validGenotype(): Arb<Genotype<Int, DummyGene>> = arbGenotype(validCh
 private fun invalidGenotype(): Arb<Genotype<Int, DummyGene>> =
     arbGenotype(arbChromosome())
         .filter { genotype -> genotype.chromosomes.isNotEmpty() && genotype.chromosomes.any { !it.verify() } }
+
+private fun genotype(): Arb<Genotype<Int, DummyGene>> = arbGenotype(arbChromosome())
+
+private fun genotypeAndInvalidIndex(): Arb<Pair<Genotype<Int, DummyGene>, Int>> =
+    arbGenotype(arbChromosome())
+        .flatMap { genotype ->
+            val index = Arb.int(genotype.size..genotype.size + 10)
+            index.map { genotype to it }
+        }

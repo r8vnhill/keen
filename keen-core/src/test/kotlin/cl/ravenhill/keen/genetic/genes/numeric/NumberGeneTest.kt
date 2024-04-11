@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.genetic.genes.numeric
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.arb.genetic.genes.intGene
+import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -20,7 +20,7 @@ class NumberGeneTest : FreeSpec({
 
     "A NumberGene instance" - {
         "can be mutated" {
-            checkAll(Arb.intGene(), Arb.long().map { Random(it) to Random(it) }) { gene, (r1, r2) ->
+            checkAll(arbIntGene(), Arb.long().map { Random(it) to Random(it) }) { gene, (r1, r2) ->
                 Domain.random = r1
                 val mutated = gene.mutate()
                 Domain.random = r2

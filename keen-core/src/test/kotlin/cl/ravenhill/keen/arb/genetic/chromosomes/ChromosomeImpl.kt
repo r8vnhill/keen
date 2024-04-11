@@ -12,7 +12,7 @@ import cl.ravenhill.keen.arb.genetic.genes.booleanGene
 import cl.ravenhill.keen.arb.genetic.genes.charGene
 import cl.ravenhill.keen.arb.genetic.genes.arbDoubleGene
 import cl.ravenhill.keen.arb.genetic.genes.gene
-import cl.ravenhill.keen.arb.genetic.genes.intGene
+import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.BooleanChromosome
@@ -134,7 +134,23 @@ fun arbDoubleChromosome(
     DoubleChromosome(List(size.bind()) { gene.bind() })
 }
 
-fun Arb.Companion.intChromosome(size: Arb<Int> = int(0..5), gene: Arb<IntGene> = intGene()) = arbitrary {
+/**
+ * Creates an arbitrary generator for `IntChromosome` instances, aimed at property-based testing within genetic
+ * algorithms.
+ *
+ * @param size
+ *  An optional `Arb<Int>` instance specifying the number of `IntGene` elements in the chromosome, defaulting to a range
+ *  of 0 to 5.
+ * @param gene
+ *  An optional `Arb<IntGene>` instance for generating the genes within the chromosome, defaulting to a standard
+ *  `IntGene` configuration.
+ * @return An `Arb<IntChromosome>` that produces `IntChromosome` instances with the specified number and configuration
+ *  of `IntGene` elements.
+ */
+fun arbIntChromosome(
+    size: Arb<Int> = Arb.int(0..5),
+    gene: Arb<IntGene> = arbIntGene()
+) = arbitrary {
     IntChromosome(List(size.bind()) { gene.bind() })
 }
 
