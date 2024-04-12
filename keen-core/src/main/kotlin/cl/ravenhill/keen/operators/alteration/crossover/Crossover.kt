@@ -9,7 +9,7 @@ package cl.ravenhill.keen.operators.alteration.crossover
 import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
-import cl.ravenhill.jakt.constraints.ints.BeAtLeast
+import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
@@ -77,6 +77,11 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * `outputSize`.
      */
     override fun invoke(state: EvolutionState<T, G>, outputSize: Int): EvolutionState<T, G> {
+        constraints {
+            "Output size must be equal to number of offspring" {
+                outputSize must BeEqualTo(numOffspring)
+            }
+        }
         // Select a subset of individuals to recombine using the provided probability and other parameters
         val parents = Domain.random.subsets(state.population, numParents, exclusivity)
         // Recombine the selected individuals to produce offspring
@@ -118,6 +123,10 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * // offspringGenotypes will contain genotypes with recombined chromosomes from parent1 and parent2
      * ```
      *
+     * ## Remark:
+     * This does not ensure that th number of offspring genotypes is equal to [numOffspring]. For that, you should
+     * call the [invoke] method.
+     *
      * @param parentGenotypes The list of parent genotypes from which to generate offspring.
      * @return A list of offspring genotypes produced by the crossover of the parent genotypes.
      * @throws CompositeException containing all the exceptions thrown by the constraints.
@@ -142,9 +151,9 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
                 }
             }
         }
-        val size = parentGenotypes.first().size
+        val parentGenotypeSize = parentGenotypes.first().size // Number of chromosomes in each parent genotype
         // Select random indices of chromosomes to recombine
-        val chromosomeIndices = Domain.random.indices(pickProbability = chromosomeRate, end = size)
+        val chromosomeIndices = Domain.random.indices(pickProbability = chromosomeRate, end = parentGenotypeSize)
         // Associate the chromosomes of each parent genotype with the selected indices
         val chromosomes = chromosomeIndices.map { index -> parentGenotypes.map { it[index] } }
         // Recombine the selected chromosomes
