@@ -94,6 +94,14 @@ class SinglePointCrossoverTest : FreeSpec({
             }
         }
 
+        "throws an exception if the chromosomes have different sizes" {
+            checkAll(differentSizeGenes(), Arb.int(0, 10)) { (gs1, gs2), index ->
+                shouldThrow<CompositeException> {
+                    SinglePointCrossover<Int, IntGene>().crossoverAt(index, gs1 to gs2)
+                }.shouldHaveInfringement<CrossoverException>("Parents must have the same size")
+            }
+        }
+
         "returns the correct offspring" {
             checkAll(arbSinglePointCrossover<Int, IntGene>(), genesAndValidIndex()) { crossover, (gs1, gs2, index) ->
                 val (offspring1, offspring2) = crossover.crossoverAt(index, gs1 to gs2)
@@ -119,3 +127,10 @@ private fun genesAndInvalidIndex(): Arb<Triple<List<IntGene>, List<IntGene>, Int
 // Generate triples with a valid index (within the range including the size)
 private fun genesAndValidIndex(): Arb<Triple<List<IntGene>, List<IntGene>, Int>> =
     genesWithIndex { size -> Arb.int(0, size) }
+
+private fun differentSizeGenes(): Arb<Pair<List<IntGene>, List<IntGene>>> =
+    Arb.list(arbIntGene()).flatMap { gs1 ->
+        Arb.list(arbIntGene())
+            .filter { it.size != gs1.size }
+            .map { gs2 -> gs1 to gs2 }
+    }

@@ -182,6 +182,9 @@ class SinglePointCrossover<T, G>(override val chromosomeRate: Double = 1.0, over
             "The crossover point must be in the range [0, $hi]."(::CrossoverException) {
                 crossoverPoint must IntBeInRange(0..hi)
             }
+            "Parents must have the same size"(::CrossoverException) {
+                parents.first must HaveSize(parents.second.size)
+            }
         }
         val newFirst = parents.first.slice(0..<crossoverPoint) + parents.second.slice(crossoverPoint..<hi)
         val newSecond = parents.second.slice(0..<crossoverPoint) + parents.first.slice(crossoverPoint..<hi)
