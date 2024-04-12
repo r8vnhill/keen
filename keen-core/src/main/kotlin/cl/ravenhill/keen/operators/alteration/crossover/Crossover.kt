@@ -9,6 +9,7 @@ package cl.ravenhill.keen.operators.alteration.crossover
 import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
@@ -134,6 +135,11 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
             }
             "Genotypes must have the same number of chromosomes"(::CrossoverException) {
                 parentGenotypes.map { it.size }.toSet() must HaveSize(1)
+            }
+            parentGenotypes.forEachIndexed { index, genotype ->
+                "The number of chromosomes in parent $index must be greater than 0"(::CrossoverException) {
+                    genotype must HaveSize { it > 0 }
+                }
             }
         }
         val size = parentGenotypes.first().size

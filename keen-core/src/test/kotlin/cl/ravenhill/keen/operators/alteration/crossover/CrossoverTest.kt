@@ -61,6 +61,44 @@ class CrossoverTest : FreeSpec({
                     )
                 }
             }
+
+            "any parent genotype is empty" - {
+                withData(
+                    Triple(
+                        genericCrossover,
+                        listOf(
+                            Genotype(),
+                            Genotype(IntChromosome(IntGene(1)))
+                        ),
+                        listOf(0)
+                    ),
+                    Triple(
+                        genericCrossover,
+                        listOf(
+                            Genotype(IntChromosome(IntGene(1))),
+                            Genotype()
+                        ),
+                        listOf(1)
+                    ),
+                    Triple(
+                        genericCrossover,
+                        listOf(
+                            Genotype(),
+                            Genotype()
+                        ),
+                        listOf(0, 1)
+                    )
+                ) { (crossover, parents, emptyIndex) ->
+                    val ex = shouldThrow<CompositeException> {
+                        crossover.crossover(parents)
+                    }
+                    emptyIndex.forEach { index ->
+                        ex.shouldHaveInfringement<CrossoverException>(
+                            "The number of chromosomes in parent $index must be greater than 0"
+                        )
+                    }
+                }
+            }
         }
     }
 })
@@ -88,7 +126,6 @@ private val genericCrossover: Crossover<Int, IntGene> = object : Crossover<Int, 
     override val chromosomeRate: Double = 0.5
     override val exclusivity: Boolean = false
 
-    override fun crossoverChromosomes(chromosomes: List<Chromosome<Int, IntGene>>): List<Chromosome<Int, IntGene>> {
-        TODO("Never called")
-    }
+    override fun crossoverChromosomes(chromosomes: List<Chromosome<Int, IntGene>>) =
+        throw NotImplementedError("Never called")
 }
