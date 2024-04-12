@@ -1,14 +1,18 @@
 package cl.ravenhill.keen.operators.alteration.crossover
 
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.genetic.arbGenotype
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.operators.arbBaseCrossover
 import cl.ravenhill.keen.assertions.`crossover should return a list of offspring`
 import cl.ravenhill.keen.assertions.`crossover should throw an exception on incorrect configuration`
+import cl.ravenhill.keen.assertions.genericCrossover
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.withData
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.filter
