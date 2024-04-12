@@ -104,19 +104,18 @@ class SinglePointCrossoverTest : FreeSpec({
     }
 })
 
+// Common function to generate triples of gene lists and an index
+private fun genesWithIndex(indexGenerator: (Int) -> Arb<Int>): Arb<Triple<List<IntGene>, List<IntGene>, Int>> =
+    Arb.list(arbIntGene()).flatMap { gs1 ->
+        Arb.list(arbIntGene(), gs1.size..gs1.size).flatMap { gs2 ->
+            indexGenerator(gs1.size).map { index -> Triple(gs1, gs2, index) }
+        }
+    }
+
+// Generate triples with an invalid index (either < 0 or > size of the list)
 private fun genesAndInvalidIndex(): Arb<Triple<List<IntGene>, List<IntGene>, Int>> =
-    Arb.list(arbIntGene()).flatMap { gs1 ->
-        Arb.list(arbIntGene(), gs1.size..gs1.size).flatMap {
-            Arb.int()
-                .filter { it < 0 || it > gs1.size }
-                .map { index -> Triple(gs1, it, index) }
-        }
-    }
+    genesWithIndex { size -> Arb.int().filter { it < 0 || it > size } }
 
+// Generate triples with a valid index (within the range including the size)
 private fun genesAndValidIndex(): Arb<Triple<List<IntGene>, List<IntGene>, Int>> =
-    Arb.list(arbIntGene()).flatMap { gs1 ->
-        Arb.list(arbIntGene(), gs1.size..gs1.size).flatMap {
-            Arb.int(0, gs1.size).map { index -> Triple(gs1, it, index) }
-        }
-    }
-
+    genesWithIndex { size -> Arb.int(0, size) }
