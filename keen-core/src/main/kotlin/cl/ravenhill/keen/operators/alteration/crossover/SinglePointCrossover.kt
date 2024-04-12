@@ -6,12 +6,15 @@
 
 package cl.ravenhill.keen.operators.alteration.crossover
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.exceptions.CrossoverConfigException
+import cl.ravenhill.keen.exceptions.CrossoverException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.jakt.constraints.doubles.BeInRange as DoubleBeInRange
@@ -70,6 +73,7 @@ import cl.ravenhill.jakt.constraints.ints.BeInRange as IntBeInRange
  * @property exclusivity Indicates whether crossover excludes other operations. Default is `false`.
  * @constructor Creates a new instance of `SinglePointCrossover` with the given chromosome rate and exclusivity.
  */
+@OptIn(ExperimentalJakt::class)
 class SinglePointCrossover<T, G>(override val chromosomeRate: Double = 1.0, override val exclusivity: Boolean = false) :
     Crossover<T, G> where G : Gene<T, G> {
 
@@ -79,7 +83,7 @@ class SinglePointCrossover<T, G>(override val chromosomeRate: Double = 1.0, over
 
     init {
         constraints {
-            "The chromosome rate must be in the range [0.0, 1.0]." {
+            "The chromosome rate must be in the range [0.0, 1.0]."(::CrossoverConfigException) {
                 chromosomeRate must DoubleBeInRange(0.0..1.0)
             }
         }
@@ -172,10 +176,10 @@ class SinglePointCrossover<T, G>(override val chromosomeRate: Double = 1.0, over
      * @throws IntConstraintException If the crossover point is outside the valid range of indices.
      */
     @Throws(CompositeException::class, IntConstraintException::class)
-    private fun crossoverAt(crossoverPoint: Int, parents: Pair<List<G>, List<G>>): Pair<List<G>, List<G>> {
+    internal fun crossoverAt(crossoverPoint: Int, parents: Pair<List<G>, List<G>>): Pair<List<G>, List<G>> {
         val hi = parents.first.size
         constraints {
-            "The crossover point must be in the range [0, $hi]." {
+            "The crossover point must be in the range [0, $hi]."(::CrossoverException) {
                 crossoverPoint must IntBeInRange(0..hi)
             }
         }
@@ -183,4 +187,6 @@ class SinglePointCrossover<T, G>(override val chromosomeRate: Double = 1.0, over
         val newSecond = parents.second.slice(0..<crossoverPoint) + parents.first.slice(crossoverPoint..<hi)
         return newFirst to newSecond
     }
+
+    override fun toString() = "SinglePointCrossover(chromosomeRate=$chromosomeRate, exclusivity=$exclusivity)"
 }
