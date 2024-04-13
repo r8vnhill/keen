@@ -1,7 +1,6 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.arb.genetic.genes.booleanGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -15,7 +14,7 @@ class BooleanGeneTest : FreeSpec({
 
     "A Boolean Gene" - {
         "should be able to generate random values" {
-            checkAll(Arb.booleanGene(), Arb.long().map { Random(it) to Random(it) }) { gene, (r1, r2) ->
+            checkAll(arbBooleanGene(), Arb.long().map { Random(it) to Random(it) }) { gene, (r1, r2) ->
                 Domain.random = r1
                 val randomValue = gene.generator()
                 randomValue shouldBe r2.nextBoolean()
@@ -23,7 +22,7 @@ class BooleanGeneTest : FreeSpec({
         }
 
         "should be able to duplicate with a specific value" {
-            checkAll(Arb.booleanGene(), Arb.boolean()) { gene, value ->
+            checkAll(arbBooleanGene(), Arb.boolean()) { gene, value ->
                 val duplicated = gene.duplicateWithValue(value)
                 duplicated.value shouldBe value
             }

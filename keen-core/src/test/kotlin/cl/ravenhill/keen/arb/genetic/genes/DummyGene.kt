@@ -95,13 +95,13 @@ fun Arb.Companion.gene(value: Arb<Int> = int(), isValid: Arb<Boolean> = boolean(
  *   arbitrary that generates `true` or `false` values with equal probability.
  * @return An `Arb<BooleanGene>`, capable of generating `BooleanGene` instances based on the provided boolean values.
  */
-fun Arb.Companion.booleanGene(value: Arb<Boolean> = boolean()) = arbitrary {
+fun arbBooleanGene(value: Arb<Boolean> = Arb.boolean()) = arbitrary {
     if (value.bind()) BooleanGene.True else BooleanGene.False
 }
 
-fun Arb.Companion.charGene(
-    value: Arb<Char> = char(),
-    range: Arb<ClosedRange<Char>> = arbRange(char(), char()),
+fun arbCharGene(
+    value: Arb<Char> = Arb.char(),
+    range: Arb<ClosedRange<Char>> = arbRange(Arb.char(), Arb.char()),
     filter: (Char) -> Boolean = { true },
 ) = arbitrary {
     CharGene(value.bind(), range.bind(), filter)

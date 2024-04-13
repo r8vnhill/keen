@@ -47,7 +47,7 @@ class IntChromosomeTest : FreeSpec({
                 IntChromosome.Factory().filters.shouldBeEmpty()
             }
 
-            "can be set" {
+            "can be mutated" {
                 val filters = mutableListOf({ _: Int -> true })
                 val factory = IntChromosome.Factory().apply { this.filters = filters }
                 factory.filters shouldBe filters

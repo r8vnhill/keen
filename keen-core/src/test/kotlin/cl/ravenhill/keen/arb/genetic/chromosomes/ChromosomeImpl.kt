@@ -7,12 +7,7 @@
 package cl.ravenhill.keen.arb.genetic.chromosomes
 
 import cl.ravenhill.keen.arb.arbRange
-import cl.ravenhill.keen.arb.genetic.genes.DummyGene
-import cl.ravenhill.keen.arb.genetic.genes.booleanGene
-import cl.ravenhill.keen.arb.genetic.genes.charGene
-import cl.ravenhill.keen.arb.genetic.genes.arbDoubleGene
-import cl.ravenhill.keen.arb.genetic.genes.gene
-import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
+import cl.ravenhill.keen.arb.genetic.genes.*
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.BooleanChromosome
@@ -71,14 +66,14 @@ fun arbChromosome(
 
 fun Arb.Companion.booleanChromosome(
     size: Arb<Int> = int(0..10),
-    gene: Arb<BooleanGene> = booleanGene(),
+    gene: Arb<BooleanGene> = arbBooleanGene(),
 ) = arbitrary {
     BooleanChromosome(List(size.bind()) { gene.bind() })
 }
 
-fun Arb.Companion.charChromosome(
-    size: Arb<Int> = int(0..10),
-    gene: Arb<CharGene> = Arb.charGene(),
+fun charChromosome(
+    size: Arb<Int> = Arb.int(0..10),
+    gene: Arb<CharGene> = arbCharGene(),
 ) = arbitrary {
     CharChromosome(List(size.bind()) { gene.bind() })
 }
