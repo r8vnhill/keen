@@ -2,6 +2,7 @@ package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.datatypes.arbProbability
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
 import cl.ravenhill.keen.arb.operators.arbSinglePointCrossover
 import cl.ravenhill.keen.assertions.should.shouldBeExclusive
@@ -14,14 +15,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.boolean
-import io.kotest.property.arbitrary.constant
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.flatMap
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.map
+import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 
 class SinglePointCrossoverTest : FreeSpec({
@@ -107,6 +101,19 @@ class SinglePointCrossoverTest : FreeSpec({
                 val (offspring1, offspring2) = crossover.crossoverAt(index, gs1 to gs2)
                 offspring1 shouldBe gs1.take(index) + gs2.drop(index)
                 offspring2 shouldBe gs2.take(index) + gs1.drop(index)
+            }
+        }
+    }
+
+    "When crossing at a random point" - {
+        "throws an exception if the number of parents is not 2" {
+            checkAll(
+                arbSinglePointCrossover<Int, IntGene>(),
+                Arb.list(arbIntChromosome(), 1..10).filter { it.size != 2 }
+            ) { crossover, chromosomes ->
+                shouldThrow<CompositeException> {
+                    crossover.crossoverChromosomes(chromosomes)
+                }.shouldHaveInfringement<CrossoverException>("The number of parent chromosomes must be 2")
             }
         }
     }

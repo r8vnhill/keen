@@ -127,11 +127,13 @@ class SinglePointCrossover<T, G>(override val chromosomeRate: Double = 1.0, over
     @Throws(CompositeException::class, CollectionConstraintException::class)
     override fun crossoverChromosomes(chromosomes: List<Chromosome<T, G>>): List<Chromosome<T, G>> {
         constraints {
-            "The number of parent chromosomes must be 2" {
+            "The number of parent chromosomes must be 2"(::CrossoverException) {
                 chromosomes must HaveSize(2)
             }
-            "Both parents must have the same size" {
-                chromosomes[0] must HaveSize(chromosomes[1].size)
+            if (chromosomes.size == 2) {
+                "Both parents must have the same size" {
+                    chromosomes[0] must HaveSize(chromosomes[1].size)
+                }
             }
         }
         if (Domain.random.nextDouble() > chromosomeRate) {

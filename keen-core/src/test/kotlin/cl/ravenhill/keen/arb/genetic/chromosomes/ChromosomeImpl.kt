@@ -71,7 +71,7 @@ fun Arb.Companion.booleanChromosome(
     BooleanChromosome(List(size.bind()) { gene.bind() })
 }
 
-fun charChromosome(
+fun arbCharChromosome(
     size: Arb<Int> = Arb.int(0..10),
     gene: Arb<CharGene> = arbCharGene(),
 ) = arbitrary {

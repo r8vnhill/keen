@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.genetic.chromosomes
 
 import cl.ravenhill.keen.arb.arbRange
-import cl.ravenhill.keen.arb.genetic.chromosomes.charChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbCharChromosome
 import cl.ravenhill.keen.arb.genetic.genes.arbCharGene
 import cl.ravenhill.keen.assertions.`test that a gene can be duplicated with a new set of genes`
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
@@ -38,11 +38,11 @@ class CharChromosomeTest : FreeSpec({
         }
 
         "can be duplicated with a new set of genes" {
-            `test that a gene can be duplicated with a new set of genes`(charChromosome(), arbCharGene())
+            `test that a gene can be duplicated with a new set of genes`(arbCharChromosome(), arbCharGene())
         }
 
         "can be converted to a Simple String " {
-            checkAll(charChromosome()) { chromosome ->
+            checkAll(arbCharChromosome()) { chromosome ->
                 val expected = chromosome.genes.joinToString("") { it.toSimpleString() }
                 chromosome.toSimpleString() shouldBe expected
             }

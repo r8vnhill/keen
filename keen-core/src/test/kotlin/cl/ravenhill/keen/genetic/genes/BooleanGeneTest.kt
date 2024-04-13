@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.genetic.genes
 
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.arb.genetic.genes.arbBooleanGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
