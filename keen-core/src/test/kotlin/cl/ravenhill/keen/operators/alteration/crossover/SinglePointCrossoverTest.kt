@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
@@ -10,6 +11,7 @@ import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.assertions.should.shouldNotBeExclusive
 import cl.ravenhill.keen.exceptions.CrossoverConfigException
 import cl.ravenhill.keen.exceptions.CrossoverException
+import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -17,6 +19,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
+import kotlin.random.Random
 
 class SinglePointCrossoverTest : FreeSpec({
     "Can be constructed" - {
@@ -116,6 +119,47 @@ class SinglePointCrossoverTest : FreeSpec({
                 }.shouldHaveInfringement<CrossoverException>("The number of parent chromosomes must be 2")
             }
         }
+
+        "throws an exception if the chromosomes have different sizes" {
+            checkAll(differentSizeGenes()) { (gs1, gs2) ->
+                shouldThrow<CompositeException> {
+                    SinglePointCrossover<Int, IntGene>().crossoverChromosomes(
+                        listOf(IntChromosome(gs1), IntChromosome(gs2))
+                    )
+                }.shouldHaveInfringement<CrossoverException>("Both parents must have the same size")
+            }
+        }
+
+        "performs no crossover if the chromosome rate is 0" {
+            checkAll(
+                arbSinglePointCrossover<Int, IntGene>(Arb.constant(0.0)),
+                sameSizeChromosomePair()
+            ) { crossover, (gs1, gs2) ->
+                val (offspring1, offspring2) = crossover.crossoverChromosomes(
+                    listOf(IntChromosome(gs1), IntChromosome(gs2))
+                )
+                offspring1 shouldBe gs1
+                offspring2 shouldBe gs2
+            }
+        }
+
+        "performs a crossover if the chromosome rate is 1" {
+            checkAll(
+                arbSinglePointCrossover<Int, IntGene>(Arb.constant(1.0)),
+            ) { crossover ->
+                Domain.random = Random(420)
+                val (gs1, gs2) = listOf(
+                    listOf(1, 2, 3, 4, 5),
+                    listOf(6, 7, 8, 9, 10)
+                )
+                val (offspring1, offspring2) = crossover.crossoverChromosomes(
+                    listOf(IntChromosome(*gs1.toIntArray()), IntChromosome(*gs2.toIntArray()))
+                )
+                // Crosses at index 3
+                offspring1.flatten() shouldBe listOf(1, 2, 3, 9, 10)
+                offspring2.flatten() shouldBe listOf(6, 7, 8, 4, 5)
+            }
+        }
     }
 })
 
@@ -140,4 +184,9 @@ private fun differentSizeGenes(): Arb<Pair<List<IntGene>, List<IntGene>>> =
         Arb.list(arbIntGene())
             .filter { it.size != gs1.size }
             .map { gs2 -> gs1 to gs2 }
+    }
+
+private fun sameSizeChromosomePair(): Arb<Pair<List<IntGene>, List<IntGene>>> =
+    Arb.list(arbIntGene()).flatMap { gs1 ->
+        Arb.list(arbIntGene(), gs1.size..gs1.size).map { gs2 -> gs1 to gs2 }
     }

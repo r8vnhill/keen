@@ -131,7 +131,7 @@ class SinglePointCrossover<T, G>(override val chromosomeRate: Double = 1.0, over
                 chromosomes must HaveSize(2)
             }
             if (chromosomes.size == 2) {
-                "Both parents must have the same size" {
+                "Both parents must have the same size"(::CrossoverException) {
                     chromosomes[0] must HaveSize(chromosomes[1].size)
                 }
             }
