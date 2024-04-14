@@ -12,6 +12,7 @@ import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.exceptions.CrossoverConfigException
+import cl.ravenhill.keen.exceptions.CrossoverException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -143,8 +144,12 @@ open class CombineCrossover<T, G>(
     fun combine(chromosomes: List<Chromosome<T, G>>): List<G> {
         // Validation for the combine operation
         constraints {
-            "Number of inputs must be equal to the number of parents" { chromosomes must HaveSize(numParents) }
-            "All chromosomes must have the same length" { chromosomes.map { it.size }.toSet() must HaveSize(1) }
+            "Number of inputs (${chromosomes.size}) be equal to the number of parents ($numParents)"(::CrossoverException) {
+                chromosomes must HaveSize(numParents)
+            }
+            "All chromosomes must have the same length"(::CrossoverException) {
+                chromosomes.map { it.size }.toSet() must HaveSize(1)
+            }
         }
         // Combining logic for genes
         return List(chromosomes[0].size) { i ->
