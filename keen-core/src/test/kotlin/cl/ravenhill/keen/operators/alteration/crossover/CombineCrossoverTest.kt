@@ -20,5 +20,13 @@ class CombineCrossoverTest : FreeSpec({
                 }.shouldHaveInfringement<CrossoverConfigException>("The chromosome rate ($rate) must be in 0.0..1.0")
             }
         }
+
+        "throws an exception if the gene rate is not between 0 and 1" {
+            checkAll(arbInvalidProbability()) { rate ->
+                shouldThrow<CompositeException> {
+                    CombineCrossover<Int, IntGene>({ genes -> genes.first() }, geneRate = rate)
+                }.shouldHaveInfringement<CrossoverConfigException>("The gene rate ($rate) must be in 0.0..1.0")
+            }
+        }
     }
 })
