@@ -34,6 +34,27 @@ fun <T, G> arbSinglePointCrossover(
     )
 }
 
+/**
+ * Generates an [Arb] of [CombineCrossover] instances for testing purposes, with configurable parameters
+ * for chromosome rate, gene rate, number of parents, and exclusivity. This allows for extensive and flexible
+ * testing of the `CombineCrossover` class under various conditions.
+ *
+ * @param chromosomeRate
+ *  An optional `Arb<Double>` that specifies the probabilities for chromosome crossover rate. If `null`, defaults to 1.0,
+ *  representing a 100% crossover rate.
+ * @param geneRate
+ *  An optional `Arb<Double>` that specifies the probabilities for gene crossover rate. If `null`, defaults to 1.0,
+ *  representing a 100% gene crossover rate.
+ * @param numParents An optional
+ *  `Arb<Int>` to specify the number of parents involved in the crossover. If `null`, defaults to 2.
+ * @param exclusivity
+ *  An optional `Arb<Boolean>` to specify if the crossover should be exclusive. If `null`, defaults to false.
+ * @return
+ *  An `Arb<CombineCrossover<T, G>>` which generates instances of [CombineCrossover] based on the provided or default
+ *  configurations.
+ * @param T The type parameter of the gene values.
+ * @param G The type of `Gene` being used, which must conform to `Gene<T, G>`.
+ */
 fun <T, G> arbCombineCrossover(
     chromosomeRate: Arb<Double>? = arbProbability(),
     geneRate: Arb<Double>? = arbProbability(),
@@ -41,7 +62,7 @@ fun <T, G> arbCombineCrossover(
     exclusivity: Arb<Boolean>? = Arb.boolean()
 ): Arb<CombineCrossover<T, G>> where G : Gene<T, G> = arbitrary {
     CombineCrossover(
-        { genes -> genes.first() },
+        { genes -> genes.last() },
         chromosomeRate = chromosomeRate?.bind() ?: 1.0,
         geneRate = geneRate?.bind() ?: 1.0,
         numParents = numParents?.bind() ?: 2,

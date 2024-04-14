@@ -112,21 +112,31 @@ open class CombineCrossover<T, G>(
         listOf(chromosomes.first().duplicateWithGenes(combine(chromosomes)))
 
     /**
-     * Combines genes from a list of chromosomes to create a new list of genes.
+     * Combines genes from a list of chromosomes to create a new list of genes, using specified combination rules and
+     * probabilities.
      *
-     * This function implements the core logic of the `CombineCrossover` operation. It takes a list of parent
-     * chromosomes and combines their genes, gene by gene, to produce a new set of genes for the offspring's
-     * chromosome.
+     * This function is integral to the `CombineCrossover` operation in evolutionary algorithms, where genes from parent
+     * chromosomes are combined to produce offspring. It ensures that all chromosomes have the same length and that the
+     * number of chromosomes aligns with the expected number of parents.
      *
      * ## Process:
-     * 1. **Validation**: Ensures that the number of chromosomes matches the expected number of parents and that all
-     *    chromosomes have the same length.
-     * 2. **Gene Combination**: Iterates over each gene index and combines the corresponding genes from each parent
-     *    chromosome using the `combiner` function. If the `geneRate` criterion is not met, the gene from the first
-     *    parent chromosome is retained.
+     * 1. **Validation**:
+     *    - Ensures that the number of chromosomes matches the expected number of parents.
+     *    - Verifies that all chromosomes have the same length, which is essential for a uniform crossover.
+     * 2. **Gene Combination**:
+     *    - Iterates over each gene index and uses a `combiner` function to merge genes from each chromosome based on
+     *    `geneRate`.
+     *    - If `geneRate` conditions are not met, the gene from the first parent chromosome is used as the default.
+     *
+     * ## Behavior:
+     * - **Chromosome Rate is 0**: The function returns a set of genes from the first chromosome, effectively skipping
+     * crossover.
+     * - **Gene Rate is 1**: Every gene is a result of the `combiner` function, ensuring maximum diversity from
+     * available genes.
      *
      * ## Usage:
-     * This method is called internally during the crossover process to combine genes from parent chromosomes.
+     * This method is called internally during the crossover process to fuse genes from parental chromosomes into a new
+     * set for offspring.
      *
      * ### Example:
      * ```kotlin
@@ -134,9 +144,8 @@ open class CombineCrossover<T, G>(
      * val combinedGenes = combine(parentChromosomes)
      * // combinedGenes contains the new set of genes for the offspring
      * ```
-     * In this example, `combine` is used to create a new set of genes from a list of parent chromosomes. Each gene in
-     * the new set is either a combination of genes from the parents or directly inherited from the first parent,
-     * based on the `geneRate`.
+     * In this example, `combine` is used to generate a new set of genes from a list of parent chromosomes. The method applies
+     * the `combiner` function or inherits directly from the first parent based on the `geneRate`.
      *
      * @param chromosomes A list of parent [Chromosome] instances from which to combine genes.
      * @return A list of [G] representing the combined genes for the offspring's chromosome.
@@ -144,9 +153,9 @@ open class CombineCrossover<T, G>(
     fun combine(chromosomes: List<Chromosome<T, G>>): List<G> {
         // Validation for the combine operation
         constraints {
-            "Number of inputs (${chromosomes.size}) be equal to the number of parents ($numParents)"(::CrossoverException) {
-                chromosomes must HaveSize(numParents)
-            }
+            "Number of inputs (${chromosomes.size}) must equal the number of parents ($numParents)"(
+                ::CrossoverException
+            ) { chromosomes must HaveSize(numParents) }
             "All chromosomes must have the same length"(::CrossoverException) {
                 chromosomes.map { it.size }.toSet() must HaveSize(1)
             }
@@ -160,4 +169,5 @@ open class CombineCrossover<T, G>(
             }
         }
     }
+
 }

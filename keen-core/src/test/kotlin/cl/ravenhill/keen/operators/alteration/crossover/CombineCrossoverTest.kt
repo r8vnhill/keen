@@ -13,16 +13,15 @@ import cl.ravenhill.keen.exceptions.CrossoverException
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.spec.style.freeSpec
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
 import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.nonPositiveInt
+import io.kotest.property.PropTestConfig
+import io.kotest.property.arbitrary.*
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
@@ -30,30 +29,70 @@ class CombineCrossoverTest : FreeSpec({
     include(`crossover construction`())
 
     "When combining chromosomes" - {
-        "throws an exception if the number of inputs is not equal to the number of parents" {
-            checkAll(
-                arbCombineCrossover<Int, IntGene>(), Arb.list(arbIntChromosome())
-            ) { crossover, inputs ->
-                assume { inputs shouldNotHaveSize crossover.numParents }
-                shouldThrow<CompositeException> {
-                    crossover.combine(inputs)
-                }.shouldHaveInfringement<CrossoverException>(
-                    "Number of inputs (${inputs.size}) be equal to the number of parents (${crossover.numParents})"
-                )
-            }
-        }
+        `invalid input should throw an exception`()
+        `valid input should produce offspring`()
+    }
+})
 
-        "throws an exception if chromosomes have different lengths" {
-            checkAll(arbCombineCrossover<Int, IntGene>(), differentLengthChromosomes()) { crossover, inputs ->
-                shouldThrow<CompositeException> {
-                    crossover.combine(inputs)
-                }.shouldHaveInfringement<CrossoverException>(
-                    "All chromosomes must have the same length"
-                )
+@OptIn(ExperimentalKotest::class)
+private suspend fun FreeSpecContainerScope.`valid input should produce offspring`() {
+    "returns the first chromosome if the chromosome rate is 0" {
+        checkAll(
+            PropTestConfig(iterations = 100),
+            crossoverAndValidInputs(Arb.constant(0.0))
+        ) { (crossover, inputs) ->
+            val offspring = crossover.combine(inputs)
+            offspring.size shouldBe inputs[0].size
+            offspring.forEachIndexed { index, gene ->
+                gene shouldBe inputs[0][index]
             }
         }
     }
-})
+
+    "combines all genes if the gene rate is 1" {
+        checkAll(
+            PropTestConfig(iterations = 100),
+            crossoverAndValidInputs(Arb.constant(1.0))
+        ) { (crossover, inputs) ->
+            // combiner = { genes -> genes.last() }
+            val offspring = crossover.combine(inputs)
+            offspring.size shouldBe inputs[0].size
+            offspring.map { it.value } shouldBe inputs.reversed().first().map { it.value }
+        }
+    }
+}
+
+private fun crossoverAndValidInputs(geneRate: Arb<Double>): Arb<Pair<CombineCrossover<Int, IntGene>, List<IntChromosome>>> =
+    arbCombineCrossover<Int, IntGene>(geneRate = geneRate).flatMap { crossover ->
+        Arb.list(arbIntChromosome(), crossover.numParents..crossover.numParents)
+            .filter { chromosomes -> chromosomes.map { it.size }.distinct().size == 1 }
+            .map { inputs -> crossover to inputs }
+    }
+
+private suspend fun FreeSpecContainerScope.`invalid input should throw an exception`() {
+    "throws an exception if the number of inputs is not equal to the number of parents" {
+        checkAll(
+            arbCombineCrossover<Int, IntGene>(), Arb.list(arbIntChromosome())
+        ) { crossover, inputs ->
+            assume { inputs shouldNotHaveSize crossover.numParents }
+            shouldThrow<CompositeException> {
+                crossover.combine(inputs)
+            }.shouldHaveInfringement<CrossoverException>(
+                "Number of inputs (${inputs.size}) must equal the number of parents (${crossover.numParents})"
+            )
+        }
+    }
+
+    "throws an exception if chromosomes have different lengths" {
+        checkAll(arbCombineCrossover<Int, IntGene>(), differentLengthChromosomes()) { crossover, inputs ->
+            shouldThrow<CompositeException> {
+                crossover.combine(inputs)
+            }.shouldHaveInfringement<CrossoverException>(
+                "All chromosomes must have the same length"
+            )
+        }
+    }
+}
 
 private fun `crossover construction`() = freeSpec {
     "When constructing" - {
