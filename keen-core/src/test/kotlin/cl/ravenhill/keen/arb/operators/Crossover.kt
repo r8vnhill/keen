@@ -2,10 +2,12 @@ package cl.ravenhill.keen.arb.operators
 
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.alteration.crossover.CombineCrossover
 import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
+import io.kotest.property.arbitrary.int
 
 /**
  * Generates an [Arb] of [SinglePointCrossover] instances for testing purposes. This function provides flexible
@@ -26,10 +28,23 @@ fun <T, G> arbSinglePointCrossover(
     chromosomeRate: Arb<Double>? = arbProbability(),
     exclusivity: Arb<Boolean>? = Arb.boolean()
 ): Arb<SinglePointCrossover<T, G>> where G : Gene<T, G> = arbitrary {
-    when {
-        chromosomeRate != null && exclusivity != null -> SinglePointCrossover(chromosomeRate.bind(), exclusivity.bind())
-        chromosomeRate != null -> SinglePointCrossover(chromosomeRate.bind())
-        exclusivity != null -> SinglePointCrossover(exclusivity = exclusivity.bind())
-        else -> SinglePointCrossover()
-    }
+    SinglePointCrossover(
+        chromosomeRate = chromosomeRate?.bind() ?: 1.0,
+        exclusivity = exclusivity?.bind() ?: false
+    )
+}
+
+fun <T, G> arbCombineCrossover(
+    chromosomeRate: Arb<Double>? = arbProbability(),
+    geneRate: Arb<Double>? = arbProbability(),
+    numParents: Arb<Int>? = Arb.int(2..5),
+    exclusivity: Arb<Boolean>? = Arb.boolean()
+): Arb<CombineCrossover<T, G>> where G : Gene<T, G> = arbitrary {
+    CombineCrossover(
+        { genes -> genes.first() },
+        chromosomeRate = chromosomeRate?.bind() ?: 1.0,
+        geneRate = geneRate?.bind() ?: 1.0,
+        numParents = numParents?.bind() ?: 2,
+        exclusivity = exclusivity?.bind() ?: false
+    )
 }

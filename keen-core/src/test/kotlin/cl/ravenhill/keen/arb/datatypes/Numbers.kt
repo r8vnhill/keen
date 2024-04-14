@@ -7,10 +7,7 @@
 package cl.ravenhill.keen.arb.datatypes
 
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.filterNot
-import io.kotest.property.arbitrary.pair
+import io.kotest.property.arbitrary.*
 
 /**
  * Creates an arbitrary generator for divisors of a given number.
@@ -59,3 +56,13 @@ fun arbNonNaNDoublePair(arb: Arb<Double>) = Arb.pair(arbNonNaNDouble(arb), arbNo
  * @return An `Arb<Double>` that generates double values between 0.0 and 1.0, excluding NaN and infinite values.
  */
 fun arbProbability() = Arb.double(0.0..1.0, includeNonFiniteEdgeCases = false)
+
+/**
+ * Generates an `Arb<Double>` that provides invalid probability values, specifically those not within the standard
+ * probability range of 0.0 to 1.0, inclusive. This generator is particularly useful for testing scenarios where
+ * probability parameters are expected to be constrained within the valid range and can help ensure that functions
+ * properly handle out-of-range values.
+ *
+ * @return `An Arb<Double>` that randomly generates double values outside the range of 0.0 to 1.0.
+ */
+fun arbInvalidProbability() = Arb.double().filter { it !in 0.0..1.0 }

@@ -5,7 +5,6 @@
 
 package cl.ravenhill.keen.arb.genetic.genes
 
-import cl.ravenhill.jakt.utils.DoubleRange
 import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.genetic.genes.BooleanGene
@@ -124,7 +123,7 @@ fun arbCharGene(
  * ### Generating a [DoubleGene] with a specific range and custom filter:
  * ```kotlin
  * val doubleGeneArb = Arb.doubleGene(
- *     range = Arb.doubleRange(0.0..10.0), // Specifying the range
+ *     range = Arb.ClosedFloatingPointRange<Double>(0.0..10.0), // Specifying the range
  *     filter = { it % 2 == 0.0 }           // Custom filter for even values
  * )
  * val doubleGene = doubleGeneArb.bind()   // Resulting DoubleGene will have an even value between 0.0 and 10.0
@@ -133,7 +132,7 @@ fun arbCharGene(
  * This generator is useful in scenarios where genes representing floating-point values are required to have
  * specific characteristics, such as falling within a certain range or satisfying certain conditions.
  *
- * @param range An [Arb] of [DoubleRange] representing the range within which the gene's value should fall.
+ * @param range An [Arb] of [ClosedFloatingPointRange<Double>] representing the range within which the gene's value should fall.
  *              Defaults to a range generated from two double values, ensuring the lower bound is less than
  *              the upper bound.
  * @param value An [Arb] of [Double] for generating the gene's value within the specified range. Defaults to
@@ -144,7 +143,7 @@ fun arbCharGene(
  * @return An [Arb] that generates [DoubleGene] instances with the specified configurations.
  */
 fun arbDoubleGene(
-    range: Arb<DoubleRange> = arbOrderedPair(Arb.double().filterNot { it.isNaN() || it.isInfinite() })
+    range: Arb<ClosedFloatingPointRange<Double>> = arbOrderedPair(Arb.double().filterNot { it.isNaN() || it.isInfinite() })
         .filter { (lo, hi) -> lo < hi }.map { (lo, hi) -> lo..hi },
     value: Arb<Double> = range.map {
         Arb.double(it).next()

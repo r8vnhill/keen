@@ -191,6 +191,7 @@ private fun genesAndInvalidIndex(): Arb<Triple<List<IntGene>, List<IntGene>, Int
 private fun genesAndValidIndex(): Arb<Triple<List<IntGene>, List<IntGene>, Int>> =
     genesWithIndex { size -> Arb.int(0, size) }
 
+// Generate pairs of gene lists with different sizes
 private fun differentSizeGenes(): Arb<Pair<List<IntGene>, List<IntGene>>> =
     Arb.list(arbIntGene()).flatMap { gs1 ->
         Arb.list(arbIntGene())
@@ -198,6 +199,7 @@ private fun differentSizeGenes(): Arb<Pair<List<IntGene>, List<IntGene>>> =
             .map { gs2 -> gs1 to gs2 }
     }
 
+// Generate pairs of gene lists with the same size
 private fun sameSizeChromosomePair(): Arb<Pair<List<IntGene>, List<IntGene>>> =
     Arb.list(arbIntGene()).flatMap { gs1 ->
         Arb.list(arbIntGene(), gs1.size..gs1.size).map { gs2 -> gs1 to gs2 }

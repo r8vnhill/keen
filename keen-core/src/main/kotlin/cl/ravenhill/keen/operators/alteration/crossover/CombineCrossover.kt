@@ -6,10 +6,12 @@
 
 package cl.ravenhill.keen.operators.alteration.crossover
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.exceptions.CrossoverConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -63,7 +65,9 @@ open class CombineCrossover<T, G>(
     // Initial validation and constraints
     init {
         constraints {
-            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0" { chromosomeRate must BeInRange(0.0..1.0) }
+            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::CrossoverConfigException) {
+                chromosomeRate must BeInRange(0.0..1.0)
+            }
             "The gene rate [$geneRate] must be in 0.0..1.0" { geneRate must BeInRange(0.0..1.0) }
         }
     }
