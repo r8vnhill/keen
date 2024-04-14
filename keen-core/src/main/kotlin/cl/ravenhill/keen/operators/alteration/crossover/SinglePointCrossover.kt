@@ -131,6 +131,9 @@ class SinglePointCrossover<T, G>(override val chromosomeRate: Double = 1.0, over
                 chromosomes must HaveSize(2)
             }
             if (chromosomes.size == 2) {
+                "Chromosomes must not be empty"(::CrossoverException) {
+                    chromosomes[0] mustNot HaveSize(0)
+                }
                 "Both parents must have the same size"(::CrossoverException) {
                     chromosomes[0] must HaveSize(chromosomes[1].size)
                 }
@@ -188,8 +191,8 @@ class SinglePointCrossover<T, G>(override val chromosomeRate: Double = 1.0, over
                 parents.first must HaveSize(parents.second.size)
             }
         }
-        val newFirst = parents.first.slice(0..<crossoverPoint) + parents.second.slice(crossoverPoint..<hi)
-        val newSecond = parents.second.slice(0..<crossoverPoint) + parents.first.slice(crossoverPoint..<hi)
+        val newFirst = parents.first.take(crossoverPoint) + parents.second.drop(crossoverPoint)
+        val newSecond = parents.second.take(crossoverPoint) + parents.first.drop(crossoverPoint)
         return newFirst to newSecond
     }
 

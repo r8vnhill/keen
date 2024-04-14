@@ -2,6 +2,8 @@ package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
@@ -14,13 +16,16 @@ import cl.ravenhill.keen.exceptions.CrossoverException
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
+@OptIn(ExperimentalKotest::class)
 class SinglePointCrossoverTest : FreeSpec({
     "Can be constructed" - {
         "with default parameters" {
@@ -102,8 +107,8 @@ class SinglePointCrossoverTest : FreeSpec({
         "returns the correct offspring" {
             checkAll(arbSinglePointCrossover<Int, IntGene>(), genesAndValidIndex()) { crossover, (gs1, gs2, index) ->
                 val (offspring1, offspring2) = crossover.crossoverAt(index, gs1 to gs2)
-                offspring1 shouldBe gs1.take(index) + gs2.drop(index)
-                offspring2 shouldBe gs2.take(index) + gs1.drop(index)
+                offspring1 shouldBe gs1.slice(0..<index) + gs2.slice(index..<gs2.size)
+                offspring2 shouldBe gs2.slice(0..<index) + gs1.slice(index..<gs1.size)
             }
         }
     }
@@ -130,10 +135,18 @@ class SinglePointCrossoverTest : FreeSpec({
             }
         }
 
+        "throws an exception if the chromosomes are empty" {
+            shouldThrow<CompositeException> {
+                SinglePointCrossover<Int, IntGene>().crossoverChromosomes(
+                    listOf(IntChromosome(emptyList()), IntChromosome(emptyList()))
+                )
+            }.shouldHaveInfringement<CrossoverException>("Chromosomes must not be empty")
+        }
+
         "performs no crossover if the chromosome rate is 0" {
             checkAll(
                 arbSinglePointCrossover<Int, IntGene>(Arb.constant(0.0)),
-                sameSizeChromosomePair()
+                sameSizeChromosomePair().filter { it.first.isNotEmpty() }
             ) { crossover, (gs1, gs2) ->
                 val (offspring1, offspring2) = crossover.crossoverChromosomes(
                     listOf(IntChromosome(gs1), IntChromosome(gs2))
@@ -145,19 +158,18 @@ class SinglePointCrossoverTest : FreeSpec({
 
         "performs a crossover if the chromosome rate is 1" {
             checkAll(
+                PropTestConfig(listeners = listOf(ResetDomainListener)),
                 arbSinglePointCrossover<Int, IntGene>(Arb.constant(1.0)),
-            ) { crossover ->
-                Domain.random = Random(420)
-                val (gs1, gs2) = listOf(
-                    listOf(1, 2, 3, 4, 5),
-                    listOf(6, 7, 8, 9, 10)
-                )
+                arbRngPair(),
+                sameSizeChromosomePair().filter { it.first.isNotEmpty() }
+            ) { crossover, (r1, r2), (gs1, gs2) ->
+                Domain.random = r1
                 val (offspring1, offspring2) = crossover.crossoverChromosomes(
-                    listOf(IntChromosome(*gs1.toIntArray()), IntChromosome(*gs2.toIntArray()))
+                    listOf(IntChromosome(gs1), IntChromosome(gs2))
                 )
-                // Crosses at index 3
-                offspring1.flatten() shouldBe listOf(1, 2, 3, 9, 10)
-                offspring2.flatten() shouldBe listOf(6, 7, 8, 4, 5)
+                val index = r2.apply { nextDouble() }.nextInt(0, gs1.size)
+                offspring1 shouldBe gs1.slice(0..<index) + gs2.slice(index..<gs2.size)
+                offspring2 shouldBe gs2.slice(0..<index) + gs1.slice(index..<gs1.size)
             }
         }
     }
