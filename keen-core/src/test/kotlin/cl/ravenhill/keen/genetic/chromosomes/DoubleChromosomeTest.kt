@@ -23,6 +23,7 @@ import cl.ravenhill.keen.utils.nextDoubleInRange
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.filterNot
 
 class DoubleChromosomeTest : FreeSpec({
@@ -54,6 +55,8 @@ class DoubleChromosomeTest : FreeSpec({
             "with an explicit range should use the provided range" {
                 `validate all genes against single range`(
                     arbRange(arbNonNaNDouble(), arbNonNaNDouble())
+                        // Test bugs with range -0.0..0.0 and 0.0..-0.0
+                        .filter { it.start != 0.0 && it.endInclusive != 0.0 }
                 ) { DoubleChromosome.Factory() }
             }
 

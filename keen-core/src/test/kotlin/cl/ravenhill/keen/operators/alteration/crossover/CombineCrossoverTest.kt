@@ -1,6 +1,9 @@
 package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.datatypes.arbInvalidProbability
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
@@ -27,12 +30,54 @@ import io.kotest.property.checkAll
 
 class CombineCrossoverTest : FreeSpec({
     include(`crossover construction`())
+    include(`chromosome combination`())
+    include(`cross chromosomes`())
+})
 
+@OptIn(ExperimentalKotest::class)
+private fun `cross chromosomes`() = freeSpec {
+    "When crossing chromosomes" - {
+        "returns the expected offspring" {
+            checkAll(
+                PropTestConfig(iterations = 100, listeners = listOf(ResetDomainListener)),
+                crossoverAndValidInputs(),
+                arbRngPair()
+            ) { (crossover, inputs), (rng1, rng2) ->
+                Domain.random = rng1
+                val offspring = crossover.crossoverChromosomes(inputs)
+                offspring.size shouldBe 1
+                Domain.random = rng2
+                val combinedGenes = combineGenes(inputs, crossover.geneRate)
+                offspring shouldBe listOf(inputs.first().duplicateWithGenes(combinedGenes))
+            }
+        }
+    }
+}
+
+private fun combineGenes(inputs: List<IntChromosome>, geneRate: Double): List<IntGene> {
+    val numGenes = inputs.first().genes.size
+    val combinedGenes = mutableListOf<IntGene>()
+
+    for (i in 0 until numGenes) {
+        if (Domain.random.nextDouble() < geneRate) {
+            var lastGene = inputs.first().genes[i]  // Default to the first if only one input
+            for (chromosome in inputs) {
+                lastGene = chromosome.genes[i]  // Iterate to find the last gene
+            }
+            combinedGenes.add(lastGene)
+        } else {
+            combinedGenes.add(inputs.first().genes[i])
+        }
+    }
+    return combinedGenes
+}
+
+private fun `chromosome combination`() = freeSpec {
     "When combining chromosomes" - {
         `invalid input should throw an exception`()
         `valid input should produce offspring`()
     }
-})
+}
 
 @OptIn(ExperimentalKotest::class)
 private suspend fun FreeSpecContainerScope.`valid input should produce offspring`() {
@@ -54,7 +99,6 @@ private suspend fun FreeSpecContainerScope.`valid input should produce offspring
             PropTestConfig(iterations = 100),
             crossoverAndValidInputs(Arb.constant(1.0))
         ) { (crossover, inputs) ->
-            // combiner = { genes -> genes.last() }
             val offspring = crossover.combine(inputs)
             offspring.size shouldBe inputs[0].size
             offspring.map { it.value } shouldBe inputs.reversed().first().map { it.value }
@@ -62,7 +106,9 @@ private suspend fun FreeSpecContainerScope.`valid input should produce offspring
     }
 }
 
-private fun crossoverAndValidInputs(geneRate: Arb<Double>): Arb<Pair<CombineCrossover<Int, IntGene>, List<IntChromosome>>> =
+private fun crossoverAndValidInputs(
+    geneRate: Arb<Double> = arbProbability()
+): Arb<Pair<CombineCrossover<Int, IntGene>, List<IntChromosome>>> =
     arbCombineCrossover<Int, IntGene>(geneRate = geneRate).flatMap { crossover ->
         Arb.list(arbIntChromosome(), crossover.numParents..crossover.numParents)
             .filter { chromosomes -> chromosomes.map { it.size }.distinct().size == 1 }

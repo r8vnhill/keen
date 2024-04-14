@@ -10,6 +10,7 @@ import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.map
+import kotlin.math.abs
 
 /**
  * Generates an arbitrary closed range of comparable elements.
@@ -41,5 +42,5 @@ import io.kotest.property.arbitrary.map
  */
 fun <T> arbRange(a: Arb<T>, b: Arb<T>) where T : Comparable<T> = arbOrderedPair(a, b)
     .map { (start, end) -> start..end }
-    .filter { it != -0.0..0.0 }
+    .filter { abs(it.endInclusive.compareTo(it.start)) > 0 }
     .filter { it.endInclusive > it.start }
