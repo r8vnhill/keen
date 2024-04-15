@@ -77,11 +77,6 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * `outputSize`.
      */
     override fun invoke(state: EvolutionState<T, G>, outputSize: Int): EvolutionState<T, G> {
-        constraints {
-            "Output size must be equal to number of offspring" {
-                outputSize must BeEqualTo(numOffspring)
-            }
-        }
         // Select a subset of individuals to recombine using the provided probability and other parameters
         val parents = Domain.random.subsets(state.population, numParents, exclusivity)
         // Recombine the selected individuals to produce offspring
