@@ -209,7 +209,7 @@ private suspend fun FreeSpecContainerScope.`valid configuration should initializ
     }
 }
 
-suspend fun FreeSpecContainerScope.`default configuration should initialize correctly`() {
+private suspend fun FreeSpecContainerScope.`default configuration should initialize correctly`() {
     "with default parameters should have the following properties" {
         checkAll(arbCombineCrossover<Int, IntGene>(null, null, null, null)) { crossover ->
             with(crossover) {
