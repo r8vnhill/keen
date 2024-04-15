@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -41,6 +41,6 @@ import io.kotest.property.arbitrary.int
  * @return An `Arb<GenerationLimit<T, G>>` capable of generating `GenerationLimit` instances with random
  *         generation counts.
  */
-fun <T, G> Arb.Companion.generationLimit(generations: Arb<Int> = int()) where G : Gene<T, G> = arbitrary {
+fun <T, G> arbGenerationLimit(generations: Arb<Int> = Arb.int()) where G : Gene<T, G> = arbitrary {
     MaxGenerations<T, G>(generations.bind())
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -73,7 +73,7 @@ fun <T, G> Arb.Companion.selector(): Arb<Selector<T, G>> where G : Gene<T, G> = 
  *
  * ### Example:
  * ```kotlin
- * val tournamentSelectorGen = Arb.tournamentSelector<Int, SomeGeneClass>()
+ * val tournamentSelectorGen = KeenArb.tournamentSelector<Int, SomeGeneClass>()
  * val tournamentSelector = tournamentSelectorGen.bind() // Generates a TournamentSelector instance
  * // Use tournamentSelector in an evolutionary algorithm for selection of individuals
  * ```
@@ -87,7 +87,9 @@ fun <T, G> Arb.Companion.selector(): Arb<Selector<T, G>> where G : Gene<T, G> = 
  * @return An [Arb]<[TournamentSelector]<[T], [G]>> for generating `TournamentSelector` instances with varying
  *         tournament sizes.
  */
-fun <T, G> Arb.Companion.tournamentSelector(tournamentSize: Arb<Int> = int(1..5)) where G : Gene<T, G> = arbitrary {
+fun <T, G> arbTournamentSelector(
+    tournamentSize: Arb<Int> = Arb.int(1..5)
+) where G : Gene<T, G> = arbitrary {
     TournamentSelector<T, G>(tournamentSize.bind())
 }
 
@@ -126,8 +128,8 @@ fun <T, G> Arb.Companion.tournamentSelector(tournamentSize: Arb<Int> = int(1..5)
  *   individuals are sorted by fitness.
  * @return An [Arb]<[RouletteWheelSelector]<[T], [G]>> for generating `RouletteWheelSelector` instances.
  */
-fun <T, G> Arb.Companion.rouletteWheelSelector(
-    sorted: Arb<Boolean> = boolean(),
+fun <T, G> arbRouletteWheelSelector(
+    sorted: Arb<Boolean> = Arb.boolean(),
 ) where G : Gene<T, G> = arbitrary {
     RouletteWheelSelector<T, G>(sorted.bind())
 }

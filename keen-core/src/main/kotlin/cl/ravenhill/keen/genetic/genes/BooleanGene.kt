@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -84,6 +84,13 @@ sealed interface BooleanGene : Gene<Boolean, BooleanGene> {
      * Returns 1.0 if the gene's value is `true`, otherwise 0.0.
      */
     fun toDouble() = if (value) 1.0 else 0.0
+
+    /**
+     * Returns the logical negation of the current boolean value.
+     *
+     * @return The logical negation of the current value.
+     */
+    operator fun not() = if (value) False else True
 
     /**
      * Represents a `BooleanGene` instance with a fixed value of `true`.

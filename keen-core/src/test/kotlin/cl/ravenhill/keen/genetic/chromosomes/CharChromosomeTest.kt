@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic.chromosomes
 
-import cl.ravenhill.keen.arb.genetic.chromosomes.charChromosome
-import cl.ravenhill.keen.arb.genetic.genes.charGene
-import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.arb.arbRange
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbCharChromosome
+import cl.ravenhill.keen.arb.genetic.genes.arbCharGene
 import cl.ravenhill.keen.assertions.`test that a gene can be duplicated with a new set of genes`
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
@@ -29,20 +29,20 @@ class CharChromosomeTest : FreeSpec({
     "A Char Chromosome instance" - {
         "should have a genes property that " - {
             "is set according to the constructor" {
-                `test chromosome gene consistency`(Arb.charGene()) { CharChromosome(it) }
+                `test chromosome gene consistency`(arbCharGene()) { CharChromosome(it) }
             }
 
             "is set according to the vararg constructor" {
-                `test chromosome gene consistency`(Arb.charGene()) { CharChromosome(*it.toTypedArray()) }
+                `test chromosome gene consistency`(arbCharGene()) { CharChromosome(*it.toTypedArray()) }
             }
         }
 
         "can be duplicated with a new set of genes" {
-            `test that a gene can be duplicated with a new set of genes`(Arb.charChromosome(), Arb.charGene())
+            `test that a gene can be duplicated with a new set of genes`(arbCharChromosome(), arbCharGene())
         }
 
         "can be converted to a Simple String " {
-            checkAll(Arb.charChromosome()) { chromosome ->
+            checkAll(arbCharChromosome()) { chromosome ->
                 val expected = chromosome.genes.joinToString("") { it.toSimpleString() }
                 chromosome.toSimpleString() shouldBe expected
             }
@@ -96,7 +96,7 @@ class CharChromosomeTest : FreeSpec({
             }
             "with an explicit range should use the provided range" {
                 `validate all genes against single range`(
-                    Arb.range(Arb.char(), Arb.char())
+                    arbRange(Arb.char(), Arb.char())
                 ) {
                     CharChromosome.Factory()
                 }
@@ -116,7 +116,7 @@ class CharChromosomeTest : FreeSpec({
 
             "with valid ranges and filters should create a chromosome with genes that satisfy the constraints" {
                 `validate genes with specified range and factory`(
-                    Arb.range(Arb.char(), Arb.char()),
+                    arbRange(Arb.char(), Arb.char()),
                     { rng, ranges, index ->
                         CharGene(rng.nextChar(ranges[index]), ranges[index])
                     }) { CharChromosome.Factory() }

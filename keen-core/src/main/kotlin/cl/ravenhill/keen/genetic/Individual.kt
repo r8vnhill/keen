@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -7,6 +7,7 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.mixins.FitnessEvaluable
 import cl.ravenhill.keen.utils.isNotNaN
 import java.util.*
 
@@ -40,8 +41,9 @@ import java.util.*
  * @constructor Creates a new individual with the specified genotype and fitness.
  *   The fitness is a measure of how well the individual's genotype performs in the given problem context.
  */
-data class Individual<T, G>(val genotype: Genotype<T, G>, val fitness: Double = Double.NaN) :
-    GeneticMaterial<T, G> where G : Gene<T, G> {
+data class Individual<T, G>(val genotype: Genotype<T, G>, override val fitness: Double = Double.NaN) :
+    GeneticMaterial<T, G>,
+    FitnessEvaluable where G : Gene<T, G> {
 
     val size by lazy { genotype.size }
 
@@ -141,7 +143,7 @@ data class Individual<T, G>(val genotype: Genotype<T, G>, val fitness: Double = 
      * @return `true` if the fitness value of the individual is a valid number, indicating that fitness evaluation has
      *   been completed; `false` if the fitness is NaN, suggesting that the evaluation is yet to be performed.
      */
-    fun isEvaluated() = fitness.isNotNaN()
+    override fun isEvaluated() = fitness.isNotNaN()
 
     /**
      * Generates a simplified string representation of the individual, highlighting its genotype and fitness.
@@ -158,7 +160,7 @@ data class Individual<T, G>(val genotype: Genotype<T, G>, val fitness: Double = 
      *
      * @return A string that concisely represents the individual, comprising its genotype and fitness.
      */
-    override fun toSimpleString() = "${genotype.toSimpleString()} -> $fitness"
+    override fun toSimpleString() = "$genotype -> $fitness"
 
     /**
      * Generates a detailed string representation of the individual, including its genotype and fitness.
@@ -177,7 +179,7 @@ data class Individual<T, G>(val genotype: Genotype<T, G>, val fitness: Double = 
      *
      * @return A string representing the individual with details of its genotype and fitness.
      */
-    override fun toString() = "Individual(genotype=${genotype.toSimpleString()}, fitness=$fitness)"
+    override fun toString() = "Individual(genotype=$genotype, fitness=$fitness)"
 
     /**
      * Produces a comprehensive string representation of the individual, encompassing detailed information about its
@@ -197,7 +199,7 @@ data class Individual<T, G>(val genotype: Genotype<T, G>, val fitness: Double = 
      * @return A detailed string representation of the individual, including both a comprehensive view of its genotype
      *   and its fitness value.
      */
-    override fun toDetailedString() = "Individual(genotype=${genotype.toDetailedString()}, fitness=$fitness)"
+    override fun toDetailedString() = "Individual(genotype=$genotype, fitness=$fitness)"
 
 
     /**

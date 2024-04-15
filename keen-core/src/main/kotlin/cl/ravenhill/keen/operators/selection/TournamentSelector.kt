@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -13,6 +13,7 @@ import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.ranking.IndividualRanker
+import java.util.*
 
 
 /**
@@ -94,6 +95,16 @@ class TournamentSelector<T, G>(val tournamentSize: Int = DEFAULT_SIZE) : Selecto
                 .maxWithOrNull(ranker.comparator)
                 ?: throw SelectionException { "Tournament selection failed to find a max individual" }
         }
+
+    override fun toString() = "TournamentSelector(tournamentSize=$tournamentSize)"
+
+    override fun equals(other: Any?) = when {
+        this === other -> true
+        other !is TournamentSelector<*, *> -> false
+        else -> tournamentSize == other.tournamentSize
+    }
+
+    override fun hashCode() = Objects.hash(TournamentSelector::class, tournamentSize)
 
     companion object {
         /** The default size of the tournaments. Set to 3. */

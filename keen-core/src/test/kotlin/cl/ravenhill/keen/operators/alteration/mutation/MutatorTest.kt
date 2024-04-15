@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -7,16 +7,17 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ResetDomainRandomListener
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
-import cl.ravenhill.keen.arb.evolution.evolutionState
-import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
+import cl.ravenhill.keen.arb.evolution.arbEvolutionState
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
-import cl.ravenhill.keen.arb.operators.anyMutator
-import cl.ravenhill.keen.arb.operators.baseMutator
-import cl.ravenhill.keen.arb.rngPair
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
+import cl.ravenhill.keen.arb.operators.arbAnyMutator
+import cl.ravenhill.keen.arb.operators.arbBaseMutator
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
@@ -34,8 +35,8 @@ class MutatorTest : FreeSpec({
         "when mutating an individual" - {
             "should perform no mutations if the probability is 0" {
                 checkAll(
-                    Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
-                    Arb.individual(Arb.genotype(Arb.intChromosome()))
+                    arbAnyMutator(chromosomeRate = Arb.constant(0.0)),
+                    arbIndividual(Arb.genotype(arbIntChromosome()))
                 ) { mutator, individual ->
                     with(mutator.mutateIndividual(individual)) {
                         fitness.shouldBeNaN()
@@ -46,10 +47,10 @@ class MutatorTest : FreeSpec({
 
             "should mutate all chromosomes if the probability is 1" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
-                    Arb.baseMutator<Int, IntGene>(chromosomeRate = Arb.constant(1.0)),
-                    Arb.individual(Arb.genotype(Arb.intChromosome())),
-                    Arb.rngPair()
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
+                    arbBaseMutator<Int, IntGene>(chromosomeRate = Arb.constant(1.0)),
+                    arbIndividual(Arb.genotype(arbIntChromosome())),
+                    arbRngPair()
                 ) { mutator, individual, (rng1, rng2) ->
                     Domain.random = rng1
                     val mutated = mutator.mutateIndividual(individual)
@@ -62,10 +63,10 @@ class MutatorTest : FreeSpec({
 
             "should mutate chromosomes according to the chromosome rate" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
-                    Arb.baseMutator<Int, IntGene>(),
-                    Arb.individual(Arb.genotype(Arb.intChromosome())),
-                    Arb.rngPair()
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
+                    arbBaseMutator<Int, IntGene>(),
+                    arbIndividual(Arb.genotype(arbIntChromosome())),
+                    arbRngPair()
                 ) { mutator, individual, (rng1, rng2) ->
                     Domain.random = rng1
                     val mutated = mutator.mutateIndividual(individual)
@@ -84,10 +85,10 @@ class MutatorTest : FreeSpec({
         "when mutating a population" - {
             "should perform no mutations if the probability is 0" {
                 checkAll(
-                    Arb.anyMutator(chromosomeRate = Arb.constant(0.0)),
-                    Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
-                        Arb.anyRanker()
+                    arbAnyMutator(chromosomeRate = Arb.constant(0.0)),
+                    arbEvolutionState(
+                        arbPopulation(arbIndividual(Arb.genotype(arbIntChromosome()))),
+                        KeenArb.anyRanker()
                     )
                 ) { mutator, state ->
                     with(mutator(state, state.population.size)) {
@@ -98,13 +99,13 @@ class MutatorTest : FreeSpec({
 
             "should mutate all chromosomes if the probability is 1" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
-                    Arb.anyMutator(individualRate = Arb.constant(1.0)),
-                    Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
-                        Arb.anyRanker()
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
+                    arbAnyMutator(individualRate = Arb.constant(1.0)),
+                    arbEvolutionState(
+                        arbPopulation(arbIndividual(Arb.genotype(arbIntChromosome()))),
+                        KeenArb.anyRanker()
                     ),
-                    Arb.rngPair()
+                    arbRngPair()
                 ) { mutator, state, (rng1, rng2) ->
                     Domain.random = rng1
                     val mutated = mutator(state, state.population.size)
@@ -118,13 +119,13 @@ class MutatorTest : FreeSpec({
 
             "should mutate individuals according to the individual rate" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
-                    Arb.anyMutator(),
-                    Arb.evolutionState(
-                        Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome()))),
-                        Arb.anyRanker()
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
+                    arbAnyMutator(),
+                    arbEvolutionState(
+                        arbPopulation(arbIndividual(Arb.genotype(arbIntChromosome()))),
+                        KeenArb.anyRanker()
                     ),
-                    Arb.rngPair()
+                    arbRngPair()
                 ) { mutator, state, (rng1, rng2) ->
                     Domain.random = rng1
                     val mutated = mutator(state, state.population.size)

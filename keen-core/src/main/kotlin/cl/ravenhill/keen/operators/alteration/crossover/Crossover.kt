@@ -1,17 +1,20 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 
 package cl.ravenhill.keen.operators.alteration.crossover
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.exceptions.CrossoverException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -115,22 +118,37 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * // offspringGenotypes will contain genotypes with recombined chromosomes from parent1 and parent2
      * ```
      *
+     * ## Remark:
+     * This does not ensure that th number of offspring genotypes is equal to [numOffspring]. For that, you should
+     * call the [invoke] method.
+     *
      * @param parentGenotypes The list of parent genotypes from which to generate offspring.
      * @return A list of offspring genotypes produced by the crossover of the parent genotypes.
      * @throws CompositeException containing all the exceptions thrown by the constraints.
      * @throws CollectionConstraintException if the size of the [parentGenotypes] list doesn't match the number of
      *   parents ([numParents]).
      */
+    @OptIn(ExperimentalJakt::class)
     @Throws(CompositeException::class, CollectionConstraintException::class)
     fun crossover(parentGenotypes: List<Genotype<T, G>>): List<Genotype<T, G>> {
         constraints {
-            "The number of inputs (${parentGenotypes.size}) must be equal to the number of parents ($numParents)" {
+            "The number of inputs (${parentGenotypes.size}) must be equal to the number of parents ($numParents)"(
+                ::CrossoverException
+            ) {
                 parentGenotypes must HaveSize(numParents)
             }
+            "Genotypes must have the same number of chromosomes"(::CrossoverException) {
+                parentGenotypes.map { it.size }.toSet() must HaveSize(1)
+            }
+            parentGenotypes.forEachIndexed { index, genotype ->
+                "The number of chromosomes in parent $index must be greater than 0"(::CrossoverException) {
+                    genotype must HaveSize { it > 0 }
+                }
+            }
         }
-        val size = parentGenotypes.first().size
+        val parentGenotypeSize = parentGenotypes.first().size // Number of chromosomes in each parent genotype
         // Select random indices of chromosomes to recombine
-        val chromosomeIndices = Domain.random.indices(pickProbability = chromosomeRate, end = size)
+        val chromosomeIndices = Domain.random.indices(pickProbability = chromosomeRate, end = parentGenotypeSize)
         // Associate the chromosomes of each parent genotype with the selected indices
         val chromosomes = chromosomeIndices.map { index -> parentGenotypes.map { it[index] } }
         // Recombine the selected chromosomes

@@ -15,7 +15,8 @@ syntax and enclose all code with
 
 to make it more readable and easier to understand.
 
-### 2. Consistency and Professionalism in Documentation
+### 2. Consistency and Professionalism in
+Documentation
 
 When writing documentation, **ALWAYS** answer accordingly to the first rule to maintain 
 consistency and professionalism.

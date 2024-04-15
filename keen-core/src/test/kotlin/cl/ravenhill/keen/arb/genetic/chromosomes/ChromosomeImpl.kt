@@ -1,18 +1,13 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 
 package cl.ravenhill.keen.arb.genetic.chromosomes
 
-import cl.ravenhill.keen.arb.genetic.genes.DummyGene
-import cl.ravenhill.keen.arb.genetic.genes.booleanGene
-import cl.ravenhill.keen.arb.genetic.genes.charGene
-import cl.ravenhill.keen.arb.genetic.genes.doubleGene
-import cl.ravenhill.keen.arb.genetic.genes.gene
-import cl.ravenhill.keen.arb.genetic.genes.intGene
-import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.arb.arbRange
+import cl.ravenhill.keen.arb.genetic.genes.*
 import cl.ravenhill.keen.evolution.executors.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialConstructor
 import cl.ravenhill.keen.genetic.chromosomes.BooleanChromosome
@@ -61,30 +56,41 @@ class ChromosomeImpl(override val genes: List<DummyGene>) : Chromosome<Int, Dumm
     override fun duplicateWithGenes(genes: List<DummyGene>) = ChromosomeImpl(genes.map { it.copy() })
 }
 
-fun Arb.Companion.chromosome(
-    size: Arb<Int> = int(0..10),
-    isValid: Arb<Boolean> = boolean(),
+fun arbChromosome(
+    size: Arb<Int> = Arb.int(0..10),
+    isValid: Arb<Boolean> = Arb.boolean(),
     gene: Arb<DummyGene> = Arb.gene(isValid = isValid),
-) = arbitrary {
+): Arb<Chromosome<Int, DummyGene>> = arbitrary {
     ChromosomeImpl(List(size.bind()) { gene.bind() })
 }
 
 fun Arb.Companion.booleanChromosome(
     size: Arb<Int> = int(0..10),
-    gene: Arb<BooleanGene> = booleanGene(),
+    gene: Arb<BooleanGene> = arbBooleanGene(),
 ) = arbitrary {
     BooleanChromosome(List(size.bind()) { gene.bind() })
 }
 
-fun Arb.Companion.charChromosome(
-    size: Arb<Int> = int(0..10),
-    gene: Arb<CharGene> = Arb.charGene(),
+fun arbCharChromosome(
+    size: Arb<Int> = Arb.int(0..10),
+    gene: Arb<CharGene> = arbCharGene(),
 ) = arbitrary {
     CharChromosome(List(size.bind()) { gene.bind() })
 }
 
-fun Arb.Companion.nothingChromosome(
-    size: Arb<Int> = int(0..10),
+/**
+ * Generates an arbitrary generator for `NothingChromosome` instances, designed for property-based testing in scenarios
+ * where a chromosome with no functional genes is required. It's particularly useful for simulating edge cases or
+ * default states in evolutionary algorithm testing.
+ *
+ * @param size
+ *  An optional `Arb<Int>` instance that specifies the number of `NothingGene` elements in the chromosome, with a
+ *  default range of 0 to 10.
+ * @return An `Arb<NothingChromosome>` that produces `NothingChromosome` instances with the specified number of
+ *  `NothingGene` elements.
+ */
+fun arbNothingChromosome(
+    size: Arb<Int> = Arb.int(0..10),
 ) = arbitrary {
     NothingChromosome(List(size.bind()) { NothingGene })
 }
@@ -116,14 +122,30 @@ fun Arb.Companion.nothingChromosome(
  *   Defaults to [doubleGene()], which generates arbitrary instances of [DoubleGene].
  * @return An [Arb] that generates instances of [DoubleChromosome] with a specified number of genes.
  */
-fun Arb.Companion.doubleChromosome(
-    size: Arb<Int> = int(0..5),
-    gene: Arb<DoubleGene> = doubleGene(),
+fun arbDoubleChromosome(
+    size: Arb<Int> = Arb.int(0..5),
+    gene: Arb<DoubleGene> = arbDoubleGene(),
 ) = arbitrary {
     DoubleChromosome(List(size.bind()) { gene.bind() })
 }
 
-fun Arb.Companion.intChromosome(size: Arb<Int> = int(0..5), gene: Arb<IntGene> = intGene()) = arbitrary {
+/**
+ * Creates an arbitrary generator for `IntChromosome` instances, aimed at property-based testing within genetic
+ * algorithms.
+ *
+ * @param size
+ *  An optional `Arb<Int>` instance specifying the number of `IntGene` elements in the chromosome, defaulting to a range
+ *  of 0 to 5.
+ * @param gene
+ *  An optional `Arb<IntGene>` instance for generating the genes within the chromosome, defaulting to a standard
+ *  `IntGene` configuration.
+ * @return An `Arb<IntChromosome>` that produces `IntChromosome` instances with the specified number and configuration
+ *  of `IntGene` elements.
+ */
+fun arbIntChromosome(
+    size: Arb<Int> = Arb.int(0..5),
+    gene: Arb<IntGene> = arbIntGene()
+) = arbitrary {
     IntChromosome(List(size.bind()) { gene.bind() })
 }
 
@@ -207,7 +229,7 @@ fun <T, G> Arb.Companion.numberChromosomeFactory(
  * ### Example:
  * Generating a factory for creating [DoubleChromosome] instances with specific ranges and filters:
  * ```kotlin
- * val chromosomeFactoryArb = Arb.doubleChromosomeFactory(
+ * val chromosomeFactoryArb = arbDoubleChromosomeFactory(
  *     ranges = Arb.list(range(Arb.double(0.0, 1.0), Arb.double(1.0, 2.0)), 0..5).map { it.toMutableList() },
  *     filters = Arb.list(constant { value: Double -> value > 0.5 }, 0..5).map { it.toMutableList() }
  * )
@@ -219,18 +241,18 @@ fun <T, G> Arb.Companion.numberChromosomeFactory(
  *
  * @return An [Arb] that generates instances of [DoubleChromosome.Factory].
  */
-fun Arb.Companion.doubleChromosomeFactory(
-    size: Arb<Int> = int(1..5),
+fun arbDoubleChromosomeFactory(
+    size: Arb<Int> = Arb.int(1..5),
     ranges: ((size: Int) -> Arb<MutableList<ClosedRange<Double>>>)? = {
-        list(
-            range(double(), double()).filter { range ->
+        Arb.list(
+            arbRange(Arb.double(), Arb.double()).filter { range ->
                 range.start < range.endInclusive && range.start.isFinite() && range.endInclusive.isFinite()
             },
             it..it
         ).map { ls -> ls.toMutableList() }
     },
     filters: ((size: Int) -> Arb<MutableList<(Double) -> Boolean>>)? = {
-        list(constant { _: Double -> true }, it..it).map { ls -> ls.toMutableList() }
+        Arb.list(Arb.constant { _: Double -> true }, it..it).map { ls -> ls.toMutableList() }
     },
 ): Arb<DoubleChromosome.Factory> = arbitrary {
     DoubleChromosome.Factory().apply {

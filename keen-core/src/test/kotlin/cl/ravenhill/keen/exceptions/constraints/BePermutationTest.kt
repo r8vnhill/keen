@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -20,16 +20,20 @@ class BePermutationTest : FreeSpec({
     "A BePermutation constraint" - {
         "should have a validator function that" - {
             "returns true when the collection is a permutation" {
-                checkAll(Arb.list(Arb.int()).filter { it.distinct().size == it.size }) { list ->
+                checkAll(permutation()) { list ->
                     BePermutation.validator(list).shouldBeTrue()
                 }
             }
 
             "returns false when the collection is not a permutation" {
-                checkAll(Arb.list(Arb.int()).filter { it.distinct().size != it.size }) { list ->
+                checkAll(nonPermutation()) { list ->
                     BePermutation.validator(list).shouldBeFalse()
                 }
             }
         }
     }
 })
+
+private fun permutation(): Arb<List<Int>> = Arb.list(Arb.int()).filter { it.distinct().size == it.size }
+
+private fun nonPermutation(): Arb<List<Int>> = Arb.list(Arb.int()).filter { it.distinct().size != it.size }

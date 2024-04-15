@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -8,17 +8,17 @@ package cl.ravenhill.keen.operators.selection
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ResetDomainRandomListener
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
-import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
-import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
-import cl.ravenhill.keen.arb.operators.tournamentSelector
-import cl.ravenhill.keen.arb.rngPair
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
+import cl.ravenhill.keen.arb.operators.arbTournamentSelector
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
-import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
@@ -59,9 +59,9 @@ class TournamentSelectorTest : FreeSpec({
         "when selecting individuals from a population" - {
             "should return the specified number of individuals" {
                 checkAll(
-                    Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..25),
+                    arbPopulation(arbIndividual(Arb.genotype(arbNothingChromosome())), 1..25),
                     Arb.int(0..100),
-                    Arb.anyRanker<Nothing, NothingGene>()
+                    KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { population, n, ranker ->
                     TournamentSelector<Nothing, NothingGene>().select(population, n, ranker).size shouldBe n
                 }
@@ -69,12 +69,12 @@ class TournamentSelectorTest : FreeSpec({
 
             "should return the expected individuals" {
                 checkAll(
-                    PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
-                    Arb.tournamentSelector<Int, IntGene>(),
-                    Arb.population(Arb.individual(Arb.genotype(Arb.intChromosome())), 1..25),
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
+                    arbTournamentSelector<Int, IntGene>(),
+                    arbPopulation(arbIndividual(Arb.genotype(arbIntChromosome())), 1..25),
                     Arb.int(0..100),
-                    Arb.anyRanker<Int, IntGene>(),
-                    Arb.rngPair()
+                    KeenArb.anyRanker<Int, IntGene>(),
+                    arbRngPair()
                 ) { selector, population, n, ranker, (rng1, rng2) ->
                     Domain.random = rng1
                     val selected = selector.select(population, n, ranker)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -7,8 +7,8 @@
 package cl.ravenhill.keen.assertions
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ResetDomainRandomListener
-import cl.ravenhill.keen.arb.rngPair
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.mixins.FilterMutableListContainer
@@ -22,7 +22,6 @@ import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.next
 import io.kotest.property.checkAll
@@ -209,9 +208,9 @@ suspend fun <T, G, F> `validate genes with specified range and factory`(
       G : Gene<T, G>, G : Filterable<T>, G : Ranged<T>,
       F : Chromosome.Factory<T, G>, F : RangeMutableListContainer<T> {
     checkAll(
-        PropTestConfig(listeners = listOf(ResetDomainRandomListener)),
+        PropTestConfig(listeners = listOf(ResetDomainListener)),
         Arb.list(arb, 1..50).map { it.toMutableList() },
-        Arb.rngPair()
+        arbRngPair()
     ) { ranges, (r1, r2) ->
         Domain.random = r1
         val factory = factoryBuilder()

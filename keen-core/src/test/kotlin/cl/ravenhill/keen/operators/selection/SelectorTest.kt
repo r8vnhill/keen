@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -9,12 +9,12 @@ package cl.ravenhill.keen.operators.selection
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.arb.evolution.evolutionState
-import cl.ravenhill.keen.arb.genetic.chromosomes.doubleChromosome
+import cl.ravenhill.keen.arb.evolution.arbEvolutionState
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
-import cl.ravenhill.keen.arb.individualRanker
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
+import cl.ravenhill.keen.arb.arbIndividualRanker
 import cl.ravenhill.keen.arb.operators.selector
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.evolution.EvolutionState
@@ -36,7 +36,7 @@ class SelectorTest : FreeSpec({
             "the population is empty" {
                 checkAll(
                     Arb.selector<Double, DoubleGene>(),
-                    Arb.individualRanker(),
+                    arbIndividualRanker(),
                     Arb.int()
                 ) { selector, ranker, count ->
                     shouldThrow<CompositeException> {
@@ -51,12 +51,12 @@ class SelectorTest : FreeSpec({
                 checkAll(
                     Arb.selector<Double, DoubleGene>(),
                     Arb.negativeInt(),
-                    Arb.evolutionState(
-                        Arb.population(
-                            Arb.individual(Arb.genotype(Arb.doubleChromosome())),
+                    arbEvolutionState(
+                        arbPopulation(
+                            arbIndividual(Arb.genotype(arbDoubleChromosome())),
                             1..10
                         ),
-                        Arb.individualRanker(),
+                        arbIndividualRanker(),
                     )
                 ) { selector, count, state ->
                     shouldThrow<CompositeException> {
@@ -71,12 +71,12 @@ class SelectorTest : FreeSpec({
         "should select the specified number of individuals" {
             checkAll(
                 Arb.selector<Double, DoubleGene>(),
-                Arb.evolutionState(
-                    Arb.population(
-                        Arb.individual(Arb.genotype(Arb.doubleChromosome())),
+                arbEvolutionState(
+                    arbPopulation(
+                        arbIndividual(Arb.genotype(arbDoubleChromosome())),
                         1..10
                     ),
-                    Arb.individualRanker(),
+                    arbIndividualRanker(),
                 ).map {
                     it to Arb.int(1..it.size).next()
                 }

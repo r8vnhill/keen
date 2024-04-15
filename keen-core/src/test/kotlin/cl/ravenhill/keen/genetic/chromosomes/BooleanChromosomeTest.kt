@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -8,7 +8,7 @@ package cl.ravenhill.keen.genetic.chromosomes
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.keen.arb.genetic.chromosomes.booleanChromosome
-import cl.ravenhill.keen.arb.genetic.genes.booleanGene
+import cl.ravenhill.keen.arb.genetic.genes.arbBooleanGene
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import io.kotest.assertions.throwables.shouldThrow
@@ -26,14 +26,14 @@ class BooleanChromosomeTest : FreeSpec({
 
     "A Boolean Chromosome instance" - {
         "should have a genes property that is set according to the constructor" {
-            checkAll(Arb.list(Arb.booleanGene())) { genes ->
+            checkAll(Arb.list(arbBooleanGene())) { genes ->
                 val chromosome = BooleanChromosome(genes)
                 chromosome.genes shouldBe genes
             }
         }
 
         "can be duplicated with a new set of genes" {
-            checkAll(Arb.booleanChromosome(), Arb.list(Arb.booleanGene())) { chromosome, newGenes ->
+            checkAll(Arb.booleanChromosome(), Arb.list(arbBooleanGene())) { chromosome, newGenes ->
                 val duplicatedChromosome = chromosome.duplicateWithGenes(newGenes)
                 duplicatedChromosome.genes shouldBe newGenes
             }

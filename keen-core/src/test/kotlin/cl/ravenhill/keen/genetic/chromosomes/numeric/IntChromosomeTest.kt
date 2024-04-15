@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic.chromosomes.numeric
 
-import cl.ravenhill.keen.arb.genetic.chromosomes.intChromosome
-import cl.ravenhill.keen.arb.genetic.genes.intGene
-import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.arb.arbRange
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
+import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
 import cl.ravenhill.keen.assertions.`each gene should have the specified range`
 import cl.ravenhill.keen.assertions.`each gene should pass the specified filter`
 import cl.ravenhill.keen.assertions.`test chromosome gene consistency`
@@ -28,16 +28,16 @@ class IntChromosomeTest : FreeSpec({
     "An Int Chromosome instance" - {
         "should have a genes property that" - {
             "is set according to the constructor" {
-                `test chromosome gene consistency`(Arb.intGene()) { IntChromosome(it) }
+                `test chromosome gene consistency`(arbIntGene()) { IntChromosome(it) }
             }
 
             "is set according to the vararg constructor" {
-                `test chromosome gene consistency`(Arb.intGene()) { IntChromosome(*it.toTypedArray()) }
+                `test chromosome gene consistency`(arbIntGene()) { IntChromosome(*it.toTypedArray()) }
             }
         }
 
         "can be duplicated with a new set of genes" {
-            `test that a gene can be duplicated with a new set of genes`(Arb.intChromosome(), Arb.intGene())
+            `test that a gene can be duplicated with a new set of genes`(arbIntChromosome(), arbIntGene())
         }
     }
 
@@ -47,7 +47,7 @@ class IntChromosomeTest : FreeSpec({
                 IntChromosome.Factory().filters.shouldBeEmpty()
             }
 
-            "can be set" {
+            "can be mutated" {
                 val filters = mutableListOf({ _: Int -> true })
                 val factory = IntChromosome.Factory().apply { this.filters = filters }
                 factory.filters shouldBe filters
@@ -94,7 +94,7 @@ class IntChromosomeTest : FreeSpec({
             }
 
             "with an explicit range should use the provided range" {
-                `validate all genes against single range`(Arb.range(Arb.int(), Arb.int())) {
+                `validate all genes against single range`(arbRange(Arb.int(), Arb.int())) {
                     IntChromosome.Factory()
                 }
             }
@@ -113,7 +113,7 @@ class IntChromosomeTest : FreeSpec({
 
             "with valid ranges and filters should create a chromosome with genes that satisfy the constraints" {
                 `validate genes with specified range and factory`(
-                    Arb.range(Arb.int(), Arb.int()), { rng, ranges, index ->
+                    arbRange(Arb.int(), Arb.int()), { rng, ranges, index ->
                         IntGene(rng.nextIntInRange(ranges[index]), ranges[index])
                     }) { IntChromosome.Factory() }
             }

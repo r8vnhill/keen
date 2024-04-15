@@ -1,13 +1,12 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.arb.genetic.genes
 
-import cl.ravenhill.jakt.utils.DoubleRange
-import cl.ravenhill.keen.arb.datatypes.orderedPair
-import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.arb.arbRange
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -95,13 +94,13 @@ fun Arb.Companion.gene(value: Arb<Int> = int(), isValid: Arb<Boolean> = boolean(
  *   arbitrary that generates `true` or `false` values with equal probability.
  * @return An `Arb<BooleanGene>`, capable of generating `BooleanGene` instances based on the provided boolean values.
  */
-fun Arb.Companion.booleanGene(value: Arb<Boolean> = boolean()) = arbitrary {
+fun arbBooleanGene(value: Arb<Boolean> = Arb.boolean()) = arbitrary {
     if (value.bind()) BooleanGene.True else BooleanGene.False
 }
 
-fun Arb.Companion.charGene(
-    value: Arb<Char> = char(),
-    range: Arb<ClosedRange<Char>> = range(char(), char()),
+fun arbCharGene(
+    value: Arb<Char> = Arb.char(),
+    range: Arb<ClosedRange<Char>> = arbRange(Arb.char(), Arb.char()),
     filter: (Char) -> Boolean = { true },
 ) = arbitrary {
     CharGene(value.bind(), range.bind(), filter)
@@ -124,7 +123,7 @@ fun Arb.Companion.charGene(
  * ### Generating a [DoubleGene] with a specific range and custom filter:
  * ```kotlin
  * val doubleGeneArb = Arb.doubleGene(
- *     range = Arb.doubleRange(0.0..10.0), // Specifying the range
+ *     range = Arb.ClosedFloatingPointRange<Double>(0.0..10.0), // Specifying the range
  *     filter = { it % 2 == 0.0 }           // Custom filter for even values
  * )
  * val doubleGene = doubleGeneArb.bind()   // Resulting DoubleGene will have an even value between 0.0 and 10.0
@@ -133,7 +132,7 @@ fun Arb.Companion.charGene(
  * This generator is useful in scenarios where genes representing floating-point values are required to have
  * specific characteristics, such as falling within a certain range or satisfying certain conditions.
  *
- * @param range An [Arb] of [DoubleRange] representing the range within which the gene's value should fall.
+ * @param range An [Arb] of [ClosedFloatingPointRange<Double>] representing the range within which the gene's value should fall.
  *              Defaults to a range generated from two double values, ensuring the lower bound is less than
  *              the upper bound.
  * @param value An [Arb] of [Double] for generating the gene's value within the specified range. Defaults to
@@ -143,20 +142,32 @@ fun Arb.Companion.charGene(
  *
  * @return An [Arb] that generates [DoubleGene] instances with the specified configurations.
  */
-fun Arb.Companion.doubleGene(
-    range: Arb<DoubleRange> = orderedPair(double().filterNot { it.isNaN() || it.isInfinite() })
+fun arbDoubleGene(
+    range: Arb<ClosedFloatingPointRange<Double>> = arbOrderedPair(Arb.double().filterNot { it.isNaN() || it.isInfinite() })
         .filter { (lo, hi) -> lo < hi }.map { (lo, hi) -> lo..hi },
     value: Arb<Double> = range.map {
-        double(it).next()
+        Arb.double(it).next()
     },
     filter: (Double) -> Boolean = { true },
 ) = arbitrary {
     DoubleGene(value.bind(), range.bind(), filter)
 }
 
-fun Arb.Companion.intGene(
-    value: Arb<Int> = int(),
-    range: Arb<ClosedRange<Int>> = range(int(), int()),
+/**
+ * Creates an arbitrary generator for `IntGene` instances, suitable for property-based testing.
+ * This generator allows customization of the gene's value, its valid range, and a filter function
+ * for additional value constraints. It's an extension function of the `Arb` companion object.
+ *
+ * @param value An `Arb<Int>` generator for the gene's value. Defaults to a generator for any `Int`.
+ * @param range An `Arb<ClosedRange<Int>>` generator for the gene's valid range. Defaults to a
+ *              generator that produces any `ClosedRange<Int>`.
+ * @param filter A predicate function to apply additional constraints on the gene's value. Defaults
+ *               to a function that accepts all values.
+ * @return An `Arb<IntGene>` that generates `IntGene` instances with the specified properties.
+ */
+fun arbIntGene(
+    value: Arb<Int> = Arb.int(),
+    range: Arb<ClosedRange<Int>> = arbRange(Arb.int(), Arb.int()),
     filter: (Int) -> Boolean = { true },
 ) = arbitrary {
     IntGene(value.bind(), range.bind(), filter)

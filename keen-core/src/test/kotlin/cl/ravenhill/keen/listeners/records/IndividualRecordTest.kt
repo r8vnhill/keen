@@ -1,16 +1,14 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 
 package cl.ravenhill.keen.listeners.records
 
-import cl.ravenhill.keen.arb.genetic.chromosomes.chromosome
-import cl.ravenhill.keen.arb.genetic.genes.DummyGene
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.listeners.individualRecord
-import cl.ravenhill.keen.listeners.records.IndividualRecord
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -22,7 +20,7 @@ class IndividualRecordTest : FreeSpec({
 
     "A Generation Record" - {
         "can be created with a generation number" {
-            checkAll(Arb.genotype(Arb.chromosome()), Arb.double().filterNot { it.isNaN() }) { genotype, fitness ->
+            checkAll(Arb.genotype(arbChromosome()), Arb.double().filterNot { it.isNaN() }) { genotype, fitness ->
                 IndividualRecord(genotype, fitness).apply {
                     this.genotype shouldBe genotype
                     this.fitness shouldBe fitness
@@ -31,7 +29,7 @@ class IndividualRecordTest : FreeSpec({
         }
 
         "can be converted to an Individual" {
-            checkAll(Arb.individualRecord(Arb.genotype(Arb.chromosome()))) { record ->
+            checkAll(Arb.individualRecord(Arb.genotype(arbChromosome()))) { record ->
                 record.toIndividual().apply {
                     this.genotype shouldBe record.genotype
                     this.fitness shouldBe record.fitness

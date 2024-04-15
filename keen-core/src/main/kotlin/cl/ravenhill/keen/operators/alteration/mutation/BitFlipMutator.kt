@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -13,6 +13,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator.Companion.DEFAULT_INDIVIDUAL_RATE
 
 
 /**
@@ -104,11 +105,13 @@ class BitFlipMutator<G>(
      *   occurs.
      */
     override fun mutateChromosome(chromosome: Chromosome<Boolean, G>) =
-        if (Domain.random.nextDouble() < chromosomeRate) {
-            chromosome.duplicateWithGenes(chromosome.genes.map { mutateGene(it) })
-        } else {
-            chromosome
-        }
+        chromosome.duplicateWithGenes(chromosome.genes.map {
+            if (Domain.random.nextDouble() < geneRate) {
+                mutateGene(it)
+            } else {
+                it
+            }
+        })
 
     /**
      * Mutates a gene by flipping its Boolean value.
@@ -130,11 +133,7 @@ class BitFlipMutator<G>(
      * @return A new gene instance with the flipped value if mutation occurs, or the original gene if no mutation
      *   happens.
      */
-    override fun mutateGene(gene: G): G = if (Domain.random.nextDouble() < geneRate) {
-        gene.duplicateWithValue(!gene.value)
-    } else {
-        gene
-    }
+    override fun mutateGene(gene: G): G = gene.duplicateWithValue(!gene.value)
 
     /**
      * Companion object for default mutation rate constants.

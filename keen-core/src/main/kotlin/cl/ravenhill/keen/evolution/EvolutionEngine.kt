@@ -1,16 +1,16 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.EvolutionEngine.Factory
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
@@ -18,6 +18,7 @@ import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
+import cl.ravenhill.keen.exceptions.EngineException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -536,33 +537,35 @@ class EvolutionEngine<T, G>(
         val genotypeFactory: Genotype.Factory<T, G>,
     ) where G : Gene<T, G> {
 
+        @OptIn(ExperimentalJakt::class)
         var populationSize: Int = DEFAULT_POPULATION_SIZE
             set(value) = constraints {
-                "Population size ($value) must be positive." { value must BePositive }
+                "Population size ($value) must be positive."(::EngineException) { value must BePositive }
             }.let { field = value }
 
+        @OptIn(ExperimentalJakt::class)
         var survivalRate: Double = DEFAULT_SURVIVAL_RATE
             set(value) = constraints {
-                "Survival rate ($value) must be between 0 and 1." { value must BeInRange(0.0..1.0) }
+                "Survival rate ($value) must be between 0 and 1."(::EngineException) {
+                    value must BeInRange(0.0..1.0)
+                }
             }.let { field = value }
 
-        var parentSelector: Selector<T, G> = TournamentSelector()
+        var parentSelector: Selector<T, G> = defaultParentSelector()
 
-        var survivorSelector: Selector<T, G> = TournamentSelector()
+        var survivorSelector: Selector<T, G> = defaultSurvivorSelector()
 
-        var alterers: MutableList<Alterer<T, G>> = mutableListOf()
+        var alterers: MutableList<Alterer<T, G>> = defaultAlterers()
 
-        var limits: MutableList<Limit<T, G>> = mutableListOf()
+        var limits: MutableList<Limit<T, G>> = defaultLimits()
 
-        var ranker: IndividualRanker<T, G> = FitnessMaxRanker()
+        var ranker: IndividualRanker<T, G> = defaultRanker()
 
-        var listeners: MutableList<EvolutionListener<T, G>> = mutableListOf()
+        var listeners: MutableList<EvolutionListener<T, G>> = defaultListeners()
 
-        var evaluator = EvaluationExecutor.Factory<T, G>().apply {
-            creator = { SequentialEvaluator(it) }
-        }
+        var evaluator: EvaluationExecutor.Factory<T, G> = defaultEvaluator()
 
-        var interceptor = EvolutionInterceptor.identity<T, G>()
+        var interceptor: EvolutionInterceptor<T, G> = defaultInterceptor()
 
         /**
          * Constructs and returns an instance of [EvolutionEngine] based on the current configuration of the factory.
@@ -596,6 +599,23 @@ class EvolutionEngine<T, G>(
              * Default survival rate for an evolutionary algorithm. Set to 0.4.
              */
             const val DEFAULT_SURVIVAL_RATE = 0.4
+
+            fun <T, G> defaultParentSelector() where G : Gene<T, G> = TournamentSelector<T, G>()
+            fun <T, G> defaultSurvivorSelector() where G : Gene<T, G> = TournamentSelector<T, G>()
+
+            fun <T, G> defaultAlterers() where G : Gene<T, G> = mutableListOf<Alterer<T, G>>()
+
+            fun <T, G> defaultLimits() where G : Gene<T, G> = mutableListOf<Limit<T, G>>()
+
+            fun <T, G> defaultRanker() where G : Gene<T, G> = FitnessMaxRanker<T, G>()
+
+            fun <T, G> defaultListeners() where G : Gene<T, G> = mutableListOf<EvolutionListener<T, G>>()
+
+            fun <T, G> defaultEvaluator() where G : Gene<T, G> = EvaluationExecutor.Factory<T, G>().apply {
+                creator = { SequentialEvaluator(it) }
+            }
+
+            fun <T, G> defaultInterceptor() where G : Gene<T, G> = EvolutionInterceptor.identity<T, G>()
         }
     }
 }

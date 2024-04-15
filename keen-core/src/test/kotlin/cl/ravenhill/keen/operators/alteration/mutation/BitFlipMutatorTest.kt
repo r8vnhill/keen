@@ -1,133 +1,108 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
-import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.keen.arb.datatypes.probability
-import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
-import cl.ravenhill.keen.exceptions.MutatorConfigException
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.genetic.chromosomes.booleanChromosome
+import cl.ravenhill.keen.arb.operators.arbBitFlipMutator
+import cl.ravenhill.keen.arb.arbRngPair
+import cl.ravenhill.keen.assertions.`test Gene Mutator gene rate`
+import cl.ravenhill.keen.assertions.`test Mutator individual rate property`
+import cl.ravenhill.keen.assertions.`test Mutator chromosome rate property`
 import cl.ravenhill.keen.genetic.genes.BooleanGene
-import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.filterNot
+import io.kotest.property.PropTestConfig
+import io.kotest.property.arbitrary.constant
 import io.kotest.property.checkAll
 
+@OptIn(ExperimentalKotest::class)
 class BitFlipMutatorTest : FreeSpec({
 
+    include(
+        `test Mutator individual rate property`(
+            "BitFlipMutator.DEFAULT_INDIVIDUAL_RATE" to BitFlipMutator.DEFAULT_INDIVIDUAL_RATE,
+            { chromosomeRate, geneRate ->
+                BitFlipMutator<BooleanGene>(
+                    chromosomeRate = chromosomeRate,
+                    geneRate = geneRate
+                )
+            },
+            { individualRate, chromosomeRate, geneRate -> BitFlipMutator(individualRate, chromosomeRate, geneRate) }
+        )
+    )
+
+    include(`test Mutator chromosome rate property`(
+        "BitFlipMutator.DEFAULT_CHROMOSOME_RATE" to BitFlipMutator.DEFAULT_CHROMOSOME_RATE,
+        { individualRate, geneRate ->
+            BitFlipMutator<BooleanGene>(
+                individualRate = individualRate,
+                geneRate = geneRate
+            )
+        },
+        { individualRate, chromosomeRate, geneRate -> BitFlipMutator(individualRate, chromosomeRate, geneRate) }
+    ))
+
+    include(`test Gene Mutator gene rate`(
+        "BitFlipMutator.DEFAULT_GENE_RATE" to BitFlipMutator.DEFAULT_GENE_RATE,
+        { individualRate, chromosomeRate ->
+            BitFlipMutator<BooleanGene>(
+                individualRate = individualRate,
+                chromosomeRate = chromosomeRate
+            )
+        },
+        { individualRate, chromosomeRate, geneRate -> BitFlipMutator(individualRate, chromosomeRate, geneRate) }
+    ))
+
     "A Bit-Flip Mutator instance" - {
-        "should have an individual rate property that" - {
-            "defaults to [BitFlipMutator.DEFAULT_INDIVIDUAL_RATE]" {
-                checkAll(Arb.probability(), Arb.probability()) { chromosomeRate, geneRate ->
-                    val mutator = BitFlipMutator<BooleanGene>(
-                        chromosomeRate = chromosomeRate,
-                        geneRate = geneRate
-                    )
-                    mutator.individualRate shouldBe BitFlipMutator.DEFAULT_INDIVIDUAL_RATE
-                }
-            }
-
-            "can be set to a value between 0 and 1" {
-                checkAll(
-                    Arb.probability(),
-                    Arb.probability(),
-                    Arb.probability()
-                ) { individualRate, chromosomeRate, geneRate ->
-                    val mutator = BitFlipMutator<BooleanGene>(individualRate, chromosomeRate, geneRate)
-                    mutator.individualRate shouldBe individualRate
-                }
-            }
-
-            "should throw an exception if set to a value that's not between 0 and 1" {
-                checkAll(
-                    Arb.double().filterNot { it in 0.0..1.0 },
-                    Arb.double(),
-                    Arb.double()
-                ) { individualRate, chromosomeRate, geneRate ->
-                    shouldThrow<CompositeException> {
-                        BitFlipMutator<BooleanGene>(individualRate, chromosomeRate, geneRate)
-                    }.shouldHaveInfringement<MutatorConfigException>(
-                        "The individual rate ($individualRate) must be in 0.0..1.0"
-                    )
-                }
+        "can mutate a gene" {
+            checkAll(arbBitFlipMutator<BooleanGene>()) { mutator ->
+                mutator.mutateGene(BooleanGene.True) shouldBe BooleanGene.False
+                mutator.mutateGene(BooleanGene.False) shouldBe BooleanGene.True
             }
         }
 
-        "should have a chromosome rate property that" - {
-            "defaults to [BitFlipMutator.DEFAULT_CHROMOSOME_RATE]" {
-                checkAll(Arb.probability(), Arb.probability()) { individualRate, geneRate ->
-                    val mutator = BitFlipMutator<BooleanGene>(
-                        individualRate = individualRate,
-                        geneRate = geneRate
-                    )
-                    mutator.chromosomeRate shouldBe BitFlipMutator.DEFAULT_CHROMOSOME_RATE
-                }
-            }
-
-            "can be set to a value between 0 and 1" {
+        "when mutating a chromosome" - {
+            "should perform no mutations if the gene rate is set to 0" {
                 checkAll(
-                    Arb.probability(),
-                    Arb.probability(),
-                    Arb.probability()
-                ) { individualRate, chromosomeRate, geneRate ->
-                    val mutator = BitFlipMutator<BooleanGene>(individualRate, chromosomeRate, geneRate)
-                    mutator.chromosomeRate shouldBe chromosomeRate
+                    arbBitFlipMutator<BooleanGene>(geneRate = Arb.constant(0.0)),
+                    Arb.booleanChromosome()
+                ) { mutator, chromosome ->
+                    mutator.mutateChromosome(chromosome) shouldBe chromosome
                 }
             }
 
-            "should throw an exception if set to a value that's not between 0 and 1" {
+            "should mutate all genes if the gene rate is set to 1" {
                 checkAll(
-                    Arb.double(),
-                    Arb.double().filterNot { it in 0.0..1.0 },
-                    Arb.double()
-                ) { individualRate, chromosomeRate, geneRate ->
-                    shouldThrow<CompositeException> {
-                        BitFlipMutator<BooleanGene>(individualRate, chromosomeRate, geneRate)
-                    }.shouldHaveInfringement<MutatorConfigException>(
-                        "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"
-                    )
-                }
-            }
-        }
-
-        "should have a gene rate property that" - {
-            "defaults to [BitFlipMutator.DEFAULT_GENE_RATE]" {
-                checkAll(Arb.probability(), Arb.probability()) { individualRate, chromosomeRate ->
-                    val mutator = BitFlipMutator<BooleanGene>(
-                        individualRate = individualRate,
-                        chromosomeRate = chromosomeRate
-                    )
-                    mutator.geneRate shouldBe BitFlipMutator.DEFAULT_GENE_RATE
+                    arbBitFlipMutator<BooleanGene>(geneRate = Arb.constant(1.0)),
+                    Arb.booleanChromosome()
+                ) { mutator, chromosome ->
+                    mutator.mutateChromosome(chromosome) shouldBe chromosome.map { !it }
                 }
             }
 
-            "can be set to a value between 0 and 1" {
+            "should mutate some genes if the gene rate is set to a value between 0 and 1" {
                 checkAll(
-                    Arb.probability(),
-                    Arb.probability(),
-                    Arb.probability()
-                ) { individualRate, chromosomeRate, geneRate ->
-                    val mutator = BitFlipMutator<BooleanGene>(individualRate, chromosomeRate, geneRate)
-                    mutator.geneRate shouldBe geneRate
-                }
-            }
-
-            "should throw an exception if set to a value that's not between 0 and 1" {
-                checkAll(
-                    Arb.double(),
-                    Arb.double(),
-                    Arb.double().filterNot { it in 0.0..1.0 }
-                ) { individualRate, chromosomeRate, geneRate ->
-                    shouldThrow<CompositeException> {
-                        BitFlipMutator<BooleanGene>(individualRate, chromosomeRate, geneRate)
-                    }.shouldHaveInfringement<MutatorConfigException>(
-                        "The gene rate ($geneRate) must be in 0.0..1.0"
-                    )
+                    PropTestConfig(listeners = listOf(ResetDomainListener)),
+                    arbBitFlipMutator<BooleanGene>(),
+                    Arb.booleanChromosome(),
+                    arbRngPair()
+                ) { mutator, chromosome, (rng1, rng2) ->
+                    Domain.random = rng1
+                    val mutated = mutator.mutateChromosome(chromosome)
+                    mutated.forEachIndexed { index, gene ->
+                        if (rng2.nextDouble() < mutator.geneRate) {
+                            gene shouldBe !chromosome[index]
+                        } else {
+                            gene shouldBe chromosome[index]
+                        }
+                    }
                 }
             }
         }

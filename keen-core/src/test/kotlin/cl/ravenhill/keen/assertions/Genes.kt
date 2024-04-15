@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -7,25 +7,19 @@
 package cl.ravenhill.keen.assertions
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.arb.genetic.genes.doubleGene
-import cl.ravenhill.keen.arb.range
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.arbRange
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.exceptions.AbsurdOperation
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.mixins.Filterable
 import cl.ravenhill.keen.mixins.Ranged
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.filterNot
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.long
-import io.kotest.property.arbitrary.map
+import io.kotest.property.PropTestConfig
 import io.kotest.property.checkAll
 import kotlin.random.Random
 
@@ -56,7 +50,7 @@ suspend fun <T, G> FreeSpecContainerScope.`test that the gene range is set to th
         }
 
         "is set to the range provided in the constructor" {
-            checkAll(arb, Arb.range(arb, arb)) { value, range ->
+            checkAll(arb, arbRange(arb, arb)) { value, range ->
                 arbRangeFactory(value, range).range shouldBe range
             }
         }
@@ -84,13 +78,18 @@ suspend fun <T, G> FreeSpecContainerScope.`test that the gene filter is set to t
     }
 }
 
+@OptIn(ExperimentalKotest::class)
 suspend fun <T, G> FreeSpecContainerScope.`test that a gene can generate a value`(
     arb: Arb<T>,
     geneFactory: (T) -> G,
     generator: (Random, ClosedRange<T>) -> T,
 ) where T : Comparable<T>, G : Gene<T, G>, G : Ranged<T> {
     "can generate a random value" {
-        checkAll(arb, Arb.long().map { Random(it) to Random(it) }) { value, (r1, r2) ->
+        checkAll(
+            PropTestConfig(listeners = listOf(ResetDomainListener)),
+            arb,
+            arbRngPair()
+        ) { value, (r1, r2) ->
             Domain.random = r1
             val gene = geneFactory(value)
             gene.generator() shouldBe generator(r2, gene.range)
@@ -101,7 +100,7 @@ suspend fun <T, G> FreeSpecContainerScope.`test that a gene can generate a value
 suspend fun <T, G> FreeSpecContainerScope.`test that a gene can duplicate itself`(
     arb: Arb<T>,
     gene: Arb<G>
-) where G : Gene<T, G>, G: Ranged<T>, G: Filterable<T> {
+) where G : Gene<T, G>, G : Ranged<T>, G : Filterable<T> {
     "can create a copy with a different value" {
         checkAll(gene, arb) { gene, newValue ->
             val copy = gene.duplicateWithValue(newValue)

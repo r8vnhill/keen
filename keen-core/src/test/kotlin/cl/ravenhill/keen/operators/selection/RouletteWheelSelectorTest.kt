@@ -1,16 +1,17 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.operators.selection
 
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.anyRanker
-import cl.ravenhill.keen.arb.genetic.chromosomes.nothingChromosome
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.arb.genetic.individual
-import cl.ravenhill.keen.arb.genetic.population
-import cl.ravenhill.keen.arb.operators.rouletteWheelSelector
+import cl.ravenhill.keen.arb.genetic.arbIndividual
+import cl.ravenhill.keen.arb.genetic.arbPopulation
+import cl.ravenhill.keen.arb.operators.arbRouletteWheelSelector
 import cl.ravenhill.keen.assertions.should.shouldBeEq
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
@@ -18,7 +19,6 @@ import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.FitnessMinRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
-import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
@@ -42,9 +42,9 @@ class RouletteWheelSelectorTest : FreeSpec({
         "when assigning a probability to each individual" - {
             "should return a list of probabilities that sum 1" {
                 checkAll(
-                    Arb.rouletteWheelSelector<Nothing, NothingGene>(),
-                    Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..100),
-                    Arb.anyRanker<Nothing, NothingGene>()
+                    arbRouletteWheelSelector<Nothing, NothingGene>(),
+                    arbPopulation(arbIndividual(Arb.genotype(arbNothingChromosome())), 1..100),
+                    KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { selector, population, ranker ->
                     val probabilities = selector.probabilities(population, ranker)
                     probabilities.sum() shouldBeEq 1.0
@@ -102,10 +102,10 @@ class RouletteWheelSelectorTest : FreeSpec({
         "when selecting individuals from a population" - {
             "should return the specified number of individuals" {
                 checkAll(
-                    Arb.rouletteWheelSelector<Nothing, NothingGene>(),
-                    Arb.population(Arb.individual(Arb.genotype(Arb.nothingChromosome())), 1..25),
+                    arbRouletteWheelSelector<Nothing, NothingGene>(),
+                    arbPopulation(arbIndividual(Arb.genotype(arbNothingChromosome())), 1..25),
                     Arb.int(0..100),
-                    Arb.anyRanker<Nothing, NothingGene>()
+                    KeenArb.anyRanker<Nothing, NothingGene>()
                 ) { selector, population, n, ranker ->
                     selector.select(population, n, ranker).size shouldBe n
                 }

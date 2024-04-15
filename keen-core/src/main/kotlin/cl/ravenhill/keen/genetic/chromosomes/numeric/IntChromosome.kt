@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -70,6 +70,38 @@ data class IntChromosome(override val genes: List<IntGene>) : NumberChromosome<I
      * @param genes Varargs of [IntGene] instances to be included in the chromosome.
      */
     constructor(vararg genes: IntGene) : this(genes.toList())
+
+    /**
+     * Constructs an [IntChromosome] using a variable number of integer values, converting each into an [IntGene] with
+     * default settings.
+     *
+     * This constructor is particularly useful for quick instantiation of chromosomes where genes are represented by
+     * simple integer values without the need for specifying complex constraints or ranges. Ideal for testing and simple
+     * use cases where detailed gene configuration is not necessary.
+     *
+     * ## Characteristics:
+     * - **Simplicity**: Facilitates the creation of [IntChromosome] with minimal setup, using default gene
+     *  configurations.
+     * - **Convenience**: Offers a straightforward approach to instantiate chromosomes with integer values, ideal for
+     * less complex scenarios.
+     *
+     * ## Usage:
+     * This constructor is best used in scenarios where the complexity of gene configurations is minimal, and the focus
+     * is on the ease of chromosome setup. It allows for the rapid setup of genetic models in tests or simplified
+     * models.
+     *
+     * ### Example:
+     * Creating an [IntChromosome] directly from integers, which are automatically encapsulated into [IntGene] instances
+     * with default behavior:
+     * ```kotlin
+     * val simpleChromosome = IntChromosome(5, 10, 15)
+     * ```
+     * Here, `IntChromosome` is instantiated directly with integers. Each integer is converted to an [IntGene] with a
+     * default gene behavior, simplifying the setup process.
+     *
+     * @param genes Varargs of integers, each representing the value for a single [IntGene].
+     */
+    constructor(vararg genes: Int) : this(genes.map { IntGene(it) })
 
     /**
      * Creates a new [IntChromosome] instance with specified list of [IntGene]s.

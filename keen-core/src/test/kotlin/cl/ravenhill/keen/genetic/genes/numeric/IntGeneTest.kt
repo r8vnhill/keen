@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
 package cl.ravenhill.keen.genetic.genes.numeric
 
-import cl.ravenhill.keen.arb.genetic.genes.intGene
+import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
 import cl.ravenhill.keen.assertions.`test that a gene can duplicate itself`
 import cl.ravenhill.keen.assertions.`test that a gene can generate a value`
 import cl.ravenhill.keen.assertions.`test that the gene filter is set to the expected filter`
@@ -42,11 +42,11 @@ class IntGeneTest : FreeSpec({
             Arb.int(), { IntGene(it) }, { random, range -> random.nextIntInRange(range) }
         )
 
-        `test that a gene can duplicate itself`(Arb.int(), Arb.intGene())
+        `test that a gene can duplicate itself`(Arb.int(), arbIntGene())
 
         "can verify its validity when" - {
             "the value is within the range and satisfies the filter" {
-                checkAll(Arb.intGene().filter {
+                checkAll(arbIntGene().filter {
                     it.value in it.range && it.filter(it.value)
                 }) { gene ->
                     gene.verify().shouldBeTrue()
@@ -54,13 +54,13 @@ class IntGeneTest : FreeSpec({
             }
 
             "the value is outside the range" {
-                checkAll(Arb.intGene().filter { it.value !in it.range }) { gene ->
+                checkAll(arbIntGene().filter { it.value !in it.range }) { gene ->
                     gene.verify().shouldBeFalse()
                 }
             }
 
             "the value does not satisfy the filter" {
-                checkAll(Arb.intGene { it > 0 }, Arb.int().filterNot { it > 0 }) { gene, newValue ->
+                checkAll(arbIntGene { it > 0 }, Arb.int().filterNot { it > 0 }) { gene, newValue ->
                     gene.copy(value = newValue).verify().shouldBeFalse()
                 }
             }
@@ -68,8 +68,8 @@ class IntGeneTest : FreeSpec({
 
         "can be averaged" {
             checkAll(
-                Arb.intGene(Arb.int(-100, 100)),
-                Arb.list(Arb.intGene(Arb.int(-100, 100)), 1..10),
+                arbIntGene(Arb.int(-100, 100)),
+                Arb.list(arbIntGene(Arb.int(-100, 100)), 1..10),
             ) { gene, genes ->
                 val expectedValue = (genes.map { it.value } + gene.value).average().toInt()
                 // +/- 1 to avoid rounding errors
@@ -79,25 +79,25 @@ class IntGeneTest : FreeSpec({
 
         "can be converted to" - {
             "a Double" {
-                checkAll(Arb.intGene()) { gene ->
+                checkAll(arbIntGene()) { gene ->
                     gene.toDouble() shouldBe gene.value.toDouble()
                 }
             }
 
             "an Int" {
-                checkAll(Arb.intGene()) { gene ->
+                checkAll(arbIntGene()) { gene ->
                     gene.toInt() shouldBe gene.value
                 }
             }
 
             "a String" {
-                checkAll(Arb.intGene()) { gene ->
+                checkAll(arbIntGene()) { gene ->
                     gene.toString() shouldBe "IntGene(value=${gene.value}, range=${gene.range})"
                 }
             }
 
             "a Detailed String" {
-                checkAll(Arb.intGene()) { gene ->
+                checkAll(arbIntGene()) { gene ->
                     gene.toDetailedString() shouldBe
                           "IntGene(value=${gene.value}, range=${gene.range}, filter=(${gene.filter})@${
                               System.identityHashCode(gene.filter)
@@ -108,13 +108,13 @@ class IntGeneTest : FreeSpec({
 
         "should have an equals method that" - {
             "is reflexive" {
-                checkAll(Arb.intGene()) { gene ->
+                checkAll(arbIntGene()) { gene ->
                     gene shouldBe gene
                 }
             }
 
             "is symmetric" {
-                checkAll(Arb.intGene()) { gene ->
+                checkAll(arbIntGene()) { gene ->
                     val other = gene.copy()
                     gene shouldBe other
                     other shouldBe gene
@@ -122,7 +122,7 @@ class IntGeneTest : FreeSpec({
             }
 
             "is transitive" {
-                checkAll(Arb.intGene()) { gene ->
+                checkAll(arbIntGene()) { gene ->
                     val other1 = gene.copy()
                     val other2 = gene.copy()
                     gene shouldBe other1
@@ -132,7 +132,7 @@ class IntGeneTest : FreeSpec({
             }
 
             "returns false when comparing to null" {
-                checkAll(Arb.intGene()) { gene ->
+                checkAll(arbIntGene()) { gene ->
                     gene shouldNotBe null
                 }
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.utils
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.arb.datatypes.nonNaNDoublePair
+import cl.ravenhill.keen.arb.datatypes.arbNonNaNDoublePair
 import cl.ravenhill.keen.assertions.should.shouldBeEq
 import cl.ravenhill.keen.assertions.should.shouldNotBeEq
 import io.kotest.common.ExperimentalKotest
@@ -47,7 +47,7 @@ class NumbersTest : FreeSpec({
         "be true if the difference between the values is less than the tolerance" {
             checkAll(
                 PropTestConfig(listeners = listOf(ResetEqualityThresholdListener)),
-                Arb.nonNaNDoublePair(Arb.double(-100_000_000.0..100_000_000.0)).map { (a, b) ->
+                arbNonNaNDoublePair(Arb.double(-100_000_000.0..100_000_000.0)).map { (a, b) ->
                     val threshold = Arb.double().filter { it > abs(a - b) }.next()
                     Triple(a, b, threshold)
                 }
@@ -60,7 +60,7 @@ class NumbersTest : FreeSpec({
         "be false if the difference between the values is greater than the tolerance" {
             checkAll(
                 PropTestConfig(listeners = listOf(ResetEqualityThresholdListener)),
-                Arb.nonNaNDoublePair(Arb.double(-100_000_000.0..100_000_000.0))
+                arbNonNaNDoublePair(Arb.double(-100_000_000.0..100_000_000.0))
                     .filter { abs(it.first - it.second) > 0.0 }
                     .map { (a, b) ->
                         val threshold = Arb.double(0.0..abs(a - b)).next()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Ignacio Slater M.
+ * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
  */
 
@@ -7,14 +7,14 @@
 package cl.ravenhill.keen.genetic.genes.numeric
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.arb.datatypes.orderedPair
-import cl.ravenhill.keen.arb.genetic.genes.doubleGene
-import cl.ravenhill.keen.assertions.`test that a gene can duplicate itself`
-import cl.ravenhill.keen.assertions.`test that a gene can generate a value`
-import cl.ravenhill.keen.assertions.`test that the gene filter is set to the expected filter`
-import cl.ravenhill.keen.assertions.`test that the gene range is set to the expected range`
-import cl.ravenhill.keen.assertions.`test that the gene value is set to the expected value`
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.ToStringMode
+import cl.ravenhill.keen.arb.datatypes.arbNonNaNDouble
+import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
+import cl.ravenhill.keen.arb.genetic.genes.arbDoubleGene
+import cl.ravenhill.keen.assertions.*
 import cl.ravenhill.keen.utils.nextDoubleInRange
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -23,16 +23,12 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.matchers.types.shouldNotHaveSameHashCodeAs
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.filterNot
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.long
-import io.kotest.property.arbitrary.map
+import io.kotest.property.PropTestConfig
+import io.kotest.property.arbitrary.*
 import io.kotest.property.assume
 import io.kotest.property.checkAll
-import kotlin.random.Random
 
+@OptIn(ExperimentalKotest::class)
 class DoubleGeneTest : FreeSpec({
 
     "A Double Gene" - {
@@ -67,32 +63,41 @@ class DoubleGeneTest : FreeSpec({
             }
 
             "a String" {
-                checkAll<Double> { d ->
+                checkAll(PropTestConfig(listeners = listOf(ResetDomainListener)), Arb.double()) { d ->
+                    Domain.toStringMode = ToStringMode.DEFAULT
                     DoubleGene(d).toString() shouldBe
-                          "DoubleGene(value=$d, range=-1.7976931348623157E308..1.7976931348623157E308)"
+                            "DoubleGene(value=$d, range=-1.7976931348623157E308..1.7976931348623157E308)"
                 }
             }
 
             "a Detailed String" {
-                checkAll<Double> { d ->
-                    DoubleGene(d).toDetailedString() shouldBe
-                          "DoubleGene(" +
-                          "value=$d, " +
-                          "range=-1.7976931348623157E308..1.7976931348623157E308, " +
-                          "filter=(kotlin.Double) -> kotlin.Boolean)"
+                checkAll(PropTestConfig(listeners = listOf(ResetDomainListener)), Arb.double()) { d ->
+                    Domain.toStringMode = ToStringMode.DETAILED
+                    DoubleGene(d).toString() shouldBe
+                            "DoubleGene(" +
+                            "value=$d, " +
+                            "range=-1.7976931348623157E308..1.7976931348623157E308, " +
+                            "filter=(kotlin.Double) -> kotlin.Boolean)"
+                }
+            }
+
+            "a Simple String" {
+                checkAll(PropTestConfig(listeners = listOf(ResetDomainListener)), Arb.double()) { d ->
+                    Domain.toStringMode = ToStringMode.SIMPLE
+                    DoubleGene(d).toString() shouldBe d.toString()
                 }
             }
         }
 
         "equality should" - {
             "be reflexive" {
-                checkAll(Arb.doubleGene()) { g ->
+                checkAll(arbDoubleGene()) { g ->
                     g shouldBe g
                 }
             }
 
             "be symmetric" {
-                checkAll(Arb.double().filterNot { it.isNaN() }) { d ->
+                checkAll(arbNonNaNDouble()) { d ->
                     val g1 = DoubleGene(d)
                     val g2 = DoubleGene(d)
                     g1 shouldBe g2
@@ -101,7 +106,7 @@ class DoubleGeneTest : FreeSpec({
             }
 
             "be transitive" {
-                checkAll(Arb.double().filterNot { it.isNaN() }) { d ->
+                checkAll(arbNonNaNDouble()) { d ->
                     val g1 = DoubleGene(d)
                     val g2 = DoubleGene(d)
                     val g3 = DoubleGene(d)
@@ -121,7 +126,7 @@ class DoubleGeneTest : FreeSpec({
             }
 
             "not have the same hash code as another gene with a different value" {
-                checkAll(Arb.doubleGene(), Arb.doubleGene()) { g1, g2 ->
+                checkAll(arbDoubleGene(), arbDoubleGene()) { g1, g2 ->
                     assume { g1 shouldNotBe g2 }
                     g1 shouldNotHaveSameHashCodeAs g2
                 }
@@ -134,25 +139,29 @@ class DoubleGeneTest : FreeSpec({
             { random, range -> random.nextDoubleInRange(range) }
         )
 
-        `test that a gene can duplicate itself`(Arb.double(), Arb.doubleGene())
+        `test that a gene can duplicate itself`(Arb.double(), arbDoubleGene())
 
         "can verify its validity when" - {
             "the value is within the range and satisfies the filter" {
-                checkAll(Arb.doubleGene().filter {
-                    it.value in it.range && it.filter(it.value)
-                }) { gene ->
+                checkAll(
+                    arbDoubleGene()
+                        .filter { it.value in it.range && it.filter(it.value) }
+                ) { gene ->
                     gene.verify().shouldBeTrue()
                 }
             }
 
             "the value is outside the range" {
-                checkAll(Arb.doubleGene().filter { it.value !in it.range }) { gene ->
+                checkAll(
+                    arbDoubleGene()
+                        .filter { it.value !in it.range }
+                ) { gene ->
                     gene.verify().shouldBeFalse()
                 }
             }
 
             "the value does not satisfy the filter" {
-                checkAll(Arb.doubleGene { it > 0 }, Arb.double().filterNot { it > 0 }) { gene, newValue ->
+                checkAll(arbDoubleGene { it > 0 }, Arb.double().filterNot { it > 0 }) { gene, newValue ->
                     gene.copy(value = newValue).verify().shouldBeFalse()
                 }
             }
@@ -160,11 +169,11 @@ class DoubleGeneTest : FreeSpec({
 
         "can be averaged" - {
             checkAll(
-                Arb.doubleGene(
-                    range = Arb.orderedPair(Arb.double(-100.0..100.0).filterNot { it.isNaN() })
+                arbDoubleGene(
+                    range = arbOrderedPair(Arb.double(-100.0..100.0).filterNot { it.isNaN() })
                         .filter { it.first < it.second }
                         .map { it.first..it.second }),
-                Arb.list(Arb.doubleGene(), 1..10)
+                Arb.list(arbDoubleGene(), 1..10)
             ) { gene, genes ->
                 val expected = (genes.sumOf { it.value } + gene.value) / (genes.size + 1)
                 gene.average(genes) shouldBe gene.copy(value = expected)
