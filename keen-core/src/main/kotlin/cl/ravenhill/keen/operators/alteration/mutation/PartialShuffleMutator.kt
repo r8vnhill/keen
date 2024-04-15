@@ -11,8 +11,10 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * 1. Abdoun, Abouchabaka, and Tajani, “Analyzing the Performance of Mutation Operators to Solve the Travelling
  *  Salesman Problem.”
  */
-class PartialShuffleMutator<T, G>(override val individualRate: Double, override val chromosomeRate: Double) :
-        Mutator<T, G> where G : Gene<T, G> {
+class PartialShuffleMutator<T, G>(
+    override val individualRate: Double = 1.0,
+    override val chromosomeRate: Double = 1.0
+) : Mutator<T, G> where G : Gene<T, G> {
 
     init {
         constraints {
