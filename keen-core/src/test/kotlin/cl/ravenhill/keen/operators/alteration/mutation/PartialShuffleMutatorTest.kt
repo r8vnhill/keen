@@ -22,5 +22,15 @@ class PartialShuffleMutatorTest : FreeSpec({
                 )
             }
         }
+
+        "should throw an exception if the chromosome rate is not in 0..1" {
+            checkAll(Arb.double(), arbInvalidProbability()) { individualRate, invalidProbability ->
+                shouldThrow<CompositeException> {
+                    PartialShuffleMutator<Int, IntGene>(individualRate, invalidProbability)
+                }.shouldHaveInfringement<MutatorConfigException>(
+                    "Chromosome mutation rate must be in the range [0, 1]"
+                )
+            }
+        }
     }
 })
