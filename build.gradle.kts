@@ -24,8 +24,6 @@ subprojects {
 }
 
 kotlin {
-    // Configures the JVM toolchain to use version 8 of the JDK
-    jvmToolchain(17)
     sourceSets.all {
         languageSettings {
             languageVersion = "2.0"
