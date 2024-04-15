@@ -2,6 +2,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -35,8 +36,31 @@ class PartialShuffleMutator<T, G>(
 
     override fun mutateChromosome(chromosome: Chromosome<T, G>): Chromosome<T, G> {
         if (shuffleBoundaryProbability == 0.0) return chromosome
-        TODO("Not yet implemented")
+        val genes = chromosome.genes
+        var start = 0
+        var end = chromosome.size - 1
+        for (i in chromosome.indices) {
+            if (Domain.random.nextDouble() < shuffleBoundaryProbability) {
+                start = i
+                break
+            }
+        }
+        for (i in start..<chromosome.size) {
+            if (Domain.random.nextDouble() > shuffleBoundaryProbability) {
+                end = i
+                break
+            }
+        }
+        return chromosome.duplicateWithGenes(
+            chromosome.take(start)
+                    + genes.subList(start, end + 1).shuffled(Domain.random)
+                    + chromosome.drop(end + 1)
+        )
     }
+
+    override fun toString() =
+        "PartialShuffleMutator(individualRate=$individualRate, chromosomeRate=$chromosomeRate, " +
+                "shuffleBoundaryProbability=$shuffleBoundaryProbability)"
 
     companion object {
         const val DEFAULT_INDIVIDUAL_RATE = 1.0

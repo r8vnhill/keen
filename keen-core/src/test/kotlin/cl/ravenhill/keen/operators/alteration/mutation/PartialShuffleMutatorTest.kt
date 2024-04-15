@@ -1,26 +1,44 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ResetDomainListener
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.datatypes.arbInvalidProbability
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
+import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.spec.style.freeSpec
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
 import io.kotest.property.checkAll
+import kotlin.random.Random
 
 class PartialShuffleMutatorTest : FreeSpec({
     include(`operator construction`())
+    include(`when mutating a chromosome`())
+})
 
+private fun `operator construction`() = freeSpec {
+    "When constructing" - {
+        `throws an exception on invalid rates`()
+        `creates a mutator on valid rates`()
+    }
+}
+
+@OptIn(ExperimentalKotest::class)
+private fun `when mutating a chromosome`() = freeSpec {
     "When mutating a chromosome" - {
         "should return the same chromosome if the shuffle boundary probability is 0" {
             checkAll(
@@ -30,13 +48,34 @@ class PartialShuffleMutatorTest : FreeSpec({
                 mutator.mutateChromosome(chromosome) shouldBe chromosome
             }
         }
-    }
-})
 
-private fun `operator construction`() = freeSpec {
-    "When constructing" - {
-        `throws an exception on invalid rates`()
-        `creates a mutator on valid rates`()
+        "should shuffle the entire chromosome if the shuffle boundary probability is 1" {
+            checkAll(
+                PropTestConfig(listeners = listOf(ResetDomainListener)),
+                arbPartialShuffleMutator(arbProbability(), arbProbability(), Arb.constant(1.0)),
+                arbIntChromosome(),
+                arbRngPair()
+            ) { mutator, chromosome, (rng1, rng2) ->
+                Domain.random = rng1
+                val mutated = mutator.mutateChromosome(chromosome)
+                getBoundary(rng2, chromosome, mutator.shuffleBoundaryProbability)
+                mutated.genes shouldBe chromosome.genes.shuffled(rng2)
+            }
+        }
+
+        "should shuffle the chromosome according to the shuffle boundary probability" {
+            checkAll(
+                PropTestConfig(listeners = listOf(ResetDomainListener)),
+                arbPartialShuffleMutator(),
+                arbIntChromosome(),
+                arbRngPair()
+            ) { mutator, chromosome, (rng1, rng2) ->
+                Domain.random = rng1
+                val mutated = mutator.mutateChromosome(chromosome)
+                val (start, end) = getBoundary(rng2, chromosome, mutator.shuffleBoundaryProbability)
+                mutated.genes shouldBe partialShuffle(chromosome.genes, start, end, rng2)
+            }
+        }
     }
 }
 
@@ -135,4 +174,50 @@ private fun arbPartialShuffleMutator(
         shuffleBoundaryProbability = shuffleBoundaryProbability?.bind()
             ?: PartialShuffleMutator.DEFAULT_SHUFFLE_BOUNDARY_PROBABILITY
     )
+}
+
+private fun partialShuffle(chromosome: List<IntGene>, start: Int, end: Int, random: Random): List<IntGene> {
+    val newChromosome = mutableListOf<IntGene>()
+
+    // Copy genes up to the start index
+    for (i in 0..<start) {
+        newChromosome.add(chromosome[i])
+    }
+
+    // Prepare the segment to shuffle
+    val segmentToShuffle = mutableListOf<IntGene>()
+    for (i in start..end) {
+        segmentToShuffle.add(chromosome[i])
+    }
+
+    // Shuffle the segment
+    segmentToShuffle.shuffle(random)
+
+    // Add the shuffled segment back into the new chromosome
+    newChromosome.addAll(segmentToShuffle)
+
+    // Copy the remaining genes after the end index
+    for (i in end + 1..<chromosome.size) {
+        newChromosome.add(chromosome[i])
+    }
+
+    return newChromosome
+}
+
+private fun getBoundary(rng: Random, chromosome: IntChromosome, shuffleBoundaryProbability: Double): Pair<Int, Int> {
+    var start = 0
+    var end = chromosome.size - 1
+    for (i in chromosome.indices) {
+        if (rng.nextDouble() < shuffleBoundaryProbability) {
+            start = i
+            break
+        }
+    }
+    for (i in start..<chromosome.size) {
+        if (rng.nextDouble() > shuffleBoundaryProbability) {
+            end = i
+            break
+        }
+    }
+    return start to end
 }
