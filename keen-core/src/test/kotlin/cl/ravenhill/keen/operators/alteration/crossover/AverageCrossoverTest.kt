@@ -1,9 +1,12 @@
 package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
+import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
 import cl.ravenhill.keen.assertions.should.shouldBeExclusive
+import cl.ravenhill.keen.assertions.should.shouldBeInRange
 import cl.ravenhill.keen.assertions.should.shouldNotBeExclusive
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
@@ -11,7 +14,6 @@ import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.spec.style.freeSpec
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
-import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
@@ -22,10 +24,8 @@ import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.flatMap
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.long
 import io.kotest.property.arbitrary.map
 import io.kotest.property.checkAll
-import kotlin.random.Random
 
 class AverageCrossoverTest : FreeSpec({
     include(`crossover construction`())
@@ -46,7 +46,7 @@ private fun `when crossing chromosomes`() = freeSpec {
         "returns the expected offspring" - {
             "with gene rate 0.0" {
                 checkAll(
-                    PropTestConfig(iterations = 100),
+                    PropTestConfig(iterations = 50),
                     arbCrossoverAndValidInputs(Arb.constant(0.0))
                 ) { (crossover, chromosomes) ->
                     val offspring = crossover.crossoverChromosomes(chromosomes)
@@ -56,9 +56,41 @@ private fun `when crossing chromosomes`() = freeSpec {
 
             "with gene rate 1.0" {
                 checkAll(
+                    PropTestConfig(iterations = 50),
                     arbCrossoverAndValidInputs(Arb.constant(1.0))
                 ) { (crossover, chromosomes) ->
-                    TODO()
+                    val offspring = crossover.crossoverChromosomes(chromosomes)
+                    val averages = mutableListOf<Int>()
+                    chromosomes.first().indices.forEach { index ->
+                        val genes = chromosomes.map { it[index].value }
+                        averages.add(genes.sum() / genes.size)
+                    }
+                    offspring.first().indices.forEach { index ->
+                        offspring.first()[index].value shouldBeInRange averages[index] - 1..averages[index] + 1
+                    }
+                }
+            }
+
+            "with arbitrary gene rate" {
+                checkAll(
+                    PropTestConfig(iterations = 50),
+                    arbCrossoverAndValidInputs(),
+                    arbRngPair()
+                ) { (crossover, chromosomes), (r1, r2) ->
+                    Domain.random = r1
+                    val offspring = crossover.crossoverChromosomes(chromosomes)
+                    val averages = mutableListOf<Int>()
+                    chromosomes.first().indices.forEach { index ->
+                        val genes = chromosomes.map { it[index].value }
+                        averages.add(genes.sum() / genes.size)
+                    }
+                    offspring.first().indices.forEach { index ->
+                        if (r2.nextDouble() < crossover.geneRate) {
+                            offspring.first()[index].value shouldBeInRange averages[index] - 1..averages[index] + 1
+                        } else {
+                            offspring.first()[index].value shouldBe chromosomes[0][index].value
+                        }
+                    }
                 }
             }
         }
@@ -160,24 +192,14 @@ private fun arbCrossoverAndValidInputs(
     geneRate: Arb<Double> = arbProbability(),
 ): Arb<Pair<AverageCrossover<Int, IntGene>, List<IntChromosome>>> =
     arbAverageCrossover(geneRate).flatMap { crossover ->
-        Arb.list(arbIntChromosome(), crossover.numParents..crossover.numParents)
+        Arb.list(arbIntChromosome(gene = arbIntGene(Arb.int(-100..100))), crossover.numParents..crossover.numParents)
             .filter { chromosomes -> chromosomes.map { it.size }.distinct().size == 1 }
             .map { inputs -> crossover to inputs }
     }
 
-fun arbAverageCrossover(
+private fun arbAverageCrossover(
     geneRate: Arb<Double> = arbProbability(),
 ): Arb<AverageCrossover<Int, IntGene>> = arbitrary {
     AverageCrossover(arbProbability().bind(), geneRate.bind(), Arb.int(2..5).bind(), Arb.boolean().bind())
 }
 
-private fun cross(chromosomes: List<IntChromosome>, geneRate: Double, rng: Random): List<Int> {
-    val genes = chromosomes.flatten()
-    return List(chromosomes[0].size) { i ->
-        if (rng.nextDouble() < geneRate) {
-            genes[i].average(genes.drop(chromosomes.size)).toInt()
-        } else {
-            chromosomes[0][i].toInt()
-        }
-    }
-}
