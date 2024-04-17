@@ -30,6 +30,7 @@ import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.checkAll
 import cl.ravenhill.keen.Domain
+import io.kotest.common.ExperimentalKotest
 import kotlin.random.Random
 
 class UniformCrossoverTest : FreeSpec({
@@ -46,6 +47,7 @@ private fun `when constructing`() = freeSpec {
     }
 }
 
+@OptIn(ExperimentalKotest::class)
 private fun `when crossing chromosomes`() = freeSpec {
     "When crossing chromosomes" - {
         "returns the expected offspring" {
@@ -63,7 +65,6 @@ private fun `when crossing chromosomes`() = freeSpec {
     }
 }
 
-@OptIn(ExperimentalKeen::class)
 private suspend fun FreeSpecContainerScope.`invalid configuration should throw an exception`() {
     "throws an exception if the chromosome rate is not between 0 and 1" {
         checkAll(arbInvalidProbability()) { rate ->
@@ -84,7 +85,6 @@ private suspend fun FreeSpecContainerScope.`invalid configuration should throw a
     }
 }
 
-@OptIn(ExperimentalKeen::class)
 private suspend fun FreeSpecContainerScope.`default configuration should initialize correctly`() {
     "with default parameters should have the following properties" {
         val crossover = UniformCrossover<Int, IntGene>()
@@ -102,7 +102,6 @@ private suspend fun FreeSpecContainerScope.`default configuration should initial
     }
 }
 
-@OptIn(ExperimentalKeen::class)
 private suspend fun FreeSpecContainerScope.`valid configuration should initialize correctly`() {
     "with a custom number of parents" {
         checkAll(Arb.int(2..5)) { numParents ->
@@ -163,7 +162,6 @@ private suspend fun FreeSpecContainerScope.`valid configuration should initializ
 // endregion
 
 // region : Arb
-@OptIn(ExperimentalKeen::class)
 private fun arbUniformCrossover(
     numParents: Arb<Int>? = Arb.int(2..5),
     chromosomeRate: Arb<Double>? = arbProbability(),
@@ -176,7 +174,6 @@ private fun arbUniformCrossover(
     )
 }
 
-@OptIn(ExperimentalKeen::class)
 private fun arbCrossoverAndValidInputs(): Arb<Pair<UniformCrossover<Int, IntGene>, List<IntChromosome>>> =
     arbUniformCrossover().flatMap { crossover ->
         Arb.list(arbIntChromosome(), crossover.numParents..crossover.numParents)

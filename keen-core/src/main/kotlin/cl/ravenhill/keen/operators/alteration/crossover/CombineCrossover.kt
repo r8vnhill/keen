@@ -169,5 +169,4 @@ open class CombineCrossover<T, G>(
             }
         }
     }
-
 }

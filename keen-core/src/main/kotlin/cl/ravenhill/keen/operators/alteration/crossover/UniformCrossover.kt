@@ -38,7 +38,6 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @param G The gene type, extending `Gene<T, G>`.
  * @param chromosomeRate The probability of a chromosome undergoing crossover, typically in the range [0.0, 1.0].
  */
-@ExperimentalKeen
 class UniformCrossover<T, G>(
     numParents: Int = DEFAULT_NUM_PARENTS,
     chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,

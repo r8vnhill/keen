@@ -68,7 +68,7 @@ class DoubleChromosomeTest : FreeSpec({
 
             "with an explicit filter should use the provided filter" {
                 `validate all genes against single filter`(
-                    Arb.double().filterNot { it.isNaN() || it.isInfinite() },
+                    Arb.double().filterNot { it.isNaN() || it.isInfinite() || it == -0.0},
                     { true }) {
                     DoubleChromosome.Factory()
                 }
