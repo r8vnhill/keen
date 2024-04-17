@@ -15,11 +15,21 @@ import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
 import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
+import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.NothingGene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
+import cl.ravenhill.keen.listeners.records.EvolutionRecord
+import cl.ravenhill.keen.listeners.records.GenerationRecord
+import cl.ravenhill.keen.listeners.records.IndividualRecord
+import cl.ravenhill.keen.ranking.FitnessMaxRanker
+import cl.ravenhill.keen.ranking.IndividualRanker
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.checkAll
+import kotlin.time.TimeSource
 
 class EvolutionListenerTest : FreeSpec({
     "An Evolution Listener" - {
@@ -53,6 +63,38 @@ class EvolutionListenerTest : FreeSpec({
             ) { l1, l2 ->
                 (l1 + l2) shouldBe listOf(l1, l2)
             }
+        }
+
+
+        "can compute the number of steady generations when the evolution record is empty" {
+            val ranker = FitnessMaxRanker<Int, IntGene>()
+            val record = EvolutionRecord<Int, IntGene>()
+            EvolutionListener.computeSteadyGenerations(ranker, record) shouldBe 0
+        }
+
+        "can compute the number of steady generations when the evolution record has one generation" {
+            val ranker = FitnessMaxRanker<Int, IntGene>()
+            val record = EvolutionRecord<Int, IntGene>()
+            record.generations += GenerationRecord(0)
+            EvolutionListener.computeSteadyGenerations(ranker, record) shouldBe 0
+        }
+
+        "can compute the number of steady generations when the evolution record has four generations" {
+            val ranker = FitnessMaxRanker<Int, IntGene>()
+            val record = EvolutionRecord<Int, IntGene>()
+            record.generations += GenerationRecord<Int, IntGene>(0).apply {
+                population.offspring += listOf(IndividualRecord(Individual(Genotype(IntChromosome(0)), 0.0)))
+            }
+            record.generations += GenerationRecord<Int, IntGene>(1).apply {
+                population.offspring += listOf(IndividualRecord(Individual(Genotype(IntChromosome(0)), 1.0)))
+            }
+            record.generations += GenerationRecord<Int, IntGene>(2).apply {
+                population.offspring += listOf(IndividualRecord(Individual(Genotype(IntChromosome(0)), 1.0)))
+            }
+            record.generations += GenerationRecord<Int, IntGene>(3).apply {
+                population.offspring += listOf(IndividualRecord(Individual(Genotype(IntChromosome(0)), 1.0)))
+            }
+            EvolutionListener.computeSteadyGenerations(ranker, record) shouldBe 2
         }
     }
 })

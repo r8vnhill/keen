@@ -105,6 +105,5 @@ interface Reducible<T> : Node<Reducible<T>>, SelfReferential<Reducible<T>> {
      * @param args A variable number of arguments of type `T` used in the reduction process.
      * @return The result of the reduction process, of type `T`.
      */
-    operator fun <T> Reducible<T>.invoke(environment: Environment<T>, vararg args: T): T =
-        invoke(environment, args.toList())
+    operator fun invoke(environment: Environment<T>, vararg args: T): T = invoke(environment, args.toList())
 }

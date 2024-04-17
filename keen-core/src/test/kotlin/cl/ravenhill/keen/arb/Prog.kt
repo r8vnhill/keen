@@ -10,7 +10,6 @@ import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.prog.Environment
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.string
 
 /**
@@ -45,7 +44,7 @@ import io.kotest.property.arbitrary.string
  * @return An arbitrary generator for `Environment<T>` instances.
  */
 @OptIn(ExperimentalKeen::class)
-fun <T> Arb.Companion.environment(memory: Arb<Map<Int, T>>?, name: Arb<String> = string()) = arbitrary {
+fun <T> arbEnvironment(memory: Arb<Map<Int, T>>?, name: Arb<String> = Arb.string()) = arbitrary {
     Environment<T>(name.bind()).apply {
         memory?.bind()?.forEach { (key, value) -> this += key to value }
     }

@@ -13,7 +13,7 @@ import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
-import cl.ravenhill.keen.arb.limits.arbGenerationLimit
+import cl.ravenhill.keen.arb.limits.arbMaxGenerations
 import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
 import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
 import cl.ravenhill.keen.arb.operators.arbAlterer
@@ -54,6 +54,7 @@ class EvolutionEngineTest : FreeSpec({
     "The engine" - {
         "can be created with a custom configuration" {
             checkAll(
+                PropTestConfig(iterations = 100),
                 populationConfig(),
                 selectionConfig(),
                 alterationConfig(),
@@ -197,7 +198,7 @@ private fun selectionConfig(): Arb<SelectionConfig<Double, DoubleGene>> = arbSel
 private fun alterers(): Arb<List<Alterer<Double, DoubleGene>>> = Arb.list(arbAlterer())
 private fun alterationConfig(): Arb<AlterationConfig<Double, DoubleGene>> = arbAlterationConfig(alterers())
 
-private fun limits(): Arb<List<Limit<Double, DoubleGene>>> = Arb.list(arbGenerationLimit())
+private fun limits(): Arb<List<Limit<Double, DoubleGene>>> = Arb.list(arbMaxGenerations())
 private fun ranker(): Arb<IndividualRanker<Double, DoubleGene>> = arbRanker()
 private fun listeners(
     ranker: Arb<IndividualRanker<Double, DoubleGene>>

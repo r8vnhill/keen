@@ -49,6 +49,8 @@ import cl.ravenhill.keen.genetic.genes.Gene
  */
 class IndividualRecord<T, G>(val genotype: Genotype<T, G>, val fitness: Double) where G : Gene<T, G> {
 
+    constructor(individual: Individual<T, G>) : this(individual.genotype, individual.fitness)
+
     /**
      * Converts this record into an `Individual` object.
      *
