@@ -138,6 +138,12 @@ class TreeTest : FreeSpec({
             }
         }
 
+        "when converting to a top-down list of nodes" - {
+            "should return a list with a single element" {
+                singleElementTree.toTopDown() shouldBe listOf(singleElementTree.value)
+            }
+        }
+
         "can replace its root node" {
             val newRoot = intermediateNodeB
             val newTree = singleElementTree.replaceFirst(newRoot) { it.value.contents == 'a' }
@@ -218,6 +224,17 @@ class TreeTest : FreeSpec({
                 shouldThrowWithMessage<NoSuchElementException>("Node not found in tree") {
                     multiElementTree.indexOfFirst { it.value.contents == 'e' }
                 }
+            }
+        }
+
+        "when converting to a top-down list of nodes" - {
+            "should return a list with all the nodes in the tree" {
+                multiElementTree.toTopDown() shouldBe listOf(
+                    TypedIntermediate(2, 'a'),
+                    TypedIntermediate(1, 'b'),
+                    TypedLeaf('d'),
+                    TypedLeaf('c')
+                )
             }
         }
 

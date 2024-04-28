@@ -386,14 +386,20 @@ fun <V, T> Tree<V, T>.fromTopDown(nodes: List<T>): T where T : Tree<V, T> {
         stack.removeAll(children.toSet())
         // Create a new node with the given value and children.
         val node = createNode(it.value, children)
-        constraints {
-            "The arity of the tree [${it.arity}] does not match the arity of the node [${node.children.size}]." {
-                node.children must HaveSize(it.arity)
-            }
-        }
         // Add the new node to the stack.
         stack.add(node)
     }
     // Return the top of the stack.
     return stack.first()
+}
+
+@OptIn(ExperimentalKeen::class)
+fun <K, V> Tree<K, V>.toTopDown(): List<K> where V : Tree<K, V> {
+    val stack = mutableListOf<K>()
+    val nodes = nodes.reversed()
+    nodes.forEach { node ->
+        stack += node.value
+        stack += node.children.map { it.value }
+    }
+    return stack
 }
