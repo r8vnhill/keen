@@ -8,9 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] - TBD
 
 ## Added
-- Partial shuffle mutation operator
-- [STABLE] Uniform crossover operator
-- Displacement mutation operator
+- **Partial shuffle mutation operator**
+- [STABLE] **Uniform crossover operator**
+- **Displacement mutation operator**
 
 ## [1.1.1] - 2023-12-23
 
