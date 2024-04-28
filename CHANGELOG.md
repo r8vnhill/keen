@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 - Partial shuffle mutation operator
 - [STABLE] Uniform crossover operator
+- Displacement mutation operator
 
 ## [1.1.1] - 2023-12-23
 

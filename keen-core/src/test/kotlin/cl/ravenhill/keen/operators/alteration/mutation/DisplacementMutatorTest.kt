@@ -1,23 +1,30 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.arb.datatypes.arbInvalidProbability
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
+import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.flatMap
 import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.negativeInt
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
+import kotlin.random.Random
 
 class DisplacementMutatorTest : FreeSpec({
     "A Displacement Mutator" - {
@@ -87,7 +94,7 @@ class DisplacementMutatorTest : FreeSpec({
         }
 
         "when mutating" - {
-            "should return the same chromosome if the displacement boundary probability is 0" {
+            "should return the same chromosome if the displacement  is 0" {
                 checkAll(
                     arbDisplacementMutator(displacement = Arb.constant(0)),
                     arbDoubleChromosome()
@@ -95,6 +102,37 @@ class DisplacementMutatorTest : FreeSpec({
                     val mutated = mutator.mutateChromosome(chromosome)
                     mutated shouldBe chromosome
                 }
+            }
+
+            "should return the same chromosome if the displacement is the same as the chromosome size" {
+                checkAll(
+                    arbDisplacementMutator(displacement = Arb.int(0, 10)).flatMap { mutator ->
+                        arbDoubleChromosome(size = Arb.constant(mutator.displacement)).map {
+                            mutator to it
+                        }
+                    }
+                ) { (mutator, chromosome) ->
+                    val mutated = mutator.mutateChromosome(chromosome)
+                    mutated shouldBe chromosome
+                }
+            }
+        }
+
+        "should mutate the chromosome" - {
+            withData(
+                MutatorData(DisplacementMutator(), IntChromosome(0, 1, 2, 3), Random(0), IntChromosome(3, 0, 1, 2)),
+                MutatorData(DisplacementMutator(), IntChromosome(0, 1, 2, 3), Random(420), IntChromosome(1, 2, 3, 0)),
+                MutatorData(
+                    DisplacementMutator(displacement = 2),
+                    IntChromosome(0, 1, 2, 3),
+                    Random(69),
+                    IntChromosome(2, 3, 0, 1)
+                ),
+
+                ) { (mutator, chromosome, rng1, result) ->
+                Domain.random = rng1
+                val mutated = mutator.mutateChromosome(chromosome)
+                mutated shouldBe result
             }
         }
     }
@@ -111,3 +149,10 @@ private fun arbDisplacementMutator(
         displacement = displacement?.bind() ?: DisplacementMutator.DEFAULT_DISPLACEMENT
     )
 }
+
+private data class MutatorData(
+    val mutator: DisplacementMutator<Int, IntGene>,
+    val chromosome: IntChromosome,
+    val rng1: Random,
+    val result: IntChromosome
+)
