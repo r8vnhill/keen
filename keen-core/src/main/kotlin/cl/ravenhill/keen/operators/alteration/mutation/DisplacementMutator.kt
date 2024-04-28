@@ -2,6 +2,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
+import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -9,7 +10,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 class DisplacementMutator<T, G>(
     override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
     override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
-    val displacementBoundaryProbability: Double = DEFAULT_DISPLACEMENT_BOUNDARY_PROBABILITY
+    val displacement: Int = DEFAULT_DISPLACEMENT
 ) : Mutator<T, G> where G : Gene<T, G> {
     init {
         constraints {
@@ -19,21 +20,24 @@ class DisplacementMutator<T, G>(
             "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "The displacement boundary probability ($displacementBoundaryProbability) must be in 0.0..1.0"(
+            "The displacement must be a non-negative integer"(
                 ::MutatorConfigException
             ) {
-                displacementBoundaryProbability must BeInRange(0.0..1.0)
+                displacement mustNot BeNegative
             }
         }
     }
 
     override fun mutateChromosome(chromosome: Chromosome<T, G>): Chromosome<T, G> {
-        TODO("Not yet implemented")
+        if (displacement == 0) {
+            return chromosome
+        }
+        TODO()
     }
 
     companion object {
         const val DEFAULT_INDIVIDUAL_RATE = 1.0
         const val DEFAULT_CHROMOSOME_RATE = 1.0
-        const val DEFAULT_DISPLACEMENT_BOUNDARY_PROBABILITY = 0.5
+        const val DEFAULT_DISPLACEMENT = 1
     }
 }

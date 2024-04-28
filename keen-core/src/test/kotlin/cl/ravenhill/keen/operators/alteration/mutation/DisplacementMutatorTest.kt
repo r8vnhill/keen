@@ -3,6 +3,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.datatypes.arbInvalidProbability
 import cl.ravenhill.keen.arb.datatypes.arbProbability
+import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.MutatorConfigException
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
@@ -10,7 +11,12 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.negativeInt
+import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
 
 class DisplacementMutatorTest : FreeSpec({
@@ -21,7 +27,7 @@ class DisplacementMutatorTest : FreeSpec({
                     checkAll(
                         arbInvalidProbability(),
                         Arb.double(),
-                        Arb.double()
+                        Arb.int()
                     ) { rate, chRate, displacementBoundaryProb ->
                         shouldThrow<CompositeException> {
                             DisplacementMutator<Double, DoubleGene>(rate, chRate, displacementBoundaryProb)
@@ -33,7 +39,7 @@ class DisplacementMutatorTest : FreeSpec({
                     checkAll(
                         Arb.double(),
                         arbInvalidProbability(),
-                        Arb.double()
+                        Arb.int()
                     ) { rate, chRate, displacementBoundaryProb ->
                         shouldThrow<CompositeException> {
                             DisplacementMutator<Double, DoubleGene>(rate, chRate, displacementBoundaryProb)
@@ -45,11 +51,11 @@ class DisplacementMutatorTest : FreeSpec({
                     checkAll(
                         Arb.double(),
                         Arb.double(),
-                        arbInvalidProbability()
-                    ) { rate, chRate, displacementBoundaryProb ->
+                        Arb.negativeInt()
+                    ) { rate, chRate, displacement ->
                         shouldThrow<CompositeException> {
-                            DisplacementMutator<Double, DoubleGene>(rate, chRate, displacementBoundaryProb)
-                        }.shouldHaveInfringement<MutatorConfigException>("The displacement boundary probability ($displacementBoundaryProb) must be in 0.0..1.0")
+                            DisplacementMutator<Double, DoubleGene>(rate, chRate, displacement)
+                        }.shouldHaveInfringement<MutatorConfigException>("The displacement must be a non-negative integer")
                     }
                 }
             }
@@ -59,8 +65,8 @@ class DisplacementMutatorTest : FreeSpec({
                     val mutator = DisplacementMutator<Double, DoubleGene>()
                     mutator.individualRate shouldBe DisplacementMutator.DEFAULT_INDIVIDUAL_RATE
                     mutator.chromosomeRate shouldBe DisplacementMutator.DEFAULT_CHROMOSOME_RATE
-                    mutator.displacementBoundaryProbability shouldBe
-                            DisplacementMutator.DEFAULT_DISPLACEMENT_BOUNDARY_PROBABILITY
+                    mutator.displacement shouldBe
+                            DisplacementMutator.DEFAULT_DISPLACEMENT
                 }
             }
 
@@ -69,15 +75,39 @@ class DisplacementMutatorTest : FreeSpec({
                     checkAll(
                         arbProbability(),
                         arbProbability(),
-                        arbProbability()
+                        Arb.positiveInt()
                     ) { rate, chRate, displacementBoundaryProb ->
                         val mutator = DisplacementMutator<Double, DoubleGene>(rate, chRate, displacementBoundaryProb)
                         mutator.individualRate shouldBe rate
                         mutator.chromosomeRate shouldBe chRate
-                        mutator.displacementBoundaryProbability shouldBe displacementBoundaryProb
+                        mutator.displacement shouldBe displacementBoundaryProb
                     }
+                }
+            }
+        }
+
+        "when mutating" - {
+            "should return the same chromosome if the displacement boundary probability is 0" {
+                checkAll(
+                    arbDisplacementMutator(displacement = Arb.constant(0)),
+                    arbDoubleChromosome()
+                ) { mutator, chromosome ->
+                    val mutated = mutator.mutateChromosome(chromosome)
+                    mutated shouldBe chromosome
                 }
             }
         }
     }
 })
+
+private fun arbDisplacementMutator(
+    individualRate: Arb<Double>? = arbProbability(),
+    chromosomeRate: Arb<Double>? = arbProbability(),
+    displacement: Arb<Int>? = Arb.int()
+): Arb<DisplacementMutator<Double, DoubleGene>> = arbitrary {
+    DisplacementMutator(
+        individualRate = individualRate?.bind() ?: DisplacementMutator.DEFAULT_INDIVIDUAL_RATE,
+        chromosomeRate = chromosomeRate?.bind() ?: DisplacementMutator.DEFAULT_CHROMOSOME_RATE,
+        displacement = displacement?.bind() ?: DisplacementMutator.DEFAULT_DISPLACEMENT
+    )
+}
