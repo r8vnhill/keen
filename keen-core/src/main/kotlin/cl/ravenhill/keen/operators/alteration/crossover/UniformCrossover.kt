@@ -38,14 +38,25 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @param G The gene type, extending `Gene<T, G>`.
  * @param chromosomeRate The probability of a chromosome undergoing crossover, typically in the range [0.0, 1.0].
  */
-@ExperimentalKeen
-class UniformCrossover<T, G>(numParents: Int = 2, chromosomeRate: Double = 1.0, exclusivity: Boolean = false) :
-    CombineCrossover<T, G>(
-        { genes: List<G> ->
-            genes.random(Domain.random)
-        },
-        chromosomeRate,
-        1.0,
-        numParents,
-        exclusivity
-    ) where G : Gene<T, G>
+class UniformCrossover<T, G>(
+    numParents: Int = DEFAULT_NUM_PARENTS,
+    chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
+    exclusivity: Boolean = DEFAULT_EXCLUSIVITY
+) : CombineCrossover<T, G>(
+    { genes: List<G> ->
+        genes.random(Domain.random)
+    },
+    chromosomeRate,
+    1.0,
+    numParents,
+    exclusivity
+) where G : Gene<T, G> {
+    companion object {
+        const val DEFAULT_NUM_PARENTS = 2
+        const val DEFAULT_CHROMOSOME_RATE = 1.0
+        const val DEFAULT_EXCLUSIVITY = false
+    }
+
+    override fun toString() =
+        "UniformCrossover(numParents=$numParents, chromosomeRate=$chromosomeRate, exclusivity=$exclusivity)"
+}
