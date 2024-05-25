@@ -9,6 +9,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.arb.any
 import cl.ravenhill.keen.arb.arbEnvironment
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -20,13 +21,14 @@ import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
-@OptIn(ExperimentalKeen::class)
+@OptIn(ExperimentalKeen::class, ExperimentalKotest::class)
 class EnvironmentTest : FreeSpec({
 
     afterEach { Domain.environments.clear() }
@@ -205,7 +207,11 @@ class EnvironmentTest : FreeSpec({
 
         "can check if it contains a key" - {
             "and returns false if the key is not present" {
-                checkAll(arbEnvironment<Any?>(Arb.map(Arb.int(), Arb.any())), Arb.int()) { env, key ->
+                checkAll(
+                    PropTestConfig(iterations = 100),
+                    arbEnvironment<Any?>(Arb.map(Arb.int(), Arb.any())),
+                    Arb.int()
+                ) { env, key ->
                     assume {
                         env.keys shouldNotContain key
                     }

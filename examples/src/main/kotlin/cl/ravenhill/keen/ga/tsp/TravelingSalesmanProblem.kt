@@ -11,6 +11,7 @@ import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.crossover.OrderedCrossover
+import cl.ravenhill.keen.operators.alteration.mutation.DisplacementMutator
 import cl.ravenhill.keen.operators.alteration.mutation.InversionMutator
 import cl.ravenhill.keen.ranking.FitnessMinRanker
 
@@ -66,7 +67,7 @@ data object TravelingSalesmanProblem {
         }) {
             populationSize = POPULATION_SIZE
             limits += MaxGenerations(MAX_GENERATIONS)
-            alterers += listOf(InversionMutator(individualRate = 0.1), OrderedCrossover(chromosomeRate = 0.3))
+            alterers += listOf(DisplacementMutator(individualRate = 0.1), OrderedCrossover(chromosomeRate = 0.3))
             ranker = FitnessMinRanker()
             listeners += observers
         }

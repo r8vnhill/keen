@@ -77,8 +77,8 @@ class DoubleChromosomeTest : FreeSpec({
             "with valid ranges and filters should create a chromosome with genes that satisfy the constraints" {
                 `validate genes with specified range and factory`(
                     arbRange(
-                        Arb.double(includeNonFiniteEdgeCases = false).filter { it != 0.0 },
-                        Arb.double(includeNonFiniteEdgeCases = false).filter { it != 0.0 }
+                        Arb.double(includeNonFiniteEdgeCases = false).filterNot { it == -0.0 },
+                        Arb.double(includeNonFiniteEdgeCases = false).filterNot { it == -0.0}
                     ), { rng, ranges, index ->
                         DoubleGene(rng.nextDoubleInRange(ranges[index]), ranges[index])
                     }) { DoubleChromosome.Factory() }
