@@ -12,6 +12,7 @@ import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ExperimentalKeen
@@ -292,7 +293,7 @@ interface Tree<V, T> : SelfReferential<T>, Iterable<T>, MultiStringFormat where 
      */
     @Deprecated("Use toString() instead.", ReplaceWith("toString()"))
     override fun toDetailedString() = "${this::class.simpleName}(" +
-          "value=$value, size=$size, arity=$arity, height=$height, children=$children, descendants=$descendants)"
+            "value=$value, size=$size, arity=$arity, height=$height, children=$children, descendants=$descendants)"
 
     companion object
 }
@@ -396,4 +397,88 @@ fun <V, T> Tree<V, T>.fromTopDown(nodes: List<T>): T where T : Tree<V, T> {
     }
     // Return the top of the stack.
     return stack.first()
+}
+
+/**
+ * ! BROKEN !
+ * Converts a tree structure into a top-down list representation. This method traverses the tree starting from the root
+ * and adds each node to a list in the order they are visited. The traversal method used here is implied to be
+ * breadth-first, given the top-down nature of the list.
+ *
+ * This function is marked as experimental and should be used with caution as its behavior or signature might change in
+ * future releases.
+ *
+ * ## Usage:
+ * This method can be particularly useful for algorithms that require processing of tree nodes in a sequential manner
+ * starting from the root, or for simply serializing the tree structure into a list for easy storage or transmission.
+ *
+ * ### Example:
+ * ```kotlin
+ * val tree = Tree(rootValue)
+ * // Assuming `tree` is populated with multiple nodes...
+ * val nodeList = tree.toTopDownList()
+ * // nodeList now contains all nodes of the tree in top-down order.
+ * ```
+ *
+ * @param V The type of values held in the tree's nodes.
+ * @param T The type of the tree itself, which must extend `Tree<V, T>`.
+ *
+ * @return A list containing all nodes of the tree, ordered from top to bottom.
+ */
+@OptIn(ExperimentalKeen::class)
+inline fun <V, reified T> Tree<V, T>.toTopDownList(): List<T> where T : Tree<V, T> {
+    return toTopDownSequence().toList()
+}
+
+/**
+ * ! BROKEN !
+ * Converts the tree into a sequence of nodes in a top-down order using a breadth-first traversal approach. This method
+ * allows for lazy, incremental processing of tree nodes as they are encountered in the traversal, which is useful for
+ * scenarios where only part of the tree might need to be processed, or where the full tree is too large to process in
+ * memory at once.
+ *
+ * ### Experimental API:
+ * This method is marked with the `@OptIn(ExperimentalKeen::class)` annotation indicating that it is part of an
+ * experimental API that may change in future releases.
+ *
+ * ### Usage:
+ * This method is particularly useful for processing trees in scenarios where operations or computations need to be
+ * applied to nodes in the order they appear from top to bottom, such as calculating levels or applying filters:
+ *
+ * ```kotlin
+ * val tree: Tree<String, CustomTreeType> = obtainTreeSomehow()
+ * val topDownNodes = tree.toTopDownSequence().filter { it.value.contains("specific") }
+ * topDownNodes.forEach { println(it.value) }
+ * ```
+ *
+ * ### Example:
+ * Consider a tree with a structure representing organizational hierarchy:
+ * - CEO
+ *   - VP of Engineering
+ *     - Engineering Manager
+ *   - VP of Sales
+ *
+ * Calling `toTopDownSequence` on this tree would yield a sequence of nodes starting with the CEO, followed by the VPs,
+ * and then the Engineering Manager, allowing for operations that need to consider organizational structure.
+ *
+ * @receiver The tree instance on which the method is called.
+ * @param T The type of the tree itself, which must extend `Tree<V, T>`.
+ * @param V The value type stored in each node of the tree.
+ * @return A [Sequence<T>] that can be iterated over to process nodes of the tree in a top-down order. The sequence
+ *         is generated lazily, meaning that each node is processed only as it is needed by the consuming operation.
+ * @throws CompositeException containing all the exceptions thrown by the constraints.
+ * @throws ConstraintException if the tree is not of the expected type `T`.
+ */
+@OptIn(ExperimentalKeen::class)
+inline fun <V, reified T> Tree<V, T>.toTopDownSequence() where T : Tree<V, T> = sequence {
+    val queue = ArrayDeque<T>()
+    constraints {
+        "The tree must be of type ${T::class.simpleName}." { constraint { this@toTopDownSequence is T } }
+    }
+    queue.add(this@toTopDownSequence as T)
+    while (queue.isNotEmpty()) {
+        val node = queue.removeFirst()
+        yield(node)
+        node.forEach { queue.add(it) }
+    }
 }
