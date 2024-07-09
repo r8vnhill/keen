@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.EvolutionState
-import cl.ravenhill.keen.evolution.Evolver
+import cl.ravenhill.keen.evolution.engines.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.EvolutionListener
 

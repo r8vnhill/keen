@@ -1,17 +1,12 @@
-/*
- * Copyright (c) 2024, Ignacio Slater M.
- * 2-Clause BSD License.
- */
-
-
-package cl.ravenhill.keen.evolution
+package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.jakt.ExperimentalJakt
-import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.Jakt
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.keen.evolution.EvolutionEngine.Factory
+import cl.ravenhill.keen.evolution.EvolutionInterceptor
+import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
@@ -32,6 +27,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
 import kotlin.math.ceil
 import kotlin.math.floor
 
+typealias GeneticAlgorithm<T, G> = EvolutionEngine<T, G>
 
 /**
  * Implements the core engine of an evolutionary algorithm, handling the entire process of evolution.
@@ -91,7 +87,7 @@ import kotlin.math.floor
  * @property survivorSelector A selector for choosing survivors from the population.
  * @property alterers A list of genetic operators for altering the offspring.
  * @property limits A list of termination conditions for the evolutionary process.
- * @property ranker A ranker for ordering individuals based on their fitness.
+ * @property evolutionConfig A ranker for ordering individuals based on their fitness.
  * @property listeners A list of listeners for monitoring and reacting to the evolution process.
  * @property evaluator An executor for evaluating the fitness of individuals.
  * @property interceptor An interceptor for modifying the evolution state before and after each phase.
@@ -103,7 +99,7 @@ class EvolutionEngine<T, G>(
     selectionConfig: SelectionConfig<T, G>,
     alterationConfig: AlterationConfig<T, G>,
     evolutionConfig: EvolutionConfig<T, G>,
-) : Evolver<T, G> where G : Gene<T, G> {
+) : AbstractEvolutionaryAlgorithm<T, G>(evolutionConfig) where G : Gene<T, G> {
 
     val genotypeFactory: Genotype.Factory<T, G> = populationConfig.genotypeFactory
     val populationSize: Int = populationConfig.populationSize
@@ -111,63 +107,10 @@ class EvolutionEngine<T, G>(
     val parentSelector: Selector<T, G> = selectionConfig.parentSelector
     val survivorSelector: Selector<T, G> = selectionConfig.survivorSelector
     val alterers: List<Alterer<T, G>> = alterationConfig.alterers
-    val limits: List<Limit<T, G>> = evolutionConfig.limits
-    val ranker: IndividualRanker<T, G> = evolutionConfig.ranker
-    override val listeners: MutableList<EvolutionListener<T, G>> = evolutionConfig.listeners.toMutableList()
-    val evaluator: EvaluationExecutor<T, G> = evolutionConfig.evaluator
-    val interceptor: EvolutionInterceptor<T, G> = evolutionConfig.interceptor
 
     init {
         limits.forEach { it.engine = this }
-        listeners.onEach { listener -> listener.ranker = ranker }
-    }
-
-    /**
-     * Represents the state of the evolutionary process.
-     */
-    private var state: EvolutionState<T, G> = EvolutionState.empty(ranker)
-
-    /**
-     * Executes the evolutionary algorithm until a specified termination condition is met.
-     *
-     * This function represents the main loop of the evolutionary algorithm, where generations are iterated through
-     * until one or more termination conditions (limits) are satisfied. It manages the overall flow of the evolutionary
-     * process, from the initial generation to the final state that meets the defined criteria.
-     *
-     * ## Evolutionary Loop:
-     * 1. **Evolution Start Notification**: Notifies all registered listeners that the evolution process has started.
-     * 2. **Generation Iteration**: Repeatedly iterates through generations using the `iterateGeneration` method.
-     * 3. **Termination Check**: After each iteration, checks if any of the termination conditions (limits) are
-     *   satisfied.
-     * 4. **Evolution End Notification**: Once a termination condition is met, notifies all registered listeners that
-     *   the evolution process has ended.
-     *
-     * ## Usage:
-     * The `evolve` method is the entry point for executing the evolutionary algorithm. It is invoked when the
-     * algorithm is ready to start and will continue to run until the specified termination conditions are met.
-     *
-     * ### Example:
-     * ```kotlin
-     * val engine = /* Create an instance of EvolutionEngine */
-     * val finalState = engine.evolve()
-     * // The finalState represents the state of the evolution at the end of the process
-     * ```
-     * In this example, `evolve` is called to start the evolutionary process. The method continues to iterate through
-     * generations until a termination condition is satisfied, returning the final state of the evolution.
-     *
-     * @return The final [EvolutionState] after the termination conditions are met, representing the end of the
-     *   evolutionary process.
-     */
-    override fun evolve(): EvolutionState<T, G> {
-        // Notify listeners of evolution start
-        listeners.forEach { it.onEvolutionStarted(state) }
-        // Main evolutionary loop
-        do {
-            state = iterateGeneration(state)
-        } while (limits.none { it(state) })
-        // Notify listeners of evolution end
-        listeners.forEach { it.onEvolutionEnded(state) }
-        return state
+        listeners.onEach { listener -> listener.ranker = this.evolutionConfig.ranker }
     }
 
     /**
@@ -212,9 +155,7 @@ class EvolutionEngine<T, G>(
      * @param state The current [EvolutionState] representing the progress of evolution.
      * @return An updated [EvolutionState] that represents the state of the evolution after one generation cycle.
      */
-    fun iterateGeneration(state: EvolutionState<T, G>): EvolutionState<T, G> {
-        // Notify listeners of generation start
-        listeners.forEach { it.onGenerationStarted(state) }
+    override fun iterateGeneration(state: EvolutionState<T, G>): EvolutionState<T, G> {
         // Apply pre-processing to the state
         val interceptedStart = interceptor.before(state)
         // Initialize or continue population
@@ -233,8 +174,6 @@ class EvolutionEngine<T, G>(
         val nextGeneration = evaluatePopulation(nextPopulation)
         // Apply post-processing to the final state
         val interceptedEnd = interceptor.after(nextGeneration)
-        // Notify listeners of generation end
-        listeners.forEach { it.onGenerationEnded(interceptedEnd) }
         return interceptedEnd.copy(generation = interceptedEnd.generation + 1)
     }
 
@@ -335,7 +274,7 @@ class EvolutionEngine<T, G>(
      */
     fun evaluatePopulation(state: EvolutionState<T, G>): EvolutionState<T, G> {
         // Validate the size of the population before evaluation
-        constraints {
+        Jakt.constraints {
             "Population size must be the same as the expected population size." {
                 state.population must HaveSize(populationSize)
             }
@@ -345,7 +284,7 @@ class EvolutionEngine<T, G>(
         // Conduct the fitness evaluation process
         val evaluated = evaluator(state).apply {
             // Validate the population after evaluation
-            constraints {
+            Jakt.constraints {
                 "Evaluated population size must be the same as the expected population size." {
                     population must HaveSize(populationSize)
                 }
@@ -539,13 +478,13 @@ class EvolutionEngine<T, G>(
 
         @OptIn(ExperimentalJakt::class)
         var populationSize: Int = DEFAULT_POPULATION_SIZE
-            set(value) = constraints {
+            set(value) = Jakt.constraints {
                 "Population size ($value) must be positive."(::EngineException) { value must BePositive }
             }.let { field = value }
 
         @OptIn(ExperimentalJakt::class)
         var survivalRate: Double = DEFAULT_SURVIVAL_RATE
-            set(value) = constraints {
+            set(value) = Jakt.constraints {
                 "Survival rate ($value) must be between 0 and 1."(::EngineException) {
                     value must BeInRange(0.0..1.0)
                 }

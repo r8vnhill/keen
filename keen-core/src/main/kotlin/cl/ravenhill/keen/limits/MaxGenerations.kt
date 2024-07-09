@@ -9,7 +9,7 @@ package cl.ravenhill.keen.limits
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.evolution.EvolutionState
-import cl.ravenhill.keen.evolution.Evolver
+import cl.ravenhill.keen.evolution.engines.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
 
 

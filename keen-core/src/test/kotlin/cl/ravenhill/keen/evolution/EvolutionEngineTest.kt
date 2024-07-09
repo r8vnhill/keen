@@ -23,6 +23,7 @@ import cl.ravenhill.keen.arbEngine
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
+import cl.ravenhill.keen.evolution.engines.EvolutionEngine
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Individual
@@ -68,7 +69,7 @@ class EvolutionEngineTest : FreeSpec({
                     survivorSelector shouldBe selectionConfig.survivorSelector
                     alterers shouldBe alterationConfig.alterers
                     limits shouldBe evolutionConfig.limits
-                    ranker shouldBe evolutionConfig.ranker
+                    this.evolutionConfig shouldBe evolutionConfig.ranker
                     listeners shouldBe evolutionConfig.listeners
                     evaluator shouldBe evolutionConfig.evaluator
                     interceptor shouldBe evolutionConfig.interceptor
@@ -172,7 +173,7 @@ class EvolutionEngineTest : FreeSpec({
                         newState.population shouldBe parentSelector.select(
                             state.population,
                             newState.population.size,
-                            ranker
+                            evolutionConfig
                         )
                     }
                 }

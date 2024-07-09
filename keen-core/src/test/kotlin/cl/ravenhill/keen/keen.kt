@@ -1,6 +1,6 @@
 package cl.ravenhill.keen
 
-import cl.ravenhill.keen.evolution.EvolutionEngine
+import cl.ravenhill.keen.evolution.engines.EvolutionEngine
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
