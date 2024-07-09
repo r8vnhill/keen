@@ -4,15 +4,17 @@
  */
 
 
-package cl.ravenhill.keen.listeners
+package cl.ravenhill.keen.listeners.summary
 
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.listeners.EvolutionListener.Companion.computeSteadyGenerations
+import cl.ravenhill.keen.listeners.AbstractEvolutionListener
+import cl.ravenhill.keen.listeners.mixins.GenerationListener
+import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
-import cl.ravenhill.keen.listeners.records.IndividualRecord
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
 
 /**
@@ -51,8 +53,14 @@ import kotlin.time.ExperimentalTime
  * @property fittest The fittest individual in the final generation.
  */
 @OptIn(ExperimentalTime::class)
-class EvolutionSummary<T, G>(val precision: Duration.() -> Long = Duration::inWholeMilliseconds) :
-        AbstractEvolutionListener<T, G>() where G : Gene<T, G> {
+class EvolutionSummary<T, G>(
+    val precision: Duration.() -> Long = Duration::inWholeMilliseconds,
+    evolution: EvolutionRecord<T, G> = EvolutionRecord(),
+    timeSource: TimeSource = TimeSource.Monotonic,
+    generationSummary: GenerationSummary<T, G> = GenerationSummary(evolution, timeSource, ptecision)
+) : AbstractEvolutionListener<T, G>(),
+        GenerationListener<T, G> by generationSummary
+        where G : Gene<T, G> {
 
     /**
      * Displays a detailed summary of the evolutionary process on the console.
@@ -126,89 +134,6 @@ class EvolutionSummary<T, G>(val precision: Duration.() -> Long = Duration::inWh
     |--> Best fitness: ${fittest.fitness}
     """.trimIndent()
     )
-
-    /**
-     * Callback function triggered at the start of each generation during the evolutionary process.
-     *
-     * This method is invoked at the beginning of each generation cycle in an evolutionary algorithm. It initializes and
-     * records the state of the current generation, including its start time and the snapshot of the parent population.
-     * This information is vital for tracking the progress and changes in each generation and forms a part of the
-     * overall evolution summary.
-     *
-     * ## Functionality:
-     * - **Generation Record Initialization**: Sets up a new `GenerationRecord` to store details of the current
-     *   generation.
-     * - **Time Recording**: Captures the start time of the generation using the `timeSource`.
-     * - **Parent Population Snapshot**: Records a snapshot of the parent population at the beginning of the generation.
-     *   This includes converting each individual's genotype and fitness into `IndividualRecord` for detailed tracking.
-     * - **Evolution Tracking**: Appends the current generation record to the `evolution` object's generation history.
-     *
-     * ## Usage:
-     * This method is automatically called by the evolutionary algorithm at the start of each generation. It is not
-     * intended to be invoked directly in most use cases.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onGenerationStarted(currentState) }
-     * ```
-     *
-     * In this snippet, `onGenerationStarted` is called for each listener in the evolutionary algorithm, marking the
-     * beginning of a new generation.
-     *
-     * @param state The current [EvolutionState] representing the beginning of the generation. It includes the
-     *   population and other relevant evolutionary data.
-     */
-    override fun onGenerationStarted(state: EvolutionState<T, G>) {
-        currentGeneration = GenerationRecord<T, G>(generations.size + 1).apply {
-            startTime = timeSource.markNow()
-            this.population.parents = List(state.population.size) {
-                IndividualRecord(state.population[it].genotype, state.population[it].fitness)
-            }
-        }
-        evolution.generations += currentGeneration
-    }
-
-    /**
-     * Callback function triggered at the end of each generation during the evolutionary process.
-     *
-     * This method is invoked when a generation cycle in an evolutionary algorithm concludes. It finalizes the record
-     * for the current generation, capturing its duration, the state of the offspring population, and the number of
-     * steady generations observed up to this point. This information is crucial for analyzing the progression and
-     * effectiveness of the evolutionary process over time.
-     *
-     * ## Functionality:
-     * - **Generation Duration Recording**: Calculates and records the duration of the current generation.
-     * - **Offspring Population Snapshot**: Stores a snapshot of the offspring population at the end of the generation.
-     *   This includes creating `IndividualRecord` instances for each offspring, capturing their genotypes and fitness.
-     * - **Steady Generation Calculation**: Updates the count of steady generations, which is a measure of how long the
-     *   population's fittest individual has remained unchanged, indicating stability or a possible convergence in the
-     *   evolutionary process.
-     * - **Generation Record Update**: Updates the current generation record with the collected data.
-     *
-     * ## Usage:
-     * This method is automatically called by the evolutionary algorithm at the end of each generation. It is not
-     * intended to be invoked directly in most use cases.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onGenerationEnded(currentState) }
-     * ```
-     *
-     * In this snippet, `onGenerationEnded` is called for each listener in the evolutionary algorithm, marking the
-     * completion of a generation.
-     *
-     * @param state The current [EvolutionState] representing the end of the generation. It includes the population
-     *   and other relevant evolutionary data.
-     */
-    override fun onGenerationEnded(state: EvolutionState<T, G>) {
-        currentGeneration.apply {
-            duration = currentGeneration.startTime.elapsedNow().precision()
-            population.offspring = List(state.population.size) {
-                IndividualRecord(state.population[it].genotype, state.population[it].fitness)
-            }
-            steady = computeSteadyGenerations(ranker, evolution)
-        }
-    }
 
     /**
      * Callback function triggered at the start of the initialization phase in the evolutionary process.

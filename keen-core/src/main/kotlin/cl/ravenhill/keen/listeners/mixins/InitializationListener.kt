@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.listeners.mixins
 
+import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
@@ -13,11 +14,11 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * ### Example 1: Custom Initialization Listener
  * ```
  * class MyInitializationListener : InitializationListener<Int, MyGene> {
- *     override fun onInitializationStarted() {
+ *     override fun onInitializationStarted(state: EvolutionState<Int, MyGene>) {
  *         println("Initialization started.")
  *     }
  *
- *     override fun onInitializationEnded() {
+ *     override fun onInitializationEnded(state: EvolutionState<Int, MyGene>) {
  *         println("Initialization ended.")
  *     }
  * }
@@ -29,11 +30,15 @@ interface InitializationListener<T, G> where G : Gene<T, G> {
 
     /**
      * Called when the initialization phase starts.
+     *
+     * @param state the current state of the evolution process
      */
-    fun onInitializationStarted() = Unit
+    fun onInitializationStarted(state: EvolutionState<T, G>) = Unit
 
     /**
      * Called when the initialization phase ends.
+     *
+     * @param state the current state of the evolution process
      */
-    fun onInitializationEnded() = Unit
+    fun onInitializationEnded(state: EvolutionState<T, G>) = Unit
 }

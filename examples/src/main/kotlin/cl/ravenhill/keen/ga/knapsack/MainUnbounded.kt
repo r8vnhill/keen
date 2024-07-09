@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.ga.knapsack
 
 import cl.ravenhill.keen.listeners.EvolutionPlotter
-import cl.ravenhill.keen.listeners.EvolutionSummary
+import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 
 fun main() {
     val summary = EvolutionSummary<Pair<Int, Int>, KnapsackGene>()

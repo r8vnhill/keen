@@ -2,6 +2,7 @@ package cl.ravenhill.keen.listeners.mixins
 
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.listeners.records.GenerationRecord
 
 /**
  * A listener interface for receiving notifications about the start and end of generations in the evolutionary
