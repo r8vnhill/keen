@@ -9,12 +9,9 @@ package cl.ravenhill.keen.listeners.summary
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
+import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
-import cl.ravenhill.keen.listeners.records.EvolutionRecord
-import cl.ravenhill.keen.listeners.records.GenerationRecord
-import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-import kotlin.time.TimeSource
 
 
 /**
@@ -54,12 +51,9 @@ import kotlin.time.TimeSource
  */
 @OptIn(ExperimentalTime::class)
 class EvolutionSummary<T, G>(
-    val precision: Duration.() -> Long = Duration::inWholeMilliseconds,
-    evolution: EvolutionRecord<T, G> = EvolutionRecord(),
-    timeSource: TimeSource = TimeSource.Monotonic,
-    generationSummary: GenerationSummary<T, G> = GenerationSummary(evolution, timeSource, ptecision)
+    config: ListenerConfiguration<T, G> = ListenerConfiguration()
 ) : AbstractEvolutionListener<T, G>(),
-        GenerationListener<T, G> by generationSummary
+    GenerationListener<T, G> by GenerationSummary(config)
         where G : Gene<T, G> {
 
     /**
@@ -130,7 +124,7 @@ class EvolutionSummary<T, G>(
     |--> Min generation time: ${generations.minOfOrNull { it.duration }} ms
     |--> Generation: ${evolution.generations.last().generation}
     |--> Steady generations: ${evolution.generations.last().steady}
-    |--> Fittest: ${fittest.genotype.toSimpleString()}
+    |--> Fittest: ${fittest.genotype}
     |--> Best fitness: ${fittest.fitness}
     """.trimIndent()
     )
