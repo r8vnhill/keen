@@ -1,3 +1,5 @@
+package cl.ravenhill.keen.ga
+
 /*
  * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
@@ -75,17 +77,11 @@ private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten()
 fun main() {
     val engine = evolutionEngine(::count, genotypeOf {
         chromosomeOf {
-            booleans {
-                size = CHROMOSOME_SIZE
-                trueRate = TRUE_RATE
-            }
+            booleans { size = 50 }
         }
     }) {
-        populationSize = POPULATION_SIZE
-        parentSelector = RouletteWheelSelector()
-        survivorSelector = TournamentSelector()
         alterers += listOf(BitFlipMutator(individualRate = 0.5), UniformCrossover(chromosomeRate = 0.6))
-        limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
+        limits += listOf(MaxGenerations(1000), TargetFitness(50.0))
         listeners += listOf(EvolutionSummary(), EvolutionPlotter())
     }
     engine.evolve()
