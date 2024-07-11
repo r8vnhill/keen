@@ -11,6 +11,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
+import cl.ravenhill.keen.listeners.mixins.InitializationListener
 import kotlin.time.ExperimentalTime
 
 
@@ -53,7 +54,8 @@ import kotlin.time.ExperimentalTime
 class EvolutionSummary<T, G>(
     config: ListenerConfiguration<T, G> = ListenerConfiguration()
 ) : AbstractEvolutionListener<T, G>(),
-    GenerationListener<T, G> by GenerationSummary(config)
+    GenerationListener<T, G> by GenerationSummary(config),
+    InitializationListener<T, G> by InitializationSummary(config)
         where G : Gene<T, G> {
 
     /**
@@ -128,69 +130,6 @@ class EvolutionSummary<T, G>(
     |--> Best fitness: ${fittest.fitness}
     """.trimIndent()
     )
-
-    /**
-     * Callback function triggered at the start of the initialization phase in the evolutionary process.
-     *
-     * This method is invoked when the initialization phase of an evolutionary algorithm begins. Initialization is a
-     * crucial stage where the initial population and setup for the evolutionary process are established. This method
-     * marks the start time of the initialization phase, allowing for tracking the duration of this initial setup.
-     *
-     * ## Functionality:
-     * - **Initialization Start Time Recording**: Captures the start time of the initialization phase using the provided
-     *   time source. This timestamp is essential for measuring the duration of the initialization phase, which includes
-     *   creating the initial population and setting up the environment for the evolution process.
-     *
-     * ## Usage:
-     * This method is automatically called by the evolutionary algorithm framework at the beginning of the
-     * initialization phase. It is not intended for direct invocation in typical use cases.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onInitializationStarted(currentState) }
-     * ```
-     *
-     * In this snippet, `onInitializationStarted` is called for each listener in the evolutionary algorithm, signifying
-     * the start of the initialization phase.
-     *
-     * @param state The current [EvolutionState] at the start of initialization. It provides context for the
-     *   initialization phase, including the initial settings and parameters for the evolutionary process.
-     */
-    override fun onInitializationStarted(state: EvolutionState<T, G>) {
-        evolution.initialization.startTime = timeSource.markNow()
-    }
-
-    /**
-     * Callback function triggered at the end of the initialization phase in the evolutionary process.
-     *
-     * This method is called when the initialization phase of an evolutionary algorithm concludes. The initialization
-     * phase typically involves setting up the initial population and other necessary configurations for the
-     * evolutionary process. This method calculates and records the duration of this phase, providing insights into the
-     * time taken for initialization.
-     *
-     * ## Functionality:
-     * - **Initialization Duration Calculation**: Determines the duration of the initialization phase by calculating the
-     *   elapsed time since its start. This duration is crucial for performance analysis and optimization of the
-     *   evolutionary process.
-     *
-     * ## Usage:
-     * This method is automatically invoked by the evolutionary algorithm framework at the conclusion of the
-     * initialization phase. It is typically not called directly in user code.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onInitializationEnded(currentState) }
-     * ```
-     *
-     * In this example, `onInitializationEnded` is invoked for each listener, signaling the end of the initialization
-     * phase and enabling the calculation of its duration.
-     *
-     * @param state The current [EvolutionState] at the end of the initialization. It encapsulates the state of the
-     *   evolutionary process immediately after initialization, ready for the next phase of evolution.
-     */
-    override fun onInitializationEnded(state: EvolutionState<T, G>) {
-        evolution.initialization.duration = evolution.initialization.startTime.elapsedNow().precision()
-    }
 
     /**
      * Callback function triggered at the start of the evaluation phase in the evolutionary process.
