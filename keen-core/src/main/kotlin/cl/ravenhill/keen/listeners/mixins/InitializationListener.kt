@@ -1,4 +1,4 @@
-package cl.ravenhill.keen.listeners.characteristics
+package cl.ravenhill.keen.listeners.mixins
 
 import cl.ravenhill.keen.genetic.genes.Gene
 
