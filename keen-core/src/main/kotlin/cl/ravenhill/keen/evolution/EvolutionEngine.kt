@@ -6,12 +6,13 @@
 
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.evolution.EvolutionEngine.Factory
+import cl.ravenhill.keen.evolution.EvolutionEngine.Factory.Companion.DEFAULT_POPULATION_SIZE
+import cl.ravenhill.keen.evolution.EvolutionEngine.Factory.Companion.DEFAULT_SURVIVAL_RATE
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
@@ -23,12 +24,14 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.Limit
-import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.ListenerConfiguration
+import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.Selector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.utils.Box
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -119,7 +122,6 @@ class EvolutionEngine<T, G>(
 
     init {
         limits.forEach { it.engine = this }
-        listeners.onEach { listener -> listener.ranker = ranker }
     }
 
     /**
@@ -537,13 +539,13 @@ class EvolutionEngine<T, G>(
         val genotypeFactory: Genotype.Factory<T, G>,
     ) where G : Gene<T, G> {
 
-        @OptIn(ExperimentalJakt::class)
+        private val _ranker: Box.MutableBox<IndividualRanker<T, G>> = Box.mutable(defaultRanker())
+
         var populationSize: Int = DEFAULT_POPULATION_SIZE
             set(value) = constraints {
                 "Population size ($value) must be positive."(::EngineException) { value must BePositive }
             }.let { field = value }
 
-        @OptIn(ExperimentalJakt::class)
         var survivalRate: Double = DEFAULT_SURVIVAL_RATE
             set(value) = constraints {
                 "Survival rate ($value) must be between 0 and 1."(::EngineException) {
@@ -561,7 +563,10 @@ class EvolutionEngine<T, G>(
 
         var ranker: IndividualRanker<T, G> = defaultRanker()
 
+        @Deprecated("Use the 'listenerFactories' property instead.")
         var listeners: MutableList<EvolutionListener<T, G>> = defaultListeners()
+
+        var listenerFactories: MutableList<(ListenerConfiguration<T, G>) -> EvolutionListener<T, G>> = mutableListOf()
 
         var evaluator: EvaluationExecutor.Factory<T, G> = defaultEvaluator()
 
@@ -585,7 +590,14 @@ class EvolutionEngine<T, G>(
             selectionConfig = SelectionConfig(survivalRate, parentSelector, survivorSelector),
             alterationConfig = AlterationConfig(alterers),
             evolutionConfig = EvolutionConfig(
-                limits, ranker, listeners, evaluator.creator(fitnessFunction), interceptor
+                limits,
+                ranker,
+                // This is meant to be removed in the future in favor of the listenerFactories property
+                if (listenerFactories.isEmpty()) listeners else listenerFactories.map {
+                    it(ListenerConfiguration(ranker = ranker))
+                },
+                evaluator.creator(fitnessFunction),
+                interceptor
             )
         )
 

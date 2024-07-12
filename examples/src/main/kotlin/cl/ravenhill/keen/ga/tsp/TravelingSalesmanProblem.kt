@@ -9,7 +9,7 @@ import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
 import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.limits.MaxGenerations
-import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.crossover.OrderedCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.InversionMutator
 import cl.ravenhill.keen.ranking.FitnessMinRanker
