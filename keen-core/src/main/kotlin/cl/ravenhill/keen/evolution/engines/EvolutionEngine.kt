@@ -1,12 +1,11 @@
 package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.jakt.ExperimentalJakt
-import cl.ravenhill.jakt.Jakt
+import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.keen.evolution.EvolutionInterceptor
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.EvolutionEngine.Factory
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
@@ -110,7 +109,54 @@ class EvolutionEngine<T, G>(
 
     init {
         limits.forEach { it.engine = this }
-        listeners.onEach { listener -> listener.ranker = this.evolutionConfig.ranker }
+    }
+
+    /**
+     * Represents the state of the evolutionary process.
+     */
+    private var state: EvolutionState<T, G> = EvolutionState.empty(ranker)
+
+    /**
+     * Executes the evolutionary algorithm until a specified termination condition is met.
+     *
+     * This function represents the main loop of the evolutionary algorithm, where generations are iterated through
+     * until one or more termination conditions (limits) are satisfied. It manages the overall flow of the evolutionary
+     * process, from the initial generation to the final state that meets the defined criteria.
+     *
+     * ## Evolutionary Loop:
+     * 1. **Evolution Start Notification**: Notifies all registered listeners that the evolution process has started.
+     * 2. **Generation Iteration**: Repeatedly iterates through generations using the `iterateGeneration` method.
+     * 3. **Termination Check**: After each iteration, checks if any of the termination conditions (limits) are
+     *   satisfied.
+     * 4. **Evolution End Notification**: Once a termination condition is met, notifies all registered listeners that
+     *   the evolution process has ended.
+     *
+     * ## Usage:
+     * The `evolve` method is the entry point for executing the evolutionary algorithm. It is invoked when the
+     * algorithm is ready to start and will continue to run until the specified termination conditions are met.
+     *
+     * ### Example:
+     * ```kotlin
+     * val engine = /* Create an instance of EvolutionEngine */
+     * val finalState = engine.evolve()
+     * // The finalState represents the state of the evolution at the end of the process
+     * ```
+     * In this example, `evolve` is called to start the evolutionary process. The method continues to iterate through
+     * generations until a termination condition is satisfied, returning the final state of the evolution.
+     *
+     * @return The final [EvolutionState] after the termination conditions are met, representing the end of the
+     *   evolutionary process.
+     */
+    override fun evolve(): EvolutionState<T, G> {
+        // Notify listeners of evolution start
+        listeners.forEach { it.onEvolutionStarted(state) }
+        // Main evolutionary loop
+        do {
+            state = iterateGeneration(state)
+        } while (limits.none { it(state) })
+        // Notify listeners of evolution end
+        listeners.forEach { it.onEvolutionEnded(state) }
+        return state
     }
 
     /**
@@ -274,7 +320,7 @@ class EvolutionEngine<T, G>(
      */
     fun evaluatePopulation(state: EvolutionState<T, G>): EvolutionState<T, G> {
         // Validate the size of the population before evaluation
-        Jakt.constraints {
+        constraints {
             "Population size must be the same as the expected population size." {
                 state.population must HaveSize(populationSize)
             }
@@ -284,7 +330,7 @@ class EvolutionEngine<T, G>(
         // Conduct the fitness evaluation process
         val evaluated = evaluator(state).apply {
             // Validate the population after evaluation
-            Jakt.constraints {
+            constraints {
                 "Evaluated population size must be the same as the expected population size." {
                     population must HaveSize(populationSize)
                 }
@@ -476,15 +522,15 @@ class EvolutionEngine<T, G>(
         val genotypeFactory: Genotype.Factory<T, G>,
     ) where G : Gene<T, G> {
 
-        @OptIn(ExperimentalJakt::class)
+        private val _ranker: Box.MutableBox<IndividualRanker<T, G>> = Box.mutable(defaultRanker())
+
         var populationSize: Int = DEFAULT_POPULATION_SIZE
-            set(value) = Jakt.constraints {
+            set(value) = constraints {
                 "Population size ($value) must be positive."(::EngineException) { value must BePositive }
             }.let { field = value }
 
-        @OptIn(ExperimentalJakt::class)
         var survivalRate: Double = DEFAULT_SURVIVAL_RATE
-            set(value) = Jakt.constraints {
+            set(value) = constraints {
                 "Survival rate ($value) must be between 0 and 1."(::EngineException) {
                     value must BeInRange(0.0..1.0)
                 }
@@ -500,7 +546,10 @@ class EvolutionEngine<T, G>(
 
         var ranker: IndividualRanker<T, G> = defaultRanker()
 
+        @Deprecated("Use the 'listenerFactories' property instead.")
         var listeners: MutableList<EvolutionListener<T, G>> = defaultListeners()
+
+        var listenerFactories: MutableList<(ListenerConfiguration<T, G>) -> EvolutionListener<T, G>> = mutableListOf()
 
         var evaluator: EvaluationExecutor.Factory<T, G> = defaultEvaluator()
 
@@ -524,7 +573,14 @@ class EvolutionEngine<T, G>(
             selectionConfig = SelectionConfig(survivalRate, parentSelector, survivorSelector),
             alterationConfig = AlterationConfig(alterers),
             evolutionConfig = EvolutionConfig(
-                limits, ranker, listeners, evaluator.creator(fitnessFunction), interceptor
+                limits,
+                ranker,
+                // This is meant to be removed in the future in favor of the listenerFactories property
+                if (listenerFactories.isEmpty()) listeners else listenerFactories.map {
+                    it(ListenerConfiguration(ranker = ranker))
+                },
+                evaluator.creator(fitnessFunction),
+                interceptor
             )
         )
 

@@ -161,18 +161,13 @@ open class CombineCrossover<T, G>(
             }
         }
         // Combining logic for genes
-        return when (geneRate) {
-            0.0 -> chromosomes[0].genes
-            1.0 -> List(chromosomes[0].size) { i -> combiner(chromosomes.map { it[i] }) }
-            else -> {
-                List(chromosomes[0].size) { i ->
-                    if (Domain.random.nextDouble() < geneRate) {
-                        combiner(chromosomes.map { it[i] })
-                    } else {
-                        chromosomes[0][i]
-                    }
-                }
+        return List(chromosomes[0].size) { i ->
+            if (Domain.random.nextDouble() < geneRate) {
+                combiner(chromosomes.map { it[i] })
+            } else {
+                chromosomes[0][i]
             }
         }
     }
+
 }

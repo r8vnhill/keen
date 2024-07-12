@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.ga.tsp
 
-import cl.ravenhill.keen.listeners.EvolutionSummary
+import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 
 /**
  * The entry point of the application for solving the Traveling Salesman Problem (TSP) using a genetic algorithm.

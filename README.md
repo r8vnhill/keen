@@ -99,7 +99,7 @@ dependencies {
 ## Examples
 
 The following examples only have the explanation of what's the problem to solve.
-You can find the explanations of the code in the [wiki](https://github.com/r8vnhill/keen/wiki).
+You can find the explanations of the code in the [manual](https://ravenhill.pages.dev/keen/manual) (WIP).
 
 ### One Max (Ones Counting) Problem
 
@@ -120,8 +120,8 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness
-import cl.ravenhill.keen.listeners.EvolutionPlotter
-import cl.ravenhill.keen.listeners.EvolutionSummary
+import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
+import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
@@ -130,7 +130,6 @@ import cl.ravenhill.keen.operators.selection.TournamentSelector
 
 private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
 
-@OptIn(ExperimentalKeen::class)
 fun main() {
   val engine = evolutionEngine(::count, genotypeOf {
     chromosomeOf {

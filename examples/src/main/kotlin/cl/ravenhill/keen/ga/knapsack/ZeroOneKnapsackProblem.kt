@@ -16,7 +16,7 @@ import cl.ravenhill.keen.ga.knapsack.ZeroOneKnapsackProblem.TRUE_RATE
 import cl.ravenhill.keen.ga.knapsack.ZeroOneKnapsackProblem.items
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.limits.MaxGenerations
-import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 

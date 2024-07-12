@@ -139,7 +139,7 @@ data class BooleanChromosome(override val genes: List<BooleanGene>) : Chromosome
      *   must be within the range [0.0, 1.0].
      */
     class Factory : Chromosome.AbstractFactory<Boolean, BooleanGene>() {
-        var trueRate: Double by Delegates.notNull()
+        var trueRate: Double = 0.5
 
         /**
          * Creates and returns a new instance of [BooleanChromosome] with genes initialized based on the `trueRate`.

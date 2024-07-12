@@ -17,7 +17,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.listeners.EvolutionSummary
+import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.AverageCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
 import cl.ravenhill.keen.operators.selection.RandomSelector

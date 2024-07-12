@@ -14,9 +14,8 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness
-import cl.ravenhill.keen.listeners.EvolutionPlotter
-import cl.ravenhill.keen.listeners.EvolutionSummary
-import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
+import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
+import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
@@ -72,7 +71,6 @@ private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten()
  * In this implementation, executing `main` will initiate the genetic algorithm process and output the evolution
  * summary.
  */
-@OptIn(ExperimentalKeen::class)
 fun main() {
     val engine = evolutionEngine(::count, genotypeOf {
         chromosomeOf {

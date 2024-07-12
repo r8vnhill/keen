@@ -7,8 +7,8 @@
 package cl.ravenhill.keen.ga.knapsack
 
 import cl.ravenhill.keen.genetic.genes.BooleanGene
-import cl.ravenhill.keen.listeners.EvolutionPlotter
-import cl.ravenhill.keen.listeners.EvolutionSummary
+import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
+import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 
 
 /**

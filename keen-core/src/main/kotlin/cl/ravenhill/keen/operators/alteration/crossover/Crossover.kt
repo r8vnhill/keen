@@ -128,7 +128,6 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * @throws CollectionConstraintException if the size of the [parentGenotypes] list doesn't match the number of
      *   parents ([numParents]).
      */
-    @OptIn(ExperimentalJakt::class)
     @Throws(CompositeException::class, CollectionConstraintException::class)
     fun crossover(parentGenotypes: List<Genotype<T, G>>): List<Genotype<T, G>> {
         constraints {

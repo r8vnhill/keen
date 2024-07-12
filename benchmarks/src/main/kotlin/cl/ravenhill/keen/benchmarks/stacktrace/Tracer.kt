@@ -14,7 +14,7 @@ import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness
-import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.crossover.Crossover
 import cl.ravenhill.keen.operators.alteration.mutation.Mutator
 import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
