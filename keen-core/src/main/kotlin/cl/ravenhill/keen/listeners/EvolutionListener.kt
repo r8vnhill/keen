@@ -8,6 +8,11 @@ package cl.ravenhill.keen.listeners
 
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.listeners.mixins.EvaluationListener
+import cl.ravenhill.keen.listeners.mixins.GenerationListener
+import cl.ravenhill.keen.listeners.mixins.InitializationListener
+import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
+import cl.ravenhill.keen.listeners.mixins.SurvivorSelectionListener
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.utils.isNotNaN
@@ -52,83 +57,16 @@ import kotlin.time.TimeSource
  * @see EvolutionRecord for details on recording evolution data.
  * @see TimeSource for details on timing various phases of the evolution process.
  */
-interface EvolutionListener<T, G> where G : Gene<T, G> {
+interface EvolutionListener<T, G> :
+        GenerationListener<T, G>,
+        InitializationListener<T, G>,
+        EvaluationListener<T, G>,
+        ParentSelectionListener<T, G>,
+        SurvivorSelectionListener<T, G>
+        where G : Gene<T, G> {
     var ranker: IndividualRanker<T, G>
     var evolution: EvolutionRecord<T, G>
     var timeSource: TimeSource
-
-    /**
-     * Called when the generation of the evolutionary algorithm has started.
-     *
-     * @param state The current state of the evolutionary algorithm.
-     */
-    fun onGenerationStarted(state: EvolutionState<T, G>) = Unit
-
-
-    /**
-     * Handles the event when the generation has ended.
-     *
-     * @param state The current evolution state.
-     */
-    fun onGenerationEnded(state: EvolutionState<T, G>) = Unit
-
-
-    /**
-     * Called when the initialization process has started.
-     *
-     * @param state The current state of the evolution process.
-     */
-    fun onInitializationStarted(state: EvolutionState<T, G>) = Unit
-
-    /**
-     * Called when the initialization process has ended.
-     *
-     * @param state The current state of the evolution process.
-     */
-    fun onInitializationEnded(state: EvolutionState<T, G>) = Unit
-
-    /**
-     * Called when the evaluation process has started.
-     *
-     * @param state The current state of the evolution process.
-     */
-    fun onEvaluationStarted(state: EvolutionState<T, G>) = Unit
-
-    /**
-     * Called when the evaluation process has ended.
-     *
-     * @param state The current state of the evolution process.
-     */
-    fun onEvaluationEnded(state: EvolutionState<T, G>) = Unit
-
-    /**
-     * Called when the offspring selection process has started.
-     *
-     * @param state The current state of the evolution process.
-     */
-    fun onParentSelectionStarted(state: EvolutionState<T, G>) = Unit
-
-    /**
-     * Called when the offspring selection process has ended.
-     *
-     * @param state The current state of the evolution process.
-     */
-    fun onParentSelectionEnded(state: EvolutionState<T, G>) = Unit
-
-    /**
-     * Called when the survivor selection process has started.
-     *
-     * @param state The current state of the evolution process.
-     */
-    fun onSurvivorSelectionStarted(state: EvolutionState<T, G>) = Unit
-
-    /**
-     * Called when the survivor selection process has ended.
-     *
-     * @param state The current state of the evolution process.
-     */
-    fun onSurvivorSelectionEnded(state: EvolutionState<T, G>) = Unit
-
     /**
      * Called when the alteration process has started.
      *

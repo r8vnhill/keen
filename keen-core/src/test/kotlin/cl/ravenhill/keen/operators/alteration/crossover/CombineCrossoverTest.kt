@@ -24,13 +24,7 @@ import io.kotest.matchers.collections.shouldNotHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
-import io.kotest.property.arbitrary.constant
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.flatMap
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.map
-import io.kotest.property.arbitrary.nonPositiveInt
+import io.kotest.property.arbitrary.*
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
@@ -215,7 +209,7 @@ private suspend fun FreeSpecContainerScope.`valid configuration should initializ
     }
 }
 
-private suspend fun FreeSpecContainerScope.`default configuration should initialize correctly`() {
+suspend fun FreeSpecContainerScope.`default configuration should initialize correctly`() {
     "with default parameters should have the following properties" {
         checkAll(arbCombineCrossover<Int, IntGene>(null, null, null, null)) { crossover ->
             with(crossover) {
@@ -230,8 +224,12 @@ private suspend fun FreeSpecContainerScope.`default configuration should initial
 }
 
 private suspend fun FreeSpecContainerScope.`invalid configuration should throw an exception`() {
-    `throws an exception if the chromosome rate is not in the range 0 to 1` { invalidRate ->
-        CombineCrossover({ genes -> genes.first()}, chromosomeRate = invalidRate)
+    "throws an exception if the chromosome rate is not between 0 and 1" {
+        checkAll(arbInvalidProbability()) { rate ->
+            shouldThrow<CompositeException> {
+                CombineCrossover<Int, IntGene>({ genes -> genes.first() }, chromosomeRate = rate)
+            }.shouldHaveInfringement<CrossoverConfigException>("The chromosome rate ($rate) must be in 0.0..1.0")
+        }
     }
 
     "throws an exception if the gene rate is not between 0 and 1" {

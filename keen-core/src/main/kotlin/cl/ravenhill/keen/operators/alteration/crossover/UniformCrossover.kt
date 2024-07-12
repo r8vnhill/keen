@@ -56,4 +56,7 @@ class UniformCrossover<T, G>(
         const val DEFAULT_CHROMOSOME_RATE = 1.0
         const val DEFAULT_EXCLUSIVITY = false
     }
+
+    override fun toString() =
+        "UniformCrossover(numParents=$numParents, chromosomeRate=$chromosomeRate, exclusivity=$exclusivity)"
 }

@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ResetDomainListener
 import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.datatypes.arbInvalidProbability
@@ -14,6 +14,7 @@ import cl.ravenhill.keen.exceptions.CrossoverConfigException
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.spec.style.freeSpec
 import io.kotest.core.spec.style.scopes.FreeSpecContainerScope
@@ -29,8 +30,6 @@ import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.checkAll
-import cl.ravenhill.keen.Domain
-import io.kotest.common.ExperimentalKotest
 import kotlin.random.Random
 
 class UniformCrossoverTest : FreeSpec({
@@ -59,7 +58,11 @@ private fun `when crossing chromosomes`() = freeSpec {
                 Domain.random = rngPair.first
                 val offspring = crossover.crossoverChromosomes(chromosomes)
                 offspring.first().size shouldBe chromosomes.first().size
-                offspring.flatten() shouldBe cross(chromosomes, rngPair.second)
+                offspring.flatten() shouldBe crossoverChromosomes(
+                    chromosomes,
+                    rngPair.second,
+                    crossover.geneRate
+                ).flatten()
             }
         }
     }
@@ -183,12 +186,24 @@ private fun arbCrossoverAndValidInputs(): Arb<Pair<UniformCrossover<Int, IntGene
 // endregion
 
 // region : Helpers
-private fun cross(chromosomes: List<IntChromosome>, rng: Random): List<IntGene> {
-    val offspring = mutableListOf<IntGene>()
-    for (i in chromosomes[0].indices) {
-        rng.nextDouble()
-        offspring += chromosomes.random(rng)[i]
+private fun combine(genes: List<IntGene>, rng: Random) = genes.random(rng)
+
+private fun cross(chromosomes: List<IntChromosome>, rng: Random, geneRate: Double): List<IntGene> {
+    val chromosomeSize = chromosomes.first().size
+    val newGenes = mutableListOf<IntGene>()
+
+    for (i in 0..<chromosomeSize) {
+        if (geneRate == 1.0 || rng.nextDouble() < geneRate) {
+            newGenes.add(combine(chromosomes.map { it[i] }, rng))
+        } else {
+            newGenes.add(chromosomes.first().genes[i])
+        }
     }
-    return offspring
+    return newGenes
 }
+
+fun crossoverChromosomes(chromosomes: List<IntChromosome>, rng: Random, geneRate: Double) =
+    List(1) { IntChromosome(chromosomes.first().size) }.map { offspring ->
+        offspring.duplicateWithGenes(cross(chromosomes, rng, geneRate))
+    }
 // endregion

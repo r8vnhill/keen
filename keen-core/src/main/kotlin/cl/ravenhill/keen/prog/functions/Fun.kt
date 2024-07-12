@@ -6,7 +6,6 @@ import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.ExperimentalKeen
-import cl.ravenhill.keen.exceptions.AstException
 import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Reducible
 import cl.ravenhill.keen.utils.trees.Intermediate
@@ -48,7 +47,7 @@ open class Fun<T>(val name: String, override val arity: Int, val body: (List<T>)
 
     init {
         constraints {
-            "The arity ($arity) must be greater than or equal to 0"(::AstException) { arity mustNot BeNegative }
+            "The arity [$arity] must be at least 0" { arity mustNot BeNegative }
         }
     }
 

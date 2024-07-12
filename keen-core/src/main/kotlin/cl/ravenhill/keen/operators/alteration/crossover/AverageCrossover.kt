@@ -37,10 +37,10 @@ import cl.ravenhill.keen.genetic.genes.numeric.NumberGene
  * @param geneRate The probability of an individual gene within a chromosome being recombined, in the range [0.0, 1.0].
  */
 class AverageCrossover<T, G>(
-    chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
-    geneRate: Double = DEFAULT_GENE_RATE,
-    numParents: Int = DEFAULT_NUM_PARENTS,
-    exclusivity: Boolean = DEFAULT_EXCLUSIVITY
+    chromosomeRate: Double = 1.0,
+    geneRate: Double = 1.0,
+    numParents: Int = 2,
+    exclusivity: Boolean = false
 ) : CombineCrossover<T, G>(
     { genes: List<G> ->
         genes[0].average(genes.drop(1))
@@ -49,11 +49,4 @@ class AverageCrossover<T, G>(
     geneRate,
     numParents,
     exclusivity
-) where T : Number, G : NumberGene<T, G> {
-    companion object {
-        const val DEFAULT_CHROMOSOME_RATE = 1.0
-        const val DEFAULT_GENE_RATE = 1.0
-        const val DEFAULT_NUM_PARENTS = 2
-        const val DEFAULT_EXCLUSIVITY = false
-    }
-}
+) where T : Number, G : NumberGene<T, G>

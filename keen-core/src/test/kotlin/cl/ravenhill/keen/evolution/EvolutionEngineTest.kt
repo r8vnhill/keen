@@ -1,27 +1,25 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.arb.arbRanker
-import cl.ravenhill.keen.arb.evolution.arbAlterationConfig
-import cl.ravenhill.keen.arb.evolution.arbEvolutionState
-import cl.ravenhill.keen.arb.evolution.arbPopulationConfig
-import cl.ravenhill.keen.arb.evolution.arbSelectionConfig
-import cl.ravenhill.keen.arb.evolution.evolutionConfig
+import cl.ravenhill.keen.arb.evolution.*
 import cl.ravenhill.keen.arb.genetic.arbGenotype
 import cl.ravenhill.keen.arb.genetic.arbGenotypeFactory
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
-import cl.ravenhill.keen.arb.limits.arbMaxGenerations
+import cl.ravenhill.keen.arb.limits.arbGenerationLimit
 import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
 import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
 import cl.ravenhill.keen.arb.operators.arbAlterer
 import cl.ravenhill.keen.arb.operators.arbRouletteWheelSelector
 import cl.ravenhill.keen.arb.operators.arbTournamentSelector
-import cl.ravenhill.keen.arbEngine
+import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
+import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
@@ -33,28 +31,18 @@ import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.IndividualRanker
-import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.PropTestConfig
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.long
-import io.kotest.property.arbitrary.map
-import io.kotest.property.arbitrary.next
+import io.kotest.property.arbitrary.*
 import io.kotest.property.checkAll
 import kotlin.math.floor
 import kotlin.random.Random
 
-@OptIn(ExperimentalKotest::class)
 class EvolutionEngineTest : FreeSpec({
     "The engine" - {
         "can be created with a custom configuration" {
             checkAll(
-                PropTestConfig(iterations = 100),
                 populationConfig(),
                 selectionConfig(),
                 alterationConfig(),
@@ -79,8 +67,7 @@ class EvolutionEngineTest : FreeSpec({
         "when starting evolution" - {
             "returns the same state if it already started" {
                 checkAll(
-                    PropTestConfig(iterations = 100),
-                    arbEngine(
+                    engine(
                         populationConfig(),
                         selectionConfig(),
                         alterationConfig(),
@@ -97,7 +84,7 @@ class EvolutionEngineTest : FreeSpec({
 
             "returns a new state if it hasn't started" {
                 checkAll(
-                    arbEngine(
+                    engine(
                         populationConfig(),
                         selectionConfig(),
                         alterationConfig(),
@@ -117,7 +104,7 @@ class EvolutionEngineTest : FreeSpec({
         "when evaluating a population" - {
             "returns a state with all individuals evaluated" {
                 checkAll(
-                    arbEngine(
+                    engine(
                         populationConfig(),
                         selectionConfig(),
                         alterationConfig(),
@@ -137,8 +124,7 @@ class EvolutionEngineTest : FreeSpec({
         "when selecting parents" - {
             "selects the expected number of parents" {
                 checkAll(
-                    PropTestConfig(iterations = 100),
-                    arbEngine(
+                    engine(
                         populationConfig(),
                         selectionConfig(),
                         alterationConfig(),
@@ -156,7 +142,7 @@ class EvolutionEngineTest : FreeSpec({
 
             "selects parents with the expected selector" {
                 checkAll(
-                    arbEngine(
+                    engine(
                         populationConfig(),
                         selectionConfig(),
                         alterationConfig(),
@@ -199,7 +185,7 @@ private fun selectionConfig(): Arb<SelectionConfig<Double, DoubleGene>> = arbSel
 private fun alterers(): Arb<List<Alterer<Double, DoubleGene>>> = Arb.list(arbAlterer())
 private fun alterationConfig(): Arb<AlterationConfig<Double, DoubleGene>> = arbAlterationConfig(alterers())
 
-private fun limits(): Arb<List<Limit<Double, DoubleGene>>> = Arb.list(arbMaxGenerations())
+private fun limits(): Arb<List<Limit<Double, DoubleGene>>> = Arb.list(arbGenerationLimit())
 private fun ranker(): Arb<IndividualRanker<Double, DoubleGene>> = arbRanker()
 private fun listeners(
     ranker: Arb<IndividualRanker<Double, DoubleGene>>
@@ -211,12 +197,26 @@ private fun evaluator(): Arb<EvaluationExecutor<Double, DoubleGene>> = arbitrary
 
 private fun evolutionConfig(): Arb<EvolutionConfig<Double, DoubleGene>> {
     val ranker = ranker()
-    return evolutionConfig(
+    return KeenArb.evolutionConfig(
         limits(),
         ranker,
         listeners(ranker),
         evaluator(),
         arbitrary { EvolutionInterceptor(before = { it }, after = { it }) }
+    )
+}
+
+private fun engine(
+    populationConfig: Arb<PopulationConfig<Double, DoubleGene>>,
+    selectionConfig: Arb<SelectionConfig<Double, DoubleGene>>,
+    alterationConfig: Arb<AlterationConfig<Double, DoubleGene>>,
+    evolutionConfig: Arb<EvolutionConfig<Double, DoubleGene>>
+): Arb<EvolutionEngine<Double, DoubleGene>> = arbitrary {
+    EvolutionEngine(
+        populationConfig.bind(),
+        selectionConfig.bind(),
+        alterationConfig.bind(),
+        evolutionConfig.bind()
     )
 }
 

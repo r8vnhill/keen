@@ -6,9 +6,7 @@
 
 package cl.ravenhill.keen.arb.evolution
 
-import cl.ravenhill.keen.arb.datatypes.arbProbability
-import cl.ravenhill.keen.arb.operators.arbRouletteWheelSelector
-import cl.ravenhill.keen.arb.operators.arbTournamentSelector
+import cl.ravenhill.keen.arb.KeenArb
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
@@ -64,9 +62,9 @@ fun <T, G> arbPopulationConfig(
  * @param G The type of the Gene, constrained to be a subclass of `Gene<T, G>`.
  */
 fun <T, G> arbSelectionConfig(
-    survivalRate: Arb<Double> = arbProbability(),
-    parentSelector: Arb<Selector<T, G>> = arbTournamentSelector(),
-    survivorSelector: Arb<Selector<T, G>> = arbRouletteWheelSelector()
+    survivalRate: Arb<Double>,
+    parentSelector: Arb<Selector<T, G>>,
+    survivorSelector: Arb<Selector<T, G>>,
 ): Arb<SelectionConfig<T, G>> where G : Gene<T, G> = arbitrary {
     SelectionConfig(
         survivalRate = survivalRate.bind(),
@@ -81,7 +79,7 @@ fun <T, G> arbAlterationConfig(
     AlterationConfig(alterers.bind())
 }
 
-fun <T, G> evolutionConfig(
+fun <T, G> KeenArb.evolutionConfig(
     limits: Arb<List<Limit<T, G>>>,
     ranker: Arb<IndividualRanker<T, G>>,
     listeners: Arb<List<EvolutionListener<T, G>>>,
