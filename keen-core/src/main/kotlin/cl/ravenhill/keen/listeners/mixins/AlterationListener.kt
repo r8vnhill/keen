@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.listeners.mixins
 
+import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
@@ -13,11 +14,13 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * ### Example 1: Custom Alteration Listener
  * ```
  * class MyAlterationListener : AlterationListener<Int, MyGene> {
- *     override fun onAlterationStarted() =
+ *     override fun onAlterationStarted(state: EvolutionState<Int, MyGene>) {
  *         println("Alteration started.")
+ *     }
  *
- *     override fun onAlterationEnded() =
+ *     override fun onAlterationEnded(state: EvolutionState<Int, MyGene>) {
  *         println("Alteration ended.")
+ *     }
  * }
  * ```
  * @param T the type of the gene value
@@ -27,11 +30,15 @@ interface AlterationListener<T, G> where G : Gene<T, G> {
 
     /**
      * Called when the alteration phase starts.
+     *
+     * @param state the current state of the evolution process
      */
-    fun onAlterationStarted() = Unit
+    fun onAlterationStarted(state: EvolutionState<T, G>) = Unit
 
     /**
      * Called when the alteration phase ends.
+     *
+     * @param state the current state of the evolution process
      */
-    fun onAlterationEnded() = Unit
+    fun onAlterationEnded(state: EvolutionState<T, G>) = Unit
 }

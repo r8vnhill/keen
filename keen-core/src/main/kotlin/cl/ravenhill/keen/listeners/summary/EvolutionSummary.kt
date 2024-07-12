@@ -10,6 +10,7 @@ import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
+import cl.ravenhill.keen.listeners.mixins.AlterationListener
 import cl.ravenhill.keen.listeners.mixins.EvaluationListener
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.listeners.mixins.InitializationListener
@@ -61,7 +62,8 @@ class EvolutionSummary<T, G>(
     InitializationListener<T, G> by InitializationSummary(config),
     EvaluationListener<T, G> by EvaluationSummary(config),
     ParentSelectionListener<T, G> by ParentSelectionSummary(config),
-    SurvivorSelectionListener<T, G> by SurvivorSelectionSummary(config)
+    SurvivorSelectionListener<T, G> by SurvivorSelectionSummary(config),
+    AlterationListener<T, G> by AlterationSummary(config)
         where G : Gene<T, G> {
 
     /**
@@ -136,66 +138,6 @@ class EvolutionSummary<T, G>(
     |--> Best fitness: ${fittest.fitness}
     """.trimIndent()
     )
-
-    /**
-     * Callback function triggered at the start of the alteration phase in the evolutionary process.
-     *
-     * This method marks the beginning of the alteration phase in an evolutionary algorithm. The alteration phase
-     * typically involves genetic operations such as mutation and crossover. This method records the start time of this
-     * phase, which is crucial for analyzing the time taken by these genetic operations within the evolutionary cycle.
-     *
-     * ## Functionality:
-     * - **Start Time Recording**: Captures the start time of the alteration phase, marking the beginning of genetic
-     *   operations on the population.
-     *
-     * ## Usage:
-     * This method is automatically invoked by the evolutionary algorithm framework at the start of the alteration
-     * phase. It is not usually called directly by user code.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onAlterationStarted(currentState) }
-     * ```
-     * In this example, `onAlterationStarted` is called for each listener at the beginning of the alteration phase,
-     * setting the start time for this crucial stage in the evolutionary process.
-     *
-     * @param state The current [EvolutionState] at the start of the alteration phase. This state includes the
-     *   population that is about to undergo genetic operations like mutation or crossover.
-     */
-    override fun onAlterationStarted(state: EvolutionState<T, G>) {
-        currentGeneration.alteration.startTime = timeSource.markNow()
-    }
-
-    /**
-     * Callback function triggered at the end of the alteration phase in the evolutionary process.
-     *
-     * This method is invoked when the alteration phase of an evolutionary algorithm concludes. The alteration phase,
-     * which includes genetic operations such as mutation and crossover, is crucial for introducing genetic diversity
-     * and new traits into the population. This method calculates and records the duration of the alteration phase,
-     * providing valuable insights into the time efficiency of these genetic operations.
-     *
-     * ## Functionality:
-     * - **Duration Calculation**: Computes the total time taken for the alteration phase by measuring the interval
-     *   between the start and end times. This duration is crucial for performance analysis and optimization of the
-     *   genetic operations.
-     *
-     * ## Usage:
-     * This method is automatically triggered by the evolutionary algorithm framework at the conclusion of the
-     * alteration phase. It is not typically called directly by user code.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onAlterationEnded(currentState) }
-     * ```
-     * In this example, `onAlterationEnded` is called for each listener after the alteration phase is completed. It
-     * calculates the duration of this phase, aiding in the assessment and improvement of the algorithm's performance.
-     *
-     * @param state The current [EvolutionState] at the end of the alteration phase. This state includes the population
-     *   that has undergone genetic operations.
-     */
-    override fun onAlterationEnded(state: EvolutionState<T, G>) {
-        currentGeneration.alteration.duration = currentGeneration.alteration.startTime.elapsedNow().precision()
-    }
 
     /**
      * Callback function triggered at the start of the evolution process.
