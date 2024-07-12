@@ -2,6 +2,7 @@ package cl.ravenhill.keen.listeners.mixins
 
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.listeners.PhaseListener
 
 /**
  * A listener interface for receiving notifications about the start and end of the survivor selection phase in the
@@ -26,7 +27,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @param T the type of the gene value
  * @param G the type of the gene, which must extend [Gene]
  */
-interface SurvivorSelectionListener<T, G> where G : Gene<T, G> {
+interface SurvivorSelectionListener<T, G> : PhaseListener<T, G> where G : Gene<T, G> {
 
     /**
      * Called when the survivor selection phase starts.

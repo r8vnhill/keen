@@ -2,7 +2,7 @@ package cl.ravenhill.keen.listeners.summary
 
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.listeners.EvolutionListener.Companion.computeSteadyGenerations
+import cl.ravenhill.keen.listeners.mixins.EvolutionListener.Companion.computeSteadyGenerations
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mapGeneration
 import cl.ravenhill.keen.listeners.mixins.GenerationListener

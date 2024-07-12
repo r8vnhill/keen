@@ -51,6 +51,9 @@ class EvolutionPrinter<T, G> private constructor(
     GenerationListener<T, G> by GenerationPrinterListener(configuration)
         where G : Gene<T, G> {
 
+    private val evolution = configuration.evolution
+    private val generations by lazy { evolution.generations }
+
     /**
      * Initializes the printer with the specified interval and configuration.
      *

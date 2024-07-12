@@ -1,53 +1,32 @@
 package cl.ravenhill.keen.utils
 
 /**
- * A generic container class that holds a nullable value and provides various utility methods for transformation.
+ * A sealed interface representing a container that may or may not hold a value of type `T`.
+ * Provides basic operations to transform the contained value if present.
  *
  * ## Usage:
- * This class provides a simple way to encapsulate a value, which can be transformed using the provided methods.
+ * This interface has two implementations: `ImmutableBox` and `MutableBox`, each providing methods to transform and
+ * access the contained value.
  *
- * ### Example 1: Creating a Box with an initial value
+ * ### Example 1: Creating and using an ImmutableBox
  * ```
- * val intBox = Box(123)
- * val strBox = Box("Hello")
- * ```
- *
- * ### Example 2: Using map, flatMap, and fold
- * ```
- * val box = Box(5)
- * val mappedBox = box.map { it * 2 } // Box(value = 10)
- * val flatMappedBox = box.flatMap { Box(it * 2) } // Box(value = 10)
- * val foldedValue = box.fold { it * 2 } // 10
+ * val immutableBox: Box<Int> = Box.immutable(42)
+ * val transformedBox = (immutableBox as Box.ImmutableBox).map { it * 2 }
+ * println(transformedBox.value) // Outputs: 84
  * ```
  *
- * ### Example 3: Creating an empty Box
+ * ### Example 2: Creating and using a MutableBox
  * ```
- * val emptyBox = Box.empty<Int>()
+ * val mutableBox: Box<Int> = Box.mutable(42)
+ * val transformedBox = (mutableBox as Box.MutableBox).map { it * 2 }
+ * println(transformedBox.value) // Outputs: 84
  * ```
- * @param T the type of the value held by the box
+ *
+ * @param T the type of the value contained in the box
  * @property value the value contained in the box, which can be null
  */
-class Box<T>(var value: T?) {
-
-    /**
-     * Transforms the value contained in the box using the provided transform function and returns a new Box containing
-     * the result.
-     *
-     * @param transform the function to transform the value
-     * @param U the type of the result
-     * @return a new Box containing the transformed value
-     */
-    fun <U> map(transform: (T) -> U): Box<U> = Box(value?.let(transform))
-
-    /**
-     * Transforms the value contained in the box using the provided transform function that returns a new Box and
-     * returns the result.
-     *
-     * @param transform the function to transform the value into another Box
-     * @param U the type of the result
-     * @return the resulting Box from the transformation, or an empty Box if the original value is null
-     */
-    fun <U> flatMap(transform: (T) -> Box<U>): Box<U> = value?.let(transform) ?: empty()
+sealed interface Box<T> {
+    val value: T?
 
     /**
      * Transforms the value contained in the box using the provided transform function and returns the result.
@@ -58,13 +37,100 @@ class Box<T>(var value: T?) {
      */
     fun <U> fold(transform: (T) -> U): U? = value?.let(transform)
 
+    /**
+     * An immutable implementation of the Box interface.
+     *
+     * @param T the type of the value contained in the box
+     */
+    class ImmutableBox<T>(override val value: T?) : Box<T> {
+
+        /**
+         * Transforms the value contained in the box using the provided transform function and returns a new immutable
+         * box containing the result.
+         *
+         * @param transform the function to transform the value
+         * @param U the type of the result
+         * @return a new immutable box containing the transformed value
+         */
+        fun <U> map(transform: (T) -> U): Box<U> = ImmutableBox(value?.let(transform))
+
+        /**
+         * Transforms the value contained in the box using the provided transform function that returns a new box and
+         * returns the result.
+         *
+         * @param transform the function to transform the value into another box
+         * @param U the type of the result
+         * @return the resulting box from the transformation, or an empty immutable box if the original value is null
+         */
+        fun <U> flatMap(transform: (T) -> Box<U>): Box<U> = value?.let(transform) ?: empty()
+
+        companion object {
+            /**
+             * Creates an empty immutable box.
+             *
+             * @param U the type of the value that the box can hold
+             * @return an empty immutable box
+             */
+            fun <U> empty(): Box<U> = ImmutableBox(null)
+        }
+    }
+
+    /**
+     * A mutable implementation of the Box interface.
+     *
+     * @param T the type of the value contained in the box
+     */
+    class MutableBox<T>(override var value: T?) : Box<T> {
+
+        /**
+         * Transforms the value contained in the box using the provided transform function and returns a new mutable box
+         * containing the result.
+         *
+         * @param transform the function to transform the value
+         * @param U the type of the result
+         * @return a new mutable box containing the transformed value
+         */
+        fun <U> map(transform: (T) -> U): MutableBox<U> = MutableBox(value?.let(transform))
+
+        /**
+         * Transforms the value contained in the box using the provided transform function that returns a new mutable
+         * box and returns the result.
+         *
+         * @param transform the function to transform the value into another mutable box
+         * @param U the type of the result
+         * @return the resulting mutable box from the transformation, or an empty mutable box if the original value is
+         *  null
+         */
+        fun <U> flatMap(transform: (T) -> MutableBox<U>): MutableBox<U> = value?.let(transform) ?: empty()
+
+        companion object {
+            /**
+             * Creates an empty mutable box.
+             *
+             * @param U the type of the value that the box can hold
+             * @return an empty mutable box
+             */
+            fun <U> empty(): MutableBox<U> = MutableBox(null)
+        }
+    }
+
     companion object {
         /**
-         * Creates an empty Box.
+         * Creates an immutable box containing the specified value.
          *
-         * @param U the type of the value that the Box can hold
-         * @return an empty Box
+         * @param U the type of the value
+         * @param value the value to be contained in the box
+         * @return an immutable box containing the specified value
          */
-        fun <U> empty(): Box<U> = Box(null)
+        fun <U> immutable(value: U): ImmutableBox<U> = ImmutableBox(value)
+
+        /**
+         * Creates a mutable box containing the specified value.
+         *
+         * @param U the type of the value
+         * @param value the value to be contained in the box
+         * @return a mutable box containing the specified value
+         */
+        fun <U> mutable(value: U): MutableBox<U> = MutableBox(value)
     }
 }

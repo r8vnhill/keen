@@ -46,9 +46,8 @@ import kotlin.time.ExperimentalTime
  * @param G the type of the gene, which must extend [Gene]
  * @property precision the function used to measure the duration
  */
-@OptIn(ExperimentalTime::class)
 class EvolutionSummary<T, G>(
-    config: ListenerConfiguration<T, G> = ListenerConfiguration()
+    private val config: ListenerConfiguration<T, G> = ListenerConfiguration()
 ) : AbstractEvolutionListener<T, G>(),
     GenerationListener<T, G> by GenerationSummary(config),
     InitializationListener<T, G> by InitializationSummary(config),
@@ -126,7 +125,7 @@ class EvolutionSummary<T, G>(
      * @param state the current state of the evolution process
      */
     override fun onEvolutionStarted(state: EvolutionState<T, G>) {
-        evolution.startTime = timeSource.markNow()
+        evolution.startTime = config.timeSource.markNow()
     }
 
     /**

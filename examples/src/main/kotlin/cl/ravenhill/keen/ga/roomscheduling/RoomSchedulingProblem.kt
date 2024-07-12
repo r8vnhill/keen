@@ -13,7 +13,7 @@ import cl.ravenhill.keen.dsl.integers
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
 import cl.ravenhill.keen.ranking.FitnessMinRanker

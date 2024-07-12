@@ -4,20 +4,13 @@
  */
 
 
-package cl.ravenhill.keen.listeners
+package cl.ravenhill.keen.listeners.mixins
 
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.listeners.mixins.AlterationListener
-import cl.ravenhill.keen.listeners.mixins.EvaluationListener
-import cl.ravenhill.keen.listeners.mixins.GenerationListener
-import cl.ravenhill.keen.listeners.mixins.InitializationListener
-import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
-import cl.ravenhill.keen.listeners.mixins.SurvivorSelectionListener
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.utils.isNotNaN
-import kotlin.time.TimeSource
 
 
 /**
@@ -54,21 +47,6 @@ interface EvolutionListener<T, G> :
         SurvivorSelectionListener<T, G>,
         AlterationListener<T, G>
         where G : Gene<T, G> {
-
-    /**
-     * The ranker used for ranking individuals.
-     */
-    var ranker: IndividualRanker<T, G>
-
-    /**
-     * The record of the evolution process.
-     */
-    var evolution: EvolutionRecord<T, G>
-
-    /**
-     * The source of time.
-     */
-    var timeSource: TimeSource
 
     /**
      * Called when the evolution phase starts.

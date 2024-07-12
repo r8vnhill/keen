@@ -1,7 +1,7 @@
-    /*
- * Copyright (c) 2024, Ignacio Slater M.
- * 2-Clause BSD License.
- */
+/*
+* Copyright (c) 2024, Ignacio Slater M.
+* 2-Clause BSD License.
+*/
 
 
 package cl.ravenhill.keen.ga
@@ -14,7 +14,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.listeners.EvolutionPlotter
+import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.AverageCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator

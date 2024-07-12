@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 
 
 interface Evolver<T, G> where G : Gene<T, G> {
