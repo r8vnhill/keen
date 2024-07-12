@@ -18,41 +18,33 @@ import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
 import cl.ravenhill.keen.listeners.mixins.SurvivorSelectionListener
 import kotlin.time.ExperimentalTime
 
-
 /**
- * Provides a summary of the evolutionary process, including timing and performance metrics.
- *
- * `EvolutionSummary` is an `EvolutionListener` that captures detailed timing information throughout the evolution
- * process. It logs durations for various stages, such as initialization, evaluation, selection, and alteration. It also
- * tracks overall evolution time, generation times, and the final results of the evolutionary process.
- *
- * ## Key Metrics:
- * - Initialization time
- * - Average, maximum, and minimum evaluation times
- * - Average, maximum, and minimum selection times for offspring and survivors
- * - Average, maximum, and minimum alteration times
- * - Total evolution time and individual generation times
- * - Generation number, steady generations, and fitness of the fittest individual
+ * A comprehensive class that summarizes the entire evolutionary computation process, including initialization,
+ * evaluation, parent selection, survivor selection, and alteration phases.
  *
  * ## Usage:
- * Attach this listener to an evolutionary algorithm to gather performance and timing metrics. It can help
- * in analyzing the efficiency and effectiveness of different components of the evolutionary process.
+ * This class implements various listener interfaces to handle events occurring at different phases of the evolutionary
+ * process and records relevant information. It also provides a method to display a summary of the evolution.
  *
- * ### Example:
- * ```kotlin
- * val summaryListener = EvolutionSummary<MyDataType, MyGene>()
- * val engine = evolutionEngine(/* ... */).apply {
- *     listeners += summaryListener
- * }
- * engine.run()
- * summaryListener.display()
+ * ### Example 1: Creating an Evolution Summary
  * ```
- * In this example, `EvolutionSummary` is used as a listener for an evolutionary algorithm. After the evolution
- * process is completed, `display()` is called to print a comprehensive summary of the evolution.
+ * val config = ListenerConfiguration<Int, MyGene>()
+ * val evolutionSummary = EvolutionSummary(config)
  *
- * @param T The type of data encapsulated by the genes.
- * @param G The type of gene, conforming to the [Gene] interface.
- * @property fittest The fittest individual in the final generation.
+ * val state = EvolutionState(
+ *     generation = 1,
+ *     ranker = FitnessMaxRanker(),
+ *     population = listOf(Individual(...), Individual(...), Individual(...))
+ * )
+ * evolutionSummary.onEvolutionStarted(state)
+ * // Perform evolutionary steps...
+ * evolutionSummary.onEvolutionEnded(state)
+ * // Display the summary of the evolution process
+ * evolutionSummary.display()
+ * ```
+ * @param T the type of the gene value
+ * @param G the type of the gene, which must extend [Gene]
+ * @property precision the function used to measure the duration
  */
 @OptIn(ExperimentalTime::class)
 class EvolutionSummary<T, G>(
@@ -66,134 +58,81 @@ class EvolutionSummary<T, G>(
     AlterationListener<T, G> by AlterationSummary(config)
         where G : Gene<T, G> {
 
+    private val precision = config.precision
+
     /**
-     * Displays a detailed summary of the evolutionary process on the console.
+     * Displays a detailed summary of the evolution process. The summary includes the times for various phases such as
+     * initialization, evaluation, parent selection, survivor selection, alteration, and the overall evolution duration.
      *
-     * This method outputs a comprehensive report of the evolution, covering various aspects such as initialization
-     * time, evaluation, selection, alteration times, overall evolution duration, generation details, and the final
-     * results. It's designed to provide a quick and informative overview of the evolutionary process and its
-     * efficiency.
-     *
-     * ## Output Format:
-     * The summary is structured in sections, each focusing on different aspects of the evolutionary process:
-     * - Initialization Time: Duration taken for the initial setup of the evolution.
-     * - Evaluation Times: Statistical data (average, maximum, minimum) for the time taken in the evaluation phase
-     *   across generations.
-     * - Selection Times: Detailed timing for offspring and survivor selection processes.
-     * - Alteration Times: Statistical data for the alteration phase, including mutation and crossover operations.
-     * - Evolution Results: Overall metrics such as total time, generation times, and final evolutionary outcomes like
-     *   the fittest individual and its fitness.
-     *
-     * ## Example Output:
-     * ```
-     * ------------ Evolution Summary ---------------
-     * |--> Initialization time: [Initialization time] ms
-     * ------------- Evaluation Times ----------------
-     * |--> Average: [Average evaluation time] ms
-     * |--> Max: [Maximum evaluation time] ms
-     * |--> Min: [Minimum evaluation time] ms
-     * ...
-     * |--> Best fitness: [Best fitness value]
-     * ```
+     * The summary also provides statistics like the average, maximum, and minimum times for each phase, as well as
+     * information about the fittest individual and the number of steady generations.
      *
      * ## Usage:
-     * This method is typically called after the completion of the evolutionary process to analyze and understand the
-     * performance and outcomes.
+     * Call this method to print a formatted summary of the entire evolutionary process.
      *
-     * ```kotlin
-     * val summaryListener = EvolutionSummary<MyDataType, MyGene>()
-     * //... evolution process
-     * summaryListener.display() // Call this method to print the summary
+     * ### Example 1: Displaying the Evolution Summary
+     * ```
+     * val config = ListenerConfiguration<Int, MyGene>()
+     * val evolutionSummary = EvolutionSummary(config)
+     *
+     * val state = EvolutionState(
+     *     generation = 1,
+     *     ranker = FitnessMaxRanker(),
+     *     population = listOf(Individual(...), Individual(...), Individual(...))
+     * )
+     * evolutionSummary.onEvolutionStarted(state)
+     * // Perform evolutionary steps...
+     * evolutionSummary.onEvolutionEnded(state)
+     * // Display the summary of the evolution process
+     * evolutionSummary.display()
      * ```
      */
     override fun display() = println(
         """
-    ------------ Evolution Summary ---------------
-    |--> Initialization time: ${evolution.initialization.duration} ms
-    ------------- Evaluation Times ----------------
-    |--> Average: ${generations.map { it.evaluation.duration }.average()} ms
-    |--> Max: ${generations.maxOfOrNull { it.evaluation.duration }} ms
-    |--> Min: ${generations.minOfOrNull { it.evaluation.duration }} ms
-    -------------- Selection Times ----------------
-    |   |--> Offspring Selection
-    |   |   |--> Average: ${generations.map { it.parentSelection.duration }.average()} ms
-    |   |   |--> Max: ${generations.maxOfOrNull { it.parentSelection.duration }} ms
-    |   |   |--> Min: ${generations.minOfOrNull { it.parentSelection.duration }} ms
-    |   |--> Survivor Selection
-    |   |   |--> Average: ${generations.map { it.survivorSelection.duration }.average()} ms
-    |   |   |--> Max: ${generations.maxOfOrNull { it.survivorSelection.duration }} ms
-    |   |   |--> Min: ${generations.minOfOrNull { it.survivorSelection.duration }} ms
-    --------------- Alteration Times --------------
-    |--> Average: ${generations.map { it.alteration.duration }.average()} ms
-    |--> Max: ${generations.maxOfOrNull { it.alteration.duration }} ms
-    |--> Min: ${generations.minOfOrNull { it.alteration.duration }} ms
-    -------------- Evolution Results --------------
-    |--> Total time: ${evolution.duration} ms
-    |--> Average generation time: ${generations.map { it.duration }.average()} ms
-    |--> Max generation time: ${generations.maxOfOrNull { it.duration }} ms
-    |--> Min generation time: ${generations.minOfOrNull { it.duration }} ms
-    |--> Generation: ${evolution.generations.last().generation}
-    |--> Steady generations: ${evolution.generations.last().steady}
-    |--> Fittest: ${fittest.genotype}
-    |--> Best fitness: ${fittest.fitness}
-    """.trimIndent()
+        ------------ Evolution Summary ---------------
+        |--> Initialization time: ${evolution.initialization.duration} ms
+        ------------- Evaluation Times ----------------
+        |--> Average: ${generations.map { it.evaluation.duration }.average()} ms
+        |--> Max: ${generations.maxOfOrNull { it.evaluation.duration }} ms
+        |--> Min: ${generations.minOfOrNull { it.evaluation.duration }} ms
+        -------------- Selection Times ----------------
+        |   |--> Offspring Selection
+        |   |   |--> Average: ${generations.map { it.parentSelection.duration }.average()} ms
+        |   |   |--> Max: ${generations.maxOfOrNull { it.parentSelection.duration }} ms
+        |   |   |--> Min: ${generations.minOfOrNull { it.parentSelection.duration }} ms
+        |   |--> Survivor Selection
+        |   |   |--> Average: ${generations.map { it.survivorSelection.duration }.average()} ms
+        |   |   |--> Max: ${generations.maxOfOrNull { it.survivorSelection.duration }} ms
+        |   |   |--> Min: ${generations.minOfOrNull { it.survivorSelection.duration }} ms
+        --------------- Alteration Times --------------
+        |--> Average: ${generations.map { it.alteration.duration }.average()} ms
+        |--> Max: ${generations.maxOfOrNull { it.alteration.duration }} ms
+        |--> Min: ${generations.minOfOrNull { it.alteration.duration }} ms
+        -------------- Evolution Results --------------
+        |--> Total time: ${evolution.duration} ms
+        |--> Average generation time: ${generations.map { it.duration }.average()} ms
+        |--> Max generation time: ${generations.maxOfOrNull { it.duration }} ms
+        |--> Min generation time: ${generations.minOfOrNull { it.duration }} ms
+        |--> Generation: ${evolution.generations.last().generation}
+        |--> Steady generations: ${evolution.generations.last().steady}
+        |--> Fittest: ${fittest.genotype}
+        |--> Best fitness: ${fittest.fitness}
+        """.trimIndent()
     )
 
     /**
-     * Callback function triggered at the start of the evolution process.
+     * Called when the evolution phase starts. Sets the start time of the evolution process.
      *
-     * This method is invoked at the beginning of the evolutionary algorithm's execution. It marks the commencement of
-     * the entire evolutionary process, setting the starting point for time measurement of the evolution. This is
-     * crucial for tracking the duration and performance of the evolutionary algorithm as a whole.
-     *
-     * ## Functionality:
-     * - **Start Time Recording**: Establishes the starting time for the evolution process. This initial timestamp is
-     *   used to calculate the total duration of the evolution once it concludes.
-     *
-     * ## Usage:
-     * This method is automatically triggered by the evolutionary algorithm framework at the start of the evolution
-     * process. It is not typically invoked directly in user code.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onEvolutionStarted(currentState) }
-     * ```
-     * In this example, `onEvolutionStarted` is called for each listener at the beginning of the evolution process. It
-     * records the start time, which is essential for later calculating the total duration of the evolutionary cycle.
-     *
-     * @param state The [EvolutionState] at the start of the evolution process. This state includes the initial
-     *   population and other relevant setup details for the evolutionary algorithm.
+     * @param state the current state of the evolution process
      */
     override fun onEvolutionStarted(state: EvolutionState<T, G>) {
         evolution.startTime = timeSource.markNow()
     }
 
     /**
-     * Callback function triggered at the end of the evolution process.
+     * Called when the evolution phase ends. Updates the evolution record with the duration.
      *
-     * This method is called upon the completion of an evolutionary algorithm's execution. It marks the end of the
-     * evolution process and is responsible for calculating the total duration of the evolutionary cycle. This
-     * information is vital for analyzing the performance, efficiency, and overall time consumption of the evolutionary
-     * algorithm.
-     *
-     * ## Functionality:
-     * - **Total Duration Calculation**: Computes the total time taken for the entire evolution process by measuring the
-     *   interval between the start and end times.
-     *
-     * ## Usage:
-     * This method is automatically invoked by the evolutionary algorithm framework at the conclusion of the evolution
-     * process. It is not intended for direct invocation in typical use cases.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onEvolutionEnded(currentState) }
-     * ```
-     * In this example, `onEvolutionEnded` is called for each listener at the end of the evolution process. It
-     * calculates the total duration of the evolution, which is essential for performance analysis and time efficiency
-     * evaluation.
-     *
-     * @param state The final [EvolutionState] at the conclusion of the evolution process. This state includes the
-     *   final population and the results of the evolutionary algorithm.
+     * @param state the current state of the evolution process
      */
     override fun onEvolutionEnded(state: EvolutionState<T, G>) {
         evolution.duration = evolution.startTime.elapsedNow().precision()
