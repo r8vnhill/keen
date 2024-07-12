@@ -19,6 +19,7 @@ import cl.ravenhill.keen.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.listeners.records.GenerationRecord
+import cl.ravenhill.keen.ranking.IndividualRanker
 import org.jetbrains.letsPlot.Figure
 import org.jetbrains.letsPlot.geom.geomLine
 import org.jetbrains.letsPlot.letsPlot
@@ -76,8 +77,11 @@ open class EvolutionPlotter<T, G>(private val configuration: ListenerConfigurati
     AbstractEvolutionListener<T, G>(),
     GenerationListener<T, G> by GenerationPlotListener(configuration)
         where G : Gene<T, G> {
+    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
+    override val ranker = configuration.ranker
 
-    private val evolution = configuration.evolution
+    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
+    override val evolution = configuration.evolution
 
     /**
      * Displays a window with a plot of the evolution process, showing the best, worst, and average fitness values over

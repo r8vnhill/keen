@@ -10,7 +10,6 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.IndividualRecord
-import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
 import kotlin.time.TimeSource
 
@@ -46,7 +45,16 @@ import kotlin.time.TimeSource
  * @see TimeSource for details on timing various phases of the evolution process.
  */
 abstract class AbstractEvolutionListener<T, G> : EvolutionListener<T, G> where G : Gene<T, G> {
+    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
+    abstract val ranker: IndividualRanker<T, G>
+
+    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
+    abstract val evolution: EvolutionRecord<T, G>
+
+    @Deprecated(
+        "This property will be removed in future versions. Use the fitness function that takes parameters instead",
+        ReplaceWith("fitness(ranker, evolution)")
+    )
     val fittest: IndividualRecord<T, G>
-        get() = ranker.sort(evolution.generations.last().population.offspring.map { it.toIndividual() }).first()
-            .let { IndividualRecord(it.genotype, it.fitness) }
+        get() = fittest(ranker, evolution)
 }

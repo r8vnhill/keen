@@ -24,6 +24,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.Limit
+import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.Selector
@@ -562,7 +563,10 @@ class EvolutionEngine<T, G>(
 
         var ranker: IndividualRanker<T, G> = defaultRanker()
 
+        @Deprecated("Use the 'listenerFactories' property instead.")
         var listeners: MutableList<EvolutionListener<T, G>> = defaultListeners()
+
+        var listenerFactories: MutableList<(ListenerConfiguration<T, G>) -> EvolutionListener<T, G>> = mutableListOf()
 
         var evaluator: EvaluationExecutor.Factory<T, G> = defaultEvaluator()
 
@@ -586,7 +590,14 @@ class EvolutionEngine<T, G>(
             selectionConfig = SelectionConfig(survivalRate, parentSelector, survivorSelector),
             alterationConfig = AlterationConfig(alterers),
             evolutionConfig = EvolutionConfig(
-                limits, ranker, listeners, evaluator.creator(fitnessFunction), interceptor
+                limits,
+                ranker,
+                // This is meant to be removed in the future in favor of the listenerFactories property
+                if (listenerFactories.isEmpty()) listeners else listenerFactories.map {
+                    it(ListenerConfiguration(ranker = ranker))
+                },
+                evaluator.creator(fitnessFunction),
+                interceptor
             )
         )
 
