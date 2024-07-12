@@ -10,8 +10,11 @@ import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
+import cl.ravenhill.keen.listeners.mixins.EvaluationListener
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.listeners.mixins.InitializationListener
+import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
+import cl.ravenhill.keen.listeners.mixins.SurvivorSelectionListener
 import kotlin.time.ExperimentalTime
 
 
@@ -55,7 +58,10 @@ class EvolutionSummary<T, G>(
     config: ListenerConfiguration<T, G> = ListenerConfiguration()
 ) : AbstractEvolutionListener<T, G>(),
     GenerationListener<T, G> by GenerationSummary(config),
-    InitializationListener<T, G> by InitializationSummary(config)
+    InitializationListener<T, G> by InitializationSummary(config),
+    EvaluationListener<T, G> by EvaluationSummary(config),
+    ParentSelectionListener<T, G> by ParentSelectionSummary(config),
+    SurvivorSelectionListener<T, G> by SurvivorSelectionSummary(config)
         where G : Gene<T, G> {
 
     /**
@@ -130,193 +136,6 @@ class EvolutionSummary<T, G>(
     |--> Best fitness: ${fittest.fitness}
     """.trimIndent()
     )
-
-    /**
-     * Callback function triggered at the start of the evaluation phase in the evolutionary process.
-     *
-     * This method is invoked when the evaluation phase of an evolutionary algorithm begins. The evaluation phase is
-     * crucial as it involves assessing the fitness of each individual in the current population. This method records
-     * the start time of the evaluation phase, which is essential for tracking the performance and efficiency of the
-     * evolutionary process.
-     *
-     * ## Functionality:
-     * - **Evaluation Start Time Recording**: Captures the moment when the evaluation phase starts, allowing for precise
-     *   measurement of the duration of this phase.
-     *
-     * ## Usage:
-     * This method is automatically called by the evolutionary algorithm framework at the beginning of the evaluation
-     * phase. It is not typically invoked directly in user code.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onEvaluationStarted(currentState) }
-     * ```
-     *
-     * In this example, `onEvaluationStarted` is invoked for each listener at the start of the evaluation phase,
-     * marking the time when the fitness assessment of the population begins.
-     *
-     * @param state The current [EvolutionState] at the start of the evaluation. This state includes the population that
-     *   will undergo fitness evaluation.
-     */
-    override fun onEvaluationStarted(state: EvolutionState<T, G>) {
-        currentGeneration.evaluation.startTime = timeSource.markNow()
-    }
-
-    /**
-     * Callback function triggered at the end of the evaluation phase in the evolutionary process.
-     *
-     * This method is called when the evaluation phase of an evolutionary algorithm concludes. During the evaluation
-     * phase, each individual in the population is assessed for fitness. This method calculates and records the
-     * duration of the evaluation phase, which is vital for analyzing the performance and time efficiency of the
-     * evolutionary process.
-     *
-     * ## Functionality:
-     * - **Evaluation Duration Calculation**: Computes the total time taken for the evaluation phase by measuring the
-     *   interval between the start and end times.
-     *
-     * ## Usage:
-     * This method is automatically invoked by the evolutionary algorithm framework at the end of the evaluation phase.
-     * It is not intended for direct invocation in typical use cases.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onEvaluationEnded(currentState) }
-     * ```
-     * In this example, `onEvaluationEnded` is called for each listener at the conclusion of the evaluation phase. It
-     * calculates the duration of the evaluation phase, which is crucial for performance analysis.
-     *
-     * @param state The current [EvolutionState] at the end of the evaluation phase. This state includes the population
-     *              that has just been evaluated for fitness.
-     */
-    override fun onEvaluationEnded(state: EvolutionState<T, G>) {
-        currentGeneration.evaluation.duration = currentGeneration.evaluation.startTime.elapsedNow().precision()
-    }
-
-    /**
-     * Callback function triggered at the beginning of the parent selection phase in the evolutionary process.
-     *
-     * This method is called when the parent selection phase of an evolutionary algorithm begins. During this phase,
-     * a subset of individuals from the current population is selected to act as parents for generating offspring.
-     * The method marks the start time of the parent selection phase, which is essential for tracking the duration
-     * and performance of this phase.
-     *
-     * ## Functionality:
-     * - **Start Time Recording**: Records the start time of the parent selection phase, enabling the calculation of
-     *   the total duration of this phase once it concludes.
-     *
-     * ## Usage:
-     * This method is automatically invoked by the evolutionary algorithm framework at the start of the parent selection
-     * phase. It is not intended for direct invocation in general use cases.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onParentSelectionStarted(currentState) }
-     * ```
-     * In this example, `onParentSelectionStarted` is invoked for each listener at the commencement of the parent
-     * selection phase. It logs the start time of the phase, which is later used to calculate the total duration of
-     * parent selection.
-     *
-     * @param state The current [EvolutionState] at the beginning of the parent selection phase. This state includes the
-     *              population from which parents will be selected.
-     */
-    override fun onParentSelectionStarted(state: EvolutionState<T, G>) {
-        currentGeneration.parentSelection.startTime = timeSource.markNow()
-    }
-
-    /**
-     * Callback function triggered at the conclusion of the parent selection phase in the evolutionary process.
-     *
-     * This method is invoked at the end of the parent selection phase of an evolutionary algorithm. During this phase,
-     * parents are selected from the current population for the purpose of producing offspring. The method captures the
-     * end time of the parent selection phase and calculates its total duration, contributing to a comprehensive
-     * performance analysis of the evolutionary process.
-     *
-     * ## Functionality:
-     * - **Duration Calculation**: Computes the total time taken for the parent selection phase by measuring the
-     *   interval between the start and end times recorded.
-     *
-     * ## Usage:
-     * This method is automatically called by the evolutionary algorithm framework upon the completion of the parent
-     * selection phase. It is generally not intended for manual invocation.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onParentSelectionEnded(currentState) }
-     * ```
-     * In this example, `onParentSelectionEnded` is called for each listener at the conclusion of the parent selection
-     * phase. It calculates and logs the duration of this phase, providing valuable data for analyzing the efficiency
-     * and performance of the selection process.
-     *
-     * @param state The current [EvolutionState] at the end of the parent selection phase. This state includes the
-     *              population from which parents have been selected for offspring production.
-     */
-    override fun onParentSelectionEnded(state: EvolutionState<T, G>) {
-        currentGeneration.parentSelection.duration =
-            currentGeneration.parentSelection.startTime.elapsedNow().precision()
-    }
-
-    /**
-     * Callback function triggered at the beginning of the survivor selection phase in the evolutionary process.
-     *
-     * This method is invoked at the start of the survivor selection phase of an evolutionary algorithm. During this
-     * phase, individuals from the current population or the newly created offspring are selected to form the next
-     * generation's population. The method records the start time of the survivor selection phase, which is crucial for
-     * monitoring the duration and efficiency of this process.
-     *
-     * ## Functionality:
-     * - **Start Time Recording**: Marks the beginning of the survivor selection phase, facilitating subsequent
-     *   calculation of its duration.
-     *
-     * ## Usage:
-     * This method is automatically called by the evolutionary algorithm framework as the survivor selection phase
-     * begins. It is not typically used directly in user-defined code.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onSurvivorSelectionStarted(currentState) }
-     * ```
-     * In this example, `onSurvivorSelectionStarted` is called for each listener at the start of the survivor selection
-     * phase. It records the start time, which will later be used to calculate the total duration of this phase, aiding
-     * in performance analysis and optimization.
-     *
-     * @param state The current [EvolutionState] at the beginning of the survivor selection phase. This state includes
-     *              the population from which survivors will be chosen for the next generation.
-     */
-    override fun onSurvivorSelectionStarted(state: EvolutionState<T, G>) {
-        currentGeneration.survivorSelection.startTime = timeSource.markNow()
-    }
-
-    /**
-     * Callback function triggered at the end of the survivor selection phase in the evolutionary process.
-     *
-     * This method is called upon the conclusion of the survivor selection phase in an evolutionary algorithm. Survivor
-     * selection is a crucial stage where individuals are chosen based on their fitness to continue into the next
-     * generation. This method calculates and records the duration of the survivor selection phase, providing valuable
-     * insights into the time efficiency of this stage in the evolutionary process.
-     *
-     * ## Functionality:
-     * - **Duration Calculation**: Computes the total time taken for the survivor selection phase by measuring the
-     *   elapsed time from its start to the end.
-     *
-     * ## Usage:
-     * This method is automatically invoked by the evolutionary algorithm framework at the completion of the survivor
-     * selection phase. It is typically not called directly by user code.
-     *
-     * ```kotlin
-     * // Within the evolutionary algorithm framework
-     * evolutionListeners.forEach { it.onSurvivorSelectionEnded(currentState) }
-     * ```
-     * In this example, `onSurvivorSelectionEnded` is invoked for each listener at the end of the survivor selection
-     * phase. The method's primary role is to calculate the duration of this phase, contributing to the overall
-     * performance analysis of the algorithm.
-     *
-     * @param state The current [EvolutionState] at the end of the survivor selection phase. This state reflects the
-     *              population that has been selected to survive into the next generation.
-     */
-    override fun onSurvivorSelectionEnded(state: EvolutionState<T, G>) {
-        currentGeneration.survivorSelection.duration =
-            currentGeneration.survivorSelection.startTime.elapsedNow().precision()
-    }
 
     /**
      * Callback function triggered at the start of the alteration phase in the evolutionary process.

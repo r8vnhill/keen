@@ -4,6 +4,7 @@ import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.EvolutionListener.Companion.computeSteadyGenerations
 import cl.ravenhill.keen.listeners.ListenerConfiguration
+import cl.ravenhill.keen.listeners.mapGeneration
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
@@ -77,7 +78,7 @@ class GenerationSummary<T, G>(
                 IndividualRecord(state.population[it].genotype, state.population[it].fitness)
             }
         }
-        evolution.generations += currentGeneration.fold { it }!!
+        evolution.generations += currentGeneration.value!!
     }
 
     /**
@@ -107,15 +108,11 @@ class GenerationSummary<T, G>(
      * @param state the current state of the evolution process, containing information about the population at the end
      *  of the generation
      */
-    override fun onGenerationEnded(state: EvolutionState<T, G>) {
-        currentGeneration.map { generation ->
-            generation?.let {
-                it.duration = generation.startTime.elapsedNow().precision()
-                it.population.offspring = List(state.population.size) { index ->
-                    IndividualRecord(state.population[index].genotype, state.population[index].fitness)
-                }
-                it.steady = computeSteadyGenerations(ranker, evolution)
-            }
+    override fun onGenerationEnded(state: EvolutionState<T, G>) = mapGeneration(currentGeneration) {
+        duration = startTime.elapsedNow().precision()
+        population.offspring = List(state.population.size) { index ->
+            IndividualRecord(state.population[index].genotype, state.population[index].fitness)
         }
+        steady = computeSteadyGenerations(ranker, evolution)
     }
 }

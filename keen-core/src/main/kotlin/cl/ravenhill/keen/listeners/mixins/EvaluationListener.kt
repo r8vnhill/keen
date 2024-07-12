@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.listeners.mixins
 
+import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 
 
@@ -14,11 +15,11 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * ### Example 1: Custom Evaluation Listener
  * ```
  * class MyEvaluationListener : EvaluationListener<Int, MyGene> {
- *     override fun onEvaluationStarted() {
+ *     override fun onEvaluationStarted(state: EvolutionState<Int, MyGene>) {
  *         println("Evaluation started.")
  *     }
  *
- *     override fun onEvaluationEnded() {
+ *     override fun onEvaluationEnded(state: EvolutionState<Int, MyGene>) {
  *         println("Evaluation ended.")
  *     }
  * }
@@ -30,11 +31,15 @@ interface EvaluationListener<T, G> where G : Gene<T, G> {
 
     /**
      * Called when the evaluation phase starts.
+     *
+     * @param state the current state of the evolution process
      */
-    fun onEvaluationStarted() = Unit
+    fun onEvaluationStarted(state: EvolutionState<T, G>) = Unit
 
     /**
      * Called when the evaluation phase ends.
+     *
+     * @param state the current state of the evolution process
      */
-    fun onEvaluationEnded() = Unit
+    fun onEvaluationEnded(state: EvolutionState<T, G>) = Unit
 }
