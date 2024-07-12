@@ -14,7 +14,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.limits.SteadyGenerations
 import cl.ravenhill.keen.limits.TargetFitness
-import cl.ravenhill.keen.listeners.EvolutionPlotter
+import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator

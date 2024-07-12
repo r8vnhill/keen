@@ -37,6 +37,11 @@ sealed interface Box<T> {
      */
     fun <U> fold(transform: (T) -> U): U? = value?.let(transform)
 
+    fun <U> map(transform: (T) -> U): Box<U>
+    fun <U> flatMap(transform: (T) -> Box<U>): Box<U>
+
+    fun toMutable(): MutableBox<T> = MutableBox(value)
+
     /**
      * An immutable implementation of the Box interface.
      *
@@ -52,7 +57,7 @@ sealed interface Box<T> {
          * @param U the type of the result
          * @return a new immutable box containing the transformed value
          */
-        fun <U> map(transform: (T) -> U): Box<U> = ImmutableBox(value?.let(transform))
+        override fun <U> map(transform: (T) -> U): Box<U> = ImmutableBox(value?.let(transform))
 
         /**
          * Transforms the value contained in the box using the provided transform function that returns a new box and
@@ -62,7 +67,7 @@ sealed interface Box<T> {
          * @param U the type of the result
          * @return the resulting box from the transformation, or an empty immutable box if the original value is null
          */
-        fun <U> flatMap(transform: (T) -> Box<U>): Box<U> = value?.let(transform) ?: empty()
+        override fun <U> flatMap(transform: (T) -> Box<U>): Box<U> = value?.let(transform) ?: empty()
 
         companion object {
             /**
@@ -90,7 +95,7 @@ sealed interface Box<T> {
          * @param U the type of the result
          * @return a new mutable box containing the transformed value
          */
-        fun <U> map(transform: (T) -> U): MutableBox<U> = MutableBox(value?.let(transform))
+        override fun <U> map(transform: (T) -> U): MutableBox<U> = MutableBox(value?.let(transform))
 
         /**
          * Transforms the value contained in the box using the provided transform function that returns a new mutable
@@ -101,7 +106,8 @@ sealed interface Box<T> {
          * @return the resulting mutable box from the transformation, or an empty mutable box if the original value is
          *  null
          */
-        fun <U> flatMap(transform: (T) -> MutableBox<U>): MutableBox<U> = value?.let(transform) ?: empty()
+        override fun <U> flatMap(transform: (T) -> Box<U>): MutableBox<U> =
+            value?.let(transform)?.toMutable() ?: empty()
 
         companion object {
             /**

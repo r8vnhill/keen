@@ -45,7 +45,7 @@ class GenerationSummary<T, G>(
     private val timeSource: TimeSource = configuration.timeSource
     private val ranker: IndividualRanker<T, G> = configuration.ranker
     private val precision: Duration.() -> Long = configuration.precision
-    private val currentGeneration: Box<GenerationRecord<T, G>?> = configuration.currentGeneration
+    private val currentGeneration = configuration.currentGeneration
 
     /**
      * Called when a generation starts. This method initializes a new generation record, sets the start time, and

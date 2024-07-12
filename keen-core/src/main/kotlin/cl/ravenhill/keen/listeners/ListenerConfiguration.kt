@@ -47,5 +47,5 @@ data class ListenerConfiguration<T, G>(
     val timeSource: TimeSource = TimeSource.Monotonic,
     val precision: Duration.() -> Long = Duration::inWholeMilliseconds,
 ) where G : Gene<T, G> {
-    val currentGeneration: Box<GenerationRecord<T, G>?> = Box.empty()
+    val currentGeneration = Box.mutable<GenerationRecord<T, G>?>(null)
 }

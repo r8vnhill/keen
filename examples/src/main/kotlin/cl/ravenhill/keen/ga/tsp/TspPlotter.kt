@@ -33,7 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import cl.ravenhill.keen.listeners.EvolutionPlotter
+import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import org.jetbrains.letsPlot.Figure
 import org.jetbrains.letsPlot.geom.geomLine
 import org.jetbrains.letsPlot.geom.geomPoint

@@ -10,13 +10,13 @@ import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
+import cl.ravenhill.keen.listeners.fittest
 import cl.ravenhill.keen.listeners.mixins.AlterationListener
 import cl.ravenhill.keen.listeners.mixins.EvaluationListener
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.listeners.mixins.InitializationListener
 import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
 import cl.ravenhill.keen.listeners.mixins.SurvivorSelectionListener
-import kotlin.time.ExperimentalTime
 
 /**
  * A comprehensive class that summarizes the entire evolutionary computation process, including initialization,
@@ -59,6 +59,12 @@ class EvolutionSummary<T, G>(
 
     private val precision = config.precision
 
+    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
+    override val ranker = config.ranker
+
+    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
+    override val evolution = config.evolution
+
     /**
      * Displays a detailed summary of the evolution process. The summary includes the times for various phases such as
      * initialization, evaluation, parent selection, survivor selection, alteration, and the overall evolution duration.
@@ -86,38 +92,41 @@ class EvolutionSummary<T, G>(
      * evolutionSummary.display()
      * ```
      */
-    override fun display() = println(
-        """
-        ------------ Evolution Summary ---------------
-        |--> Initialization time: ${evolution.initialization.duration} ms
-        ------------- Evaluation Times ----------------
-        |--> Average: ${generations.map { it.evaluation.duration }.average()} ms
-        |--> Max: ${generations.maxOfOrNull { it.evaluation.duration }} ms
-        |--> Min: ${generations.minOfOrNull { it.evaluation.duration }} ms
-        -------------- Selection Times ----------------
-        |   |--> Offspring Selection
-        |   |   |--> Average: ${generations.map { it.parentSelection.duration }.average()} ms
-        |   |   |--> Max: ${generations.maxOfOrNull { it.parentSelection.duration }} ms
-        |   |   |--> Min: ${generations.minOfOrNull { it.parentSelection.duration }} ms
-        |   |--> Survivor Selection
-        |   |   |--> Average: ${generations.map { it.survivorSelection.duration }.average()} ms
-        |   |   |--> Max: ${generations.maxOfOrNull { it.survivorSelection.duration }} ms
-        |   |   |--> Min: ${generations.minOfOrNull { it.survivorSelection.duration }} ms
-        --------------- Alteration Times --------------
-        |--> Average: ${generations.map { it.alteration.duration }.average()} ms
-        |--> Max: ${generations.maxOfOrNull { it.alteration.duration }} ms
-        |--> Min: ${generations.minOfOrNull { it.alteration.duration }} ms
-        -------------- Evolution Results --------------
-        |--> Total time: ${evolution.duration} ms
-        |--> Average generation time: ${generations.map { it.duration }.average()} ms
-        |--> Max generation time: ${generations.maxOfOrNull { it.duration }} ms
-        |--> Min generation time: ${generations.minOfOrNull { it.duration }} ms
-        |--> Generation: ${evolution.generations.last().generation}
-        |--> Steady generations: ${evolution.generations.last().steady}
-        |--> Fittest: ${fittest.genotype}
-        |--> Best fitness: ${fittest.fitness}
-        """.trimIndent()
-    )
+    override fun display() {
+        val generations = evolution.generations
+        println(
+            """
+            ------------ Evolution Summary ---------------
+            |--> Initialization time: ${evolution.initialization.duration} ms
+            ------------- Evaluation Times ----------------
+            |--> Average: ${generations.map { it.evaluation.duration }.average()} ms
+            |--> Max: ${generations.maxOfOrNull { it.evaluation.duration }} ms
+            |--> Min: ${generations.minOfOrNull { it.evaluation.duration }} ms
+            -------------- Selection Times ----------------
+            |   |--> Offspring Selection
+            |   |   |--> Average: ${generations.map { it.parentSelection.duration }.average()} ms
+            |   |   |--> Max: ${generations.maxOfOrNull { it.parentSelection.duration }} ms
+            |   |   |--> Min: ${generations.minOfOrNull { it.parentSelection.duration }} ms
+            |   |--> Survivor Selection
+            |   |   |--> Average: ${generations.map { it.survivorSelection.duration }.average()} ms
+            |   |   |--> Max: ${generations.maxOfOrNull { it.survivorSelection.duration }} ms
+            |   |   |--> Min: ${generations.minOfOrNull { it.survivorSelection.duration }} ms
+            --------------- Alteration Times --------------
+            |--> Average: ${generations.map { it.alteration.duration }.average()} ms
+            |--> Max: ${generations.maxOfOrNull { it.alteration.duration }} ms
+            |--> Min: ${generations.minOfOrNull { it.alteration.duration }} ms
+            -------------- Evolution Results --------------
+            |--> Total time: ${evolution.duration} ms
+            |--> Average generation time: ${generations.map { it.duration }.average()} ms
+            |--> Max generation time: ${generations.maxOfOrNull { it.duration }} ms
+            |--> Min generation time: ${generations.minOfOrNull { it.duration }} ms
+            |--> Generation: ${evolution.generations.last().generation}
+            |--> Steady generations: ${evolution.generations.last().steady}
+            |--> Fittest: ${fittest(ranker, evolution).genotype}
+            |--> Best fitness: ${fittest(ranker, evolution).fitness}
+            """.trimIndent()
+        )
+    }
 
     /**
      * Called when the evolution phase starts. Sets the start time of the evolution process.

@@ -11,12 +11,14 @@ import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
-import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mapGeneration
+import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
+import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.listeners.records.IndividualRecord
+import cl.ravenhill.keen.ranking.IndividualRanker
 
 /**
  * A class that tracks the number of steady generations in the evolutionary computation process. A steady generation is
@@ -93,7 +95,20 @@ class SteadyGenerations<T, G>(
             }
         }
     } {
-    }, { evolution.generations.last().steady > generations }) where G : Gene<T, G> {
+        @Deprecated(
+            "This property will be removed in future versions. Use configuration objects instead.",
+            ReplaceWith("configuration.ranker")
+        )
+        override val ranker: IndividualRanker<T, G>
+            get() = configuration.ranker
+
+        @Deprecated(
+            "This property will be removed in future versions. Use configuration objects instead.",
+            ReplaceWith("configuration.evolution")
+        )
+        override val evolution: EvolutionRecord<T, G>
+            get() = configuration.evolution
+    }, { configuration.evolution.generations.last().steady > generations }) where G : Gene<T, G> {
 
     init {
         constraints {

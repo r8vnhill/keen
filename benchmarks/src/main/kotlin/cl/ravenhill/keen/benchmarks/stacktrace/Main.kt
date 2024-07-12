@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.benchmarks.stacktrace
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.listeners.EvolutionPlotter
+import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.CombineCrossover
 import cl.ravenhill.keen.operators.alteration.crossover.Crossover

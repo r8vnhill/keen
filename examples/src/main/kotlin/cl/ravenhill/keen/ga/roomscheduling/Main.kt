@@ -8,7 +8,7 @@ package cl.ravenhill.keen.ga.roomscheduling
 
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
-import cl.ravenhill.keen.listeners.EvolutionPlotter
+import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import kotlin.random.Random
 
