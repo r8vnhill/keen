@@ -12,6 +12,7 @@ import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.CharGene
 import cl.ravenhill.keen.limits.TargetFitness
+import cl.ravenhill.keen.limits.targetFitness
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
@@ -61,8 +62,8 @@ fun main() {
         }) {
         populationSize = 500
         alterers += listOf(RandomMutator(0.1), SinglePointCrossover(0.2))
-        limits += TargetFitness(TARGET.length.toDouble())
-        listeners += listOf(EvolutionSummary(), EvolutionPlotter())
+        limitFactories += targetFitness(TARGET.length.toDouble())
+        listenerFactories += listOf(::EvolutionSummary, ::EvolutionPlotter)
     }
     engine.evolve()
     engine.listeners.forEach { it.display() }

@@ -14,6 +14,8 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.SteadyGenerations
+import cl.ravenhill.keen.limits.maxGenerations
+import cl.ravenhill.keen.limits.steadyGenerations
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.AverageCrossover
@@ -44,8 +46,8 @@ fun main() {
         parentSelector = TournamentSelector()
         survivorSelector = TournamentSelector()
         alterers += listOf(RandomMutator(0.1), AverageCrossover(0.3))
-        listeners += listOf(EvolutionSummary(), EvolutionPlotter())
-        limits += listOf(SteadyGenerations(50), MaxGenerations(500))
+        listenerFactories += listOf(::EvolutionSummary, ::EvolutionPlotter)
+        limitFactories += listOf(steadyGenerations(50), maxGenerations(500))
     }
     engine.evolve()
     engine.listeners.forEach { it.display() }
