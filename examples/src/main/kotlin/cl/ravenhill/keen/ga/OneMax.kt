@@ -5,7 +5,6 @@
 
 package cl.ravenhill.keen.ga
 
-import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
