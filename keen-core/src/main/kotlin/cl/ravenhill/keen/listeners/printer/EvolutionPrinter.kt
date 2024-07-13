@@ -47,7 +47,7 @@ class EvolutionPrinter<T, G> private constructor(
     private val every: Int,
     configuration: ListenerConfiguration<T, G>,
     private val generationPrinter: GenerationPrinterListener<T, G>
-) : AbstractEvolutionListener<T, G>(),
+) : AbstractEvolutionListener<T, G>(configuration),
     GenerationListener<T, G> by GenerationPrinterListener(configuration)
         where G : Gene<T, G> {
 

@@ -12,9 +12,10 @@ import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.dsl.integers
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
-import cl.ravenhill.keen.limits.SteadyGenerations
-import cl.ravenhill.keen.limits.TargetFitness
+import cl.ravenhill.keen.limits.steadyGenerations
+import cl.ravenhill.keen.limits.targetFitness
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
+import cl.ravenhill.keen.listeners.printer.EvolutionPrinter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
@@ -142,13 +143,13 @@ fun main() {
     ) {
         populationSize = POPULATION_SIZE
         alterers += listOf(
-            RandomMutator(individualRate = 0.2),
+            RandomMutator(individualRate = 0.3),
             SwapMutator(individualRate = 0.2),
             SinglePointCrossover(chromosomeRate = 0.3)
         )
         ranker = FitnessMinRanker()
-        limits += listOf(TargetFitness(0.0), SteadyGenerations(STEADY_GENERATIONS))
-        listeners += summary + plotter
+        limitFactories += listOf(targetFitness(0.0), steadyGenerations(STEADY_GENERATIONS))
+        listenerFactories += listOf(::EvolutionSummary, ::EvolutionPlotter, { c -> EvolutionPrinter(10, c) })
     }
     engine.evolve()
     summary.display()
