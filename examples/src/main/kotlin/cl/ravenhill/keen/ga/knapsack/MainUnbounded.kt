@@ -10,9 +10,9 @@ import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 
 fun main() {
-    val summary = EvolutionSummary<Pair<Int, Int>, KnapsackGene>()
-    val plotter = EvolutionPlotter<Pair<Int, Int>, KnapsackGene>()
-    UnboundedKnapsackProblem(summary, plotter)
+    val engine = UnboundedKnapsackProblem(::EvolutionSummary, ::EvolutionPlotter)
+    val summary = engine.listeners.filterIsInstance<EvolutionSummary<Pair<Int, Int>, KnapsackGene>>().first()
+    val plotter = engine.listeners.filterIsInstance<EvolutionPlotter<Pair<Int, Int>, KnapsackGene>>().first()
     summary.display()
     summary.fittest.genotype.flatten().filter { it.first != 0 }.also(::println)
     plotter.display()

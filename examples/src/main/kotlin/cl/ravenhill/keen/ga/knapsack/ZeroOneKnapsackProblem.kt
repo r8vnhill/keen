@@ -9,6 +9,7 @@ import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
 import cl.ravenhill.keen.dsl.genotypeOf
+import cl.ravenhill.keen.evolution.Evolver
 import cl.ravenhill.keen.ga.knapsack.ZeroOneKnapsackProblem.MAX_GENERATIONS
 import cl.ravenhill.keen.ga.knapsack.ZeroOneKnapsackProblem.MAX_WEIGHT
 import cl.ravenhill.keen.ga.knapsack.ZeroOneKnapsackProblem.POPULATION_SIZE
@@ -16,10 +17,14 @@ import cl.ravenhill.keen.ga.knapsack.ZeroOneKnapsackProblem.TRUE_RATE
 import cl.ravenhill.keen.ga.knapsack.ZeroOneKnapsackProblem.items
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.limits.MaxGenerations
+import cl.ravenhill.keen.limits.maxGenerations
+import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 
+private typealias ZeroOneKnapsackListenerFactory =
+            (ListenerConfiguration<Boolean, BooleanGene>) -> EvolutionListener<Boolean, BooleanGene>
 
 /**
  * Defines the zero-one knapsack problem for use in a genetic algorithm.
@@ -75,7 +80,7 @@ object ZeroOneKnapsackProblem {
      *
      * @param observers A list of `EvolutionListener<Boolean, BooleanGene>` instances to monitor the evolution process.
      */
-    operator fun invoke(vararg observers: EvolutionListener<Boolean, BooleanGene>) {
+    operator fun invoke(vararg observers: ZeroOneKnapsackListenerFactory): Evolver<Boolean, BooleanGene> {
         val engine = evolutionEngine(ZeroOneKnapsackProblem::fitnessFunction, genotypeOf {
             chromosomeOf {
                 booleans {
@@ -86,9 +91,10 @@ object ZeroOneKnapsackProblem {
         }) {
             populationSize = POPULATION_SIZE
             alterers += listOf(BitFlipMutator(individualRate = 0.1), SinglePointCrossover(chromosomeRate = 0.1))
-            limits += listOf(MaxGenerations(MAX_GENERATIONS))
-            listeners += observers
+            limitFactories += maxGenerations(MAX_GENERATIONS)
+            listenerFactories += observers.toList()
         }
         engine.evolve()
+        return engine
     }
 }

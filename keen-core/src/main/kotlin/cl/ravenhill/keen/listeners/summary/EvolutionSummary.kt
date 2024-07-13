@@ -47,7 +47,7 @@ import cl.ravenhill.keen.listeners.mixins.SurvivorSelectionListener
  * @property precision the function used to measure the duration
  */
 class EvolutionSummary<T, G>(
-    private val configuration: ListenerConfiguration<T, G> = ListenerConfiguration()
+    configuration: ListenerConfiguration<T, G> = ListenerConfiguration()
 ) : AbstractEvolutionListener<T, G>(configuration),
     GenerationListener<T, G> by GenerationSummary(configuration),
     InitializationListener<T, G> by InitializationSummary(configuration),

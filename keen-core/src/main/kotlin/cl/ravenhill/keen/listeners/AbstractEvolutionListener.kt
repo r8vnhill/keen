@@ -44,18 +44,15 @@ import kotlin.time.TimeSource
  * @see EvolutionRecord for details on recording evolution data.
  * @see TimeSource for details on timing various phases of the evolution process.
  */
-abstract class AbstractEvolutionListener<T, G>(configuration: ListenerConfiguration<T, G> = ListenerConfiguration()) :
-    EvolutionListener<T, G> where G : Gene<T, G> {
+abstract class AbstractEvolutionListener<T, G>(
+    protected val configuration: ListenerConfiguration<T, G> = ListenerConfiguration()
+) : EvolutionListener<T, G> where G : Gene<T, G> {
     @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
     val ranker: IndividualRanker<T, G> = configuration.ranker
 
     @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
     val evolution: EvolutionRecord<T, G> = configuration.evolution
 
-    @Deprecated(
-        "This property will be removed in future versions. Use the fitness function that takes parameters instead",
-        ReplaceWith("fitness(ranker, evolution)")
-    )
     val fittest: IndividualRecord<T, G>
-        get() = fittest(ranker, evolution)
+        get() = fittest(configuration.ranker, configuration.evolution)
 }

@@ -72,7 +72,7 @@ import org.jetbrains.letsPlot.skia.compose.PlotPanel
  * @param T the type of the gene value
  * @param G the type of the gene, which must extend [Gene]
  */
-open class EvolutionPlotter<T, G>(private val configuration: ListenerConfiguration<T, G> = ListenerConfiguration()) :
+open class EvolutionPlotter<T, G>(configuration: ListenerConfiguration<T, G> = ListenerConfiguration()) :
     AbstractEvolutionListener<T, G>(configuration),
     GenerationListener<T, G> by GenerationPlotListener(configuration)
         where G : Gene<T, G> {

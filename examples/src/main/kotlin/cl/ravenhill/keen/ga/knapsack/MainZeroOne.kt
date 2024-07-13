@@ -34,11 +34,10 @@ import cl.ravenhill.keen.listeners.summary.EvolutionSummary
  * and a printout of the fittest solution in the format of item pairs (value, weight).
  */
 fun main() {
-    val summary = EvolutionSummary<Boolean, BooleanGene>()
     val plotter = EvolutionPlotter<Boolean, BooleanGene>()
 
-    ZeroOneKnapsackProblem(summary, plotter)
-
+    val engine = ZeroOneKnapsackProblem(::EvolutionSummary, ::EvolutionPlotter)
+    val summary = engine.listeners.filterIsInstance<EvolutionSummary<Boolean, BooleanGene>>().first()
     summary.display()
     val fittestSolution = summary.fittest.genotype.flatten()
         .mapIndexedNotNull { index, isInBag ->

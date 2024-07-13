@@ -6,15 +6,27 @@
 package cl.ravenhill.keen.ga.knapsack
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
 import cl.ravenhill.keen.dsl.genotypeOf
-import cl.ravenhill.keen.limits.MaxGenerations
-import cl.ravenhill.keen.limits.SteadyGenerations
+import cl.ravenhill.keen.evolution.Evolver
+import cl.ravenhill.keen.ga.knapsack.UnboundedKnapsackProblem.CHROMOSOME_SIZE
+import cl.ravenhill.keen.ga.knapsack.UnboundedKnapsackProblem.MAX_GENERATIONS
+import cl.ravenhill.keen.ga.knapsack.UnboundedKnapsackProblem.MAX_WEIGHT
+import cl.ravenhill.keen.ga.knapsack.UnboundedKnapsackProblem.MUTATION_RATE
+import cl.ravenhill.keen.ga.knapsack.UnboundedKnapsackProblem.PENALTY_MULTIPLIER
+import cl.ravenhill.keen.ga.knapsack.UnboundedKnapsackProblem.POPULATION_SIZE
+import cl.ravenhill.keen.ga.knapsack.UnboundedKnapsackProblem.STEADY_GENERATIONS
+import cl.ravenhill.keen.ga.knapsack.UnboundedKnapsackProblem.items
+import cl.ravenhill.keen.limits.maxGenerations
+import cl.ravenhill.keen.limits.steadyGenerations
+import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.RandomMutator
+
+private typealias UnboundedKnapsackListenerFactory =
+            (ListenerConfiguration<Pair<Int, Int>, KnapsackGene>) -> EvolutionListener<Pair<Int, Int>, KnapsackGene>
 
 /**
  * Defines the unbounded knapsack problem for use in a genetic algorithm.
@@ -83,8 +95,7 @@ object UnboundedKnapsackProblem {
      * @param observers A variable number of `EvolutionListener<Pair<Int, Int>, KnapsackGene>` instances that can be
      *   used to monitor the evolution process.
      */
-    @OptIn(ExperimentalKeen::class)
-    operator fun invoke(vararg observers: EvolutionListener<Pair<Int, Int>, KnapsackGene>) {
+    operator fun invoke(vararg observers: UnboundedKnapsackListenerFactory): Evolver<Pair<Int, Int>, KnapsackGene> {
         val engine = evolutionEngine(UnboundedKnapsackProblem::fitnessFunction, genotypeOf {
             chromosomeOf {
                 KnapsackChromosome.Factory(CHROMOSOME_SIZE) { KnapsackGene(items.random(Domain.random)) }
@@ -92,9 +103,10 @@ object UnboundedKnapsackProblem {
         }) {
             populationSize = POPULATION_SIZE
             alterers += listOf(RandomMutator(MUTATION_RATE), UniformCrossover())
-            limits += listOf(MaxGenerations(MAX_GENERATIONS), SteadyGenerations(STEADY_GENERATIONS))
-            listeners += observers
+            limitFactories += listOf(maxGenerations(MAX_GENERATIONS), steadyGenerations(STEADY_GENERATIONS))
+            listenerFactories += observers.toList()
         }
         engine.evolve()
+        return engine
     }
 }
