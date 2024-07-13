@@ -11,8 +11,6 @@ import cl.ravenhill.keen.evolution.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
-import cl.ravenhill.keen.listeners.records.EvolutionRecord
-import cl.ravenhill.keen.ranking.IndividualRanker
 
 
 /**
@@ -45,7 +43,8 @@ import cl.ravenhill.keen.ranking.IndividualRanker
 data class MaxGenerations<T, G>(
     val generations: Int,
     val configuration: ListenerConfiguration<T, G> = ListenerConfiguration()
-) : ListenLimit<T, G>(Listener(configuration), { state -> state.generation >= generations }) where G : Gene<T, G> {
+) : ListenLimit<T, G>(MaxGenerationsListener(configuration), { state -> state.generation >= generations }
+) where G : Gene<T, G> {
 
     override var engine: Evolver<T, G>? = null
 }
@@ -57,15 +56,8 @@ data class MaxGenerations<T, G>(
  * @param G the type of the gene, which must extend [Gene]
  * @param configuration the configuration for the listener
  */
-private class Listener<T, G>(configuration: ListenerConfiguration<T, G>) :
+private class MaxGenerationsListener<T, G>(configuration: ListenerConfiguration<T, G>) :
     AbstractEvolutionListener<T, G>() where G : Gene<T, G> {
-
-    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
-    override val ranker: IndividualRanker<T, G> = configuration.ranker
-
-    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
-    override val evolution: EvolutionRecord<T, G> = configuration.evolution
-
     var generation = 0
         private set
 

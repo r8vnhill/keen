@@ -15,10 +15,8 @@ import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mapGeneration
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
-import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.listeners.records.IndividualRecord
-import cl.ravenhill.keen.ranking.IndividualRanker
 
 /**
  * A class that tracks the number of steady generations in the evolutionary computation process. A steady generation is
@@ -60,14 +58,17 @@ class SteadyGenerations<T, G>(
     val generations: Int,
     configuration: ListenerConfiguration<T, G> = ListenerConfiguration()
 ) : ListenLimit<T, G>(
-    object : AbstractEvolutionListener<T, G>(), GenerationListener<T, G> by object : GenerationListener<T, G> {
+    object : AbstractEvolutionListener<T, G>(),
+        GenerationListener<T, G> by object : GenerationListener<T, G> {} {
+
 
         private val currentGeneration = configuration.currentGeneration
         private val evolution = configuration.evolution
         private val ranker = configuration.ranker
 
         /**
-         * Called when a generation starts. Initializes a new generation record and updates the parents' information.
+         * Called when a generation starts. Initializes a new generation record and updates the parents'
+         * information.
          *
          * @param state the current state of the evolution process
          */
@@ -95,21 +96,7 @@ class SteadyGenerations<T, G>(
                 steady = EvolutionListener.computeSteadyGenerations(ranker, evolution)
             }
         }
-    } {
-        @Deprecated(
-            "This property will be removed in future versions. Use configuration objects instead.",
-            ReplaceWith("configuration.ranker")
-        )
-        override val ranker: IndividualRanker<T, G>
-            get() = configuration.ranker
-
-        @Deprecated(
-            "This property will be removed in future versions. Use configuration objects instead.",
-            ReplaceWith("configuration.evolution")
-        )
-        override val evolution: EvolutionRecord<T, G>
-            get() = configuration.evolution
-    }, { configuration.evolution.generations.last().steady > generations }) where G : Gene<T, G> {
+        }, { configuration.evolution.generations.last().steady > generations }) where G : Gene<T, G> {
 
     init {
         constraints {

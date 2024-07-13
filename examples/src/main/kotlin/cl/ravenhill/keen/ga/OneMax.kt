@@ -15,6 +15,7 @@ import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.limits.maxGenerations
+import cl.ravenhill.keen.limits.targetFitness
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.printer.EvolutionPrinter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
@@ -87,7 +88,7 @@ fun main() {
         survivorSelector = TournamentSelector()
         alterers += listOf(BitFlipMutator(individualRate = 0.5), UniformCrossover(chromosomeRate = 0.6))
 //        limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
-        limitFactories += maxGenerations(MAX_GENERATIONS)
+        limitFactories += listOf(maxGenerations(MAX_GENERATIONS), targetFitness(TARGET_FITNESS))
         listenerFactories += listOf(::EvolutionSummary, ::EvolutionPlotter)
     }
     engine.evolve()
