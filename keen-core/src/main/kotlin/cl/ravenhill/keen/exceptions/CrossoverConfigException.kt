@@ -12,7 +12,7 @@ import cl.ravenhill.jakt.Jakt
  * correct configuration of crossovers, ensuring that they adhere to defined constraints.
  *
  * ## Usage:
- * `CrossoverConfigException` is intended to be used within a [Jakt.constraints] block to enforce constraints on
+ * `CrossoverConfigException` is intended to be used within a constraints block to enforce constraints on
  * crossover configurations. When a configuration value violates a constraint, this exception is thrown, providing
  * detailed error information.
  *
@@ -29,8 +29,7 @@ import cl.ravenhill.jakt.Jakt
  * ```
  * In this example, the exception is used to assert specific conditions like the crossover rate being within the valid
  * range of 0 to 1, and the number of parents being adequate for the chosen crossover strategy. If any condition is not
- * met, a `CrossoverConfigException` with an appropriate message is raised according to the specified
- * [Jakt.shortCircuit] and [Jakt.skipChecks] flags.
+ * met, a `CrossoverConfigException` with an appropriate message is raised.
  *
  * @param message A descriptive message providing details about the configuration error.
  */

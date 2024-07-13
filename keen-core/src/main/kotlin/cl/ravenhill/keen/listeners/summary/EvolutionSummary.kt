@@ -47,23 +47,17 @@ import cl.ravenhill.keen.listeners.mixins.SurvivorSelectionListener
  * @property precision the function used to measure the duration
  */
 class EvolutionSummary<T, G>(
-    private val config: ListenerConfiguration<T, G> = ListenerConfiguration()
-) : AbstractEvolutionListener<T, G>(),
-    GenerationListener<T, G> by GenerationSummary(config),
-    InitializationListener<T, G> by InitializationSummary(config),
-    EvaluationListener<T, G> by EvaluationSummary(config),
-    ParentSelectionListener<T, G> by ParentSelectionSummary(config),
-    SurvivorSelectionListener<T, G> by SurvivorSelectionSummary(config),
-    AlterationListener<T, G> by AlterationSummary(config)
+    private val configuration: ListenerConfiguration<T, G> = ListenerConfiguration()
+) : AbstractEvolutionListener<T, G>(configuration),
+    GenerationListener<T, G> by GenerationSummary(configuration),
+    InitializationListener<T, G> by InitializationSummary(configuration),
+    EvaluationListener<T, G> by EvaluationSummary(configuration),
+    ParentSelectionListener<T, G> by ParentSelectionSummary(configuration),
+    SurvivorSelectionListener<T, G> by SurvivorSelectionSummary(configuration),
+    AlterationListener<T, G> by AlterationSummary(configuration)
         where G : Gene<T, G> {
 
-    private val precision = config.precision
-
-    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
-    override val ranker = config.ranker
-
-    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
-    override val evolution = config.evolution
+    private val precision = configuration.precision
 
     /**
      * Displays a detailed summary of the evolution process. The summary includes the times for various phases such as
@@ -134,7 +128,7 @@ class EvolutionSummary<T, G>(
      * @param state the current state of the evolution process
      */
     override fun onEvolutionStarted(state: EvolutionState<T, G>) {
-        evolution.startTime = config.timeSource.markNow()
+        evolution.startTime = configuration.timeSource.markNow()
     }
 
     /**

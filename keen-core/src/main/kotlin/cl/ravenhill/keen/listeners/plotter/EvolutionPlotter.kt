@@ -73,14 +73,9 @@ import org.jetbrains.letsPlot.skia.compose.PlotPanel
  * @param G the type of the gene, which must extend [Gene]
  */
 open class EvolutionPlotter<T, G>(private val configuration: ListenerConfiguration<T, G> = ListenerConfiguration()) :
-    AbstractEvolutionListener<T, G>(),
+    AbstractEvolutionListener<T, G>(configuration),
     GenerationListener<T, G> by GenerationPlotListener(configuration)
         where G : Gene<T, G> {
-    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
-    override val ranker = configuration.ranker
-
-    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
-    override val evolution = configuration.evolution
 
     /**
      * Displays a window with a plot of the evolution process, showing the best, worst, and average fitness values over

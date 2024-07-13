@@ -50,11 +50,7 @@ class EvolutionPrinter<T, G> private constructor(
 ) : AbstractEvolutionListener<T, G>(),
     GenerationListener<T, G> by GenerationPrinterListener(configuration)
         where G : Gene<T, G> {
-    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
-    override val ranker = configuration.ranker
 
-    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
-    override val evolution = configuration.evolution
     private val generations by lazy { evolution.generations }
 
     /**

@@ -87,7 +87,6 @@ fun main() {
         parentSelector = RouletteWheelSelector()
         survivorSelector = TournamentSelector()
         alterers += listOf(BitFlipMutator(individualRate = 0.5), UniformCrossover(chromosomeRate = 0.6))
-//        limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
         limitFactories += listOf(maxGenerations(MAX_GENERATIONS), targetFitness(TARGET_FITNESS))
         listenerFactories += listOf(::EvolutionSummary, ::EvolutionPlotter)
     }
