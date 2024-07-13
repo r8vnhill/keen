@@ -111,6 +111,8 @@ The following example shows how to solve the _One Max_ problem with _Keen_.
 #### Implementation
 
 ```kotlin
+package cl.ravenhill.keen.ga
+
 import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
@@ -121,35 +123,39 @@ import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
+import cl.ravenhill.keen.listeners.printer.EvolutionPrinter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
-import cl.ravenhill.keen.operators.alteration.crossover.SinglePointCrossover
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 
+private const val POPULATION_SIZE = 100
+private const val CHROMOSOME_SIZE = 50
+private const val TRUE_RATE = 0.15
+private const val TARGET_FITNESS = CHROMOSOME_SIZE.toDouble()
+private const val MAX_GENERATIONS = 500
 private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
 
 fun main() {
   val engine = evolutionEngine(::count, genotypeOf {
     chromosomeOf {
       booleans {
-        size = 50
-        trueRate = 0.15
+        size = CHROMOSOME_SIZE
+        trueRate = TRUE_RATE
       }
     }
   }) {
-    populationSize = 500
+    populationSize = POPULATION_SIZE
     parentSelector = RouletteWheelSelector()
     survivorSelector = TournamentSelector()
     alterers += listOf(BitFlipMutator(individualRate = 0.5), UniformCrossover(chromosomeRate = 0.6))
-    limits += listOf(MaxGenerations(500), TargetFitness(TARGET_FITNESS))
-    listeners += listOf(EvolutionSummary(), EvolutionPlotter())
+    limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
+    listenerFactories += listOf(::EvolutionPlotter, ::EvolutionSummary, { c -> EvolutionPrinter(10, c) })
   }
   engine.evolve()
   engine.listeners.forEach { it.display() }
 }
-
 ```
 
 #### Output

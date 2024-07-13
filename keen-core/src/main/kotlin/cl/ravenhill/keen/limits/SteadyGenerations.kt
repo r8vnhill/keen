@@ -26,8 +26,8 @@ import cl.ravenhill.keen.ranking.IndividualRanker
  * end of generations and updates the steady generation count accordingly.
  *
  * ## Usage:
- * This class extends `ListenLimit` and implements `GenerationListener` to handle events occurring at the start and end of each generation,
- * and records relevant information about steady generations.
+ * This class extends `ListenLimit` and implements `GenerationListener` to handle events occurring at the start and end
+ * of each generation, and records relevant information about steady generations.
  *
  * ### Example 1: Using SteadyGenerations in an Evolution Engine
  * ```
@@ -82,7 +82,8 @@ class SteadyGenerations<T, G>(
         }
 
         /**
-         * Called when a generation ends. Updates the current generation record with the offspring information and the number of steady generations.
+         * Called when a generation ends. Updates the current generation record with the offspring information and the
+         * number of steady generations.
          *
          * @param state the current state of the evolution process
          */

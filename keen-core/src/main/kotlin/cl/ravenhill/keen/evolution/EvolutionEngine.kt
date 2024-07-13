@@ -24,6 +24,7 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.Limit
+import cl.ravenhill.keen.limits.ListenLimit
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.Alterer
@@ -31,7 +32,6 @@ import cl.ravenhill.keen.operators.selection.Selector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
-import cl.ravenhill.keen.utils.Box
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -539,8 +539,6 @@ class EvolutionEngine<T, G>(
         val genotypeFactory: Genotype.Factory<T, G>,
     ) where G : Gene<T, G> {
 
-        private val _ranker: Box.MutableBox<IndividualRanker<T, G>> = Box.mutable(defaultRanker())
-
         var populationSize: Int = DEFAULT_POPULATION_SIZE
             set(value) = constraints {
                 "Population size ($value) must be positive."(::EngineException) { value must BePositive }
@@ -559,7 +557,10 @@ class EvolutionEngine<T, G>(
 
         var alterers: MutableList<Alterer<T, G>> = defaultAlterers()
 
+        @Deprecated("Use the 'limitFactories' property instead.")
         var limits: MutableList<Limit<T, G>> = defaultLimits()
+
+        var limitFactories: MutableList<(ListenerConfiguration<T, G>) -> ListenLimit<T, G>> = mutableListOf()
 
         var ranker: IndividualRanker<T, G> = defaultRanker()
 
@@ -590,7 +591,9 @@ class EvolutionEngine<T, G>(
             selectionConfig = SelectionConfig(survivalRate, parentSelector, survivorSelector),
             alterationConfig = AlterationConfig(alterers),
             evolutionConfig = EvolutionConfig(
-                limits,
+                if (limitFactories.isEmpty()) limits else limitFactories.map {
+                    it(ListenerConfiguration(ranker = ranker))
+                },
                 ranker,
                 // This is meant to be removed in the future in favor of the listenerFactories property
                 if (listenerFactories.isEmpty()) listeners else listenerFactories.map {

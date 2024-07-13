@@ -9,45 +9,98 @@ package cl.ravenhill.keen.limits
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.evolution.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.listeners.AbstractEvolutionListener
+import cl.ravenhill.keen.listeners.ListenerConfiguration
+import cl.ravenhill.keen.listeners.records.EvolutionRecord
+import cl.ravenhill.keen.ranking.IndividualRanker
 
 
 /**
- * A limit condition for evolutionary algorithms based on the number of generations.
- *
- * `GenerationLimit` is a class that implements the [Limit] interface to provide a termination condition for an
- * evolutionary algorithm based on the number of generations processed. It is used to stop the evolutionary process
- * after a specified number of generations have been completed.
+ * A class that limits the evolutionary computation process based on the maximum number of generations. Once the
+ * specified number of generations is reached, the evolution process will be stopped.
  *
  * ## Usage:
- * ```kotlin
- * // Define a limit of 100 generations
- * val generationLimit = GenerationLimit<MyDataType, MyGene>(100)
  *
- * // Use in an evolutionary algorithm setup
+ * Prefer using the [maxGenerations] factory function to create instances of this class.
+ *
+ * This class extends `ListenLimit` and uses a listener to track the number of generations.
+ *
+ * ### Example 1: Creating a MaxGenerations Limit
+ * ```
+ * val config = ListenerConfiguration<Int, MyGene>()
+ * val maxGenerations = MaxGenerations(100, config)
+ *
  * val engine = evolutionEngine(/* ... */) {
- *     limits += generationLimit
+ *     limitFactories += { c -> MaxGenerations(100, c) }
  *     // ...
  * }
- * // The algorithm will run until 100 generations have been processed
+ * engine.evolve()
  * ```
- * In this example, `GenerationLimit` is used to specify that the evolutionary algorithm should terminate
- * after 100 generations have been processed.
  *
- * @param T The type ocf data encapsulated by the genes within the individuals.
- * @param G The type of gene in the individuals, conforming to the [Gene] interface.
- * @param generations The maximum number of generations to run the evolutionary algorithm.
- * @property engine The evolutionary engine to which this limit applies. Unused in this implementation.
+ * @param T the type of the gene value
+ * @param G the type of the gene, which must extend [Gene]
+ * @property generations the maximum number of generations to run the evolution process
+ * @property configuration the configuration for the listener
  */
-data class MaxGenerations<T, G>(val generations: Int) : Limit<T, G> where G : Gene<T, G> {
+data class MaxGenerations<T, G>(
+    val generations: Int,
+    val configuration: ListenerConfiguration<T, G> = ListenerConfiguration()
+) : ListenLimit<T, G>(Listener(configuration), { state -> state.generation >= generations }) where G : Gene<T, G> {
 
     override var engine: Evolver<T, G>? = null
+}
+
+/**
+ * A private listener class used by `MaxGenerations` to track the number of generations.
+ *
+ * @param T the type of the gene value
+ * @param G the type of the gene, which must extend [Gene]
+ * @param configuration the configuration for the listener
+ */
+private class Listener<T, G>(configuration: ListenerConfiguration<T, G>) :
+    AbstractEvolutionListener<T, G>() where G : Gene<T, G> {
+
+    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
+    override val ranker: IndividualRanker<T, G> = configuration.ranker
+
+    @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
+    override val evolution: EvolutionRecord<T, G> = configuration.evolution
+
+    var generation = 0
+        private set
 
     /**
-     * Checks whether the specified generation limit has been reached.
+     * Called when a generation ends. Increments the generation count.
      *
-     * @param state The current state of the evolution, including the current generation number.
-     * @return `true` if the current generation number is greater than or equal to the specified limit,
-     *   `false` otherwise.
+     * @param state the current state of the evolution process
      */
-    override fun invoke(state: EvolutionState<T, G>) = state.generation >= generations
+    override fun onGenerationEnded(state: EvolutionState<T, G>) {
+        generation++
+    }
 }
+
+/**
+ * Creates a factory function for `MaxGenerations` that can be used to limit the evolutionary computation process based
+ * on the maximum number of generations. The factory function takes a `ListenerConfiguration` and returns a
+ * `MaxGenerations` instance.
+ *
+ * ## Usage:
+ * This function is a higher-order function that returns a factory function for creating `MaxGenerations` objects.
+ *
+ * ### Example 1: Creating a MaxGenerations Factory
+ * ```
+ * val engine = evolutionEngine(/* ... */) {
+ *     limitFactories += maxGenerations(100)
+ *     // ...
+ * }
+ * engine.evolve()
+ * ```
+ *
+ * @param generations the maximum number of generations to run the evolution process
+ * @param T the type of the gene value
+ * @param G the type of the gene, which must extend [Gene]
+ * @return a factory function that takes a `ListenerConfiguration` and returns a `MaxGenerations` instance
+ */
+fun <T, G> maxGenerations(generations: Int): (ListenerConfiguration<T, G>) -> MaxGenerations<T, G>
+        where G : Gene<T, G> = { configuration -> MaxGenerations(generations, configuration) }
+

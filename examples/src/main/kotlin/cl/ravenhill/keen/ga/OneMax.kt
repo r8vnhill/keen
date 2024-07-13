@@ -14,7 +14,9 @@ import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BooleanGene
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness
+import cl.ravenhill.keen.limits.maxGenerations
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
+import cl.ravenhill.keen.listeners.printer.EvolutionPrinter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
@@ -84,8 +86,9 @@ fun main() {
         parentSelector = RouletteWheelSelector()
         survivorSelector = TournamentSelector()
         alterers += listOf(BitFlipMutator(individualRate = 0.5), UniformCrossover(chromosomeRate = 0.6))
-        limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
-        listeners += listOf(EvolutionSummary(), EvolutionPlotter())
+//        limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
+        limitFactories += maxGenerations(MAX_GENERATIONS)
+        listenerFactories += listOf(::EvolutionSummary, ::EvolutionPlotter)
     }
     engine.evolve()
     engine.listeners.forEach { it.display() }

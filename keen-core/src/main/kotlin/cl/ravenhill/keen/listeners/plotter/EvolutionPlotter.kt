@@ -19,7 +19,6 @@ import cl.ravenhill.keen.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.listeners.records.GenerationRecord
-import cl.ravenhill.keen.ranking.IndividualRanker
 import org.jetbrains.letsPlot.Figure
 import org.jetbrains.letsPlot.geom.geomLine
 import org.jetbrains.letsPlot.letsPlot
@@ -134,7 +133,8 @@ open class EvolutionPlotter<T, G>(private val configuration: ListenerConfigurati
     protected fun createFitnessFigure(best: List<Double>, worst: List<Double>, average: List<Double>): Figure {
         val categoryLabel = "Fitness"
         val data = mapOf<String, Any>(
-            categoryLabel to List(best.size) { "Best" } + List(worst.size) { "Worst" } + List(average.size) { "Average" },
+            categoryLabel to List(best.size) { "Best" } + List(worst.size) { "Worst" }
+                    + List(average.size) { "Average" },
             "fitness" to best + worst + average,
             "generations" to best.indices + worst.indices + average.indices
         )
