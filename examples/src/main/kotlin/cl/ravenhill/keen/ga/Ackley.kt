@@ -12,8 +12,8 @@ import cl.ravenhill.keen.dsl.evolutionEngine
 import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
-import cl.ravenhill.keen.limits.MaxGenerations
-import cl.ravenhill.keen.limits.SteadyGenerations
+import cl.ravenhill.keen.limits.maxGenerations
+import cl.ravenhill.keen.limits.steadyGenerations
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.AverageCrossover
@@ -69,8 +69,6 @@ private const val MUTATION_RATE = 0.1
 private val range = LO..HI
 
 fun main() {
-    val summary = EvolutionSummary<Double, DoubleGene>()
-    val plotter = EvolutionPlotter<Double, DoubleGene>()
     val engine = evolutionEngine(::ackley, genotypeOf {
         chromosomeOf {
             doubles {
@@ -82,8 +80,8 @@ fun main() {
         populationSize = POPULATION_SIZE
         ranker = FitnessMinRanker()
         alterers += listOf(RandomMutator(MUTATION_RATE), AverageCrossover(geneRate = 0.5))
-        limits += listOf(SteadyGenerations(generations = 50), MaxGenerations(500))
-        listeners += summary + plotter
+        limitFactories += listOf(steadyGenerations(generations = 50), maxGenerations(generations = 500))
+        listenerFactories += listOf(::EvolutionSummary, ::EvolutionPlotter)
     }
     engine.evolve()
     engine.listeners.filterIsInstance<EvolutionSummary<*, *>>().first().display()

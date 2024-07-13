@@ -111,19 +111,15 @@ The following example shows how to solve the _One Max_ problem with _Keen_.
 #### Implementation
 
 ```kotlin
-package cl.ravenhill.keen.ga
-
-import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
 import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BooleanGene
-import cl.ravenhill.keen.limits.MaxGenerations
-import cl.ravenhill.keen.limits.TargetFitness
+import cl.ravenhill.keen.limits.maxGenerations
+import cl.ravenhill.keen.limits.targetFitness
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
-import cl.ravenhill.keen.listeners.printer.EvolutionPrinter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
@@ -150,8 +146,8 @@ fun main() {
     parentSelector = RouletteWheelSelector()
     survivorSelector = TournamentSelector()
     alterers += listOf(BitFlipMutator(individualRate = 0.5), UniformCrossover(chromosomeRate = 0.6))
-    limits += listOf(MaxGenerations(MAX_GENERATIONS), TargetFitness(TARGET_FITNESS))
-    listenerFactories += listOf(::EvolutionPlotter, ::EvolutionSummary, { c -> EvolutionPrinter(10, c) })
+    limitFactories += listOf(maxGenerations(MAX_GENERATIONS), targetFitness(TARGET_FITNESS))
+    listenerFactories += listOf(::EvolutionSummary, ::EvolutionPlotter)
   }
   engine.evolve()
   engine.listeners.forEach { it.display() }

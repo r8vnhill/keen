@@ -5,19 +5,15 @@
 
 package cl.ravenhill.keen.ga
 
-import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
 import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BooleanGene
-import cl.ravenhill.keen.limits.MaxGenerations
-import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.limits.maxGenerations
 import cl.ravenhill.keen.limits.targetFitness
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
-import cl.ravenhill.keen.listeners.printer.EvolutionPrinter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
