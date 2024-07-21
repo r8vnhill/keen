@@ -54,7 +54,6 @@ import cl.ravenhill.keen.utils.eq
  * @param chromosomeRate The probability of a chromosome undergoing mutation.
  * @param geneRate The probability of an individual gene within a chromosome being mutated.
  */
-@OptIn(ExperimentalJakt::class)
 class RandomMutator<T, G>(
     override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
     override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,

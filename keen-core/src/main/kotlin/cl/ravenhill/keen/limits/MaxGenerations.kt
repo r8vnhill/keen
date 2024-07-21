@@ -95,4 +95,3 @@ private class MaxGenerationsListener<T, G>(configuration: ListenerConfiguration<
  */
 fun <T, G> maxGenerations(generations: Int): (ListenerConfiguration<T, G>) -> MaxGenerations<T, G>
         where G : Gene<T, G> = { configuration -> MaxGenerations(generations, configuration) }
-

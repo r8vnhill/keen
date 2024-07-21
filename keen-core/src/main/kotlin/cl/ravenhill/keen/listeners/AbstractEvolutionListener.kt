@@ -28,7 +28,8 @@ import kotlin.time.TimeSource
  *
  * ### Example:
  * ```kotlin
- * class MyEvolutionListener<T, G> : AbstractEvolutionListener<T, G>() where G : Gene<T, G> {
+ * class MyEvolutionListener<T, G>(configuration: ListenerConfiguration<T, G>) :
+ *         AbstractEvolutionListener<T, G>(configuration) where G : Gene<T, G> {
  *     override fun onGenerationEnded(state: EvolutionState<T, G>) {
  *         // Custom logic for handling the end of a generation
  *     }
@@ -39,6 +40,8 @@ import kotlin.time.TimeSource
  *
  * @param T The type of data used in the evolution process, typically representing the genetic information.
  * @param G The type of gene used in the evolution process, must be a subtype of [Gene].
+ * @property configuration The configuration for the listener, providing access to common properties like ranker and
+ * evolution record.
  * @see EvolutionListener for the interface this abstract class implements.
  * @see IndividualRanker for details on how individuals are ranked.
  * @see EvolutionRecord for details on recording evolution data.
@@ -47,12 +50,17 @@ import kotlin.time.TimeSource
 abstract class AbstractEvolutionListener<T, G>(
     protected val configuration: ListenerConfiguration<T, G> = ListenerConfiguration()
 ) : EvolutionListener<T, G> where G : Gene<T, G> {
+
     @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
     val ranker: IndividualRanker<T, G> = configuration.ranker
 
     @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
     val evolution: EvolutionRecord<T, G> = configuration.evolution
 
+    /**
+     * The fittest individual in the current evolution process, determined using the ranker and evolution record from
+     * the configuration.
+     */
     val fittest: IndividualRecord<T, G>
         get() = fittest(configuration.ranker, configuration.evolution)
 }

@@ -64,11 +64,6 @@ fun UnboundedKnapsackProblem.fitnessFunction(genotype: Genotype<Pair<Int, Int>, 
  * - A penalty is applied if the total weight exceeds `MAX_WEIGHT`. The penalty is the excess weight over `MAX_WEIGHT`.
  * - The fitness is calculated as the total profit minus any weight penalty.
  *
- * ## Usage:
- * This function is crucial in evaluating how effectively a particular genotype solves the Zero-One Knapsack Problem. It
- * is an integral part of the genetic algorithm's selection process, as genotypes with higher fitness values are more
- * likely to be chosen for reproduction.
- *
  * @param genotype The genotype to be evaluated, consisting of `BooleanGene` objects where `true` indicates inclusion
  *   of an item in the knapsack.
  * @return The fitness value of the genotype, calculated based on the total profit of included items, adjusted for

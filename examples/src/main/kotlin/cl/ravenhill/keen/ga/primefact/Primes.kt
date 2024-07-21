@@ -33,7 +33,7 @@ import kotlin.math.sqrt
  *
  * @return The number of prime numbers to be generated, set to 50.
  */
-private const val NUM_PRIMES = 50
+private const val NUM_PRIMES = 20
 
 /**
  * Generates a list of the first [NUM_PRIMES] prime numbers.
@@ -69,7 +69,7 @@ fun primes(): List<Int> {
         }
         n++
     }
-    return primes
+    return primes.filter { it > 0 }
 }
 
 /**

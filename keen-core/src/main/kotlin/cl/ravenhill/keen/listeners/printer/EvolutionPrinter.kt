@@ -123,3 +123,28 @@ class EvolutionPrinter<T, G> private constructor(
         }
     )
 }
+
+/**
+ * Creates a factory function for `EvolutionPrinter` that can be used to periodically print the evolutionary computation
+ * process details based on the specified interval. The factory function takes a `ListenerConfiguration` and returns an
+ * `EvolutionPrinter` instance.
+ *
+ * ## Usage:
+ * This function is a higher-order function that returns a factory function for creating `EvolutionPrinter` objects.
+ *
+ * ### Example 1: Creating an EvolutionPrinter Factory
+ * ```
+ * val engine = evolutionEngine(/* ... */) {
+ *     limitFactories += evolutionPrinter(10)
+ *     // ...
+ * }
+ * engine.evolve()
+ * ```
+ *
+ * @param every the interval (in generations) at which to print the evolution process details
+ * @param T the type of the gene value
+ * @param G the type of the gene, which must extend [Gene]
+ * @return a factory function that takes a `ListenerConfiguration` and returns an `EvolutionPrinter` instance
+ */
+fun <T, G> evolutionPrinter(every: Int): (ListenerConfiguration<T, G>) -> EvolutionPrinter<T, G>
+        where G : Gene<T, G> = { config -> EvolutionPrinter(every, config) }
