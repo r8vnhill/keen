@@ -192,7 +192,7 @@ fun Random.indices(size: Int, end: Int, start: Int = 0): List<Int> {
     val remainingIndices = List(end - start) { start + it }.toMutableList()
     return List(size) {
         remainingIndices.removeAt(nextInt(remainingIndices.size))
-    }
+    }.sorted()
 }
 
 /**

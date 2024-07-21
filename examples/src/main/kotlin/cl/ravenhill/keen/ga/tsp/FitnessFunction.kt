@@ -41,11 +41,6 @@ private infix fun Pair<Int, Int>.distanceTo(other: Pair<Int, Int>): Double {
  * - The distance between consecutive points is calculated using the Euclidean distance formula.
  * - The total distance is the sum of these individual distances.
  *
- * ## Usage:
- * This function is primarily used by the genetic algorithm's engine to evaluate and rank genotypes during the
- * evolutionary process. It helps in guiding the algorithm towards finding the shortest possible route, solving the
- * Traveling Salesman Problem.
- *
  * @param genotype The genotype representing a sequence of route points. Each gene corresponds to a coordinate in the
  *   route.
  * @return The fitness score as a `Double`. Lower scores indicate shorter and more efficient routes.

@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import org.jetbrains.letsPlot.Figure
 import org.jetbrains.letsPlot.geom.geomLine
@@ -54,18 +55,13 @@ import org.jetbrains.letsPlot.skia.compose.PlotPanel
  * - Displays the best route found by the algorithm in a coordinate-based plot.
  * - Provides an interactive UI to switch between different plots and control the aspect ratio of the displayed plots.
  *
- * ## Functionality:
- * - The `display` method sets up the application window and UI layout, incorporating the plots and controls.
- * - Utilizes composable functions like `Sidebar` and `PlotArea` for structuring the UI.
- * - Includes methods like `createRouteFigure` to generate specific plots based on the algorithm's output.
- *
- * ## Usage:
- * Instantiate `TspPlotter` as part of an evolutionary algorithm implementation for the TSP. The plotter can be used to
- * visually monitor the algorithm's progress and analyze the results.
+ * @param configuration The configuration for the plotter.
  *
  * @see TravelingSalesmanProblem
  */
-class TspPlotter : EvolutionPlotter<Pair<Int, Int>, RoutePointGene>() {
+class TspPlotter(
+    configuration: ListenerConfiguration<Pair<Int, Int>, RoutePointGene>
+) : EvolutionPlotter<Pair<Int, Int>, RoutePointGene>(configuration) {
 
     /**
      * Displays the main application window for visualizing the Traveling Salesman Problem (TSP) solution.
@@ -84,13 +80,9 @@ class TspPlotter : EvolutionPlotter<Pair<Int, Int>, RoutePointGene>() {
      *   row layout.
      * - **Interactive Elements**: Includes interactive UI components, such as a plot selection list and an aspect
      *   ratio toggle, to enhance user engagement and control.
-     *
-     * ## Usage:
-     * This method is called to initiate the display of the TSP solution visualization. It is typically invoked after
-     * setting up the evolutionary algorithm and attaching the `TspPlotter` as an evolution listener.
      */
     override fun display() = application {
-        val (best, worst, average) = computeFitnessTriplet(evolution.generations)
+        val (best, worst, average) = computeFitnessTriplet(configuration.evolution.generations)
         Window(onCloseRequest = ::exitApplication, title = "Traveling Salesman Problem") {
             val figures = listOf(
                 "Fitness Plot" to createFitnessFigure(best, worst, average),
@@ -126,19 +118,6 @@ class TspPlotter : EvolutionPlotter<Pair<Int, Int>, RoutePointGene>() {
      *   - The points are styled with a specific size and transparency (alpha) value for visual clarity.
      *   - The lines are drawn to connect the points in the order they are visited in the route.
      *
-     * ## Usage:
-     * This method is used to generate a visual output for the best route found in a TSP solution. The resulting
-     * `Figure` object can be displayed in a UI or exported as an image file.
-     *
-     * ### Example Usage:
-     * ```kotlin
-     * val tspPlotter = TspPlotter()
-     * // Assuming tspPlotter.fittest is already defined
-     * val routeFigure = tspPlotter.createRouteFigure()
-     * ```
-     * In this example, `createRouteFigure` is used within a `TspPlotter` instance to generate a plot of the best
-     * route.
-     *
      * @return A `Figure` object representing the plotted route.
      */
     private fun createRouteFigure(): Figure {
@@ -164,29 +143,14 @@ class TspPlotter : EvolutionPlotter<Pair<Int, Int>, RoutePointGene>() {
  * a label. It is designed for scenarios where a user needs to select one option from a list. The current selection
  * is tracked and can be updated by the user's interaction.
  *
- * ## Parameters:
- * - `options`: A list of strings representing the plot options to be displayed.
- * - `selectedIndex`: A [MutableState] holding the index of the currently selected option.
- *
  * ## Functionality:
  * - The function iterates over the provided list of options, creating a row for each item.
  * - Each row contains a radio button and a text label corresponding to the option.
  * - Selection logic is implemented such that clicking on an option updates the `selectedIndex`.
  * - The current selection is visually represented by the active state of the radio button.
  *
- * ## Usage:
- * This function can be used in UIs where a selection is required from a list of options, such as choosing a plot type
- * in a data visualization tool.
- *
- * ### Example:
- * ```kotlin
- * val plotOptions = listOf("Line Chart", "Bar Chart", "Pie Chart")
- * val selectedPlot = remember { mutableStateOf(0) }
- *
- * PlotList(plotOptions, selectedPlot)
- * ```
- * In this example, `PlotList` is used to display three plot options. The selection is stored in `selectedPlot`, which
- * is a mutable state holding the index of the selected option.
+ * @param options A list of strings representing the plot options to be displayed.
+ * @param selectedIndex A [MutableState] holding the index of the currently selected option.
  *
  * @see [RadioButton] for details on the radio button implementation.
  * @see [Column] and [Row] for layout structures.
@@ -229,27 +193,6 @@ private fun PlotList(
  * UI where the visual representation of data (such as fitness trends or routes in an evolutionary algorithm) is
  * displayed. The function uses [PlotPanel] from the Lets-Plot library to handle the actual plot rendering.
  *
- * ## Functionality:
- * - Displays the plot corresponding to the currently selected index (`figureIndex.value`).
- * - The plot's aspect ratio is determined based on the value of `preserveAspectRatio`.
- * - If there are any computation messages from the plot rendering process, they are printed to the console.
- *
- * ## Usage:
- * This function is used within a UI layout where multiple plots are available for selection, and the user can choose
- * which plot to view. It is typically used in data analysis or visualization tools where different representations
- * of data are provided.
- *
- * ### Example:
- * ```kotlin
- * val figures = listOf("Plot 1" to figure1, "Plot 2" to figure2)
- * val selectedPlot = remember { mutableStateOf(0) }
- * val preserveAspect = remember { mutableStateOf(true) }
- *
- * PlotArea(figures, selectedPlot, preserveAspect)
- * ```
- * In this example, `PlotArea` is used to display the plot currently selected by the user. The user can switch between
- * `figure1` and `figure2` using a separate control mechanism that updates `selectedPlot`.
- *
  * @param figures A list of pairs, each containing a string label and a [Figure] object representing a plot.
  * @param figureIndex A [MutableState] holding the index of the currently selected plot to be displayed.
  * @param preserveAspectRatio A [MutableState] indicating whether the aspect ratio of the plot should be preserved.
@@ -277,28 +220,6 @@ private fun PlotArea(
  * `Sidebar` is designed to provide control elements for the user to select different plots and to toggle the aspect
  * ratio preservation of the displayed plot. It's a part of a larger UI, typically used in conjunction with a main
  * area that displays the selected plot (`PlotArea`).
- *
- * ## Layout and Functionality:
- * - The function creates a vertical column layout that includes:
- *   - A header text labeling the plot selection area.
- *   - A list of selectable plot options (`PlotList`), allowing the user to choose which plot to display.
- *   - A row containing a checkbox to toggle the preservation of the aspect ratio of the plot.
- *
- * ## Usage:
- * This function is typically used in data visualization tools or any application where multiple plots are available
- * for viewing, and the user needs to select which plot to display. It provides an intuitive way to switch between
- * different plots and control their display properties.
- *
- * ### Example Usage:
- * ```kotlin
- * val figures = listOf("Plot 1" to figure1, "Plot 2" to figure2)
- * val selectedPlot = remember { mutableStateOf(0) }
- * val preserveAspect = remember { mutableStateOf(true) }
- *
- * Sidebar(figures, selectedPlot, preserveAspect)
- * ```
- * In this example, `Sidebar` is part of a UI layout where users can select between `figure1` and `figure2` and
- * toggle the aspect ratio preservation of the displayed plot.
  *
  * @param figures A list of pairs, each containing a string label and a [Figure] object representing a plot.
  * @param figureIndex A [MutableState] holding the index of the currently selected plot to be displayed.

@@ -65,7 +65,7 @@ import cl.ravenhill.keen.utils.indices
  */
 class PartiallyMappedCrossover<T, G>(
     override val chromosomeRate: Double,
-    override val exclusivity: Boolean
+    override val exclusivity: Boolean = false
 ) : PermutationCrossover<T, G> where G : Gene<T, G> {
 
     override val numOffspring = 2
