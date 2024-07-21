@@ -6,16 +6,10 @@
 
 package cl.ravenhill.keen.ga.primefact
 
-import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.chromosomes.Chromosome
-import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.printer.evolutionPrinter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
-import cl.ravenhill.keen.operators.alteration.mutation.GeneMutator
-import kotlin.math.abs
 
 /**
  * Implementation of the Prime Factorization Problem using a genetic algorithm.
@@ -45,11 +39,8 @@ fun main() {
     val plotter = engine.listeners.filterIsInstance<EvolutionPlotter<Int, IntGene>>().first()
     summary.display()
     println(
-        buildString {
-            append("Solution: ")
-            append(summary.fittest.genotype.flatten().filter { it > 1 }.joinToString(" * "))
-            append(" = ${PrimeFactorizationProblem.TARGET}")
-        }
+        "Solution: ${summary.fittest.genotype.flatten().filter { it > 1 }.joinToString(" * ")}" +
+                " = ${PrimeFactorizationProblem.TARGET}"
     )
     plotter.display()
 }

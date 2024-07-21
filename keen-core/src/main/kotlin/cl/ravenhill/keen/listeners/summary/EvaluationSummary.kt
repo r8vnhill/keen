@@ -59,23 +59,3 @@ class EvaluationSummary<T, G>(configuration: ListenerConfiguration<T, G>) :
         evaluation.duration = evaluation.startTime.elapsedNow().precision()
     }
 }
-
-/**
- * Creates an `EvaluationSummary` instance using the provided configuration.
- *
- * ## Usage:
- * This function is a factory method for creating an `EvaluationSummary` object with the given configuration.
- *
- * ### Example 1: Creating an EvaluationSummary
- * ```
- * val config = ListenerConfiguration<Int, MyGene>()
- * val evaluationSummary = evaluationSummary(config)
- * ```
- *
- * @param configuration the configuration used to create the `EvaluationSummary`
- * @param T the type of the gene value
- * @param G the type of the gene, which must extend [Gene]
- * @return an `EvaluationSummary` instance configured with the provided configuration
- */
-fun <T, G> evaluationSummary(configuration: ListenerConfiguration<T, G>) where G : Gene<T, G> =
-    EvaluationSummary(configuration)

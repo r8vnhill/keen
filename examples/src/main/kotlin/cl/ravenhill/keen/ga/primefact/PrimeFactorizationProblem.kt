@@ -24,9 +24,9 @@ object PrimeFactorizationProblem {
      * The target number for the prime factorization in the genetic algorithm.
      *
      * `TARGET` specifies the integer that the genetic algorithm attempts to factorize into its prime components. The
-     * value is set to 6969, serving as the goal for the algorithm's factorization process.
+     * value is set to 420, serving as the goal for the algorithm's factorization process.
      */
-    const val TARGET = 6969
+    const val TARGET = 420
 
     /**
      * The size of the population in the genetic algorithm.
