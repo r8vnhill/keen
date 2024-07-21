@@ -17,20 +17,6 @@ import kotlin.math.sqrt
  * numbers. The value is set to 50, meaning that the `primes` function will compute and return the first 50 prime
  * numbers starting from 2.
  *
- * ## Usage:
- * The `NUM_PRIMES` constant is used in the `primes` function to determine the size of the list of prime numbers that
- * the function will generate. This allows for consistent and predictable output from the function.
- *
- * ### Example:
- * ```kotlin
- * // In the primes function
- * while (primes.size < NUM_PRIMES) {
- *     // Generate prime numbers
- * }
- * ```
- * In this context, `NUM_PRIMES` controls the loop within the `primes` function to ensure that exactly 50 prime numbers
- * are generated and added to the list.
- *
  * @return The number of prime numbers to be generated, set to 50.
  */
 private const val NUM_PRIMES = 20
@@ -50,15 +36,7 @@ private const val NUM_PRIMES = 20
  * - If `n` is found to be prime, it is added to the list of primes.
  * - The loop continues until the list contains NUM_PRIMES prime numbers.
  *
- * ## Example Usage:
- * ```kotlin
- * val firstPrimes = primes()
- * println(firstPrimes) // Outputs the first NUM_PRIMES prime numbers
- * ```
- *
- * In this example, `primes` is called to generate a list of the first NUM_PRIMES prime numbers.
- *
- * @return A list containing the first NUM_PRIMES prime numbers.
+ * @return A list containing the first [NUM_PRIMES] prime numbers.
  */
 fun primes(): List<Int> {
     val primes = mutableListOf<Int>()
@@ -87,16 +65,6 @@ fun primes(): List<Int> {
  *
  * The use of the square root of `n` as the upper limit for the loop significantly improves performance,
  * especially for larger numbers, by reducing the number of divisibility checks.
- *
- * ## Example Usage:
- * ```kotlin
- * val number = 29
- * val isNumberPrime = isPrime(number)
- * println("Is $number prime? $isNumberPrime") // Output: Is 29 prime? true
- * ```
- *
- * In this example, the function `isPrime` is used to check if 29 is a prime number, which it is.
- *
  *
  * @param n The number to be checked for primality.
  * @return `true` if `n` is a prime number; `false` otherwise.

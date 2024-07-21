@@ -13,12 +13,6 @@ import kotlin.math.abs
  * value indicates that the gene product is closer to the target, making the genotype a more suitable solution in the
  * context of factorization.
  *
- * ## Process:
- * - The function first converts the target number to a `Long` to handle large products without overflow.
- * - It then flattens the genotype to get a list of gene values and calculates their product.
- * - The absolute difference between this product and the target number is calculated.
- * - This difference is returned as a `Double`, representing the fitness value.
- *
  * A genotype with a fitness value of 0.0 would indicate a perfect factorization of the target number.
  *
  * @param genotype The genotype to be evaluated for fitness.

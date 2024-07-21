@@ -23,11 +23,6 @@ import cl.ravenhill.keen.listeners.summary.EvolutionSummary
  * set of potential factors, ensuring that only viable candidates are considered for factorization. The algorithm
  * evolves the population towards a solution where the product of genes in the fittest individual equals the target
  * number.
- *
- * ## Usage:
- * The `main` function sets up and runs the genetic algorithm. It evolves the population while applying genetic
- * operations like mutation and crossover. The evolution process is subject to constraints such as reaching a fitness
- * target or a steady state. The result is displayed, showing the factorization of the target number.
  */
 fun main() {
     val engine = PrimeFactorizationProblem(
