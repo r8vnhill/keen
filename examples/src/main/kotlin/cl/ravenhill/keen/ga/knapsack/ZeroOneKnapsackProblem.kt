@@ -33,17 +33,6 @@ private typealias ZeroOneKnapsackListenerFactory =
  * evolutionary computation. It includes constants that define various parameters of the problem and the genetic
  * algorithm.
  *
- * ### Usage:
- * This object is used to solve instances of the zero-one knapsack problem by configuring and running a genetic
- * algorithm. Observers can be attached to monitor the evolutionary process.
- *
- * ### Example:
- * ```kotlin
- * ZeroOneKnapsackProblem.invoke(myListOfObservers)
- * ```
- * In this example, `ZeroOneKnapsackProblem` is invoked with a list of observers to start the evolutionary process for
- * solving the problem.
- *
  * @property MAX_WEIGHT The maximum weight that the knapsack can hold, set to 30.
  * @property items The list of items to be used in the knapsack problem. Each item is a pair of integers, representing
  *   the value and weight of the item, respectively.
@@ -66,17 +55,6 @@ object ZeroOneKnapsackProblem {
      * This function sets up and runs an evolutionary computation process to solve the zero-one knapsack problem. It
      * configures the evolutionary engine with specified parameters, genetic operators, and constraints. Observers can
      * be attached to monitor the evolution process.
-     *
-     * ## Process:
-     * - Initializes the evolutionary engine using a custom fitness function and genetic structure.
-     * - Configures genetic operators such as BitFlipMutator and SinglePointCrossover.
-     * - Sets population size, and evolution limits like the maximum number of generations.
-     * - Attaches provided observers to the evolution process.
-     * - Executes the evolutionary algorithm by calling `engine.evolve()`.
-     *
-     * ### Usage:
-     * Call this function to start the evolutionary process for solving the Zero-One Knapsack Problem. Attach observers
-     * as needed to monitor or intervene in the evolution process.
      *
      * @param observers A list of `EvolutionListener<Boolean, BooleanGene>` instances to monitor the evolution process.
      */

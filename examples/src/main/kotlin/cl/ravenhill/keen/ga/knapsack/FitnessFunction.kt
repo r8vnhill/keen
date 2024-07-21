@@ -27,14 +27,9 @@ import kotlin.math.abs
  *   multiplier ([UnboundedKnapsackProblem.PENALTY_MULTIPLIER]).
  * - If the genotype meets the problem constraints, no penalty is applied.
  *
- * ## Usage:
- * This function is used to evaluate how well a particular genotype solves the unbounded knapsack problem. It is a
- * crucial part of the genetic algorithm's selection process, as genotypes with higher fitness values are more likely to
- * be selected for reproduction.
- *
  * @param genotype The genotype to be evaluated, consisting of `KnapsackGene` objects.
  * @return The fitness value of the genotype, calculated based on the total value of items and adjusted by a penalty for
- *         exceeding the maximum weight limit.
+ *  exceeding the maximum weight limit.
  */
 fun UnboundedKnapsackProblem.fitnessFunction(genotype: Genotype<Pair<Int, Int>, KnapsackGene>): Double {
     val items = genotype.flatten()
@@ -69,13 +64,13 @@ fun UnboundedKnapsackProblem.fitnessFunction(genotype: Genotype<Pair<Int, Int>, 
  * @return The fitness value of the genotype, calculated based on the total profit of included items, adjusted for
  *   penalties due to excess weight.
  */
-fun ZeroOneKnapsackProblem.fitnessFunction(genotype: Genotype<Boolean, BooleanGene>): Double {
-    val profit = genotype.flatten().zip(items).sumOf { (isInBag, item) ->
+fun ZeroOneKnapsackProblem.fitnessFunction(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().let { genes ->
+    val profit = genes.zip(items).sumOf { (isInBag, item) ->
         if (isInBag) item.first else 0
     }
-    val weight = genotype.flatten().zip(items).sumOf { (isInBag, item) ->
+    val weight = genes.zip(items).sumOf { (isInBag, item) ->
         if (isInBag) item.second else 0
     }
     val penalty = if (weight > MAX_WEIGHT) weight - MAX_WEIGHT else 0
-    return (profit - penalty).toDouble()
+    (profit - penalty).toDouble()
 }

@@ -12,26 +12,17 @@ import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 
 
 /**
- * Main function to execute the Zero-One Knapsack Problem using a genetic algorithm.
+ * The main function that sets up and runs the genetic algorithm for the 0/1 knapsack problem.
  *
- * This function demonstrates the use of the [ZeroOneKnapsackProblem] object to solve the knapsack problem with a
- * genetic algorithm. It includes the creation of summary and plotter tools to monitor and visualize the evolutionary
- * process and outcomes.
+ * The 0/1 knapsack problem is a combinatorial optimization problem where you have a set of items, each with a specific
+ * weight and value, and a knapsack with a limited capacity. The goal is to maximize the total value of the items in the
+ * knapsack without exceeding its weight capacity. Each item can either be included in the knapsack (1) or excluded (0),
+ * hence the name 0/1 knapsack problem.
  *
- * ## Process:
- * - Initializes `EvolutionSummary` and `EvolutionPlotter` instances for monitoring and visualizing the genetic
- *   algorithm's progress.
- * - Invokes the `ZeroOneKnapsackProblem` with these monitoring tools to start the evolutionary process.
- * - Displays the summary and plots the evolution results using the respective tools.
- * - Extracts and prints the fittest genotype from the summary, showing the best solution found by the algorithm.
- *
- * ### Usage:
- * Run this function to solve the Zero-One Knapsack Problem using a genetic algorithm and to visualize the process and
- * results. It provides insights into the algorithm's performance and the quality of the solutions it generates.
- *
- * ### Example Output:
- * An example output of this function includes a summary of the evolutionary process, a plot visualizing the progress,
- * and a printout of the fittest solution in the format of item pairs (value, weight).
+ * This function initializes the evolutionary engine with listeners for summarizing and plotting the evolution process.
+ * It retrieves the `EvolutionSummary` and `EvolutionPlotter` listeners from the engine, displays the summary, and
+ * prints the fittest genotype that contains items in the knapsack. Finally, it displays the plot of the evolution
+ * process.
  */
 fun main() {
     val plotter = EvolutionPlotter<Boolean, BooleanGene>()

@@ -34,17 +34,6 @@ private typealias UnboundedKnapsackListenerFactory =
  * This object encapsulates the configuration and setup necessary for solving the knapsack problem using evolutionary
  * computation. It includes constants that define various parameters of the problem and the genetic algorithm.
  *
- * ### Usage:
- * This object can be used to solve instances of the knapsack problem by configuring and running a genetic algorithm.
- * Observers can be attached to monitor the evolution process.
- *
- * ### Example:
- * ```kotlin
- * UnboundedKnapsackProblem(myObserver)
- * ```
- * In this example, `UnboundedKnapsackProblem` is invoked with an observer to start the evolutionary process for
- * solving the problem.
- *
  * @property MAX_WEIGHT The maximum weight that the knapsack can hold. Set to 15 by default.
  * @property PENALTY_MULTIPLIER The penalty multiplier for exceeding the maximum weight. Set to 50.0 by default.
  * @property CHROMOSOME_SIZE The number of genes in each chromosome. Set to 15 by default.
@@ -73,24 +62,6 @@ object UnboundedKnapsackProblem {
      * This function sets up and runs an evolutionary computation process to solve the knapsack problem. It configures
      * the evolutionary engine with specified parameters, genetic operators, and constraints. Observers can be
      * attached to monitor the evolution process.
-     *
-     * ## Process:
-     * - Initializes the evolutionary engine using `evolutionEngine` with the provided fitness function.
-     * - Configures the genetic structure (genotype and chromosome) of the solution candidates.
-     * - Sets the population size, alterers (like mutation and crossover), and evolution limits.
-     * - Attaches any provided observers to the evolution process.
-     * - Executes the evolutionary algorithm by calling `engine.evolve()`.
-     *
-     * ### Usage:
-     * Call this function to start the evolutionary process for solving the Unbounded Knapsack Problem. Attach any
-     * observers as needed to monitor or intervene in the evolution process.
-     *
-     * ### Example:
-     * ```kotlin
-     * UnboundedKnapsackProblem(myEvolutionListener)
-     * ```
-     * In this example, `UnboundedKnapsackProblem` is invoked with an evolution listener to start and monitor the
-     * evolutionary process for solving the knapsack problem.
      *
      * @param observers A variable number of `EvolutionListener<Pair<Int, Int>, KnapsackGene>` instances that can be
      *   used to monitor the evolution process.

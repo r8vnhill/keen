@@ -16,20 +16,6 @@ import cl.ravenhill.keen.genetic.chromosomes.Chromosome
  * problem. It holds a list of `KnapsackGene` objects, each representing an item in the knapsack with a pair of weight
  * and value.
  *
- * ## Usage:
- * `KnapsackChromosome` is used in genetic algorithms to represent a potential solution to the knapsack problem,
- * encapsulating a set of items (genes). The `Factory` class facilitates the creation of these chromosomes, enabling
- * easy instantiation with custom gene generation logic.
- *
- * ### Example:
- * ```kotlin
- * val chromosomeFactory = KnapsackChromosome.Factory(10) { KnapsackGene(5 to 10) }
- * val chromosome = chromosomeFactory.make()
- * ```
- * In this example, `chromosomeFactory` is an instance of `KnapsackChromosome.Factory` that creates chromosomes with 10
- * genes, each gene representing an item with a weight of 5 and a value of 10. `chromosome` is an instance of
- * `KnapsackChromosome` created by this factory.
- *
  * @property genes A list of `KnapsackGene` objects representing the items in the knapsack.
  */
 data class KnapsackChromosome(override val genes: List<KnapsackGene>) : Chromosome<Pair<Int, Int>, KnapsackGene> {
@@ -61,10 +47,6 @@ data class KnapsackChromosome(override val genes: List<KnapsackGene>) : Chromoso
      *
      * This factory allows the creation of `KnapsackChromosome` instances with a specified number of genes, each
      * generated using the provided `geneFactory` function.
-     *
-     * ## Usage:
-     * Instantiate this factory with the desired chromosome size and gene factory function, and use the `make` method to
-     * create new `KnapsackChromosome` instances.
      *
      * @param size The number of genes in each chromosome to be created.
      * @param geneFactory A lambda function that generates instances of `KnapsackGene`.
