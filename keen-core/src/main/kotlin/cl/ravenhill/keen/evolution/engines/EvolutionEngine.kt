@@ -1,18 +1,11 @@
-/*
- * Copyright (c) 2024, Ignacio Slater M.
- * 2-Clause BSD License.
- */
-
-
-package cl.ravenhill.keen.evolution
+package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.keen.evolution.EvolutionEngine.Factory
-import cl.ravenhill.keen.evolution.EvolutionEngine.Factory.Companion.DEFAULT_POPULATION_SIZE
-import cl.ravenhill.keen.evolution.EvolutionEngine.Factory.Companion.DEFAULT_SURVIVAL_RATE
+import cl.ravenhill.keen.evolution.EvolutionInterceptor
+import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
@@ -35,6 +28,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
 import kotlin.math.ceil
 import kotlin.math.floor
 
+typealias GeneticAlgorithm<T, G> = EvolutionEngine<T, G>
 
 /**
  * Implements the core engine of an evolutionary algorithm, handling the entire process of evolution.
@@ -94,7 +88,7 @@ import kotlin.math.floor
  * @property survivorSelector A selector for choosing survivors from the population.
  * @property alterers A list of genetic operators for altering the offspring.
  * @property limits A list of termination conditions for the evolutionary process.
- * @property ranker A ranker for ordering individuals based on their fitness.
+ * @property evolutionConfig A ranker for ordering individuals based on their fitness.
  * @property listeners A list of listeners for monitoring and reacting to the evolution process.
  * @property evaluator An executor for evaluating the fitness of individuals.
  * @property interceptor An interceptor for modifying the evolution state before and after each phase.
@@ -106,7 +100,7 @@ class EvolutionEngine<T, G>(
     selectionConfig: SelectionConfig<T, G>,
     alterationConfig: AlterationConfig<T, G>,
     evolutionConfig: EvolutionConfig<T, G>,
-) : Evolver<T, G> where G : Gene<T, G> {
+) : AbstractEvolutionaryAlgorithm<T, G>(evolutionConfig) where G : Gene<T, G> {
 
     val genotypeFactory: Genotype.Factory<T, G> = populationConfig.genotypeFactory
     val populationSize: Int = populationConfig.populationSize
@@ -114,130 +108,9 @@ class EvolutionEngine<T, G>(
     val parentSelector: Selector<T, G> = selectionConfig.parentSelector
     val survivorSelector: Selector<T, G> = selectionConfig.survivorSelector
     val alterers: List<Alterer<T, G>> = alterationConfig.alterers
-    val limits: List<Limit<T, G>> = evolutionConfig.limits
-    val ranker: IndividualRanker<T, G> = evolutionConfig.ranker
-    override val listeners: MutableList<EvolutionListener<T, G>> = evolutionConfig.listeners.toMutableList()
-    val evaluator: EvaluationExecutor<T, G> = evolutionConfig.evaluator
-    val interceptor: EvolutionInterceptor<T, G> = evolutionConfig.interceptor
 
     init {
         limits.forEach { it.engine = this }
-    }
-
-    /**
-     * Represents the state of the evolutionary process.
-     */
-    private var state: EvolutionState<T, G> = EvolutionState.empty(ranker)
-
-    /**
-     * Executes the evolutionary algorithm until a specified termination condition is met.
-     *
-     * This function represents the main loop of the evolutionary algorithm, where generations are iterated through
-     * until one or more termination conditions (limits) are satisfied. It manages the overall flow of the evolutionary
-     * process, from the initial generation to the final state that meets the defined criteria.
-     *
-     * ## Evolutionary Loop:
-     * 1. **Evolution Start Notification**: Notifies all registered listeners that the evolution process has started.
-     * 2. **Generation Iteration**: Repeatedly iterates through generations using the `iterateGeneration` method.
-     * 3. **Termination Check**: After each iteration, checks if any of the termination conditions (limits) are
-     *   satisfied.
-     * 4. **Evolution End Notification**: Once a termination condition is met, notifies all registered listeners that
-     *   the evolution process has ended.
-     *
-     * ## Usage:
-     * The `evolve` method is the entry point for executing the evolutionary algorithm. It is invoked when the
-     * algorithm is ready to start and will continue to run until the specified termination conditions are met.
-     *
-     * ### Example:
-     * ```kotlin
-     * val engine = /* Create an instance of EvolutionEngine */
-     * val finalState = engine.evolve()
-     * // The finalState represents the state of the evolution at the end of the process
-     * ```
-     * In this example, `evolve` is called to start the evolutionary process. The method continues to iterate through
-     * generations until a termination condition is satisfied, returning the final state of the evolution.
-     *
-     * @return The final [EvolutionState] after the termination conditions are met, representing the end of the
-     *   evolutionary process.
-     */
-    override fun evolve(): EvolutionState<T, G> {
-        // Notify listeners of evolution start
-        listeners.forEach { it.onEvolutionStarted(state) }
-        // Main evolutionary loop
-        do {
-            state = iterateGeneration(state)
-        } while (limits.none { it(state) })
-        // Notify listeners of evolution end
-        listeners.forEach { it.onEvolutionEnded(state) }
-        return state
-    }
-
-    /**
-     * Executes one iteration of the evolutionary process, progressing the evolution by one generation.
-     *
-     * This function encapsulates the core steps of an evolutionary algorithm's cycle. It manages the transition from
-     * one generation to the next, ensuring that each phase of the evolutionary process is properly executed.
-     *
-     * ## Evolutionary Cycle:
-     * 1. **Pre-Processing**: Applies any pre-processing steps to the initial state.
-     * 2. **Population Initialization/Continuation**: Either initializes a new population or continues with the
-     *   existing one.
-     * 3. **Population Evaluation**: Assesses the fitness of each individual in the population.
-     * 4. **Parent Selection**: Selects a subset of individuals from the evaluated population to act as parents for
-     *   offspring.
-     * 5. **Survivor Selection**: Chooses individuals from the evaluated population to continue to the next generation.
-     * 6. **Offspring Alteration**: Applies genetic alterations (e.g., mutation, crossover) to the offspring.
-     * 7. **Merging Offspring and Survivors**: Combines the altered offspring with the survivors to form the next
-     *   generation's population.
-     * 8. **Next Generation Evaluation**: Evaluates the fitness of the new generation.
-     * 9. **Post-Processing**: Applies any post-processing steps to the final state.
-     *
-     * ## Event Notification:
-     * The function notifies registered listeners at the start and end of each generation, providing hooks for external
-     * monitoring and intervention in the evolutionary process.
-     *
-     * ## Usage:
-     * This method is typically invoked in a loop within the evolutionary algorithm, with each call representing a
-     * single evolutionary step (generation).
-     *
-     * ### Example:
-     * ```kotlin
-     * val engine = /* Create an instance of EvolutionEngine */
-     * var currentState = /* Initial EvolutionState */
-     * repeat(100) {
-     *     currentState = engine.iterateGeneration(currentState)
-     * }
-     * ```
-     * In this example, `iterateGeneration` is called in a loop to progress the evolution through 100 generations.
-     * The state of the evolution is updated with each iteration, reflecting the new generation's state.
-     *
-     * @param state The current [EvolutionState] representing the progress of evolution.
-     * @return An updated [EvolutionState] that represents the state of the evolution after one generation cycle.
-     */
-    fun iterateGeneration(state: EvolutionState<T, G>): EvolutionState<T, G> {
-        // Notify listeners of generation start
-        listeners.forEach { it.onGenerationStarted(state) }
-        // Apply pre-processing to the state
-        val interceptedStart = interceptor.before(state)
-        // Initialize or continue population
-        val initialPopulation = startEvolution(interceptedStart)
-        // Evaluate population fitness
-        val evaluatedPopulation = evaluatePopulation(initialPopulation)
-        // Select parents for offspring production
-        val parents = selectParents(evaluatedPopulation)
-        // Select survivors for the next generation
-        val survivors = selectSurvivors(evaluatedPopulation)
-        // Alter offspring through genetic operations
-        val offspring = alterOffspring(parents)
-        // Merge offspring and survivors to form the next generation
-        val nextPopulation = survivors.copy(population = survivors.population + offspring.population)
-        // Evaluate the next generation
-        val nextGeneration = evaluatePopulation(nextPopulation)
-        // Apply post-processing to the final state
-        val interceptedEnd = interceptor.after(nextGeneration)
-        // Notify listeners of generation end
-        listeners.forEach { it.onGenerationEnded(interceptedEnd) }
-        return interceptedEnd.copy(generation = interceptedEnd.generation + 1)
     }
 
     /**
