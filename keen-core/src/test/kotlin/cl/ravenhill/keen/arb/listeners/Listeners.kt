@@ -12,9 +12,6 @@ import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.ranking.IndividualRanker
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.next
-import kotlin.time.TestTimeSource
-import kotlin.time.TimeSource
 
 /**
  * Creates an arbitrary generator for [EvolutionListener]<[T], [G]> instances.
@@ -26,17 +23,9 @@ import kotlin.time.TimeSource
  *
  * @param T The type parameter representing the value type in the gene.
  * @param G The gene type, extending `Gene<T, G>`.
- * @param ranker An [Arb]<[IndividualRanker]<[T], [G]>> used to generate the ranker component of the listener.
- * @param evolution An [Arb]<[EvolutionRecord]<[T], [G]>> used to generate the evolution record component of the listener.
  * @return An [Arb]<[EvolutionListener]<[T], [G]>> that generates `EvolutionListener` instances.
  */
-fun <T, G> arbEvolutionListener(
-    ranker: Arb<IndividualRanker<T, G>>,
-    evolution: Arb<EvolutionRecord<T, G>>,
-): Arb<EvolutionListener<T, G>> where G : Gene<T, G> = arbitrary {
+fun <T, G> arbEvolutionListener(): Arb<EvolutionListener<T, G>> where G : Gene<T, G> = arbitrary {
     object : EvolutionListener<T, G> {
-        override var ranker: IndividualRanker<T, G> = ranker.next()
-        override var evolution: EvolutionRecord<T, G> = evolution.next()
-        override var timeSource: TimeSource = TestTimeSource()
     }
 }

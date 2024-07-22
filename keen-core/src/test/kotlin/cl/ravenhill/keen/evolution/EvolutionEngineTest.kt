@@ -12,7 +12,6 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.arb.limits.arbGenerationLimit
 import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
-import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
 import cl.ravenhill.keen.arb.operators.arbAlterer
 import cl.ravenhill.keen.arb.operators.arbRouletteWheelSelector
 import cl.ravenhill.keen.arb.operators.arbTournamentSelector
@@ -189,7 +188,7 @@ private fun limits(): Arb<List<Limit<Double, DoubleGene>>> = Arb.list(arbGenerat
 private fun ranker(): Arb<IndividualRanker<Double, DoubleGene>> = arbRanker()
 private fun listeners(
     ranker: Arb<IndividualRanker<Double, DoubleGene>>
-): Arb<List<EvolutionListener<Double, DoubleGene>>> = Arb.list(arbEvolutionListener(ranker, arbEvolutionRecord()))
+): Arb<List<EvolutionListener<Double, DoubleGene>>> = Arb.list(arbEvolutionListener())
 
 private fun evaluator(): Arb<EvaluationExecutor<Double, DoubleGene>> = arbitrary {
     SequentialEvaluator { _ -> 1.0 }

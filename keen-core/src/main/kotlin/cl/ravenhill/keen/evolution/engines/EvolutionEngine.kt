@@ -150,7 +150,7 @@ class EvolutionEngine<T, G>(
      * @return An [EvolutionState] that is ready for the evolutionary process. If initialization occurred, this state
      *         contains a new population; otherwise, it returns the provided state.
      */
-    fun startEvolution(state: EvolutionState<T, G>) = if (state.isEmpty()) {
+    override fun startEvolution(state: EvolutionState<T, G>) = if (state.isEmpty()) {
         // Notify listeners about the initialization start
         listeners.forEach { it.onInitializationStarted(state) }
         // Generate initial population
@@ -208,7 +208,7 @@ class EvolutionEngine<T, G>(
      *   evaluated for fitness.
      * @return An [EvolutionState] after the fitness evaluation process, containing the evaluated population.
      */
-    fun evaluatePopulation(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    override fun evaluatePopulation(state: EvolutionState<T, G>): EvolutionState<T, G> {
         // Validate the size of the population before evaluation
         constraints {
             "Population size must be the same as the expected population size." {
@@ -267,7 +267,7 @@ class EvolutionEngine<T, G>(
      *   which parents need to be selected.
      * @return An [EvolutionState] after the parent selection process, containing the selected parents.
      */
-    fun selectParents(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    override fun selectParents(state: EvolutionState<T, G>): EvolutionState<T, G> {
         // Notify listeners at the start of the parent selection phase
         listeners.forEach { it.onParentSelectionStarted(state) }
         // Conduct the parent selection process
@@ -309,7 +309,7 @@ class EvolutionEngine<T, G>(
      *   from which survivors need to be selected.
      * @return An [EvolutionState] after the survivor selection process, containing the population that survived.
      */
-    fun selectSurvivors(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    override fun selectSurvivors(state: EvolutionState<T, G>): EvolutionState<T, G> {
         // Notify listeners at the start of the survivor selection phase
         listeners.forEach { it.onSurvivorSelectionStarted(state) }
         // Conduct the survivor selection process
@@ -351,7 +351,7 @@ class EvolutionEngine<T, G>(
      *   offspring to be altered.
      * @return An [EvolutionState] with the altered offspring, marking the completion of the genetic alteration phase.
      */
-    fun alterOffspring(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    override fun alterOffspring(state: EvolutionState<T, G>): EvolutionState<T, G> {
         // Notify listeners that the alteration phase has started
         listeners.forEach { it.onAlterationStarted(state) }
         // Apply each alterer to the current state

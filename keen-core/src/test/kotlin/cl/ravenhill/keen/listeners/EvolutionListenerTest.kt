@@ -14,8 +14,6 @@ import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.listeners.arbEvolutionListener
-import cl.ravenhill.keen.arb.listeners.arbEvolutionRecord
-import cl.ravenhill.keen.genetic.genes.NothingGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -26,7 +24,7 @@ class EvolutionListenerTest : FreeSpec({
         "should do nothing for all events" {
             val populationArb = arbPopulation(arbIndividual(Arb.genotype(arbNothingChromosome())))
             checkAll(
-                arbEvolutionListener(KeenArb.anyRanker<Nothing, NothingGene>(), arbEvolutionRecord()),
+                arbEvolutionListener(),
                 arbEvolutionState(populationArb, KeenArb.anyRanker())
             ) { listener, state ->
                 listener.onEvolutionEnded(state) shouldBe Unit
@@ -48,8 +46,8 @@ class EvolutionListenerTest : FreeSpec({
 
         "can be concatenated" {
             checkAll(
-                arbEvolutionListener(KeenArb.anyRanker<Nothing, NothingGene>(), arbEvolutionRecord()),
-                arbEvolutionListener(KeenArb.anyRanker<Nothing, NothingGene>(), arbEvolutionRecord()),
+                arbEvolutionListener(),
+                arbEvolutionListener(),
             ) { l1, l2 ->
                 (l1 + l2) shouldBe listOf(l1, l2)
             }
