@@ -47,13 +47,6 @@ import cl.ravenhill.keen.mixins.SelfReferential
  * @param G The specific type of `Gene`, following the Curiously Recurring Template Pattern (CRTP).
  *
  * @property value The genetic data stored in the gene.
- *
- * @see GeneticMaterial
- * @see SelfReferential
- * @see MultiStringFormat
- * @author <https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @version 2.0.0
- * @since 2.0.0
  */
 interface Gene<T, G> : GeneticMaterial<T, G>, SelfReferential<G>, MultiStringFormat where G : Gene<T, G> {
     val value: T

@@ -1,13 +1,18 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.arb.arbRngPair
 import cl.ravenhill.keen.arb.datatypes.arbProbability
+import cl.ravenhill.keen.arb.genetic.genes.arbDoubleGene
 import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
 import cl.ravenhill.keen.assertions.`test Gene Mutator gene rate`
 import cl.ravenhill.keen.assertions.`test Mutator individual rate property`
 import cl.ravenhill.keen.assertions.`test Mutator chromosome rate property`
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
+import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
+import cl.ravenhill.keen.mixins.shouldHaveRange
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -53,13 +58,35 @@ class RandomMutatorTest : FreeSpec({
     ))
 
     "Mutating a gene" - {
-        "should return the same gene if the gene rate is 0.0" {
-            checkAll(arbRandomMutator<Int, IntGene>(geneRate = Arb.constant(0.0)), arbIntGene()) { mutator, gene ->
-                mutator.mutateGene(gene) shouldBe gene
+        "should generate the expected gene according to the random generator for" -{
+            "an IntGene" {
+                checkAll(
+                    arbRandomMutator<Int, IntGene>(),
+                    arbIntGene(),
+                    arbRngPair()
+                ) { mutator, gene, (domainRandom, expectedRandom) ->
+                    Domain.random = domainRandom
+                    val mutatedGene = mutator.mutateGene(gene)
+                    mutatedGene.value shouldBe expectedRandom.nextInt(gene.range.start, gene.range.endInclusive)
+                }
             }
-        }
 
-        ""
+            "a DoubleGene" {
+                checkAll(
+                    arbRandomMutator<Double, DoubleGene>(),
+                    arbDoubleGene(),
+                    arbRngPair()
+                ) { mutator, gene, (domainRandom, expectedRandom) ->
+                    Domain.random = domainRandom
+                    val mutatedGene = mutator.mutateGene(gene)
+                    mutatedGene.value shouldBe expectedRandom.nextDouble(gene.range.start, gene.range.endInclusive)
+                }
+            }
+
+            // Tests for other gene types are omitted because the mutation strategy used by RandomMutator is defined
+            // within each gene type. Consequently, the mutation logic is tested in the test suite of each specific gene
+            // type.
+        }
     }
 })
 
