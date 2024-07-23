@@ -205,7 +205,16 @@ class EnvironmentTest : FreeSpec({
 
         "can check if it contains a key" - {
             "and returns false if the key is not present" {
-                checkAll(arbEnvironment<Any?>(Arb.map(Arb.int(), Arb.any())), Arb.int()) { env, key ->
+                checkAll(
+                    arbEnvironment<Any?>(
+                        Arb.map(
+                            keyArb = Arb.int(),
+                            valueArb = Arb.any(),
+                            minSize = 0,
+                            maxSize = 25
+                        )
+                    ), Arb.int()
+                ) { env, key ->
                     assume {
                         env.keys shouldNotContain key
                     }
@@ -214,7 +223,12 @@ class EnvironmentTest : FreeSpec({
             }
 
             "and returns true if the key is present" {
-                checkAll(arbEnvironment<Any?>(Arb.map(Arb.int(), Arb.any()))) { env ->
+                checkAll(arbEnvironment<Any?>(Arb.map(
+                    keyArb = Arb.int(),
+                    valueArb = Arb.any(),
+                    minSize = 0,
+                    maxSize = 25
+                ))) { env ->
                     env.forEach { t, _ ->
                         env.containsKey(t).shouldBeTrue()
                     }
