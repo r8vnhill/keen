@@ -93,7 +93,10 @@ class TournamentSelector<T, G>(val tournamentSize: Int = DEFAULT_SIZE) : Selecto
             generateSequence { population[Domain.random.nextInt(population.size)] }
                 .take(tournamentSize)
                 .maxWithOrNull(ranker.comparator)
-                ?: throw SelectionException { "Tournament selection failed to find a max individual" }
+                ?: throw SelectionException {
+                    // Unreachable
+                    "Tournament selection failed to find a max individual"
+                }
         }
 
     override fun toString() = "TournamentSelector(tournamentSize=$tournamentSize)"

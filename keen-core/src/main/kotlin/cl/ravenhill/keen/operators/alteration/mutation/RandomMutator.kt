@@ -6,7 +6,6 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
-import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.keen.Domain
@@ -40,7 +39,7 @@ import cl.ravenhill.keen.utils.eq
  * ### Example:
  * ```kotlin
  * val mutator = RandomMutator<MyDataType, MyGene>(
- *     probability = 0.1,     // 10% overall mutation probability
+ *     individualRate = 0.1,     // 10% overall mutation probability
  *     chromosomeRate = 0.5,  // 50% chance for each chromosome to be mutated
  *     geneRate = 0.5         // 50% chance for each gene within a chromosome to be mutated
  * )
@@ -50,11 +49,10 @@ import cl.ravenhill.keen.utils.eq
  *
  * @param T The type of data encapsulated by the genes within the chromosomes.
  * @param G The type of gene in the chromosomes, conforming to the [Gene] interface.
- * @param individualRate The overall probability of a mutation occurring during the mutation process.
- * @param chromosomeRate The probability of a chromosome undergoing mutation.
- * @param geneRate The probability of an individual gene within a chromosome being mutated.
+ * @property individualRate The overall probability of a mutation occurring during the mutation process.
+ * @property chromosomeRate The probability of a chromosome undergoing mutation.
+ * @property geneRate The probability of an individual gene within a chromosome being mutated.
  */
-@OptIn(ExperimentalJakt::class)
 class RandomMutator<T, G>(
     override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
     override val chromosomeRate: Double = DEFAULT_CHROMOSOME_RATE,
@@ -128,8 +126,27 @@ class RandomMutator<T, G>(
     }
 
     companion object {
+        /**
+         * The default probability of a mutation occurring during the mutation process for an individual.
+         *
+         * This value represents the default likelihood that any given individual will be selected for mutation.
+         */
         const val DEFAULT_INDIVIDUAL_RATE = 0.5
+
+        /**
+         * The default probability of a chromosome undergoing mutation.
+         *
+         * This value represents the default likelihood that any given chromosome within an individual will be selected
+         * for mutation.
+         */
         const val DEFAULT_CHROMOSOME_RATE = 0.5
+
+        /**
+         * The default probability of an individual gene within a chromosome being mutated.
+         *
+         * This value represents the default likelihood that any given gene within a chromosome will be selected for
+         * mutation.
+         */
         const val DEFAULT_GENE_RATE = 0.5
     }
 }
