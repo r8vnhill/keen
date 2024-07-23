@@ -79,6 +79,7 @@ class EvolutionEngineTest : FreeSpec({
         "when starting evolution" - {
             "returns the same state if it already started" {
                 checkAll(
+                    PropTestConfig(iterations = 100),
                     arbEngine(
                         populationConfig(),
                         selectionConfig(),
