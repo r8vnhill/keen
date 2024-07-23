@@ -3,7 +3,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.exceptions.MutatorConfigException
+import cl.ravenhill.keen.exceptions.MutatorConfigurationException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -56,13 +56,13 @@ class PartialShuffleMutator<T, G>(
 
     init {
         constraints {
-            "Individual mutation rate must be in the range [0, 1]"(::MutatorConfigException) {
+            "Individual mutation rate must be in the range [0, 1]"(::MutatorConfigurationException) {
                 individualRate must BeInRange(0.0..1.0)
             }
-            "Chromosome mutation rate must be in the range [0, 1]"(::MutatorConfigException) {
+            "Chromosome mutation rate must be in the range [0, 1]"(::MutatorConfigurationException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "Shuffle boundary probability must be in the range [0, 1]"(::MutatorConfigException) {
+            "Shuffle boundary probability must be in the range [0, 1]"(::MutatorConfigurationException) {
                 shuffleBoundaryProbability must BeInRange(0.0..1.0)
             }
         }

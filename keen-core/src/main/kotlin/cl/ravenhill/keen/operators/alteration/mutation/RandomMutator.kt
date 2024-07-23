@@ -9,7 +9,7 @@ package cl.ravenhill.keen.operators.alteration.mutation
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.exceptions.MutatorConfigException
+import cl.ravenhill.keen.exceptions.MutatorConfigurationException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -60,13 +60,13 @@ class RandomMutator<T, G>(
 
     init {
         constraints {
-            "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigException) {
+            "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigurationException) {
                 individualRate must BeInRange(0.0..1.0)
             }
-            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigException) {
+            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigurationException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "The gene rate ($geneRate) must be in 0.0..1.0"(::MutatorConfigException) {
+            "The gene rate ($geneRate) must be in 0.0..1.0"(::MutatorConfigurationException) {
                 geneRate must BeInRange(0.0..1.0)
             }
         }

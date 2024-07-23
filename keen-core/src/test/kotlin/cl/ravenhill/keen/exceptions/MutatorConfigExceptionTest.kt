@@ -14,7 +14,7 @@ class MutatorConfigExceptionTest : FreeSpec({
     "A MutatorConfigException instance" - {
         "should have a message" {
             checkAll<String> { message ->
-                MutatorConfigException(message).message shouldBe message
+                MutatorConfigurationException(message).message shouldBe message
             }
         }
     }

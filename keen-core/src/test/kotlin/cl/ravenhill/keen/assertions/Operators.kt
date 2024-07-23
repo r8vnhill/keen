@@ -8,7 +8,7 @@ import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.operators.arbBaseCrossover
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.CrossoverException
-import cl.ravenhill.keen.exceptions.MutatorConfigException
+import cl.ravenhill.keen.exceptions.MutatorConfigurationException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
@@ -103,7 +103,7 @@ fun <T, G> `test Mutator individual rate property`(
             ) { individualRate, chromosomeRate, geneRate ->
                 shouldThrow<CompositeException> {
                     completeBuilder(individualRate, chromosomeRate, geneRate)
-                }.shouldHaveInfringement<MutatorConfigException>(
+                }.shouldHaveInfringement<MutatorConfigurationException>(
                     "The individual rate ($individualRate) must be in 0.0..1.0"
                 )
             }
@@ -181,7 +181,7 @@ fun <T, G> `test Mutator chromosome rate property`(
             ) { individualRate, chromosomeRate, geneRate ->
                 shouldThrow<CompositeException> {
                     completeBuilder(individualRate, chromosomeRate, geneRate)
-                }.shouldHaveInfringement<MutatorConfigException>(
+                }.shouldHaveInfringement<MutatorConfigurationException>(
                     "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"
                 )
             }
@@ -259,7 +259,7 @@ fun <T, G> `test Gene Mutator gene rate`(
             ) { individualRate, chromosomeRate, geneRate ->
                 shouldThrow<CompositeException> {
                     completeBuilder(individualRate, chromosomeRate, geneRate)
-                }.shouldHaveInfringement<MutatorConfigException>(
+                }.shouldHaveInfringement<MutatorConfigurationException>(
                     "The gene rate ($geneRate) must be in 0.0..1.0"
                 )
             }

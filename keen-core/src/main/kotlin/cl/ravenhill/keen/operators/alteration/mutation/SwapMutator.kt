@@ -6,11 +6,15 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
+import cl.ravenhill.jakt.Jakt
 import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.exceptions.MutationException
+import cl.ravenhill.keen.exceptions.MutatorConfigurationException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.utils.indices
@@ -66,13 +70,13 @@ class SwapMutator<T, G>(
 
     init {
         constraints {
-            "The swap rate [$swapRate] must be in 0.0..1.0" {
+            "The swap rate [$swapRate] must be in 0.0..1.0"(::MutatorConfigurationException) {
                 swapRate must BeInRange(0.0..1.0)
             }
-            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0" {
+            "The chromosome rate [$chromosomeRate] must be in 0.0..1.0"(::MutatorConfigurationException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "The individual rate [$individualRate] must be in 0.0..1.0" {
+            "The individual rate [$individualRate] must be in 0.0..1.0"(::MutatorConfigurationException) {
                 individualRate must BeInRange(0.0..1.0)
             }
         }
@@ -89,15 +93,23 @@ class SwapMutator<T, G>(
      * 4. Creates a new chromosome instance with the mutated gene list, preserving the original chromosome's structure.
      *
      * ## Usage:
-     * This function is called internally by the SwapMutator during the mutation phase of an evolutionary algorithm. It
-     * ensures that each chromosome undergoes mutation according to the defined swap mutation logic, thus contributing
-     * to the diversity and exploration of the solution space.
+     * This function is called internally by the `SwapMutator` during the mutation phase of an evolutionary algorithm.
+     * It ensures that each chromosome undergoes mutation according to the defined swap mutation logic, thus
+     * contributing to the diversity and exploration of the solution space.
      *
-     * @param chromosome the chromosome to mutate. It is a generic type with gene type G and value type T.
-     * @return a new instance of `Chromosome<T, G>` with genes swapped based on the mutation logic.
-     * @receiver the current instance of the mutator.
+     * @param chromosome The chromosome to mutate. It is a generic type with gene type `G` and value type `T`.
+     * @return A new instance of `Chromosome<T, G>` with genes swapped based on the mutation logic.
+     * @throws CompositeException containing all the exceptions thrown by the constraints.
+     * @throws MutationException if the chromosome is empty and [Jakt.shortCircuit] is enabled.
+     * @receiver The current instance of the mutator.
+     * @see MutableList.swap
      */
     override fun mutateChromosome(chromosome: Chromosome<T, G>): Chromosome<T, G> {
+        constraints {
+            "The chromosome must not be empty"(::MutationException) {
+                chromosome mustNot BeEmpty
+            }
+        }
         val genes = chromosome.toMutableList()
         val indices = Domain.random.indices(swapRate, genes.size)
         indices.forEach {
