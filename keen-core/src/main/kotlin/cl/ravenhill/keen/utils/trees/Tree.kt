@@ -15,7 +15,8 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.Broken
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.mixins.MultiStringFormat
 import cl.ravenhill.keen.mixins.SelfReferential
 
@@ -130,6 +131,7 @@ interface Tree<V, T> : SelfReferential<T>, Iterable<T>, MultiStringFormat where 
      * @throws CompositeException containing all the exceptions thrown by the constraints.
      * @throws IntConstraintException if no node in the tree satisfies the predicate.
      */
+    @Broken("This function is broken and should not be used.")
     fun indexOfFirst(predicate: (T) -> Boolean): IntRange {
         val index = nodes.indexOfFirst(predicate)
         constraints { "Predicate does not hold for any node in the tree." { index mustNot BeEqualTo(-1) } }
@@ -330,6 +332,7 @@ interface Tree<V, T> : SelfReferential<T>, Iterable<T>, MultiStringFormat where 
  * @return A new instance of the tree with the first node satisfying the predicate replaced by the `replacement` node.
  */
 @ExperimentalKeen
+@Broken("This function is broken and should not be used.")
 fun <V, T> Tree<V, T>.replaceFirst(replacement: T, predicate: (T) -> Boolean): T where T : Tree<V, T> {
     val range = indexOfFirst(predicate)
     val newNodes = mutableListOf<T>().apply {
@@ -426,9 +429,8 @@ fun <V, T> Tree<V, T>.fromTopDown(nodes: List<T>): T where T : Tree<V, T> {
  * @return A list containing all nodes of the tree, ordered from top to bottom.
  */
 @OptIn(ExperimentalKeen::class)
-inline fun <V, reified T> Tree<V, T>.toTopDownList(): List<T> where T : Tree<V, T> {
-    return toTopDownSequence().toList()
-}
+@Broken("This function is broken and should not be used.")
+inline fun <V, reified T> Tree<V, T>.toTopDownList() where T : Tree<V, T> = toTopDownSequence().toList()
 
 /**
  * ! BROKEN !
@@ -470,6 +472,7 @@ inline fun <V, reified T> Tree<V, T>.toTopDownList(): List<T> where T : Tree<V, 
  * @throws ConstraintException if the tree is not of the expected type `T`.
  */
 @OptIn(ExperimentalKeen::class)
+@Broken("This function is broken and should not be used.")
 inline fun <V, reified T> Tree<V, T>.toTopDownSequence() where T : Tree<V, T> = sequence {
     val queue = ArrayDeque<T>()
     constraints {

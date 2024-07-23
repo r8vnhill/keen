@@ -9,10 +9,14 @@ import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeNaN
 import cl.ravenhill.jakt.constraints.ints.BePositive
+import cl.ravenhill.keen.Domain.DEFAULT_POPULATION_SIZE
+import cl.ravenhill.keen.Domain.DEFAULT_SURVIVAL_RATE
 import cl.ravenhill.keen.Domain.environments
 import cl.ravenhill.keen.Domain.equalityThreshold
 import cl.ravenhill.keen.Domain.maxProgramDepth
 import cl.ravenhill.keen.Domain.random
+import cl.ravenhill.keen.Domain.toStringMode
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.prog.Environment
 import cl.ravenhill.keen.prog.Program
 import cl.ravenhill.keen.utils.eq
@@ -69,13 +73,14 @@ object Domain {
     const val DEFAULT_SURVIVAL_RATE = 0.4
 
     const val DEFAULT_EQUALITY_THRESHOLD = 0.0001
+
     @OptIn(ExperimentalJakt::class)
     var equalityThreshold = DEFAULT_EQUALITY_THRESHOLD
         set(value) {
             constraints {
                 "The equality threshold ($value) must be greater than or equal to zero" {
-                   value must DoubleBeAtLeast(0.0)
-                   value mustNot BeNaN
+                    value must DoubleBeAtLeast(0.0)
+                    value mustNot BeNaN
                 }
             }
             field = value

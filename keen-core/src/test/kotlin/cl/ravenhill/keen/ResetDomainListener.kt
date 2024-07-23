@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen
 
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.prog.Program
 import io.kotest.property.PropTestListener
 import kotlin.random.Random

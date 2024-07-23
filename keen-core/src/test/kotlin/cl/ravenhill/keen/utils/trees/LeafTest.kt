@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.utils.trees
 
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 

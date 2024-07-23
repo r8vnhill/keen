@@ -111,7 +111,6 @@ The following example shows how to solve the _One Max_ problem with _Keen_.
 #### Implementation
 
 ```kotlin
-import cl.ravenhill.keen.ExperimentalKeen
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
@@ -130,7 +129,6 @@ import cl.ravenhill.keen.operators.selection.TournamentSelector
 
 private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
 
-@OptIn(ExperimentalKeen::class)
 fun main() {
   val engine = evolutionEngine(::count, genotypeOf {
     chromosomeOf {

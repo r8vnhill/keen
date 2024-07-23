@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.arb
 
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.prog.Environment
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

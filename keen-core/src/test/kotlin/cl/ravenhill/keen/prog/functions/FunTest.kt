@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.prog.functions
 
 import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import cl.ravenhill.keen.exceptions.AstException
 import io.kotest.assertions.throwables.shouldThrow

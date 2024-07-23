@@ -6,7 +6,7 @@
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.arb.any
 import cl.ravenhill.keen.arb.arbEnvironment
 import io.kotest.core.spec.style.FreeSpec

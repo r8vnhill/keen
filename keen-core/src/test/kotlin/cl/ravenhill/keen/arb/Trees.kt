@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.arb
 
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.utils.trees.Leaf
 import cl.ravenhill.keen.utils.trees.Node
 import io.kotest.property.Arb
