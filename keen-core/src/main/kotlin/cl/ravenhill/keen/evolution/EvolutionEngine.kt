@@ -6,12 +6,13 @@
 
 package cl.ravenhill.keen.evolution
 
-import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.evolution.EvolutionEngine.Factory
+import cl.ravenhill.keen.evolution.EvolutionEngine.Factory.Companion.DEFAULT_POPULATION_SIZE
+import cl.ravenhill.keen.evolution.EvolutionEngine.Factory.Companion.DEFAULT_SURVIVAL_RATE
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
@@ -537,13 +538,11 @@ class EvolutionEngine<T, G>(
         val genotypeFactory: Genotype.Factory<T, G>,
     ) where G : Gene<T, G> {
 
-        @OptIn(ExperimentalJakt::class)
         var populationSize: Int = DEFAULT_POPULATION_SIZE
             set(value) = constraints {
                 "Population size ($value) must be positive."(::EngineException) { value must BePositive }
             }.let { field = value }
 
-        @OptIn(ExperimentalJakt::class)
         var survivalRate: Double = DEFAULT_SURVIVAL_RATE
             set(value) = constraints {
                 "Survival rate ($value) must be between 0 and 1."(::EngineException) {

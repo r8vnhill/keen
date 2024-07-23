@@ -24,7 +24,9 @@ import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldMatch
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.int
@@ -84,6 +86,31 @@ class TournamentSelectorTest : FreeSpec({
                         it shouldBe best
                     }
                 }
+            }
+        }
+
+        "properties" - {
+            "can be converted to a string" - {
+                "with the default tournament size" {
+                    TournamentSelector<Nothing, NothingGene>().toString() shouldBe
+                            "TournamentSelector(tournamentSize=3)"
+                }
+
+                "with a custom tournament size" {
+                    checkAll(Arb.positiveInt()) { size ->
+                        val selector = TournamentSelector<Nothing, NothingGene>(size)
+                        val regex = """(TournamentSelector\(tournamentSize=)(\d+)(\))"""
+                        val matcher = regex.toRegex().find(selector.toString())
+                        matcher.shouldNotBeNull()
+                        matcher.groupValues[1] shouldBe "TournamentSelector(tournamentSize="
+                        matcher.groupValues[2].toInt() shouldBe size
+                        matcher.groupValues[3] shouldBe ")"
+                    }
+                }
+            }
+
+            "can calculate it's hash code" {
+                TournamentSelector<Nothing, NothingGene>().hashCode() shouldBe TournamentSelector::class.hashCode()
             }
         }
     }
