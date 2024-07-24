@@ -11,6 +11,7 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.exceptions.CrossoverException
 import cl.ravenhill.keen.exceptions.constraints.BePermutation
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -75,11 +76,11 @@ interface PermutationCrossover<T, G> : Crossover<T, G> where G : Gene<T, G> {
     override fun crossoverChromosomes(chromosomes: List<Chromosome<T, G>>): List<Chromosome<T, G>> {
         constraints {
             chromosomes.forEachIndexed { index, chromosome ->
-                "Chromosome $index is not a permutation" {
+                "Chromosome $index is not a permutation"(::CrossoverException) {
                     chromosome must BePermutation
                 }
             }
-            "All chromosomes must have the same elements in any order" {
+            "All chromosomes must have the same elements in any order"(::CrossoverException) {
                 constraint { haveSameElements(chromosomes) }
             }
         }
