@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.ranking
 
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -40,7 +41,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * being considered superior.
  *
  * @param T The type of data encapsulated by the genes in the individuals.
- * @param G The specific type of gene present in the individuals.
+ * @param F The specific type of gene present in the individuals.
  *
  * @property comparator A [Comparator] used for ranking individuals. It internally uses the [invoke] method
  *   to define the sorting logic.
@@ -52,7 +53,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @since 2.0.0
  * @version 2.0.0
  */
-interface IndividualRanker<T, G> where G : Gene<T, G> {
+interface IndividualRanker<T, F> where F : Feature<T, F> {
     val comparator
         get() = Comparator(::invoke)
 
@@ -89,7 +90,7 @@ interface IndividualRanker<T, G> where G : Gene<T, G> {
      *   Negative for the first individual ranking higher, positive for the second individual ranking higher, and zero
      *   for equal ranking.
      */
-    operator fun invoke(first: Individual<T, G>, second: Individual<T, G>): Int
+    operator fun invoke(first: Individual<T, F>, second: Individual<T, F>): Int
 
 
     /**
@@ -123,7 +124,7 @@ interface IndividualRanker<T, G> where G : Gene<T, G> {
      *   algorithm.
      * @return A new list of individuals sorted in descending order based on the criteria defined by the comparator.
      */
-    fun sort(population: Population<T, G>) = population.sortedWith(comparator.reversed())
+    fun sort(population: Population<T, F>) = population.sortedWith(comparator.reversed())
 
     /**
      * Transforms a list of fitness values of individuals.
