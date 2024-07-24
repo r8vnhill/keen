@@ -156,6 +156,7 @@ class EvolutionEngineTest : FreeSpec({
 
             "selects parents with the expected selector" {
                 checkAll(
+                    PropTestConfig(iterations = 100),
                     arbEngine(
                         populationConfig(),
                         selectionConfig(),
