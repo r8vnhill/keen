@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.prog.terminals
 
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.prog.Reducible
 import cl.ravenhill.keen.utils.trees.Leaf
 

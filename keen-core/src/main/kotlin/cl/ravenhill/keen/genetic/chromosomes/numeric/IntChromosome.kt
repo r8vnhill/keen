@@ -8,6 +8,7 @@ package cl.ravenhill.keen.genetic.chromosomes.numeric
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.chromosomes.ChromosomeUtils
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome.Factory
@@ -132,6 +133,33 @@ data class IntChromosome(override val genes: List<IntGene>) : NumberChromosome<I
      * @return A new [IntChromosome] instance containing the provided genes.
      */
     override fun duplicateWithGenes(genes: List<IntGene>) = IntChromosome(genes)
+
+    override fun toString() = when (Domain.toStringMode) {
+        ToStringMode.SIMPLE -> genes.joinToString(prefix = "[", postfix = "]") { it.value.toString() }
+        else -> "IntChromosome(genes=$genes)"
+    }
+
+    companion object {
+        /**
+         * Creates an empty [IntChromosome] instance with no genes.
+         *
+         * This function is useful for initializing or representing a chromosome with no genetic information.
+         * It provides a baseline or default state for chromosomes in certain evolutionary algorithm scenarios.
+         *
+         * ## Usage:
+         * This method can be used in cases where an empty chromosome is needed as a placeholder or as an initial
+         * state in evolutionary algorithms.
+         *
+         * ### Example:
+         * ```
+         * val emptyChromosome = IntChromosome.empty()
+         * ```
+         * Here, an empty [IntChromosome] instance is created, which contains no genes.
+         *
+         * @return An empty [IntChromosome] instance.
+         */
+        fun empty() = IntChromosome(emptyList())
+    }
 
     /**
      * Factory class for creating [IntChromosome] instances.

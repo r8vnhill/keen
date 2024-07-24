@@ -9,7 +9,7 @@ package cl.ravenhill.keen.utils.trees
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.arb.arbRange
 import cl.ravenhill.keen.assertions.should.shouldBeInRange
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement

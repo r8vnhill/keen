@@ -10,7 +10,7 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.utils.nextIntInRange
 
 

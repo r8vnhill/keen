@@ -4,5 +4,10 @@ import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNot
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

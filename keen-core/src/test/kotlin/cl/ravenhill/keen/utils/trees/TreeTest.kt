@@ -10,7 +10,7 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
@@ -140,13 +140,13 @@ class TreeTest : FreeSpec({
 
         "when converting to " - {
             "top-down list of nodes " - {
-                "should return a list with a single element" {
+                "!should return a list with a single element" {
                     singleElementTree.toTopDownList() shouldBe listOf(singleElementTree)
                 }
             }
 
             "top-down sequence of nodes" - {
-                "should return a sequence with a single element" {
+                "!should return a sequence with a single element" {
                     singleElementTree.toTopDownSequence().toList() shouldBe listOf(singleElementTree)
                 }
             }
@@ -190,7 +190,7 @@ class TreeTest : FreeSpec({
         }
 
         "can be converted to a detailed string representation" {
-            multiElementTree.toString() shouldBe "TypedTree(" +
+            multiElementTree.toDetailedString() shouldBe "TypedTree(" +
                     "value=TypedIntermediate(arity=2, contents=a), " +
                     "size=4, " +
                     "arity=2, " +
@@ -224,11 +224,11 @@ class TreeTest : FreeSpec({
         }
 
         "when searching for a node should" - {
-            "return the index of the node if it is in the tree" {
+            "!return the index of the node if it is in the tree" {
                 multiElementTree.indexOfFirst { it.value.contents == 'b' } shouldBe 1..<3
             }
 
-            "throw a [NoSuchElementException] if the node is not in the tree" {
+            "!throw a [NoSuchElementException] if the node is not in the tree" {
                 shouldThrowWithMessage<NoSuchElementException>("Node not found in tree") {
                     multiElementTree.indexOfFirst { it.value.contents == 'e' }
                 }
@@ -263,7 +263,7 @@ class TreeTest : FreeSpec({
             }
         }
 
-        "can replace" - {
+        "!can replace" - {
             "its root node" {
                 val newRoot = singleElementTree
                 val newTree = multiElementTree.replaceFirst(newRoot) { it.value.contents == 'a' }
@@ -277,7 +277,7 @@ class TreeTest : FreeSpec({
             }
         }
 
-        "when converting to " - {
+        "!when converting to " - {
             "top-down list of nodes" - {
                 "should return a list with all the nodes in the tree" {
                     multiElementTree.toTopDownList() shouldBe listOf(

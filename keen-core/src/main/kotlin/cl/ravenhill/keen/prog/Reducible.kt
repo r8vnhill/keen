@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.prog
 
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.mixins.SelfReferential
 import cl.ravenhill.keen.utils.trees.Node
 

@@ -8,7 +8,7 @@ import cl.ravenhill.keen.arb.datatypes.arbInvalidProbability
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
-import cl.ravenhill.keen.exceptions.MutatorConfigException
+import cl.ravenhill.keen.exceptions.MutatorConfigurationException
 import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
@@ -88,7 +88,7 @@ private suspend fun FreeSpecContainerScope.`throws an exception on invalid rates
         ) { invalidProbability, chromosomeRate, shuffleBoundary ->
             shouldThrow<CompositeException> {
                 PartialShuffleMutator<Int, IntGene>(invalidProbability, chromosomeRate, shuffleBoundary)
-            }.shouldHaveInfringement<MutatorConfigException>(
+            }.shouldHaveInfringement<MutatorConfigurationException>(
                 "Individual mutation rate must be in the range [0, 1]"
             )
         }
@@ -102,7 +102,7 @@ private suspend fun FreeSpecContainerScope.`throws an exception on invalid rates
         ) { individualRate, invalidProbability, shuffleBoundary ->
             shouldThrow<CompositeException> {
                 PartialShuffleMutator<Int, IntGene>(individualRate, invalidProbability, shuffleBoundary)
-            }.shouldHaveInfringement<MutatorConfigException>(
+            }.shouldHaveInfringement<MutatorConfigurationException>(
                 "Chromosome mutation rate must be in the range [0, 1]"
             )
         }
@@ -116,7 +116,7 @@ private suspend fun FreeSpecContainerScope.`throws an exception on invalid rates
         ) { individualRate, chromosomeRate, invalidProbability ->
             shouldThrow<CompositeException> {
                 PartialShuffleMutator<Int, IntGene>(individualRate, chromosomeRate, invalidProbability)
-            }.shouldHaveInfringement<MutatorConfigException>(
+            }.shouldHaveInfringement<MutatorConfigurationException>(
                 "Shuffle boundary probability must be in the range [0, 1]"
             )
         }

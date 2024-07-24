@@ -12,6 +12,7 @@ import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
 import io.kotest.property.checkAll
@@ -47,6 +48,14 @@ class FitnessMaxRankerTest : FreeSpec({
             ) { g1, g2, f ->
                 FitnessMaxRanker<Nothing, NothingGene>()(Individual(g1, f), Individual(g2, f)) shouldBe 0
             }
+        }
+
+        "can be converted to a string" {
+            FitnessMaxRanker<Nothing, NothingGene>().toString() shouldBe "FitnessMaxRanker"
+        }
+
+        "can calculate it's hash code" {
+            FitnessMaxRanker<Nothing, NothingGene>().hashCode() shouldBe FitnessMaxRanker::class.hashCode()
         }
     }
 })

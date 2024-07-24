@@ -1,4 +1,4 @@
-package cl.ravenhill.keen
+package cl.ravenhill.keen.annotations
 
 /**
  * Marks an API as experimental within the Keen library. This annotation indicates that the API is still in
