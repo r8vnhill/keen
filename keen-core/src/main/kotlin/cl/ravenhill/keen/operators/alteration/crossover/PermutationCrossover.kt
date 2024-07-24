@@ -7,8 +7,9 @@
 package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.jakt.Jakt.constraints
-import cl.ravenhill.jakt.constraints.collections.HaveSize
+import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.exceptions.constraints.BePermutation
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -16,76 +17,70 @@ import cl.ravenhill.keen.genetic.genes.Gene
 
 
 /**
- * Defines an interface for performing permutation crossover in genetic algorithms. This crossover strategy is
- * specifically designed for chromosomes that represent permutations.
+ * Interface representing a permutation crossover operator for evolutionary algorithms.
  *
- * In genetic algorithms, a permutation crossover is a method of combining two or more parent chromosomes to produce new
- * offspring. This type of crossover ensures that the offspring chromosomes are also valid permutations.
+ * A permutation crossover operator is used to combine genetic information from parent chromosomes to produce
+ * offspring chromosomes. It ensures that the resulting chromosomes are valid permutations, meaning they contain
+ * the same elements as the parent chromosomes but in a different order. In a valid permutation, each element must
+ * appear exactly once; hence, there are no duplicated elements.
  *
- * ## Crossover Process:
- * 1. Validates that each chromosome in the input list is a permutation chromosome.
- * 2. Determines whether a crossover will occur based on a predefined probability ([chromosomeRate]).
- * 3. If crossover is to take place, performs permutation-specific crossover logic via the [permuteChromosomes] method.
- * 4. Generates offspring chromosomes by duplicating the base chromosome's structure with the new gene sequences.
+ * ## Constraints:
+ * - Each chromosome must be a valid permutation.
+ * - All chromosomes must contain the same elements, regardless of order.
  *
  * ## Usage:
- * This interface can be implemented to define specific permutation crossover behaviors in genetic algorithms,
- * particularly in problems where the solutions are permutations, such as scheduling or routing problems.
+ * This interface should be implemented by classes that perform crossover operations on permutations. It is
+ * particularly useful in combinatorial optimization problems like the Traveling Salesman Problem (TSP) or any
+ * scenario where the solution can be represented as a permutation of elements.
  *
- * ### Example Implementation:
+ * ### Example:
+ * Implementing a specific permutation crossover:
  * ```
- * class MyPermutationCrossover<T, G> : PermutationCrossover<T, G> where G : Gene<T, G> {
+ * class MyPermutationCrossover<T, G : Gene<T, G>> : PermutationCrossover<T, G> {
  *     override fun permuteChromosomes(chromosomes: List<Chromosome<T, G>>): List<List<G>> {
- *         // Implement specific permutation crossover logic here
+ *         // Custom permutation logic
  *     }
  * }
  * ```
  *
- * @param T the type of value that the genes represent.
- * @param G the gene type, must extend Gene<T, G>.
+ * @param T The type of value that the genes represent.
+ * @param G The gene type, must extend [Gene].
  */
 interface PermutationCrossover<T, G> : Crossover<T, G> where G : Gene<T, G> {
 
     /**
-     * Performs a permutation crossover operation on a list of chromosomes. This function ensures that the resulting
-     * chromosomes are valid permutations and maintains the integrity of the genetic information.
+     * Performs the crossover operation on the given list of chromosomes.
      *
-     * ## Crossover Logic:
-     * 1. Validates each chromosome in the provided list to ensure it represents a valid permutation. This is crucial
-     *    as the crossover operation is defined specifically for permutation chromosomes.
-     * 2. Determines whether a crossover should occur based on a probability ([chromosomeRate]). If the random value
-     *    exceeds this rate, the function returns the original list of chromosomes without any crossover.
-     * 3. Performs the permutation crossover by calling the `permuteChromosomes` method, which should be implemented to
-     *    define the specific logic of permutation crossover.
-     * 4. Creates new chromosomes by duplicating the base chromosome's structure with the permuted gene sequences.
+     * This method ensures that all chromosomes are valid permutations and contain the same elements. If the
+     * chromosomes meet these constraints, the crossover operation is performed using the [permuteChromosomes]
+     * method.
      *
      * ## Constraints:
-     * - The function enforces that all chromosomes in the input list are permutation chromosomes. This constraint is
-     *   crucial for the crossover process to be meaningful and valid in the context of genetic algorithms focusing on
-     *   permutation solutions.
+     * - Each chromosome must be a valid permutation (no duplicated elements).
+     * - All chromosomes must have the same elements in any order.
      *
-     * ## Usage:
-     * This function is typically used in gene-centric evolutionary algorithms where solutions are represented as
-     * permutations. It is particularly effective in problems like the Traveling Salesman Problem, scheduling, or any
-     * other scenario where the order of elements is critical.
+     * ## Process:
+     * 1. Validates that each chromosome is a permutation.
+     * 2. Checks that all chromosomes contain the same elements.
+     * 3. If a random value exceeds the [chromosomeRate], the original chromosomes are returned.
+     * 4. Otherwise, the chromosomes are permuted using [permuteChromosomes] and new chromosomes are created with the
+     * permuted genes.
      *
-     * ### Example Usage:
-     * ```
-     * // Assuming a list of permutation chromosomes and an instance of a PermutationCrossover implementation
-     * val offspringChromosomes = permutationCrossover.crossoverChromosomes(parentChromosomes)
-     * ```
-     *
-     * @param chromosomes A list of chromosomes to undergo crossover. These chromosomes should represent permutations.
-     * @return A list of new Chromosome<T, G> instances resulting from the crossover operation.
-     * @throws CompositeException if any chromosome in the list does not satisfy the permutation constraint.
+     * @param chromosomes The list of chromosomes to be crossed over.
+     * @return A list of new chromosomes created by crossing over the input chromosomes.
+     * @throws CompositeException containing all the exceptions thrown by the constraints.
+     * @throws CollectionConstraintException if any chromosome is not a valid permutation
+     * @throws ConstraintException if the chromosomes do not contain the same elements
      */
-    @Throws(CompositeException::class)
     override fun crossoverChromosomes(chromosomes: List<Chromosome<T, G>>): List<Chromosome<T, G>> {
         constraints {
-            for (chromosome in chromosomes) {
-                "A Permutation Crossover can only be applied to permutation chromosomes" {
+            chromosomes.forEachIndexed { index, chromosome ->
+                "Chromosome $index is not a permutation" {
                     chromosome must BePermutation
                 }
+            }
+            "All chromosomes must have the same elements in any order" {
+                constraint { haveSameElements(chromosomes) }
             }
         }
         if (Domain.random.nextDouble() > chromosomeRate) {
@@ -97,34 +92,29 @@ interface PermutationCrossover<T, G> : Crossover<T, G> where G : Gene<T, G> {
     }
 
     /**
-     * Defines the specific logic for permuting the genes within a list of chromosomes. This function is central to the
-     * permutation crossover process, determining how the genes are rearranged to create new offspring chromosomes.
+     * Permutes the genes of the given chromosomes.
      *
-     * ## Process:
-     * 1. Takes a list of chromosomes as input.
-     * 2. Applies a permutation logic to the genes within these chromosomes. The specific permutation algorithm is
-     *   defined in the implementation of this function.
-     * 3. Returns a list of gene lists, where each list represents the permuted genes of a chromosome.
+     * This method should be implemented to define the specific logic for permuting the genes of the input chromosomes.
+     * The resulting list of gene lists will be used to create new chromosomes that are valid permutations.
      *
-     * ## Usage:
-     * This function is called by the [crossoverChromosomes] method in the `PermutationCrossover` interface. It's
-     * responsible for the actual rearrangement of genes that constitutes the crossover in genetic algorithms,
-     * especially in problems where the solutions are represented as gene permutations (e.g., routing or sequencing
-     * problems).
-     *
-     * Implementing this function requires defining the specific way genes are permuted during the crossover operation.
-     * The implementation can vary based on the requirements of the specific problem being solved by the genetic
-     * algorithm.
-     *
-     * ### Example Implementation:
-     * ```
-     * override fun permuteChromosomes(chromosomes: List<Chromosome<T, G>>): List<List<G>> {
-     *     // Define the permutation logic for the chromosomes' genes
-     * }
-     * ```
-     *
-     * @param chromosomes A list of chromosomes to be permuted. Each chromosome is a collection of genes of type G.
-     * @return A list of lists, where each inner list is a permuted sequence of genes representing a new chromosome.
+     * @param chromosomes The list of chromosomes to permute.
+     * @return A list of gene lists representing the permuted chromosomes.
      */
     fun permuteChromosomes(chromosomes: List<Chromosome<T, G>>): List<List<G>>
+}
+
+/**
+ * Checks if all provided chromosomes have the same elements.
+ *
+ * This function compares multiple chromosomes to determine if they all contain the same elements, regardless of the
+ * order.
+ * It ensures that each list has the same size and that all elements in the first list are present in each subsequent
+ * list.
+ *
+ * @param lists The list of lists to compare.
+ * @return `true` if all lists contain the same elements, `false` otherwise.
+ */
+private fun haveSameElements(lists: List<Chromosome<*, *>>): Boolean {
+    val first = lists[0]
+    return lists.all { it.size == first.size && it.containsAll(first) }
 }

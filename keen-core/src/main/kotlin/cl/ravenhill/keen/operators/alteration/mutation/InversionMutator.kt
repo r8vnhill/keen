@@ -138,7 +138,7 @@ class InversionMutator<T, G>(
         val invertedGenes = genes.toMutableList()
 
         // Iterate over half the range of genes to swap their positions.
-        for (i in start until (start + (end - start + 1) / 2)) {
+        for (i in start..<(start + (end - start + 1) / 2)) {
             // Calculate the corresponding index to swap with.
             val j = end - (i - start)
             // Swap the positions of the genes at indices i and j.
