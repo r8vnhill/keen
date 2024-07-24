@@ -1,21 +1,30 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.arb.datatypes.arbInvalidProbability
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
+import cl.ravenhill.keen.exceptions.MutationException
 import cl.ravenhill.keen.exceptions.MutatorConfigurationException
+import cl.ravenhill.keen.genetic.chromosomes.Chromosome
+import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.withData
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.constant
+import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
+import kotlin.random.Random
 
 class SwapMutatorTest : FreeSpec({
     "A Swap Mutator instance" - {
@@ -120,13 +129,63 @@ class SwapMutatorTest : FreeSpec({
         }
 
         "when mutating a chromosome" - {
-            "should throw an exception"
+            "should throw an exception if the chromosome is empty" {
+                checkAll(arbSwapMutator<Int, IntGene>()) { mutator ->
+                    shouldThrow<CompositeException> {
+                        mutator.mutateChromosome(IntChromosome.empty())
+                    }.shouldHaveInfringement<MutationException>(
+                        "The chromosome must not be empty"
+                    )
+                }
+            }
+
             "should not change the chromosome if the swap rate is 0.0" {
                 checkAll(
                     arbSwapMutator<Int, IntGene>(swapRate = Arb.constant(0.0)),
-                    arbIntChromosome()
+                    arbIntChromosome(size = Arb.int(1..100))
                 ) { mutator, chromosome ->
                     mutator.mutateChromosome(chromosome) shouldBe chromosome
+                }
+            }
+
+            "should maintain the same genes in any order" {
+                checkAll(
+                    arbSwapMutator<Int, IntGene>(),
+                    arbIntChromosome(size = Arb.int(1..100))
+                ) { mutator, chromosome ->
+                    val genes = chromosome.genes
+                    val mutated = mutator.mutateChromosome(chromosome).genes
+                    mutated shouldContainExactlyInAnyOrder genes
+                }
+            }
+
+            "should swap genes in the chromosome" - {
+                Domain.toStringMode = ToStringMode.SIMPLE
+                withData(
+                    nameFn = { "${it.inChromosome} -> ${it.outChromosome}" },
+                    SwapMutationData(
+                        inChromosome = IntChromosome(1, 2, 3, 4, 5),
+                        mutator = SwapMutator(swapRate = 1.0),
+                        seed = 0L,
+                        outChromosome = IntChromosome(4, 5, 3, 2, 1)
+                    ),
+                    SwapMutationData(
+                        inChromosome = IntChromosome(1, 2, 3, 4, 5),
+                        mutator = SwapMutator(swapRate = 0.5),
+                        seed = 420L,
+                        outChromosome = IntChromosome(2, 5, 4, 1, 3)
+                    ),
+                    SwapMutationData(
+                        inChromosome = IntChromosome(1, 2, 3, 4, 5),
+                        mutator = SwapMutator(swapRate = 0.25),
+                        seed = 69L,
+                        outChromosome = IntChromosome(1, 2, 5, 4, 3)
+                    )
+                ) { swapData ->
+                    with (swapData) {
+                        Domain.random = Random(seed)
+                        mutator.mutateChromosome(inChromosome) shouldBe outChromosome
+                    }
                 }
             }
         }
@@ -144,3 +203,10 @@ fun <T, G> arbSwapMutator(
         swapRate = swapRate.bind()
     )
 }
+
+private data class SwapMutationData<T, G>(
+    val inChromosome: Chromosome<T, G>,
+    val mutator: SwapMutator<T, G>,
+    val seed: Long,
+    val outChromosome: Chromosome<T, G>,
+) where G : Gene<T, G>
