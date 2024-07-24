@@ -13,7 +13,7 @@ import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.ranking.IndividualRanker
-import java.util.*
+import cl.ravenhill.keen.utils.hash
 
 
 /**
@@ -107,7 +107,7 @@ class TournamentSelector<T, G>(val tournamentSize: Int = DEFAULT_SIZE) : Selecto
         else -> tournamentSize == other.tournamentSize
     }
 
-    override fun hashCode() = Objects.hash(TournamentSelector::class, tournamentSize)
+    override fun hashCode() = hash(TournamentSelector::class, tournamentSize)
 
     companion object {
         /** The default size of the tournaments. Set to 3. */

@@ -26,12 +26,16 @@ import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldMatch
+import io.kotest.matchers.types.shouldHaveSameHashCodeAs
+import io.kotest.matchers.types.shouldNotHaveSameHashCodeAs
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.nonPositiveInt
 import io.kotest.property.arbitrary.positiveInt
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 @OptIn(ExperimentalKotest::class)
@@ -109,8 +113,23 @@ class TournamentSelectorTest : FreeSpec({
                 }
             }
 
-            "can calculate it's hash code" {
-                TournamentSelector<Nothing, NothingGene>().hashCode() shouldBe TournamentSelector::class.hashCode()
+            "hashing" - {
+                "should be consistent" {
+                    checkAll(Arb.positiveInt()) { size ->
+                        TournamentSelector<Nothing, NothingGene>(size) shouldHaveSameHashCodeAs
+                                TournamentSelector<Nothing, NothingGene>(size)
+                    }
+                }
+
+                "should be different for different tournament sizes" {
+                    checkAll(Arb.positiveInt(), Arb.positiveInt()) { size1, size2 ->
+                        assume {
+                            size1 shouldNotBe size2
+                        }
+                        TournamentSelector<Nothing, NothingGene>(size1) shouldNotHaveSameHashCodeAs
+                                TournamentSelector<Nothing, NothingGene>(size2)
+                    }
+                }
             }
         }
     }
