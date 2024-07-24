@@ -1,0 +1,25 @@
+package cl.ravenhill.keen.evolution
+
+import cl.ravenhill.keen.evolution.config.AlterationConfig
+import cl.ravenhill.keen.evolution.config.EvolutionConfig
+import cl.ravenhill.keen.evolution.config.PopulationConfig
+import cl.ravenhill.keen.evolution.config.SelectionConfig
+import cl.ravenhill.keen.evolution.engines.Evolver
+import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm
+import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.genes.Gene
+
+@Deprecated("Use GeneticAlgorithm instead", ReplaceWith("GeneticAlgorithm"))
+class EvolutionEngine<T, G>(
+    populationConfig: PopulationConfig<T, G>,
+    selectionConfig: SelectionConfig<T, G>,
+    alterationConfig: AlterationConfig<T, G>,
+    evolutionConfig: EvolutionConfig<T, G>,
+) : Evolver<T, G> by GeneticAlgorithm(populationConfig, selectionConfig, alterationConfig, evolutionConfig)
+        where G : Gene<T, G> {
+    class Factory<T, G>(
+        val fitnessFunction: (Genotype<T, G>) -> Double,
+        val genotypeFactory: Genotype.Factory<T, G>,
+    ) :
+            where G : Gene<T, G>
+}

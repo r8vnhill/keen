@@ -4,7 +4,7 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosomeFactory
 import cl.ravenhill.keen.arb.genetic.arbGenotypeFactory
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
-import cl.ravenhill.keen.evolution.engines.EvolutionEngine
+import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm
 import cl.ravenhill.keen.exceptions.EngineException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
@@ -20,19 +20,19 @@ class EvolutionEngineFactoryTest : FreeSpec({
         "a fitness function and a genotype factory" {
             checkAll(arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))) { genotypeFactory ->
                 val fitnessFunction = { _: Genotype<Double, DoubleGene> -> 0.0 }
-                with(EvolutionEngine.Factory(fitnessFunction, genotypeFactory)) {
+                with(GeneticAlgorithm.Factory(fitnessFunction, genotypeFactory)) {
                     this.genotypeFactory shouldBe genotypeFactory
                     this.fitnessFunction shouldBe fitnessFunction
-                    populationSize shouldBe EvolutionEngine.Factory.DEFAULT_POPULATION_SIZE
-                    survivalRate shouldBe EvolutionEngine.Factory.DEFAULT_SURVIVAL_RATE
-                    parentSelector shouldBe EvolutionEngine.Factory.defaultParentSelector()
-                    survivorSelector shouldBe EvolutionEngine.Factory.defaultSurvivorSelector()
-                    alterers shouldBe EvolutionEngine.Factory.defaultAlterers()
-                    limits shouldBe EvolutionEngine.Factory.defaultLimits()
-                    ranker shouldBe EvolutionEngine.Factory.defaultRanker()
-                    listeners shouldBe EvolutionEngine.Factory.defaultListeners()
-                    evaluator shouldBe EvolutionEngine.Factory.defaultEvaluator()
-                    interceptor shouldBe EvolutionEngine.Factory.defaultInterceptor()
+                    populationSize shouldBe GeneticAlgorithm.Factory.DEFAULT_POPULATION_SIZE
+                    survivalRate shouldBe GeneticAlgorithm.Factory.DEFAULT_SURVIVAL_RATE
+                    parentSelector shouldBe GeneticAlgorithm.Factory.defaultParentSelector()
+                    survivorSelector shouldBe GeneticAlgorithm.Factory.defaultSurvivorSelector()
+                    alterers shouldBe GeneticAlgorithm.Factory.defaultAlterers()
+                    limits shouldBe GeneticAlgorithm.Factory.defaultLimits()
+                    ranker shouldBe GeneticAlgorithm.Factory.defaultRanker()
+                    listeners shouldBe GeneticAlgorithm.Factory.defaultListeners()
+                    evaluator shouldBe GeneticAlgorithm.Factory.defaultEvaluator()
+                    interceptor shouldBe GeneticAlgorithm.Factory.defaultInterceptor()
                 }
             }
         }
@@ -42,7 +42,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
         "to a positive value mutates the property" {
             val arbGenotypeFactory = arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
             checkAll(Arb.positiveInt(), arbGenotypeFactory) { size, genotypeFactory ->
-                EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                GeneticAlgorithm.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
                     populationSize = size
                 }
             }
@@ -52,7 +52,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
             val arbGenotypeFactory = arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))
             checkAll(Arb.negativeInt(), arbGenotypeFactory) { size, genotypeFactory ->
                 shouldThrow<CompositeException> {
-                    EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                    GeneticAlgorithm.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
                         populationSize = size
                     }
                 }.shouldHaveInfringement<EngineException>("Population size ($size) must be positive.")
@@ -62,7 +62,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
         "to zero throws an exception" {
             checkAll(arbGenotypeFactory(Arb.list(arbDoubleChromosomeFactory()))) { genotypeFactory ->
                 shouldThrow<CompositeException> {
-                    EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                    GeneticAlgorithm.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
                         populationSize = 0
                     }
                 }.shouldHaveInfringement<EngineException>("Population size (0) must be positive.")
@@ -77,7 +77,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
                 Arb.double(0.0..1.0, false).filterNot { it == 0.0 || it == 1.0 },
                 arbGenotypeFactory
             ) { rate, genotypeFactory ->
-                EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                GeneticAlgorithm.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
                     survivalRate = rate
                 }
             }
@@ -90,7 +90,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
                 arbGenotypeFactory
             ) { rate, genotypeFactory ->
                 shouldThrow<CompositeException> {
-                    EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                    GeneticAlgorithm.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
                         survivalRate = rate
                     }
                 }.shouldHaveInfringement<EngineException>("Survival rate ($rate) must be between 0 and 1.")
@@ -104,7 +104,7 @@ class EvolutionEngineFactoryTest : FreeSpec({
                 arbGenotypeFactory
             ) { rate, genotypeFactory ->
                 shouldThrow<CompositeException> {
-                    EvolutionEngine.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
+                    GeneticAlgorithm.Factory({ _: Genotype<Double, DoubleGene> -> 0.0 }, genotypeFactory).apply {
                         survivalRate = rate
                     }
                 }.shouldHaveInfringement<EngineException>("Survival rate ($rate) must be between 0 and 1.")

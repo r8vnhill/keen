@@ -7,6 +7,7 @@
 package cl.ravenhill.keen.listeners.mixins
 
 import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.ranking.IndividualRanker
@@ -46,7 +47,7 @@ interface EvolutionListener<T, G> :
         ParentSelectionListener<T, G>,
         SurvivorSelectionListener<T, G>,
         AlterationListener<T, G>
-        where G : Gene<T, G> {
+        where G : Feature<T, G> {
 
     /**
      * Called when the evolution phase starts.

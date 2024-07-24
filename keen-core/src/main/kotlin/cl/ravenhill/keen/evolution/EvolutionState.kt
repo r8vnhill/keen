@@ -8,8 +8,7 @@ package cl.ravenhill.keen.evolution
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeNegative
-import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.jakt.exceptions.IntConstraintException
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -17,50 +16,11 @@ import cl.ravenhill.keen.ranking.IndividualRanker
 import java.util.*
 
 
-/**
- * Represents the state of an evolutionary process at a specific generation.
- *
- * `EvolutionState` encapsulates the current generation number and the population of individuals at that generation. It
- * serves as a snapshot of the evolutionary process, providing insights into the genetic composition and dynamics of the
- * population at a given point in time.
- *
- * ## Usage:
- * `EvolutionState` is typically used in evolutionary algorithms to track and manage the state of the population as it
- * evolves over generations. It facilitates operations like selection, reproduction, and mutation by providing access to
- * the current generation and its individuals.
- *
- * ### Example:
- * ```
- * val initialPopulation = listOf(Individual(genotype1, fitness1), Individual(genotype2, fitness2))
- * var state = EvolutionState(0, initialPopulation, myRanker)
- * // Evolutionary algorithm iterations
- * for (i in 1..numberOfGenerations) {
- *     state = state.next() // Proceed to the next generation
- *     // Perform evolutionary operations on the state's population
- * }
- * ```
- * In this example, `EvolutionState` is used to manage the population state across generations in an evolutionary
- * algorithm.
- *
- * @param T The type of data encapsulated by the genes.
- * @param G The specific type of gene.
- * @param generation The current generation number in the evolutionary process.
- * @param population The population of individuals at the current generation.
- *
- * @constructor Creates an instance of `EvolutionState` with the specified generation number and population.
- * @throws CompositeException containing an [IntConstraintException] if the generation number is negative.
- *
- * @see Individual for the structure representing individuals in the population.
- *
- * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @version 2.0.0
- * @since 1.0.0
- */
-open class EvolutionState<T, G>(
+open class EvolutionState<T, F>(
     val generation: Int,
-    val ranker: IndividualRanker<T, G>,
-    val population: Population<T, G>,
-) where G : Gene<T, G> {
+    val ranker: IndividualRanker<T, F>,
+    val population: Population<T, F>,
+) where F : Feature<T, F> {
 
     init {
         constraints { "Generation [$generation] must not be negative" { generation mustNot BeNegative } }
@@ -75,8 +35,8 @@ open class EvolutionState<T, G>(
      */
     constructor(
         generation: Int,
-        ranker: IndividualRanker<T, G>,
-        vararg individuals: Individual<T, G>,
+        ranker: IndividualRanker<T, F>,
+        vararg individuals: Individual<T, F>,
     ) : this(generation, ranker, individuals.toList())
 
     /**
@@ -153,11 +113,11 @@ open class EvolutionState<T, G>(
      */
     fun copy(
         generation: Int = this.generation,
-        ranker: IndividualRanker<T, G> = this.ranker,
-        population: Population<T, G> = this.population,
+        ranker: IndividualRanker<T, F> = this.ranker,
+        population: Population<T, F> = this.population,
     ) = EvolutionState(generation, ranker, population)
 
-    fun map(function: (Individual<T, G>) -> Individual<T, G>) = copy(population = population.map(function))
+    fun map(function: (Individual<T, F>) -> Individual<T, F>) = copy(population = population.map(function))
 
     /**
      * Destructuring operator to extract the generation number.

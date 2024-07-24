@@ -6,15 +6,15 @@
 
 package cl.ravenhill.keen.dsl
 
-import cl.ravenhill.keen.evolution.engines.EvolutionEngine
+import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
 
 
 /**
- * Creates and configures an instance of [EvolutionEngine] for evolutionary algorithms.
+ * Creates and configures an instance of [GeneticAlgorithm] for evolutionary algorithms.
  *
- * This function serves as a convenient builder for setting up an [EvolutionEngine]. It encapsulates the configuration
+ * This function serves as a convenient builder for setting up an [GeneticAlgorithm]. It encapsulates the configuration
  * and creation of the engine in a concise and readable manner. The engine is customized using a provided fitness
  * function, a genotype factory, and an initialization block that allows for further configuration.
  *
@@ -40,11 +40,11 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @param genotype A factory for creating genotypes, which are the fundamental units of genetic information in the
  *   evolutionary algorithm.
  * @param init A lambda block for additional configuration. This block is applied to an instance of
- *   [EvolutionEngine.Factory], allowing for detailed customization of the evolutionary process.
- * @return An instance of [EvolutionEngine] configured as per the provided parameters and initialization block.
+ *   [GeneticAlgorithm.Factory], allowing for detailed customization of the evolutionary process.
+ * @return An instance of [GeneticAlgorithm] configured as per the provided parameters and initialization block.
  */
 fun <T, G> evolutionEngine(
     fitnessFunction: (Genotype<T, G>) -> Double,
     genotype: Genotype.Factory<T, G>,
-    init: EvolutionEngine.Factory<T, G>.() -> Unit,
-) where G : Gene<T, G> = EvolutionEngine.Factory(fitnessFunction, genotype).apply(init).make()
+    init: GeneticAlgorithm.Factory<T, G>.() -> Unit,
+) where G : Gene<T, G> = GeneticAlgorithm.Factory(fitnessFunction, genotype).apply(init).make()

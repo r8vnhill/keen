@@ -1,5 +1,5 @@
 package cl.ravenhill.keen.listeners
 
-import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.features.Feature
 
-interface PhaseListener<T, U> where U : Gene<T, U>
+interface PhaseListener<T, F> where F : Feature<T, F>
