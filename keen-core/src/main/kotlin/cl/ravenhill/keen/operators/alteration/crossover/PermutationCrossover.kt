@@ -80,7 +80,7 @@ interface PermutationCrossover<T, G> : Crossover<T, G> where G : Gene<T, G> {
                     chromosome must BePermutation
                 }
             }
-            "All chromosomes must have the same elements in any order"(::CrossoverException) {
+            "All chromosomes must have the same elements in any order" {
                 constraint { haveSameElements(chromosomes) }
             }
         }

@@ -1,6 +1,7 @@
 package cl.ravenhill.keen.operators.alteration.crossover
 
 import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.jakt.exceptions.ConstraintException
 import cl.ravenhill.keen.arb.datatypes.arbProbability
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbIntChromosome
 import cl.ravenhill.keen.arb.genetic.genes.arbIntGene
@@ -12,12 +13,16 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
+import io.kotest.matchers.shouldNot
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.positiveInt
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 class PermutationCrossoverTest : FreeSpec({
@@ -40,9 +45,38 @@ class PermutationCrossoverTest : FreeSpec({
                     }
                 }
             }
+
+            "should throw an exception if the chromosomes have different elements" {
+                checkAll(
+                    arbAnonymousPermutationCrossover<Int, IntGene>(),
+                    Arb.list(arbIntChromosome(), 2..100)
+                ) { crossover, chromosomes ->
+                    assume {
+                        chromosomes shouldNot haveSameElements()
+                    }
+                    val exception = shouldThrow<CompositeException> {
+                        crossover.crossoverChromosomes(chromosomes)
+                    }
+                    exception.shouldHaveInfringement<ConstraintException>(
+                        "All chromosomes must have the same elements in any order"
+                    )
+                }
+            }
         }
     }
 })
+
+fun haveSameElements(): Matcher<List<IntChromosome>> = object : Matcher<List<IntChromosome>> {
+    override fun test(value: List<IntChromosome>): MatcherResult {
+        val first = value.first()
+        val allSameElements = value.all { it.genes.toSet() == first.genes.toSet() }
+        return MatcherResult(
+            allSameElements,
+            { "All chromosomes must have the same elements in any order" },
+            { "Chromosomes must have different elements" }
+        )
+    }
+}
 
 fun <T, G> arbAnonymousPermutationCrossover(
     numOffspring: Arb<Int> = Arb.positiveInt(10),
