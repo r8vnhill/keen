@@ -63,8 +63,8 @@ interface Selector<T, G> : GeneticOperator<T, G> where G : Gene<T, G> {
      *   there are individuals to select from.
      * - **Positive Output Size**: Ensures that the desired output size ([outputSize]) is not negative, as negative
      *   values are not meaningful in the context of population selection.
-     * - **Consistent Output Size**: Confirms that the size of the population in the resulting [GeneticEvolutionState] matches
-     *   the specified [outputSize], maintaining consistency in population size after selection.
+     * - **Consistent Output Size**: Confirms that the size of the population in the resulting [GeneticEvolutionState]
+     *  matches the specified [outputSize], maintaining consistency in population size after selection.
      *
      * ## Process:
      * - Validates the initial population size and desired output size.
@@ -85,8 +85,8 @@ interface Selector<T, G> : GeneticOperator<T, G> where G : Gene<T, G> {
      * In this example, the `selector` is used to select a subset of individuals from the current state, producing
      * a new state with a population that matches the desired output size.
      *
-     * @param state The current [GeneticEvolutionState], containing the population to select from and the current generation
-     *   number.
+     * @param state The current [GeneticEvolutionState], containing the population to select from and the current
+     *  generation number.
      * @param outputSize The number of individuals to be included in the new population of the resulting
      *   [GeneticEvolutionState].
      * @return A new [GeneticEvolutionState] object that contains a population resulting from the selection process,

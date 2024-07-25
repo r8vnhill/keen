@@ -49,7 +49,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @property engine The [Evolver] instance that is executing the evolutionary process.
  */
 interface Limit<T, G> where G : Gene<T, G> {
-
+    @Deprecated("This property will be removed in future versions.")
     var engine: Evolver<T, G>?
 
     /**

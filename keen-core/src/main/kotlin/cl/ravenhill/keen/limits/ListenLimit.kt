@@ -58,11 +58,8 @@ open class ListenLimit<T, G>(
     private val listener: EvolutionListener<T, G>,
     private val predicate: EvolutionListener<T, G>.(GeneticEvolutionState<T, G>) -> Boolean
 ) : Limit<T, G> where G : Gene<T, G> {
+
     override var engine: Evolver<T, G>? = null
-        set(value) {
-            value?.listeners?.add(listener)
-            field = value
-        }
 
     /**
      * Evaluates the termination condition for the evolutionary process using the provided listener predicate.
