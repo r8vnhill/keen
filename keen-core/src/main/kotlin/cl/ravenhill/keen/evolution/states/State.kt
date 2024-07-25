@@ -19,6 +19,7 @@ import cl.ravenhill.keen.ranking.FitnessRanker
  * ```kotlin
  * data class MyState<T, F>(
  *     override val population: List<FitnessEvaluable>,
+ *     override val generation: Int,
  * ) : State<T, F> where F : Feature<T, F> {
  *
  *     override val size: Int
@@ -35,6 +36,7 @@ import cl.ravenhill.keen.ranking.FitnessRanker
  * @property size The size of the state, typically representing the number of individuals in the population.
  * @property population The list of individuals in the state.
  * @property ranker The [FitnessRanker] used to rank individuals in the state.
+ * @property generation The current generation of the state.
  */
 interface State<T, F> where F : Feature<T, F> {
 
@@ -43,6 +45,9 @@ interface State<T, F> where F : Feature<T, F> {
     val population: List<FitnessEvaluable>
 
     val ranker: FitnessRanker<T, F>
+
+    val generation: Int
+
     /**
      * Checks if the state is empty.
      *

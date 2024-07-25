@@ -15,12 +15,56 @@ import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.mixins.FitnessEvaluable
 import cl.ravenhill.keen.operators.Operator
 import cl.ravenhill.keen.ranking.FitnessRanker
 
 
+/**
+ * Represents a selector in an evolutionary algorithm.
+ *
+ * The `Selector` interface extends the `Operator` interface and defines the basic structure and operations for
+ * selecting individuals from a population based on their fitness. This includes a state builder for creating new
+ * states and a method for performing the selection process.
+ *
+ * ## Usage:
+ * This interface is intended to be implemented by classes that perform specific selection operations on the state of
+ * the evolutionary algorithm, such as tournament selection or roulette wheel selection. Implementing classes should
+ * provide the logic to select individuals from the population based on their fitness.
+ *
+ * ### Example:
+ * ```kotlin
+ * class TournamentSelector<T, F>(
+ *     override val stateBuilder: (Int, FitnessRanker<T, F>, List<FitnessEvaluable>) -> State<T, F>
+ * ) : Selector<T, F> where F : Feature<T, F> {
+ *
+ *     override fun select(population: List<FitnessEvaluable>, count: Int, ranker: FitnessRanker<T, F>):
+ *         List<FitnessEvaluable> {
+ *         // Implementation of tournament selection logic
+ *     }
+ * }
+ * ```
+ *
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @property stateBuilder The state builder function for creating new states. This function is used to create new states
+ *  with the specified generation, ranker, and selected population.
+ */
 interface Selector<T, F> : Operator<T, F> where F : Feature<T, F> {
 
+    val stateBuilder: (Int, FitnessRanker<T, F>, List<FitnessEvaluable>) -> State<T, F>
+
+    /**
+     * Applies the selector to the given state and produces a new state with the specified output size.
+     *
+     * This method performs the selection process, ensuring the population is not empty and the output size is not
+     * negative. It then selects individuals from the population based on their fitness and returns a new state with
+     * the selected individuals.
+     *
+     * @param state The current state of the evolutionary process.
+     * @param outputSize The size of the output state to be produced.
+     * @return The new state after applying the selector.
+     */
     override fun invoke(state: State<T, F>, outputSize: Int): State<T, F> {
         constraints {
             "Population must not be empty" {
@@ -31,11 +75,7 @@ interface Selector<T, F> : Operator<T, F> where F : Feature<T, F> {
             }
         }
         val selectedPopulation = select(state.population, outputSize, state.ranker)
-        return GeneticEvolutionState(
-            state.generation,
-            state.ranker,
-            selectedPopulation
-        ).apply {
+        return stateBuilder(state.generation, state.ranker, selectedPopulation).apply {
             constraints {
                 "Expected output size ($outputSize) must be equal to actual output size (${selectedPopulation.size})" {
                     selectedPopulation must HaveSize(outputSize)
@@ -45,14 +85,15 @@ interface Selector<T, F> : Operator<T, F> where F : Feature<T, F> {
     }
 
     /**
-     * Selects a subset of individuals from a population based on specific criteria.
+     * Selects individuals from the population based on their fitness.
      *
-     * See [Selector] for more information.
+     * This method performs the selection process, selecting a specified number of individuals from the population
+     * based on their fitness and the provided ranker.
      *
-     * @param population The population from which to select individuals.
+     * @param population The population of individuals to select from.
      * @param count The number of individuals to select.
-     * @param ranker The [FitnessRanker] used to rank individuals in the population.
-     * @return A [Population] consisting of the selected individuals.
+     * @param ranker The ranker used to evaluate individuals in the population.
+     * @return The list of selected individuals.
      */
-    fun select(population: Population<T, F>, count: Int, ranker: FitnessRanker<T, F>): Population<T, F>
+    fun select(population: List<FitnessEvaluable>, count: Int, ranker: FitnessRanker<T, F>): List<FitnessEvaluable>
 }
