@@ -54,8 +54,8 @@ import cl.ravenhill.keen.ranking.IndividualRanker
  */
 data class EvolutionConfig<T, F, R>(
     val limits: List<Limit<T, F, R>>,
-    val ranker: IndividualRanker<T, F>,
+    val ranker: IndividualRanker<T, F, R>,
     val listeners: List<EvolutionListener<T, F>>,
-    val evaluator: EvaluationExecutor<T, F>,
+    val evaluator: EvaluationExecutor<T, F, R>,
     val interceptor: EvolutionInterceptor<T, F, R>,
 ) where F : Feature<T, F>, R : Representation<T, F>

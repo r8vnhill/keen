@@ -101,8 +101,8 @@ class GeneticAlgorithm<T, G>(
     populationConfig: PopulationConfig<T, G>,
     selectionConfig: SelectionConfig<T, G>,
     alterationConfig: AlterationConfig<T, G>,
-    evolutionConfig: EvolutionConfig<T, G>,
-) : AbstractEvolutionaryAlgorithm<T, G>(evolutionConfig) where G : Gene<T, G> {
+    evolutionConfig: EvolutionConfig<T, G, Genotype<T, G>>,
+) : AbstractEvolutionaryAlgorithm<T, G, Genotype<T, G>>(evolutionConfig) where G : Gene<T, G> {
 
     val genotypeFactory: Genotype.Factory<T, G> = populationConfig.genotypeFactory
     val populationSize: Int = populationConfig.populationSize

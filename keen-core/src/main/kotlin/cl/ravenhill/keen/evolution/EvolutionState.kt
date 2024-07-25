@@ -48,7 +48,7 @@ import cl.ravenhill.keen.utils.hash
  */
 open class EvolutionState<T, F, R>(
     val generation: Int,
-    val ranker: IndividualRanker<T, F>,
+    val ranker: IndividualRanker<T, F, R>,
     val population: Population<T, F, R>,
 ) where F : Feature<T, F>, R : Representation<T, F> {
 
@@ -67,7 +67,7 @@ open class EvolutionState<T, F, R>(
      */
     constructor(
         generation: Int,
-        ranker: IndividualRanker<T, F>,
+        ranker: IndividualRanker<T, F, R>,
         vararg individuals: Individual<T, F, R>,
     ) : this(generation, ranker, individuals.toList())
 
@@ -102,7 +102,7 @@ open class EvolutionState<T, F, R>(
      */
     fun copy(
         generation: Int = this.generation,
-        ranker: IndividualRanker<T, F> = this.ranker,
+        ranker: IndividualRanker<T, F, R> = this.ranker,
         population: Population<T, F, R> = this.population,
     ) = EvolutionState(generation, ranker, population)
 
