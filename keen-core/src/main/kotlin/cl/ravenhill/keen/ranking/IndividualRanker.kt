@@ -47,10 +47,6 @@ import cl.ravenhill.keen.genetic.genes.Gene
  *
  * @see Comparator for details on the comparator used for sorting.
  * @see Individual for the entity being ranked.
- *
- * @author <https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @since 2.0.0
- * @version 2.0.0
  */
 interface IndividualRanker<T, G> where G : Gene<T, G> {
     val comparator

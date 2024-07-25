@@ -194,7 +194,7 @@ class GeneticAlgorithm<T, G>(
         // Notify listeners at the start of the parent selection phase
         listeners.forEach { it.onParentSelectionStarted(state) }
         // Conduct the parent selection process
-        val selected = parentSelector(state, floor((1 - survivalRate) * populationSize).toInt())
+        val selected = parentSelector.invoke(state, floor((1 - survivalRate) * populationSize).toInt())
         // Notify listeners at the end of the parent selection phase
         listeners.forEach { it.onParentSelectionEnded(selected) }
         return selected
@@ -216,7 +216,7 @@ class GeneticAlgorithm<T, G>(
         // Notify listeners at the start of the survivor selection phase
         listeners.forEach { it.onSurvivorSelectionStarted(state) }
         // Conduct the survivor selection process
-        val selected = survivorSelector(state, ceil(survivalRate * populationSize).toInt())
+        val selected = survivorSelector.invoke(state, ceil(survivalRate * populationSize).toInt())
         // Notify listeners at the end of the survivor selection phase
         listeners.forEach { it.onSurvivorSelectionEnded(selected) }
         return selected

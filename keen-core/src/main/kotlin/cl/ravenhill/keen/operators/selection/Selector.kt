@@ -11,9 +11,10 @@ import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
+import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.GeneticOperator
+import cl.ravenhill.keen.operators.Operator
 import cl.ravenhill.keen.ranking.IndividualRanker
 
 
@@ -49,7 +50,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
  * @param T The type of data encapsulated by the genes within the individuals.
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.
  */
-interface Selector<T, G> : GeneticOperator<T, G> where G : Gene<T, G> {
+interface Selector<T, G> : Operator<T, G> where G : Gene<T, G> {
 
     /**
      * Invokes the selection method and produces a modified [GeneticEvolutionState] with a new population.
@@ -92,7 +93,7 @@ interface Selector<T, G> : GeneticOperator<T, G> where G : Gene<T, G> {
      * @return A new [GeneticEvolutionState] object that contains a population resulting from the selection process,
      *   maintaining the same generation number as the input [state].
      */
-    override fun invoke(state: GeneticEvolutionState<T, G>, outputSize: Int): GeneticEvolutionState<T, G> {
+    override fun invoke(state: State<T, G>, outputSize: Int): State<T, G> {
         constraints {
             "Population must not be empty" {
                 state.population mustNot BeEmpty

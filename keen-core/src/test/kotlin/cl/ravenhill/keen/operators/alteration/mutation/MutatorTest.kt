@@ -108,7 +108,7 @@ class MutatorTest : FreeSpec({
                     arbRngPair()
                 ) { mutator, state, (rng1, rng2) ->
                     Domain.random = rng1
-                    val mutated = mutator(state, state.population.size)
+                    val mutated = mutator.invoke(state, state.population.size)
                     Domain.random = rng2
                     mutated.population.forEachIndexed { i, individual ->
                         Domain.random.nextDouble()  // Skip the individual rate check
@@ -128,7 +128,7 @@ class MutatorTest : FreeSpec({
                     arbRngPair()
                 ) { mutator, state, (rng1, rng2) ->
                     Domain.random = rng1
-                    val mutated = mutator(state, state.population.size)
+                    val mutated = mutator.invoke(state, state.population.size)
                     Domain.random = rng2
                     mutated.population.forEachIndexed { i, individual ->
                         if (Domain.random.nextDouble() > mutator.individualRate) {

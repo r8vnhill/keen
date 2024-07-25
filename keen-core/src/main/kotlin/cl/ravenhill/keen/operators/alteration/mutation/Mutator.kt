@@ -10,6 +10,7 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
+import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
@@ -89,7 +90,7 @@ interface Mutator<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * @return An [GeneticEvolutionState] containing the mutated population. The state will have the same generation number but
      *         potentially altered individuals.
      */
-    override fun invoke(state: GeneticEvolutionState<T, G>, outputSize: Int): GeneticEvolutionState<T, G> {
+    override fun invoke(state: State<T, G>, outputSize: Int): State<T, G> {
         constraints {
             "The output size ($outputSize) must be equal to the population size (${state.population.size})" {
                 outputSize must BeEqualTo(state.population.size)

@@ -37,7 +37,7 @@ import java.util.*
 data class GeneticEvolutionState<T, G>(
     val generation: Int,
     val ranker: IndividualRanker<T, G>,
-    val population: Population<T, G>,
+    override val population: Population<T, G>,
 ) : State<T, G> where G : Gene<T, G> {
 
     init {

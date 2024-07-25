@@ -8,20 +8,20 @@ package cl.ravenhill.keen.operators.alteration
 
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.GeneticOperator
+import cl.ravenhill.keen.operators.Operator
 
 
 /**
  * An interface representing an alterer in an evolutionary algorithm.
  *
- * An `Alterer` is a specialized type of [GeneticOperator] focused on modifying or altering the genetic makeup
+ * An `Alterer` is a specialized type of [Operator] focused on modifying or altering the genetic makeup
  * of individuals within a population. These alterations are typically mutations or other genetic modifications
  * that introduce diversity and aid in the evolutionary process.
  *
  * ## Responsibilities of an Alterer:
  * - **Genetic Modification**: Implementations of this interface are responsible for altering the genes of individuals
  *   in a population. This could involve mutation, gene swapping, or other forms of genetic manipulation.
- * - **State Transformation**: As with any [GeneticOperator], an `Alterer` takes an [GeneticEvolutionState] as input and
+ * - **State Transformation**: As with any [Operator], an `Alterer` takes an [GeneticEvolutionState] as input and
  *   produces a new [GeneticEvolutionState] reflecting the changes made to the population.
  *
  * ## Usage:
@@ -50,6 +50,6 @@ import cl.ravenhill.keen.operators.GeneticOperator
  * @param T The type of data encapsulated by the genes within the individuals.
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.
  */
-interface Alterer<T, G> : GeneticOperator<T, G> where G : Gene<T, G> {
+interface Alterer<T, G> : Operator<T, G> where G : Gene<T, G> {
     operator fun plus(alterer: Alterer<T, G>) = listOf(this, alterer)
 }
