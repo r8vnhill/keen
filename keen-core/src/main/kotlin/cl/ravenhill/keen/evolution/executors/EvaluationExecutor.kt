@@ -9,10 +9,8 @@ package cl.ravenhill.keen.evolution.executors
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.features.Representation
-import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
-import cl.ravenhill.keen.genetic.genes.Gene
 
 
 /**
@@ -58,9 +56,9 @@ interface EvaluationExecutor<T, F> : KeenExecutor where F : Feature<T, F> {
          * @param force Whether to force re-evaluation of already evaluated individuals.
          * @return A list of individual evaluators.
          */
-        internal fun <T, F> selectAndCreateEvaluators(
-            population: Population<T, F>, function: (Representation<T, F>) -> Double, force: Boolean = false,
-        ) where F : Feature<T, F> = if (force) {
+        internal fun <T, F, R> selectAndCreateEvaluators(
+            population: Population<T, F, R>, function: (R) -> Double, force: Boolean = false,
+        ) where F : Feature<T, F>, R : Representation<T, F> = if (force) {
             population
         } else {
             population.filterNot { it.isEvaluated() }
@@ -74,11 +72,11 @@ interface EvaluationExecutor<T, F> : KeenExecutor where F : Feature<T, F> {
          * @param evaluationStrategy The strategy used to evaluate the individuals.
          * @return The updated population with evaluated fitness values.
          */
-        internal fun <T, F> evaluateAndAddToPopulation(
-            toEvaluate: List<IndividualEvaluator<T, F>>,
-            population: Population<T, F>,
-            evaluationStrategy: (List<IndividualEvaluator<T, F>>) -> Unit,
-        ) where F : Feature<T, F> = if (toEvaluate.isNotEmpty()) {
+        internal fun <T, F, R> evaluateAndAddToPopulation(
+            toEvaluate: List<IndividualEvaluator<T, F, R>>,
+            population: Population<T, F, R>,
+            evaluationStrategy: (List<IndividualEvaluator<T, F, R>>) -> Unit,
+        ) where F : Feature<T, F>, R : Representation<T, F> = if (toEvaluate.isNotEmpty()) {
             evaluationStrategy(toEvaluate)
             // Handling population update based on evaluation results
             if (toEvaluate.size == population.size) {
@@ -101,13 +99,13 @@ interface EvaluationExecutor<T, F> : KeenExecutor where F : Feature<T, F> {
      * @param T The type of the value held by the features.
      * @param F The type of the feature, which must extend [Feature].
      */
-    open class Factory<T, F> :
-        KeenExecutor.Factory<(Representation<T, F>) -> Double, EvaluationExecutor<T, F>> where F : Feature<T, F> {
+    open class Factory<T, F, R> : KeenExecutor.Factory<(R) -> Double, EvaluationExecutor<T, F>>
+            where F : Feature<T, F>, R : Representation<T, F> {
 
         /**
          * The creator function for producing `EvaluationExecutor` instances.
          */
-        override lateinit var creator: ((Representation<T, F>) -> Double) -> EvaluationExecutor<T, F>
+        override lateinit var creator: ((R) -> Double) -> EvaluationExecutor<T, F>
     }
 }
 
@@ -124,10 +122,10 @@ interface EvaluationExecutor<T, F> : KeenExecutor where F : Feature<T, F> {
  * @param fitnessFunction The function used to evaluate the fitness of the individual's representation.
  * @constructor Creates an instance of `IndividualEvaluator` with the specified individual and fitness function.
  */
-internal class IndividualEvaluator<T, F>(
-    individual: Individual<T, F>,
-    private val fitnessFunction: (Representation<T, F>) -> Double,
-) where F : Feature<T, F> {
+internal class IndividualEvaluator<T, F, R>(
+    individual: Individual<T, F, R>,
+    private val fitnessFunction: (R) -> Double,
+) where F : Feature<T, F>, R : Representation<T, F> {
 
     /**
      * The fitness value of the individual, initially set to `Double.NaN`.
@@ -142,7 +140,7 @@ internal class IndividualEvaluator<T, F>(
     /**
      * Gets a copy of the individual with the evaluated fitness value.
      */
-    val individual: Individual<T, F>
+    val individual: Individual<T, F, R>
         get() = _individual.copy(fitness = fitness)
 
     /**

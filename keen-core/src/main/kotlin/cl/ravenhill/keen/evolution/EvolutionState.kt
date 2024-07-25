@@ -11,6 +11,7 @@ import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.features.Feature
+import cl.ravenhill.keen.features.Representation
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -39,6 +40,7 @@ import java.util.*
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
  * @property generation The current generation number.
  * @property ranker The ranker used to evaluate individuals in the population.
  * @property population The population of individuals at the current generation.
@@ -46,11 +48,11 @@ import java.util.*
  * @throws CompositeException if any of the constraints are violated.
  * @throws IntConstraintException if the generation is negative.
  */
-open class EvolutionState<T, F>(
+open class EvolutionState<T, F, R>(
     val generation: Int,
     val ranker: IndividualRanker<T, F>,
-    val population: Population<T, F>,
-) where F : Feature<T, F> {
+    val population: Population<T, F, R>,
+) where F : Feature<T, F>, R : Representation<T, F> {
 
     init {
         constraints { "Generation [$generation] must not be negative" { generation mustNot BeNegative } }
@@ -68,7 +70,7 @@ open class EvolutionState<T, F>(
     constructor(
         generation: Int,
         ranker: IndividualRanker<T, F>,
-        vararg individuals: Individual<T, F>,
+        vararg individuals: Individual<T, F, R>,
     ) : this(generation, ranker, individuals.toList())
 
     /**
@@ -103,7 +105,7 @@ open class EvolutionState<T, F>(
     fun copy(
         generation: Int = this.generation,
         ranker: IndividualRanker<T, F> = this.ranker,
-        population: Population<T, F> = this.population,
+        population: Population<T, F, R> = this.population,
     ) = EvolutionState(generation, ranker, population)
 
     /**
@@ -129,7 +131,7 @@ open class EvolutionState<T, F>(
      * @param function The transformation function to apply to each individual.
      * @return A new instance of `EvolutionState` with the transformed population.
      */
-    fun map(function: (Individual<T, F>) -> Individual<T, F>) = copy(population = population.map(function))
+    fun map(function: (Individual<T, F, R>) -> Individual<T, F, R>) = copy(population = population.map(function))
 
     /**
      * Returns the generation component of the `EvolutionState`.
@@ -160,7 +162,7 @@ open class EvolutionState<T, F>(
      */
     override fun equals(other: Any?) = when {
         this === other -> true
-        other !is EvolutionState<*, *> -> false
+        other !is EvolutionState<*, *, *> -> false
         else -> population == other.population && generation == other.generation
     }
 

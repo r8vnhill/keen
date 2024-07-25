@@ -18,7 +18,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @param G The type of genes contained within the individuals' genotypes. These genes collectively form the genetic
  *   makeup of each individual in the population.
  */
-typealias Population<T, G> = List<Individual<T, G>>
+typealias Population<T, G, R> = List<Individual<T, G, R>>
 
 /**
  * An extension property to retrieve the fitness values of all individuals in a population.

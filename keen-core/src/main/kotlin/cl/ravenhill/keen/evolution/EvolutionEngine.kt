@@ -6,6 +6,7 @@ import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.engines.Evolver
 import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm
+import cl.ravenhill.keen.features.Representation
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -19,7 +20,7 @@ class EvolutionEngine<T, G>(
         where G : Gene<T, G> {
     @Deprecated("Use GeneticAlgorithm.Factory instead", ReplaceWith("GeneticAlgorithm.Factory"))
     class Factory<T, G>(
-        fitnessFunction: (Genotype<T, G>) -> Double,
+        fitnessFunction: (Representation<T, G>) -> Double,
         genotypeFactory: Genotype.Factory<T, G>,
     ) : Evolver.Factory<T, G> by GeneticAlgorithm.Factory(fitnessFunction, genotypeFactory)
             where G : Gene<T, G>

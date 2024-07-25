@@ -40,8 +40,8 @@ import cl.ravenhill.keen.utils.isNotNaN
  * @property fitness The fitness value of the individual, defaulting to `Double.NaN`.
  * @constructor Creates an instance of `Individual` with the specified representation and fitness.
  */
-data class Individual<T, F>(val representation: Representation<T, F>, override val fitness: Double = Double.NaN) :
-    FitnessEvaluable, FlatMappable<T> where F : Feature<T, F> {
+data class Individual<T, F, R>(val representation: R, override val fitness: Double = Double.NaN) :
+    FitnessEvaluable, FlatMappable<T> where F : Feature<T, F>, R : Representation<T, F> {
 
     /**
      * Deprecated property for accessing the representation.
@@ -102,7 +102,7 @@ data class Individual<T, F>(val representation: Representation<T, F>, override v
      */
     override fun equals(other: Any?) = when {
         this === other -> true
-        other !is Individual<*, *> -> false
+        other !is Individual<*, *, *> -> false
         else -> representation == other.representation
     }
 

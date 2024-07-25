@@ -8,6 +8,7 @@ package cl.ravenhill.keen.ga
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
+import cl.ravenhill.keen.dsl.geneticAlgorithm
 import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.BooleanGene
@@ -71,7 +72,7 @@ private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten()
  * summary.
  */
 fun main() {
-    val engine = evolutionEngine(::count, genotypeOf {
+    val engine = geneticAlgorithm(::count, genotypeOf {
         chromosomeOf {
             booleans {
                 size = CHROMOSOME_SIZE
