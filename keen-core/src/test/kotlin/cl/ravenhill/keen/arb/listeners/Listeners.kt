@@ -8,8 +8,6 @@ package cl.ravenhill.keen.arb.listeners
 
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
-import cl.ravenhill.keen.listeners.records.EvolutionRecord
-import cl.ravenhill.keen.ranking.IndividualRanker
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 

@@ -11,7 +11,7 @@ import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.fitness
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.ranking.FitnessRanker
 import cl.ravenhill.keen.utils.eq
 import cl.ravenhill.keen.utils.incremental
 import cl.ravenhill.keen.utils.sub
@@ -87,7 +87,7 @@ class RouletteWheelSelector<T, G>(val sorted: Boolean = false) : Selector<T, G> 
      * @param population The population from which individuals are to be selected.
      * @return A list of probabilities corresponding to each individual in the population.
      */
-    fun probabilities(population: Population<T, G>, ranker: IndividualRanker<T, G>): List<Double> {
+    fun probabilities(population: Population<T, G>, ranker: FitnessRanker<T, G>): List<Double> {
         // Adjust fitness values to ensure they're positive.
         val adjustedFitness = ranker.fitnessTransform(population.fitness).let {
             it sub min(it.min(), 0.0)
@@ -108,7 +108,7 @@ class RouletteWheelSelector<T, G>(val sorted: Boolean = false) : Selector<T, G> 
         return adjustedFitness
     }
 
-    override fun select(population: Population<T, G>, count: Int, ranker: IndividualRanker<T, G>): Population<T, G> {
+    override fun select(population: Population<T, G>, count: Int, ranker: FitnessRanker<T, G>): Population<T, G> {
         val pop = if (sorted) {
             ranker.sort(population)
         } else {

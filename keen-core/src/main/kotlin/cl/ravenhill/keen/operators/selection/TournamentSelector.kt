@@ -12,7 +12,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.ranking.FitnessRanker
 import java.util.*
 
 
@@ -84,11 +84,11 @@ class TournamentSelector<T, G>(val tournamentSize: Int = DEFAULT_SIZE) : Selecto
      *
      * @param population The population of individuals from which to select.
      * @param count The number of individuals to select.
-     * @param ranker The [IndividualRanker] used to determine the best individual in each tournament.
+     * @param ranker The [FitnessRanker] used to determine the best individual in each tournament.
      *
      * @return A list of individuals selected through tournament selection.
      */
-    override fun select(population: Population<T, G>, count: Int, ranker: IndividualRanker<T, G>) =
+    override fun select(population: Population<T, G>, count: Int, ranker: FitnessRanker<T, G>) =
         (0..<count).map {
             generateSequence { population[Domain.random.nextInt(population.size)] }
                 .take(tournamentSize)

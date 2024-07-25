@@ -9,7 +9,7 @@ package cl.ravenhill.keen.listeners.mixins
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
-import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.ranking.FitnessRanker
 import cl.ravenhill.keen.utils.isNotNaN
 
 
@@ -85,7 +85,7 @@ interface EvolutionListener<T, G> :
          * @return the number of steady generations
          */
         fun <T, G> computeSteadyGenerations(
-            ranker: IndividualRanker<T, G>,
+            ranker: FitnessRanker<T, G>,
             evolution: EvolutionRecord<T, G>,
         ): Int where G : Gene<T, G> {
             var steady = 0

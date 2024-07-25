@@ -3,7 +3,7 @@ package cl.ravenhill.keen.listeners
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.IndividualRecord
-import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.ranking.FitnessRanker
 
 /**
  * Determines the fittest individual from the latest generation in the evolutionary record.
@@ -28,7 +28,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
  * @return the fittest individual record from the latest generation
  */
 fun <T, G> fittest(
-    ranker: IndividualRanker<T, G>,
+    ranker: FitnessRanker<T, G>,
     evolution: EvolutionRecord<T, G>
 ): IndividualRecord<T, G> where G : Gene<T, G> =
     ranker.sort(

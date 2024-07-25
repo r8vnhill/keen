@@ -15,7 +15,7 @@ import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.Operator
-import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.ranking.FitnessRanker
 
 
 /**
@@ -123,8 +123,8 @@ interface Selector<T, G> : Operator<T, G> where G : Gene<T, G> {
      *
      * @param population The population from which to select individuals.
      * @param count The number of individuals to select.
-     * @param ranker The [IndividualRanker] used to rank individuals in the population.
+     * @param ranker The [FitnessRanker] used to rank individuals in the population.
      * @return A [Population] consisting of the selected individuals.
      */
-    fun select(population: Population<T, G>, count: Int, ranker: IndividualRanker<T, G>): Population<T, G>
+    fun select(population: Population<T, G>, count: Int, ranker: FitnessRanker<T, G>): Population<T, G>
 }

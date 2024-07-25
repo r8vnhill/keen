@@ -11,7 +11,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.FitnessMinRanker
-import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.ranking.FitnessRanker
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.choice
@@ -22,15 +22,15 @@ import io.kotest.property.arbitrary.constant
  *
  * @return An `Arb` that generates `IndividualRanker` instances, which rank individuals based on fitness values.
  */
-fun arbIndividualRanker(): Arb<IndividualRanker<Double, DoubleGene>> = arbitrary {
-    object : IndividualRanker<Double, DoubleGene> {
+fun arbIndividualRanker(): Arb<FitnessRanker<Double, DoubleGene>> = arbitrary {
+    object : FitnessRanker<Double, DoubleGene> {
         override fun invoke(first: Individual<Double, DoubleGene>, second: Individual<Double, DoubleGene>) =
             first.fitness.compareTo(second.fitness)
     }
 }
 
 /**
- * Creates an arbitrary generator for [IndividualRanker]<[T], [G]> instances.
+ * Creates an arbitrary generator for [FitnessRanker]<[T], [G]> instances.
  *
  * This function is a part of the [Arb.Companion] object and is designed to generate arbitrary instances of
  * `IndividualRanker<T, G>`. Each generated `IndividualRanker` is capable of comparing two individuals
@@ -60,16 +60,16 @@ fun arbIndividualRanker(): Arb<IndividualRanker<Double, DoubleGene>> = arbitrary
  *
  * @param T The type parameter representing the value type in the gene.
  * @param G The gene type, extending `Gene<T, G>`.
- * @return An [Arb]<[IndividualRanker]<[T], [G]>> that generates `IndividualRanker` instances.
+ * @return An [Arb]<[FitnessRanker]<[T], [G]>> that generates `IndividualRanker` instances.
  */
-fun <T, G> arbRanker(): Arb<IndividualRanker<T, G>> where G : Gene<T, G> = arbitrary {
-    object : IndividualRanker<T, G> {
+fun <T, G> arbRanker(): Arb<FitnessRanker<T, G>> where G : Gene<T, G> = arbitrary {
+    object : FitnessRanker<T, G> {
         override fun invoke(first: Individual<T, G>, second: Individual<T, G>) = first.fitness.compareTo(second.fitness)
     }
 }
 
 /**
- * Creates an arbitrary generator for various types of [IndividualRanker]<[T], [G]> instances.
+ * Creates an arbitrary generator for various types of [FitnessRanker]<[T], [G]> instances.
  *
  * This function, part of the [Arb.Companion] object, is designed to generate different arbitrary instances
  * of `IndividualRanker<T, G>`. It offers a choice among a custom ranker created via the `ranker()` function,
@@ -98,8 +98,8 @@ fun <T, G> arbRanker(): Arb<IndividualRanker<T, G>> where G : Gene<T, G> = arbit
  *
  * @param T The type parameter representing the value type in the gene.
  * @param G The gene type, extending `Gene<T, G>`.
- * @return An [Arb]<[IndividualRanker]<[T], [G]>> that generates various types of `IndividualRanker` instances.
+ * @return An [Arb]<[FitnessRanker]<[T], [G]>> that generates various types of `IndividualRanker` instances.
  */
-fun <T, G> KeenArb.anyRanker(): Arb<IndividualRanker<T, G>> where G : Gene<T, G> = with(Arb) {
+fun <T, G> KeenArb.anyRanker(): Arb<FitnessRanker<T, G>> where G : Gene<T, G> = with(Arb) {
     choice(arbRanker(), constant(FitnessMaxRanker()), constant(FitnessMinRanker()))
 }

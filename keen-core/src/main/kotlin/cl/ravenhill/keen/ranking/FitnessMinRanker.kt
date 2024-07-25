@@ -13,7 +13,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 /**
  * A ranking strategy in evolutionary algorithms that prioritizes individuals with lower fitness values.
  *
- * `FitnessMinRanker` implements the [IndividualRanker] interface, providing a mechanism to rank individuals
+ * `FitnessMinRanker` implements the [FitnessRanker] interface, providing a mechanism to rank individuals
  * based on their fitness scores. Unlike traditional rankers that favor higher fitness values, this ranker
  * gives preference to individuals with lower fitness values. It's useful in optimization problems where a
  * lower fitness score indicates a better solution.
@@ -37,7 +37,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @param T The type of data encapsulated by the genes within the individuals.
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.
  */
-class FitnessMinRanker<T, G> : IndividualRanker<T, G> where G : Gene<T, G> {
+class FitnessMinRanker<T, G> : FitnessRanker<T, G> where G : Gene<T, G> {
 
     /**
      * Compares two individuals based on their fitness values, giving priority to lower fitness scores.

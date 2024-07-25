@@ -4,7 +4,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
-import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.ranking.FitnessRanker
 import cl.ravenhill.keen.utils.Box
 import kotlin.time.Duration
 import kotlin.time.TimeSource
@@ -42,7 +42,7 @@ import kotlin.time.TimeSource
  * @property currentGeneration a box that holds the current generation record, initialized to null
  */
 data class ListenerConfiguration<T, G>(
-    val ranker: IndividualRanker<T, G> = FitnessMaxRanker(),
+    val ranker: FitnessRanker<T, G> = FitnessMaxRanker(),
     val evolution: EvolutionRecord<T, G> = EvolutionRecord(),
     val timeSource: TimeSource = TimeSource.Monotonic,
     val precision: Duration.() -> Long = Duration::inWholeMilliseconds,

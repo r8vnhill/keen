@@ -28,7 +28,7 @@ import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.Selector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
-import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.ranking.FitnessRanker
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -308,7 +308,7 @@ class GeneticAlgorithm<T, G>(
 
         var limitFactories: MutableList<(ListenerConfiguration<T, G>) -> ListenLimit<T, G>> = mutableListOf()
 
-        var ranker: IndividualRanker<T, G> = defaultRanker()
+        var ranker: FitnessRanker<T, G> = defaultRanker()
 
         @Deprecated("Use the 'listenerFactories' property instead.")
         var listeners: MutableList<EvolutionListener<T, G>> = defaultListeners()
