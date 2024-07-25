@@ -7,51 +7,64 @@
 package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.mixins.FlatMappable
 import cl.ravenhill.keen.mixins.MultiStringFormat
 import cl.ravenhill.keen.mixins.Verifiable
 
 
 /**
- * Interface representing the encapsulation of genetic information in a genetic algorithm.
+ * Represents genetic material in an evolutionary algorithm.
  *
- * `GeneticMaterial` serves as a foundational element in genetic algorithms, combining aspects of verification and
- * diverse string representation capabilities. It's designed for classes that encapsulate genetic data, like genes or
- * chromosomes, providing essential operations and transformation capabilities for such data.
+ * The `GeneticMaterial` interface extends the [Verifiable] and [FlatMappable] interfaces, providing a contract
+ * for types that encapsulate genetic material and support verification and flat mapping operations. It includes
+ * a default implementation of the `flatMap` method.
  *
- * ## Key Features:
- * - **Verification**: Inherits from [Verifiable], enabling implementation of custom verification logic to ensure
- *   the integrity and validity of the genetic data.
- * - **String Representation**: Inherits from [MultiStringFormat], offering methods [toSimpleString] and
- *   [toDetailedString] for versatile textual representation of genetic material.
- * - **Flattening Genetic Data**: Includes a [flatten] method, which transforms structured genetic material into a list
- *   of basic elements, facilitating individual-level operations in genetic algorithms.
- * - **Mapping Elements**: Provides a [flatMap] method, allowing for transformation of the genetic material's elements
- *   into a list of another type, enhancing the versatility in processing genetic data.
+ * ## Usage:
+ * This interface is intended to be implemented by classes that manage genetic material, such as chromosomes or
+ * genotypes, in evolutionary algorithms. It ensures that the implementing types can be verified for integrity and
+ * support flat mapping of their elements.
  *
- * ## Applicability:
- * Ideal for use in classes that model genetic elements, enabling them to align with the operational needs of genetic
- * algorithms, such as verification, transformation, and diverse representation for analysis or debugging purposes.
+ * ### Example:
+ * ```
+ * class MyGeneticMaterial<T, G : Gene<T, G>>(val genes: List<G>) : GeneticMaterial<T, G> {
+ *     override fun verify(): Boolean {
+ *         // Verification logic
+ *         return true
+ *     }
  *
- * @param T The type of data encapsulated within the genetic material.
- * @param G The specific gene type, extending `Gene<T, G>`, representing the genetic data.
+ *     override fun flatten(): List<T> {
+ *         // Flattening logic
+ *         return genes.map { it.value }
+ *     }
+ * }
+ * ```
+ * In this example, `MyGeneticMaterial` implements the `GeneticMaterial` interface, providing specific logic for
+ * verification and flattening of genetic material.
+ *
+ * @param T The type of the value held by the genes.
+ * @param G The type of the gene, which must extend [Gene].
  */
-interface GeneticMaterial<T, G> : Verifiable, MultiStringFormat where G : Gene<T, G> {
+interface GeneticMaterial<T, G> : Verifiable, FlatMappable<T> where G : Gene<T, G> {
 
     /**
-     * Transforms the genetic material into a list of its basic genetic elements.
-     * Useful for processing or evaluating genetic data at the individual element level.
+     * Applies a transformation function to each element in the genetic material and returns a list of the results.
      *
-     * @return A list of type [T], representing the flattened genetic elements.
-     */
-    fun flatten(): List<T>
-
-    /**
-     * Maps each element of the flattened genetic material to a different type, creating a transformed list.
-     * This method extends the functionality of [flatten], enabling custom transformations on genetic elements.
+     * This default implementation of `flatMap` flattens the genetic material and then applies the transformation
+     * function to each element.
      *
-     * @param transform A transformation function applied to each flattened element of type [T].
-     * @return A list of transformed elements of type [U].
+     * ### Example:
+     * ```
+     * val geneticMaterial = MyGeneticMaterial(...)
+     * val transformedElements = geneticMaterial.flatMap { geneValue ->
+     *     // Transformation logic
+     *     geneValue.toString()
+     * }
+     * ```
+     * In this example, the `flatMap` method is used to convert each gene value to its string representation.
+     *
+     * @param U The type of elements in the resulting list.
+     * @param transform The transformation function to apply to each element.
+     * @return A list of transformed elements.
      */
-    fun <U> flatMap(transform: (T) -> U): List<U> = flatten().map(transform)
+    override fun <U> flatMap(transform: (T) -> U): List<U> = flatten().map(transform)
 }
-
