@@ -4,23 +4,25 @@ import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
+import cl.ravenhill.keen.features.Feature
+import cl.ravenhill.keen.features.Representation
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.ranking.IndividualRanker
 
-abstract class AbstractEvolutionaryAlgorithm<T, G>(val evolutionConfig: EvolutionConfig<T, G>) :
-    Evolver<T, G> where G : Gene<T, G> {
+abstract class AbstractEvolutionaryAlgorithm<T, F, R>(val evolutionConfig: EvolutionConfig<T, F, R>) :
+    Evolver<T, F> where F : Feature<T, F>, R : Representation<T, F> {
 
-    private var state: EvolutionState<T, G> = EvolutionState.empty(evolutionConfig.ranker)
+    private var state: EvolutionState<T, F, R> = EvolutionState.empty(evolutionConfig.ranker)
 
-    override val listeners: MutableList<EvolutionListener<T, G>> = evolutionConfig.listeners.toMutableList()
-    val limits: List<Limit<T, G>> = evolutionConfig.limits
-    val ranker: IndividualRanker<T, G> = evolutionConfig.ranker
-    val evaluator: EvaluationExecutor<T, G> = evolutionConfig.evaluator
-    val interceptor: EvolutionInterceptor<T, G> = evolutionConfig.interceptor
+    override val listeners: MutableList<EvolutionListener<T, F>> = evolutionConfig.listeners.toMutableList()
+    val limits: List<Limit<T, F>> = evolutionConfig.limits
+    val ranker: IndividualRanker<T, F> = evolutionConfig.ranker
+    val evaluator: EvaluationExecutor<T, F> = evolutionConfig.evaluator
+    val interceptor: EvolutionInterceptor<T, F> = evolutionConfig.interceptor
 
-    override fun evolve(): EvolutionState<T, G> {
+    override fun evolve(): EvolutionState<T, F> {
         // Notify listeners of evolution start
         listeners.forEach { it.onEvolutionStarted(state) }
         // Main evolutionary loop
@@ -36,7 +38,7 @@ abstract class AbstractEvolutionaryAlgorithm<T, G>(val evolutionConfig: Evolutio
         return state
     }
 
-    fun iterateGeneration(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    fun iterateGeneration(state: EvolutionState<T, F>): EvolutionState<T, F> {
         // Apply pre-processing to the state
         val interceptedStart = interceptor.before(state)
         // Initialize or continue population
@@ -58,9 +60,9 @@ abstract class AbstractEvolutionaryAlgorithm<T, G>(val evolutionConfig: Evolutio
         return interceptedEnd.copy(generation = interceptedEnd.generation + 1)
     }
 
-    abstract fun startEvolution(state: EvolutionState<T, G>): EvolutionState<T, G>
-    abstract fun evaluatePopulation(state: EvolutionState<T, G>): EvolutionState<T, G>
-    abstract fun selectParents(state: EvolutionState<T, G>): EvolutionState<T, G>
-    abstract fun selectSurvivors(state: EvolutionState<T, G>): EvolutionState<T, G>
-    abstract fun alterOffspring(state: EvolutionState<T, G>): EvolutionState<T, G>
+    abstract fun startEvolution(state: EvolutionState<T, F>): EvolutionState<T, F>
+    abstract fun evaluatePopulation(state: EvolutionState<T, F>): EvolutionState<T, F>
+    abstract fun selectParents(state: EvolutionState<T, F>): EvolutionState<T, F>
+    abstract fun selectSurvivors(state: EvolutionState<T, F>): EvolutionState<T, F>
+    abstract fun alterOffspring(state: EvolutionState<T, F>): EvolutionState<T, F>
 }

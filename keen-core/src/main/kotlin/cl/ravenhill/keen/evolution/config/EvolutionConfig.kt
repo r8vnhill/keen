@@ -7,10 +7,12 @@
 package cl.ravenhill.keen.evolution.config
 
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
+import cl.ravenhill.keen.evolution.EvolutionState
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.features.Representation
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.ranking.IndividualRanker
@@ -32,7 +34,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
  * ### Example:
  * ```
  * val config = EvolutionConfig(
- *     limits = listOf(GenerationLimit(100)),
+ *     limits = listOf(MaxGenerations(100)),
  *     ranker = MyIndividualRanker(),
  *     listeners = listOf(MyEvolutionListener()),
  *     evaluator = MyEvaluationExecutor(),
@@ -51,7 +53,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
  * @constructor Creates an instance of `EvolutionConfig` with the specified parameters.
  */
 data class EvolutionConfig<T, F, R>(
-    val limits: List<Limit<T, F>>,
+    val limits: List<Limit<T, F, R>>,
     val ranker: IndividualRanker<T, F>,
     val listeners: List<EvolutionListener<T, F>>,
     val evaluator: EvaluationExecutor<T, F>,

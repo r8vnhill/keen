@@ -15,7 +15,7 @@ class EvolutionEngine<T, G>(
     populationConfig: PopulationConfig<T, G>,
     selectionConfig: SelectionConfig<T, G>,
     alterationConfig: AlterationConfig<T, G>,
-    evolutionConfig: EvolutionConfig<T, G>,
+    evolutionConfig: EvolutionConfig<T, G, Genotype<T, G>>,
 ) : Evolver<T, G> by GeneticAlgorithm(populationConfig, selectionConfig, alterationConfig, evolutionConfig)
         where G : Gene<T, G> {
     @Deprecated("Use GeneticAlgorithm.Factory instead", ReplaceWith("GeneticAlgorithm.Factory"))

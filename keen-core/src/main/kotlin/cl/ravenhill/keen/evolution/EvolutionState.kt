@@ -14,10 +14,8 @@ import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.features.Representation
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.utils.hash
-import java.util.*
 
 
 /**
@@ -177,9 +175,13 @@ open class EvolutionState<T, F, R>(
         /**
          * Creates an empty `EvolutionState` with the specified ranker and an initial generation of 0.
          *
+         * @param T The type of the value held by the features.
+         * @param F The type of the feature, which must extend [Feature].
+         * @param R The type of the representation, which must extend [Representation].
          * @param ranker The ranker used to evaluate individuals in the population.
          * @return An empty instance of `EvolutionState`.
          */
-        fun <T, G> empty(ranker: IndividualRanker<T, G>) where G : Gene<T, G> = EvolutionState(0, ranker)
+        fun <T, F, R> empty(ranker: IndividualRanker<T, F, R>) where F : Feature<T, F>, R : Representation<T, F> =
+            EvolutionState(0, ranker)
     }
 }
