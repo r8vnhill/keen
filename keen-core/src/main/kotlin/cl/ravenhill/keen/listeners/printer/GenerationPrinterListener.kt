@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.listeners.printer
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
@@ -52,7 +52,7 @@ class GenerationPrinterListener<T, G>(configuration: ListenerConfiguration<T, G>
      *
      * @param state the current state of the evolution process
      */
-    override fun onGenerationStarted(state: EvolutionState<T, G>) {
+    override fun onGenerationStarted(state: GeneticEvolutionState<T, G>) {
         currentGeneration.value = GenerationRecord<T, G>(state.generation).apply {
             startTime = timeSource.markNow()
         }
@@ -63,7 +63,7 @@ class GenerationPrinterListener<T, G>(configuration: ListenerConfiguration<T, G>
      *
      * @param state the current state of the evolution process
      */
-    override fun onGenerationEnded(state: EvolutionState<T, G>) {
+    override fun onGenerationEnded(state: GeneticEvolutionState<T, G>) {
         mapGeneration(currentGeneration) {
             duration = startTime.elapsedNow().inWholeNanoseconds
             evolution.generations += this

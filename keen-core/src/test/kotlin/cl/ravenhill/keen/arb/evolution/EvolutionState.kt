@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.arb.evolution
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.ranking.IndividualRanker
@@ -15,9 +15,9 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.nonNegativeInt
 
 /**
- * Generates an arbitrary [EvolutionState] for property-based testing in evolutionary algorithms.
+ * Generates an arbitrary [GeneticEvolutionState] for property-based testing in evolutionary algorithms.
  *
- * This function creates instances of [EvolutionState] with varying generations and populations, making it
+ * This function creates instances of [GeneticEvolutionState] with varying generations and populations, making it
  * suitable for testing different scenarios within evolutionary algorithms. The `population` parameter provides
  * an arbitrary generator for populations, while the `generation` parameter allows specifying the generation
  * number, which defaults to non-negative values.
@@ -28,7 +28,7 @@ import io.kotest.property.arbitrary.nonNegativeInt
  * and effectiveness of algorithms that manage or rely on the state of evolutionary processes.
  *
  * ### Example:
- * Generating an [EvolutionState] with a random generation number and population:
+ * Generating an [GeneticEvolutionState] with a random generation number and population:
  * ```kotlin
  * val individualArb = Arb.individual(MyGenotypeArb, Arb.double(0.0..1.0))
  * val populationArb = Arb.population(individualArb)
@@ -37,7 +37,7 @@ import io.kotest.property.arbitrary.nonNegativeInt
  * // Results in an EvolutionState with a random generation number and population
  * ```
  *
- * In this example, `evolutionStateArb` generates an instance of [EvolutionState] with a population provided
+ * In this example, `evolutionStateArb` generates an instance of [GeneticEvolutionState] with a population provided
  * by `populationArb` and a random generation number. This setup is ideal for testing the behavior of evolutionary
  * algorithms across different generations and population configurations.
  *
@@ -46,11 +46,11 @@ import io.kotest.property.arbitrary.nonNegativeInt
  * @param population An [Arb]<[Population]<[T], [G]>> for generating populations of individuals.
  * @param generation An optional [Arb]<[Int]> for generating the generation number. Defaults to generating non-negative
  *   integers.
- * @return An [Arb] that generates [EvolutionState] instances, each representing a state in an evolutionary process with
+ * @return An [Arb] that generates [GeneticEvolutionState] instances, each representing a state in an evolutionary process with
  *   a specific generation number and population.
  */
 fun <T, G> arbEvolutionState(
     population: Arb<Population<T, G>>,
     ranker: Arb<IndividualRanker<T, G>>,
     generation: Arb<Int> = Arb.nonNegativeInt(),
-) where G : Gene<T, G> = arbitrary { EvolutionState(generation.bind(), ranker.bind(), population.bind()) }
+) where G : Gene<T, G> = arbitrary { GeneticEvolutionState(generation.bind(), ranker.bind(), population.bind()) }

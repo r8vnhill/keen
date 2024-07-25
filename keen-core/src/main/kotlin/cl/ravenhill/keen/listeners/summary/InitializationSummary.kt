@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.listeners.summary
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.InitializationListener
@@ -63,7 +63,7 @@ class InitializationSummary<T, G>(configuration: ListenerConfiguration<T, G>) :
      * @param state the current state of the evolution process, containing information about the population at the start
      *  of the initialization
      */
-    override fun onInitializationStarted(state: EvolutionState<T, G>) {
+    override fun onInitializationStarted(state: GeneticEvolutionState<T, G>) {
         evolution.initialization.startTime = timeSource.markNow()
     }
 
@@ -94,7 +94,7 @@ class InitializationSummary<T, G>(configuration: ListenerConfiguration<T, G>) :
      * @param state the current state of the evolution process, containing information about the population at the end
      *  of the initialization
      */
-    override fun onInitializationEnded(state: EvolutionState<T, G>) {
+    override fun onInitializationEnded(state: GeneticEvolutionState<T, G>) {
         evolution.initialization.duration = evolution.initialization.startTime.elapsedNow().precision()
     }
 }

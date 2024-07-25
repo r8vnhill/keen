@@ -6,6 +6,7 @@
 
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import java.util.*
 
@@ -48,14 +49,14 @@ import java.util.*
  *
  * @param T The type of data encapsulated by the genes within the individuals.
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.
- * @property before A function to be applied to the [EvolutionState] before genetic operations.
- * @property after A function to be applied to the [EvolutionState] after genetic operations.
+ * @property before A function to be applied to the [GeneticEvolutionState] before genetic operations.
+ * @property after A function to be applied to the [GeneticEvolutionState] after genetic operations.
  *
  * @constructor Creates an [EvolutionInterceptor] with specified `before` and `after` functions.
  */
 class EvolutionInterceptor<T, G>(
-    val before: (EvolutionState<T, G>) -> EvolutionState<T, G>,
-    val after: (EvolutionState<T, G>) -> EvolutionState<T, G>,
+    val before: (GeneticEvolutionState<T, G>) -> GeneticEvolutionState<T, G>,
+    val after: (GeneticEvolutionState<T, G>) -> GeneticEvolutionState<T, G>,
 ) where G : Gene<T, G> {
 
     override fun toString() = "EvolutionInterceptor(before=$before, after=$after)"
@@ -99,12 +100,12 @@ class EvolutionInterceptor<T, G>(
          * on the evolution state after the primary genetic operations. It allows for the insertion of custom logic
          * into the evolutionary algorithm's workflow.
          *
-         * @param function A lambda function to be applied to the [EvolutionState] after genetic operations.
+         * @param function A lambda function to be applied to the [GeneticEvolutionState] after genetic operations.
          *                 The function takes an [EvolutionState] as input and returns an [EvolutionState].
          * @return An [EvolutionInterceptor] configured to apply the specified `after` function.
          */
         fun <T, G> after(
-            function: (EvolutionState<T, G>) -> EvolutionState<T, G>,
+            function: (GeneticEvolutionState<T, G>) -> GeneticEvolutionState<T, G>,
         ) where G : Gene<T, G> = EvolutionInterceptor<T, G>(before = { it }, after = { function(it) })
     }
 }

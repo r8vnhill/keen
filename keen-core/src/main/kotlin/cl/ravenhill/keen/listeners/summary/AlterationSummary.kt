@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.listeners.summary
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mapGeneration
@@ -45,7 +45,7 @@ class AlterationSummary<T, G>(config: ListenerConfiguration<T, G>) : AlterationL
      *
      * @param state the current state of the evolution process
      */
-    override fun onAlterationStarted(state: EvolutionState<T, G>) = mapGeneration(currentGeneration) {
+    override fun onAlterationStarted(state: GeneticEvolutionState<T, G>) = mapGeneration(currentGeneration) {
         alteration.startTime = timeSource.markNow()
     }
 
@@ -54,7 +54,7 @@ class AlterationSummary<T, G>(config: ListenerConfiguration<T, G>) : AlterationL
      *
      * @param state the current state of the evolution process
      */
-    override fun onAlterationEnded(state: EvolutionState<T, G>) = mapGeneration(currentGeneration) {
+    override fun onAlterationEnded(state: GeneticEvolutionState<T, G>) = mapGeneration(currentGeneration) {
         alteration.duration = alteration.startTime.elapsedNow().precision()
     }
 }

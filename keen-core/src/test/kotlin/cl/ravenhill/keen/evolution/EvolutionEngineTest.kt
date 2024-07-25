@@ -22,6 +22,7 @@ import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
@@ -92,7 +93,7 @@ class EvolutionEngineTest : FreeSpec({
                     ranker()
                 ) { engine, ranker ->
                     with(engine) {
-                        val state = EvolutionState.empty(ranker)
+                        val state = GeneticEvolutionState.empty(ranker)
                         val newState = startEvolution(state)
                         newState.size shouldBe populationSize
                     }
@@ -222,8 +223,8 @@ private fun engine(
 private fun individual(): Arb<Individual<Double, DoubleGene>> = arbIndividual(arbGenotype(arbDoubleChromosome()))
 private fun nonEmptyPopulation(): Arb<Population<Double, DoubleGene>> = arbPopulation(individual(), 1..100)
 
-private fun nonEmptyState(): Arb<EvolutionState<Double, DoubleGene>> =
+private fun nonEmptyState(): Arb<GeneticEvolutionState<Double, DoubleGene>> =
     arbEvolutionState(nonEmptyPopulation(), ranker())
 
-private fun state(size: Int): Arb<EvolutionState<Double, DoubleGene>> =
+private fun state(size: Int): Arb<GeneticEvolutionState<Double, DoubleGene>> =
     arbEvolutionState(arbPopulation(individual(), size..size), ranker())

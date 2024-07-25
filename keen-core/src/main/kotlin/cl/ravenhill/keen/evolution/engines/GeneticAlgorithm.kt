@@ -6,7 +6,7 @@ import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.dsl.geneticAlgorithm
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
@@ -110,7 +110,7 @@ class GeneticAlgorithm<T, G>(
      * @return The updated evolution state, either with an initialized population or the current state if already
      *  populated.
      */
-    override fun startEvolution(state: EvolutionState<T, G>) = if (state.isEmpty()) {
+    override fun startEvolution(state: GeneticEvolutionState<T, G>) = if (state.isEmpty()) {
         // Notify listeners about the initialization start
         listeners.forEach { it.onInitializationStarted(state) }
         // Generate initial population
@@ -143,7 +143,7 @@ class GeneticAlgorithm<T, G>(
      * @param state The current evolution state containing the population to be evaluated.
      * @return The updated evolution state with evaluated fitness values.
      */
-    override fun evaluatePopulation(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    override fun evaluatePopulation(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
         // Validate the size of the population before evaluation
         constraints {
             "Population size must be the same as the expected population size." {
@@ -181,7 +181,7 @@ class GeneticAlgorithm<T, G>(
      * @param state The current evolution state containing the population to select parents from.
      * @return The updated evolution state with the selected parents.
      */
-    override fun selectParents(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    override fun selectParents(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
         // Notify listeners at the start of the parent selection phase
         listeners.forEach { it.onParentSelectionStarted(state) }
         // Conduct the parent selection process
@@ -203,7 +203,7 @@ class GeneticAlgorithm<T, G>(
      * @param state The current evolution state containing the population to select survivors from.
      * @return The updated evolution state with the selected survivors.
      */
-    override fun selectSurvivors(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    override fun selectSurvivors(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
         // Notify listeners at the start of the survivor selection phase
         listeners.forEach { it.onSurvivorSelectionStarted(state) }
         // Conduct the survivor selection process
@@ -225,7 +225,7 @@ class GeneticAlgorithm<T, G>(
      * @param state The current evolution state containing the population to alter.
      * @return The updated evolution state with the altered offspring.
      */
-    override fun alterOffspring(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    override fun alterOffspring(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
         // Notify listeners that the alteration phase has started
         listeners.forEach { it.onAlterationStarted(state) }
         // Apply each alterer to the current state

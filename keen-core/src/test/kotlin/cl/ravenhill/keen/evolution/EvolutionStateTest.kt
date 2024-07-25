@@ -15,6 +15,7 @@ import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbDoubleChromosome
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
@@ -43,7 +44,7 @@ class EvolutionStateTest : FreeSpec({
                     Arb.nonNegativeInt(),
                     arbIndividualRanker()
                 ) { population, generation, ranker ->
-                    val state = EvolutionState(generation, ranker, population)
+                    val state = GeneticEvolutionState(generation, ranker, population)
                     state.population shouldBe population
                     state.generation shouldBe generation
                 }
@@ -56,7 +57,7 @@ class EvolutionStateTest : FreeSpec({
                     Arb.nonNegativeInt(),
                     arbIndividualRanker()
                 ) { population, generation, ranker ->
-                    val state = EvolutionState(generation, ranker, *population.toTypedArray())
+                    val state = GeneticEvolutionState(generation, ranker, *population.toTypedArray())
                     state.population shouldBe population
                     state.generation shouldBe generation
                 }
@@ -70,7 +71,7 @@ class EvolutionStateTest : FreeSpec({
                     arbIndividualRanker()
                 ) { population, generation, ranker ->
                     shouldThrow<CompositeException> {
-                        EvolutionState(generation, ranker, population)
+                        GeneticEvolutionState(generation, ranker, population)
                     }.shouldHaveInfringement<IntConstraintException>("Generation [$generation] must not be negative")
                 }
             }
@@ -78,7 +79,7 @@ class EvolutionStateTest : FreeSpec({
 
         "can be initialized as empty" {
             checkAll(arbIndividualRanker()) { ranker ->
-                val state = EvolutionState.empty(ranker)
+                val state = GeneticEvolutionState.empty(ranker)
                 state.population.shouldBeEmpty()
                 state.generation shouldBe 0
             }
@@ -132,7 +133,7 @@ class EvolutionStateTest : FreeSpec({
                     Arb.nonNegativeInt(),
                     arbIndividualRanker()
                 ) { population, generation, newGeneration, ranker ->
-                    val state = EvolutionState(generation, ranker, population)
+                    val state = GeneticEvolutionState(generation, ranker, population)
                     val copy = state.copy(generation = newGeneration)
                     copy.population shouldBe population
                     copy.generation shouldBe newGeneration

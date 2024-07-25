@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.listeners.plotter
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mapGeneration
@@ -47,7 +47,7 @@ class GenerationPlotListener<T, G>(configuration: ListenerConfiguration<T, G>) :
      *
      * @param state the current state of the evolution process
      */
-    override fun onGenerationStarted(state: EvolutionState<T, G>) {
+    override fun onGenerationStarted(state: GeneticEvolutionState<T, G>) {
         currentGeneration.value = GenerationRecord(state.generation)
         evolution.generations += currentGeneration.value!!
     }
@@ -57,7 +57,7 @@ class GenerationPlotListener<T, G>(configuration: ListenerConfiguration<T, G>) :
      *
      * @param state the current state of the evolution process
      */
-    override fun onGenerationEnded(state: EvolutionState<T, G>) = mapGeneration(currentGeneration) {
+    override fun onGenerationEnded(state: GeneticEvolutionState<T, G>) = mapGeneration(currentGeneration) {
         population.offspring = List(state.population.size) {
             IndividualRecord(
                 state.population[it].genotype,

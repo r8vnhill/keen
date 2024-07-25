@@ -17,7 +17,7 @@ import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.arbIndividualRanker
 import cl.ravenhill.keen.arb.operators.selector
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -40,7 +40,7 @@ class SelectorTest : FreeSpec({
                     Arb.int()
                 ) { selector, ranker, count ->
                     shouldThrow<CompositeException> {
-                        selector(EvolutionState.empty(ranker), count)
+                        selector(GeneticEvolutionState.empty(ranker), count)
                     }.shouldHaveInfringement<CollectionConstraintException>(
                         "Population must not be empty"
                     )

@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.arb.operators
 
 import cl.ravenhill.keen.arb.datatypes.arbProbability
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.IntGene
@@ -32,7 +32,7 @@ import io.kotest.property.arbitrary.next
  */
 fun <T, G> arbAlterer(): Arb<Alterer<T, G>> where G : Gene<T, G> = arbitrary {
     object : Alterer<T, G> {
-        override fun invoke(state: EvolutionState<T, G>, outputSize: Int) =
+        override fun invoke(state: GeneticEvolutionState<T, G>, outputSize: Int) =
             state.copy(population = state.population.take(outputSize))
     }
 }

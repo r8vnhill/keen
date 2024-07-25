@@ -6,12 +6,11 @@
 
 package cl.ravenhill.keen.operators.selection
 
-import cl.ravenhill.jakt.Jakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BeNegative
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.GeneticOperator
@@ -53,10 +52,10 @@ import cl.ravenhill.keen.ranking.IndividualRanker
 interface Selector<T, G> : GeneticOperator<T, G> where G : Gene<T, G> {
 
     /**
-     * Invokes the selection method and produces a modified [EvolutionState] with a new population.
+     * Invokes the selection method and produces a modified [GeneticEvolutionState] with a new population.
      *
      * This method is the main execution point for the selector, applying its logic to the given [state] and producing
-     * a new [EvolutionState] that reflects the results of the selection process. It ensures that the selection
+     * a new [GeneticEvolutionState] that reflects the results of the selection process. It ensures that the selection
      * operation adheres to specified constraints and correctly modifies the population.
      *
      * ## Constraints:
@@ -64,13 +63,13 @@ interface Selector<T, G> : GeneticOperator<T, G> where G : Gene<T, G> {
      *   there are individuals to select from.
      * - **Positive Output Size**: Ensures that the desired output size ([outputSize]) is not negative, as negative
      *   values are not meaningful in the context of population selection.
-     * - **Consistent Output Size**: Confirms that the size of the population in the resulting [EvolutionState] matches
+     * - **Consistent Output Size**: Confirms that the size of the population in the resulting [GeneticEvolutionState] matches
      *   the specified [outputSize], maintaining consistency in population size after selection.
      *
      * ## Process:
      * - Validates the initial population size and desired output size.
      * - Applies the selection logic to the initial population to produce a new subset of individuals.
-     * - Constructs a new [EvolutionState] with the selected individuals and the same generation number.
+     * - Constructs a new [GeneticEvolutionState] with the selected individuals and the same generation number.
      * - Validates that the resulting population size matches the desired output size.
      *
      * ## Example:
@@ -86,14 +85,14 @@ interface Selector<T, G> : GeneticOperator<T, G> where G : Gene<T, G> {
      * In this example, the `selector` is used to select a subset of individuals from the current state, producing
      * a new state with a population that matches the desired output size.
      *
-     * @param state The current [EvolutionState], containing the population to select from and the current generation
+     * @param state The current [GeneticEvolutionState], containing the population to select from and the current generation
      *   number.
      * @param outputSize The number of individuals to be included in the new population of the resulting
-     *   [EvolutionState].
-     * @return A new [EvolutionState] object that contains a population resulting from the selection process,
+     *   [GeneticEvolutionState].
+     * @return A new [GeneticEvolutionState] object that contains a population resulting from the selection process,
      *   maintaining the same generation number as the input [state].
      */
-    override fun invoke(state: EvolutionState<T, G>, outputSize: Int): EvolutionState<T, G> {
+    override fun invoke(state: GeneticEvolutionState<T, G>, outputSize: Int): GeneticEvolutionState<T, G> {
         constraints {
             "Population must not be empty" {
                 state.population mustNot BeEmpty
@@ -103,7 +102,7 @@ interface Selector<T, G> : GeneticOperator<T, G> where G : Gene<T, G> {
             }
         }
         val selectedPopulation = select(state.population, outputSize, state.ranker)
-        return EvolutionState(
+        return GeneticEvolutionState(
             state.generation,
             state.ranker,
             selectedPopulation

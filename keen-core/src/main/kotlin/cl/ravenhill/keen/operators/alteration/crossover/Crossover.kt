@@ -6,14 +6,12 @@
 
 package cl.ravenhill.keen.operators.alteration.crossover
 
-import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.HaveSize
-import cl.ravenhill.jakt.constraints.ints.BeEqualTo
 import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.exceptions.CrossoverException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
@@ -71,12 +69,12 @@ interface Crossover<T, G> : Alterer<T, G> where G : Gene<T, G> {
      * In this example, `RecombinationOperator` is applied to the `currentState` of the evolutionary process to
      * generate 100 offspring, resulting in a new `EvolutionState` that reflects the updated population.
      *
-     * @param state The current [EvolutionState] encapsulating the population and other relevant evolutionary data.
+     * @param state The current [GeneticEvolutionState] encapsulating the population and other relevant evolutionary data.
      * @param outputSize The desired number of offspring to be produced through recombination.
-     * @return An updated [EvolutionState] containing the newly produced offspring, with a population size equal to
+     * @return An updated [GeneticEvolutionState] containing the newly produced offspring, with a population size equal to
      * `outputSize`.
      */
-    override fun invoke(state: EvolutionState<T, G>, outputSize: Int): EvolutionState<T, G> {
+    override fun invoke(state: GeneticEvolutionState<T, G>, outputSize: Int): GeneticEvolutionState<T, G> {
         // Select a subset of individuals to recombine using the provided probability and other parameters
         val parents = Domain.random.subsets(state.population, numParents, exclusivity)
         // Recombine the selected individuals to produce offspring

@@ -1,9 +1,8 @@
 package cl.ravenhill.keen.listeners.mixins
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.PhaseListener
-import cl.ravenhill.keen.listeners.records.GenerationRecord
 
 /**
  * A listener interface for receiving notifications about the start and end of generations in the evolutionary
@@ -33,12 +32,12 @@ interface GenerationListener<T, G> : PhaseListener<T, G> where G : Gene<T, G> {
      *
      * @param state the current state of the evolution process
      */
-    fun onGenerationStarted(state: EvolutionState<T, G>) = Unit
+    fun onGenerationStarted(state: GeneticEvolutionState<T, G>) = Unit
 
     /**
      * Called when a generation ends.
      *
      * @param state the current state of the evolution process
      */
-    fun onGenerationEnded(state: EvolutionState<T, G>) = Unit
+    fun onGenerationEnded(state: GeneticEvolutionState<T, G>) = Unit
 }

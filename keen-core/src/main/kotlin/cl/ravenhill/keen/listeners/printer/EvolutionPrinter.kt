@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.listeners.printer
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
@@ -71,7 +71,7 @@ class EvolutionPrinter<T, G> private constructor(
      *
      * @param state the current state of the evolution process
      */
-    override fun onGenerationEnded(state: EvolutionState<T, G>) {
+    override fun onGenerationEnded(state: GeneticEvolutionState<T, G>) {
         generationPrinter.onGenerationEnded(state)
         if (state.generation % every == 0) {
             display()

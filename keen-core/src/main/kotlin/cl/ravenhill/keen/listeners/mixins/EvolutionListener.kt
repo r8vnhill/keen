@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.listeners.mixins
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.ranking.IndividualRanker
@@ -53,14 +53,14 @@ interface EvolutionListener<T, G> :
      *
      * @param state the current state of the evolution process
      */
-    fun onEvolutionStarted(state: EvolutionState<T, G>) = Unit
+    fun onEvolutionStarted(state: GeneticEvolutionState<T, G>) = Unit
 
     /**
      * Called when the evolution phase ends.
      *
      * @param state the current state of the evolution process
      */
-    fun onEvolutionEnded(state: EvolutionState<T, G>) = Unit
+    fun onEvolutionEnded(state: GeneticEvolutionState<T, G>) = Unit
 
     /**
      * Displays the listener's information.

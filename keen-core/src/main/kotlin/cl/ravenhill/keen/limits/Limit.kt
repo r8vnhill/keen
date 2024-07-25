@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.engines.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -21,7 +21,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * ## Key Concepts:
  * - **Termination Criteria**: The primary role of a `Limit` is to provide a mechanism to decide when the
  *   evolutionary process should stop. This decision is typically based on the current state of the evolution.
- * - **State Evaluation**: Each `Limit` evaluates the [EvolutionState] to determine if the specified criteria
+ * - **State Evaluation**: Each `Limit` evaluates the [GeneticEvolutionState] to determine if the specified criteria
  *   for termination are met.
  *
  * ## Usage:
@@ -53,10 +53,10 @@ interface Limit<T, G> where G : Gene<T, G> {
     var engine: Evolver<T, G>?
 
     /**
-     * Evaluates the given [EvolutionState] and determines whether the evolutionary process should terminate.
+     * Evaluates the given [GeneticEvolutionState] and determines whether the evolutionary process should terminate.
      *
      * @param state The current state of the evolution process.
      * @return `true` if the termination criteria are met, `false` otherwise.
      */
-    operator fun invoke(state: EvolutionState<T, G>): Boolean
+    operator fun invoke(state: GeneticEvolutionState<T, G>): Boolean
 }

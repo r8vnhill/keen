@@ -10,7 +10,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.evolutionEngine
 import cl.ravenhill.keen.dsl.genotypeOf
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.limits.MaxGenerations
 import cl.ravenhill.keen.limits.TargetFitness
@@ -59,9 +59,9 @@ class Tracer<T : Throwable>(
         return MinimalCrashReproduction(program!!)
     }
 
-    private fun minimize(result: EvolutionState<KFunction<*>, KFunctionGene>) = result.trimStart().trimEnd()
+    private fun minimize(result: GeneticEvolutionState<KFunction<*>, KFunctionGene>) = result.trimStart().trimEnd()
 
-    private fun EvolutionState<KFunction<*>, KFunctionGene>.trimEnd() = map {
+    private fun GeneticEvolutionState<KFunction<*>, KFunctionGene>.trimEnd() = map {
         // Iteratively remove the last instruction from the genotype
         for (i in 1..it.genotype.first().size) {
             val candidate = Genotype(KFunctionChromosome(it.genotype.first().take(i)))
@@ -75,7 +75,7 @@ class Tracer<T : Throwable>(
     }
 
 
-    private fun EvolutionState<KFunction<*>, KFunctionGene>.trimStart() = map {
+    private fun GeneticEvolutionState<KFunction<*>, KFunctionGene>.trimStart() = map {
         // Iteratively remove the first instruction from the genotype
         for (i in it.genotype.first().size downTo 1) {
             val candidate = Genotype(KFunctionChromosome(it.genotype.first().drop(i)))

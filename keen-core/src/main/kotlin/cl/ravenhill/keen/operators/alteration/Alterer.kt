@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.operators.alteration
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.GeneticOperator
 
@@ -21,8 +21,8 @@ import cl.ravenhill.keen.operators.GeneticOperator
  * ## Responsibilities of an Alterer:
  * - **Genetic Modification**: Implementations of this interface are responsible for altering the genes of individuals
  *   in a population. This could involve mutation, gene swapping, or other forms of genetic manipulation.
- * - **State Transformation**: As with any [GeneticOperator], an `Alterer` takes an [EvolutionState] as input and
- *   produces a new [EvolutionState] reflecting the changes made to the population.
+ * - **State Transformation**: As with any [GeneticOperator], an `Alterer` takes an [GeneticEvolutionState] as input and
+ *   produces a new [GeneticEvolutionState] reflecting the changes made to the population.
  *
  * ## Usage:
  * Implement this interface to define specific alteration strategies in an evolutionary algorithm. The specific
@@ -45,7 +45,7 @@ import cl.ravenhill.keen.operators.GeneticOperator
  * val newState = alterer(currentState, outputSize)
  * ```
  * In this example, `MutationAlterer` implements the `Alterer` interface and applies mutations to each individual
- * in the population of the current [EvolutionState], resulting in a new state for the next generation.
+ * in the population of the current [GeneticEvolutionState], resulting in a new state for the next generation.
  *
  * @param T The type of data encapsulated by the genes within the individuals.
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.

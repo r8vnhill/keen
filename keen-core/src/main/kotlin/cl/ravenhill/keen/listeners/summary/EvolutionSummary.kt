@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.listeners.summary
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
@@ -127,7 +127,7 @@ class EvolutionSummary<T, G>(
      *
      * @param state the current state of the evolution process
      */
-    override fun onEvolutionStarted(state: EvolutionState<T, G>) {
+    override fun onEvolutionStarted(state: GeneticEvolutionState<T, G>) {
         evolution.startTime = configuration.timeSource.markNow()
     }
 
@@ -136,7 +136,7 @@ class EvolutionSummary<T, G>(
      *
      * @param state the current state of the evolution process
      */
-    override fun onEvolutionEnded(state: EvolutionState<T, G>) {
+    override fun onEvolutionEnded(state: GeneticEvolutionState<T, G>) {
         evolution.duration = evolution.startTime.elapsedNow().precision()
     }
 }

@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.listeners.summary
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mapGeneration
@@ -46,7 +46,7 @@ class EvaluationSummary<T, G>(configuration: ListenerConfiguration<T, G>) :
      *
      * @param state the current state of the evolution process
      */
-    override fun onEvaluationStarted(state: EvolutionState<T, G>) = mapGeneration(currentGeneration) {
+    override fun onEvaluationStarted(state: GeneticEvolutionState<T, G>) = mapGeneration(currentGeneration) {
         evaluation.startTime = timeSource.markNow()
     }
 
@@ -55,7 +55,7 @@ class EvaluationSummary<T, G>(configuration: ListenerConfiguration<T, G>) :
      *
      * @param state the current state of the evolution process
      */
-    override fun onEvaluationEnded(state: EvolutionState<T, G>) = mapGeneration(currentGeneration) {
+    override fun onEvaluationEnded(state: GeneticEvolutionState<T, G>) = mapGeneration(currentGeneration) {
         evaluation.duration = evaluation.startTime.elapsedNow().precision()
     }
 }

@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.evolution.executors
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.Population
@@ -61,7 +61,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 interface EvaluationExecutor<T, G> : KeenExecutor where G : Gene<T, G> {
 
     /**
-     * Evaluates the fitness of each individual in the given [EvolutionState].
+     * Evaluates the fitness of each individual in the given [GeneticEvolutionState].
      *
      * See [EvaluationExecutor] for more information.
      *
@@ -69,7 +69,7 @@ interface EvaluationExecutor<T, G> : KeenExecutor where G : Gene<T, G> {
      * @param force A flag indicating whether to force re-evaluation of fitness. Useful in dynamic environments.
      * @return The updated population with the fitness scores of each individual updated.
      */
-    operator fun invoke(state: EvolutionState<T, G>, force: Boolean = false): EvolutionState<T, G>
+    operator fun invoke(state: GeneticEvolutionState<T, G>, force: Boolean = false): GeneticEvolutionState<T, G>
 
     companion object {
         /**

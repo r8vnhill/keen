@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.listeners.mixins
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.PhaseListener
 
@@ -35,12 +35,12 @@ interface EvaluationListener<T, G> : PhaseListener<T, G> where G : Gene<T, G> {
      *
      * @param state the current state of the evolution process
      */
-    fun onEvaluationStarted(state: EvolutionState<T, G>) = Unit
+    fun onEvaluationStarted(state: GeneticEvolutionState<T, G>) = Unit
 
     /**
      * Called when the evaluation phase ends.
      *
      * @param state the current state of the evolution process
      */
-    fun onEvaluationEnded(state: EvolutionState<T, G>) = Unit
+    fun onEvaluationEnded(state: GeneticEvolutionState<T, G>) = Unit
 }

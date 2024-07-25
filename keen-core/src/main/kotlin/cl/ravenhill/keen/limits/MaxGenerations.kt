@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.engines.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
@@ -66,7 +66,7 @@ private class MaxGenerationsListener<T, G>(configuration: ListenerConfiguration<
      *
      * @param state the current state of the evolution process
      */
-    override fun onGenerationEnded(state: EvolutionState<T, G>) {
+    override fun onGenerationEnded(state: GeneticEvolutionState<T, G>) {
         generation++
     }
 }

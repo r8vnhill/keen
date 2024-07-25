@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.engines.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
@@ -24,7 +24,7 @@ import cl.ravenhill.keen.listeners.mixins.EvolutionListener
  * - **Listener Integration**: Incorporates an [EvolutionListener] into the limit evaluation process. This listener
  *   can be used to monitor and react to the evolutionary process, providing additional flexibility in defining
  *   the termination condition.
- * - **Conditional Check**: Utilizes a custom predicate that takes the current [EvolutionState] and evaluates
+ * - **Conditional Check**: Utilizes a custom predicate that takes the current [GeneticEvolutionState] and evaluates
  *   whether a specified condition has been met. If the condition returns `true`, it indicates that the
  *   evolutionary process should be terminated.
  *
@@ -50,13 +50,13 @@ import cl.ravenhill.keen.listeners.mixins.EvolutionListener
  * @param T The type of data encapsulated by the genes within the individuals.
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.
  * @param listener The [EvolutionListener] that is integrated into the limit checking process.
- * @param predicate A function associated with the listener that takes an [EvolutionState] and returns
+ * @param predicate A function associated with the listener that takes an [GeneticEvolutionState] and returns
  *   a `Boolean` indicating whether the evolutionary process should be terminated.
  * @property engine The [Evolver] instance that is executing the evolutionary process.
  */
 open class ListenLimit<T, G>(
     private val listener: EvolutionListener<T, G>,
-    private val predicate: EvolutionListener<T, G>.(EvolutionState<T, G>) -> Boolean
+    private val predicate: EvolutionListener<T, G>.(GeneticEvolutionState<T, G>) -> Boolean
 ) : Limit<T, G> where G : Gene<T, G> {
     override var engine: Evolver<T, G>? = null
         set(value) {
@@ -69,13 +69,13 @@ open class ListenLimit<T, G>(
      *
      * This method is an implementation of the `invoke` function from the [Limit] interface. It is called during the
      * evolutionary process to check whether the specified condition (defined in the [predicate]) is met, based on
-     * the current [EvolutionState]. If the condition is satisfied, it indicates that the evolutionary process should
+     * the current [GeneticEvolutionState]. If the condition is satisfied, it indicates that the evolutionary process should
      * be halted.
      *
      * ## Functionality:
      * - **Condition Evaluation**: Utilizes the [predicate] function, which is part of the [listener], to evaluate
      *   whether the termination condition is met.
-     * - **State Analysis**: The current [EvolutionState] is passed to the predicate function, allowing it to
+     * - **State Analysis**: The current [GeneticEvolutionState] is passed to the predicate function, allowing it to
      *   analyze various aspects of the state, such as the generation number, population fitness, diversity, or
      *   any other relevant metric.
      *
@@ -83,11 +83,11 @@ open class ListenLimit<T, G>(
      * This method is automatically invoked by the evolutionary algorithm's control mechanism at each generation or
      * evolutionary step. It is not typically called directly by the user.
      *
-     * @param state The current [EvolutionState] of the evolutionary process. This state is used by the predicate to
+     * @param state The current [GeneticEvolutionState] of the evolutionary process. This state is used by the predicate to
      *   determine whether the termination condition is satisfied.
      * @return `true` if the termination condition is met and the evolutionary process should be halted, `false`
      *   otherwise.
      */
-    override fun invoke(state: EvolutionState<T, G>) = listener.predicate(state)
+    override fun invoke(state: GeneticEvolutionState<T, G>) = listener.predicate(state)
 }
 

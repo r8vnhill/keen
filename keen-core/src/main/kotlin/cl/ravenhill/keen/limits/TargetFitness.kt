@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.engines.Evolver
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.AbstractEvolutionListener
@@ -69,7 +69,7 @@ class TargetFitness<T, G>(val predicate: (Double) -> Boolean) : ListenLimit<T, G
      * @param state the current state of the evolution process
      * @return true if any individual meets the fitness predicate, false otherwise
      */
-    override fun invoke(state: EvolutionState<T, G>) = state.population.any { predicate(it.fitness) }
+    override fun invoke(state: GeneticEvolutionState<T, G>) = state.population.any { predicate(it.fitness) }
 }
 
 /**

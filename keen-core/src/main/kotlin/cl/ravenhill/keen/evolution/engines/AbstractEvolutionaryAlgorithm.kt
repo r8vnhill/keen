@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.genetic.genes.Gene
@@ -12,7 +12,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
 abstract class AbstractEvolutionaryAlgorithm<T, G>(val evolutionConfig: EvolutionConfig<T, G>) :
     Evolver<T, G> where G : Gene<T, G> {
 
-    private var state: EvolutionState<T, G> = EvolutionState.empty(evolutionConfig.ranker)
+    private var state: GeneticEvolutionState<T, G> = GeneticEvolutionState.empty(evolutionConfig.ranker)
 
     override val listeners: MutableList<EvolutionListener<T, G>> = evolutionConfig.listeners.toMutableList()
     val limits: List<Limit<T, G>> = evolutionConfig.limits
@@ -20,7 +20,7 @@ abstract class AbstractEvolutionaryAlgorithm<T, G>(val evolutionConfig: Evolutio
     val evaluator: EvaluationExecutor<T, G> = evolutionConfig.evaluator
     val interceptor: EvolutionInterceptor<T, G> = evolutionConfig.interceptor
 
-    override fun evolve(): EvolutionState<T, G> {
+    override fun evolve(): GeneticEvolutionState<T, G> {
         // Notify listeners of evolution start
         listeners.forEach { it.onEvolutionStarted(state) }
         // Main evolutionary loop
@@ -36,7 +36,7 @@ abstract class AbstractEvolutionaryAlgorithm<T, G>(val evolutionConfig: Evolutio
         return state
     }
 
-    fun iterateGeneration(state: EvolutionState<T, G>): EvolutionState<T, G> {
+    fun iterateGeneration(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
         // Apply pre-processing to the state
         val interceptedStart = interceptor.before(state)
         // Initialize or continue population
@@ -58,9 +58,9 @@ abstract class AbstractEvolutionaryAlgorithm<T, G>(val evolutionConfig: Evolutio
         return interceptedEnd.copy(generation = interceptedEnd.generation + 1)
     }
 
-    abstract fun startEvolution(state: EvolutionState<T, G>): EvolutionState<T, G>
-    abstract fun evaluatePopulation(state: EvolutionState<T, G>): EvolutionState<T, G>
-    abstract fun selectParents(state: EvolutionState<T, G>): EvolutionState<T, G>
-    abstract fun selectSurvivors(state: EvolutionState<T, G>): EvolutionState<T, G>
-    abstract fun alterOffspring(state: EvolutionState<T, G>): EvolutionState<T, G>
+    abstract fun startEvolution(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G>
+    abstract fun evaluatePopulation(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G>
+    abstract fun selectParents(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G>
+    abstract fun selectSurvivors(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G>
+    abstract fun alterOffspring(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G>
 }

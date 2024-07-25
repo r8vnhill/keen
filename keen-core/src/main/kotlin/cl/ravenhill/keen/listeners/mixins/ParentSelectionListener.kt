@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.listeners.mixins
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.PhaseListener
 
@@ -34,12 +34,12 @@ interface ParentSelectionListener<T, G> : PhaseListener<T, G> where G : Gene<T, 
      *
      * @param state the current state of the evolution process
      */
-    fun onParentSelectionStarted(state: EvolutionState<T, G>) = Unit
+    fun onParentSelectionStarted(state: GeneticEvolutionState<T, G>) = Unit
 
     /**
      * Called when the parent selection phase ends.
      *
      * @param state the current state of the evolution process
      */
-    fun onParentSelectionEnded(state: EvolutionState<T, G>) = Unit
+    fun onParentSelectionEnded(state: GeneticEvolutionState<T, G>) = Unit
 }

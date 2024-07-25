@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.listeners.summary
 
-import cl.ravenhill.keen.evolution.EvolutionState
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener.Companion.computeSteadyGenerations
 import cl.ravenhill.keen.listeners.ListenerConfiguration
@@ -10,7 +10,6 @@ import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.listeners.records.IndividualRecord
 import cl.ravenhill.keen.ranking.IndividualRanker
-import cl.ravenhill.keen.utils.Box
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 
@@ -71,7 +70,7 @@ class GenerationSummary<T, G>(
      * @param state the current state of the evolution process, containing information about the population at the start
      *  of the generation
      */
-    override fun onGenerationStarted(state: EvolutionState<T, G>) {
+    override fun onGenerationStarted(state: GeneticEvolutionState<T, G>) {
         currentGeneration.value = GenerationRecord<T, G>(evolution.generations.size + 1).apply {
             startTime = timeSource.markNow()
             this.population.parents = List(state.population.size) {
@@ -108,7 +107,7 @@ class GenerationSummary<T, G>(
      * @param state the current state of the evolution process, containing information about the population at the end
      *  of the generation
      */
-    override fun onGenerationEnded(state: EvolutionState<T, G>) = mapGeneration(currentGeneration) {
+    override fun onGenerationEnded(state: GeneticEvolutionState<T, G>) = mapGeneration(currentGeneration) {
         duration = startTime.elapsedNow().precision()
         population.offspring = List(state.population.size) { index ->
             IndividualRecord(state.population[index].genotype, state.population[index].fitness)
