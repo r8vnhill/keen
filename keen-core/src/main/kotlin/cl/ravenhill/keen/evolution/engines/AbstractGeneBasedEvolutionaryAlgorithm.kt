@@ -1,7 +1,9 @@
 package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
+import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
 
 /**
@@ -47,10 +49,12 @@ import cl.ravenhill.keen.genetic.genes.Gene
  *
  * @param T The type of the value held by the genes.
  * @param G The type of the gene, which must extend [Gene].
- * @property evolutionConfig The configuration settings for the evolutionary algorithm.
+ * @param evolutionConfig The configuration settings for the evolutionary algorithm.
  */
-abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G>(val evolutionConfig: EvolutionConfig<T, G>) :
-    Evolver<T, G> where G : Gene<T, G> {
+abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G>(
+    populationConfig: PopulationConfig<T, G>,
+    evolutionConfig: EvolutionConfig<T, G>
+) : Evolver<T, G> where G : Gene<T, G> {
 
     private var state = GeneticEvolutionState.empty(evolutionConfig.ranker)
 
@@ -59,6 +63,8 @@ abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G>(val evolutionConfig:
     val ranker = evolutionConfig.ranker
     val evaluator = evolutionConfig.evaluator
     val interceptor = evolutionConfig.interceptor
+    val genotypeFactory: Genotype.Factory<T, G> = populationConfig.genotypeFactory
+    override val populationSize: Int = populationConfig.populationSize
 
     /**
      * Starts the evolution process and runs it until one of the limits is reached.

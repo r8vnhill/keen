@@ -86,10 +86,8 @@ class GeneticAlgorithm<T, G>(
     selectionConfig: SelectionConfig<T, G>,
     alterationConfig: AlterationConfig<T, G>,
     evolutionConfig: EvolutionConfig<T, G>,
-) : AbstractGeneBasedEvolutionaryAlgorithm<T, G>(evolutionConfig) where G : Gene<T, G> {
+) : AbstractGeneBasedEvolutionaryAlgorithm<T, G>(populationConfig, evolutionConfig) where G : Gene<T, G> {
 
-    val genotypeFactory: Genotype.Factory<T, G> = populationConfig.genotypeFactory
-    val populationSize: Int = populationConfig.populationSize
     val survivalRate: Double = selectionConfig.survivalRate
     val parentSelector: Selector<T, G> = selectionConfig.parentSelector
     val survivorSelector: Selector<T, G> = selectionConfig.survivorSelector
