@@ -17,9 +17,10 @@ class EvolutionEngine<T, G>(
     evolutionConfig: EvolutionConfig<T, G>,
 ) : Evolver<T, G> by GeneticAlgorithm(populationConfig, selectionConfig, alterationConfig, evolutionConfig)
         where G : Gene<T, G> {
+    @Deprecated("Use GeneticAlgorithm.Factory instead", ReplaceWith("GeneticAlgorithm.Factory"))
     class Factory<T, G>(
-        val fitnessFunction: (Genotype<T, G>) -> Double,
-        val genotypeFactory: Genotype.Factory<T, G>,
-    ) :
+        fitnessFunction: (Genotype<T, G>) -> Double,
+        genotypeFactory: Genotype.Factory<T, G>,
+    ) : Evolver.Factory<T, G> by GeneticAlgorithm.Factory(fitnessFunction, genotypeFactory)
             where G : Gene<T, G>
 }

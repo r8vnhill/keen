@@ -411,7 +411,7 @@ class GeneticAlgorithm<T, G>(
     class Factory<T, G>(
         val fitnessFunction: (Genotype<T, G>) -> Double,
         val genotypeFactory: Genotype.Factory<T, G>,
-    ) where G : Gene<T, G> {
+    ) : Evolver.Factory<T, G> where G : Gene<T, G> {
 
         var populationSize: Int = DEFAULT_POPULATION_SIZE
             set(value) = constraints {
@@ -460,7 +460,7 @@ class GeneticAlgorithm<T, G>(
          *
          * @return An instance of [GeneticAlgorithm] configured according to the factory's settings.
          */
-        fun make() = GeneticAlgorithm(
+        override fun make() = GeneticAlgorithm(
             populationConfig = PopulationConfig(genotypeFactory, populationSize),
             selectionConfig = SelectionConfig(survivalRate, parentSelector, survivorSelector),
             alterationConfig = AlterationConfig(alterers),

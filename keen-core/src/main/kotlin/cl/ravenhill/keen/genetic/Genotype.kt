@@ -14,6 +14,7 @@ import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.exceptions.InvalidIndexException
+import cl.ravenhill.keen.features.Representation
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -40,8 +41,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @constructor Constructs a genotype from a list or varargs of chromosomes.
  */
 data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
-    GeneticMaterial<T, G>, Collection<Chromosome<T, G>> where G : Gene<T, G> {
-
+    Representation<T, G>, GeneticMaterial<T, G>, Collection<Chromosome<T, G>> where G : Gene<T, G> {
 
     /**
      * Secondary constructor for creating a [Genotype] instance using varargs of chromosomes.
@@ -201,7 +201,6 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) :
      * @return The chromosome located at the specified index in the genotype.
      * @throws CompositeException containing [InvalidIndexException] if the index is outside the valid range.
      */
-    @OptIn(ExperimentalJakt::class)
     @Throws(CompositeException::class, InvalidIndexException::class)
     operator fun get(index: Int): Chromosome<T, G> {
         constraints {
