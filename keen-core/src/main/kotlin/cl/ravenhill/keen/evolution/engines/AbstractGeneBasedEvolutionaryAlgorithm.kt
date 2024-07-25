@@ -2,9 +2,11 @@ package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
+import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.operators.selection.Selector
 
 /**
  * Abstract class representing a gene-based evolutionary algorithm.
@@ -22,8 +24,11 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * ### Example:
  * ```kotlin
  * class MyGeneBasedAlgorithm<T, G>(
- *     config: EvolutionConfig<T, G>
- * ) : AbstractGeneBasedEvolutionaryAlgorithm<T, G>(config) where G : Gene<T, G> {
+ *     populationConfig: PopulationConfig<T, G>,
+ *     evolutionConfig: EvolutionConfig<T, G>,
+ *     selectionConfig: SelectionConfig<T, G>
+ * ) : AbstractGeneBasedEvolutionaryAlgorithm<T, G>(populationConfig, evolutionConfig, selectionConfig)
+ *         where G : Gene<T, G> {
  *
  *     override fun startEvolution(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
  *         // Implementation of population initialization
@@ -50,10 +55,25 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @param T The type of the value held by the genes.
  * @param G The type of the gene, which must extend [Gene].
  * @param evolutionConfig The configuration settings for the evolutionary algorithm.
+ * @param populationConfig The configuration settings for the population.
+ * @param selectionConfig The configuration settings for the selection process.
+ * @property state The current state of the evolutionary process.
+ * @property listeners The listeners to notify during the evolution process.
+ * @property limits The termination conditions for the evolution process.
+ * @property ranker The ranker used to evaluate individuals in the population.
+ * @property evaluator The evaluator used to calculate the fitness of individuals.
+ * @property interceptor The interceptor used to pre-process and post-process the state.
+ * @property genotypeFactory The factory used to generate genotypes for individuals.
+ * @property populationSize The size of the population.
+ * @property survivalRate The rate of individuals that survive to the next generation.
+ * @property parentSelector The selector used to choose parents for offspring production.
+ * @property survivorSelector The selector used to choose survivors for the next generation.
+ * @constructor Creates an instance of the gene-based evolutionary algorithm with the specified configurations.
  */
 abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G>(
     populationConfig: PopulationConfig<T, G>,
-    evolutionConfig: EvolutionConfig<T, G>
+    evolutionConfig: EvolutionConfig<T, G>,
+    selectionConfig: SelectionConfig<T, G>
 ) : Evolver<T, G> where G : Gene<T, G> {
 
     private var state = GeneticEvolutionState.empty(evolutionConfig.ranker)
@@ -65,6 +85,9 @@ abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G>(
     val interceptor = evolutionConfig.interceptor
     val genotypeFactory: Genotype.Factory<T, G> = populationConfig.genotypeFactory
     override val populationSize: Int = populationConfig.populationSize
+    override val survivalRate: Double = selectionConfig.survivalRate
+    val parentSelector: Selector<T, G> = selectionConfig.parentSelector
+    val survivorSelector: Selector<T, G> = selectionConfig.survivorSelector
 
     /**
      * Starts the evolution process and runs it until one of the limits is reached.

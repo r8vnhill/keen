@@ -6,13 +6,16 @@ import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.dsl.geneticAlgorithm
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
+import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm.Factory
+import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm.Factory.Companion.DEFAULT_POPULATION_SIZE
+import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm.Factory.Companion.DEFAULT_SURVIVAL_RATE
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.exceptions.EngineException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
@@ -86,11 +89,12 @@ class GeneticAlgorithm<T, G>(
     selectionConfig: SelectionConfig<T, G>,
     alterationConfig: AlterationConfig<T, G>,
     evolutionConfig: EvolutionConfig<T, G>,
-) : AbstractGeneBasedEvolutionaryAlgorithm<T, G>(populationConfig, evolutionConfig) where G : Gene<T, G> {
+) : AbstractGeneBasedEvolutionaryAlgorithm<T, G>(
+    populationConfig,
+    evolutionConfig,
+    selectionConfig
+) where G : Gene<T, G> {
 
-    val survivalRate: Double = selectionConfig.survivalRate
-    val parentSelector: Selector<T, G> = selectionConfig.parentSelector
-    val survivorSelector: Selector<T, G> = selectionConfig.survivorSelector
     val alterers: List<Alterer<T, G>> = alterationConfig.alterers
 
     init {

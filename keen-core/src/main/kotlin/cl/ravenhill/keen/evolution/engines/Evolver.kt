@@ -16,7 +16,8 @@ import cl.ravenhill.keen.features.Feature
  * ### Example:
  * ```kotlin
  * class MyEvolver<T, F>(
- *     override val populationSize: Int
+ *     override val populationSize: Int,
+ *     override val survivalRate: Double,
  * ) : Evolver<T, F> where F : Feature<T, F> {
  *
  *     override fun evolve(): State<T, F> {
@@ -29,13 +30,13 @@ import cl.ravenhill.keen.features.Feature
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @property populationSize The size of the population managed by the evolver.
+ * @property survivalRate The rate of individuals that survive each generation.
  */
 interface Evolver<T, F> where F : Feature<T, F> {
 
-    /**
-     * The size of the population managed by the evolver.
-     */
     val populationSize: Int
+
+    val survivalRate: Double
 
     /**
      * Starts and runs the evolution process.
