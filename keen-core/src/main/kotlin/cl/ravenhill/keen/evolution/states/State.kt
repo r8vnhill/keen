@@ -2,6 +2,7 @@ package cl.ravenhill.keen.evolution.states
 
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.mixins.FitnessEvaluable
+import cl.ravenhill.keen.ranking.FitnessRanker
 
 /**
  * Represents a state in the evolutionary process.
@@ -24,6 +25,8 @@ import cl.ravenhill.keen.mixins.FitnessEvaluable
  *         get() = population.size
  *
  *     override fun isEmpty() = population.isEmpty()
+ *
+ *     override val ranker = FitnessMaxRanker<T, F>()
  * }
  * ```
  *
@@ -31,6 +34,7 @@ import cl.ravenhill.keen.mixins.FitnessEvaluable
  * @param F The type of the feature, which must extend [Feature].
  * @property size The size of the state, typically representing the number of individuals in the population.
  * @property population The list of individuals in the state.
+ * @property ranker The [FitnessRanker] used to rank individuals in the state.
  */
 interface State<T, F> where F : Feature<T, F> {
 
@@ -38,6 +42,7 @@ interface State<T, F> where F : Feature<T, F> {
 
     val population: List<FitnessEvaluable>
 
+    val ranker: FitnessRanker<T, F>
     /**
      * Checks if the state is empty.
      *
