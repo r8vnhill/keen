@@ -14,7 +14,7 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.utils.trees.Tree

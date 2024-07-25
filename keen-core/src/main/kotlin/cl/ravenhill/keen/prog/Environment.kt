@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.prog
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 
 /**
  * Represents a programmable environment with a unique identifier, capable of storing and managing memory elements.

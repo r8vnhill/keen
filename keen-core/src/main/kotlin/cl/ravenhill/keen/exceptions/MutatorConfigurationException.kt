@@ -37,4 +37,4 @@ import cl.ravenhill.jakt.exceptions.ConstraintException
  *
  * @param message A descriptive message providing details about the configuration error.
  */
-class MutatorConfigException(message: String) : ConstraintException({ message })
+class MutatorConfigurationException(message: String) : ConstraintException({ message })

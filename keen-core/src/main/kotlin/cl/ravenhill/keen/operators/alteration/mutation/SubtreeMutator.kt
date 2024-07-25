@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.operators.alteration.mutation
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.utils.trees.Tree

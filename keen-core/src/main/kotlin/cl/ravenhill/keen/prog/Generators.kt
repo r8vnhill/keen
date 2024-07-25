@@ -9,7 +9,7 @@ package cl.ravenhill.keen.prog
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.prog.functions.Fun
 import cl.ravenhill.keen.prog.terminals.Terminal
 import cl.ravenhill.keen.utils.trees.Tree

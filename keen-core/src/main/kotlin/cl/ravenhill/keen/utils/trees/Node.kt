@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.utils.trees
 
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.mixins.MultiStringFormat
 
 /**

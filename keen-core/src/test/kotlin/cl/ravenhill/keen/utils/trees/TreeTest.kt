@@ -10,7 +10,7 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 import cl.ravenhill.keen.arb.random
 import cl.ravenhill.keen.assertions.should.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
@@ -79,14 +79,14 @@ class TreeTest : FreeSpec({
         }
 
         "can be converted to a detailed string representation" {
-            singleElementTree.toDetailedString() shouldBe "TypedTree(" +
-                  "value=TypedLeaf(contents=a), " +
-                  "size=1, " +
-                  "arity=0, " +
-                  "height=0, " +
-                  "children=[], " +
-                  "descendants=[]" +
-                  ")"
+            singleElementTree.toString() shouldBe "TypedTree(" +
+                    "value=TypedLeaf(contents=a), " +
+                    "size=1, " +
+                    "arity=0, " +
+                    "height=0, " +
+                    "children=[], " +
+                    "descendants=[]" +
+                    ")"
         }
 
         "when getting a random node" - {
@@ -138,6 +138,20 @@ class TreeTest : FreeSpec({
             }
         }
 
+        "when converting to " - {
+            "top-down list of nodes " - {
+                "!should return a list with a single element" {
+                    singleElementTree.toTopDownList() shouldBe listOf(singleElementTree)
+                }
+            }
+
+            "top-down sequence of nodes" - {
+                "!should return a sequence with a single element" {
+                    singleElementTree.toTopDownSequence().toList() shouldBe listOf(singleElementTree)
+                }
+            }
+        }
+
         "can replace its root node" {
             val newRoot = intermediateNodeB
             val newTree = singleElementTree.replaceFirst(newRoot) { it.value.contents == 'a' }
@@ -177,26 +191,26 @@ class TreeTest : FreeSpec({
 
         "can be converted to a detailed string representation" {
             multiElementTree.toDetailedString() shouldBe "TypedTree(" +
-                  "value=TypedIntermediate(arity=2, contents=a), " +
-                  "size=4, " +
-                  "arity=2, " +
-                  "height=2, " +
-                  "children=[" +
-                  "TypedTree(" +
-                  "node=TypedIntermediate(arity=1, contents=b), " +
-                  "children=[TypedTree(node=TypedLeaf(contents=d), children=[])]" +
-                  "), " +
-                  "TypedTree(node=TypedLeaf(contents=c), children=[])" +
-                  "], " +
-                  "descendants=[" +
-                  "TypedTree(" +
-                  "node=TypedIntermediate(arity=1, contents=b), " +
-                  "children=[" +
-                  "TypedTree(node=TypedLeaf(contents=d), children=[])]), " +
-                  "TypedTree(node=TypedLeaf(contents=d), children=[]), " +
-                  "TypedTree(node=TypedLeaf(contents=c), children=[])" +
-                  "]" +
-                  ")"
+                    "value=TypedIntermediate(arity=2, contents=a), " +
+                    "size=4, " +
+                    "arity=2, " +
+                    "height=2, " +
+                    "children=[" +
+                    "TypedTree(" +
+                    "node=TypedIntermediate(arity=1, contents=b), " +
+                    "children=[TypedTree(node=TypedLeaf(contents=d), children=[])]" +
+                    "), " +
+                    "TypedTree(node=TypedLeaf(contents=c), children=[])" +
+                    "], " +
+                    "descendants=[" +
+                    "TypedTree(" +
+                    "node=TypedIntermediate(arity=1, contents=b), " +
+                    "children=[" +
+                    "TypedTree(node=TypedLeaf(contents=d), children=[])]), " +
+                    "TypedTree(node=TypedLeaf(contents=d), children=[]), " +
+                    "TypedTree(node=TypedLeaf(contents=c), children=[])" +
+                    "]" +
+                    ")"
         }
 
         "when getting a random node" - {
@@ -210,11 +224,11 @@ class TreeTest : FreeSpec({
         }
 
         "when searching for a node should" - {
-            "return the index of the node if it is in the tree" {
+            "!return the index of the node if it is in the tree" {
                 multiElementTree.indexOfFirst { it.value.contents == 'b' } shouldBe 1..<3
             }
 
-            "throw a [NoSuchElementException] if the node is not in the tree" {
+            "!throw a [NoSuchElementException] if the node is not in the tree" {
                 shouldThrowWithMessage<NoSuchElementException>("Node not found in tree") {
                     multiElementTree.indexOfFirst { it.value.contents == 'e' }
                 }
@@ -249,7 +263,7 @@ class TreeTest : FreeSpec({
             }
         }
 
-        "can replace" - {
+        "!can replace" - {
             "its root node" {
                 val newRoot = singleElementTree
                 val newTree = multiElementTree.replaceFirst(newRoot) { it.value.contents == 'a' }
@@ -260,6 +274,30 @@ class TreeTest : FreeSpec({
                 val replacement = singleElementTree
                 val newTree = multiElementTree.replaceFirst(replacement) { it.value.contents == 'b' }
                 newTree shouldBe TypedTree(TypedIntermediate(2, 'a'), listOf(leafNodeC, replacement))
+            }
+        }
+
+        "!when converting to " - {
+            "top-down list of nodes" - {
+                "should return a list with all the nodes in the tree" {
+                    multiElementTree.toTopDownList() shouldBe listOf(
+                        multiElementTree,
+                        intermediateNodeB,
+                        leafNodeD,
+                        leafNodeC
+                    )
+                }
+            }
+
+            "top-down sequence of nodes" - {
+                "should return a sequence with all the nodes in the tree" {
+                    multiElementTree.toTopDownSequence().toList() shouldBe listOf(
+                        multiElementTree,
+                        intermediateNodeB,
+                        leafNodeD,
+                        leafNodeC
+                    )
+                }
             }
         }
     }

@@ -6,14 +6,12 @@
 
 package cl.ravenhill.keen.operators.alteration.mutation
 
-import cl.ravenhill.jakt.ExperimentalJakt
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.exceptions.MutatorConfigException
+import cl.ravenhill.keen.exceptions.MutatorConfigurationException
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.utils.eq
 
 /**
  * A mutator that randomly applies mutations to chromosomes and genes in an evolutionary algorithm.
@@ -40,7 +38,7 @@ import cl.ravenhill.keen.utils.eq
  * ### Example:
  * ```kotlin
  * val mutator = RandomMutator<MyDataType, MyGene>(
- *     probability = 0.1,     // 10% overall mutation probability
+ *     individualRate = 0.1,     // 10% overall mutation probability
  *     chromosomeRate = 0.5,  // 50% chance for each chromosome to be mutated
  *     geneRate = 0.5         // 50% chance for each gene within a chromosome to be mutated
  * )
@@ -50,9 +48,9 @@ import cl.ravenhill.keen.utils.eq
  *
  * @param T The type of data encapsulated by the genes within the chromosomes.
  * @param G The type of gene in the chromosomes, conforming to the [Gene] interface.
- * @param individualRate The overall probability of a mutation occurring during the mutation process.
- * @param chromosomeRate The probability of a chromosome undergoing mutation.
- * @param geneRate The probability of an individual gene within a chromosome being mutated.
+ * @property individualRate The overall probability of a mutation occurring during the mutation process.
+ * @property chromosomeRate The probability of a chromosome undergoing mutation.
+ * @property geneRate The probability of an individual gene within a chromosome being mutated.
  */
 class RandomMutator<T, G>(
     override val individualRate: Double = DEFAULT_INDIVIDUAL_RATE,
@@ -62,73 +60,85 @@ class RandomMutator<T, G>(
 
     init {
         constraints {
-            "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigException) {
+            "The individual rate ($individualRate) must be in 0.0..1.0"(::MutatorConfigurationException) {
                 individualRate must BeInRange(0.0..1.0)
             }
-            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigException) {
+            "The chromosome rate ($chromosomeRate) must be in 0.0..1.0"(::MutatorConfigurationException) {
                 chromosomeRate must BeInRange(0.0..1.0)
             }
-            "The gene rate ($geneRate) must be in 0.0..1.0"(::MutatorConfigException) {
+            "The gene rate ($geneRate) must be in 0.0..1.0"(::MutatorConfigurationException) {
                 geneRate must BeInRange(0.0..1.0)
             }
         }
     }
 
     /**
-     * Mutates a chromosome based on the specified mutation probability.
+     * Mutates a chromosome by potentially mutating each gene within it based on the specified gene mutation
+     * probability.
      *
-     * This method determines whether a given chromosome undergoes mutation. The mutation process is controlled by the
-     * [chromosomeRate] probability. If the chromosome is selected for mutation (based on the [chromosomeRate]), each
-     * gene within the chromosome is passed to the [mutateGene] method for potential mutation.
+     * This method creates a new chromosome by duplicating the original chromosome and applying mutations to its genes
+     * based on the [geneRate] probability. Each gene in the chromosome is mutated if a random value falls within the
+     * [geneRate].
      *
      * ## Mutation Logic:
-     * - If [chromosomeRate] is 0.0, no mutation occurs, and the original chromosome is returned.
-     * - If a random value exceeds [chromosomeRate], the chromosome remains unaltered.
-     * - If a random value is within the [chromosomeRate], the chromosome undergoes mutation. This involves creating a
-     *   new chromosome with each gene potentially mutated by [mutateGene].
+     * - For each gene in the chromosome, if a random value is within the [geneRate], the gene is mutated by calling
+     *   the [mutateGene] method. Otherwise, the gene remains unaltered.
      *
      * ## Usage:
      * This method is typically invoked as part of a larger mutation process within an evolutionary algorithm, where
      * chromosomes of individuals in a population are subject to mutation to introduce genetic diversity.
      *
      * @param chromosome The chromosome to potentially mutate.
-     * @return The original chromosome if no mutation occurs, or a new chromosome with mutated genes if mutation occurs.
+     * @return A new chromosome with potentially mutated genes.
      */
-    override fun mutateChromosome(chromosome: Chromosome<T, G>) = when {
-        chromosomeRate eq 0.0 -> chromosome
-        Domain.random.nextDouble() > chromosomeRate -> chromosome
-        else -> chromosome.duplicateWithGenes(chromosome.map { mutateGene(it) })
-    }
+    override fun mutateChromosome(chromosome: Chromosome<T, G>) = chromosome.duplicateWithGenes(chromosome.map {
+        if (Domain.random.nextDouble() <= geneRate) {
+            mutateGene(it)
+        } else {
+            it
+        }
+    })
 
     /**
-     * Mutates a gene based on the specified gene mutation probability.
+     * Mutates a gene.
      *
-     * This method determines whether a given gene undergoes mutation. The mutation process is governed by the
-     * [geneRate] probability. If the gene is selected for mutation (as determined by the [geneRate]), a new mutated
-     * gene is created using the gene's own `mutate` method.
+     * This method directly calls the `mutate` method on the provided gene, creating a new mutated gene instance.
      *
      * ## Mutation Logic:
-     * - If [geneRate] is 0.0, no mutation occurs, and the original gene is returned.
-     * - If a random value exceeds [geneRate], the gene remains unaltered.
-     * - If a random value falls within [geneRate], the gene undergoes mutation. This involves creating a new gene
-     *   instance with the mutation applied, ensuring that the original gene's state is not altered.
+     * - The method does not consider any mutation probabilities and always mutates the provided gene.
+     * - A new gene instance is created by invoking the gene's `mutate` method.
      *
      * ## Usage:
      * This method is a key component in genetic algorithms where mutation is used to introduce variability and
      * explore new genetic combinations. It's invoked as part of the mutation process for individuals in a population.
      *
-     * @param gene The gene to potentially mutate.
-     * @return The original gene if no mutation occurs, or a new mutated gene instance if mutation occurs.
+     * @param gene The gene to be mutated.
+     * @return A new mutated gene instance.
      */
-    override fun mutateGene(gene: G) = when {
-        geneRate eq 0.0 -> gene
-        Domain.random.nextDouble() > geneRate -> gene
-        else -> gene.mutate()
-    }
+    override fun mutateGene(gene: G) = gene.mutate()
 
     companion object {
+        /**
+         * The default probability of a mutation occurring during the mutation process for an individual.
+         *
+         * This value represents the default likelihood that any given individual will be selected for mutation.
+         */
         const val DEFAULT_INDIVIDUAL_RATE = 0.5
+
+        /**
+         * The default probability of a chromosome undergoing mutation.
+         *
+         * This value represents the default likelihood that any given chromosome within an individual will be selected
+         * for mutation.
+         */
         const val DEFAULT_CHROMOSOME_RATE = 0.5
+
+        /**
+         * The default probability of an individual gene within a chromosome being mutated.
+         *
+         * This value represents the default likelihood that any given gene within a chromosome will be selected for
+         * mutation.
+         */
         const val DEFAULT_GENE_RATE = 0.5
     }
 }

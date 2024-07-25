@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.utils.trees
 
-import cl.ravenhill.keen.ExperimentalKeen
+import cl.ravenhill.keen.annotations.ExperimentalKeen
 
 /**
  * Represents a leaf node in a data structure, typically used in contexts like trees or hierarchical structures.
