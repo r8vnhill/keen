@@ -45,10 +45,6 @@ package cl.ravenhill.keen.evolution.executors
  * In this example, `MyCustomExecutor` implements the `KeenExecutor` interface. The factory,
  * `MyCustomExecutorFactory`, specifies how to create instances of `MyCustomExecutor` based on
  * a specific input type, `MyInputType`.
- *
- * @author [Ignacio Slater M.](https://www.github.com/r8vnhill)
- * @version 2.0.0
- * @since 2.0.0
  */
 interface KeenExecutor {
 
