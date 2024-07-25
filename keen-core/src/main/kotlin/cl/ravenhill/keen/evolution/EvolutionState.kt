@@ -11,8 +11,8 @@ import cl.ravenhill.keen.ranking.FitnessRanker
     ReplaceWith("GeneticEvolutionState(generation, ranker, population)")
 )
 class EvolutionState<T, G>(
-    val generation: Int,
-    val ranker: FitnessRanker<T, G>,
-    val population: Population<T, G>,
+    override val generation: Int,
+    override val ranker: FitnessRanker<T, G>,
+    override val population: Population<T, G>,
 ) : State<T, G> by GeneticEvolutionState(generation, ranker, population)
         where G : Gene<T, G>
