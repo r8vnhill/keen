@@ -19,7 +19,7 @@ import cl.ravenhill.keen.evolution.config.AlterationConfig
 import cl.ravenhill.keen.evolution.config.EvolutionConfig
 import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
-import cl.ravenhill.keen.evolution.engines.EvolutionEngine
+import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.genetic.Individual
@@ -47,7 +47,7 @@ class EvolutionEngineTest : FreeSpec({
                 alterationConfig(),
                 evolutionConfig()
             ) { populationConfig, selectionConfig, alterationConfig, evolutionConfig ->
-                with(EvolutionEngine(populationConfig, selectionConfig, alterationConfig, evolutionConfig)) {
+                with(GeneticAlgorithm(populationConfig, selectionConfig, alterationConfig, evolutionConfig)) {
                     genotypeFactory shouldBe populationConfig.genotypeFactory
                     populationSize shouldBe populationConfig.populationSize
                     survivalRate shouldBe selectionConfig.survivalRate
@@ -210,8 +210,8 @@ private fun engine(
     selectionConfig: Arb<SelectionConfig<Double, DoubleGene>>,
     alterationConfig: Arb<AlterationConfig<Double, DoubleGene>>,
     evolutionConfig: Arb<EvolutionConfig<Double, DoubleGene>>
-): Arb<EvolutionEngine<Double, DoubleGene>> = arbitrary {
-    EvolutionEngine(
+): Arb<GeneticAlgorithm<Double, DoubleGene>> = arbitrary {
+    GeneticAlgorithm(
         populationConfig.bind(),
         selectionConfig.bind(),
         alterationConfig.bind(),
