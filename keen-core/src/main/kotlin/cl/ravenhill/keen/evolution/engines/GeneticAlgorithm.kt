@@ -410,7 +410,7 @@ class GeneticAlgorithm<T, G>(
      * @property interceptor An [EvolutionInterceptor] for intercepting and modifying the evolution state.
      */
     class Factory<T, G>(
-        val fitnessFunction: (Representation<T, G>) -> Double,
+        val fitnessFunction: (Genotype<T, G>) -> Double,
         val genotypeFactory: Genotype.Factory<T, G>,
     ) : Evolver.Factory<T, G> where G : Gene<T, G> {
 

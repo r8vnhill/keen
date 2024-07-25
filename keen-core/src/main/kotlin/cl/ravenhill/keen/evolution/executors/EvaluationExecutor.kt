@@ -21,12 +21,13 @@ import cl.ravenhill.keen.genetic.Population
  * process and handling the creation and execution of individual evaluators.
  *
  * ## Usage:
- * Implement this interface to define custom evaluation strategies for evolutionary algorithms.
+ * Implement this interface to define custom evaluation strategies for evolutionary algorithms. Use the companion
+ * object methods to facilitate the selection, creation, and execution of evaluators.
  *
  * ### Example:
  * ```
- * class MyEvaluationExecutor<T, F : Feature<T, F>> : EvaluationExecutor<T, F> {
- *     override fun invoke(state: EvolutionState<T, F>, force: Boolean): EvolutionState<T, F> {
+ * class MyEvaluationExecutor<T, F : Feature<T, F>, R : Representation<T, F>> : EvaluationExecutor<T, F, R> {
+ *     override fun invoke(state: EvolutionState<T, F, R>, force: Boolean): EvolutionState<T, F, R> {
  *         // Custom evaluation logic
  *     }
  * }
@@ -34,8 +35,9 @@ import cl.ravenhill.keen.genetic.Population
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
  */
-interface EvaluationExecutor<T, F> : KeenExecutor where F : Feature<T, F> {
+interface EvaluationExecutor<T, F, R> : KeenExecutor where F : Feature<T, F>, R : Representation<T, F> {
 
     /**
      * Invokes the evaluation process on the given evolution state.
@@ -44,7 +46,7 @@ interface EvaluationExecutor<T, F> : KeenExecutor where F : Feature<T, F> {
      * @param force Whether to force re-evaluation of already evaluated individuals.
      * @return The updated evolution state with evaluated fitness values.
      */
-    operator fun invoke(state: EvolutionState<T, F>, force: Boolean = false): EvolutionState<T, F>
+    operator fun invoke(state: EvolutionState<T, F, R>, force: Boolean = false): EvolutionState<T, F, R>
 
     companion object {
 
@@ -96,16 +98,27 @@ interface EvaluationExecutor<T, F> : KeenExecutor where F : Feature<T, F> {
      *
      * The `Factory` class provides a way to create `EvaluationExecutor` instances using a specified fitness function.
      *
+     * ### Example:
+     * ```
+     * class MyEvaluationExecutorFactory<T, F : Feature<T, F>, R : Representation<T, F>> :
+     *     EvaluationExecutor.Factory<T, F, R>() {
+     *     override var creator: ((R) -> Double) -> EvaluationExecutor<T, F, R> = { fitnessFunction ->
+     *         MyEvaluationExecutor(fitnessFunction)
+     *     }
+     * }
+     * ```
+     *
      * @param T The type of the value held by the features.
      * @param F The type of the feature, which must extend [Feature].
+     * @param R The type of the representation, which must extend [Representation].
      */
-    open class Factory<T, F, R> : KeenExecutor.Factory<(R) -> Double, EvaluationExecutor<T, F>>
+    open class Factory<T, F, R> : KeenExecutor.Factory<(R) -> Double, EvaluationExecutor<T, F, R>>
             where F : Feature<T, F>, R : Representation<T, F> {
 
         /**
          * The creator function for producing `EvaluationExecutor` instances.
          */
-        override lateinit var creator: ((R) -> Double) -> EvaluationExecutor<T, F>
+        override lateinit var creator: ((R) -> Double) -> EvaluationExecutor<T, F, R>
     }
 }
 

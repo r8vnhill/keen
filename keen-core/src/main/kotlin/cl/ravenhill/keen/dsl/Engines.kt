@@ -81,7 +81,7 @@ fun <T, G> evolutionEngine(
  * @return An initialized instance of `GeneticAlgorithm`.
  */
 inline fun <T, G> geneticAlgorithm(
-    noinline fitnessFunction: (Representation<T, G>) -> Double,
+    noinline fitnessFunction: (Genotype<T, G>) -> Double,
     genotype: Genotype.Factory<T, G>,
     init: GeneticAlgorithm.Factory<T, G>.() -> Unit,
 ) where G : Gene<T, G> = GeneticAlgorithm.Factory(fitnessFunction, genotype).apply(init).make()
