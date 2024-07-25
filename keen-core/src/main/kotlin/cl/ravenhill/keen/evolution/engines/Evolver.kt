@@ -27,6 +27,10 @@ import cl.ravenhill.keen.features.Feature
  * }
  * ```
  *
+ * ## References:
+ * 1. De Jong, Kenneth A. Evolutionary Computation: A Unified Approach, 2006.
+ *  https://ieeexplore.ieee.org/servlet/opac?bknumber=6267245.
+ *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @property populationSize The size of the population managed by the evolver.

@@ -74,6 +74,13 @@ import kotlin.math.floor
  * val state = geneticAlgorithm.iterateGeneration(EvolutionState(...))
  * ```
  *
+ * ## References:
+ * 1. Holland, John H. Adaptation in natural and artificial systems: an introductory analysis with applications to
+ *  biology, control, and artificial intelligence. 1st MIT Press ed. Complex adaptive systems. Cambridge, Mass: MIT
+ *  Press, 1992.
+ * 2. Bergel, Alexandre. Agile Artificial Intelligence in Pharo: Implementing Neural Networks, Genetic Algorithms, and
+ *  Neuroevolution. For Professionals by Professionals. New York: Apress, 2020.
+ *
  * @param T The type of the value held by the genes.
  * @param G The type of the gene, which must extend [Gene].
  * @property genotypeFactory The factory used to create genotypes.

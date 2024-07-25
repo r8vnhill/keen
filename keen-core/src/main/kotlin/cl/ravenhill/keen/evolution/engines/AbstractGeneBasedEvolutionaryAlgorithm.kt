@@ -52,6 +52,10 @@ import cl.ravenhill.keen.operators.selection.Selector
  * }
  * ```
  *
+ * ## References:
+ * 1. De Jong, Kenneth A. Evolutionary Computation: A Unified Approach, 2006.
+ *  https://ieeexplore.ieee.org/servlet/opac?bknumber=6267245.
+ *
  * @param T The type of the value held by the genes.
  * @param G The type of the gene, which must extend [Gene].
  * @param evolutionConfig The configuration settings for the evolutionary algorithm.
