@@ -150,8 +150,7 @@ open class EvolutionState<T, F>(
      *
      * @return A string representation of the `EvolutionState`.
      */
-    override fun toString() =
-        "EvolutionState(generation=$generation, population=${population.map { it.toSimpleString() }})"
+    override fun toString() = "EvolutionState(generation=$generation, population=$population)"
 
     /**
      * Checks if the given object is equal to this `EvolutionState`.
