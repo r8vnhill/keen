@@ -5,6 +5,7 @@ import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.Genotype
+import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.selection.Selector
 
@@ -78,7 +79,7 @@ abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G>(
     populationConfig: PopulationConfig<T, G>,
     evolutionConfig: EvolutionConfig<T, G>,
     selectionConfig: SelectionConfig<T, G>
-) : Evolver<T, G> where G : Gene<T, G> {
+) : Evolver<T, G, Individual<T, G>> where G : Gene<T, G> {
 
     private var state = GeneticEvolutionState.empty(evolutionConfig.ranker)
 
