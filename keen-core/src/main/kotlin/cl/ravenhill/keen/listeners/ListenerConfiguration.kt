@@ -1,5 +1,6 @@
 package cl.ravenhill.keen.listeners
 
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
@@ -10,42 +11,48 @@ import kotlin.time.Duration
 import kotlin.time.TimeSource
 
 /**
- * Configuration data class for setting up listeners in the evolutionary computation process.
+ * Configuration settings for creating listeners in the evolutionary algorithm.
+ *
+ * The `ListenerConfiguration` data class encapsulates various configuration settings used to create and configure
+ * listeners for monitoring and responding to events in the evolutionary process. This includes settings for the ranker,
+ * the evolution record, the time source, and the precision of time measurements.
  *
  * ## Usage:
- * This class provides configuration for listeners, including the ranker used for ranking individuals, the record of the
- * evolution process, the time source, and the precision for measuring duration.
+ * Use this class to configure listeners with specific settings before attaching them to the evolutionary algorithm.
+ * This configuration allows listeners to have access to important context and utility functions.
  *
- * ### Example 1: Default Configuration
- * ```
- * val config = ListenerConfiguration<Int, MyGene>()
- * ```
- *
- * ### Example 2: Custom Configuration
- * ```
- * val customRanker = MyCustomRanker<Int, MyGene>()
- * val customEvolution = MyCustomEvolutionRecord<Int, MyGene>()
- * val customTimeSource = MyCustomTimeSource()
- * val config = ListenerConfiguration(
- *     ranker = customRanker,
- *     evolution = customEvolution,
- *     timeSource = customTimeSource,
- *     precision = Duration::inWholeSeconds
+ * ### Example:
+ * ```kotlin
+ * val listenerConfig = ListenerConfiguration(
+ *     ranker = FitnessMaxRanker(),
+ *     evolution = EvolutionRecord(),
+ *     timeSource = TimeSource.Monotonic,
+ *     precision = Duration::inWholeMilliseconds
  * )
+ * val listeners = listOf<ListenerFactory<MyGeneType, MyFeatureType>> { config ->
+ *     EvolutionSummary(config)
+ * }.map { it(listenerConfig) }
  * ```
- * @param T the type of the gene value
- * @param G the type of the gene, which must extend [Gene]
- * @property ranker the ranker used for ranking individuals, defaults to [FitnessMaxRanker]
- * @property evolution the record of the evolution process, defaults to [EvolutionRecord]
- * @property timeSource the source of time, defaults to [TimeSource.Monotonic]
- * @property precision the function used to measure the duration, defaults to [Duration.inWholeMilliseconds]
- * @property currentGeneration a box that holds the current generation record, initialized to null
+ *
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @property ranker The ranker used to evaluate and compare individuals in the population.
+ * @property evolution The record of the evolutionary process.
+ * @property timeSource The source of time used for measuring durations and timestamps.
+ * @property precision The function used to determine the precision of time measurements.
+ * @constructor Creates an instance of `ListenerConfiguration` with the specified settings.
  */
-data class ListenerConfiguration<T, G>(
-    val ranker: FitnessRanker<T, G> = FitnessMaxRanker(),
-    val evolution: EvolutionRecord<T, G> = EvolutionRecord(),
+data class ListenerConfiguration<T, F>(
+    val ranker: FitnessRanker<T, F> = FitnessMaxRanker(),
+    val evolution: EvolutionRecord<T, F> = EvolutionRecord(),
     val timeSource: TimeSource = TimeSource.Monotonic,
     val precision: Duration.() -> Long = Duration::inWholeMilliseconds,
-) where G : Gene<T, G> {
-    val currentGeneration = Box.mutable<GenerationRecord<T, G>?>(null)
+) where F : Feature<T, F> {
+
+    /**
+     * The current generation record, stored in a mutable box.
+     *
+     * This property allows listeners to access and modify the current generation record during the evolutionary process.
+     */
+    val currentGeneration = Box.mutable<GenerationRecord<T, F>?>(null)
 }

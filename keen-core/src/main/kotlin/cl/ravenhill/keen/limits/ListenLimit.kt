@@ -45,8 +45,8 @@ import cl.ravenhill.keen.mixins.FitnessEvaluable
  * @constructor Creates an instance of `ListenLimit` with the specified listener and predicate.
  */
 open class ListenLimit<T, F, I>(
-    private val listener: EvolutionListener<T, F>,
-    private val predicate: EvolutionListener<T, F>.(State<T, F, I>) -> Boolean
+    private val listener: EvolutionListener<T, F, I>,
+    private val predicate: EvolutionListener<T, F, I>.(State<T, F, I>) -> Boolean
 ) : Limit<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
 
     /**
