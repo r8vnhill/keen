@@ -5,39 +5,39 @@
 
 package cl.ravenhill.keen.evolution.config
 
-import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.operators.selection.Selector
+import cl.ravenhill.keen.repr.Representation
 
 /**
- * Represents the configuration for selection processes in an evolutionary algorithm.
+ * Configuration class for the selection process in an evolutionary algorithm.
  *
- * This class encapsulates parameters related to the selection of individuals in a population,
- * including the rate of survival and the methods for selecting parents and survivors.
+ * The `SelectionConfig` data class encapsulates the settings and components used for parent and survivor selection
+ * during the evolutionary process. This includes the survival rate, parent selector, and survivor selector.
  *
- * This configuration is essential in controlling how individuals are selected for reproduction and survival,
- * impacting the genetic diversity and fitness of the population over generations. It allows for flexibility
- * in defining different selection strategies within the evolutionary process.
+ * ## Usage:
+ * This class is used to configure the selection process in the evolutionary algorithm by specifying the necessary
+ * selectors and survival rate.
  *
- * Example Usage:
- * ```
- * val selectionConfig = SelectionConfig(
+ * ### Example 1: Basic Configuration
+ * ```kotlin
+ * val config = SelectionConfig<MyValue, MyFeature, MyRepresentation>(
  *     survivalRate = 0.5,
  *     parentSelector = TournamentSelector(),
  *     survivorSelector = RouletteWheelSelector()
  * )
- * val evolutionEngine = EvolutionEngine(populationConfig, selectionConfig, otherConfigParameters)
  * ```
  *
- * @param T The type of data encapsulated by the genes within the individuals.
- * @param G The type of gene in the individuals, conforming to the [Gene] interface.
- * @property survivalRate A double value representing the proportion of the population that will survive to the next
- *   generation.
- * @property parentSelector A [Selector] instance used for choosing parents for producing offspring.
- * @property survivorSelector A [Selector] instance used for choosing individuals that will survive to the next
- *   generation.
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
+ * @property survivalRate The rate at which individuals survive to the next generation.
+ * @property parentSelector The selector used to choose parents for reproduction.
+ * @property survivorSelector The selector used to choose survivors for the next generation.
+ * @constructor Creates an instance of `SelectionConfig` with the specified settings and selectors.
  */
-data class SelectionConfig<T, G>(
+data class SelectionConfig<T, F, R>(
     val survivalRate: Double,
-    val parentSelector: Selector<T, G>,
-    val survivorSelector: Selector<T, G>
-) where G : Gene<T, G>
+    val parentSelector: Selector<T, F, R>,
+    val survivorSelector: Selector<T, F, R>
+) where F : Feature<T, F>, R : Representation<T, F>
