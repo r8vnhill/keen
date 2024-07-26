@@ -45,7 +45,7 @@ fun main() {
     summary.display()
     val schedule = MutableList(RoomSchedulingProblem.meetings.size) { mutableListOf<Meeting>() }
     RoomSchedulingProblem.meetings.forEachIndexed { index, meeting ->
-        val room = summary.fittest.genotype[index][0].value
+        val room = summary.fittest.representation[index][0].value
         schedule[room] += meeting
     }
     schedule.forEachIndexed { index, meetings ->

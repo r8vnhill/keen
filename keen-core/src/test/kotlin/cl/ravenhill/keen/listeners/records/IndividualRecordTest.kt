@@ -22,7 +22,7 @@ class IndividualRecordTest : FreeSpec({
         "can be created with a generation number" {
             checkAll(Arb.genotype(arbChromosome()), Arb.double().filterNot { it.isNaN() }) { genotype, fitness ->
                 IndividualRecord(genotype, fitness).apply {
-                    this.genotype shouldBe genotype
+                    this.representation shouldBe genotype
                     this.fitness shouldBe fitness
                 }
             }
@@ -31,7 +31,7 @@ class IndividualRecordTest : FreeSpec({
         "can be converted to an Individual" {
             checkAll(Arb.individualRecord(Arb.genotype(arbChromosome()))) { record ->
                 record.toIndividual().apply {
-                    this.genotype shouldBe record.genotype
+                    this.genotype shouldBe record.representation
                     this.fitness shouldBe record.fitness
                 }
             }

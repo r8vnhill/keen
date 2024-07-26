@@ -121,7 +121,7 @@ class TspPlotter(
      * @return A `Figure` object representing the plotted route.
      */
     private fun createRouteFigure(): Figure {
-        val best = fittest.genotype.flatten()
+        val best = fittest.representation.flatten()
         val data = mapOf(
             "x" to best.map { it.first.toDouble() },
             "y" to best.map { it.second.toDouble() },

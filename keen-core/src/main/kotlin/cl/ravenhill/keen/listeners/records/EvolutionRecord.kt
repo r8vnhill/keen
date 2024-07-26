@@ -46,10 +46,6 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @property initialization A record of the initialization phase in the evolutionary process.
  *
  * @constructor Creates a new instance of `EvolutionRecord` with an optional list of generation records.
- *
- * @author <a href="https://www.github.com/r8vnhill">Ignacio Slater M.</a>
- * @version 2.0.0
- * @since 2.0.0
  */
 data class EvolutionRecord<T, G>(val generations: MutableList<GenerationRecord<T, G>> = mutableListOf()) :
     AbstractTimedRecord() where G : Gene<T, G> {

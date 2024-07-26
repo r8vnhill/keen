@@ -117,7 +117,7 @@ class EvolutionPrinter<T, G> private constructor(
         |--> Best fitness: ${lastGeneration.population.offspring.first().fitness}
         |--> Worst fitness: ${lastGeneration.population.offspring.last().fitness}
         |--> Average fitness: ${lastGeneration.population.offspring.map { it.fitness }.average()}
-        |--> Fittest: ${lastGeneration.population.offspring.first().genotype}
+        |--> Fittest: ${lastGeneration.population.offspring.first().representation}
         |<<<>>>
         """.trimMargin()
         }

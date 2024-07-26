@@ -116,7 +116,7 @@ class EvolutionSummary<T, G>(
             |--> Min generation time: ${generations.minOfOrNull { it.duration }} ms
             |--> Generation: ${evolution.generations.last().generation}
             |--> Steady generations: ${evolution.generations.last().steady}
-            |--> Fittest: ${fittest(ranker, evolution).genotype}
+            |--> Fittest: ${fittest(ranker, evolution).representation}
             |--> Best fitness: ${fittest(ranker, evolution).fitness}
             """.trimIndent()
         )
