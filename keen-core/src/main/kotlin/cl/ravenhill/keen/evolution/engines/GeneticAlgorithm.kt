@@ -44,7 +44,7 @@ private typealias ListenLimitFactory<T, G> = (ListenerConfiguration<T, G>) -> Li
  * The `ListenerFactory` type alias defines a function type that constructs an `EvolutionListener` instance using a
  * `ListenerConfiguration`. This allows for the creation of custom listeners for the evolutionary algorithm.
  */
-private typealias ListenerFactory<T, G> = (ListenerConfiguration<T, G>) -> EvolutionListener<T, G>
+private typealias ListenerFactory<T, G> = (ListenerConfiguration<T, G>) -> EvolutionListener<T, G, Individual<T, G>>
 
 /**
  * Represents a genetic algorithm in the evolutionary computation framework.
@@ -291,15 +291,15 @@ class GeneticAlgorithm<T, G>(
      * @property parentSelector The selector used to choose parents for reproduction. Default is a [TournamentSelector].
      * @property survivorSelector The selector used to choose survivors for the next generation. Default is a
      *  [TournamentSelector].
-     * @property alterers The list of alterers used to modify the offspring. Default is an empty list.
-     * @property limits The list of limits used to control the evolution process. Default is an empty list.
-     * @property limitFactories The list of limit factories used to create limits. Default is an empty list.
-     * @property ranker The ranker used to order individuals in the population. Default is a [FitnessMaxRanker].
-     * @property listeners The list of listeners used to monitor the evolution process. Default is an empty list.
-     * @property listenerFactories The list of listener factories used to create listeners. Default is an empty list.
-     * @property evaluator The factory used to create the evaluator for the fitness function. Default is a
-     *  [SequentialEvaluator].
-     * @property interceptor The interceptor used to modify the evolution process. Default is an identity interceptor.
+     * @property alterers The list of alterers used to modify the offspring. Default is [defaultAlterers].
+     * @property limits The list of limit factories used to create stopping conditions for the evolutionary process.
+     *  Default is [defaultLimits].
+     * @property ranker The ranker used to order individuals in the population. Default is a [defaultRanker].
+     * @property listeners The list of listener factories used to create listeners for the evolutionary process. Default
+     *  is [defaultListeners].
+     * @property evaluator The factory used to create the evaluator for the fitness function. Default is
+     *  [defaultEvaluator].
+     * @property interceptor The interceptor used to modify the evolution process. Default is [defaultInterceptor].
      * @constructor Creates an instance of `Factory` with the specified fitness function and genotype factory.
      */
     class Factory<T, G>(
@@ -329,10 +329,7 @@ class GeneticAlgorithm<T, G>(
 
         var ranker = defaultRanker<T, G>()
 
-        @Deprecated("Use the 'listenerFactories' property instead.")
         var listeners = defaultListeners<T, G>()
-
-        var listenerFactories = mutableListOf<(ListenerConfiguration<T, G>) -> EvolutionListener<T, G>>()
 
         var evaluator = defaultEvaluator<T, G>()
 
@@ -350,10 +347,7 @@ class GeneticAlgorithm<T, G>(
             evolutionConfig = EvolutionConfig(
                 limits.map { it(ListenerConfiguration(ranker = ranker)) },
                 ranker,
-                // This is meant to be removed in the future in favor of the listenerFactories property
-                if (listenerFactories.isEmpty()) listeners else listenerFactories.map {
-                    it(ListenerConfiguration(ranker = ranker))
-                },
+                listeners.map { it(ListenerConfiguration(ranker = ranker)) },
                 evaluator.creator(fitnessFunction),
                 interceptor
             )
@@ -413,14 +407,15 @@ class GeneticAlgorithm<T, G>(
             fun <T, G> defaultAlterers() where G : Gene<T, G> = mutableListOf<Alterer<T, G>>()
 
             /**
-             * Provides the default list of limits for the genetic algorithm.
+             * Creates a default list of limit factories for the evolutionary algorithm.
              *
-             * This function returns a mutable list of limits used to control the evolutionary process in the genetic
-             * algorithm. The list is empty by default.
+             * The `defaultLimits` function provides a default implementation for creating an empty list of limit
+             * factories. These factories can be used to generate `ListenLimit` instances that define stopping
+             * conditions for the evolutionary process.
              *
              * @param T The type of the value held by the genes.
              * @param G The type of the gene, which must extend [Gene].
-             * @return A mutable list of limits.
+             * @return A mutable list of limit factories.
              */
             fun <T, G> defaultLimits() where G : Gene<T, G> = mutableListOf<ListenLimitFactory<T, G>>()
 
@@ -437,16 +432,17 @@ class GeneticAlgorithm<T, G>(
             fun <T, G> defaultRanker() where G : Gene<T, G> = FitnessMaxRanker<T, G>()
 
             /**
-             * Provides the default list of listeners for the genetic algorithm.
+             * Creates a default list of listener factories for the genetic algorithm.
              *
-             * This function returns a mutable list of listeners used to monitor and react to events during the genetic
-             * algorithm process. The list is empty by default.
+             * The `defaultListeners` function provides a default implementation for creating an empty list of listener
+             * factories. These factories can be used to generate `EvolutionListener` instances that respond to various
+             * events during the evolutionary process.
              *
              * @param T The type of the value held by the genes.
              * @param G The type of the gene, which must extend [Gene].
-             * @return A mutable list of evolution listeners.
+             * @return A mutable list of listener factories.
              */
-            fun <T, G> defaultListeners() where G : Gene<T, G> = mutableListOf<EvolutionListener<T, G>>()
+            fun <T, G> defaultListeners() where G : Gene<T, G> = mutableListOf<ListenerFactory<T, G>>()
 
             /**
              * Provides the default evaluator factory for the genetic algorithm.
