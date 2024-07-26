@@ -25,8 +25,8 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * ```kotlin
  * class MyGeneBasedAlgorithm<T, G>(
  *     populationConfig: PopulationConfig<T, G>,
- *     evolutionConfig: EvolutionConfig<T, G>,
- *     selectionConfig: SelectionConfig<T, G>
+ *     evolutionConfig: EvolutionConfig<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>,
+ *     selectionConfig: SelectionConfig<T, G, Genotype<T, G>>
  * ) : AbstractGeneBasedEvolutionaryAlgorithm<T, G>(populationConfig, evolutionConfig, selectionConfig)
  *         where G : Gene<T, G> {
  *
@@ -76,11 +76,11 @@ import cl.ravenhill.keen.genetic.genes.Gene
  */
 abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G>(
     populationConfig: PopulationConfig<T, G>,
-    evolutionConfig: EvolutionConfig<T, G>,
-    selectionConfig: SelectionConfig<T, G>
-) : Evolver<T, G, Individual<T, G>> where G : Gene<T, G> {
+    evolutionConfig: EvolutionConfig<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>,
+    selectionConfig: SelectionConfig<T, G, Genotype<T, G>>
+) : Evolver<T, G, Individual<T, G, Genotype<T, G>>> where G : Gene<T, G> {
 
-    private var state = GeneticEvolutionState.empty(evolutionConfig.ranker)
+    private var state = GeneticEvolutionState.empty<T, G>(evolutionConfig.ranker)
 
     val listeners = evolutionConfig.listeners.toMutableList()
     val limits = evolutionConfig.limits

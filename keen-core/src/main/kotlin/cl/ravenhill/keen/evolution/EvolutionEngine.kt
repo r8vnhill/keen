@@ -17,7 +17,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 )
 class EvolutionEngine<T, G>(
     populationConfig: PopulationConfig<T, G>,
-    selectionConfig: SelectionConfig<T, G>,
+    selectionConfig: SelectionConfig<T, G, Genotype<T, G>>,
     alterationConfig: AlterationConfig<T, G>,
     evolutionConfig: EvolutionConfig<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
 ) : Evolver<T, G, Individual<T, G, Genotype<T, G>>> by GeneticAlgorithm(
