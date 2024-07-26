@@ -20,7 +20,6 @@ import cl.ravenhill.keen.exceptions.EngineException
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.limits.ListenLimit
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
@@ -30,6 +29,22 @@ import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import kotlin.math.ceil
 import kotlin.math.floor
+
+/**
+ * Factory type alias for creating `ListenLimit` instances.
+ *
+ * The `ListenLimitFactory` type alias defines a function type that constructs a `ListenLimit` instance using a
+ * `ListenerConfiguration`. This allows for the creation of custom limits based on listener events and predicates.
+ */
+private typealias ListenLimitFactory<T, G> = (ListenerConfiguration<T, G>) -> ListenLimit<T, G, Individual<T, G>>
+
+/**
+ * Factory type alias for creating `EvolutionListener` instances.
+ *
+ * The `ListenerFactory` type alias defines a function type that constructs an `EvolutionListener` instance using a
+ * `ListenerConfiguration`. This allows for the creation of custom listeners for the evolutionary algorithm.
+ */
+private typealias ListenerFactory<T, G> = (ListenerConfiguration<T, G>) -> EvolutionListener<T, G>
 
 /**
  * Represents a genetic algorithm in the evolutionary computation framework.
@@ -310,10 +325,7 @@ class GeneticAlgorithm<T, G>(
 
         var alterers = defaultAlterers<T, G>()
 
-        @Deprecated("Use the 'limitFactories' property instead.")
-        var limits = defaultLimits<T, G>()
-
-        var limitFactories = mutableListOf<(ListenerConfiguration<T, G>) -> ListenLimit<T, G>>()
+        var limits = mutableListOf<(ListenerConfiguration<T, G>) -> ListenLimit<T, G, Individual<T, G>>>()
 
         var ranker = defaultRanker<T, G>()
 
@@ -336,9 +348,7 @@ class GeneticAlgorithm<T, G>(
             selectionConfig = SelectionConfig(survivalRate, parentSelector, survivorSelector),
             alterationConfig = AlterationConfig(alterers),
             evolutionConfig = EvolutionConfig(
-                if (limitFactories.isEmpty()) limits else limitFactories.map {
-                    it(ListenerConfiguration(ranker = ranker))
-                },
+                limits.map { it(ListenerConfiguration(ranker = ranker)) },
                 ranker,
                 // This is meant to be removed in the future in favor of the listenerFactories property
                 if (listenerFactories.isEmpty()) listeners else listenerFactories.map {
@@ -412,7 +422,7 @@ class GeneticAlgorithm<T, G>(
              * @param G The type of the gene, which must extend [Gene].
              * @return A mutable list of limits.
              */
-            fun <T, G> defaultLimits() where G : Gene<T, G> = mutableListOf<Limit<T, G>>()
+            fun <T, G> defaultLimits() where G : Gene<T, G> = mutableListOf<ListenLimitFactory<T, G>>()
 
             /**
              * Provides the default ranker for the genetic algorithm.

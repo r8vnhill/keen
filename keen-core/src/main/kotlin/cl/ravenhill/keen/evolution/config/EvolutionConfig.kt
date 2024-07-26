@@ -36,7 +36,6 @@ import cl.ravenhill.keen.ranking.FitnessRanker
  *     evaluator = SequentialEvaluator(fitnessFunction),
  *     interceptor = EvolutionInterceptor.identity()
  * )
- * val algorithm = GeneticAlgorithm(config)
  * ```
  *
  * @param T The type of the value held by the genes.

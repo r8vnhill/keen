@@ -6,85 +6,65 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.engines.Evolver
-import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.evolution.states.State
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
+import cl.ravenhill.keen.mixins.FitnessEvaluable
 
 
 /**
- * A limit implementation in an evolutionary algorithm that triggers based on a specified condition and involves an
- * [EvolutionListener].
+ * Represents a limit in the evolutionary algorithm that triggers based on an event listener and a predicate.
  *
- * `ListenLimit` integrates an [EvolutionListener] into the limit checking mechanism of an evolutionary algorithm. It
- * evaluates a condition (defined as a predicate) on the current evolutionary state and determines whether the
- * evolutionary process should be halted.
- *
- * ## Functionality:
- * - **Listener Integration**: Incorporates an [EvolutionListener] into the limit evaluation process. This listener
- *   can be used to monitor and react to the evolutionary process, providing additional flexibility in defining
- *   the termination condition.
- * - **Conditional Check**: Utilizes a custom predicate that takes the current [GeneticEvolutionState] and evaluates
- *   whether a specified condition has been met. If the condition returns `true`, it indicates that the
- *   evolutionary process should be terminated.
+ * The `ListenLimit` class implements the `Limit` interface and provides a mechanism to stop the evolutionary process
+ * based on a condition evaluated by an event listener. This allows for custom stopping conditions that can be defined
+ * using listeners.
  *
  * ## Usage:
- * `ListenLimit` is particularly useful in scenarios where the termination condition is complex or requires
- * monitoring specific aspects of the evolutionary process, such as population diversity, convergence rate,
- * or external criteria.
+ * Use this class to define custom stopping conditions for the evolutionary algorithm based on events or states observed
+ * by listeners. This is useful for scenarios where the stopping condition depends on specific events or complex state
+ * evaluations.
  *
  * ### Example:
  * ```kotlin
- * val listener: EvolutionListener<MyDataType, MyGene> = /* Define your listener */
- * val limit = ListenLimit(listener) { state ->
- *     // Define the condition for termination based on the state
- *     state.generation > 100 || isConverged(listener)
+ * val limit = ListenLimit(
+ *     listener = EvolutionSummary(listenerConfig),
+ *     predicate = { state -> state.generation >= 100 }
+ * )
+ * val engine = geneticAlgorithm(...) {
+ *   limits += limit
+ *   // ...
  * }
  * ```
- * In this example, `ListenLimit` is created with a listener and a predicate that checks if the number of
- * generations has exceeded 100 or if the population has converged. The evolutionary process will stop when
- * either of these conditions is met.
  *
- * See [SteadyGenerations] for an example of a `ListenLimit` implementation.
- *
- * @param T The type of data encapsulated by the genes within the individuals.
- * @param G The type of gene in the individuals, conforming to the [Gene] interface.
- * @param listener The [EvolutionListener] that is integrated into the limit checking process.
- * @param predicate A function associated with the listener that takes an [GeneticEvolutionState] and returns
- *   a `Boolean` indicating whether the evolutionary process should be terminated.
- * @property engine The [Evolver] instance that is executing the evolutionary process.
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param I The type of the individuals in the state, which must extend [FitnessEvaluable].
+ * @property listener The event listener used to evaluate the predicate.
+ * @property predicate The predicate evaluated by the listener to determine if the limit condition is met.
+ * @constructor Creates an instance of `ListenLimit` with the specified listener and predicate.
  */
-open class ListenLimit<T, G>(
-    private val listener: EvolutionListener<T, G>,
-    private val predicate: EvolutionListener<T, G>.(GeneticEvolutionState<T, G>) -> Boolean
-) : Limit<T, G> where G : Gene<T, G> {
-
-    @Deprecated("This property will be removed in future versions.")
-    override var engine: Evolver<T, G>? = null
+open class ListenLimit<T, F, I>(
+    private val listener: EvolutionListener<T, F>,
+    private val predicate: EvolutionListener<T, F>.(State<T, F, I>) -> Boolean
+) : Limit<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
 
     /**
-     * Evaluates the termination condition for the evolutionary process using the provided listener predicate.
+     * The engine associated with this limit.
      *
-     * This method is an implementation of the `invoke` function from the [Limit] interface. It is called during the
-     * evolutionary process to check whether the specified condition (defined in the [predicate]) is met, based on
-     * the current [GeneticEvolutionState]. If the condition is satisfied, it indicates that the evolutionary process
-     * should be halted.
-     *
-     * ## Functionality:
-     * - **Condition Evaluation**: Utilizes the [predicate] function, which is part of the [listener], to evaluate
-     *   whether the termination condition is met.
-     * - **State Analysis**: The current [GeneticEvolutionState] is passed to the predicate function, allowing it to
-     *   analyze various aspects of the state, such as the generation number, population fitness, diversity, or
-     *   any other relevant metric.
-     *
-     * ## Usage:
-     * This method is automatically invoked by the evolutionary algorithm's control mechanism at each generation or
-     * evolutionary step. It is not typically called directly by the user.
-     *
-     * @param state The current [GeneticEvolutionState] of the evolutionary process. This state is used by the predicate
-     *  to determine whether the termination condition is satisfied.
-     * @return `true` if the termination condition is met and the evolutionary process should be halted, `false`
-     *  otherwise.
+     * This property is deprecated and will be removed in future versions.
      */
-    override fun invoke(state: GeneticEvolutionState<T, G>) = listener.predicate(state)
+    @Deprecated("This property will be removed in future versions.")
+    override var engine: Evolver<T, F, I>? = null
+
+    /**
+     * Evaluates the limit condition based on the current state.
+     *
+     * This method determines whether the evolutionary process should stop based on the predicate evaluated by the
+     * listener.
+     *
+     * @param state The current state of the evolutionary process.
+     * @return `true` if the limit condition is met and the process should stop, `false` otherwise.
+     */
+    override fun invoke(state: State<T, F, I>) = listener.predicate(state)
 }
