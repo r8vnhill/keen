@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.benchmarks.stacktrace
 
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import kotlin.reflect.KFunction
 
 

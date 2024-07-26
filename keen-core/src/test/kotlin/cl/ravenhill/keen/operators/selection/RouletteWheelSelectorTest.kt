@@ -14,7 +14,7 @@ import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.operators.arbRouletteWheelSelector
 import cl.ravenhill.keen.assertions.should.shouldBeEq
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.FitnessMinRanker

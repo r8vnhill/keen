@@ -8,7 +8,7 @@ package cl.ravenhill.keen.ranking
 import cl.ravenhill.keen.arb.datatypes.arbOrderedPair
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.arb.genetic.genotype
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe

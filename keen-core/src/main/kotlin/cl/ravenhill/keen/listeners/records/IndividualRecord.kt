@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.listeners.records
 
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 
 

@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.arb.evolution
 
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
-import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.ranking.FitnessRanker
 import io.kotest.property.Arb

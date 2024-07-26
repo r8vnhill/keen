@@ -8,7 +8,7 @@ package cl.ravenhill.keen.evolution.config
 
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener

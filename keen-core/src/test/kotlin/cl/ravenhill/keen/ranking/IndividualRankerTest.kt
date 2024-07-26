@@ -14,7 +14,7 @@ import cl.ravenhill.keen.arb.genetic.genotype
 import cl.ravenhill.keen.arb.genetic.arbIndividual
 import cl.ravenhill.keen.arb.genetic.arbPopulation
 import cl.ravenhill.keen.arb.arbRanker
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo

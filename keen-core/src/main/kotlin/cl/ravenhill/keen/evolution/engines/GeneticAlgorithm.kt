@@ -18,7 +18,7 @@ import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.exceptions.EngineException
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.limits.ListenLimit
 import cl.ravenhill.keen.listeners.ListenerConfiguration

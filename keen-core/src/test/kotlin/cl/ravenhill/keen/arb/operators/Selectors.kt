@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.arb.operators
 
-import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selection.Selector

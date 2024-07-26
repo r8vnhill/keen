@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.arb
 
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.ranking.FitnessMaxRanker

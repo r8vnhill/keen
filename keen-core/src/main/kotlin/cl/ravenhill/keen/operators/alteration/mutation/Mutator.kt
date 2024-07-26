@@ -12,7 +12,7 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.chromosomes.Chromosome
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.alteration.Alterer

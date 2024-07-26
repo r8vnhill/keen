@@ -5,9 +5,8 @@ import cl.ravenhill.keen.evolution.config.PopulationConfig
 import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.operators.selection.Selector
 
 /**
  * Abstract class representing a gene-based evolutionary algorithm.

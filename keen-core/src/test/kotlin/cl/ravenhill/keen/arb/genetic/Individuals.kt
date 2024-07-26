@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.arb.genetic
 
 import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.Individual
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.Gene
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary

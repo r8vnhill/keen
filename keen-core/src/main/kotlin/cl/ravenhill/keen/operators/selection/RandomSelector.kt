@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.operators.selection
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.ranking.FitnessRanker
 

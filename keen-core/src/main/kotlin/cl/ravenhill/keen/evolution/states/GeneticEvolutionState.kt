@@ -10,8 +10,8 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.genetic.Individual
-import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.Individual
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.ranking.FitnessRanker
 

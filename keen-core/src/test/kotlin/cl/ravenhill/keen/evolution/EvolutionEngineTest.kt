@@ -23,8 +23,8 @@ import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.evolution.executors.SequentialEvaluator
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
-import cl.ravenhill.keen.genetic.Individual
-import cl.ravenhill.keen.genetic.Population
+import cl.ravenhill.keen.Individual
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.numeric.DoubleGene
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener

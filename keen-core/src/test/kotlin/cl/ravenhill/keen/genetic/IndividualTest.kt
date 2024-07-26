@@ -6,19 +6,18 @@
 
 package cl.ravenhill.keen.genetic
 
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.arb.datatypes.arbNonNaNDouble
 import cl.ravenhill.keen.arb.genetic.*
 import cl.ravenhill.keen.arb.genetic.chromosomes.arbChromosome
-import cl.ravenhill.keen.arb.genetic.chromosomes.arbNothingChromosome
 import cl.ravenhill.keen.assertions.should.shouldHaveFitness
+import cl.ravenhill.keen.fitness
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.filterNot
-import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
 
 class IndividualTest : FreeSpec({
