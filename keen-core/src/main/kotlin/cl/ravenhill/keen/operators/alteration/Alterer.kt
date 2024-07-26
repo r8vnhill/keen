@@ -6,50 +6,59 @@
 
 package cl.ravenhill.keen.operators.alteration
 
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
-import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.operators.Operator
 
 
 /**
- * An interface representing an alterer in an evolutionary algorithm.
+ * Represents an alterer in an evolutionary algorithm.
  *
- * An `Alterer` is a specialized type of [Operator] focused on modifying or altering the genetic makeup
- * of individuals within a population. These alterations are typically mutations or other genetic modifications
- * that introduce diversity and aid in the evolutionary process.
- *
- * ## Responsibilities of an Alterer:
- * - **Genetic Modification**: Implementations of this interface are responsible for altering the genes of individuals
- *   in a population. This could involve mutation, gene swapping, or other forms of genetic manipulation.
- * - **State Transformation**: As with any [Operator], an `Alterer` takes an [GeneticEvolutionState] as input and
- *   produces a new [GeneticEvolutionState] reflecting the changes made to the population.
+ * The `Alterer` interface extends the `Operator` interface and defines the basic structure and operations for
+ * altering individuals in the population. This includes a method to combine multiple alterers using the plus operator.
  *
  * ## Usage:
- * Implement this interface to define specific alteration strategies in an evolutionary algorithm. The specific
- * alteration logic can vary widely depending on the requirements of the algorithm and the nature of the problem
- * being addressed.
+ * Implement this interface in classes that perform specific alteration operations on the state of the evolutionary
+ * algorithm, such as mutation or crossover. Provide the logic to transform the population accordingly.
  *
  * ### Example:
- * Implementing a simple mutation alterer:
  * ```kotlin
- * class MutationAlterer<T, G> : Alterer<T, G> where G : Gene<T, G> {
- *     override fun invoke(state: EvolutionState<T, G>, outputSize: Int): EvolutionState<T, G> {
- *         // Implement mutation logic here
- *         val mutatedPopulation = state.population.map { /* Apply mutation to each individual */ }
- *         return EvolutionState(state.generation + 1, mutatedPopulation)
+ * class MutationAlterer<T, F> : Alterer<T, F> where F : Feature<T, F> {
+ *
+ *     override fun <S, I> invoke(
+ *         state: S,
+ *         outputSize: Int,
+ *         buildState: (List<I>) -> S
+ *     ): S where S : State<T, F, I>, I : FitnessEvaluable {
+ *         // Implementation of the mutation logic
  *     }
  * }
  *
- * // Usage in an evolutionary algorithm
- * val alterer: Alterer<MyDataType, MyGene> = MutationAlterer()
- * val newState = alterer(currentState, outputSize)
- * ```
- * In this example, `MutationAlterer` implements the `Alterer` interface and applies mutations to each individual
- * in the population of the current [GeneticEvolutionState], resulting in a new state for the next generation.
+ * class CrossoverAlterer<T, F> : Alterer<T, F> where F : Feature<T, F> {
  *
- * @param T The type of data encapsulated by the genes within the individuals.
- * @param G The type of gene in the individuals, conforming to the [Gene] interface.
+ *     override fun <S, I> invoke(
+ *         state: S,
+ *         outputSize: Int,
+ *         buildState: (List<I>) -> S
+ *     ): S where S : State<T, F, I>, I : FitnessEvaluable {
+ *         // Implementation of the crossover logic
+ *     }
+ * }
+ *
+ * val combinedAlterers = MutationAlterer<MyGeneType, MyFeatureType>() + CrossoverAlterer()
+ * ```
+ *
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
  */
-interface Alterer<T, G> : Operator<T, G, GeneticEvolutionState<T, G>> where G : Gene<T, G> {
-    operator fun plus(alterer: Alterer<T, G>) = listOf(this, alterer)
+interface Alterer<T, F> : Operator<T, F> where F : Feature<T, F> {
+
+    /**
+     * Combines this alterer with another alterer using the plus operator.
+     *
+     * This method allows combining multiple alterers into a list for sequential application.
+     *
+     * @param alterer The alterer to combine with this alterer.
+     * @return A list containing this alterer and the specified alterer.
+     */
+    operator fun plus(alterer: Alterer<T, F>) = listOf(this, alterer)
 }
