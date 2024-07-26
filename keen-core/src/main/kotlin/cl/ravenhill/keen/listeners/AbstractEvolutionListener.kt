@@ -10,7 +10,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.IndividualRecord
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import kotlin.time.TimeSource
 
 
@@ -43,7 +43,7 @@ import kotlin.time.TimeSource
  * @property configuration The configuration for the listener, providing access to common properties like ranker and
  * evolution record.
  * @see EvolutionListener for the interface this abstract class implements.
- * @see FitnessRanker for details on how individuals are ranked.
+ * @see Ranker for details on how individuals are ranked.
  * @see EvolutionRecord for details on recording evolution data.
  * @see TimeSource for details on timing various phases of the evolution process.
  */
@@ -52,7 +52,7 @@ abstract class AbstractEvolutionListener<T, G>(
 ) : EvolutionListener<T, G> where G : Gene<T, G> {
 
     @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
-    val ranker: FitnessRanker<T, G> = configuration.ranker
+    val ranker: Ranker<T, G> = configuration.ranker
 
     @Deprecated("This property will be removed in future versions. Use configuration objects instead.")
     val evolution: EvolutionRecord<T, G> = configuration.evolution

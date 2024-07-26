@@ -9,7 +9,7 @@ package cl.ravenhill.keen.arb.evolution
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.nonNegativeInt
@@ -51,6 +51,6 @@ import io.kotest.property.arbitrary.nonNegativeInt
  */
 fun <T, G> arbEvolutionState(
     population: Arb<Population<T, G>>,
-    ranker: Arb<FitnessRanker<T, G>>,
+    ranker: Arb<Ranker<T, G>>,
     generation: Arb<Int> = Arb.nonNegativeInt(),
 ) where G : Gene<T, G> = arbitrary { GeneticEvolutionState(generation.bind(), ranker.bind(), population.bind()) }

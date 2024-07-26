@@ -31,7 +31,7 @@ import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
  * @param T The type of the value held by the genes.
  * @param G The type of the gene, which must extend [Gene].
  */
-class FitnessMinRanker<T, G> : FitnessRanker<T, G> where G : Gene<T, G> {
+class FitnessMinRanker<T, G> : Ranker<T, G> where G : Gene<T, G> {
 
     /**
      * Compares two individuals based on their fitness values.

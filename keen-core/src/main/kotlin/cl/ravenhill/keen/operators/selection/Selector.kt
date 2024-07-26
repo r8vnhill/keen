@@ -14,7 +14,7 @@ import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.mixins.FitnessEvaluable
 import cl.ravenhill.keen.operators.Operator
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 
 /**
  * Represents a selector in an evolutionary algorithm.
@@ -97,5 +97,5 @@ interface Selector<T, F> : Operator<T, F> where F : Feature<T, F> {
      * @param ranker The ranker used to evaluate individuals in the population.
      * @return The list of selected individuals.
      */
-    fun <I> select(population: List<I>, count: Int, ranker: FitnessRanker<T, F>): List<I> where I : FitnessEvaluable
+    fun <I> select(population: List<I>, count: Int, ranker: Ranker<T, F>): List<I> where I : FitnessEvaluable
 }

@@ -11,7 +11,7 @@ import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
 import cl.ravenhill.keen.operators.selection.Selector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
@@ -48,7 +48,7 @@ fun <T, G> Arb.Companion.selector(): Arb<Selector<T, G>> where G : Gene<T, G> = 
         override fun select(
             population: Population<T, G>,
             count: Int,
-            ranker: FitnessRanker<T, G>,
+            ranker: Ranker<T, G>,
         ) = population.take(count)
     }
 }

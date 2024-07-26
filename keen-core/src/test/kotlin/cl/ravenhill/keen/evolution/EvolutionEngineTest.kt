@@ -30,7 +30,7 @@ import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.TournamentSelector
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -186,9 +186,9 @@ private fun alterers(): Arb<List<Alterer<Double, DoubleGene>>> = Arb.list(arbAlt
 private fun alterationConfig(): Arb<AlterationConfig<Double, DoubleGene>> = arbAlterationConfig(alterers())
 
 private fun limits(): Arb<List<Limit<Double, DoubleGene>>> = Arb.list(arbGenerationLimit())
-private fun ranker(): Arb<FitnessRanker<Double, DoubleGene>> = arbRanker()
+private fun ranker(): Arb<Ranker<Double, DoubleGene>> = arbRanker()
 private fun listeners(
-    ranker: Arb<FitnessRanker<Double, DoubleGene>>
+    ranker: Arb<Ranker<Double, DoubleGene>>
 ): Arb<List<EvolutionListener<Double, DoubleGene>>> = Arb.list(arbEvolutionListener())
 
 private fun evaluator(): Arb<EvaluationExecutor<Double, DoubleGene>> = arbitrary {

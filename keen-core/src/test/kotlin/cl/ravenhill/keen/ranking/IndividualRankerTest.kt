@@ -86,7 +86,7 @@ class IndividualRankerTest : FreeSpec({
     }
 })
 
-private class DummyRanker : FitnessRanker<Int, DummyGene> {
+private class DummyRanker : Ranker<Int, DummyGene> {
     override fun invoke(first: Individual<Int, DummyGene>, second: Individual<Int, DummyGene>) =
         first.fitness.compareTo(second.fitness)
 }

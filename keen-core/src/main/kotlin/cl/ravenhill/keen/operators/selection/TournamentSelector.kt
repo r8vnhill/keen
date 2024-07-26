@@ -9,12 +9,11 @@ package cl.ravenhill.keen.operators.selection
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.mixins.FitnessEvaluable
 import cl.ravenhill.keen.operators.selection.TournamentSelector.Companion.DEFAULT_SIZE
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import java.util.Objects.hash
 
 
@@ -64,7 +63,7 @@ class TournamentSelector<T, F>(
      * @param ranker The ranker used to evaluate individuals in the population.
      * @return The list of selected individuals.
      */
-    override fun select(population: List<FitnessEvaluable>, count: Int, ranker: FitnessRanker<T, F>) =
+    override fun select(population: List<FitnessEvaluable>, count: Int, ranker: Ranker<T, F>) =
         (0..<count).map {
             generateSequence { population[Domain.random.nextInt(population.size)] }
                 .take(tournamentSize)

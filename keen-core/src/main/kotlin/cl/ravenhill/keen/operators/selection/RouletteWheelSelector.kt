@@ -11,7 +11,7 @@ import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.fitness
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.keen.utils.eq
 import cl.ravenhill.keen.utils.incremental
@@ -22,7 +22,7 @@ import kotlin.math.min
 class RouletteWheelSelector<T, F, R>(val sorted: Boolean = false) :
     Selector<T, F> where F : Feature<T, F>, R : Representation<T, F> {
 
-    fun probabilities(population: Population<T, F>, ranker: FitnessRanker<T, F>): List<Double> {
+    fun probabilities(population: Population<T, F>, ranker: Ranker<T, F>): List<Double> {
         // Adjust fitness values to ensure they're positive.
         val adjustedFitness = ranker.fitnessTransform(population.fitness).let {
             it sub min(it.min(), 0.0)
@@ -43,7 +43,7 @@ class RouletteWheelSelector<T, F, R>(val sorted: Boolean = false) :
         return adjustedFitness
     }
 
-    override fun select(population: Population<T, F>, count: Int, ranker: FitnessRanker<T, F>): Population<T, F> {
+    override fun select(population: Population<T, F>, count: Int, ranker: Ranker<T, F>): Population<T, F> {
         val pop = if (sorted) {
             ranker.sort(population)
         } else {

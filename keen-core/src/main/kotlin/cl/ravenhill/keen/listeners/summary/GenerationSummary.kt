@@ -9,7 +9,7 @@ import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.listeners.records.IndividualRecord
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 
@@ -42,7 +42,7 @@ class GenerationSummary<T, G>(
 
     private val evolution: EvolutionRecord<T, G> = configuration.evolution
     private val timeSource: TimeSource = configuration.timeSource
-    private val ranker: FitnessRanker<T, G> = configuration.ranker
+    private val ranker: Ranker<T, G> = configuration.ranker
     private val precision: Duration.() -> Long = configuration.precision
     private val currentGeneration = configuration.currentGeneration
 

@@ -9,7 +9,7 @@ package cl.ravenhill.keen.operators.selection
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 
 /**
  * A selector implementation for random selection in evolutionary algorithms.
@@ -64,6 +64,6 @@ class RandomSelector<T, G> : Selector<T, G> where G : Gene<T, G> {
      *   In the context of random selection, the ranker's functionality is not utilized.
      * @return A list of randomly selected individuals from the population.
      */
-    override fun select(population: Population<T, G>, count: Int, ranker: FitnessRanker<T, G>) =
+    override fun select(population: Population<T, G>, count: Int, ranker: Ranker<T, G>) =
         List(count) { population.random(Domain.random) }
 }

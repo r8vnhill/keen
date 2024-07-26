@@ -19,7 +19,7 @@ import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.Selector
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 
@@ -81,7 +81,7 @@ fun <T, G> arbAlterationConfig(
 
 fun <T, G> KeenArb.evolutionConfig(
     limits: Arb<List<Limit<T, G>>>,
-    ranker: Arb<FitnessRanker<T, G>>,
+    ranker: Arb<Ranker<T, G>>,
     listeners: Arb<List<EvolutionListener<T, G>>>,
     evaluator: Arb<EvaluationExecutor<T, G>>,
     interceptor: Arb<EvolutionInterceptor<T, G>>,

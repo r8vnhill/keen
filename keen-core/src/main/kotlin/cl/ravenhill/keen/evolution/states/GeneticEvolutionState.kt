@@ -13,7 +13,7 @@ import cl.ravenhill.jakt.exceptions.IntConstraintException
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetic.genes.Gene
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 
 
 /**
@@ -35,7 +35,7 @@ import cl.ravenhill.keen.ranking.FitnessRanker
  */
 data class GeneticEvolutionState<T, G>(
     override val generation: Int,
-    override val ranker: FitnessRanker<T, G>,
+    override val ranker: Ranker<T, G>,
     override val population: Population<T, G>,
 ) : State<T, G, Individual<T, G>> where G : Gene<T, G> {
 
@@ -55,7 +55,7 @@ data class GeneticEvolutionState<T, G>(
      */
     constructor(
         generation: Int,
-        ranker: FitnessRanker<T, G>,
+        ranker: Ranker<T, G>,
         vararg individuals: Individual<T, G>,
     ) : this(generation, ranker, individuals.toList())
 
@@ -93,6 +93,6 @@ data class GeneticEvolutionState<T, G>(
          * @param ranker The ranker used to evaluate individuals in the population.
          * @return An empty `GeneticEvolutionState`.
          */
-        fun <T, G> empty(ranker: FitnessRanker<T, G>) where G : Gene<T, G> = GeneticEvolutionState(0, ranker)
+        fun <T, G> empty(ranker: Ranker<T, G>) where G : Gene<T, G> = GeneticEvolutionState(0, ranker)
     }
 }

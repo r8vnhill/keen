@@ -1,11 +1,10 @@
 package cl.ravenhill.keen.listeners
 
 import cl.ravenhill.keen.features.Feature
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import cl.ravenhill.keen.utils.Box
 import kotlin.time.Duration
 import kotlin.time.TimeSource
@@ -43,7 +42,7 @@ import kotlin.time.TimeSource
  * @constructor Creates an instance of `ListenerConfiguration` with the specified settings.
  */
 data class ListenerConfiguration<T, F>(
-    val ranker: FitnessRanker<T, F> = FitnessMaxRanker(),
+    val ranker: Ranker<T, F> = FitnessMaxRanker(),
     val evolution: EvolutionRecord<T, F> = EvolutionRecord(),
     val timeSource: TimeSource = TimeSource.Monotonic,
     val precision: Duration.() -> Long = Duration::inWholeMilliseconds,

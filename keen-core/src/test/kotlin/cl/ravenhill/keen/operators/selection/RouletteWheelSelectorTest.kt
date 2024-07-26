@@ -18,7 +18,7 @@ import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.genetic.genes.NothingGene
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.FitnessMinRanker
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
@@ -116,6 +116,6 @@ class RouletteWheelSelectorTest : FreeSpec({
 
 private data class SamplePopulation(
     val population: List<Individual<Nothing, NothingGene>>,
-    val ranker: FitnessRanker<Nothing, NothingGene>,
+    val ranker: Ranker<Nothing, NothingGene>,
     val expected: List<Double>,
 )

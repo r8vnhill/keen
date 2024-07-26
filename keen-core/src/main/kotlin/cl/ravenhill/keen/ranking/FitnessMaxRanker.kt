@@ -31,7 +31,7 @@ import cl.ravenhill.keen.mixins.FitnessEvaluable
  * @param F The type of the feature, which must extend [Feature].
  * @property comparator A comparator for comparing individuals based on their fitness.
  */
-class FitnessMaxRanker<T, F> : FitnessRanker<T, F> where F : Feature<T, F> {
+class FitnessMaxRanker<T, F> : Ranker<T, F> where F : Feature<T, F> {
 
     /**
      * Compares two individuals based on their fitness values.

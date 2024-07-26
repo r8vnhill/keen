@@ -10,7 +10,7 @@ import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.mixins.FitnessEvaluable
-import cl.ravenhill.keen.ranking.FitnessRanker
+import cl.ravenhill.keen.ranking.Ranker
 import cl.ravenhill.keen.utils.isNotNaN
 
 
@@ -98,7 +98,7 @@ interface EvolutionListener<T, F, I> :
          * @return The number of steady generations.
          */
         fun <T, F> computeSteadyGenerations(
-            ranker: FitnessRanker<T, F>,
+            ranker: Ranker<T, F>,
             evolution: EvolutionRecord<T, F>,
         ): Int where F : Feature<T, F> {
             var steady = 0
