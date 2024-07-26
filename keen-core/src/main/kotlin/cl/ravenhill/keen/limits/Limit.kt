@@ -6,9 +6,10 @@
 
 package cl.ravenhill.keen.limits
 
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.engines.Evolver
+import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.mixins.FitnessEvaluable
 
 
 /**
@@ -31,14 +32,16 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * ### Example:
  * Implementing a generation limit:
  * ```kotlin
- * class GenerationLimit<T, G>(private val maxGenerations: Int) : Limit<T, G> where G : Gene<T, G> {
+ * class GenerationLimit<T, G, I>(
+ *     private val maxGenerations: Int
+ * ) : Limit<T, G, I> where G : Gene<T, G>, I : FitnessEvaluable {
  *     override fun invoke(state: EvolutionState<T, G>): Boolean {
  *         return state.generation >= maxGenerations
  *     }
  * }
  *
  * // Usage in an evolutionary algorithm
- * val limit: Limit<MyDataType, MyGene> = GenerationLimit(100)
+ * val limit: Limit<MyDataType, MyGene, MyIndividual> = GenerationLimit(100)
  * val shouldTerminate = limit(currentState)
  * ```
  * In this example, `GenerationLimit` implements the `Limit` interface, providing a stopping condition when
@@ -48,9 +51,9 @@ import cl.ravenhill.keen.genetic.genes.Gene
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.
  * @property engine The [Evolver] instance that is executing the evolutionary process.
  */
-interface Limit<T, G> where G : Gene<T, G> {
+interface Limit<T, G, I> where G : Gene<T, G>, I : FitnessEvaluable {
     @Deprecated("This property will be removed in future versions.")
-    var engine: Evolver<T, G>?
+    var engine: Evolver<T, G, I>?
 
     /**
      * Evaluates the given [GeneticEvolutionState] and determines whether the evolutionary process should terminate.
