@@ -216,6 +216,6 @@ internal class IndividualEvaluator<T, G>(
      * the fitness score. This score is then assigned to the individual's fitness property.
      */
     operator fun invoke() {
-        fitness = fitnessFunction(_individual.genotype)
+        fitness = fitnessFunction(_individual.representation)
     }
 }

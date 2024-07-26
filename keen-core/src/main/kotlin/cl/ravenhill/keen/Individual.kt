@@ -7,9 +7,6 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.keen.features.Feature
-import cl.ravenhill.keen.genetic.Genotype
-import cl.ravenhill.keen.genetic.chromosomes.numeric.IntChromosome
-import cl.ravenhill.keen.genetic.genes.numeric.IntGene
 import cl.ravenhill.keen.mixins.FitnessEvaluable
 import cl.ravenhill.keen.mixins.FlatMappable
 import cl.ravenhill.keen.mixins.Verifiable
@@ -45,12 +42,13 @@ import java.util.Objects.hash
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
  * @property representation The position of the individual in the search or solution space.
  * @property fitness The fitness value of the individual, defaulting to `Double.NaN`.
  * @constructor Creates an instance of `Individual` with the specified representation and fitness.
  */
-data class Individual<T, F>(val representation: Representation<T, F>, override val fitness: Double = Double.NaN) :
-    FitnessEvaluable, Verifiable, FlatMappable<T> where F : Feature<T, F> {
+data class Individual<T, F, R>(val representation: R, override val fitness: Double = Double.NaN) :
+    FitnessEvaluable, Verifiable, FlatMappable<T> where F : Feature<T, F>, R : Representation<T, F> {
 
     /**
      * The size of the individual's representation, lazily computed.
@@ -96,7 +94,7 @@ data class Individual<T, F>(val representation: Representation<T, F>, override v
      */
     override fun equals(other: Any?) = when {
         this === other -> true
-        other !is Individual<*, *> -> false
+        other !is Individual<*, *, *> -> false
         else -> representation == other.representation
     }
 
