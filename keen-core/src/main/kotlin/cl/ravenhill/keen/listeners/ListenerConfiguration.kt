@@ -5,6 +5,7 @@ import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.Ranker
+import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.keen.utils.Box
 import kotlin.time.Duration
 import kotlin.time.TimeSource
@@ -22,36 +23,38 @@ import kotlin.time.TimeSource
  *
  * ### Example:
  * ```kotlin
- * val listenerConfig = ListenerConfiguration(
+ * val listenerConfig = ListenerConfiguration<MyType, MyFeature, MyRepresentation>(
  *     ranker = FitnessMaxRanker(),
  *     evolution = EvolutionRecord(),
  *     timeSource = TimeSource.Monotonic,
  *     precision = Duration::inWholeMilliseconds
  * )
- * val listeners = listOf<ListenerFactory<MyGeneType, MyFeatureType>> { config ->
+ * val listeners = listOf<ListenerFactory<MyType, MyFeature, MyRepresentation>> { config ->
  *     EvolutionSummary(config)
  * }.map { it(listenerConfig) }
  * ```
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
  * @property ranker The ranker used to evaluate and compare individuals in the population.
  * @property evolution The record of the evolutionary process.
  * @property timeSource The source of time used for measuring durations and timestamps.
  * @property precision The function used to determine the precision of time measurements.
  * @constructor Creates an instance of `ListenerConfiguration` with the specified settings.
  */
-data class ListenerConfiguration<T, F>(
-    val ranker: Ranker<T, F> = FitnessMaxRanker(),
-    val evolution: EvolutionRecord<T, F> = EvolutionRecord(),
+data class ListenerConfiguration<T, F, R>(
+    val ranker: Ranker<T, F, R> = FitnessMaxRanker(),
+    val evolution: EvolutionRecord<T, F, R> = EvolutionRecord(),
     val timeSource: TimeSource = TimeSource.Monotonic,
     val precision: Duration.() -> Long = Duration::inWholeMilliseconds,
-) where F : Feature<T, F> {
+) where F : Feature<T, F>, R : Representation<T, F> {
 
     /**
      * The current generation record, stored in a mutable box.
      *
-     * This property allows listeners to access and modify the current generation record during the evolutionary process.
+     * This property allows listeners to access and modify the current generation record during the evolutionary
+     * process.
      */
-    val currentGeneration = Box.mutable<GenerationRecord<T, F>?>(null)
+    val currentGeneration = Box.mutable<GenerationRecord<T, F, R>?>(null)
 }

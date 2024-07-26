@@ -6,66 +6,53 @@
 
 package cl.ravenhill.keen.ranking
 
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.features.Feature
-import cl.ravenhill.keen.mixins.FitnessEvaluable
+import cl.ravenhill.keen.repr.Representation
 
 
 /**
- * Represents a fitness ranker that ranks individuals by maximizing their fitness values.
+ * A ranker that prioritizes individuals with higher fitness values.
  *
- * The `FitnessMaxRanker` class implements the `FitnessRanker` interface and provides a comparator that ranks
- * individuals based on their fitness values in ascending order. This means individuals with higher fitness values are
- * considered better.
+ * The `FitnessMaxRanker` class implements the [Ranker] interface, providing a comparator that ranks individuals
+ * based on their fitness values in descending order. This ranker is commonly used in evolutionary algorithms where
+ * higher fitness values indicate better individuals.
  *
  * ## Usage:
- * This class is used to rank individuals in an evolutionary algorithm where higher fitness values are preferred. It
- * implements the comparison, equality, and hash code methods.
+ * Use this ranker to sort populations or compare individuals based on their fitness values. It ensures that individuals
+ * with higher fitness are ranked higher.
  *
  * ### Example:
  * ```kotlin
- * val ranker = FitnessMaxRanker<MyGeneType, MyFeatureType>()
+ * val ranker = FitnessMaxRanker<MyType, MyFeature, MyRepresentation>()
  * val sortedPopulation = ranker.sort(population)
  * ```
  *
- * @param T The type of the value held by the genes.
+ * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
- * @property comparator A comparator for comparing individuals based on their fitness.
+ * @param R The type of the representation, which must extend [Representation].
+ * @constructor Creates an instance of `FitnessMaxRanker`.
  */
-class FitnessMaxRanker<T, F> : Ranker<T, F> where F : Feature<T, F> {
+class FitnessMaxRanker<T, F, R> : Ranker<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
 
     /**
      * Compares two individuals based on their fitness values.
      *
      * @param first The first individual to compare.
      * @param second The second individual to compare.
-     * @return A negative integer, zero, or a positive integer if the fitness of the first individual is less than,
-     * equal to, or greater than the fitness of the second individual, respectively.
+     * @return A negative integer, zero, or a positive integer as the first individual has less than, equal to,
+     * or greater fitness than the second.
      */
-    override fun invoke(first: FitnessEvaluable, second: FitnessEvaluable) = first.fitness.compareTo(second.fitness)
+    override fun invoke(first: Individual<T, F, R>, second: Individual<T, F, R>) =
+        first.fitness.compareTo(second.fitness)
 
-    /**
-     * Returns a string representation of the `FitnessMaxRanker`.
-     *
-     * @return The string "FitnessMaxRanker".
-     */
     override fun toString() = "FitnessMaxRanker"
 
-    /**
-     * Checks if this `FitnessMaxRanker` is equal to another object.
-     *
-     * @param other The other object to compare.
-     * @return `true` if the other object is a `FitnessMaxRanker` and is equal to this one, `false` otherwise.
-     */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is FitnessMaxRanker<*, *>) return false
+        if (other !is FitnessMaxRanker<*, *, *>) return false
         return true
     }
 
-    /**
-     * Returns the hash code of this `FitnessMaxRanker`.
-     *
-     * @return The hash code of this `FitnessMaxRanker`.
-     */
     override fun hashCode() = FitnessMaxRanker::class.hashCode()
 }
