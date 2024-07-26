@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.dsl
 
-import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm
+import cl.ravenhill.keen.evolution.engines.factories.GeneticAlgorithmFactory
 import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
 
@@ -14,11 +14,11 @@ import cl.ravenhill.keen.genetic.genes.Gene
 fun <T, G> evolutionEngine(
     fitnessFunction: (Genotype<T, G>) -> Double,
     genotype: Genotype.Factory<T, G>,
-    init: GeneticAlgorithm.Factory<T, G>.() -> Unit,
+    init: GeneticAlgorithmFactory<T, G>.() -> Unit,
 ) where G : Gene<T, G> = geneticAlgorithm(fitnessFunction, genotype, init)
 
 fun <T, G> geneticAlgorithm(
     fitnessFunction: (Genotype<T, G>) -> Double,
     genotype: Genotype.Factory<T, G>,
-    init: GeneticAlgorithm.Factory<T, G>.() -> Unit,
-) where G : Gene<T, G> = GeneticAlgorithm.Factory(fitnessFunction, genotype).apply(init).make()
+    init: GeneticAlgorithmFactory<T, G>.() -> Unit,
+) where G : Gene<T, G> = GeneticAlgorithmFactory(fitnessFunction, genotype).apply(init).make()
