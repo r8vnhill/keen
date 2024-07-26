@@ -59,6 +59,7 @@ open class ListenLimit<T, G>(
     private val predicate: EvolutionListener<T, G>.(GeneticEvolutionState<T, G>) -> Boolean
 ) : Limit<T, G> where G : Gene<T, G> {
 
+    @Deprecated("This property will be removed in future versions.")
     override var engine: Evolver<T, G>? = null
 
     /**
@@ -66,8 +67,8 @@ open class ListenLimit<T, G>(
      *
      * This method is an implementation of the `invoke` function from the [Limit] interface. It is called during the
      * evolutionary process to check whether the specified condition (defined in the [predicate]) is met, based on
-     * the current [GeneticEvolutionState]. If the condition is satisfied, it indicates that the evolutionary process should
-     * be halted.
+     * the current [GeneticEvolutionState]. If the condition is satisfied, it indicates that the evolutionary process
+     * should be halted.
      *
      * ## Functionality:
      * - **Condition Evaluation**: Utilizes the [predicate] function, which is part of the [listener], to evaluate
@@ -80,11 +81,10 @@ open class ListenLimit<T, G>(
      * This method is automatically invoked by the evolutionary algorithm's control mechanism at each generation or
      * evolutionary step. It is not typically called directly by the user.
      *
-     * @param state The current [GeneticEvolutionState] of the evolutionary process. This state is used by the predicate to
-     *   determine whether the termination condition is satisfied.
+     * @param state The current [GeneticEvolutionState] of the evolutionary process. This state is used by the predicate
+     *  to determine whether the termination condition is satisfied.
      * @return `true` if the termination condition is met and the evolutionary process should be halted, `false`
-     *   otherwise.
+     *  otherwise.
      */
     override fun invoke(state: GeneticEvolutionState<T, G>) = listener.predicate(state)
 }
-

@@ -90,8 +90,8 @@ abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G>(
     val genotypeFactory: Genotype.Factory<T, G> = populationConfig.genotypeFactory
     override val populationSize: Int = populationConfig.populationSize
     override val survivalRate: Double = selectionConfig.survivalRate
-    val parentSelector: Selector<T, G> = selectionConfig.parentSelector
-    val survivorSelector: Selector<T, G> = selectionConfig.survivorSelector
+    val parentSelector = selectionConfig.parentSelector
+    val survivorSelector = selectionConfig.survivorSelector
 
     /**
      * Starts the evolution process and runs it until one of the limits is reached.
