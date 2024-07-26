@@ -17,16 +17,6 @@ import cl.ravenhill.keen.repr.Representation
  * The `IndividualRecord` data class encapsulates the representation and fitness of an individual, serving as a
  * lightweight record that can be easily converted back to an `Individual` object.
  *
- * ## Usage:
- * Use this class to store and manage individual records in evolutionary algorithms. It provides a convenient way to
- * encapsulate the state of an individual and convert it back to a fully-fledged `Individual` when needed.
- *
- * ### Example:
- * ```kotlin
- * val record = IndividualRecord(representation = myRepresentation, fitness = 42.0)
- * val individual = record.toIndividual()
- * ```
- *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].

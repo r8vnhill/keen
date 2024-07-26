@@ -6,55 +6,36 @@
 
 package cl.ravenhill.keen.listeners.records
 
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.repr.Representation
 
 
 /**
- * Records the complete evolutionary process in an evolutionary algorithm.
+ * Represents a record of the evolutionary process.
  *
- * `EvolutionRecord` captures detailed information about each generation within an evolutionary algorithm run. It
- * extends from `AbstractTimedRecord` to include overall timing information for the entire evolution process. The
- * primary purpose of this class is to provide a comprehensive log of the evolutionary process, capturing details from
- * initialization through each generation.
+ * The `EvolutionRecord` data class encapsulates the records of all generations in an evolutionary algorithm. It also
+ * includes a record for the initialization phase.
  *
- * ## Key Components:
- * - **Generations**: A mutable list of `GenerationRecord` objects, each representing a specific generation in the
- *   evolutionary process.
- * - **Initialization Record**: Timing and additional information about the initialization phase of the evolutionary
- *   algorithm.
- *
- * ## Usage:
- * This class is particularly useful for analysis, debugging, and optimization of evolutionary algorithms. It allows
- * developers and researchers to track the evolution process in detail, including the duration of specific stages and
- * changes in population over generations.
- *
- * ### Example:
- * ```
- * val evolutionRecord = EvolutionRecord<Int, MyGeneType>()
- * // Initialize the algorithm
- * evolutionRecord.initialization.startTime = //...
- * // Add generation records as the algorithm progresses
- * evolutionRecord.generations.add(generationRecord)
- * //... Continue for each generation
- * ```
- * In this example, `EvolutionRecord` is used to keep a log of the entire evolutionary process, from
- * initialization to the final generation.
- *
- * @param T The type of the genetic data or information.
- * @param G The type of gene encapsulated within the individuals.
- * @param generations The list of generation records, each documenting a specific generation in the evolution.
- * @property initialization A record of the initialization phase in the evolutionary process.
- *
- * @constructor Creates a new instance of `EvolutionRecord` with an optional list of generation records.
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
+ * @property generations The list of generation records.
+ * @constructor Creates an instance of `EvolutionRecord` with an optional list of generation records.
  */
-data class EvolutionRecord<T, G>(val generations: MutableList<GenerationRecord<T, G>> = mutableListOf()) :
-    AbstractTimedRecord() where G : Gene<T, G> {
+data class EvolutionRecord<T, F, R>(val generations: MutableList<GenerationRecord<T, F, R>> = mutableListOf()) :
+    AbstractTimedRecord() where F : Feature<T, F>, R : Representation<T, F> {
 
+    /**
+     * The record for the initialization phase of the evolutionary process.
+     *
+     * The `InitializationRecord` class extends `AbstractTimedRecord` to provide detailed timing information for
+     * the initialization phase.
+     */
     val initialization = InitializationRecord()
 
     /**
-     * A subclass of `AbstractTimedRecord` that specifically records the timing information
-     * related to the initialization phase of an evolutionary algorithm.
+     * Represents a timed record for the initialization phase in the evolutionary process.
      */
     class InitializationRecord : AbstractTimedRecord()
 }
