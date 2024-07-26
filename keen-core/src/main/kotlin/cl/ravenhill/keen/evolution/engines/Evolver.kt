@@ -3,6 +3,7 @@ package cl.ravenhill.keen.evolution.engines
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.mixins.FitnessEvaluable
+import cl.ravenhill.keen.repr.Representation
 
 /**
  * Represents an evolver in an evolutionary algorithm.
@@ -16,12 +17,12 @@ import cl.ravenhill.keen.mixins.FitnessEvaluable
  *
  * ### Example:
  * ```kotlin
- * class MyEvolver<T, F, I>(
+ * class MyEvolver<T, F, R>(
  *     override val populationSize: Int,
  *     override val survivalRate: Double
- * ) : Evolver<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
+ * ) : Evolver<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
  *
- *     override fun evolve(): State<T, F, I> {
+ *     override fun evolve(): EvolutionState<T, F, R> {
  *         // Implementation of the evolution logic
  *     }
  * }
@@ -29,11 +30,11 @@ import cl.ravenhill.keen.mixins.FitnessEvaluable
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
- * @param I The type of the individuals in the state, which must extend [FitnessEvaluable].
+ * @param R The type of the representation, which must extend [Representation].
  * @property populationSize The size of the population.
  * @property survivalRate The rate at which individuals survive to the next generation.
  */
-interface Evolver<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
+interface Evolver<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
 
     val populationSize: Int
 
@@ -47,5 +48,5 @@ interface Evolver<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
      *
      * @return The new state after performing the evolution.
      */
-    fun evolve(): EvolutionState<T, F, I>
+    fun evolve(): EvolutionState<T, F, R>
 }
