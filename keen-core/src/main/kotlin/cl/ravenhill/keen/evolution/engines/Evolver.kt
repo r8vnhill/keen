@@ -2,50 +2,50 @@ package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.features.Feature
+import cl.ravenhill.keen.mixins.FitnessEvaluable
 
 /**
  * Represents an evolver in an evolutionary algorithm.
  *
- * The `Evolver` interface defines the basic structure and operations for an entity that manages the evolutionary
- * process. This includes maintaining the population size and providing a method to start and run the evolution process.
+ * The `Evolver` interface defines the basic structure and operations for an entity that manages the evolution process.
+ * This includes properties for the population size and survival rate, as well as a method to perform the evolution.
  *
  * ## Usage:
- * This interface is intended to be implemented by classes that manage the evolutionary process. Implementing classes
- * should provide the logic to evolve the population through various evolutionary steps.
+ * Implement this interface in classes that perform the overall evolution process in an evolutionary algorithm.
+ * Provide the logic to manage the population and apply evolutionary operations.
  *
  * ### Example:
  * ```kotlin
- * class MyEvolver<T, F>(
+ * class MyEvolver<T, F, I>(
  *     override val populationSize: Int,
- *     override val survivalRate: Double,
- * ) : Evolver<T, F> where F : Feature<T, F> {
+ *     override val survivalRate: Double
+ * ) : Evolver<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
  *
- *     override fun evolve(): State<T, F> {
- *         // Implementation of the evolution process
- *         return MyState()
+ *     override fun evolve(): State<T, F, I> {
+ *         // Implementation of the evolution logic
  *     }
  * }
  * ```
  *
- * ## References:
- * 1. De Jong, Kenneth A. Evolutionary Computation: A Unified Approach, 2006.
- *  https://ieeexplore.ieee.org/servlet/opac?bknumber=6267245.
- *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
- * @property populationSize The size of the population managed by the evolver.
- * @property survivalRate The rate of individuals that survive each generation.
+ * @param I The type of the individuals in the state, which must extend [FitnessEvaluable].
+ * @property populationSize The size of the population.
+ * @property survivalRate The rate at which individuals survive to the next generation.
  */
-interface Evolver<T, F> where F : Feature<T, F> {
+interface Evolver<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
 
     val populationSize: Int
 
     val survivalRate: Double
 
     /**
-     * Starts and runs the evolution process.
+     * Performs the evolution process and returns the resulting state.
      *
-     * @return The final state of the evolutionary process.
+     * This method manages the overall evolution process, applying evolutionary operations to the population
+     * and returning the resulting state.
+     *
+     * @return The new state after performing the evolution.
      */
-    fun evolve(): State<T, F>
+    fun evolve(): State<T, F, I>
 }
