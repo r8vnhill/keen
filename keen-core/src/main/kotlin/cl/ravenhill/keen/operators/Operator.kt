@@ -8,6 +8,7 @@ package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.features.Feature
+import cl.ravenhill.keen.mixins.FitnessEvaluable
 
 /**
  * Represents an operator in an evolutionary algorithm.
@@ -23,27 +24,39 @@ import cl.ravenhill.keen.features.Feature
  *
  * ### Example:
  * ```kotlin
- * class MyOperator<T, F, S> : Operator<T, F, S> where F : Feature<T, F>, S : State<T, F> {
+ * class MyOperator<T, F> : Operator<T, F> where F : Feature<T, F> {
  *
- *     override fun invoke(state: S, outputSize: Int): S {
+ *     override fun <S, I> invoke(
+ *         state: S,
+ *         outputSize: Int,
+ *         buildState: (List<I>) -> S
+ *     ): S where S : State<T, F, I>, I : FitnessEvaluable {
  *         // Implementation of the operator logic
- *         return transformedState
  *     }
  * }
  * ```
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
- * @param S The type of the state, which must extend [State].
  */
-interface Operator<T, F, S> where F : Feature<T, F>, S : State<T, F> {
+interface Operator<T, F> where F : Feature<T, F> {
 
     /**
      * Applies the operator to the given state and produces a new state with the specified output size.
      *
+     * This method performs the operation on the state, ensuring the transformation is applied correctly and
+     * constructs a new state with the modified population.
+     *
+     * @param S The type of the state.
+     * @param I The type of the individuals in the state, which must extend [FitnessEvaluable].
      * @param state The current state of the evolutionary process.
      * @param outputSize The size of the output state to be produced.
+     * @param buildState The function used to create the new state from the modified list of individuals.
      * @return The new state after applying the operator.
      */
-    operator fun invoke(state: S, outputSize: Int): S
+    operator fun <S, I> invoke(
+        state: S,
+        outputSize: Int,
+        buildState: (List<I>) -> S
+    ): S where S : State<T, F, I>, I : FitnessEvaluable
 }

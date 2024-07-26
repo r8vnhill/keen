@@ -5,8 +5,6 @@
 
 package cl.ravenhill.keen.evolution.config
 
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
-import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.operators.selection.Selector
 
@@ -40,6 +38,6 @@ import cl.ravenhill.keen.operators.selection.Selector
  */
 data class SelectionConfig<T, G>(
     val survivalRate: Double,
-    val parentSelector: Selector<T, G, GeneticEvolutionState<T, G>>,
-    val survivorSelector: Selector<T, G, GeneticEvolutionState<T, G>>
+    val parentSelector: Selector<T, G>,
+    val survivorSelector: Selector<T, G>
 ) where G : Gene<T, G>

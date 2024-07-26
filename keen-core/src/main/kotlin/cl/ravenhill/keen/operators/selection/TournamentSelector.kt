@@ -9,48 +9,42 @@ package cl.ravenhill.keen.operators.selection
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.exceptions.SelectionException
-import cl.ravenhill.keen.genetic.Population
-import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.features.Feature
+import cl.ravenhill.keen.mixins.FitnessEvaluable
+import cl.ravenhill.keen.operators.selection.TournamentSelector.Companion.DEFAULT_SIZE
 import cl.ravenhill.keen.ranking.FitnessRanker
-import java.util.*
+import java.util.Objects.hash
 
 
 /**
- * A selector implementation for tournament selection in evolutionary algorithms.
+ * Represents a tournament selector in an evolutionary algorithm.
  *
- * `TournamentSelector` is a class that implements the tournament selection method. In this method, a set of individuals
- * is randomly chosen from the population, and the best individual from this subset, determined by the provided ranker,
- * is selected. This process is repeated until the desired number of individuals is selected.
- *
- * ## Parameters:
- * - **tournamentSize**: The size of the tournament, i.e., the number of individuals randomly picked from the population
- *   for each selection round. A larger tournament size generally leads to stronger selection pressure.
- *
- * ## Constraints:
- * - The tournament size must be a positive integer.
+ * The `TournamentSelector` class implements the `Selector` interface and provides a selection mechanism based on
+ * tournaments. You select individuals by randomly choosing a specified number of candidates from the population and
+ * selecting the best individual among them. Repeat this process until you select the desired number of individuals.
  *
  * ## Usage:
- * Tournament selection is often used in genetic algorithms where selection pressure needs to be controlled. It's
- * particularly useful when you want to maintain diversity in the population while still favoring fitter individuals.
+ * Use this class to select individuals from a population in an evolutionary algorithm based on their fitness.
+ * Control the selection process with the tournament size, which determines the number of candidates in each tournament.
  *
  * ### Example:
- * Implementing tournament selection with a specific tournament size:
  * ```kotlin
- * val state = EvolutionState<MyData, MyGene>(/*...*/)
- * val tournamentSelector = TournamentSelector<MyData, MyGene>(tournamentSize = 5)
- *
- * // Select individuals using tournament selection
- * val selectedIndividuals = tournamentSelector(state, 10)
+ * val tournamentSelector = TournamentSelector<MyGeneType, MyFeatureType>(
+ *     tournamentSize = 5
+ * )
+ * val selectedState = tournamentSelector(currentState, 10)
  * ```
- * In this example, `TournamentSelector` is instantiated with a tournament size of 5. The selector is then used to
- * select 10 individuals from the population in the given state. The returned state contains a new population with the
- * selected individuals.
  *
- * @param T The type of data encapsulated by the genes within the individuals.
- * @param G The type of gene in the individuals, conforming to the [Gene] interface.
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @property tournamentSize The number of candidates in each tournament. Default value is [DEFAULT_SIZE].
+ * @constructor Creates an instance of `TournamentSelector` with the specified tournament size and state builder.
  */
-class TournamentSelector<T, G>(val tournamentSize: Int = DEFAULT_SIZE) : Selector<T, G> where G : Gene<T, G> {
+class TournamentSelector<T, F>(
+    val tournamentSize: Int = DEFAULT_SIZE,
+) : Selector<T, F> where F : Feature<T, F> {
 
     init {
         constraints {
@@ -59,36 +53,18 @@ class TournamentSelector<T, G>(val tournamentSize: Int = DEFAULT_SIZE) : Selecto
     }
 
     /**
-     * Selects a subset of individuals from the population using tournament selection.
+     * Selects individuals from the population based on their fitness using tournament selection.
      *
-     * In tournament selection, a number of 'tournaments' are held to select individuals. In each tournament, a subset
-     * of individuals is randomly chosen from the population, and the best individual from this subset (determined by
-     * the provided ranker) is selected. This process is repeated until the desired number of individuals is selected.
+     * This method performs the selection process by randomly choosing a specified number of candidates from the
+     * population and selecting the best individual among them. Repeat this process until you select the desired number
+     * of individuals.
      *
-     * ## Process:
-     * 1. **Tournament Rounds**: The method runs a total of `count` tournaments.
-     * 2. **Random Selection**: In each tournament, `tournamentSize` individuals are randomly selected from the
-     *   population.
-     * 3. **Determining the Winner**: The best individual from these selected is determined using the `ranker`.
-     *
-     * ## Example:
-     * ```kotlin
-     * val population = /* A population of individuals */
-     * val tournamentSize = 5
-     * val tournamentSelector = TournamentSelector<MyData, MyGene>(tournamentSize)
-     * val selectedIndividuals = tournamentSelector.select(population, 10, myRanker)
-     * ```
-     * In this example, `select` is used within a `TournamentSelector` to choose 10 individuals from the population. For
-     * each individual selected, a mini-tournament of size 5 is conducted to determine the best individual based on the
-     * specified ranker.
-     *
-     * @param population The population of individuals from which to select.
+     * @param population The population of individuals to select from.
      * @param count The number of individuals to select.
-     * @param ranker The [FitnessRanker] used to determine the best individual in each tournament.
-     *
-     * @return A list of individuals selected through tournament selection.
+     * @param ranker The ranker used to evaluate individuals in the population.
+     * @return The list of selected individuals.
      */
-    override fun select(population: Population<T, G>, count: Int, ranker: FitnessRanker<T, G>) =
+    override fun select(population: List<FitnessEvaluable>, count: Int, ranker: FitnessRanker<T, F>) =
         (0..<count).map {
             generateSequence { population[Domain.random.nextInt(population.size)] }
                 .take(tournamentSize)
@@ -96,18 +72,36 @@ class TournamentSelector<T, G>(val tournamentSize: Int = DEFAULT_SIZE) : Selecto
                 ?: throw SelectionException { "Tournament selection failed to find a max individual" }
         }
 
+    /**
+     * Returns a string representation of the `TournamentSelector`.
+     *
+     * @return The string "TournamentSelector(tournamentSize=<size>)".
+     */
     override fun toString() = "TournamentSelector(tournamentSize=$tournamentSize)"
 
+    /**
+     * Checks if this `TournamentSelector` is equal to another object.
+     *
+     * @param other The other object to compare.
+     * @return `true` if the other object is a `TournamentSelector` with the same tournament size, `false` otherwise.
+     */
     override fun equals(other: Any?) = when {
         this === other -> true
         other !is TournamentSelector<*, *> -> false
         else -> tournamentSize == other.tournamentSize
     }
 
-    override fun hashCode() = Objects.hash(TournamentSelector::class, tournamentSize)
+    /**
+     * Returns the hash code of this `TournamentSelector`.
+     *
+     * @return The hash code of this `TournamentSelector`.
+     */
+    override fun hashCode() = hash(TournamentSelector::class, tournamentSize)
 
     companion object {
-        /** The default size of the tournaments. Set to 3. */
+        /**
+         * The default tournament size. Default value is 3.
+         */
         const val DEFAULT_SIZE = 3
     }
 }

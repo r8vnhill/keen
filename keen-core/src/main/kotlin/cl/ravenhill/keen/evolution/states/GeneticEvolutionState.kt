@@ -34,10 +34,10 @@ import cl.ravenhill.keen.ranking.FitnessRanker
  * @throws IntConstraintException if the generation is negative.
  */
 data class GeneticEvolutionState<T, G>(
-    val generation: Int,
-    val ranker: FitnessRanker<T, G>,
+    override val generation: Int,
+    override val ranker: FitnessRanker<T, G>,
     override val population: Population<T, G>,
-) : State<T, G> where G : Gene<T, G> {
+) : State<T, G, Individual<T, G>> where G : Gene<T, G> {
 
     init {
         constraints { "Generation [$generation] must not be negative" { generation mustNot BeNegative } }

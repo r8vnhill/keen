@@ -17,10 +17,10 @@ import cl.ravenhill.keen.ranking.FitnessRanker
  *
  * ### Example:
  * ```kotlin
- * data class MyState<T, F>(
- *     override val population: List<FitnessEvaluable>,
+ * data class MyState<T, F, I>(
+ *     override val population: List<I>,
  *     override val generation: Int,
- * ) : State<T, F> where F : Feature<T, F> {
+ * ) : State<T, F> where F : Feature<T, F>, I : FitnessEvaluable {
  *
  *     override val size: Int
  *         get() = population.size
@@ -33,16 +33,17 @@ import cl.ravenhill.keen.ranking.FitnessRanker
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
+ * @param I The type of the fitness evaluable individuals in the state.
  * @property size The size of the state, typically representing the number of individuals in the population.
  * @property population The list of individuals in the state.
  * @property ranker The [FitnessRanker] used to rank individuals in the state.
  * @property generation The current generation of the state.
  */
-interface State<T, F> where F : Feature<T, F> {
+interface State<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
 
     val size: Int
 
-    val population: List<FitnessEvaluable>
+    val population: List<I>
 
     val ranker: FitnessRanker<T, F>
 

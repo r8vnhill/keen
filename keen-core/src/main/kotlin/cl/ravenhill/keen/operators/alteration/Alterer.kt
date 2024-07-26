@@ -50,6 +50,6 @@ import cl.ravenhill.keen.operators.Operator
  * @param T The type of data encapsulated by the genes within the individuals.
  * @param G The type of gene in the individuals, conforming to the [Gene] interface.
  */
-interface Alterer<T, G> : Operator<T, G> where G : Gene<T, G> {
+interface Alterer<T, G> : Operator<T, G, GeneticEvolutionState<T, G>> where G : Gene<T, G> {
     operator fun plus(alterer: Alterer<T, G>) = listOf(this, alterer)
 }

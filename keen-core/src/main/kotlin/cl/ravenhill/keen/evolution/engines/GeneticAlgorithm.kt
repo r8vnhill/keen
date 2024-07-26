@@ -28,7 +28,6 @@ import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.Selector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
-import cl.ravenhill.keen.ranking.FitnessRanker
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -194,7 +193,9 @@ class GeneticAlgorithm<T, G>(
         // Notify listeners at the start of the parent selection phase
         listeners.forEach { it.onParentSelectionStarted(state) }
         // Conduct the parent selection process
-        val selected = parentSelector.invoke(state, floor((1 - survivalRate) * populationSize).toInt())
+        val selected = parentSelector(state, floor((1 - survivalRate) * populationSize).toInt()) {
+            state.copy(population = it)
+        }
         // Notify listeners at the end of the parent selection phase
         listeners.forEach { it.onParentSelectionEnded(selected) }
         return selected
@@ -285,39 +286,39 @@ class GeneticAlgorithm<T, G>(
         val genotypeFactory: Genotype.Factory<T, G>,
     ) where G : Gene<T, G> {
 
-        var populationSize: Int = DEFAULT_POPULATION_SIZE
+        var populationSize = DEFAULT_POPULATION_SIZE
             set(value) = constraints {
                 "Population size ($value) must be positive."(::EngineException) { value must BePositive }
             }.let { field = value }
 
-        var survivalRate: Double = DEFAULT_SURVIVAL_RATE
+        var survivalRate = DEFAULT_SURVIVAL_RATE
             set(value) = constraints {
                 "Survival rate ($value) must be between 0 and 1."(::EngineException) {
                     value must BeInRange(0.0..1.0)
                 }
             }.let { field = value }
 
-        var parentSelector: Selector<T, G> = defaultParentSelector()
+        var parentSelector = defaultParentSelector<T, G>()
 
-        var survivorSelector: Selector<T, G> = defaultSurvivorSelector()
+        var survivorSelector = defaultSurvivorSelector<T, G>()
 
-        var alterers: MutableList<Alterer<T, G>> = defaultAlterers()
+        var alterers = defaultAlterers<T, G>()
 
         @Deprecated("Use the 'limitFactories' property instead.")
-        var limits: MutableList<Limit<T, G>> = defaultLimits()
+        var limits = defaultLimits<T, G>()
 
-        var limitFactories: MutableList<(ListenerConfiguration<T, G>) -> ListenLimit<T, G>> = mutableListOf()
+        var limitFactories = mutableListOf<(ListenerConfiguration<T, G>) -> ListenLimit<T, G>>()
 
-        var ranker: FitnessRanker<T, G> = defaultRanker()
+        var ranker = defaultRanker<T, G>()
 
         @Deprecated("Use the 'listenerFactories' property instead.")
-        var listeners: MutableList<EvolutionListener<T, G>> = defaultListeners()
+        var listeners = defaultListeners<T, G>()
 
-        var listenerFactories: MutableList<(ListenerConfiguration<T, G>) -> EvolutionListener<T, G>> = mutableListOf()
+        var listenerFactories = mutableListOf<(ListenerConfiguration<T, G>) -> EvolutionListener<T, G>>()
 
-        var evaluator: EvaluationExecutor.Factory<T, G> = defaultEvaluator()
+        var evaluator = defaultEvaluator<T, G>()
 
-        var interceptor: EvolutionInterceptor<T, G> = defaultInterceptor()
+        var interceptor = defaultInterceptor<T, G>()
 
         /**
          * Creates a new instance of `GeneticAlgorithm` with the configured settings.
@@ -369,7 +370,7 @@ class GeneticAlgorithm<T, G>(
              * @param G The type of the gene, which must extend [Gene].
              * @return A default instance of `TournamentSelector`.
              */
-            fun <T, G> defaultParentSelector() where G : Gene<T, G> = TournamentSelector<T, G>()
+            fun <T, G> defaultParentSelector(): Selector<T, G> where G : Gene<T, G> = TournamentSelector()
 
             /**
              * Provides the default survivor selector for the genetic algorithm.
@@ -381,7 +382,7 @@ class GeneticAlgorithm<T, G>(
              * @param G The type of the gene, which must extend [Gene].
              * @return A default instance of `TournamentSelector`.
              */
-            fun <T, G> defaultSurvivorSelector() where G : Gene<T, G> = TournamentSelector<T, G>()
+            fun <T, G> defaultSurvivorSelector(): Selector<T, G> where G : Gene<T, G> = TournamentSelector<T, G>()
 
             /**
              * Provides the default list of alterers for the genetic algorithm.
