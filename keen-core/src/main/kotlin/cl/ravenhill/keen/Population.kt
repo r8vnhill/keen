@@ -5,41 +5,40 @@
 
 package cl.ravenhill.keen
 
-import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.features.Feature
+import cl.ravenhill.keen.repr.Representation
 
 /**
- * Represents a collection of individuals forming a population in an evolutionary algorithm.
+ * Represents a population of individuals in an evolutionary algorithm.
  *
- * The `Population` typealias is a core concept in the field of evolutionary algorithms, representing a group of
- * individuals that undergo processes like selection, crossover, and mutation. Each individual in the population
- * embodies a potential solution to the problem being addressed by the algorithm.
+ * The `Population` type alias defines a population as a list of individuals. This type alias simplifies the usage of
+ * populations within evolutionary algorithms by providing a clear and concise way to represent collections of
+ * individuals.
  *
- * @param T The type of data encapsulated by the genes within the individuals' genotypes.
- * @param G The type of genes contained within the individuals' genotypes. These genes collectively form the genetic
- *   makeup of each individual in the population.
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
  */
-typealias Population<T, G> = List<Individual<T, G>>
+typealias Population<T, F, R> = List<Individual<T, F, R>>
 
 /**
- * An extension property to retrieve the fitness values of all individuals in a population.
+ * Extension property to get the fitness values of the individuals in the population.
  *
- * This property simplifies the process of accessing the fitness scores of each individual in a population.
- * It maps over the population, extracting the fitness value from each individual and compiling these values into a
- * list. This can be particularly useful for statistical analysis, such as calculating average fitness, identifying the
- * fittest individuals, or tracking fitness over generations in an evolutionary algorithm.
+ * This extension property provides a convenient way to retrieve the fitness values of all individuals in a population.
+ * The fitness values are computed by mapping over the population and extracting the fitness of each individual.
  *
- * Example Usage:
+ * ## Usage:
+ * Use this property to quickly access the fitness values of all individuals in a population, which is useful for
+ * analysis, selection, and ranking processes in evolutionary algorithms.
+ *
+ * ### Example:
+ * ```kotlin
+ * val population: Population<MyType, MyFeature, MyRepresentation> = // initialize population
+ * val fitnessValues = population.fitness
+ * println(fitnessValues) // Output: List of fitness values
  * ```
- * val population: Population<MyDataType, MyGene> = /* Initialize population */
- * val fitnessScores = population.fitness
- * println("Average fitness: ${fitnessScores.average()}")
- * ```
- * In this example, the `fitness` property is used to retrieve the fitness scores of all individuals in the population,
- * and the average fitness score is calculated and printed.
  *
- * @param T The type of data encapsulated by the genes within the individuals.
- * @param G The type of gene in the individuals, conforming to the [Gene] interface.
- * @return A list of [Double] representing the fitness scores of each individual in the population.
+ * @property fitness The list of fitness values of the individuals in the population.
  */
-val <T, G> Population<T, G>.fitness: List<Double> where G : Gene<T, G>
+val <T, F, R> Population<T, F, R>.fitness: List<Double> where F : Feature<T, F>, R : Representation<T, F>
     get() = this.map { it.fitness }
