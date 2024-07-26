@@ -6,34 +6,30 @@
 
 package cl.ravenhill.keen.exceptions
 
+import cl.ravenhill.jakt.exceptions.ConstraintException
+
 
 /**
- * Exception class representing errors that occur during the selection process in evolutionary algorithms.
- *
- * `SelectionException` is a specialized form of [Exception] that is thrown to indicate problems that arise specifically
- * during the selection phase of an evolutionary algorithm. This can include issues such as failing to select any
- * individuals from a population or encountering invalid parameters during the selection process.
+ * Exception thrown when a constraint violation occurs during the selection operation in evolutionary algorithms.
+ * This exception highlights issues related to the constraints imposed on the selection process.
  *
  * ## Usage:
- * This exception is typically thrown by selection-related classes or functions when they encounter a state that
- * prevents them from completing the selection process successfully. It helps in diagnosing and handling issues that are
- * specific to the selection mechanism of evolutionary computations.
+ * `SelectionException` is typically thrown within a constraints block where specific conditions related to the
+ * selection operation are checked. These conditions might include the size of the population, the validity of the
+ * selection count, or other requirements for successful selection.
  *
- * ### Example:
- * ```kotlin
- * class MySelector<T, G> : Selector<T, G> where G : Gene<T, G> {
- *     override fun select(population: Population<T, G>, count: Int, ranker: IndividualRanker<T, G>): Population<T, G> {
- *         if (population.isEmpty()) {
- *             throw SelectionException { "Population must not be empty for selection" }
- *         }
- *         // Selection logic...
+ * ### Example 1: Ensuring Population is Not Empty
+ * ```
+ * constraints {
+ *     "Population must not be empty"(::SelectionException) {
+ *         state.population mustNot BeEmpty
  *     }
  * }
  * ```
- * In this example, `MySelector` throws a `SelectionException` if it is given an empty population to select from.
- * This informs users of the class about the specific reason for the failure of the selection process.
+ * Here, a `SelectionException` could be thrown if the population is empty, which is crucial for a successful selection
+ * operation.
  *
- * @param lazyMessage A lambda function that provides the detail message for the exception. This approach allows for
- *   lazy evaluation of the message, which can be beneficial for performance if the message construction is complex.
+ * @param message The detailed message that explains the reason for the exception, providing context for the constraint
+ *  violation.
  */
-class SelectionException(lazyMessage: () -> String) : Exception(lazyMessage())
+class SelectionException(message: String) : ConstraintException(message)

@@ -68,7 +68,7 @@ class TournamentSelector<T, F>(
             generateSequence { population[Domain.random.nextInt(population.size)] }
                 .take(tournamentSize)
                 .maxWithOrNull(ranker.comparator)
-                ?: throw SelectionException { "Tournament selection failed to find a max individual" }
+                ?: throw SelectionException("Tournament selection failed to find a max individual")
         }
 
     /**
