@@ -7,7 +7,6 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 val dokkaVersion = extra["dokka.version"] as String
 val jaktVersion = extra["jakt.version"] as String
-val javafxVersion = extra["javafx.version"] as String
 val kotestVersion = extra["kotest.version"] as String
 val kotlinxDatetimeVersion = extra["kotlinx.datetime.version"] as String
 val letsPlotKotlinVersion = extra["lets-plot.kotlin.version"] as String
