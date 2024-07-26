@@ -9,48 +9,49 @@ package cl.ravenhill.keen.evolution.config
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.evolution.executors.EvaluationExecutor
 import cl.ravenhill.keen.Individual
-import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.ranking.Ranker
+import cl.ravenhill.keen.repr.Representation
 
 
 /**
- * Configuration settings for the evolutionary algorithm.
+ * Configuration class for the evolution process in an evolutionary algorithm.
  *
- * The `EvolutionConfig` data class encapsulates various configuration settings used to control the evolutionary
- * process. This includes the limits for stopping the process, the ranker for evaluating individuals, listeners for
- * monitoring events, the evaluator for assessing fitness, and the interceptor for pre- and post-processing states.
+ * The `EvolutionConfig` data class encapsulates various settings and components used to configure the evolutionary
+ * process. This includes limits, rankers, listeners, evaluators, and interceptors.
  *
  * ## Usage:
- * Use this class to configure the evolutionary algorithm with specific settings. This configuration is typically
- * passed to the evolutionary algorithm to define its behavior.
+ * This class is used to configure the evolutionary algorithm by specifying the necessary components and settings.
  *
- * ### Example:
+ * ### Example 1: Basic Configuration
  * ```kotlin
- * val listenerConfig = ...
  * val config = EvolutionConfig(
- *     limits = listOf(MaxGenerations(100, listenerConfig)),
- *     ranker = FitnessMaxRanker(),
- *     listeners = listOf(EvolutionSummary(listenerConfig)),
- *     evaluator = SequentialEvaluator(fitnessFunction),
+ *     limits = listOf(MyLimit()),
+ *     ranker = MyRanker(),
+ *     listeners = listOf(MyListener()),
+ *     evaluator = MyEvaluator(),
  *     interceptor = EvolutionInterceptor.identity()
  * )
  * ```
  *
- * @param T The type of the value held by the genes.
- * @param G The type of the gene, which must extend [Gene].
- * @property limits The list of limits used to determine when to stop the evolutionary process.
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
+ * @param S The type of the evolutionary state, which must extend [EvolutionState].
+ * @property limits The list of limits that define the stopping criteria for the evolutionary process.
  * @property ranker The ranker used to evaluate and compare individuals in the population.
- * @property listeners The list of listeners that monitor and respond to events during the evolutionary process.
- * @property evaluator The evaluator used to assess the fitness of individuals in the population.
- * @property interceptor The interceptor used to apply pre- and post-processing to the evolutionary states.
- * @constructor Creates an instance of `EvolutionConfig` with the specified settings.
+ * @property listeners The list of listeners that respond to events during the evolutionary process.
+ * @property evaluator The evaluator responsible for evaluating the fitness of individuals in the population.
+ * @property interceptor The interceptor used to perform actions before and after each step of the evolution process.
+ * @constructor Creates an instance of `EvolutionConfig` with the specified components and settings.
  */
-data class EvolutionConfig<T, G>(
-    val limits: List<Limit<T, G, Individual<T, G>>>,
-    val ranker: Ranker<T, G>,
-    val listeners: List<EvolutionListener<T, G, Individual<T, G>>>,
-    val evaluator: EvaluationExecutor<T, G>,
-    val interceptor: EvolutionInterceptor<T, G>,
-) where G : Gene<T, G>
+data class EvolutionConfig<T, F, R, S>(
+    val limits: List<Limit<T, F, Individual<T, F, R>>>,
+    val ranker: Ranker<T, F, R>,
+    val listeners: List<EvolutionListener<T, F, Individual<T, F, R>>>,
+    val evaluator: EvaluationExecutor<T, F, R>,
+    val interceptor: EvolutionInterceptor<T, F, R, S>,
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>

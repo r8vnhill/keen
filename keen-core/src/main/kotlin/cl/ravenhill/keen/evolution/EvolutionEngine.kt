@@ -7,6 +7,7 @@ import cl.ravenhill.keen.evolution.config.SelectionConfig
 import cl.ravenhill.keen.evolution.engines.Evolver
 import cl.ravenhill.keen.evolution.engines.GeneticAlgorithm
 import cl.ravenhill.keen.Individual
+import cl.ravenhill.keen.genetic.Genotype
 import cl.ravenhill.keen.genetic.genes.Gene
 
 @Deprecated(
@@ -18,7 +19,7 @@ class EvolutionEngine<T, G>(
     selectionConfig: SelectionConfig<T, G>,
     alterationConfig: AlterationConfig<T, G>,
     evolutionConfig: EvolutionConfig<T, G>
-) : Evolver<T, G, Individual<T, G>> by GeneticAlgorithm(
+) : Evolver<T, G, Individual<T, G, Genotype<T, G>>> by GeneticAlgorithm(
     populationConfig,
     selectionConfig,
     alterationConfig,

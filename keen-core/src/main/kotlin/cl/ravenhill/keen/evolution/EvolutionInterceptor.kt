@@ -6,106 +6,136 @@
 
 package cl.ravenhill.keen.evolution
 
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.genetic.genes.Gene
-import java.util.*
+import cl.ravenhill.keen.repr.Representation
 
 
 /**
- * Represents an interceptor for evolution state transformations in an evolutionary algorithm.
+ * A class that intercepts the evolution process in an evolutionary algorithm.
  *
- * `EvolutionInterceptor` allows the insertion of custom logic before and after the evolution process at each
- * generation. It can be used to modify, log, or analyze the state of the evolution at various stages.
- *
- * ## Key Features:
- * - **Pre-Processing**: The `before` function is applied to the evolution state before any genetic
- *   operations are performed. It can be used for setting up or modifying the state.
- * - **Post-Processing**: The `after` function is applied to the evolution state after all genetic
- *   operations are completed. It can be used for cleanup, logging, or applying additional transformations.
+ * The `EvolutionInterceptor` class provides mechanisms to perform actions before and after each step of the evolution
+ * process. This allows for custom behavior to be executed at specific points in the evolutionary cycle, enabling
+ * more flexible and controlled evolution processes.
  *
  * ## Usage:
- * Implement an `EvolutionInterceptor` to introduce custom behavior at different stages of the evolutionary
- * process. It can be particularly useful for debugging, monitoring, or applying custom modifications to the
- * evolution state.
+ * Use this class to define actions that should occur before and after the evolution process. This can be useful for
+ * logging, modifying state, or implementing custom constraints or behaviors.
  *
- * ### Example:
- * Creating an interceptor that logs the evolution state before and after each generation:
+ * ### Example 1: Using an Interceptor to Log Before and After Evolution Steps
  * ```kotlin
- * class MyGene : Gene<Int, MyGene> { /* ... */ }
- *
- * val loggingInterceptor = EvolutionInterceptor<MyDataType, MyGene>(
+ * val interceptor = EvolutionInterceptor<MyType, MyFeature, MyRepresentation, MyState>(
  *     before = { state ->
- *         println("Before evolution: $state")
- *         state // Return the state unchanged
+ *         println("Before evolution step: $state")
+ *         state
  *     },
  *     after = { state ->
- *         println("After evolution: $state")
- *         state // Return the state unchanged
+ *         println("After evolution step: $state")
+ *         state
  *     }
  * )
  * ```
- * In this example, `loggingInterceptor` logs the state of evolution before and after each generation,
- * allowing for monitoring of the evolutionary process.
  *
- * @param T The type of data encapsulated by the genes within the individuals.
- * @param G The type of gene in the individuals, conforming to the [Gene] interface.
- * @property before A function to be applied to the [GeneticEvolutionState] before genetic operations.
- * @property after A function to be applied to the [GeneticEvolutionState] after genetic operations.
+ * ### Example 2: Using an Interceptor to Modify State Before Evolution Steps
+ * ```kotlin
+ * val interceptor = EvolutionInterceptor<MyType, MyFeature, MyRepresentation, MyState>(
+ *     before = { state ->
+ *         // Modify state before the evolution step
+ *         state.copy(generation = state.generation + 1)
+ *     },
+ *     after = { state ->
+ *         // No modifications after the evolution step
+ *         state
+ *     }
+ * )
+ * ```
  *
- * @constructor Creates an [EvolutionInterceptor] with specified `before` and `after` functions.
+ * ### Example 3: Using an Interceptor to Apply a Constraint After Evolution Steps
+ * ```kotlin
+ * val interceptor = EvolutionInterceptor<MyType, MyFeature, MyRepresentation, MyState>(
+ *     before = { state ->
+ *         // No modifications before the evolution step
+ *         state
+ *     },
+ *     after = { state ->
+ *         // Apply a constraint after the evolution step
+ *         constraints {
+ *             "Population size must not exceed 100" { state.population.size must BeAtMost(100) }
+ *         }
+ *         state
+ *     }
+ * )
+ * ```
+ *
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
+ * @param S The type of the evolutionary state, which must extend [EvolutionState].
+ * @property before A function to be executed before each evolution step.
+ * @property after A function to be executed after each evolution step.
+ * @constructor Creates an instance of `EvolutionInterceptor` with the specified before and after functions.
  */
-class EvolutionInterceptor<T, G>(
-    val before: (GeneticEvolutionState<T, G>) -> GeneticEvolutionState<T, G>,
-    val after: (GeneticEvolutionState<T, G>) -> GeneticEvolutionState<T, G>,
-) where G : Gene<T, G> {
-
-    override fun toString() = "EvolutionInterceptor(before=$before, after=$after)"
-
-    override fun equals(other: Any?) = when {
-        this === other -> true
-        other !is EvolutionInterceptor<*, *> -> false
-        else -> before == other.before && after == other.after
-    }
-
-    override fun hashCode() = Objects.hash(EvolutionInterceptor::class, before, after)
+class EvolutionInterceptor<T, F, R, S>(
+    val before: (S) -> S,
+    val after: (S) -> S
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
 
     companion object {
 
         /**
-         * Creates an [EvolutionInterceptor] that performs no modifications on the evolution state.
+         * Creates an identity interceptor that performs no operations.
          *
-         * This factory method is useful when an interceptor is required, but no actual transformation of the evolution
-         * state is needed. Both `before` and `after` functions in this interceptor are identity functions, meaning they
-         * return the state as-is without any changes.
+         * This function returns an `EvolutionInterceptor` that does nothing in the before and after steps.
          *
-         * ## Usage:
-         * Use this method to create a placeholder or default interceptor that maintains the original state of the
-         * evolution process. This is particularly useful in scenarios where interceptors are required by the system's
-         * design, but no specific logic needs to be executed.
-         *
-         * @return An instance of [EvolutionInterceptor] with no operational impact on the evolution state.
+         * @return An identity `EvolutionInterceptor`.
          */
-        fun <T, G> identity() where G : Gene<T, G> = EvolutionInterceptor<T, G>(before = { it }, after = { it })
-
+        fun <T, F, R, S> identity() where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> =
+            EvolutionInterceptor<T, F, R, S>(before = { it }, after = { it })
 
         /**
-         * Creates an [EvolutionInterceptor] that applies a specified function after genetic operations.
+         * Creates an interceptor with a specified after function.
          *
-         * This factory method is designed to generate an interceptor that acts on the evolution state post-genetic
-         * operations. The `after` function provided will be applied to the evolution state after genetic operations
-         * are completed.
+         * This function returns an `EvolutionInterceptor` that performs the specified operation after each evolution
+         * step.
          *
-         * ## Usage:
-         * This method is particularly useful when there is a need to apply additional transformations or checks
-         * on the evolution state after the primary genetic operations. It allows for the insertion of custom logic
-         * into the evolutionary algorithm's workflow.
+         * ### Example:
+         * ```kotlin
+         * val afterInterceptor = EvolutionInterceptor.after<MyType, MyFeature, MyRepresentation, MyState> { state ->
+         *     // Custom operation to be performed after each evolution step
+         *     state.copy(...)
+         * }
+         * ```
          *
-         * @param function A lambda function to be applied to the [GeneticEvolutionState] after genetic operations.
-         *                 The function takes an [EvolutionState] as input and returns an [EvolutionState].
-         * @return An [EvolutionInterceptor] configured to apply the specified `after` function.
+         * @param function The function to be executed after each evolution step.
+         * @return An `EvolutionInterceptor` with the specified after function.
          */
-        fun <T, G> after(
-            function: (GeneticEvolutionState<T, G>) -> GeneticEvolutionState<T, G>,
-        ) where G : Gene<T, G> = EvolutionInterceptor<T, G>(before = { it }, after = { function(it) })
+        fun <T, F, R, S> after(
+            function: (S) -> S,
+        ) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> =
+            EvolutionInterceptor<T, F, R, S>(before = { it }, after = function)
+
+        /**
+         * Creates an interceptor with a specified before function.
+         *
+         * This function returns an `EvolutionInterceptor` that performs the specified operation before each evolution
+         * step.
+         *
+         * ### Example:
+         * ```kotlin
+         * val beforeInterceptor = EvolutionInterceptor.before<MyType, MyFeature, MyRepresentation, MyState> { state ->
+         *     // Custom operation to be performed before each evolution step
+         *     state.copy(...)
+         * }
+         * ```
+         *
+         * @param function The function to be executed before each evolution step.
+         * @return An `EvolutionInterceptor` with the specified before function.
+         */
+        fun <T, F, R, S> before(
+            function: (S) -> S,
+        ) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> =
+            EvolutionInterceptor<T, F, R, S>(before = function, after = { it })
     }
 }
