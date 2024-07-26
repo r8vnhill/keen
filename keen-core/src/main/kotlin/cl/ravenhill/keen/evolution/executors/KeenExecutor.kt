@@ -8,63 +8,59 @@ package cl.ravenhill.keen.evolution.executors
 
 
 /**
- * Defines an interface for executors in the Keen framework.
+ * Interface representing a general executor in the Keen evolutionary computation framework.
  *
- * This interface is part of the Keen genetic algorithm framework and is used to define a standard
- * for executors. Executors are objects responsible for executing specific tasks or operations, such
- * as running a genetic algorithm, evaluating fitness, performing selections, etc.
- *
- * ## Factory Interface:
- * The `Factory` interface nested within `KeenExecutor` is a generic factory pattern for creating
- * executor instances. It provides flexibility in creating various types of executors tailored to
- * different needs and inputs.
- *
- * ### Usage:
- * The `Factory` interface is particularly useful in scenarios where executors need to be dynamically
- * created based on different input parameters or configurations. By defining a `creator` function,
- * users can specify how an executor should be instantiated.
- *
- * ### Example:
- * Implementing a factory for a custom executor:
- * ```kotlin
- * class MyCustomExecutor : KeenExecutor {
- *     // Executor implementation
- * }
- *
- * class MyCustomExecutorFactory : KeenExecutor.Factory<MyInputType, MyCustomExecutor> {
- *     override var creator: (MyInputType) -> MyCustomExecutor = { input ->
- *         // Logic for creating MyCustomExecutor with the given input
- *     }
- * }
- *
- * // Creating an executor instance
- * val factory = MyCustomExecutorFactory()
- * val executor = factory.creator(myInput)
- * ```
- *
- * In this example, `MyCustomExecutor` implements the `KeenExecutor` interface. The factory,
- * `MyCustomExecutorFactory`, specifies how to create instances of `MyCustomExecutor` based on
- * a specific input type, `MyInputType`.
- *
- * @author [Ignacio Slater M.](https://www.github.com/r8vnhill)
- * @version 2.0.0
- * @since 2.0.0
+ * The `KeenExecutor` interface defines the basic structure for executors used in the Keen framework. Executors are
+ * responsible for performing specific tasks or processes within an evolutionary algorithm.
  */
 interface KeenExecutor {
 
     /**
-     * A factory interface for creating instances of [KeenExecutor].
+     * Factory interface for creating instances of executors.
      *
-     * This interface allows for defining a custom method to create executors. It is particularly
-     * useful in scenarios where executors need to be instantiated with specific configurations or
-     * parameters.
+     * The `Factory` interface provides a mechanism for creating instances of executors in the Keen framework.
+     * It allows for the configuration of a creator function that produces the required executor instances.
      *
-     * @param I The type of the input used to create the executor.
-     * @param R The type of the executor created by the factory.
-     * @property creator A lambda function that takes an input of type [I] and produces an executor
-     *   of type [R]. This function defines how the executor is created based on the provided input.
+     * ## Usage:
+     * This interface is typically used to define factories for different types of executors within the Keen framework.
+     * By implementing this interface, users can specify how executors should be created and configured.
+     *
+     * ### Example 1: Creating a Simple Executor Factory
+     * ```kotlin
+     * class SimpleExecutor : KeenExecutor {
+     *     // Implementation of the executor
+     * }
+     *
+     * val simpleExecutorFactory = object : KeenExecutor.Factory<Unit, SimpleExecutor> {
+     *     override var creator: (Unit) -> SimpleExecutor = { SimpleExecutor() }
+     * }
+     *
+     * val executor = simpleExecutorFactory.creator(Unit)
+     * ```
+     *
+     * ### Example 2: Creating an Executor with Parameters
+     * ```kotlin
+     * class ParameterizedExecutor(val parameter: Int) : KeenExecutor {
+     *     // Implementation of the executor
+     * }
+     *
+     * val parameterizedExecutorFactory = object : KeenExecutor.Factory<Int, ParameterizedExecutor> {
+     *     override var creator: (Int) -> ParameterizedExecutor = { param -> ParameterizedExecutor(param) }
+     * }
+     *
+     * val executor = parameterizedExecutorFactory.creator(420)
+     * ```
+     *
+     * @param I The input type used by the creator function to produce executor instances.
+     * @param R The type of the executor, which must extend [KeenExecutor].
      */
     interface Factory<I, R> where R : KeenExecutor {
+
+        /**
+         * The creator function responsible for producing executor instances.
+         *
+         * This function takes an input of type [I] and returns an instance of type [R], which extends [KeenExecutor].
+         */
         var creator: (I) -> R
     }
 }
