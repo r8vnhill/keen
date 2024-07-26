@@ -8,58 +8,58 @@ package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.engines.Evolver
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
+import cl.ravenhill.keen.evolution.states.State
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.mixins.FitnessEvaluable
 
 
 /**
- * An interface representing a limit condition in an evolutionary algorithm.
+ * Represents a limit in an evolutionary algorithm.
  *
- * A `Limit` in the context of evolutionary algorithms is a condition or a set of conditions that determine whether the
- * evolutionary process should continue or terminate. It is used to define stopping criteria based on various factors
- * such as the number of generations, fitness thresholds, or other custom conditions.
- *
- * ## Key Concepts:
- * - **Termination Criteria**: The primary role of a `Limit` is to provide a mechanism to decide when the
- *   evolutionary process should stop. This decision is typically based on the current state of the evolution.
- * - **State Evaluation**: Each `Limit` evaluates the [GeneticEvolutionState] to determine if the specified criteria
- *   for termination are met.
+ * The `Limit` interface defines the basic structure and operations for a limit that determines whether the evolutionary
+ * process should stop. This includes a deprecated property for the engine and a method to evaluate the limit condition
+ * based on the current state.
  *
  * ## Usage:
- * Implement this interface to define custom termination conditions for an evolutionary algorithm. The specific
- * criteria can be tailored to the requirements of the problem being solved or the objectives of the algorithm.
+ * Implement this interface in classes that define specific stopping conditions for the evolutionary algorithm, such as
+ * reaching a certain number of generations or achieving a target fitness level. Provide the logic to evaluate the limit
+ * condition.
  *
  * ### Example:
- * Implementing a generation limit:
  * ```kotlin
- * class GenerationLimit<T, G, I>(
+ * class GenerationLimit<T, F, I>(
  *     private val maxGenerations: Int
- * ) : Limit<T, G, I> where G : Gene<T, G>, I : FitnessEvaluable {
- *     override fun invoke(state: EvolutionState<T, G>): Boolean {
- *         return state.generation >= maxGenerations
- *     }
+ * ) : Limit<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
+ *
+ *     @Deprecated("This property will be removed in future versions.")
+ *     override var engine: Evolver<T, F, I>? = null
+ *
+ *     override fun invoke(state: State<T, F, I>) = state.generation >= maxGenerations
  * }
- *
- * // Usage in an evolutionary algorithm
- * val limit: Limit<MyDataType, MyGene, MyIndividual> = GenerationLimit(100)
- * val shouldTerminate = limit(currentState)
  * ```
- * In this example, `GenerationLimit` implements the `Limit` interface, providing a stopping condition when
- * the number of generations reaches or exceeds a specified maximum.
  *
- * @param T The type of data encapsulated by the genes within the individuals.
- * @param G The type of gene in the individuals, conforming to the [Gene] interface.
- * @property engine The [Evolver] instance that is executing the evolutionary process.
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param I The type of the individuals in the state, which must extend [FitnessEvaluable].
  */
-interface Limit<T, G, I> where G : Gene<T, G>, I : FitnessEvaluable {
-    @Deprecated("This property will be removed in future versions.")
-    var engine: Evolver<T, G, I>?
+interface Limit<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
 
     /**
-     * Evaluates the given [GeneticEvolutionState] and determines whether the evolutionary process should terminate.
+     * The engine associated with this limit.
      *
-     * @param state The current state of the evolution process.
-     * @return `true` if the termination criteria are met, `false` otherwise.
+     * This property is deprecated and will be removed in future versions.
      */
-    operator fun invoke(state: GeneticEvolutionState<T, G>): Boolean
+    @Deprecated("This property will be removed in future versions.")
+    var engine: Evolver<T, F, I>?
+
+    /**
+     * Evaluates the limit condition based on the current state.
+     *
+     * This method determines whether the evolutionary process should stop based on the specified limit condition.
+     *
+     * @param state The current state of the evolutionary process.
+     * @return `true` if the limit condition is met and the process should stop, `false` otherwise.
+     */
+    operator fun invoke(state: State<T, F, I>): Boolean
 }
