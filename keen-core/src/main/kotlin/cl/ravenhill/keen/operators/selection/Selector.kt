@@ -14,7 +14,7 @@ import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.evolution.states.State
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.operators.Operator
@@ -67,7 +67,7 @@ interface Selector<T, F, R> : Operator<T, F, R> where F : Feature<T, F>, R : Rep
         state: S,
         outputSize: Int,
         buildState: (List<Individual<T, F, R>>) -> S
-    ): S where S : State<T, F, R> {
+    ): S where S : EvolutionState<T, F, R> {
         constraints {
             "Population must not be empty"(::SelectionException) {
                 state.population mustNot BeEmpty

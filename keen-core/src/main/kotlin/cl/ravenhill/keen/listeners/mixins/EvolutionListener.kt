@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.listeners.mixins
 
-import cl.ravenhill.keen.evolution.states.State
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.mixins.FitnessEvaluable
@@ -63,14 +63,14 @@ interface EvolutionListener<T, F, I> :
      *
      * @param state The current state of the evolutionary process.
      */
-    fun onEvolutionStarted(state: State<T, F, I>) = Unit
+    fun onEvolutionStarted(state: EvolutionState<T, F, I>) = Unit
 
     /**
      * Called when the evolution process ends.
      *
      * @param state The current state of the evolutionary process.
      */
-    fun onEvolutionEnded(state: State<T, F, I>) = Unit
+    fun onEvolutionEnded(state: EvolutionState<T, F, I>) = Unit
 
     /**
      * Displays the listener's state by printing its string representation.

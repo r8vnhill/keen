@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.operators
 
 import cl.ravenhill.keen.Individual
-import cl.ravenhill.keen.evolution.states.State
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -51,5 +51,5 @@ interface Operator<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
         state: S,
         outputSize: Int,
         buildState: (List<Individual<T, F, R>>) -> S
-    ): S where S : State<T, F, R>
+    ): S where S : EvolutionState<T, F, R>
 }

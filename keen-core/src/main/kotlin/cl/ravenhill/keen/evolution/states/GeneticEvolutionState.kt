@@ -37,7 +37,7 @@ data class GeneticEvolutionState<T, G>(
     override val generation: Int,
     override val ranker: Ranker<T, G>,
     override val population: Population<T, G>,
-) : State<T, G, Individual<T, G>> where G : Gene<T, G> {
+) : EvolutionState<T, G, Individual<T, G>> where G : Gene<T, G> {
 
     init {
         constraints { "Generation [$generation] must not be negative" { generation mustNot BeNegative } }

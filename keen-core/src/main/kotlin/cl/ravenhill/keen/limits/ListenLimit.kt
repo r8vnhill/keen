@@ -7,7 +7,7 @@
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.engines.Evolver
-import cl.ravenhill.keen.evolution.states.State
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.listeners.mixins.EvolutionListener
 import cl.ravenhill.keen.mixins.FitnessEvaluable
@@ -46,7 +46,7 @@ import cl.ravenhill.keen.mixins.FitnessEvaluable
  */
 open class ListenLimit<T, F, I>(
     private val listener: EvolutionListener<T, F, I>,
-    private val predicate: EvolutionListener<T, F, I>.(State<T, F, I>) -> Boolean
+    private val predicate: EvolutionListener<T, F, I>.(EvolutionState<T, F, I>) -> Boolean
 ) : Limit<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
 
     /**
@@ -66,5 +66,5 @@ open class ListenLimit<T, F, I>(
      * @param state The current state of the evolutionary process.
      * @return `true` if the limit condition is met and the process should stop, `false` otherwise.
      */
-    override fun invoke(state: State<T, F, I>) = listener.predicate(state)
+    override fun invoke(state: EvolutionState<T, F, I>) = listener.predicate(state)
 }

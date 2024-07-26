@@ -1,6 +1,6 @@
 package cl.ravenhill.keen.evolution.engines
 
-import cl.ravenhill.keen.evolution.states.State
+import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.mixins.FitnessEvaluable
 
@@ -47,5 +47,5 @@ interface Evolver<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
      *
      * @return The new state after performing the evolution.
      */
-    fun evolve(): State<T, F, I>
+    fun evolve(): EvolutionState<T, F, I>
 }

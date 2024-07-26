@@ -8,9 +8,9 @@ import cl.ravenhill.keen.repr.Representation
 /**
  * Represents a state in the evolutionary process.
  *
- * The `State` interface defines the basic structure and operations for an evolutionary state, which includes the
- * population of individuals, the ranker used for evaluating fitness, the current generation number, and the size of the
- * state.
+ * The `EvolutionState` interface defines the basic structure and operations for an evolutionary state, which includes
+ * the population of individuals, the ranker used for evaluating fitness, the current generation number, and the size of
+ * the state.
  *
  * ## Usage:
  * Use this interface to define the state of the population in an evolutionary algorithm. The state keeps track of the
@@ -23,7 +23,7 @@ import cl.ravenhill.keen.repr.Representation
  *     override val population: Population<T, F, R>,
  *     override val ranker: Ranker<T, F, R>,
  *     override val generation: Int
- * ) : State<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
+ * ) : EvolutionState<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
  *     override val size: Int
  *         get() = population.size
  *
@@ -39,7 +39,7 @@ import cl.ravenhill.keen.repr.Representation
  * @property ranker The ranker used to evaluate and compare individuals in the population.
  * @property generation The current generation number in the evolutionary process.
  */
-interface State<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
+interface EvolutionState<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
 
     val size: Int
 
