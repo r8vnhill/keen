@@ -50,7 +50,7 @@ import cl.ravenhill.keen.ranking.FitnessRanker
 data class EvolutionConfig<T, G>(
     val limits: List<Limit<T, G, Individual<T, G>>>,
     val ranker: FitnessRanker<T, G>,
-    val listeners: List<EvolutionListener<T, G>>,
+    val listeners: List<EvolutionListener<T, G, Individual<T, G>>>,
     val evaluator: EvaluationExecutor<T, G>,
     val interceptor: EvolutionInterceptor<T, G>,
 ) where G : Gene<T, G>
