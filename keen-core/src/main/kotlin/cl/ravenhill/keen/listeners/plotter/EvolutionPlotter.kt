@@ -74,7 +74,7 @@ import org.jetbrains.letsPlot.skia.compose.PlotPanel
  */
 open class EvolutionPlotter<T, G>(configuration: ListenerConfiguration<T, G> = ListenerConfiguration()) :
     AbstractEvolutionListener<T, G>(configuration),
-    GenerationListener<T, G> by GenerationPlotListener(configuration)
+    GenerationListener<T, G, Any?> by GenerationPlotListener(configuration)
         where G : Gene<T, G> {
 
     /**

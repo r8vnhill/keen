@@ -35,7 +35,7 @@ import cl.ravenhill.keen.listeners.mixins.SurvivorSelectionListener
  * @property precision the function used to measure the duration
  */
 class SurvivorSelectionSummary<T, G>(configuration: ListenerConfiguration<T, G>) :
-    SurvivorSelectionListener<T, G> where G : Gene<T, G> {
+    SurvivorSelectionListener<T, G, Any?> where G : Gene<T, G> {
 
     private val timeSource = configuration.timeSource
     private val currentGeneration = configuration.currentGeneration

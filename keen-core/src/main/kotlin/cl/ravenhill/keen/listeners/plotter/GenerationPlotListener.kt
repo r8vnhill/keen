@@ -37,7 +37,7 @@ import cl.ravenhill.keen.listeners.records.IndividualRecord
  * @property evolution the record of the evolution process
  */
 class GenerationPlotListener<T, G>(configuration: ListenerConfiguration<T, G>) :
-    GenerationListener<T, G> where G : Gene<T, G> {
+    GenerationListener<T, G, Any?> where G : Gene<T, G> {
 
     private val currentGeneration = configuration.currentGeneration
     private val evolution = configuration.evolution

@@ -35,7 +35,7 @@ import cl.ravenhill.keen.listeners.mixins.EvaluationListener
  * @property precision the function used to measure the duration
  */
 class EvaluationSummary<T, G>(configuration: ListenerConfiguration<T, G>) :
-    EvaluationListener<T, G> where G : Gene<T, G> {
+    EvaluationListener<T, G, Any?> where G : Gene<T, G> {
 
     private val timeSource = configuration.timeSource
     private val currentGeneration = configuration.currentGeneration

@@ -40,7 +40,7 @@ import cl.ravenhill.keen.listeners.records.IndividualRecord
  * @property ranker the ranker used for ranking individuals
  */
 class GenerationPrinterListener<T, G>(configuration: ListenerConfiguration<T, G>) :
-    GenerationListener<T, G> where G : Gene<T, G> {
+    GenerationListener<T, G, Any?> where G : Gene<T, G> {
 
     private val currentGeneration = configuration.currentGeneration
     private val timeSource = configuration.timeSource

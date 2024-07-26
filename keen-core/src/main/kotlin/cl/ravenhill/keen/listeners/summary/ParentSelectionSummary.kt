@@ -35,7 +35,7 @@ import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
  * @property precision the function used to measure the duration
  */
 class ParentSelectionSummary<T, G>(configuration: ListenerConfiguration<T, G>) :
-    ParentSelectionListener<T, G> where G : Gene<T, G> {
+    ParentSelectionListener<T, G, Any?> where G : Gene<T, G> {
 
     private val timeSource = configuration.timeSource
     private val currentGeneration = configuration.currentGeneration

@@ -34,7 +34,7 @@ import cl.ravenhill.keen.listeners.mixins.AlterationListener
  * @property currentGeneration the current generation record
  * @property precision the function used to measure the duration
  */
-class AlterationSummary<T, G>(config: ListenerConfiguration<T, G>) : AlterationListener<T, G> where G : Gene<T, G> {
+class AlterationSummary<T, G>(config: ListenerConfiguration<T, G>) : AlterationListener<T, G, Any?> where G : Gene<T, G> {
 
     private val timeSource = config.timeSource
     private val currentGeneration = config.currentGeneration

@@ -27,7 +27,7 @@ import cl.ravenhill.keen.listeners.PhaseListener
  * @param T the type of the gene value
  * @param G the type of the gene, which must extend [Gene]
  */
-interface ParentSelectionListener<T, G> : PhaseListener<T, G> where G : Gene<T, G> {
+interface ParentSelectionListener<T, G, U> : PhaseListener<T, G> where G : Gene<T, G> {
 
     /**
      * Called when the parent selection phase starts.

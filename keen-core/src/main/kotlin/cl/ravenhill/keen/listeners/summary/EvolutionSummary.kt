@@ -49,12 +49,12 @@ import cl.ravenhill.keen.listeners.mixins.SurvivorSelectionListener
 class EvolutionSummary<T, G>(
     configuration: ListenerConfiguration<T, G> = ListenerConfiguration()
 ) : AbstractEvolutionListener<T, G>(configuration),
-    GenerationListener<T, G> by GenerationSummary(configuration),
-    InitializationListener<T, G> by InitializationSummary(configuration),
-    EvaluationListener<T, G> by EvaluationSummary(configuration),
-    ParentSelectionListener<T, G> by ParentSelectionSummary(configuration),
-    SurvivorSelectionListener<T, G> by SurvivorSelectionSummary(configuration),
-    AlterationListener<T, G> by AlterationSummary(configuration)
+    GenerationListener<T, G, Any?> by GenerationSummary(configuration),
+    InitializationListener<T, G, Any?> by InitializationSummary(configuration),
+    EvaluationListener<T, G, Any?> by EvaluationSummary(configuration),
+    ParentSelectionListener<T, G, Any?> by ParentSelectionSummary(configuration),
+    SurvivorSelectionListener<T, G, Any?> by SurvivorSelectionSummary(configuration),
+    AlterationListener<T, G, Any?> by AlterationSummary(configuration)
         where G : Gene<T, G> {
 
     private val precision = configuration.precision

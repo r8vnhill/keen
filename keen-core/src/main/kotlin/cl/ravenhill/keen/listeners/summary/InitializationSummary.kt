@@ -34,7 +34,7 @@ import cl.ravenhill.keen.listeners.mixins.InitializationListener
  * @property precision the function used to measure the duration
  */
 class InitializationSummary<T, G>(configuration: ListenerConfiguration<T, G>) :
-    InitializationListener<T, G> where G : Gene<T, G> {
+    InitializationListener<T, G, Any?> where G : Gene<T, G> {
 
     private val evolution = configuration.evolution
     private val timeSource = configuration.timeSource

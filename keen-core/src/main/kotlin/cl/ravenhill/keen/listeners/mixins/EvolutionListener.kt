@@ -6,88 +6,101 @@
 
 package cl.ravenhill.keen.listeners.mixins
 
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
-import cl.ravenhill.keen.genetic.genes.Gene
+import cl.ravenhill.keen.evolution.states.State
+import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
+import cl.ravenhill.keen.mixins.FitnessEvaluable
 import cl.ravenhill.keen.ranking.FitnessRanker
 import cl.ravenhill.keen.utils.isNotNaN
 
 
 /**
- * A comprehensive listener interface for receiving notifications about various phases in the evolutionary computation
- * process, including initialization, evaluation, parent selection, survivor selection, alteration, and evolution
- * itself.
+ * Represents an evolution listener in an evolutionary algorithm.
+ *
+ * The `EvolutionListener` interface extends multiple listener interfaces to provide a comprehensive event handling
+ * mechanism for various stages of the evolutionary process. This includes handling events for generation,
+ * initialization, evaluation, parent selection, survivor selection, and alteration.
  *
  * ## Usage:
- * Implement this interface to create a custom listener that handles events occurring at different phases of the
- * evolutionary computation process.
+ * Implement this interface in classes that need to listen and respond to different stages of the evolutionary process.
+ * The methods provided allow for custom actions to be performed at each stage of the process.
  *
- * ### Example 1: Custom Evolution Listener
- * ```
- * class MyEvolutionListener : EvolutionListener<Int, MyGene> {
- *     override var ranker: IndividualRanker<Int, MyGene> = MyRanker()
- *     override var evolution: EvolutionRecord<Int, MyGene> = MyEvolutionRecord()
- *     override var timeSource: TimeSource = MyTimeSource()
+ * ### Example:
+ * ```kotlin
+ * class MyEvolutionListener<T, F, I> : EvolutionListener<T, F, I> where F : Feature<T, F>, I : FitnessEvaluable {
  *
- *     override fun onEvolutionStarted(state: EvolutionState<Int, MyGene>) =
- *         println("Evolution started.")
+ *     override fun onEvolutionStarted(state: State<T, F, I>) {
+ *         println("Evolution started with state: $state")
+ *     }
  *
- *     override fun onEvolutionEnded(state: EvolutionState<Int, MyGene>) =
- *         println("Evolution ended.")
+ *     override fun onEvolutionEnded(state: State<T, F, I>) {
+ *         println("Evolution ended with state: $state")
+ *     }
+ *
+ *     override fun onGenerationStart(generation: Int) {
+ *         println("Generation $generation started")
+ *     }
+ *
+ *     // Implement other event handling methods as needed
  * }
  * ```
- * @param T the type of the gene value
- * @param G the type of the gene, which must extend [Gene]
+ *
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param I The type of the individuals in the state, which must extend [FitnessEvaluable].
  */
-interface EvolutionListener<T, G> :
-        GenerationListener<T, G>,
-        InitializationListener<T, G>,
-        EvaluationListener<T, G>,
-        ParentSelectionListener<T, G>,
-        SurvivorSelectionListener<T, G>,
-        AlterationListener<T, G>
-        where G : Gene<T, G> {
+interface EvolutionListener<T, F, I> :
+    GenerationListener<T, F, I>,
+    InitializationListener<T, F, I>,
+    EvaluationListener<T, F, I>,
+    ParentSelectionListener<T, F, I>,
+    SurvivorSelectionListener<T, F, I>,
+    AlterationListener<T, F, I>
+        where F : Feature<T, F>, I : FitnessEvaluable {
 
     /**
-     * Called when the evolution phase starts.
+     * Called when the evolution process starts.
      *
-     * @param state the current state of the evolution process
+     * @param state The current state of the evolutionary process.
      */
-    fun onEvolutionStarted(state: GeneticEvolutionState<T, G>) = Unit
+    fun onEvolutionStarted(state: State<T, F, I>) = Unit
 
     /**
-     * Called when the evolution phase ends.
+     * Called when the evolution process ends.
      *
-     * @param state the current state of the evolution process
+     * @param state The current state of the evolutionary process.
      */
-    fun onEvolutionEnded(state: GeneticEvolutionState<T, G>) = Unit
+    fun onEvolutionEnded(state: State<T, F, I>) = Unit
 
     /**
-     * Displays the listener's information.
+     * Displays the listener's state by printing its string representation.
      */
     fun display() = println(toString())
 
     /**
-     * Combines this listener with another listener.
+     * Combines this listener with another listener into a list.
      *
-     * @param other the other listener to combine with
-     * @return a list containing both listeners
+     * @param other The other listener to combine with this listener.
+     * @return A list containing this listener and the specified listener.
      */
-    operator fun plus(other: EvolutionListener<T, G>): List<EvolutionListener<T, G>> = listOf(this, other)
+    operator fun plus(other: EvolutionListener<T, F, I>): List<EvolutionListener<T, F, I>> = listOf(this, other)
 
     companion object {
+
         /**
-         * Computes the number of steady generations, where the fitness of the fittest individual remains the same
-         * across consecutive generations.
+         * Computes the number of steady generations in the evolutionary process.
          *
-         * @param ranker the ranker used for ranking individuals
-         * @param evolution the record of the evolution process
-         * @return the number of steady generations
+         * This method calculates how many generations in a row have had the same fittest individual based on the
+         * provided ranker and evolution record.
+         *
+         * @param ranker The ranker used to evaluate individuals.
+         * @param evolution The record of the evolutionary process.
+         * @return The number of steady generations.
          */
-        fun <T, G> computeSteadyGenerations(
-            ranker: FitnessRanker<T, G>,
-            evolution: EvolutionRecord<T, G>,
-        ): Int where G : Gene<T, G> {
+        fun <T, F> computeSteadyGenerations(
+            ranker: FitnessRanker<T, F>,
+            evolution: EvolutionRecord<T, F>,
+        ): Int where F : Feature<T, F> {
             var steady = 0
             for (i in evolution.generations.size - 1 downTo 1) {
                 val last = evolution.generations[i - 1]

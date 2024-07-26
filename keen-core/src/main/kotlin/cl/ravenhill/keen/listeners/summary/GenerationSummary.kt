@@ -38,7 +38,7 @@ import kotlin.time.TimeSource
  */
 class GenerationSummary<T, G>(
     configuration: ListenerConfiguration<T, G>
-) : GenerationListener<T, G> where G : Gene<T, G> {
+) : GenerationListener<T, G, Any?> where G : Gene<T, G> {
 
     private val evolution: EvolutionRecord<T, G> = configuration.evolution
     private val timeSource: TimeSource = configuration.timeSource
