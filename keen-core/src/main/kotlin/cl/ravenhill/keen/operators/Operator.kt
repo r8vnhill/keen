@@ -23,9 +23,9 @@ import cl.ravenhill.keen.features.Feature
  *
  * ### Example:
  * ```kotlin
- * class MyOperator<T, F> : Operator<T, F> where F : Feature<T, F> {
+ * class MyOperator<T, F, S> : Operator<T, F, S> where F : Feature<T, F>, S : State<T, F> {
  *
- *     override fun invoke(state: State<T, F>, outputSize: Int): State<T, F> {
+ *     override fun invoke(state: S, outputSize: Int): S {
  *         // Implementation of the operator logic
  *         return transformedState
  *     }
@@ -34,8 +34,9 @@ import cl.ravenhill.keen.features.Feature
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
+ * @param S The type of the state, which must extend [State].
  */
-interface Operator<T, F> where F : Feature<T, F> {
+interface Operator<T, F, S> where F : Feature<T, F>, S : State<T, F> {
 
     /**
      * Applies the operator to the given state and produces a new state with the specified output size.
@@ -44,5 +45,5 @@ interface Operator<T, F> where F : Feature<T, F> {
      * @param outputSize The size of the output state to be produced.
      * @return The new state after applying the operator.
      */
-    operator fun invoke(state: State<T, F>, outputSize: Int): State<T, F>
+    operator fun invoke(state: S, outputSize: Int): S
 }

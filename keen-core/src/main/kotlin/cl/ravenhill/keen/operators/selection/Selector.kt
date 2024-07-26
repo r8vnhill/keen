@@ -10,11 +10,8 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BeNegative
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.evolution.states.State
 import cl.ravenhill.keen.features.Feature
-import cl.ravenhill.keen.genetic.Population
-import cl.ravenhill.keen.genetic.genes.Gene
 import cl.ravenhill.keen.mixins.FitnessEvaluable
 import cl.ravenhill.keen.operators.Operator
 import cl.ravenhill.keen.ranking.FitnessRanker
@@ -34,9 +31,9 @@ import cl.ravenhill.keen.ranking.FitnessRanker
  *
  * ### Example:
  * ```kotlin
- * class TournamentSelector<T, F>(
- *     override val stateBuilder: (Int, FitnessRanker<T, F>, List<FitnessEvaluable>) -> State<T, F>
- * ) : Selector<T, F> where F : Feature<T, F> {
+ * class TournamentSelector<T, F, S>(
+ *     override val stateBuilder: (Int, FitnessRanker<T, F>, List<FitnessEvaluable>) -> S
+ * ) : Selector<T, F> where F : Feature<T, F>, S : State<T, F> {
  *
  *     override fun select(population: List<FitnessEvaluable>, count: Int, ranker: FitnessRanker<T, F>):
  *         List<FitnessEvaluable> {
@@ -50,9 +47,9 @@ import cl.ravenhill.keen.ranking.FitnessRanker
  * @property stateBuilder The state builder function for creating new states. This function is used to create new states
  *  with the specified generation, ranker, and selected population.
  */
-interface Selector<T, F> : Operator<T, F> where F : Feature<T, F> {
+interface Selector<T, F, S> : Operator<T, F, S> where F : Feature<T, F>, S : State<T, F> {
 
-    val stateBuilder: (Int, FitnessRanker<T, F>, List<FitnessEvaluable>) -> State<T, F>
+    val stateBuilder: (Int, FitnessRanker<T, F>, List<FitnessEvaluable>) -> S
 
     /**
      * Applies the selector to the given state and produces a new state with the specified output size.
@@ -65,7 +62,7 @@ interface Selector<T, F> : Operator<T, F> where F : Feature<T, F> {
      * @param outputSize The size of the output state to be produced.
      * @return The new state after applying the selector.
      */
-    override fun invoke(state: State<T, F>, outputSize: Int): State<T, F> {
+    override fun invoke(state: S, outputSize: Int): S {
         constraints {
             "Population must not be empty" {
                 state.population mustNot BeEmpty
