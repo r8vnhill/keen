@@ -20,6 +20,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.filterNot
 import io.kotest.property.arbitrary.flatMap
 import io.kotest.property.arbitrary.list
@@ -33,13 +34,9 @@ class IndividualRankerTest : FreeSpec({
             checkAll(
                 arbIndividual(arbSimpleRepresentation(arbSimpleFeature(Arb.double()))),
                 arbIndividual(arbSimpleRepresentation(arbSimpleFeature(Arb.double()))),
-            ) { i1, i2 ->
-                SimpleRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>()(i1, i2)
-                    .shouldBe(
-                        SimpleRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>()(
-                            i1, i2
-                        )
-                    )
+                Arb.element(FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>())
+            ) { i1, i2, ranker ->
+                ranker.comparator.compare(i1, i2) shouldBe ranker(i1, i2)
             }
         }
 
