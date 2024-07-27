@@ -39,7 +39,7 @@ import cl.ravenhill.keen.repr.Representation
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
- * @property size The size of the state, typically representing the number of individuals in the population.
+ * @property size The size of the state, which is the number of individuals in the population.
  * @property population The population of individuals in the current state.
  * @property ranker The ranker used to evaluate and compare individuals in the population.
  * @property generation The current generation number in the evolutionary process.
@@ -47,6 +47,7 @@ import cl.ravenhill.keen.repr.Representation
 interface EvolutionState<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
 
     val size: Int
+        get() = population.size
 
     val population: Population<T, F, R>
 
@@ -59,5 +60,5 @@ interface EvolutionState<T, F, R> where F : Feature<T, F>, R : Representation<T,
      *
      * @return `true` if the state has no individuals, `false` otherwise.
      */
-    fun isEmpty(): Boolean
+    fun isEmpty(): Boolean = population.isEmpty()
 }

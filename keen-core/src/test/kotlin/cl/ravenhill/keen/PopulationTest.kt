@@ -9,7 +9,6 @@ import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.keen.repr.arbSimpleFeature
 import cl.ravenhill.keen.repr.arbSimpleRepresentation
-import cl.ravenhill.keen.utils.arbNonNaNDouble
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -46,5 +45,7 @@ private fun <T, F, R> arbPopulationAndFitness(
     individuals to fitness
 }
 
-fun <T, F, R> arbPopulation(individual: Arb<Individual<T, F, R>>): Arb<Population<T, F, R>>
-        where F : Feature<T, F>, R : Representation<T, F> = Arb.list(individual)
+fun <T, F, R> arbPopulation(
+    individual: Arb<Individual<T, F, R>>,
+    size: IntRange = 0..100
+): Arb<Population<T, F, R>> where F : Feature<T, F>, R : Representation<T, F> = Arb.list(individual, size)

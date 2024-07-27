@@ -34,7 +34,10 @@ class IndividualRankerTest : FreeSpec({
             checkAll(
                 arbIndividual(arbSimpleRepresentation(arbSimpleFeature(Arb.double()))),
                 arbIndividual(arbSimpleRepresentation(arbSimpleFeature(Arb.double()))),
-                Arb.element(FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>())
+                Arb.element(
+                    FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>(),
+                    FitnessMinRanker(),
+                )
             ) { i1, i2, ranker ->
                 ranker.comparator.compare(i1, i2) shouldBe ranker(i1, i2)
             }
@@ -54,7 +57,7 @@ class IndividualRankerTest : FreeSpec({
                             ).map { i2 -> i1 to i2 }
                         }
                     }) { (i1, i2) ->
-                    SimpleRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>()(
+                    FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>()(
                         i1, i2
                     ) shouldBe 1
                 }
@@ -73,7 +76,7 @@ class IndividualRankerTest : FreeSpec({
                             ).map { i2 -> i1 to i2 }
                         }
                     }) { (i1, i2) ->
-                    SimpleRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>()(
+                    FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>()(
                         i1, i2
                     ) shouldBe -1
                 }
@@ -91,7 +94,7 @@ class IndividualRankerTest : FreeSpec({
                         ).map { i2 -> i1 to i2 }
                     }
                 }) { (i1, i2) ->
-                    SimpleRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>()(
+                    FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>()(
                         i1, i2
                     ) shouldBe 0
                 }
@@ -100,10 +103,12 @@ class IndividualRankerTest : FreeSpec({
 
         "can sort a population of individuals according to the ranking criteria" {
             checkAll(
-                arbPopulation(arbIndividual(arbSimpleRepresentation(arbSimpleFeature(Arb.double()))))
-            ) { population ->
-                val ranker =
-                    SimpleRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>()
+                arbPopulation(arbIndividual(arbSimpleRepresentation(arbSimpleFeature(Arb.double())))),
+                Arb.element(
+                    FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>(),
+                    FitnessMinRanker(),
+                )
+            ) { population, ranker ->
                 val sorted = ranker.sort(population)
                 sorted.zipWithNext { i1, i2 ->
                     ranker(i1, i2) shouldBeGreaterThanOrEqualTo 0
