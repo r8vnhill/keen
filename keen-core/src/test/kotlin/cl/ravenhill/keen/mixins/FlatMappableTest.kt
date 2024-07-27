@@ -25,7 +25,7 @@ class FlatMappableTest : FreeSpec({
     }
 })
 
-fun arbFlatMappableAndFlattened(): Arb<Pair<FlatMappable<Int>, List<Int>>> = arbitrary {
+private fun arbFlatMappableAndFlattened(): Arb<Pair<FlatMappable<Int>, List<Int>>> = arbitrary {
     val size = Arb.int(0..10).bind()
     val flattened = mutableListOf<Int>()
     val elements = mutableListOf<List<Int>>()
