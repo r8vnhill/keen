@@ -7,7 +7,11 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.keen.matchers.shouldHaveFitness
 import cl.ravenhill.keen.repr.Feature
+import cl.ravenhill.keen.repr.IsValidRepresentation
 import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.repr.SimpleFeature
+import cl.ravenhill.keen.repr.arbSimpleFeature
+import cl.ravenhill.keen.repr.arbSimpleRepresentation
 import cl.ravenhill.keen.utils.arbNonNaNDouble
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -246,51 +250,9 @@ private fun <T, F> arbIndividualAndFlattenedRepresentation(
     }) to flattened
 }
 
-private fun arbIndividual(
+fun arbIndividual(
     representation: Arb<Representation<Double, SimpleFeature<Double>>>,
     fitness: Arb<Double> = Arb.double()
 ): Arb<Individual<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>> = arbitrary {
     Individual(representation.bind(), fitness.bind())
-}
-
-private fun <T, F> arbSimpleRepresentation(
-    feature: Arb<Feature<T, F>>,
-    isValidRepresentation: Arb<IsValidRepresentation> = Arb.enum<IsValidRepresentation>()
-): Arb<Representation<T, F>> where F : Feature<T, F> = arbitrary {
-    val features = Arb.list(feature).bind()
-    when (isValidRepresentation.bind()) {
-        IsValidRepresentation.VALID -> object : Representation<T, F> {
-            override val size: Int
-                get() = features.size
-
-            override fun flatten() = features.map { it.value }
-
-            override fun toString() = features.joinToString(prefix = "[", postfix = "]")
-        }
-
-        IsValidRepresentation.INVALID -> object : Representation<T, F> {
-            override val size: Int
-                get() = features.size
-
-            override fun flatten() = features.map { it.value }
-
-            override fun verify() = false
-
-            override fun toString() = features.joinToString(prefix = "[", postfix = "]")
-        }
-    }
-}
-
-private fun <T> arbSimpleFeature(value: Arb<T>): Arb<SimpleFeature<T>> = value.map {
-    SimpleFeature(it)
-}
-
-private class SimpleFeature<T>(override val value: T) : Feature<T, SimpleFeature<T>> {
-    override fun duplicateWithValue(value: T) = SimpleFeature(value)
-
-    override fun toString() = "$value"
-}
-
-private enum class IsValidRepresentation {
-    VALID, INVALID
 }
