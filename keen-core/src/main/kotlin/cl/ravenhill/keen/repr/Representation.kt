@@ -5,7 +5,6 @@
 
 package cl.ravenhill.keen.repr
 
-import cl.ravenhill.keen.features.Feature
 import cl.ravenhill.keen.mixins.FlatMappable
 import cl.ravenhill.keen.mixins.Verifiable
 
