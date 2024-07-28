@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.operators.selection.Selector
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -23,7 +24,9 @@ import cl.ravenhill.keen.repr.Representation
  * ```kotlin
  * class MyEvolver<T, F, R>(
  *     override val populationSize: Int,
- *     override val survivalRate: Double
+ *     override val survivalRate: Double,
+ *     override val parentSelector: Selector<T, F, R>,
+ *     override val offspringSelector: Selector<T, F, R>
  * ) : Evolver<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
  *
  *     override fun evolve(): EvolutionState<T, F, R> {
@@ -37,12 +40,18 @@ import cl.ravenhill.keen.repr.Representation
  * @param R The type of the representation, which must extend [Representation].
  * @property populationSize The size of the population.
  * @property survivalRate The rate at which individuals survive to the next generation.
+ * @property parentSelector The selector used to choose parents for the next generation.
+ * @property offspringSelector The selector used to choose offspring for the next generation.
  */
 interface Evolver<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
 
     val populationSize: Int
 
     val survivalRate: Double
+
+    val parentSelector: Selector<T, F, R>
+
+    val offspringSelector: Selector<T, F, R>
 
     /**
      * Performs the evolution process and returns the resulting state.

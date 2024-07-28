@@ -88,31 +88,25 @@ fun <T, F, R> arbEvolutionState(
     population: Arb<Population<T, F, R>>,
     ranker: Arb<IndividualRanker<T, F, R>>,
     generation: Arb<Int> = Arb.positiveInt()
-): Arb<EvolutionState<T, F, R>> where F : Feature<T, F>, R : Representation<T, F> =
+): Arb<SimpleState<T, F, R>> where F : Feature<T, F>, R : Representation<T, F> =
     arbitrary {
-        val boundPopulation = population.bind()
-        val boundRanker = ranker.bind()
-        val boundGeneration = generation.bind()
-        object : EvolutionState<T, F, R> {
-            override val population = boundPopulation
-            override val ranker = boundRanker
-            override val generation = boundGeneration
-        }
+        SimpleState(
+            population = population.bind(),
+            ranker = ranker.bind(),
+            generation = generation.bind()
+        )
     }
 
 private fun <T, F, R> arbEvolutionStateAndPopulation(
     population: Arb<Population<T, F, R>>,
     ranker: Arb<IndividualRanker<T, F, R>>,
     generation: Arb<Int> = Arb.positiveInt()
-): Arb<Pair<EvolutionState<T, F, R>, Population<T, F, R>>> where F : Feature<T, F>, R : Representation<T, F> =
+): Arb<Pair<SimpleState<T, F, R>, Population<T, F, R>>> where F : Feature<T, F>, R : Representation<T, F> =
     arbitrary {
         val boundPopulation = population.bind()
-        val boundRanker = ranker.bind()
-        val boundGeneration = generation.bind()
-        val state = object : EvolutionState<T, F, R> {
-            override val population = boundPopulation
-            override val ranker = boundRanker
-            override val generation = boundGeneration
-        }
-        state to boundPopulation
+        SimpleState(
+            population = boundPopulation,
+            ranker = ranker.bind(),
+            generation = generation.bind()
+        ) to boundPopulation
     }
