@@ -6,7 +6,6 @@
 package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.keen.evolution.states.EvolutionState
-import cl.ravenhill.keen.operators.selection.Selector
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -38,20 +37,9 @@ import cl.ravenhill.keen.repr.Representation
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
- * @property populationSize The size of the population.
- * @property survivalRate The rate at which individuals survive to the next generation.
- * @property parentSelector The selector used to choose parents for the next generation.
- * @property offspringSelector The selector used to choose offspring for the next generation.
+ * @param S The type of the evolution state, which must extend [EvolutionState].
  */
-interface Evolver<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
-
-    val populationSize: Int
-
-    val survivalRate: Double
-
-    val parentSelector: Selector<T, F, R>
-
-    val offspringSelector: Selector<T, F, R>
+interface Evolver<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
 
     /**
      * Performs the evolution process and returns the resulting state.
@@ -61,5 +49,5 @@ interface Evolver<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
      *
      * @return The new state after performing the evolution.
      */
-    fun evolve(): EvolutionState<T, F, R>
+    fun evolve(): S
 }
