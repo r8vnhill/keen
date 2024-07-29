@@ -6,10 +6,12 @@
 package cl.ravenhill.keen.listeners
 
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
-interface EvolutionListener<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
-    fun onEvolutionStart(state: S): Unit
+interface EvolutionListener<T, F, R, S> : GenerationListener<T, F, R, S>
+        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+    fun onEvolutionStart(): Unit
     fun onEvolutionEnd(state: S): Unit
 }

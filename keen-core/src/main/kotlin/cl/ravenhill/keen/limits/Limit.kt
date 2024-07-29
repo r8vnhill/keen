@@ -31,7 +31,8 @@ import cl.ravenhill.keen.repr.Representation
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
- * @param I The type of the individuals in the state, which must extend [FitnessEvaluable].
+ * @param R The type of the representation, which must extend [Representation].
+ * @param S The type of the evolution state, which must extend [EvolutionState].
  * @property listener The event listener used to evaluate the predicate.
  * @property predicate The predicate evaluated by the listener to determine if the limit condition is met.
  * @constructor Creates an instance of `ListenLimit` with the specified listener and predicate.
@@ -40,5 +41,15 @@ open class Limit<T, F, R, S>(
     private val listener: EvolutionListener<T, F, R, S>,
     private val predicate: EvolutionListener<T, F, R, S>.(S) -> Boolean
 ) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+
+    /**
+     * Evaluates the limit condition based on the current state.
+     *
+     * This method determines whether the evolutionary process should stop based on the predicate evaluated by the
+     * listener.
+     *
+     * @param state The current state of the evolutionary process.
+     * @return `true` if the limit condition is met and the process should stop, `false` otherwise.
+     */
     operator fun invoke(state: S) = listener.predicate(state)
 }

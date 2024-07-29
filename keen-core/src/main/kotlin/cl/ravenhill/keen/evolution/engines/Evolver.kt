@@ -21,14 +21,10 @@ import cl.ravenhill.keen.repr.Representation
  *
  * ### Example:
  * ```kotlin
- * class MyEvolver<T, F, R>(
- *     override val populationSize: Int,
- *     override val survivalRate: Double,
- *     override val parentSelector: Selector<T, F, R>,
- *     override val offspringSelector: Selector<T, F, R>
- * ) : Evolver<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
+ * class MyEvolver<T, F, R, S> : Evolver<T, F, R, S>
+ *     where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
  *
- *     override fun evolve(): EvolutionState<T, F, R> {
+ *     override fun evolve(): S {
  *         // Implementation of the evolution logic
  *     }
  * }
