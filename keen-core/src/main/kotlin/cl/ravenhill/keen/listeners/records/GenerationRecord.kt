@@ -9,7 +9,6 @@ import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -41,16 +40,16 @@ import cl.ravenhill.keen.repr.Representation
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
- * @property generations The generation number, which must not be negative.
+ * @property generation The generation number, which must not be negative.
  * @constructor Creates an instance of `GenerationRecord` with the specified generation number.
  * @throws CompositeException if any of the constraints are violated.
  * @throws IntConstraintException if the generation number is negative.
  */
-data class GenerationRecord<T, F, R>(val generations: Int) :
+data class GenerationRecord<T, F, R>(val generation: Int) :
     AbstractTimedRecord() where F : Feature<T, F>, R : Representation<T, F> {
     init {
         constraints {
-            "The generation number ($generations) must not be negative" { generations mustNot BeNegative }
+            "The generation number ($generation) must not be negative" { generation mustNot BeNegative }
         }
     }
 

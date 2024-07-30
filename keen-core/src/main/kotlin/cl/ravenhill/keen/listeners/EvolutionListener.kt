@@ -12,6 +12,6 @@ import cl.ravenhill.keen.repr.Representation
 
 interface EvolutionListener<T, F, R, S> : GenerationListener<T, F, R, S>
         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
-    fun onEvolutionStart(): Unit
-    fun onEvolutionEnd(state: S): Unit
+    fun onEvolutionStart() = Unit
+    fun onEvolutionEnd(state: S) = Unit
 }
