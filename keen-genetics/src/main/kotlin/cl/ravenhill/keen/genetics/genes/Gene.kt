@@ -7,6 +7,7 @@ package cl.ravenhill.keen.genetics.genes
 
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.mixins.FlatMappable
+import cl.ravenhill.keen.mixins.Verifiable
 import cl.ravenhill.keen.repr.Feature
 import kotlin.random.Random
 
@@ -42,7 +43,7 @@ import kotlin.random.Random
  * @param G The type of the gene, which must extend [Gene].
  * @property generator A function that generates a new value for the gene using a [Random] instance.
  */
-interface Gene<T, G> : Feature<T, G>, FlatMappable<T> where G : Gene<T, G> {
+interface Gene<T, G> : Feature<T, G>, FlatMappable<T>, Verifiable where G : Gene<T, G> {
 
     /**
      * A function that generates a new value for the gene using a [Random] instance.

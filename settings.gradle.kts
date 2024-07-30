@@ -4,7 +4,7 @@
  */
 
 rootProject.name = "keen"
-include(":keen-core", ":keen-genetics", ":examples", ":benchmarks")
+include(":keen-core", ":keen-genetics", ":test-utils", ":examples", ":benchmarks", )
 
 pluginManagement {
     repositories {
@@ -20,3 +20,7 @@ pluginManagement {
         id("org.jetbrains.dokka") version extra["dokka.version"] as String
     }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+include("test-utils")

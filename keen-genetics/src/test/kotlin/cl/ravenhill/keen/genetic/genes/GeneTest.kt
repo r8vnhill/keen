@@ -9,6 +9,8 @@ import cl.ravenhill.keen.genetics.genes.Gene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.constant
+import io.kotest.property.arbitrary.flatMap
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.map
 import io.kotest.property.checkAll
@@ -31,11 +33,19 @@ class GeneTest : FreeSpec({
     }
 })
 
-fun arbSimpleGene(): Arb<SimpleGene> = Arb.int(Int.MIN_VALUE..<Int.MAX_VALUE).map {
-    SimpleGene(it)
-}
+fun arbSimpleGene(isValid: Arb<Boolean> = Arb.constant(true)): Arb<SimpleGene> =
+    Arb.int(Int.MIN_VALUE..<Int.MAX_VALUE).flatMap { size ->
+        isValid.map { valid -> SimpleGene(size, valid) }
+    }
 
-data class SimpleGene(override val value: Int) : Gene<Int, SimpleGene> {
+data class SimpleGene(override val value: Int, val isValid: Boolean = true) : Gene<Int, SimpleGene> {
     override val generator: (Int, Random) -> Int = { v, _ -> v + 1 }
     override fun duplicateWithValue(value: Int) = copy(value = value)
+    override fun verify(): Boolean {
+        return if (!isValid) {
+            false
+        } else {
+            super.verify()
+        }
+    }
 }

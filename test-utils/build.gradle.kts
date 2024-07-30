@@ -12,12 +12,10 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":keen-core"))
     implementation("cl.ravenhill:strait-jakt:$jaktVersion")
-    testImplementation("io.kotest:kotest-property:$kotestVersion")
-    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-    testImplementation("io.kotest:kotest-framework-datatest:$kotestVersion")
-    testImplementation(project(":test-utils"))
+    implementation("io.kotest:kotest-property:$kotestVersion")
+    implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    implementation("io.kotest:kotest-framework-datatest:$kotestVersion")
 }
 
 tasks.test {
