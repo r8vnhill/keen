@@ -10,6 +10,8 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.enum
 import io.kotest.property.arbitrary.list
 
+typealias RepresentationArb<T, F> = Arb<Representation<T, F>>
+
 fun <T, F> arbSimpleRepresentation(
     feature: Arb<Feature<T, F>>,
     isValidRepresentation: Arb<IsValidRepresentation> = Arb.enum<IsValidRepresentation>()

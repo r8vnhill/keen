@@ -7,6 +7,7 @@ package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -52,4 +53,39 @@ open class Limit<T, F, R, S>(
      * @return `true` if the limit condition is met and the process should stop, `false` otherwise.
      */
     operator fun invoke(state: S) = listener.predicate(state)
+}
+
+/**
+ * Creates a limit for the evolutionary process based on a listener and a predicate.
+ *
+ * The `limit` function generates a [Limit] instance using the provided listener builder and predicate. The limit is
+ * defined by the listener's behavior and the condition specified by the predicate.
+ *
+ * ## Usage:
+ * This function is useful for setting constraints or stopping conditions in the evolutionary algorithm. It allows
+ * defining custom limits based on specific conditions evaluated by the listener.
+ *
+ * ### Example 1: Creating a Generation Limit
+ * ```kotlin
+ * val generationLimit = limit(
+ *     builder = { config -> MyGenerationListener(config) },
+ *     predicate = { state -> state.generation >= MAX_GENERATIONS }
+ * )
+ * val limitInstance = generationLimit(listenerConfig)
+ * ```
+ *
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
+ * @param S The type of the evolutionary state, which must extend [EvolutionState].
+ * @param builder A function to create an [EvolutionListener] using the given configuration.
+ * @param predicate A predicate function that defines the condition for the limit.
+ * @return A function that creates a [Limit] using the given configuration.
+ */
+fun <T, F, R, S> limit(
+    builder: (ListenerConfiguration<T, F, R>) -> EvolutionListener<T, F, R, S>,
+    predicate: EvolutionListener<T, F, R, S>.(S) -> Boolean
+): (ListenerConfiguration<T, F, R>) -> Limit<T, F, R, S>
+        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> = { config ->
+    Limit(builder(config), predicate)
 }
