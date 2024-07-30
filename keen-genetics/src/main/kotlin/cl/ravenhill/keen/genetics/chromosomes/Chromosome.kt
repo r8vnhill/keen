@@ -6,5 +6,7 @@
 package cl.ravenhill.keen.genetics.chromosomes
 
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.mixins.FlatMappable
+import cl.ravenhill.keen.repr.Representation
 
-interface Chromosome<T, G> where G : Gene<T, G>
+interface Chromosome<T, G> : Representation<T, G>, FlatMappable<T> where G : Gene<T, G>
