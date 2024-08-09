@@ -1,5 +1,4 @@
 public final class cl/ravenhill/keen/Domain {
-	public static final field $stable I
 	public static final field DEFAULT_EQUALITY_THRESHOLD D
 	public static final field INSTANCE Lcl/ravenhill/keen/Domain;
 	public final fun getEqualityThreshold ()D
@@ -11,7 +10,6 @@ public final class cl/ravenhill/keen/Domain {
 }
 
 public final class cl/ravenhill/keen/Individual : cl/ravenhill/keen/mixins/FlatMappable, cl/ravenhill/keen/mixins/Verifiable {
-	public static final field $stable I
 	public fun <init> (Lcl/ravenhill/keen/repr/Representation;D)V
 	public synthetic fun <init> (Lcl/ravenhill/keen/repr/Representation;DILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lcl/ravenhill/keen/repr/Representation;
@@ -60,17 +58,14 @@ public final class cl/ravenhill/keen/evolution/states/EvolutionState$DefaultImpl
 }
 
 public final class cl/ravenhill/keen/exceptions/InvalidIndexException : cl/ravenhill/jakt/exceptions/ConstraintException {
-	public static final field $stable I
 	public fun <init> (Ljava/lang/String;)V
 }
 
 public final class cl/ravenhill/keen/exceptions/SelectionException : cl/ravenhill/jakt/exceptions/ConstraintException {
-	public static final field $stable I
 	public fun <init> (Ljava/lang/String;)V
 }
 
 public class cl/ravenhill/keen/limits/Limit {
-	public static final field $stable I
 	public fun <init> (Lcl/ravenhill/keen/listeners/EvolutionListener;Lkotlin/jvm/functions/Function2;)V
 	public final fun invoke (Lcl/ravenhill/keen/evolution/states/EvolutionState;)Z
 }
@@ -92,7 +87,6 @@ public final class cl/ravenhill/keen/listeners/EvolutionListener$DefaultImpls {
 }
 
 public final class cl/ravenhill/keen/listeners/ListenerConfiguration {
-	public static final field $stable I
 	public fun <init> ()V
 	public fun <init> (Lcl/ravenhill/keen/ranking/IndividualRanker;Lcl/ravenhill/keen/listeners/records/EvolutionRecord;Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Lcl/ravenhill/keen/ranking/IndividualRanker;Lcl/ravenhill/keen/listeners/records/EvolutionRecord;Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -122,7 +116,6 @@ public final class cl/ravenhill/keen/listeners/mixins/GenerationListener$Default
 }
 
 public abstract class cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
-	public static final field $stable I
 	public field startTime Lkotlin/time/TimeMark;
 	public fun <init> ()V
 	public final fun getDuration ()J
@@ -132,7 +125,6 @@ public abstract class cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
 }
 
 public final class cl/ravenhill/keen/listeners/records/EvolutionRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
-	public static final field $stable I
 	public fun <init> ()V
 	public fun <init> (Ljava/util/List;)V
 	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -147,12 +139,10 @@ public final class cl/ravenhill/keen/listeners/records/EvolutionRecord : cl/rave
 }
 
 public final class cl/ravenhill/keen/listeners/records/EvolutionRecord$InitializationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
-	public static final field $stable I
 	public fun <init> ()V
 }
 
 public final class cl/ravenhill/keen/listeners/records/GenerationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
-	public static final field $stable I
 	public fun <init> (I)V
 	public final fun component1 ()I
 	public final fun copy (I)Lcl/ravenhill/keen/listeners/records/GenerationRecord;
@@ -166,17 +156,14 @@ public final class cl/ravenhill/keen/listeners/records/GenerationRecord : cl/rav
 }
 
 public final class cl/ravenhill/keen/listeners/records/GenerationRecord$AlterationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
-	public static final field $stable I
 	public fun <init> ()V
 }
 
 public final class cl/ravenhill/keen/listeners/records/GenerationRecord$EvaluationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
-	public static final field $stable I
 	public fun <init> ()V
 }
 
 public final class cl/ravenhill/keen/listeners/records/GenerationRecord$PopulationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
-	public static final field $stable I
 	public fun <init> (Ljava/util/List;Ljava/util/List;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Ljava/util/List;
@@ -190,12 +177,10 @@ public final class cl/ravenhill/keen/listeners/records/GenerationRecord$Populati
 }
 
 public final class cl/ravenhill/keen/listeners/records/GenerationRecord$SelectionRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
-	public static final field $stable I
 	public fun <init> ()V
 }
 
 public final class cl/ravenhill/keen/listeners/records/IndividualRecord {
-	public static final field $stable I
 	public static final field Companion Lcl/ravenhill/keen/listeners/records/IndividualRecord$Companion;
 	public fun <init> (Lcl/ravenhill/keen/repr/Representation;D)V
 	public final fun component1 ()Lcl/ravenhill/keen/repr/Representation;
@@ -245,7 +230,6 @@ public final class cl/ravenhill/keen/operators/selection/Selector$DefaultImpls {
 }
 
 public final class cl/ravenhill/keen/ranking/FitnessMaxRanker : cl/ravenhill/keen/ranking/IndividualRanker {
-	public static final field $stable I
 	public fun <init> ()V
 	public fun fitnessTransform (Ljava/util/List;)Ljava/util/List;
 	public fun getComparator ()Ljava/util/Comparator;
@@ -254,7 +238,6 @@ public final class cl/ravenhill/keen/ranking/FitnessMaxRanker : cl/ravenhill/kee
 }
 
 public final class cl/ravenhill/keen/ranking/FitnessMinRanker : cl/ravenhill/keen/ranking/IndividualRanker {
-	public static final field $stable I
 	public fun <init> ()V
 	public fun fitnessTransform (Ljava/util/List;)Ljava/util/List;
 	public fun getComparator ()Ljava/util/Comparator;
@@ -314,7 +297,6 @@ public final class cl/ravenhill/keen/utils/box/Box$DefaultImpls {
 }
 
 public final class cl/ravenhill/keen/utils/box/ImmutableBox : cl/ravenhill/keen/utils/box/Box {
-	public static final field $stable I
 	public fun <init> (Ljava/lang/Object;)V
 	public final fun component1 ()Ljava/lang/Object;
 	public final fun copy (Ljava/lang/Object;)Lcl/ravenhill/keen/utils/box/ImmutableBox;
@@ -333,7 +315,6 @@ public final class cl/ravenhill/keen/utils/box/ImmutableBox : cl/ravenhill/keen/
 }
 
 public final class cl/ravenhill/keen/utils/box/MutableBox : cl/ravenhill/keen/utils/box/Box {
-	public static final field $stable I
 	public fun <init> (Ljava/lang/Object;)V
 	public final fun component1 ()Ljava/lang/Object;
 	public final fun copy (Ljava/lang/Object;)Lcl/ravenhill/keen/utils/box/MutableBox;

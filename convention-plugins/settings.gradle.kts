@@ -1,21 +1,22 @@
+rootProject.name = "convention-plugins"
+
 pluginManagement {
-    repositories {
-        google()
-        gradlePluginPortal()
-        mavenCentral()
-    }
+   repositories {
+      mavenCentral()
+      gradlePluginPortal()
+   }
 }
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
-    repositories {
-        google()
-        gradlePluginPortal()
-        mavenCentral()
-    }
-
-    versionCatalogs {
-        create("libs") {
-            from(files("../gradle/libs.versions.toml"))
-        }
-    }
+   repositoriesMode = RepositoriesMode.PREFER_SETTINGS
+   repositories {
+      mavenCentral()
+      gradlePluginPortal()
+   }
+   versionCatalogs {
+      create("libs") {
+         from(files("../gradle/libs.versions.toml"))
+      }
+   }
 }

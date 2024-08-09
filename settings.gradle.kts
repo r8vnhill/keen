@@ -1,10 +1,10 @@
+rootProject.name = "keen"
+
 pluginManagement {
     includeBuild("convention-plugins")
     repositories {
-        google()
         mavenCentral()
         gradlePluginPortal()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 
@@ -21,7 +21,6 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
-        google()
         maven("https://oss.sonatype.org/content/repositories/snapshots/") {
             name = "SonatypeSnapshots"
             mavenContent { snapshotsOnly() }
@@ -47,7 +46,12 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "keen"
-include(":test-utils")
-include(":keen-core")
-include(":keen-genetics")
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
+include(
+    ":test-utils",
+    ":keen-core",
+    ":keen-genetics",
+)

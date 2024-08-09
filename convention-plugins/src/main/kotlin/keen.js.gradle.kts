@@ -1,49 +1,38 @@
-/*
- * Copyright (c) 2024, Ignacio Slater M.
- * 2-Clause BSD License.
- */
-
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
-    id("keen.kotlin")
+   id("keen.kotlin")
 }
 
 kotlin {
-    // Configure the Kotlin Multiplatform project for JavaScript targets.
-    js {
-        // Enable browser target for JavaScript.
-        browser()
-        // Enable Node.js target for JavaScript.
-        nodejs()
-    }
+   js {
+      browser()
+      nodejs()
+   }
 
-    // Configure the Kotlin Multiplatform project for WebAssembly (WASM) with JavaScript interop.
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        // Enable browser target for WASM with JavaScript interop.
-        browser()
-        // Enable Node.js target for WASM with JavaScript interop.
-        nodejs()
-    }
+   // FIXME: java.lang.NullPointerException:
+   //  null cannot be cast to non-null type org.jetbrains.kotlin.descriptors.ClassDescriptor
+//   @OptIn(ExperimentalWasmDsl::class)
+//   wasmJs {
+//      browser()
+//      nodejs()
+//   }
 
-    // Configure the Kotlin Multiplatform project for WebAssembly (WASM) with WASI (WebAssembly System Interface).
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmWasi()
+   /* FIXME: enable wasmWasi when there is support in kotlinx-coroutines-core (1.8.0-RC does only wasmJs)
+      wasmWasi {
+         nodejs()
+      }
+      */
 
-    // Apply a hierarchy template for organizing source sets and targets.
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    applyDefaultHierarchyTemplate {
-        // Define a group named "common" for common configurations.
-        group("common") {
-            // Define a subgroup named "jsHosted" for JavaScript-hosted targets.
-            group("jsHosted") {
-                // Include JavaScript targets in the jsHosted group.
-                withJs()
-                // Include WASM with JavaScript interop targets in the jsHosted group.
-                withWasm()  // FIXME with Kotlin 2.0.0: KT-63417 – to be split into `withWasmJs` and `withWasmWasi`
-            }
-        }
-    }
+   @OptIn(ExperimentalKotlinGradlePluginApi::class)
+   applyDefaultHierarchyTemplate {
+      group("common") {
+         group("jsHosted") {
+            withJs()
+//               withWasm() // FIXME with Kotlin 2.0.0: KT-63417 – to be split into `withWasmJs` and `withWasmWasi`
+         }
+      }
+   }
 }
