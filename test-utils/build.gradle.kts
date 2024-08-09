@@ -13,6 +13,7 @@ kotlin {
         // Configure the commonTest source set directly
         getByName("commonMain") {
             dependencies {
+                implementation(project(":keen-core"))
                 implementation(libs.jakt)
                 // Add Kotest libraries to the commonTest source set
                 implementation(libs.kotest.assertions.core)

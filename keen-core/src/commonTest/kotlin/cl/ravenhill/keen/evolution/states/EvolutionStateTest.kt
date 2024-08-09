@@ -25,6 +25,9 @@ import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.positiveInt
 import io.kotest.property.checkAll
 
+private typealias SimpleFitnessMaxRanker =
+        FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>
+
 class EvolutionStateTest : FreeSpec({
     "An EvolutionState" - {
         "should have a size property that" - {
@@ -32,10 +35,7 @@ class EvolutionStateTest : FreeSpec({
                 checkAll(
                     arbEvolutionStateAndPopulation(
                         population<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>(),
-                        Arb.element(
-                            FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>(),
-                            FitnessMinRanker()
-                        )
+                        Arb.element(SimpleFitnessMaxRanker(), FitnessMinRanker())
                     )
                 ) { (state, population) ->
                     state.size shouldBe population.size
@@ -51,10 +51,7 @@ class EvolutionStateTest : FreeSpec({
                             arbIndividual(arbSimpleRepresentation(arbSimpleFeature(Arb.double()))),
                             0..0
                         ),
-                        Arb.element(
-                            FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>(),
-                            FitnessMinRanker()
-                        )
+                        Arb.element(SimpleFitnessMaxRanker(), FitnessMinRanker())
                     )
                 ) { (state, _) ->
                     state.isEmpty() shouldBe true
@@ -68,10 +65,7 @@ class EvolutionStateTest : FreeSpec({
                             arbIndividual(arbSimpleRepresentation(arbSimpleFeature(Arb.double()))),
                             1..100
                         ),
-                        Arb.element(
-                            FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>(),
-                            FitnessMinRanker()
-                        )
+                        Arb.element(SimpleFitnessMaxRanker(), FitnessMinRanker())
                     )
                 ) { (state, _) ->
                     state.isEmpty() shouldBe false

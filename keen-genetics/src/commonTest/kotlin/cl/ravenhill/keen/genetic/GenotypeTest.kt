@@ -15,8 +15,8 @@ import cl.ravenhill.keen.genetic.genes.arbSimpleGene
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
-import cl.ravenhill.keen.matchers.shouldBeValid
-import cl.ravenhill.keen.matchers.shouldNotBeValid
+import cl.ravenhill.matchers.shouldBeValid
+import cl.ravenhill.matchers.shouldNotBeValid
 import cl.ravenhill.matchers.shouldHaveInfringement
 import cl.ravenhill.utils.arbProbability
 import io.kotest.assertions.throwables.shouldThrow

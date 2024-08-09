@@ -6,6 +6,7 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.keen.mixins.FlatMappable
+import cl.ravenhill.keen.mixins.Foldable
 import cl.ravenhill.keen.mixins.Verifiable
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
@@ -16,13 +17,13 @@ import cl.ravenhill.keen.utils.isNotNaN
  * Represents an individual in an evolutionary algorithm.
  *
  * The `Individual` class encapsulates the representation and fitness of an individual in an evolutionary process. It
- * implements the  [Verifiable], and [FlatMappable] interfaces, allowing it to be verified for consistency, and support
- * flat-mapping operations.
+ * implements the [Verifiable], [FlatMappable], and [Foldable] interfaces, allowing it to be verified for consistency,
+ * support flat-mapping operations, and perform fold operations.
  *
  * ## Usage:
  * Use this class to represent individuals in an evolutionary algorithm, where each individual has a representation
- * indicating its position in the search or solution space, along with a fitness value that indicates its quality or
- * suitability.
+ * indicating its position in the search or solution space, along with a fitness value that reflects its quality or
+ * suitability in the evolutionary context.
  *
  * ### Example (requires the `keen-genetics` module):
  * ```kotlin
@@ -42,11 +43,14 @@ import cl.ravenhill.keen.utils.isNotNaN
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
  * @property representation The position of the individual in the search or solution space.
- * @property fitness The fitness value of the individual, defaulting to `Double.NaN`.
+ * @property fitness The fitness value of the individual, indicating its quality, defaulting to `Double.NaN` if not
+ *   evaluated.
  * @constructor Creates an instance of `Individual` with the specified representation and fitness.
  */
-data class Individual<T, F, R>(val representation: R, val fitness: Double = Double.NaN) : Verifiable,
-    FlatMappable<T> where F : Feature<T, F>, R : Representation<T, F> {
+data class Individual<T, F, R>(
+    val representation: R,
+    val fitness: Double = Double.NaN
+) : Verifiable, FlatMappable<T>, Foldable<T> where F : Feature<T, F>, R : Representation<T, F> {
 
     /**
      * The size of the individual's representation, lazily computed.
@@ -59,6 +63,16 @@ data class Individual<T, F, R>(val representation: R, val fitness: Double = Doub
      * @return `true` if the representation is valid and the fitness is not NaN, `false` otherwise.
      */
     override fun verify() = representation.verify() && fitness.isNotNaN()
+
+    /**
+     * Folds the elements of the individual's representation into a single value.
+     *
+     * @param R The type of the result produced by the fold operation.
+     * @param initial The initial value to start the accumulation with.
+     * @param operation The binary operation to apply to the accumulator and each element of the representation.
+     * @return The final accumulated result after all elements have been processed.
+     */
+    override fun <R> fold(initial: R, operation: (R, T) -> R): R = representation.fold(initial, operation)
 
     /**
      * Flattens the individual's representation into a list of elements.
@@ -77,6 +91,9 @@ data class Individual<T, F, R>(val representation: R, val fitness: Double = Doub
     /**
      * Returns a string representation of the individual.
      *
+     * The format of the string depends on the current domain's toString mode, either a simple format or a more detailed
+     * one.
+     *
      * @return A string representation of the individual based on the current domain's toString mode.
      */
     override fun toString() = when (Domain.toStringMode) {
@@ -86,6 +103,9 @@ data class Individual<T, F, R>(val representation: R, val fitness: Double = Doub
 
     /**
      * Checks if this individual is equal to another object.
+     *
+     * Two individuals are considered equal if they have the same representation. Fitness is not considered in equality
+     * checks.
      *
      * @param other The object to compare with.
      * @return `true` if the other object is an individual with the same representation, `false` otherwise.
@@ -98,6 +118,8 @@ data class Individual<T, F, R>(val representation: R, val fitness: Double = Doub
 
     /**
      * Computes the hash code for this individual.
+     *
+     * The hash code is based on the individual's class and representation.
      *
      * @return The hash code based on the individual's class and representation.
      */

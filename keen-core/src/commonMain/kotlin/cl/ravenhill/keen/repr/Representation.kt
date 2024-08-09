@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.repr
 
 import cl.ravenhill.keen.mixins.FlatMappable
+import cl.ravenhill.keen.mixins.Foldable
 import cl.ravenhill.keen.mixins.Verifiable
 
 /**
@@ -36,7 +37,7 @@ import cl.ravenhill.keen.mixins.Verifiable
  * @param F The type of the feature, which must extend [Feature].
  * @property size The size of the representation, typically representing the number of features it contains.
  */
-interface Representation<T, F> : Verifiable, FlatMappable<T> where F : Feature<T, F> {
+interface Representation<T, F> : Verifiable, FlatMappable<T>, Foldable<T> where F : Feature<T, F> {
 
     val size: Int
 }

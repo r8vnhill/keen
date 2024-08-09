@@ -10,7 +10,7 @@ import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.operators.selection.Selector
 
-abstract class AbstractGeneBasedAlgorithm<T, G> :
+abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G> :
     Evolver<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> where G : Gene<T, G> {
     abstract val populationSize: Int
     abstract val survivalRate: Double
