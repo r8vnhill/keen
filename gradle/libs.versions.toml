@@ -3,6 +3,7 @@ kotlin = "1.9.21"
 devPublishPlugin = "0.4.1"
 jakt = "2.0.4"
 kotest = "5.9.1"
+detekt = "1.23.6"
 
 ### Java compilation ###
 # Keen's minimum supported Java version.
@@ -29,3 +30,4 @@ devPublish-plugin = { module = "dev.adamko.gradle:dev-publish-plugin", version.r
 
 [plugins]
 kotlinBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.14.0" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

@@ -1,16 +1,17 @@
 import utils.configureGradleDaemonJvm
 
 plugins {
-   id("keen.base")
-   alias(libs.plugins.kotlinBinaryCompatibilityValidator)
+    id("keen.base")
+    alias(libs.plugins.kotlinBinaryCompatibilityValidator)
+    alias(libs.plugins.detekt)
 }
 
 configureGradleDaemonJvm(
-   project = project,
-   updateDaemonJvm = tasks.updateDaemonJvm,
-   gradleDaemonJvmVersion = libs.versions.gradleDaemonJvm.map { JavaVersion.toVersion(it) },
+    project = project,
+    updateDaemonJvm = tasks.updateDaemonJvm,
+    gradleDaemonJvmVersion = libs.versions.gradleDaemonJvm.map { JavaVersion.toVersion(it) },
 )
 
 apiValidation {
-   ignoredProjects += listOf("test-utils")
+    ignoredProjects += listOf("test-utils")
 }
