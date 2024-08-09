@@ -121,14 +121,17 @@ class ChromosomeTest : FreeSpec({
 
 fun <T, G> arbChromosome(
     gene: Arb<G>,
-    size: IntRange = 0..10
+    size: IntRange = 0..10,
 ): Arb<Chromosome<T, G>> where G : Gene<T, G> = Arb.list(gene, size).map {
     object : Chromosome<T, G> {
         override val genes: List<G> = it
     }
 }
 
-private fun arbChromosomeWithInvalidGenes(size: IntRange = 1..100, isValid: Arb<Boolean> = Arb.constant(true)) =
+fun arbChromosomeWithInvalidGenes(
+    size: IntRange = 1..100,
+    isValid: Arb<Boolean> = Arb.constant(true),
+): Arb<Chromosome<Int, SimpleGene>> =
     arbitrary {
         val genes = mutableListOf<SimpleGene>()
         repeat(Arb.int(size).bind()) {
@@ -142,7 +145,7 @@ private fun arbChromosomeWithInvalidGenes(size: IntRange = 1..100, isValid: Arb<
 
 private fun <T, G> arbChromosomeAndGene(
     gene: Arb<G>,
-    size: IntRange = 1..100
+    size: IntRange = 1..100,
 ): Arb<Pair<Chromosome<T, G>, G>> where G : Gene<T, G> = Arb.list(gene, size).map { genes ->
     object : Chromosome<T, G> {
         override val genes: List<G> = genes
@@ -152,7 +155,7 @@ private fun <T, G> arbChromosomeAndGene(
 private fun <T, G> arbChromosomeAndGenes(
     gene: Arb<G>,
     size: IntRange = 1..100,
-    probability: Arb<Double> = arbProbability()
+    probability: Arb<Double> = arbProbability(),
 ): Arb<Pair<Chromosome<T, G>, List<G>>> where G : Gene<T, G> = arbitrary { (random, seed) ->
     val genes = Arb.list(gene, size).bind()
     val ratio = probability.bind()
@@ -163,7 +166,7 @@ private fun <T, G> arbChromosomeAndGenes(
 
 private fun <T, G> arbChromosomeAndNotContainedGenes(
     gene: Arb<G>,
-    size: IntRange = 0..100
+    size: IntRange = 0..100,
 ): Arb<Pair<Chromosome<T, G>, List<G>>> where G : Gene<T, G> = arbitrary {
     val genes = Arb.list(gene, size).bind()
     var notContained: List<G>
@@ -177,7 +180,7 @@ private fun <T, G> arbChromosomeAndNotContainedGenes(
 
 private fun <T, G> arbChromosomeAndSize(
     gene: Arb<G>,
-    size: IntRange = 0..100
+    size: IntRange = 0..100,
 ): Arb<Pair<Chromosome<T, G>, Int>> where G : Gene<T, G> = Arb.list(gene, size).map { genes ->
     object : Chromosome<T, G> {
         override val genes: List<G> = genes

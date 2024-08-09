@@ -7,26 +7,29 @@ package cl.ravenhill.keen.genetic
 
 import cl.ravenhill.keen.genetic.chromosomes.SimpleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.arbChromosome
+import cl.ravenhill.keen.genetic.chromosomes.arbChromosomeWithInvalidGenes
+import cl.ravenhill.keen.genetic.genes.SimpleGene
 import cl.ravenhill.keen.genetic.genes.arbSimpleGene
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.matchers.shouldBeValid
+import cl.ravenhill.keen.matchers.shouldNotBeValid
 import cl.ravenhill.utils.arbProbability
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.collections.shouldNotBeIn
-import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.boolean
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.map
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
@@ -123,6 +126,20 @@ class GenotypeTest : FreeSpec({
                 }
             }
         }
+
+        "when testing for validity" - {
+            "should return true if all chromosomes are valid" {
+                checkAll(Arb.list(arbChromosome(arbSimpleGene()))) { chromosomes ->
+                    Genotype(chromosomes).shouldBeValid()
+                }
+            }
+
+            "should return false if any chromosome is invalid" {
+                checkAll(arbGenotypeWithInvalidChromosome()) { genotype ->
+                    genotype.shouldNotBeValid()
+                }
+            }
+        }
     }
 })
 
@@ -165,4 +182,14 @@ private fun <T, G> arbGenotypeAndNotContainedChromosomes(
         notContained = Arb.list(chromosome, size).bind().filter { it !in chromosomes }
     } while (notContained.isEmpty())
     Genotype(chromosomes) to notContained
+}
+
+private fun arbGenotypeWithInvalidChromosome(): Arb<Genotype<Int, SimpleGene>> = arbitrary {
+    val chromosomes = Arb.list(arbChromosome(arbSimpleGene(Arb.boolean())), 1..10).map {
+        it.toMutableList()
+    }.bind()
+    val invalid = arbChromosomeWithInvalidGenes().bind()
+    val invalidIndex = Arb.int(chromosomes.indices).bind()
+    chromosomes[invalidIndex] = invalid
+    Genotype(chromosomes)
 }
