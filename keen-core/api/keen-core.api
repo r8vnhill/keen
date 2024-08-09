@@ -1,0 +1,354 @@
+public final class cl/ravenhill/keen/Domain {
+	public static final field $stable I
+	public static final field DEFAULT_EQUALITY_THRESHOLD D
+	public static final field INSTANCE Lcl/ravenhill/keen/Domain;
+	public final fun getEqualityThreshold ()D
+	public final fun getRandom ()Lkotlin/random/Random;
+	public final fun getToStringMode ()Lcl/ravenhill/keen/ToStringMode;
+	public final fun setEqualityThreshold (D)V
+	public final fun setRandom (Lkotlin/random/Random;)V
+	public final fun setToStringMode (Lcl/ravenhill/keen/ToStringMode;)V
+}
+
+public final class cl/ravenhill/keen/Individual : cl/ravenhill/keen/mixins/FlatMappable, cl/ravenhill/keen/mixins/Verifiable {
+	public static final field $stable I
+	public fun <init> (Lcl/ravenhill/keen/repr/Representation;D)V
+	public synthetic fun <init> (Lcl/ravenhill/keen/repr/Representation;DILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcl/ravenhill/keen/repr/Representation;
+	public final fun component2 ()D
+	public final fun copy (Lcl/ravenhill/keen/repr/Representation;D)Lcl/ravenhill/keen/Individual;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/Individual;Lcl/ravenhill/keen/repr/Representation;DILjava/lang/Object;)Lcl/ravenhill/keen/Individual;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public fun flatten ()Ljava/util/List;
+	public final fun getFitness ()D
+	public final fun getRepresentation ()Lcl/ravenhill/keen/repr/Representation;
+	public final fun getSize ()I
+	public fun hashCode ()I
+	public final fun isEvaluated ()Z
+	public fun toString ()Ljava/lang/String;
+	public fun verify ()Z
+}
+
+public final class cl/ravenhill/keen/PopulationKt {
+	public static final fun getFitness (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class cl/ravenhill/keen/ToStringMode : java/lang/Enum {
+	public static final field DEFAULT Lcl/ravenhill/keen/ToStringMode;
+	public static final field SIMPLE Lcl/ravenhill/keen/ToStringMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcl/ravenhill/keen/ToStringMode;
+	public static fun values ()[Lcl/ravenhill/keen/ToStringMode;
+}
+
+public abstract interface class cl/ravenhill/keen/evolution/engines/Evolver {
+	public abstract fun evolve ()Lcl/ravenhill/keen/evolution/states/EvolutionState;
+}
+
+public abstract interface class cl/ravenhill/keen/evolution/states/EvolutionState {
+	public abstract fun getGeneration ()I
+	public abstract fun getPopulation ()Ljava/util/List;
+	public abstract fun getRanker ()Lcl/ravenhill/keen/ranking/IndividualRanker;
+	public abstract fun getSize ()I
+	public abstract fun isEmpty ()Z
+}
+
+public final class cl/ravenhill/keen/evolution/states/EvolutionState$DefaultImpls {
+	public static fun getSize (Lcl/ravenhill/keen/evolution/states/EvolutionState;)I
+	public static fun isEmpty (Lcl/ravenhill/keen/evolution/states/EvolutionState;)Z
+}
+
+public final class cl/ravenhill/keen/exceptions/InvalidIndexException : cl/ravenhill/jakt/exceptions/ConstraintException {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class cl/ravenhill/keen/exceptions/SelectionException : cl/ravenhill/jakt/exceptions/ConstraintException {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class cl/ravenhill/keen/limits/Limit {
+	public static final field $stable I
+	public fun <init> (Lcl/ravenhill/keen/listeners/EvolutionListener;Lkotlin/jvm/functions/Function2;)V
+	public final fun invoke (Lcl/ravenhill/keen/evolution/states/EvolutionState;)Z
+}
+
+public final class cl/ravenhill/keen/limits/LimitKt {
+	public static final fun limit (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lkotlin/jvm/functions/Function1;
+}
+
+public abstract interface class cl/ravenhill/keen/listeners/EvolutionListener : cl/ravenhill/keen/listeners/mixins/GenerationListener {
+	public abstract fun onEvolutionEnd (Lcl/ravenhill/keen/evolution/states/EvolutionState;)V
+	public abstract fun onEvolutionStart ()V
+}
+
+public final class cl/ravenhill/keen/listeners/EvolutionListener$DefaultImpls {
+	public static fun onEvolutionEnd (Lcl/ravenhill/keen/listeners/EvolutionListener;Lcl/ravenhill/keen/evolution/states/EvolutionState;)V
+	public static fun onEvolutionStart (Lcl/ravenhill/keen/listeners/EvolutionListener;)V
+	public static fun onGenerationEnd (Lcl/ravenhill/keen/listeners/EvolutionListener;Lcl/ravenhill/keen/evolution/states/EvolutionState;)V
+	public static fun onGenerationStart (Lcl/ravenhill/keen/listeners/EvolutionListener;Lcl/ravenhill/keen/evolution/states/EvolutionState;)V
+}
+
+public final class cl/ravenhill/keen/listeners/ListenerConfiguration {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lcl/ravenhill/keen/ranking/IndividualRanker;Lcl/ravenhill/keen/listeners/records/EvolutionRecord;Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lcl/ravenhill/keen/ranking/IndividualRanker;Lcl/ravenhill/keen/listeners/records/EvolutionRecord;Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcl/ravenhill/keen/ranking/IndividualRanker;
+	public final fun component2 ()Lcl/ravenhill/keen/listeners/records/EvolutionRecord;
+	public final fun component3 ()Lkotlin/time/TimeSource;
+	public final fun component4 ()Lkotlin/jvm/functions/Function1;
+	public final fun copy (Lcl/ravenhill/keen/ranking/IndividualRanker;Lcl/ravenhill/keen/listeners/records/EvolutionRecord;Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/listeners/ListenerConfiguration;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/listeners/ListenerConfiguration;Lcl/ravenhill/keen/ranking/IndividualRanker;Lcl/ravenhill/keen/listeners/records/EvolutionRecord;Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcl/ravenhill/keen/listeners/ListenerConfiguration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEvolution ()Lcl/ravenhill/keen/listeners/records/EvolutionRecord;
+	public final fun getPrecision ()Lkotlin/jvm/functions/Function1;
+	public final fun getRanker ()Lcl/ravenhill/keen/ranking/IndividualRanker;
+	public final fun getTimeSource ()Lkotlin/time/TimeSource;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class cl/ravenhill/keen/listeners/mixins/GenerationListener {
+	public abstract fun onGenerationEnd (Lcl/ravenhill/keen/evolution/states/EvolutionState;)V
+	public abstract fun onGenerationStart (Lcl/ravenhill/keen/evolution/states/EvolutionState;)V
+}
+
+public final class cl/ravenhill/keen/listeners/mixins/GenerationListener$DefaultImpls {
+	public static fun onGenerationEnd (Lcl/ravenhill/keen/listeners/mixins/GenerationListener;Lcl/ravenhill/keen/evolution/states/EvolutionState;)V
+	public static fun onGenerationStart (Lcl/ravenhill/keen/listeners/mixins/GenerationListener;Lcl/ravenhill/keen/evolution/states/EvolutionState;)V
+}
+
+public abstract class cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
+	public static final field $stable I
+	public field startTime Lkotlin/time/TimeMark;
+	public fun <init> ()V
+	public final fun getDuration ()J
+	public final fun getStartTime ()Lkotlin/time/TimeMark;
+	public final fun setDuration (J)V
+	public final fun setStartTime (Lkotlin/time/TimeMark;)V
+}
+
+public final class cl/ravenhill/keen/listeners/records/EvolutionRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcl/ravenhill/keen/listeners/records/EvolutionRecord;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/listeners/records/EvolutionRecord;Ljava/util/List;ILjava/lang/Object;)Lcl/ravenhill/keen/listeners/records/EvolutionRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGenerations ()Ljava/util/List;
+	public final fun getInitialization ()Lcl/ravenhill/keen/listeners/records/EvolutionRecord$InitializationRecord;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class cl/ravenhill/keen/listeners/records/EvolutionRecord$InitializationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
+	public static final field $stable I
+	public fun <init> ()V
+}
+
+public final class cl/ravenhill/keen/listeners/records/GenerationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lcl/ravenhill/keen/listeners/records/GenerationRecord;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/listeners/records/GenerationRecord;IILjava/lang/Object;)Lcl/ravenhill/keen/listeners/records/GenerationRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGeneration ()I
+	public final fun getSteady ()I
+	public fun hashCode ()I
+	public final fun setSteady (I)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class cl/ravenhill/keen/listeners/records/GenerationRecord$AlterationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
+	public static final field $stable I
+	public fun <init> ()V
+}
+
+public final class cl/ravenhill/keen/listeners/records/GenerationRecord$EvaluationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
+	public static final field $stable I
+	public fun <init> ()V
+}
+
+public final class cl/ravenhill/keen/listeners/records/GenerationRecord$PopulationRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
+	public static final field $stable I
+	public fun <init> (Ljava/util/List;Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;Ljava/util/List;)Lcl/ravenhill/keen/listeners/records/GenerationRecord$PopulationRecord;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/listeners/records/GenerationRecord$PopulationRecord;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lcl/ravenhill/keen/listeners/records/GenerationRecord$PopulationRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOffspring ()Ljava/util/List;
+	public final fun getParents ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class cl/ravenhill/keen/listeners/records/GenerationRecord$SelectionRecord : cl/ravenhill/keen/listeners/records/AbstractTimedRecord {
+	public static final field $stable I
+	public fun <init> ()V
+}
+
+public final class cl/ravenhill/keen/listeners/records/IndividualRecord {
+	public static final field $stable I
+	public static final field Companion Lcl/ravenhill/keen/listeners/records/IndividualRecord$Companion;
+	public fun <init> (Lcl/ravenhill/keen/repr/Representation;D)V
+	public final fun component1 ()Lcl/ravenhill/keen/repr/Representation;
+	public final fun component2 ()D
+	public final fun copy (Lcl/ravenhill/keen/repr/Representation;D)Lcl/ravenhill/keen/listeners/records/IndividualRecord;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/listeners/records/IndividualRecord;Lcl/ravenhill/keen/repr/Representation;DILjava/lang/Object;)Lcl/ravenhill/keen/listeners/records/IndividualRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFitness ()D
+	public final fun getRepresentation ()Lcl/ravenhill/keen/repr/Representation;
+	public fun hashCode ()I
+	public final fun toIndividual ()Lcl/ravenhill/keen/Individual;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class cl/ravenhill/keen/listeners/records/IndividualRecord$Companion {
+	public final fun fromIndividual (Lcl/ravenhill/keen/Individual;)Lcl/ravenhill/keen/listeners/records/IndividualRecord;
+}
+
+public abstract interface class cl/ravenhill/keen/mixins/FlatMappable {
+	public abstract fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public abstract fun flatten ()Ljava/util/List;
+}
+
+public final class cl/ravenhill/keen/mixins/FlatMappable$DefaultImpls {
+	public static fun flatMap (Lcl/ravenhill/keen/mixins/FlatMappable;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+}
+
+public abstract interface class cl/ravenhill/keen/mixins/Verifiable {
+	public abstract fun verify ()Z
+}
+
+public final class cl/ravenhill/keen/mixins/Verifiable$DefaultImpls {
+	public static fun verify (Lcl/ravenhill/keen/mixins/Verifiable;)Z
+}
+
+public abstract interface class cl/ravenhill/keen/operators/Operator {
+	public abstract fun invoke (Lcl/ravenhill/keen/evolution/states/EvolutionState;ILkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/evolution/states/EvolutionState;
+}
+
+public abstract interface class cl/ravenhill/keen/operators/selection/Selector : cl/ravenhill/keen/operators/Operator {
+	public abstract fun invoke (Lcl/ravenhill/keen/evolution/states/EvolutionState;ILkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/evolution/states/EvolutionState;
+	public abstract fun select (Ljava/util/List;ILcl/ravenhill/keen/ranking/IndividualRanker;)Ljava/util/List;
+}
+
+public final class cl/ravenhill/keen/operators/selection/Selector$DefaultImpls {
+	public static fun invoke (Lcl/ravenhill/keen/operators/selection/Selector;Lcl/ravenhill/keen/evolution/states/EvolutionState;ILkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/evolution/states/EvolutionState;
+}
+
+public final class cl/ravenhill/keen/ranking/FitnessMaxRanker : cl/ravenhill/keen/ranking/IndividualRanker {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun fitnessTransform (Ljava/util/List;)Ljava/util/List;
+	public fun getComparator ()Ljava/util/Comparator;
+	public fun invoke (Lcl/ravenhill/keen/Individual;Lcl/ravenhill/keen/Individual;)I
+	public fun sort (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class cl/ravenhill/keen/ranking/FitnessMinRanker : cl/ravenhill/keen/ranking/IndividualRanker {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun fitnessTransform (Ljava/util/List;)Ljava/util/List;
+	public fun getComparator ()Ljava/util/Comparator;
+	public fun invoke (Lcl/ravenhill/keen/Individual;Lcl/ravenhill/keen/Individual;)I
+	public fun sort (Ljava/util/List;)Ljava/util/List;
+}
+
+public abstract interface class cl/ravenhill/keen/ranking/IndividualRanker {
+	public abstract fun fitnessTransform (Ljava/util/List;)Ljava/util/List;
+	public abstract fun getComparator ()Ljava/util/Comparator;
+	public abstract fun invoke (Lcl/ravenhill/keen/Individual;Lcl/ravenhill/keen/Individual;)I
+	public abstract fun sort (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class cl/ravenhill/keen/ranking/IndividualRanker$DefaultImpls {
+	public static fun fitnessTransform (Lcl/ravenhill/keen/ranking/IndividualRanker;Ljava/util/List;)Ljava/util/List;
+	public static fun getComparator (Lcl/ravenhill/keen/ranking/IndividualRanker;)Ljava/util/Comparator;
+	public static fun sort (Lcl/ravenhill/keen/ranking/IndividualRanker;Ljava/util/List;)Ljava/util/List;
+}
+
+public abstract interface class cl/ravenhill/keen/repr/Feature {
+	public abstract fun duplicateWithValue (Ljava/lang/Object;)Lcl/ravenhill/keen/repr/Feature;
+	public abstract fun getValue ()Ljava/lang/Object;
+}
+
+public abstract interface class cl/ravenhill/keen/repr/Representation : cl/ravenhill/keen/mixins/FlatMappable, cl/ravenhill/keen/mixins/Verifiable {
+	public abstract fun getSize ()I
+}
+
+public final class cl/ravenhill/keen/repr/Representation$DefaultImpls {
+	public static fun flatMap (Lcl/ravenhill/keen/repr/Representation;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static fun verify (Lcl/ravenhill/keen/repr/Representation;)Z
+}
+
+public final class cl/ravenhill/keen/utils/HashKt {
+	public static final fun hash ([Ljava/lang/Object;)I
+}
+
+public final class cl/ravenhill/keen/utils/NumbersKt {
+	public static final fun eq (DD)Z
+	public static final fun isNotNaN (D)Z
+}
+
+public abstract interface class cl/ravenhill/keen/utils/box/Box {
+	public abstract fun flatMap (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/Box;
+	public abstract fun fold (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public abstract fun getValue ()Ljava/lang/Object;
+	public abstract fun map (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/Box;
+	public abstract fun toImmutable ()Lcl/ravenhill/keen/utils/box/ImmutableBox;
+	public abstract fun toMutable ()Lcl/ravenhill/keen/utils/box/MutableBox;
+}
+
+public final class cl/ravenhill/keen/utils/box/Box$DefaultImpls {
+	public static fun fold (Lcl/ravenhill/keen/utils/box/Box;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static fun toImmutable (Lcl/ravenhill/keen/utils/box/Box;)Lcl/ravenhill/keen/utils/box/ImmutableBox;
+	public static fun toMutable (Lcl/ravenhill/keen/utils/box/Box;)Lcl/ravenhill/keen/utils/box/MutableBox;
+}
+
+public final class cl/ravenhill/keen/utils/box/ImmutableBox : cl/ravenhill/keen/utils/box/Box {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lcl/ravenhill/keen/utils/box/ImmutableBox;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/utils/box/ImmutableBox;Ljava/lang/Object;ILjava/lang/Object;)Lcl/ravenhill/keen/utils/box/ImmutableBox;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun flatMap (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/Box;
+	public fun flatMap (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/ImmutableBox;
+	public fun fold (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public synthetic fun map (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/Box;
+	public fun map (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/ImmutableBox;
+	public fun toImmutable ()Lcl/ravenhill/keen/utils/box/ImmutableBox;
+	public fun toMutable ()Lcl/ravenhill/keen/utils/box/MutableBox;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class cl/ravenhill/keen/utils/box/MutableBox : cl/ravenhill/keen/utils/box/Box {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lcl/ravenhill/keen/utils/box/MutableBox;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/utils/box/MutableBox;Ljava/lang/Object;ILjava/lang/Object;)Lcl/ravenhill/keen/utils/box/MutableBox;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun flatMap (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/Box;
+	public fun flatMap (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/MutableBox;
+	public fun fold (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public synthetic fun map (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/Box;
+	public fun map (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/utils/box/MutableBox;
+	public fun setValue (Ljava/lang/Object;)V
+	public fun toImmutable ()Lcl/ravenhill/keen/utils/box/ImmutableBox;
+	public fun toMutable ()Lcl/ravenhill/keen/utils/box/MutableBox;
+	public fun toString ()Ljava/lang/String;
+}
+

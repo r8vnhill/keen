@@ -3,23 +3,37 @@
  * 2-Clause BSD License.
  */
 
-val jaktVersion = extra["jakt.version"] as String
-val kotestVersion = extra["kotest.version"] as String
-
 plugins {
-    id("io.gitlab.arturbosch.detekt")
-    kotlin("jvm")
+    id("keen.jvm")
+    id("keen.js")
 }
 
-dependencies {
-    implementation(project(":keen-core"))
-    implementation("cl.ravenhill:strait-jakt:$jaktVersion")
-    testImplementation("io.kotest:kotest-property:$kotestVersion")
-    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-    testImplementation("io.kotest:kotest-framework-datatest:$kotestVersion")
-    testImplementation(project(":test-utils"))
-}
+kotlin {
+    sourceSets {
+        getByName("commonMain") {
+            dependencies {
+                implementation(project(":keen-core"))
+            }
+        }
 
-tasks.test {
-    useJUnitPlatform()
+        // Configure the commonTest source set directly
+        getByName("commonTest") {
+            dependencies {
+                implementation(project(":test-utils"))
+                // Add Kotest libraries to the commonTest source set
+                implementation(libs.kotest.assertions.core)
+                implementation(libs.kotest.framework.engine)
+                implementation(libs.kotest.framework.datatest)
+                implementation(libs.kotest.property)
+            }
+        }
+
+        getByName("jvmTest") {
+            dependencies {
+                // Add Kotlin reflection library to the commonTest source set
+                implementation(kotlin("reflect"))
+                implementation(libs.kotest.runner.junit5)
+            }
+        }
+    }
 }

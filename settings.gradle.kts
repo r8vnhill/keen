@@ -1,27 +1,53 @@
-/*
- * Copyright (c) 2024, Ignacio Slater M.
- * 2-Clause BSD License.
- */
-
-rootProject.name = "keen"
-
 pluginManagement {
+    includeBuild("convention-plugins")
     repositories {
+        google()
+        mavenCentral()
         gradlePluginPortal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    }
+}
+
+@Suppress("UnstableApiUsage")
+dependencyResolutionManagement {
+    repositoriesMode = RepositoriesMode.PREFER_SETTINGS
+
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/r8vnhill/strait-jakt")
+            credentials {
+                username = System.getenv("GITHUB_USER")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+        mavenCentral()
         google()
-    }
+        maven("https://oss.sonatype.org/content/repositories/snapshots/") {
+            name = "SonatypeSnapshots"
+            mavenContent { snapshotsOnly() }
+        }
 
-    plugins {
-        kotlin("jvm") version extra["kotlin.version"] as String
-        id("io.gitlab.arturbosch.detekt") version extra["detekt.version"] as String
-        id("org.jetbrains.compose") version extra["compose.version"] as String
-        id("org.jetbrains.dokka") version extra["dokka.version"] as String
+        //region Declare the Node.js & Yarn download repositories
+        // Workaround https://youtrack.jetbrains.com/issue/KT-68533/
+        ivy("https://nodejs.org/dist/") {
+            name = "Node Distributions at $url"
+            patternLayout { artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]") }
+            metadataSources { artifact() }
+            content { includeModule("org.nodejs", "node") }
+        }
+        ivy("https://github.com/yarnpkg/yarn/releases/download") {
+            name = "Yarn Distributions at $url"
+            patternLayout { artifact("v[revision]/[artifact](-v[revision]).[ext]") }
+            metadataSources { artifact() }
+            content { includeModule("com.yarnpkg", "yarn") }
+        }
+        //endregion
+
+        mavenLocal()
     }
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-}
-include("plugin-conventions")
-include(":keen-core", ":keen-genetics", ":test-utils", ":examples", ":benchmarks", )
+rootProject.name = "keen"
+include(":test-utils")
+include(":keen-core")
+include(":keen-genetics")
