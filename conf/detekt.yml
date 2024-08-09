@@ -276,7 +276,7 @@ naming:
     minimumVariableNameLength: 1
   VariableNaming:
     active: true
-    variablePattern: '(_)?[a-z][A-Za-z0-9]*'
+    variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
 
@@ -654,14 +654,9 @@ style:
 complexity:
   LongParameterList:
     active: false
-    functionThreshold: 15
-    constructorThreshold: 15
   CognitiveComplexMethod:
     active: true
   ReplaceSafeCallChainWithRun:
     active: true
   StringLiteralDuplication:
     active: true
-  TooManyFunctions:
-    active: false
-    threshold: 20

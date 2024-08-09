@@ -121,7 +121,7 @@ class ChromosomeTest : FreeSpec({
 
 fun <T, G> arbChromosome(
     gene: Arb<G>,
-    size: IntRange = 0..100
+    size: IntRange = 0..10
 ): Arb<Chromosome<T, G>> where G : Gene<T, G> = Arb.list(gene, size).map {
     object : Chromosome<T, G> {
         override val genes: List<G> = it

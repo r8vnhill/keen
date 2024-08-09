@@ -11,12 +11,23 @@ import cl.ravenhill.keen.genetic.genes.arbSimpleGene
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.utils.arbProbability
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.collections.shouldNotBeEmpty
+import io.kotest.matchers.collections.shouldNotBeIn
+import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 
 class GenotypeTest : FreeSpec({
@@ -54,13 +65,70 @@ class GenotypeTest : FreeSpec({
             }
         }
 
+        "when testing for emptiness" - {
+            "should return true if the list of chromosomes is empty" {
+                Genotype(emptyList<SimpleChromosome>()).shouldBeEmpty()
+            }
 
+            "should return false if the list of chromosomes is not empty" {
+                checkAll(Arb.list(arbChromosome(arbSimpleGene()), 1..100)) { chromosomes ->
+                    Genotype(chromosomes).shouldNotBeEmpty()
+                }
+            }
+        }
+
+        "should have an iterator that iterates over the chromosomes" {
+            checkAll(Arb.list(arbChromosome(arbSimpleGene()))) { chromosomes ->
+                val genotype = Genotype(chromosomes)
+                val iterator = genotype.iterator()
+                chromosomes.forEach {
+                    iterator.hasNext().shouldBeTrue()
+                    iterator.next() shouldBe it
+                }
+            }
+        }
+
+        "when checking for containment" - {
+            "should return true if the chromosome is in the genotype" {
+                checkAll(Arb.list(arbChromosome(arbSimpleGene()), 1..10)) { chromosomes ->
+                    val genotype = Genotype(chromosomes)
+                    chromosomes.forEach {
+                        genotype.contains(it).shouldBeTrue()
+                    }
+                }
+            }
+
+            "should return false if the chromosome is not in the genotype" {
+                checkAll(
+                    Arb.list(arbChromosome(arbSimpleGene()), 1..10),
+                    arbChromosome(arbSimpleGene(), 1..10)
+                ) { chromosomes, chromosome ->
+                    assume { chromosome shouldNotBeIn chromosomes }
+                    Genotype(chromosomes).contains(chromosome).shouldBeFalse()
+                }
+            }
+
+            "should return true if all the chromosomes are in the genotype" {
+                checkAll(arbGenotypeAndChromosomes(arbChromosome(arbSimpleGene()))) { (genotype, chromosomes) ->
+                    genotype.containsAll(chromosomes).shouldBeTrue()
+                }
+            }
+
+            "should return false if not all the chromosomes are in the genotype" {
+                checkAll(
+                    PropTestConfig(iterations = 100),
+                    arbGenotypeAndNotContainedChromosomes(arbChromosome(arbSimpleGene()))
+                ) { (genotype, notContained) ->
+                    genotype.containsAll(notContained).shouldBeFalse()
+                }
+            }
+        }
     }
 })
 
 private fun <T, G> arbGenotypeAndFlattenedChromosomes(
     geneArb: Arb<G>,
-    chromosomeBuilder: (List<G>) -> Chromosome<T, G>
+    chromosomeBuilder: (List<G>) -> Chromosome<T, G>,
 ) where G : Gene<T, G> = arbitrary {
     val genotypeSize = Arb.int(0..10).bind()
     val chromosomes = mutableListOf<Chromosome<T, G>>()
@@ -75,4 +143,26 @@ private fun <T, G> arbGenotypeAndFlattenedChromosomes(
         chromosomes += chromosomeBuilder(genes)
     }
     Genotype(chromosomes) to flattenedGenes
+}
+
+private fun <T, G> arbGenotypeAndChromosomes(
+    chromosome: Arb<Chromosome<T, G>>,
+    size: IntRange = 1..10,
+    probability: Arb<Double> = arbProbability(),
+): Arb<Pair<Genotype<T, G>, List<Chromosome<T, G>>>> where G : Gene<T, G> = arbitrary { (random, _) ->
+    val chromosomes = Arb.list(chromosome, size).bind()
+    val ratio = probability.bind()
+    Genotype(chromosomes) to chromosomes.filter { random.nextDouble() < ratio }
+}
+
+private fun <T, G> arbGenotypeAndNotContainedChromosomes(
+    chromosome: Arb<Chromosome<T, G>>,
+    size: IntRange = 1..10,
+): Arb<Pair<Genotype<T, G>, List<Chromosome<T, G>>>> where G : Gene<T, G> = arbitrary {
+    val chromosomes = Arb.list(chromosome, size).bind()
+    var notContained: List<Chromosome<T, G>>
+    do {
+        notContained = Arb.list(chromosome, size).bind().filter { it !in chromosomes }
+    } while (notContained.isEmpty())
+    Genotype(chromosomes) to notContained
 }

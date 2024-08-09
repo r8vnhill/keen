@@ -12,6 +12,7 @@ kotlin {
     sourceSets.configureEach {
         languageSettings {
             optIn("cl.ravenhill.keen.ExperimentalKeen")
+            optIn("io.kotest.common.ExperimentalKotest")
         }
     }
 }
