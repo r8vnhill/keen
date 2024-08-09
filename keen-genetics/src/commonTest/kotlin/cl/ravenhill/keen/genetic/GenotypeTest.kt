@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.genetic
 
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetic.chromosomes.SimpleChromosome
 import cl.ravenhill.keen.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.genetic.chromosomes.arbChromosomeWithInvalidGenes
@@ -15,7 +17,9 @@ import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.matchers.shouldBeValid
 import cl.ravenhill.keen.matchers.shouldNotBeValid
+import cl.ravenhill.matchers.shouldHaveInfringement
 import cl.ravenhill.utils.arbProbability
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -27,6 +31,8 @@ import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.boolean
+import io.kotest.property.arbitrary.filter
+import io.kotest.property.arbitrary.flatMap
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
@@ -137,6 +143,30 @@ class GenotypeTest : FreeSpec({
             "should return false if any chromosome is invalid" {
                 checkAll(arbGenotypeWithInvalidChromosome()) { genotype ->
                     genotype.shouldNotBeValid()
+                }
+            }
+        }
+
+        "when retrieving a chromosome by index" - {
+            "should return the chromosome at the specified index" {
+                checkAll(Arb.list(arbChromosome(arbSimpleGene()))) { chromosomes ->
+                    val genotype = Genotype(chromosomes)
+                    chromosomes.forEachIndexed { index, chromosome ->
+                        genotype[index] shouldBe chromosome
+                    }
+                }
+            }
+
+            "should throw an exception if the index is out of range" {
+                checkAll(Arb.list(arbChromosome(arbSimpleGene())).flatMap { chromosomes ->
+                    Arb.int().filter { it !in chromosomes.indices }.map { it to chromosomes }
+                }) { (index, chromosomes) ->
+                    val genotype = Genotype(chromosomes)
+                    shouldThrow<CompositeException> {
+                        genotype[index]
+                    }.shouldHaveInfringement<InvalidIndexException>(
+                        "The index ($index) must be in the range [0, ${chromosomes.size})"
+                    )
                 }
             }
         }

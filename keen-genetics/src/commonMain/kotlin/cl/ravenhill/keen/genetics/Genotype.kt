@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.genetics
 
 import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constraints.ints.BeInRange
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.exceptions.InvalidIndexException
@@ -132,7 +133,7 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) : Representat
     operator fun get(index: Int): Chromosome<T, G> {
         constraints {
             "The index ($index) must be in the range [0, $size)"(::InvalidIndexException) {
-                index in this@Genotype.indices
+                index must BeInRange(this@Genotype.indices)
             }
         }
         return chromosomes[index]

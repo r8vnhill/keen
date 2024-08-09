@@ -125,6 +125,8 @@ fun <T, G> arbChromosome(
 ): Arb<Chromosome<T, G>> where G : Gene<T, G> = Arb.list(gene, size).map {
     object : Chromosome<T, G> {
         override val genes: List<G> = it
+
+        override fun toString() = "Chromosome(genes=$genes)"
     }
 }
 

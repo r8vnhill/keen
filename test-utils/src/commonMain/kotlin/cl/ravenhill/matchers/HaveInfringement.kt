@@ -4,11 +4,10 @@
  */
 
 
-package cl.ravenhill.keen.matchers
+package cl.ravenhill.matchers
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.ConstraintException
-import cl.ravenhill.jakt.exceptions.IntConstraintException
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
