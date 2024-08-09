@@ -7,10 +7,10 @@ package cl.ravenhill.keen.listeners.records
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.IntConstraintException
-import cl.ravenhill.keen.matchers.shouldHaveInfringement
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.keen.repr.SimpleFeature
+import cl.ravenhill.matchers.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.core.spec.style.FreeSpec
@@ -79,5 +79,5 @@ class GenerationRecordTest : FreeSpec({
 })
 
 fun <T, F> arbGenerationRecord(
-    generation: Arb<Int> = Arb.nonNegativeInt()
+    generation: Arb<Int> = Arb.nonNegativeInt(),
 ): GenerationRecordArb<T, F> where F : Feature<T, F> = generation.map { GenerationRecord(it) }

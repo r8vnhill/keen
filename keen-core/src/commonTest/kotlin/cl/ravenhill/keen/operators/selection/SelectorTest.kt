@@ -11,7 +11,6 @@ import cl.ravenhill.keen.arbIndividual
 import cl.ravenhill.keen.arbPopulation
 import cl.ravenhill.keen.evolution.states.arbEvolutionState
 import cl.ravenhill.keen.exceptions.SelectionException
-import cl.ravenhill.keen.matchers.shouldHaveInfringement
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.FitnessMinRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
@@ -20,6 +19,7 @@ import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.keen.repr.SimpleFeature
 import cl.ravenhill.keen.repr.arbSimpleFeature
 import cl.ravenhill.keen.repr.arbSimpleRepresentation
+import cl.ravenhill.matchers.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -116,7 +116,7 @@ fun <T, F, R> arbSimpleSelector(): Arb<Selector<T, F, R>> where F : Feature<T, F
             override fun select(
                 population: Population<T, F, R>,
                 count: Int,
-                ranker: IndividualRanker<T, F, R>
+                ranker: IndividualRanker<T, F, R>,
             ) = ranker.sort(population).take(count)
         }
     }
@@ -132,7 +132,7 @@ private fun <T, F, R> arbFaultySelector(): Arb<Selector<T, F, R>> where F : Feat
             override fun select(
                 population: Population<T, F, R>,
                 count: Int,
-                ranker: IndividualRanker<T, F, R>
+                ranker: IndividualRanker<T, F, R>,
             ) = ranker.sort(population).take(count).drop(1)
         }
     }
@@ -148,7 +148,6 @@ private fun arbNonEmptyState() = arbEvolutionState(
 )
 
 private fun arbRanker() = Arb.element(
-    FitnessMaxRanker<Double, SimpleFeature<Double>,
-            Representation<Double, SimpleFeature<Double>>>(),
+    FitnessMaxRanker<Double, SimpleFeature<Double>, Representation<Double, SimpleFeature<Double>>>(),
     FitnessMinRanker()
 )

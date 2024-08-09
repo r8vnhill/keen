@@ -8,7 +8,7 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
-import cl.ravenhill.keen.matchers.shouldHaveInfringement
+import cl.ravenhill.matchers.shouldHaveInfringement
 import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
