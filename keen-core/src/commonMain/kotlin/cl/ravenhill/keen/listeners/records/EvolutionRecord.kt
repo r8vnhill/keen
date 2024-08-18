@@ -10,8 +10,8 @@ import cl.ravenhill.keen.repr.Representation
 
 data class EvolutionRecord<T, F, R>(
     val generations: List<GenerationRecord<T, F, R>> = emptyList()
-) : AbstractTimedRecord() where F : Feature<T, F>, R : Representation<T, F> {
+) : AbstractTimedRecord() where F : Feature<T, F>, R : Representation<T, F>:
     val initialization = InitializationRecord()
 
     class InitializationRecord : AbstractTimedRecord()
-}
+

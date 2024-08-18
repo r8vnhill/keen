@@ -43,7 +43,7 @@ import kotlin.random.Random
  * @param G The type of the gene, which must extend [Gene].
  * @property generator A function that generates a new value for the gene using a [Random] instance.
  */
-interface Gene<T, G> : Feature<T, G>, FlatMappable<T>, Verifiable where G : Gene<T, G> {
+interface Gene<T, G> : Feature<T, G>, Verifiable where G : Gene<T, G> {
 
     /**
      * A function that generates a new value for the gene using a [Random] instance.

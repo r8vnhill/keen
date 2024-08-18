@@ -5,6 +5,9 @@
 
 package cl.ravenhill.keen.repr
 
+import cl.ravenhill.keen.mixins.FlatMappable
+import cl.ravenhill.keen.mixins.Verifiable
+
 /**
  * Represents a feature in an evolutionary algorithm.
  *
@@ -27,7 +30,7 @@ package cl.ravenhill.keen.repr
  * @param F The type of the feature itself, which must extend [Feature].
  * @property value The value held by the feature.
  */
-interface Feature<T, F> where F : Feature<T, F> {
+interface Feature<T, F> : Verifiable, FlatMappable<T> where F : Feature<T, F> {
     /**
      * The value held by the feature.
      */
