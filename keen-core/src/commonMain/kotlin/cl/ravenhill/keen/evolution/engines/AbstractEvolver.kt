@@ -7,6 +7,7 @@ package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -67,17 +68,17 @@ import cl.ravenhill.keen.repr.Representation
  *   limits that control the evolution process.
  * @constructor Initializes the `AbstractEvolver` with the provided evolution configuration.
  */
-abstract class AbstractEvolver<T, F, R, S>(
-    evolutionConfiguration: EvolutionConfiguration<T, F, R, S>
-) : Evolver<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+abstract class AbstractEvolver<T, F, R, S, L>(
+    evolutionConfiguration: EvolutionConfiguration<T, F, R, S, L>
+) : Evolver<T, F, R, S, L> where F : Feature<T, F>,
+                                 R : Representation<T, F>,
+                                 S : EvolutionState<T, F, R>,
+                                 L : EvolutionListener<T, F, R, S> {
 
     /**
      * The current evolutionary state that is updated as the algorithm progresses.
      */
     protected abstract var state: S
-
-    private val listeners = evolutionConfiguration.listeners
-    private val limits = evolutionConfiguration.limits
 
     /**
      * Executes the evolutionary process until a termination condition is met.

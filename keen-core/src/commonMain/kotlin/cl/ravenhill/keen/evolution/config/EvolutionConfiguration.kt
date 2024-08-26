@@ -11,7 +11,7 @@ import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
-data class EvolutionConfiguration<T, F, R, S>(
-    val limits: List<Limit<T, F, R, S>>,
+data class EvolutionConfiguration<T, F, R, S, L>(
+    val limits: List<Limit<T, F, R, S, L>>,
     val listeners: List<EvolutionListener<T, F, R, S>>,
-) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>, L : EvolutionListener<T, F, R, S>

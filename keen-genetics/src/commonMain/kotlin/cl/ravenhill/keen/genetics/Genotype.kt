@@ -61,6 +61,9 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) : Representat
      */
     override fun flatten(): List<T> = chromosomes.flatMap { it.flatten() }
 
+    override fun <R> fold(initial: R, operation: (R, T) -> R): R =
+        chromosomes.fold(initial) { acc, chromosome -> chromosome.fold(acc, operation) }
+
     /**
      * The number of chromosomes in the genotype.
      */

@@ -40,4 +40,7 @@ data class GeneticEvolutionState<T, G>(
             "Generation ($generation) must not be negative" { generation mustNot BeNegative }
         }
     }
+
+    override fun withPopulation(population: Population<T, G, Genotype<T, G>>): EvolutionState<T, G, Genotype<T, G>> =
+        copy(population = population)
 }

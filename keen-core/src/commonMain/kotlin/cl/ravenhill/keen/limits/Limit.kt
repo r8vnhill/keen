@@ -38,10 +38,10 @@ import cl.ravenhill.keen.repr.Representation
  * @property predicate The predicate evaluated by the listener to determine if the limit condition is met.
  * @constructor Creates an instance of `ListenLimit` with the specified listener and predicate.
  */
-open class Limit<T, F, R, S>(
-    private val listener: EvolutionListener<T, F, R, S>,
-    private val predicate: EvolutionListener<T, F, R, S>.(S) -> Boolean
-) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+open class Limit<T, F, R, S, L>(
+    val listener: L,
+    private val predicate: L.(S) -> Boolean
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>, L : EvolutionListener<T, F, R, S> {
 
     /**
      * Evaluates the limit condition based on the current state.
@@ -52,7 +52,7 @@ open class Limit<T, F, R, S>(
      * @param state The current state of the evolutionary process.
      * @return `true` if the limit condition is met and the process should stop, `false` otherwise.
      */
-    operator fun invoke(state: S) = listener.predicate(state)
+    operator fun invoke(state: S): Boolean = listener.predicate(state)
 }
 
 /**
@@ -82,10 +82,14 @@ open class Limit<T, F, R, S>(
  * @param predicate A predicate function that defines the condition for the limit.
  * @return A function that creates a [Limit] using the given configuration.
  */
-fun <T, F, R, S> limit(
-    builder: (ListenerConfiguration<T, F, R>) -> EvolutionListener<T, F, R, S>,
-    predicate: EvolutionListener<T, F, R, S>.(S) -> Boolean
-): (ListenerConfiguration<T, F, R>) -> Limit<T, F, R, S>
-        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> = { config ->
-    Limit(builder(config), predicate)
-}
+fun <T, F, R, S, L> limit(
+    builder: (ListenerConfiguration<T, F, R>) -> L,
+    predicate: L.(S) -> Boolean
+): (ListenerConfiguration<T, F, R>) -> Limit<T, F, R, S, L>
+        where F : Feature<T, F>,
+              R : Representation<T, F>,
+              S : EvolutionState<T, F, R>,
+              L : EvolutionListener<T, F, R, S> =
+    { config ->
+        Limit(builder(config), predicate)
+    }

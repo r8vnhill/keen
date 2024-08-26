@@ -120,4 +120,7 @@ interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T
      * @return true if all genes in the chromosome are verified, false otherwise.
      */
     override fun verify(): Boolean = genes.all { it.verify() }
+
+    override fun <R> fold(initial: R, operation: (R, T) -> R): R =
+        genes.fold(initial) { acc, gene -> operation(acc, gene.value) }
 }
