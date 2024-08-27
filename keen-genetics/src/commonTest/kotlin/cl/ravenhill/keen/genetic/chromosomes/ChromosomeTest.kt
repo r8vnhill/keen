@@ -125,6 +125,9 @@ fun <T, G> arbChromosome(
 ): Arb<Chromosome<T, G>> where G : Gene<T, G> = Arb.list(gene, size).map {
     object : Chromosome<T, G> {
         override val genes: List<G> = it
+        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
+            TODO("Not yet implemented")
+        }
 
         override fun toString() = "Chromosome(genes=$genes)"
     }
@@ -142,6 +145,9 @@ fun arbChromosomeWithInvalidGenes(
         genes.add(arbSimpleGene(Arb.constant(false)).bind())
         object : Chromosome<Int, SimpleGene> {
             override val genes: List<SimpleGene> = genes
+            override fun duplicateWithGenes(newGenes: List<SimpleGene>): Chromosome<Int, SimpleGene> {
+                TODO("Not yet implemented")
+            }
         }
     }
 
@@ -151,6 +157,9 @@ private fun <T, G> arbChromosomeAndGene(
 ): Arb<Pair<Chromosome<T, G>, G>> where G : Gene<T, G> = Arb.list(gene, size).map { genes ->
     object : Chromosome<T, G> {
         override val genes: List<G> = genes
+        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
+            TODO("Not yet implemented")
+        }
     } to genes.random()
 }
 
@@ -163,6 +172,9 @@ private fun <T, G> arbChromosomeAndGenes(
     val ratio = probability.bind()
     object : Chromosome<T, G> {
         override val genes: List<G> = genes
+        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
+            TODO("Not yet implemented")
+        }
     } to genes.filter { random.nextDouble() < ratio }
 }
 
@@ -177,6 +189,9 @@ private fun <T, G> arbChromosomeAndNotContainedGenes(
     } while (notContained.isEmpty())
     object : Chromosome<T, G> {
         override val genes: List<G> = genes
+        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
+            TODO("Not yet implemented")
+        }
     } to notContained
 }
 
@@ -186,7 +201,14 @@ private fun <T, G> arbChromosomeAndSize(
 ): Arb<Pair<Chromosome<T, G>, Int>> where G : Gene<T, G> = Arb.list(gene, size).map { genes ->
     object : Chromosome<T, G> {
         override val genes: List<G> = genes
+        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
+            TODO("Not yet implemented")
+        }
     } to genes.size
 }
 
-class SimpleChromosome(override val genes: List<SimpleGene>) : Chromosome<Int, SimpleGene>
+class SimpleChromosome(override val genes: List<SimpleGene>) : Chromosome<Int, SimpleGene> {
+    override fun duplicateWithGenes(newGenes: List<SimpleGene>): Chromosome<Int, SimpleGene> {
+        TODO("Not yet implemented")
+    }
+}

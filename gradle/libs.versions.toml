@@ -1,9 +1,10 @@
 [versions]
-kotlin = "2.0.20"
+kotlin = "1.9.21"
 devPublishPlugin = "0.4.1"
 jakt = "2.0.4"
 kotest = "5.9.1"
 detekt = "1.23.6"
+coroutines = "1.8.1"
 
 ### Java compilation ###
 # Keen's minimum supported Java version.
@@ -23,6 +24,8 @@ kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", versio
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 
 # Gradle plugins
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

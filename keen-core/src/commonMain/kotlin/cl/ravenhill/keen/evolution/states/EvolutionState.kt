@@ -79,18 +79,43 @@ interface EvolutionState<T, F, R> : FlatMappable<T>, Foldable<T> where F : Featu
         withPopulation(population.map(f))
 
     /**
-     * Folds the elements of the population into a single value.
+     * Folds the values in the population from left to right, accumulating a result.
      *
-     * This method applies a binary operation to an initial value and each element of the population, accumulating a
-     * result. It's useful for operations like summing fitness values or aggregating features.
+     * The `fold` function allows you to reduce the entire population to a single value by applying a binary operation
+     * to an initial value and each element (i.e., each individual) in the population. The operation is applied
+     * sequentially from the first individual to the last, which makes it suitable for operations where the order
+     * of accumulation follows the sequence of individuals.
      *
      * @param R The type of the result produced by the fold operation.
      * @param initial The initial value to start the accumulation with.
-     * @param operation The binary operation to apply to the accumulator and each element of the population.
-     * @return The final accumulated result.
+     * @param operation The binary operation to apply to the accumulator and each value in the population.
+     * @return The final accumulated result after processing all individuals from left to right.
      */
     override fun <R> fold(initial: R, operation: (R, T) -> R): R =
         population.fold(initial) { acc, individual -> individual.fold(acc, operation) }
+
+    /**
+     * Folds the values in the population from right to left, accumulating a result.
+     *
+     * The `foldRight` function allows you to reduce the entire population to a single value by applying a binary
+     * operation to each element (i.e., each individual) and an initial value, processing elements from the last
+     * individual to the first. This is useful for operations where the order of processing should start from the
+     * end of the population and move towards the beginning, such as when building a result in reverse order.
+     *
+     * ## Efficiency Considerations:
+     * - **Folding Left (`fold`)**: Efficient for operations where accumulation naturally follows the sequence of
+     *   individuals from first to last, such as summing values or combining results in the original order.
+     * - **Folding Right (`foldRight`)**: More efficient for operations where accumulation needs to start from the
+     *   last individual and work towards the first, such as when constructing a result that depends on the order
+     *   starting from the end.
+     *
+     * @param R The type of the result produced by the fold operation.
+     * @param initial The initial value to start the accumulation with.
+     * @param operation The binary operation to apply to each value in the population and the accumulator.
+     * @return The final accumulated result after processing all individuals from right to left.
+     */
+    override fun <R> foldRight(initial: R, operation: (T, R) -> R): R =
+        population.foldRight(initial) { individual, acc -> individual.foldRight(acc, operation) }
 
     /**
      * Flattens the population by combining all the individuals' representations into a single list.

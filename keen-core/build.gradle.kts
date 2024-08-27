@@ -13,6 +13,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("reflect"))
+                implementation(libs.kotlin.coroutines.core)
                 api(libs.jakt)
             }
         }
