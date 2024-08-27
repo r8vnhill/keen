@@ -117,7 +117,7 @@ fun <T, F, R> arbSimpleSelector(): Arb<Selector<T, F, R>> where F : Feature<T, F
                 population: Population<T, F, R>,
                 count: Int,
                 ranker: IndividualRanker<T, F, R>,
-            ) = ranker.sort(population).take(count)
+            ): Result<Population<T, F, R>> = ranker.sort(population).take(count)
         }
     }
 
@@ -133,7 +133,7 @@ private fun <T, F, R> arbFaultySelector(): Arb<Selector<T, F, R>> where F : Feat
                 population: Population<T, F, R>,
                 count: Int,
                 ranker: IndividualRanker<T, F, R>,
-            ) = ranker.sort(population).take(count).drop(1)
+            ): Result<Population<T, F, R>> = ranker.sort(population).take(count).drop(1)
         }
     }
 

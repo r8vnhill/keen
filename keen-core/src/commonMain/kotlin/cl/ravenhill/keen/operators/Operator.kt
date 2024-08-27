@@ -50,5 +50,5 @@ interface Operator<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
         state: S,
         outputSize: Int,
         buildState: (List<Individual<T, F, R>>) -> S
-    ): S where S : EvolutionState<T, F, R>
+    ): Result<S> where S : EvolutionState<T, F, R>
 }

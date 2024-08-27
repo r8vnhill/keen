@@ -38,14 +38,40 @@ fun arbSimpleGene(isValid: Arb<Boolean> = Arb.constant(true)): Arb<SimpleGene> =
         isValid.map { valid -> SimpleGene(size, valid) }
     }
 
-data class SimpleGene(override val value: Int, val isValid: Boolean = true) : Gene<Int, SimpleGene> {
-    override val generator: (Int, Random) -> Int = { v, _ -> v + 1 }
+/**
+ * Represents a simple gene with an integer value and a validity flag.
+ *
+ * @param value The integer value of the gene.
+ * @param isValid A boolean indicating whether the gene is considered valid. Defaults to `true`.
+ */
+data class SimpleGene(
+    override val value: Int,
+    val isValid: Boolean = true
+) : Gene<Int, SimpleGene> {
+
+    /**
+     * A function to generate a new integer value based on the current gene's value.
+     * This function increments the current gene's value by 1.
+     */
+    override val generator: (Random) -> Int = { value + 1 }
+
+    /**
+     * Creates a new instance of `SimpleGene` with the specified value, preserving other properties.
+     *
+     * @param value The new integer value for the gene.
+     * @return A new instance of `SimpleGene` with the updated value.
+     */
     override fun duplicateWithValue(value: Int) = copy(value = value)
-    override fun verify(): Boolean {
-        return if (!isValid) {
-            false
-        } else {
-            super.verify()
-        }
+
+    /**
+     * Verifies if the gene is valid. The gene is considered invalid if `isValid` is `false`. Otherwise, it calls the
+     * `super.verify()` method.
+     *
+     * @return `true` if the gene is valid, otherwise `false`.
+     */
+    override fun verify() = if (!isValid) {
+        false
+    } else {
+        super.verify()
     }
 }
