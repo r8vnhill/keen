@@ -33,7 +33,15 @@ class GeneTest : FreeSpec({
     }
 })
 
-fun arbSimpleGene(isValid: Arb<Boolean> = Arb.constant(true)): Arb<SimpleGene> =
+/**
+ * Generates an arbitrary instance of `SimpleGene` with a random integer value and a validity flag.
+ *
+ * @param isValid An arbitrary boolean value indicating the validity of the gene. Defaults to always `true`.
+ * @return An arbitrary `SimpleGene` instance with a random integer value and the specified validity.
+ */
+fun arbSimpleGene(
+    isValid: Arb<Boolean> = Arb.constant(true)
+): Arb<SimpleGene> =
     Arb.int(Int.MIN_VALUE..<Int.MAX_VALUE).flatMap { size ->
         isValid.map { valid -> SimpleGene(size, valid) }
     }

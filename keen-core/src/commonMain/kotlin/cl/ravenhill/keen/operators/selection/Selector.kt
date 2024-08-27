@@ -10,6 +10,8 @@ import cl.ravenhill.jakt.constrainedTo
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BeNegative
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.states.EvolutionState
@@ -18,7 +20,7 @@ import cl.ravenhill.keen.operators.Operator
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import cl.ravenhill.jakt.exceptions.CompositeException
+import kotlin.random.Random
 
 /**
  * Represents a selection operator in an evolutionary algorithm.
@@ -32,8 +34,9 @@ import cl.ravenhill.jakt.exceptions.CompositeException
  * The `invoke` operator function is used to apply the selection process to an evolutionary state, returning
  * a new state with the selected individuals.
  *
- * ### Example:
- * Implementing a custom selector:
+ * ### Example 1:
+ *
+ * Implementing a custom selector as a class:
  * ```kotlin
  * class MySelector<T, F, R> : Selector<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
  *     override fun select(
@@ -47,9 +50,25 @@ import cl.ravenhill.jakt.exceptions.CompositeException
  * }
  * ```
  *
+ * ### Example 2:
+ *
+ * Implementing as an anonymous object:
+ * ```kotlin
+ * val selector = object : Selector<MyType, MyFeature, MyRepresentation> {
+ *     override fun select(
+ *         population: Population<MyType, MyFeature, MyRepresentation>,
+ *         count: Int,
+ *         ranker: IndividualRanker<MyType, MyFeature, MyRepresentation>
+ * ): Result<Population<MyType, MyFeature, MyRepresentation>> {
+ *     // Custom selection logic
+ * }
+ * ```
+ *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
+ *
+ * @see invoke
  */
 interface Selector<T, F, R> : Operator<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
 
@@ -113,12 +132,14 @@ interface Selector<T, F, R> : Operator<T, F, R> where F : Feature<T, F>, R : Rep
      * @param population The population from which individuals are selected.
      * @param count The number of individuals to select.
      * @param ranker The ranker used to evaluate and compare individuals in the population.
+     * @param random The random number generator used to make random selections.
      * @return A [Result] containing the selected population, or an exception wrapped in the [Result] if the selection
      *   fails.
      */
     fun select(
         population: Population<T, F, R>,
         count: Int,
-        ranker: IndividualRanker<T, F, R>
+        ranker: IndividualRanker<T, F, R>,
+        random: Random = Domain.random
     ): Result<Population<T, F, R>>
 }

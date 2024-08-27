@@ -18,6 +18,7 @@ import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.operators.selection.Selector
+import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
 
@@ -40,9 +41,9 @@ class GeneticAlgorithmFactory<T, G>(
 
     var ranker: IndividualRanker<T, G, Genotype<T, G>> = defaultRanker()
 
-    var parentSelector: Selector<T, G, Genotype<T, G>> = defaultParentSelector()
+    var parentSelector: Selector<T, G, Genotype<T, G>> = defaultParentSelector<T, G>().getOrThrow()
 
-    var survivorSelector: Selector<T, G, Genotype<T, G>> = defaultSurvivorSelector()
+    var survivorSelector: Selector<T, G, Genotype<T, G>> = defaultSurvivorSelector<T, G>().getOrThrow()
 
     val listeners: MutableList<ListenerFactory<T, G>> = defaultListenerFactories()
 
@@ -56,7 +57,8 @@ class GeneticAlgorithmFactory<T, G>(
                     >
             > = defaultLimits()
 
-    var evaluator: EvaluationExecutorFactory<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> = TODO()
+    var evaluator: EvaluationExecutorFactory<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> =
+        defaultEvaluator<T, G>()
 
     var interceptor: EvolutionInterceptor<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> = TODO()
 
@@ -83,9 +85,12 @@ class GeneticAlgorithmFactory<T, G>(
 
         fun <T, G> defaultRanker(): FitnessMaxRanker<T, G, Genotype<T, G>> where G : Gene<T, G> = FitnessMaxRanker()
 
-        fun <T, G> defaultParentSelector(): Selector<T, G, Genotype<T, G>> where G : Gene<T, G> = TODO()
+        fun <T, G> defaultParentSelector(): Result<Selector<T, G, Genotype<T, G>>> where G : Gene<T, G> = runCatching {
+            TournamentSelector()
+        }
 
-        fun <T, G> defaultSurvivorSelector(): Selector<T, G, Genotype<T, G>> where G : Gene<T, G> = TODO()
+        fun <T, G> defaultSurvivorSelector(): Result<Selector<T, G, Genotype<T, G>>> where G : Gene<T, G> =
+            runCatching { TournamentSelector() }
 
         fun <T, G> defaultListenerFactories(): MutableList<ListenerFactory<T, G>> where G : Gene<T, G> = mutableListOf()
 
@@ -98,5 +103,8 @@ class GeneticAlgorithmFactory<T, G>(
                         EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
                         >
                 > where G : Gene<T, G> = mutableListOf()
+
+        fun <T, G> defaultEvaluator(): EvaluationExecutorFactory<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
+                where G : Gene<T, G> = EvaluationExecutorFactory()
     }
 }
