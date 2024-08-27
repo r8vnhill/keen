@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.9.21"
+kotlin = "2.0.20"
 devPublishPlugin = "0.4.1"
 jakt = "2.0.4"
 kotest = "5.9.1"

@@ -48,14 +48,14 @@ interface Gene<T, G> : Feature<T, G>, Verifiable where G : Gene<T, G> {
     /**
      * A function that generates a new value for the gene using a [Random] instance.
      */
-    val generator: (T, Random) -> T
+    val generator: (Random) -> T
 
     /**
      * Creates a mutated version of this gene by generating a new value and duplicating the gene with this value.
      *
      * @return A new instance of the gene with the mutated value.
      */
-    fun mutate(): G = duplicateWithValue(generator(value, Domain.random))
+    fun mutate(): G = duplicateWithValue(generator(Domain.random))
 
     /**
      * Flattens the gene to a list containing its value.
