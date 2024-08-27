@@ -7,13 +7,11 @@ package cl.ravenhill.keen.evolution.executors.construction
 
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.exceptions.InvalidSizeException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
 
 class CoroutineConcurrentConstructor<T>(
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)

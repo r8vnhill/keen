@@ -1,9 +1,121 @@
-public abstract class cl/ravenhill/keen/evolution/engines/AbstractGeneBasedAlgorithm : cl/ravenhill/keen/evolution/engines/Evolver {
+public final class cl/ravenhill/keen/dsl/ChromosomeScope {
 	public fun <init> ()V
+}
+
+public final class cl/ravenhill/keen/dsl/ChromosomeScopeKt {
+	public static final fun chromosomeOf (Lcl/ravenhill/keen/dsl/GenotypeScope;Lkotlin/jvm/functions/Function1;)Z
+}
+
+public final class cl/ravenhill/keen/dsl/EnginesKt {
+	public static final fun geneticAlgorithm (Lkotlin/jvm/functions/Function1;Lcl/ravenhill/keen/genetics/GenotypeFactory;Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/evolution/engines/GeneticAlgorithm;
+}
+
+public final class cl/ravenhill/keen/dsl/GenotypeScope {
+	public fun <init> ()V
+	public final fun getChromosomes ()Ljava/util/List;
+}
+
+public final class cl/ravenhill/keen/dsl/GenotypeScopeKt {
+	public static final fun genotypeOf (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/genetics/GenotypeFactory;
+}
+
+public final class cl/ravenhill/keen/evolution/config/AlterationConfiguration {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcl/ravenhill/keen/evolution/config/AlterationConfiguration;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/evolution/config/AlterationConfiguration;Ljava/util/List;ILjava/lang/Object;)Lcl/ravenhill/keen/evolution/config/AlterationConfiguration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlterers ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class cl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration {
+	public fun <init> (Lcl/ravenhill/keen/genetics/GenotypeFactory;I)V
+	public final fun component1 ()Lcl/ravenhill/keen/genetics/GenotypeFactory;
+	public final fun component2 ()I
+	public final fun copy (Lcl/ravenhill/keen/genetics/GenotypeFactory;I)Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;Lcl/ravenhill/keen/genetics/GenotypeFactory;IILjava/lang/Object;)Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGenotypeFactory ()Lcl/ravenhill/keen/genetics/GenotypeFactory;
+	public final fun getPopulationSize ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class cl/ravenhill/keen/evolution/engines/AbstractGeneBasedEvolutionaryAlgorithm : cl/ravenhill/keen/evolution/engines/Evolver {
+	public fun <init> (Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;)V
+	public fun getAllListeners ()Ljava/util/List;
 	public abstract fun getOffspringSelector ()Lcl/ravenhill/keen/operators/selection/Selector;
 	public abstract fun getParentSelector ()Lcl/ravenhill/keen/operators/selection/Selector;
+	public fun getPopulationConfiguration ()Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;
 	public abstract fun getPopulationSize ()I
 	public abstract fun getSurvivalRate ()D
+}
+
+public final class cl/ravenhill/keen/evolution/engines/GeneticAlgorithm : cl/ravenhill/keen/evolution/engines/AbstractGeneBasedEvolutionaryAlgorithm {
+	public fun <init> (Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;Lcl/ravenhill/keen/evolution/config/SelectionConfiguration;Lcl/ravenhill/keen/evolution/config/AlterationConfiguration;Lcl/ravenhill/keen/evolution/config/EvolutionConfiguration;)V
+	public final fun component1 ()Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;
+	public final fun component2 ()Lcl/ravenhill/keen/evolution/config/SelectionConfiguration;
+	public final fun component3 ()Lcl/ravenhill/keen/evolution/config/AlterationConfiguration;
+	public final fun component4 ()Lcl/ravenhill/keen/evolution/config/EvolutionConfiguration;
+	public final fun copy (Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;Lcl/ravenhill/keen/evolution/config/SelectionConfiguration;Lcl/ravenhill/keen/evolution/config/AlterationConfiguration;Lcl/ravenhill/keen/evolution/config/EvolutionConfiguration;)Lcl/ravenhill/keen/evolution/engines/GeneticAlgorithm;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/evolution/engines/GeneticAlgorithm;Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;Lcl/ravenhill/keen/evolution/config/SelectionConfiguration;Lcl/ravenhill/keen/evolution/config/AlterationConfiguration;Lcl/ravenhill/keen/evolution/config/EvolutionConfiguration;ILjava/lang/Object;)Lcl/ravenhill/keen/evolution/engines/GeneticAlgorithm;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun evolve ()Lcl/ravenhill/keen/evolution/states/EvolutionState;
+	public fun evolve ()Lcl/ravenhill/keen/evolution/states/GeneticEvolutionState;
+	public final fun getAlterationConfiguration ()Lcl/ravenhill/keen/evolution/config/AlterationConfiguration;
+	public synthetic fun getCurrentState ()Lcl/ravenhill/keen/evolution/states/EvolutionState;
+	public fun getCurrentState ()Lcl/ravenhill/keen/evolution/states/GeneticEvolutionState;
+	public final fun getEvolutionConfiguration ()Lcl/ravenhill/keen/evolution/config/EvolutionConfiguration;
+	public fun getLimits ()Ljava/util/List;
+	public fun getListeners ()Ljava/util/List;
+	public fun getOffspringSelector ()Lcl/ravenhill/keen/operators/selection/Selector;
+	public fun getParentSelector ()Lcl/ravenhill/keen/operators/selection/Selector;
+	public fun getPopulationConfiguration ()Lcl/ravenhill/keen/evolution/config/GeneticPopulationConfiguration;
+	public fun getPopulationSize ()I
+	public final fun getSelectionConfiguration ()Lcl/ravenhill/keen/evolution/config/SelectionConfiguration;
+	public fun getSurvivalRate ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class cl/ravenhill/keen/evolution/engines/GeneticAlgorithmFactory {
+	public static final field Companion Lcl/ravenhill/keen/evolution/engines/GeneticAlgorithmFactory$Companion;
+	public static final field DEFAULT_POPULATION_SIZE I
+	public static final field DEFAULT_SURVIVAL_RATE D
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lcl/ravenhill/keen/genetics/GenotypeFactory;)V
+	public final fun getAlterers ()Ljava/util/List;
+	public final fun getEvaluator ()Lcl/ravenhill/keen/evolution/executors/evaluation/EvaluationExecutorFactory;
+	public final fun getFitnessFunction ()Lkotlin/jvm/functions/Function1;
+	public final fun getGenotypeFactory ()Lcl/ravenhill/keen/genetics/GenotypeFactory;
+	public final fun getInterceptor ()Lcl/ravenhill/keen/evolution/EvolutionInterceptor;
+	public final fun getLimits ()Ljava/util/List;
+	public final fun getListeners ()Ljava/util/List;
+	public final fun getParentSelector ()Lcl/ravenhill/keen/operators/selection/Selector;
+	public final fun getPopulationSize ()I
+	public final fun getRanker ()Lcl/ravenhill/keen/ranking/IndividualRanker;
+	public final fun getSurvivalRate ()D
+	public final fun getSurvivorSelector ()Lcl/ravenhill/keen/operators/selection/Selector;
+	public final fun make ()Lcl/ravenhill/keen/evolution/engines/GeneticAlgorithm;
+	public final fun setEvaluator (Lcl/ravenhill/keen/evolution/executors/evaluation/EvaluationExecutorFactory;)V
+	public final fun setInterceptor (Lcl/ravenhill/keen/evolution/EvolutionInterceptor;)V
+	public final fun setParentSelector (Lcl/ravenhill/keen/operators/selection/Selector;)V
+	public final fun setPopulationSize (I)V
+	public final fun setRanker (Lcl/ravenhill/keen/ranking/IndividualRanker;)V
+	public final fun setSurvivalRate (D)V
+	public final fun setSurvivorSelector (Lcl/ravenhill/keen/operators/selection/Selector;)V
+}
+
+public final class cl/ravenhill/keen/evolution/engines/GeneticAlgorithmFactory$Companion {
+	public final fun defaultAlterers ()Ljava/util/List;
+	public final fun defaultEvaluator ()Lcl/ravenhill/keen/evolution/executors/evaluation/EvaluationExecutorFactory;
+	public final fun defaultInterceptor ()Lcl/ravenhill/keen/evolution/EvolutionInterceptor;
+	public final fun defaultLimits ()Ljava/util/List;
+	public final fun defaultListenerFactories ()Ljava/util/List;
+	public final fun defaultParentSelector-d1pmJ48 ()Ljava/lang/Object;
+	public final fun defaultRanker ()Lcl/ravenhill/keen/ranking/FitnessMaxRanker;
+	public final fun defaultSurvivorSelector-d1pmJ48 ()Ljava/lang/Object;
 }
 
 public final class cl/ravenhill/keen/evolution/states/GeneticEvolutionState : cl/ravenhill/keen/evolution/states/EvolutionState {
@@ -14,13 +126,19 @@ public final class cl/ravenhill/keen/evolution/states/GeneticEvolutionState : cl
 	public final fun copy (ILcl/ravenhill/keen/ranking/IndividualRanker;Ljava/util/List;)Lcl/ravenhill/keen/evolution/states/GeneticEvolutionState;
 	public static synthetic fun copy$default (Lcl/ravenhill/keen/evolution/states/GeneticEvolutionState;ILcl/ravenhill/keen/ranking/IndividualRanker;Ljava/util/List;ILjava/lang/Object;)Lcl/ravenhill/keen/evolution/states/GeneticEvolutionState;
 	public fun equals (Ljava/lang/Object;)Z
+	public fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public fun flatten ()Ljava/util/List;
+	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public fun foldRight (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public fun getGeneration ()I
 	public fun getPopulation ()Ljava/util/List;
 	public fun getRanker ()Lcl/ravenhill/keen/ranking/IndividualRanker;
 	public fun getSize ()I
 	public fun hashCode ()I
 	public fun isEmpty ()Z
+	public fun map (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/evolution/states/EvolutionState;
 	public fun toString ()Ljava/lang/String;
+	public fun withPopulation (Ljava/util/List;)Lcl/ravenhill/keen/evolution/states/EvolutionState;
 }
 
 public final class cl/ravenhill/keen/genetics/Genotype : cl/ravenhill/keen/repr/Representation, java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
@@ -39,6 +157,8 @@ public final class cl/ravenhill/keen/genetics/Genotype : cl/ravenhill/keen/repr/
 	public fun equals (Ljava/lang/Object;)Z
 	public fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public fun flatten ()Ljava/util/List;
+	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public fun foldRight (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public final fun get (I)Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;
 	public final fun getChromosomes ()Ljava/util/List;
 	public fun getSize ()I
@@ -56,10 +176,66 @@ public final class cl/ravenhill/keen/genetics/Genotype : cl/ravenhill/keen/repr/
 	public fun verify ()Z
 }
 
+public final class cl/ravenhill/keen/genetics/GenotypeFactory : cl/ravenhill/keen/repr/RepresentationFactory {
+	public fun <init> ()V
+	public final fun getChromosomes ()Ljava/util/List;
+	public fun invoke-gIAlu-s (ILkotlin/random/Random;)Ljava/lang/Object;
+}
+
+public abstract class cl/ravenhill/keen/genetics/chromosomes/AbstractChromosomeFactory : cl/ravenhill/keen/genetics/chromosomes/ChromosomeFactory {
+	public fun <init> ()V
+	public fun getExecutor ()Lcl/ravenhill/keen/evolution/executors/construction/ConstructorExecutor;
+	public fun setExecutor (Lcl/ravenhill/keen/evolution/executors/construction/ConstructorExecutor;)V
+}
+
+public final class cl/ravenhill/keen/genetics/chromosomes/BooleanChromosome : cl/ravenhill/keen/genetics/chromosomes/Chromosome {
+	public fun <init> (Ljava/util/List;)V
+	public fun add (Lcl/ravenhill/keen/genetics/genes/BooleanGene;)Z
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public final fun component1 ()Ljava/util/List;
+	public fun contains (Lcl/ravenhill/keen/genetics/genes/BooleanGene;)Z
+	public synthetic fun contains (Lcl/ravenhill/keen/genetics/genes/Gene;)Z
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public final fun copy (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosome;
+	public static synthetic fun copy$default (Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosome;Ljava/util/List;ILjava/lang/Object;)Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosome;
+	public fun duplicateWithGenes (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosome;
+	public synthetic fun duplicateWithGenes (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public fun flatten ()Ljava/util/List;
+	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public fun foldRight (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public fun getGenes ()Ljava/util/List;
+	public fun getSize ()I
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeIf (Ljava/util/function/Predicate;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+	public fun verify ()Z
+}
+
+public final class cl/ravenhill/keen/genetics/chromosomes/BooleanChromosomeFactory : cl/ravenhill/keen/genetics/chromosomes/AbstractChromosomeFactory {
+	public fun <init> ()V
+	public fun invoke-gIAlu-s (ILkotlin/random/Random;)Ljava/lang/Object;
+}
+
 public abstract interface class cl/ravenhill/keen/genetics/chromosomes/Chromosome : cl/ravenhill/keen/mixins/FlatMappable, cl/ravenhill/keen/repr/Representation, java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	public abstract fun contains (Lcl/ravenhill/keen/genetics/genes/Gene;)Z
 	public abstract fun containsAll (Ljava/util/Collection;)Z
+	public abstract fun duplicateWithGenes (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;
 	public abstract fun flatten ()Ljava/util/List;
+	public abstract fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public abstract fun foldRight (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public abstract fun getGenes ()Ljava/util/List;
 	public abstract fun getSize ()I
 	public abstract fun isEmpty ()Z
@@ -72,22 +248,95 @@ public final class cl/ravenhill/keen/genetics/chromosomes/Chromosome$DefaultImpl
 	public static fun containsAll (Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;Ljava/util/Collection;)Z
 	public static fun flatMap (Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static fun flatten (Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;)Ljava/util/List;
+	public static fun fold (Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static fun foldRight (Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static fun getSize (Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;)I
 	public static fun isEmpty (Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;)Z
 	public static fun iterator (Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;)Ljava/util/Iterator;
 	public static fun verify (Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;)Z
 }
 
-public abstract interface class cl/ravenhill/keen/genetics/genes/Gene : cl/ravenhill/keen/mixins/FlatMappable, cl/ravenhill/keen/mixins/Verifiable, cl/ravenhill/keen/repr/Feature {
+public abstract interface class cl/ravenhill/keen/genetics/chromosomes/ChromosomeFactory : cl/ravenhill/keen/repr/RepresentationFactory {
+	public abstract fun getExecutor ()Lcl/ravenhill/keen/evolution/executors/construction/ConstructorExecutor;
+	public abstract fun setExecutor (Lcl/ravenhill/keen/evolution/executors/construction/ConstructorExecutor;)V
+}
+
+public abstract interface class cl/ravenhill/keen/genetics/genes/BooleanGene : cl/ravenhill/keen/genetics/genes/Gene {
+	public static final field Companion Lcl/ravenhill/keen/genetics/genes/BooleanGene$Companion;
+	public abstract fun duplicateWithValue (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public abstract fun getGenerator ()Lkotlin/jvm/functions/Function1;
+	public abstract fun toInt ()I
+}
+
+public final class cl/ravenhill/keen/genetics/genes/BooleanGene$Companion {
+	public final fun from (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public final fun fromInt (I)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public final fun pure (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+}
+
+public final class cl/ravenhill/keen/genetics/genes/BooleanGene$DefaultImpls {
+	public static fun bind (Lcl/ravenhill/keen/genetics/genes/BooleanGene;Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public static fun duplicateWithValue (Lcl/ravenhill/keen/genetics/genes/BooleanGene;Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public static fun flatMap (Lcl/ravenhill/keen/genetics/genes/BooleanGene;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static fun flatten (Lcl/ravenhill/keen/genetics/genes/BooleanGene;)Ljava/util/List;
+	public static fun getGenerator (Lcl/ravenhill/keen/genetics/genes/BooleanGene;)Lkotlin/jvm/functions/Function1;
+	public static fun mutate (Lcl/ravenhill/keen/genetics/genes/BooleanGene;Lkotlin/random/Random;)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public static fun toInt (Lcl/ravenhill/keen/genetics/genes/BooleanGene;)I
+	public static fun verify (Lcl/ravenhill/keen/genetics/genes/BooleanGene;)Z
+}
+
+public final class cl/ravenhill/keen/genetics/genes/BooleanGene$False : cl/ravenhill/keen/genetics/genes/BooleanGene {
+	public static final field INSTANCE Lcl/ravenhill/keen/genetics/genes/BooleanGene$False;
+	public fun bind (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public synthetic fun bind (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/repr/Feature;
+	public synthetic fun duplicateWithValue (Ljava/lang/Object;)Lcl/ravenhill/keen/repr/Feature;
+	public fun duplicateWithValue (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public fun flatten ()Ljava/util/List;
+	public fun getGenerator ()Lkotlin/jvm/functions/Function1;
+	public fun getValue ()Ljava/lang/Boolean;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun mutate (Lkotlin/random/Random;)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public synthetic fun mutate (Lkotlin/random/Random;)Lcl/ravenhill/keen/genetics/genes/Gene;
+	public fun toInt ()I
+	public fun toString ()Ljava/lang/String;
+	public fun verify ()Z
+}
+
+public final class cl/ravenhill/keen/genetics/genes/BooleanGene$True : cl/ravenhill/keen/genetics/genes/BooleanGene {
+	public static final field INSTANCE Lcl/ravenhill/keen/genetics/genes/BooleanGene$True;
+	public fun bind (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public synthetic fun bind (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/repr/Feature;
+	public synthetic fun duplicateWithValue (Ljava/lang/Object;)Lcl/ravenhill/keen/repr/Feature;
+	public fun duplicateWithValue (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public fun flatten ()Ljava/util/List;
+	public fun getGenerator ()Lkotlin/jvm/functions/Function1;
+	public fun getValue ()Ljava/lang/Boolean;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun mutate (Lkotlin/random/Random;)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public synthetic fun mutate (Lkotlin/random/Random;)Lcl/ravenhill/keen/genetics/genes/Gene;
+	public fun toInt ()I
+	public fun toString ()Ljava/lang/String;
+	public fun verify ()Z
+}
+
+public abstract interface class cl/ravenhill/keen/genetics/genes/Gene : cl/ravenhill/keen/mixins/Verifiable, cl/ravenhill/keen/repr/Feature {
 	public abstract fun flatten ()Ljava/util/List;
-	public abstract fun getGenerator ()Lkotlin/jvm/functions/Function2;
-	public abstract fun mutate ()Lcl/ravenhill/keen/genetics/genes/Gene;
+	public abstract fun getGenerator ()Lkotlin/jvm/functions/Function1;
+	public abstract fun mutate (Lkotlin/random/Random;)Lcl/ravenhill/keen/genetics/genes/Gene;
 }
 
 public final class cl/ravenhill/keen/genetics/genes/Gene$DefaultImpls {
+	public static fun bind (Lcl/ravenhill/keen/genetics/genes/Gene;Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/genetics/genes/Gene;
 	public static fun flatMap (Lcl/ravenhill/keen/genetics/genes/Gene;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static fun flatten (Lcl/ravenhill/keen/genetics/genes/Gene;)Ljava/util/List;
-	public static fun mutate (Lcl/ravenhill/keen/genetics/genes/Gene;)Lcl/ravenhill/keen/genetics/genes/Gene;
+	public static fun mutate (Lcl/ravenhill/keen/genetics/genes/Gene;Lkotlin/random/Random;)Lcl/ravenhill/keen/genetics/genes/Gene;
+	public static synthetic fun mutate$default (Lcl/ravenhill/keen/genetics/genes/Gene;Lkotlin/random/Random;ILjava/lang/Object;)Lcl/ravenhill/keen/genetics/genes/Gene;
 	public static fun verify (Lcl/ravenhill/keen/genetics/genes/Gene;)Z
 }
 

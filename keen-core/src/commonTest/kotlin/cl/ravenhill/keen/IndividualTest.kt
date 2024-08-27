@@ -280,6 +280,9 @@ private fun <T, F> arbIndividualAndFlattenedRepresentation(
             get() = flattened.size
 
         override fun flatten() = flattened
+
+        override fun <R> foldRight(initial: R, operation: (T, R) -> R): R = flattened.foldRight(initial, operation)
+
         override fun <R> fold(initial: R, operation: (R, T) -> R): R = flattened.fold(initial, operation)
     }) to flattened
 }

@@ -1,0 +1,9 @@
+public final class OneMaxKt {
+	public static final fun oneMax ()V
+}
+
+public final class OneMaxMainKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+

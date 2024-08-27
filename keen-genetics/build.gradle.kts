@@ -13,6 +13,7 @@ kotlin {
         getByName("commonMain") {
             dependencies {
                 implementation(project(":keen-core"))
+                implementation(libs.kotlin.coroutines.core)
             }
         }
 

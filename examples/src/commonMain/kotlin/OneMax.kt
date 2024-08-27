@@ -16,9 +16,9 @@ fun oneMax() {
     val engine = geneticAlgorithm(
         ::count,
         genotypeOf {
-            chromosomeOf {
-
-            }
+//            chromosomeOf {
+//
+//            }
         }
     ) {}
 }
