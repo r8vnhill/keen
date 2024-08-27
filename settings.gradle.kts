@@ -53,5 +53,5 @@ plugins {
 include(
     ":test-utils",
     ":keen-core",
-    ":keen-genetics",
+    ":keen-genetics"
 )

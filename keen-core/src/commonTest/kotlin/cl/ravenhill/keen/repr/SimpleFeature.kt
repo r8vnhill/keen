@@ -16,4 +16,7 @@ class SimpleFeature<T>(override val value: T) : Feature<T, SimpleFeature<T>> {
     override fun duplicateWithValue(value: T) = SimpleFeature(value)
 
     override fun toString() = "$value"
+    override fun flatten(): List<T> {
+        TODO("Not yet implemented")
+    }
 }

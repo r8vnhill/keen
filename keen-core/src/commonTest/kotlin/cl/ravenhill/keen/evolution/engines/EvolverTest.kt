@@ -17,18 +17,18 @@ class AbstractEvolverTest : FreeSpec({
     ""
 })
 
-private fun <T, F, R, S> arbEvolver(
-    initialState: Arb<S>,
-    evolutionConfiguration: Arb<EvolutionConfiguration<T, F, R, S>>
-) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> = arbitrary {
-    val boundConfiguration = evolutionConfiguration.bind()
-    val boundInitialState = initialState.bind()
-    object : AbstractEvolver<T, F, R, S>(boundConfiguration) {
-        override var state: S = boundInitialState
-
-        override fun iterateGeneration(state: S): S {
-            return state
-        }
-
-    }
-}
+//private fun <T, F, R, S> arbEvolver(
+//    initialState: Arb<S>,
+//    evolutionConfiguration: Arb<EvolutionConfiguration<T, F, R, S>>
+//) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> = arbitrary {
+//    val boundConfiguration = evolutionConfiguration.bind()
+//    val boundInitialState = initialState.bind()
+//    object : AbstractEvolver<T, F, R, S>(boundConfiguration) {
+//        override var state: S = boundInitialState
+//
+//        override fun iterateGeneration(state: S): S {
+//            return state
+//        }
+//
+//    }
+//}
