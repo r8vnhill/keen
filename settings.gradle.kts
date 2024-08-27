@@ -55,3 +55,4 @@ include(
     ":keen-core",
     ":keen-genetics"
 )
+include("examples")
