@@ -35,7 +35,7 @@ fun oneMax() {
         parentSelector = RouletteWheelSelector()
         survivorSelector = RouletteWheelSelector()
         alterers += listOf(BitFlipMutator(), UniformCrossover(chromosomeRate = 0.6))
-        limits += listOf(TODO())
+        limits += listOf(maxGenerations(100), targetFitness(50.0))
         listeners += listOf(TODO())
     }
     engine.evolve()
