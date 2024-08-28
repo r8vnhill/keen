@@ -9,6 +9,7 @@ import cl.ravenhill.keen.evolution.executors.construction.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.construction.SequentialConstructor
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.repr.RepresentationFactory
+import kotlin.properties.Delegates
 
 /**
  * Factory interface for creating chromosomes in an evolutionary algorithm.
@@ -112,5 +113,8 @@ interface ChromosomeFactory<T, G> : RepresentationFactory<T, G, Chromosome<T, G>
  *   Defaults to a `SequentialConstructor`.
  */
 abstract class AbstractChromosomeFactory<T, G> : ChromosomeFactory<T, G> where G : Gene<T, G> {
+
     override var executor: ConstructorExecutor<G> = SequentialConstructor()
+
+    override var size: Int by Delegates.notNull()
 }

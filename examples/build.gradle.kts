@@ -14,6 +14,8 @@ kotlin {
             dependencies {
                 implementation(project(":keen-core"))
                 implementation(project(":keen-genetics"))
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlin.coroutines.core)
             }
         }
     }

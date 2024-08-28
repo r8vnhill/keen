@@ -9,6 +9,7 @@
 
 package cl.ravenhill.keen.dsl
 
+import cl.ravenhill.keen.genetics.chromosomes.BooleanChromosomeFactory
 import cl.ravenhill.keen.genetics.chromosomes.ChromosomeFactory
 import cl.ravenhill.keen.genetics.genes.Gene
 
@@ -18,9 +19,9 @@ fun <T, G> GenotypeScope<T, G>.chromosomeOf(
     lazyFactory: ChromosomeScope<T>.() -> ChromosomeFactory<T, G>
 ) where G : Gene<T, G> = chromosomes.add(ChromosomeScope<T>().lazyFactory())
 
-//fun ChromosomeScope<Boolean>.booleans(builder: BooleanChromosome.Factory.() -> Unit) =
-//    BooleanChromosome.Factory().apply(builder)
-//
+fun ChromosomeScope<Boolean>.booleans(builder: BooleanChromosomeFactory.() -> Unit) =
+    BooleanChromosomeFactory().apply(builder)
+
 ///**
 // * Configures and creates a [CharChromosome.Factory] within a [ChromosomeScope]<[Char]>.
 // *

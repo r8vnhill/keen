@@ -5,6 +5,7 @@ jakt = "2.0.4"
 kotest = "5.9.1"
 detekt = "1.23.6"
 coroutines = "1.8.1"
+kotlinx-datetime = "0.6.1"
 
 ### Java compilation ###
 # Keen's minimum supported Java version.
@@ -26,6 +27,8 @@ kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest"
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 # Gradle plugins
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

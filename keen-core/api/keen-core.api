@@ -424,11 +424,11 @@ public final class cl/ravenhill/keen/repr/Representation$DefaultImpls {
 }
 
 public abstract interface class cl/ravenhill/keen/repr/RepresentationFactory {
-	public abstract fun invoke-gIAlu-s (ILkotlin/random/Random;)Ljava/lang/Object;
+	public abstract fun invoke-0E7RQCE (ILkotlin/random/Random;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class cl/ravenhill/keen/repr/RepresentationFactory$DefaultImpls {
-	public static synthetic fun invoke-gIAlu-s$default (Lcl/ravenhill/keen/repr/RepresentationFactory;ILkotlin/random/Random;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun invoke-0E7RQCE$default (Lcl/ravenhill/keen/repr/RepresentationFactory;ILkotlin/random/Random;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class cl/ravenhill/keen/utils/HashKt {

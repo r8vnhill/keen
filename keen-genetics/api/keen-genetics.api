@@ -3,6 +3,7 @@ public final class cl/ravenhill/keen/dsl/ChromosomeScope {
 }
 
 public final class cl/ravenhill/keen/dsl/ChromosomeScopeKt {
+	public static final fun booleans (Lcl/ravenhill/keen/dsl/ChromosomeScope;Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosomeFactory;
 	public static final fun chromosomeOf (Lcl/ravenhill/keen/dsl/GenotypeScope;Lkotlin/jvm/functions/Function1;)Z
 }
 
@@ -179,7 +180,7 @@ public final class cl/ravenhill/keen/genetics/Genotype : cl/ravenhill/keen/repr/
 public final class cl/ravenhill/keen/genetics/GenotypeFactory : cl/ravenhill/keen/repr/RepresentationFactory {
 	public fun <init> ()V
 	public final fun getChromosomes ()Ljava/util/List;
-	public fun invoke-gIAlu-s (ILkotlin/random/Random;)Ljava/lang/Object;
+	public fun invoke-0E7RQCE (ILkotlin/random/Random;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract class cl/ravenhill/keen/genetics/chromosomes/AbstractChromosomeFactory : cl/ravenhill/keen/genetics/chromosomes/ChromosomeFactory {
@@ -226,7 +227,7 @@ public final class cl/ravenhill/keen/genetics/chromosomes/BooleanChromosome : cl
 
 public final class cl/ravenhill/keen/genetics/chromosomes/BooleanChromosomeFactory : cl/ravenhill/keen/genetics/chromosomes/AbstractChromosomeFactory {
 	public fun <init> ()V
-	public fun invoke-gIAlu-s (ILkotlin/random/Random;)Ljava/lang/Object;
+	public fun invoke-0E7RQCE (ILkotlin/random/Random;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class cl/ravenhill/keen/genetics/chromosomes/Chromosome : cl/ravenhill/keen/mixins/FlatMappable, cl/ravenhill/keen/repr/Representation, java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {

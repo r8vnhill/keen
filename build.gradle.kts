@@ -18,5 +18,5 @@ configureGradleDaemonJvm(
 )
 
 apiValidation {
-    ignoredProjects += listOf("test-utils")
+    ignoredProjects += listOf("test-utils", "examples")
 }

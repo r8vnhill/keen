@@ -6,65 +6,54 @@ import kotlin.random.Random
 /**
  * Factory interface for creating representations in an evolutionary algorithm.
  *
- * The `RepresentationFactory` interface defines the contract for factories that generate representations of a
- * particular type in an evolutionary computation framework. A representation typically consists of a collection of
- * features (e.g., genes) that define the structure or configuration of an individual in the population.
- *
- * This interface provides a method for generating representations, encapsulating the creation process in a `Result` to
- * handle potential errors gracefully. This allows for safe and reliable construction of representations, particularly
- * in scenarios where constraints or validations may fail during the generation process.
+ * The `RepresentationFactory` interface defines a contract for factories that generate representations, which are
+ * higher-level abstractions of collections of features (such as genes in a genetic algorithm). This interface is
+ * designed to be flexible and supports asynchronous operations through Kotlin's `suspend` functions, making it suitable
+ * for environments where non-blocking operations are essential, such as Kotlin/JS.
  *
  * ## Usage:
- * This interface is intended to be implemented by classes that need to generate specific types of representations, such
- * as chromosomes, genotypes, or other structures composed of features. The factory method `invoke` creates a
- * representation of the specified size, returning the result encapsulated in a `Result` object, which can either be a
- * successful representation or an error.
+ * This interface is intended to be implemented by factories that create specific types of representations within an
+ * evolutionary algorithm. The factory provides a mechanism for generating representations of a predefined size, using
+ * a random generator to introduce variability. The `invoke` function is marked as `suspend` to enable asynchronous
+ * execution, facilitating efficient, non-blocking construction of representations.
  *
- * ### Example 1: Implementing a Chromosome Factory
+ * ### Example: Implementing a Custom Representation Factory
  * ```kotlin
- * class ChromosomeFactoryImpl : RepresentationFactory<Int, IntGene, Chromosome<Int, IntGene>> {
- *     override fun invoke(size: Int): Result<Chromosome<Int, IntGene>> = runCatching {
- *         require(size > 0) { "Size must be positive" }
- *         val genes = List(size) { IntGene(it) }
+ * class MyRepresentationFactory : RepresentationFactory<Int, IntGene, IntChromosome> {
+ *     override var size: Int = 10
+ *
+ *     override suspend fun invoke(random: Random): Result<IntChromosome> = runCatching {
+ *         val genes = List(size) { IntGene(random.nextInt(0, 100)) }
  *         IntChromosome(genes)
  *     }
  * }
  * ```
  *
- * ### Example 2: Handling Errors in Genotype Generation
- * ```kotlin
- * class GenotypeFactory : RepresentationFactory<Int, IntGene, Genotype<Int, IntGene>> {
- *     override fun invoke(size: Int): Result<Genotype<Int, IntGene>> = runCatching {
- *         require(size > 0) { "Size must be positive" }
- *         val chromosomes = List(size) { ChromosomeFactoryImpl().invoke(size).getOrThrow() }
- *         Genotype(chromosomes)
- *     }
- * }
- * ```
- *
- * @param T The type of the value held by the features in the representation.
+ * @param T The type of the value held by the features within the representation.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
  */
 interface RepresentationFactory<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
 
     /**
-     * Creates a representation with the specified size, returning a result that encapsulates either the successful
-     * representation or an error.
+     * The number of features to include in the generated representation.
      *
-     * This operator function generates a representation, typically a collection of features, with the given size.
-     * The size parameter usually determines the number of features in the resulting representation. The process
-     * is encapsulated in a `Result` to handle potential errors, such as invalid size parameters or failures in
-     * feature generation.
-     *
-     * ## Constraints:
-     * - Implementers should ensure that the size parameter is greater than zero to avoid having invalid or empty
-     *   representations.
-     *
-     * @param size The size of the representation to create, usually indicating the number of features or elements it
-     *  contains.
-     * @param random The random number generator used to generate the representation.
-     * @return A `Result` containing the representation of type `R` if successful, or an exception if an error occurs.
+     * This property defines the size of the representation that will be generated. It determines the number of features
+     * that will be included in the resulting representation, allowing for customizable and flexible factory behavior.
      */
-    operator fun invoke(size: Int, random: Random = Domain.random): Result<R>
+    var size: Int
+
+    /**
+     * Asynchronously creates a representation of the predefined size.
+     *
+     * The `invoke` function is the primary method for generating representations. It is a `suspend` function, allowing
+     * for non-blocking execution, which is particularly useful in environments like Kotlin/JS or when dealing with
+     * large-scale, computationally intensive tasks. The function uses a `Random` instance to introduce variability
+     * into the creation process.
+     *
+     * @param random The random number generator used to produce variability in the features. Defaults to
+     *   [Domain.random].
+     * @return A [Result] containing the generated representation, or an exception if the generation fails.
+     */
+    suspend operator fun invoke(random: Random = Domain.random): Result<R>
 }
