@@ -44,7 +44,7 @@ class SelectorTest : FreeSpec({
                     Arb.int(),
                 ) { selector, state, outputSize ->
                     shouldThrow<CompositeException> {
-                        selector(state, outputSize) { state.copy(population = it) }
+                        selector(state, outputSize, { state.copy(population = it) })
                     }.shouldHaveInfringement<SelectionException>("Population must not be empty")
                 }
             }
@@ -56,7 +56,7 @@ class SelectorTest : FreeSpec({
                     Arb.negativeInt(),
                 ) { selector, state, outputSize ->
                     shouldThrow<CompositeException> {
-                        selector(state, outputSize) { state.copy(population = it) }
+                        selector(state, outputSize, { state.copy(population = it) })
                     }.shouldHaveInfringement<SelectionException>("Selection count ($outputSize) must not be negative")
                 }
             }
@@ -69,7 +69,7 @@ class SelectorTest : FreeSpec({
                     }
                 ) { selector, (state, outputSize) ->
                     shouldThrow<CompositeException> {
-                        selector(state, outputSize) { state.copy(population = it) }
+                        selector(state, outputSize, { state.copy(population = it) })
                     }.shouldHaveInfringement<SelectionException>(
                         "Expected output size ($outputSize) must be equal to actual output size (${
                             selector.select(
@@ -91,7 +91,7 @@ class SelectorTest : FreeSpec({
                         Arb.int(1..state.population.size).map { state to it }
                     }
                 ) { selector, (state, outputSize) ->
-                    val selected = selector(state, outputSize) { state.copy(population = it) }
+                    val selected = selector(state, outputSize, { state.copy(population = it) })
                     selected.size shouldBe outputSize
                 }
             }
@@ -101,7 +101,7 @@ class SelectorTest : FreeSpec({
                     arbSelector(),
                     arbNonEmptyState()
                 ) { selector, state ->
-                    val selected = selector(state, state.population.size) { state.copy(population = it) }
+                    val selected = selector(state, state.population.size, { state.copy(population = it) })
                     val sorted = state.ranker.sort(state.population)
                     selected.population shouldBe sorted
                 }

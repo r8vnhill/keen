@@ -103,7 +103,7 @@ class GeneticAlgorithmFactory<T, G>(
                     >
             > = defaultLimits()
 
-    val alterers: MutableList<Alterer<T, G, Genotype<T, G>>> = defaultAlterers()
+    var alterers: MutableList<Alterer<T, G, Genotype<T, G>>> = defaultAlterers()
 
     var evaluator: EvaluationExecutorFactory<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> =
         defaultEvaluator<T, G>()

@@ -11,18 +11,20 @@ import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.evolution.executors.construction.CoroutineConcurrentConstructor
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.BooleanGene
+import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
+import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
 import kotlin.time.TimeSource
 
 private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
 
 fun oneMax() {
-    val engine1 = geneticAlgorithm(
+    val engine = geneticAlgorithm(
         ::count,
         genotypeOf {
             chromosomeOf {
                 booleans {
-                    size = 5_000_000
+                    size = 50
                     trueRate = 0.15
                     executor = CoroutineConcurrentConstructor()
                 }
@@ -32,6 +34,10 @@ fun oneMax() {
         populationSize = 500
         parentSelector = RouletteWheelSelector()
         survivorSelector = RouletteWheelSelector()
-
+        alterers += listOf(BitFlipMutator(), UniformCrossover(chromosomeRate = 0.6))
+        limits += listOf(TODO())
+        listeners += listOf(TODO())
     }
+    engine.evolve()
+    engine.listeners.forEach { it.display() }
 }

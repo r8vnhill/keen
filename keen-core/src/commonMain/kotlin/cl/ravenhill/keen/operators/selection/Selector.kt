@@ -96,10 +96,11 @@ interface Selector<T, F, R> : Operator<T, F, R> where F : Feature<T, F>, R : Rep
      * @return A [Result] containing the new evolutionary state with the selected individuals, or an exception wrapped
      *   in the [Result] if the selection fails.
      */
-    override operator fun <S> invoke(
+    override suspend operator fun <S> invoke(
         state: S,
         outputSize: Int,
-        buildState: (List<Individual<T, F, R>>) -> S
+        buildState: (List<Individual<T, F, R>>) -> S,
+        random: Random
     ): Result<S> where S : EvolutionState<T, F, R> = runCatching {
         constraints {
             "Population must not be empty"(::SelectionException) {
