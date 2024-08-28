@@ -5,7 +5,6 @@
 
 package cl.ravenhill.keen.evolution.engines
 
-import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constrainedTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.jakt.exceptions.CompositeException
@@ -41,6 +40,26 @@ import cl.ravenhill.keen.ranking.IndividualRanker
 private typealias ListenerFactory<T, G> =
             (ListenerConfiguration<T, G, Genotype<T, G>>) ->
         EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
+
+/**
+ * A typealias for a factory function that creates a `Limit` condition in an evolutionary algorithm.
+ *
+ * The `LimitFactory` typealias simplifies the definition of a factory function responsible for generating [Limit]
+ * conditions. These conditions are used to control the termination of the evolutionary process based on specific
+ * criteria, such as a maximum number of generations, a target fitness level, or other custom conditions.
+ *
+ * @param T The type of value held by the features.
+ * @param G The type of gene in the genotype.
+ */
+private typealias LimitFactory<T, G> =
+            (ListenerConfiguration<T, G, Genotype<T, G>>) ->
+        Limit<
+                T,
+                G,
+                Genotype<T, G>,
+                GeneticEvolutionState<T, G>,
+                out EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
+                >
 
 /**
  * A type alias for `GeneticPopulationConfiguration`, representing the configuration of a genetic population.
@@ -93,15 +112,7 @@ class GeneticAlgorithmFactory<T, G>(
 
     val listeners: MutableList<ListenerFactory<T, G>> = defaultListenerFactories()
 
-    val limits: MutableList<
-            Limit<
-                    T,
-                    G,
-                    Genotype<T, G>,
-                    GeneticEvolutionState<T, G>,
-                    EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
-                    >
-            > = defaultLimits()
+    var limits: MutableList<LimitFactory<T, G>> = defaultLimits()
 
     var alterers: MutableList<Alterer<T, G, Genotype<T, G>>> = defaultAlterers()
 
@@ -110,13 +121,15 @@ class GeneticAlgorithmFactory<T, G>(
 
     var interceptor: EvolutionInterceptor<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> = defaultInterceptor()
 
-    fun make(): GeneticAlgorithm<T, G, EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>> =
-        GeneticAlgorithm(
+    fun make(): GeneticAlgorithm<T, G, out EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>> {
+        val listenerConfiguration = ListenerConfiguration(ranker = ranker)
+        return GeneticAlgorithm(
             makePopulationConfig(),
             makeSelectionConfig(),
             AlterationConfiguration(alterers),
-            makeEvolutionConfig()
+            makeEvolutionConfig(listenerConfiguration)
         )
+    }
 
     private fun makePopulationConfig(): PopulationConfig<T, G> =
         GeneticPopulationConfiguration(genotypeFactory, populationSize)
@@ -127,14 +140,14 @@ class GeneticAlgorithmFactory<T, G>(
         survivorSelector,
     )
 
-    private fun makeEvolutionConfig(): EvolutionConfiguration<
+    private fun makeEvolutionConfig(configuration: ListenerConfiguration<T, G, Genotype<T, G>>): EvolutionConfiguration<
             T,
             G,
             Genotype<T, G>,
             GeneticEvolutionState<T, G>,
-            EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
+            out EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
             > = EvolutionConfiguration(
-        limits,
+        limits.map { it(configuration) },
         listeners.map { it(ListenerConfiguration()) },
     )
 
@@ -157,15 +170,7 @@ class GeneticAlgorithmFactory<T, G>(
 
         fun <T, G> defaultListenerFactories(): MutableList<ListenerFactory<T, G>> where G : Gene<T, G> = mutableListOf()
 
-        fun <T, G> defaultLimits(): MutableList<
-                Limit<
-                        T,
-                        G,
-                        Genotype<T, G>,
-                        GeneticEvolutionState<T, G>,
-                        EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
-                        >
-                > where G : Gene<T, G> = mutableListOf()
+        fun <T, G> defaultLimits(): MutableList<LimitFactory<T, G>> where G : Gene<T, G> = mutableListOf()
 
         fun <T, G> defaultEvaluator(): EvaluationExecutorFactory<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
                 where G : Gene<T, G> = EvaluationExecutorFactory()

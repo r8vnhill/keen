@@ -3,7 +3,6 @@
  * 2-Clause BSD License.
  */
 
-import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.geneticAlgorithm
@@ -11,10 +10,11 @@ import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.evolution.executors.construction.CoroutineConcurrentConstructor
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.BooleanGene
+import cl.ravenhill.keen.limits.maxGenerations
+import cl.ravenhill.keen.limits.targetFitness
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
-import kotlin.time.TimeSource
 
 private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
 
