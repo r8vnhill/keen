@@ -8,103 +8,99 @@ package cl.ravenhill.keen.evolution.engines
 import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
 /**
- * An abstract base class for implementing an evolutionary algorithm.
+ * Abstract base class for implementing evolutionary algorithms.
  *
- * The `AbstractEvolver` class provides a framework for managing the evolutionary process, including handling the
- * evolutionary state, invoking lifecycle listeners, and applying evolutionary limits. Subclasses are required to
- * implement the `iterateGeneration` method, which defines the specific logic for advancing the evolutionary state
- * through generations.
+ * The `AbstractEvolver` class provides a flexible foundation for creating evolutionary algorithms by defining the core
+ * structure and processes required for evolving a population of individuals over successive generations. It manages the
+ * lifecycle of the evolutionary process, including invoking listeners at key points and enforcing evolution limits.
  *
  * ## Usage:
- * This class is intended to be extended by concrete implementations of evolutionary algorithms. Subclasses must
- * provide an implementation for the `iterateGeneration` method, which advances the evolutionary state by one
- * generation.
+ * This class is intended to be extended by specific implementations of evolutionary algorithms. It provides a concrete
+ * implementation of the [Evolver] interface, handling common operations such as managing listeners and applying limits.
+ * Subclasses are required to implement the [iterateGeneration] method, which defines the specific logic for advancing
+ * the evolutionary state through generations.
  *
- * ### Example 1: Implementing a Simple Genetic Algorithm
- * ```
- * class SimpleGeneticEvolver(
- *     evolutionConfiguration: EvolutionConfiguration<Double, SimpleGene, SimpleRepresentation, SimpleState>
- * ) : AbstractEvolver<Double, SimpleGene, SimpleRepresentation, SimpleState>(evolutionConfiguration) {
+ * ### Example: Implementing a Custom Evolver
+ * ```kotlin
+ * class MyEvolver<T, F, R, S>(
+ *     evolutionConfiguration: EvolutionConfiguration<T, F, R, S>
+ * ) : AbstractEvolver<T, F, R, S>(evolutionConfiguration)
+ *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
  *
- *     override var state: SimpleState = initialState
+ *     override var state: S = // initialize state here
  *
- *     override fun iterateGeneration(state: SimpleState): SimpleState {
- *         // Example logic: Select parents, perform crossover and mutation, update state
- *         val parents = selectParents(state.population)
- *         val offspring = performCrossover(parents)
- *         val mutatedOffspring = performMutation(offspring)
- *         return state.copy(population = mutatedOffspring)
- *     }
- *
- *     private fun selectParents(population: List<SimpleRepresentation>): List<SimpleRepresentation> {
- *         // Selection logic (e.g., tournament selection)
- *         return population.shuffled().take(2)
- *     }
- *
- *     private fun performCrossover(parents: List<SimpleRepresentation>): List<SimpleRepresentation> {
- *         // Crossover logic (e.g., single-point crossover)
- *         return parents // Placeholder logic for simplicity
- *     }
- *
- *     private fun performMutation(offspring: List<SimpleRepresentation>): List<SimpleRepresentation> {
- *         // Mutation logic (e.g., bit-flip mutation)
- *         return offspring.map { it.mutate() }
+ *     override fun iterateGeneration(state: S): S {
+ *         // Define the logic for advancing the evolutionary process by one generation
+ *         return updatedState
  *     }
  * }
  * ```
- * In this example, `SimpleGeneticEvolver` implements a basic genetic algorithm with steps for selection, crossover,
- * and mutation. The `iterateGeneration` method defines how the state is updated in each generation by applying
- * these steps.
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
  * @param S The type of the evolutionary state, which must extend [EvolutionState].
- * @param evolutionConfiguration The configuration settings for the evolutionary algorithm, including listeners and
- *   limits that control the evolution process.
- * @constructor Initializes the `AbstractEvolver` with the provided evolution configuration.
+ * @property evolutionConfiguration The configuration settings for the evolutionary process, including listeners and
+ *   limits.
+ * @property publicListeners A list of listeners that will be notified of events during the evolution process. The
+ *   listeners are provided as copies to prevent direct modifications, preserving the integrity of the evolution
+ *   process.
  */
-abstract class AbstractEvolver<T, F, R, S, L>(
-    evolutionConfiguration: EvolutionConfiguration<T, F, R, S, L>
-) : Evolver<T, F, R, S, L> where F : Feature<T, F>,
-                                 R : Representation<T, F>,
-                                 S : EvolutionState<T, F, R>,
-                                 L : EvolutionListener<T, F, R, S> {
+abstract class AbstractEvolver<T, F, R, S>(
+    private val evolutionConfiguration: EvolutionConfiguration<T, F, R, S>
+) : Evolver<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
 
     /**
-     * The current evolutionary state that is updated as the algorithm progresses.
+     * The current evolutionary state.
      */
     protected abstract var state: S
 
     /**
-     * Executes the evolutionary process until a termination condition is met.
-     *
-     * This method manages the main evolutionary loop, invoking lifecycle listeners at appropriate
-     * stages (start of evolution, start and end of each generation, and end of evolution). The loop
-     * continues until one of the configured limits is met.
-     *
-     * @return The final evolutionary state after the process has completed.
+     * The limits that control the evolution process.
      */
-    override fun evolve(): S {
-        listeners.forEach { it.onEvolutionStart() }
+    private val limits = evolutionConfiguration.limits
+
+    /**
+     * The listeners that are specific to the evolutionary process.
+     */
+    private val evolutionListeners = evolutionConfiguration.listeners.filterIsInstance<EvolutionListener<*, *, *, S>>()
+
+    private val generationListeners =
+        evolutionConfiguration.listeners.filterIsInstance<GenerationListener<*, *, *, S>>()
+
+    final override val publicListeners
+        get() = evolutionConfiguration.listeners.map { it.copy() } + limits.map { it.listener.copy() }
+
+    /**
+     * Executes the evolutionary process.
+     *
+     * This method manages the main loop of the evolutionary algorithm, invoking lifecycle listeners at the start and
+     * end of the evolution and at the start and end of each generation. The process continues until one of the
+     * configured limits is met, at which point the final state is returned.
+     *
+     * @return The final evolutionary state after the process is complete.
+     */
+    override suspend fun evolve(): S {
+        evolutionListeners.forEach { it.onEvolutionStart() }
         do {
-            listeners.forEach { it.onGenerationStart(state) }
+            generationListeners.forEach { it.onGenerationStart(state) }
             state = iterateGeneration(state)
-            listeners.forEach { it.onGenerationEnd(state) }
+            generationListeners.forEach { it.onGenerationEnd(state) }
         } while (limits.none { it(state) })
-        listeners.forEach { it.onEvolutionEnd(state) }
+        evolutionListeners.forEach { it.onEvolutionEnd(state) }
         return state
     }
 
     /**
      * Advances the evolutionary state by one generation.
      *
-     * Subclasses must implement this method to define how the state is updated in each generation
-     * of the evolutionary process.
+     * Subclasses must implement this method to define the specific logic for updating the evolutionary state
+     * in each generation.
      *
      * @param state The current evolutionary state.
      * @return The updated evolutionary state after one generation.

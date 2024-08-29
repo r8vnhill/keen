@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.keen.evolution.config.AlterationConfiguration
@@ -19,8 +24,6 @@ data class GeneticAlgorithm<T, G, L>(
 ) : AbstractGeneBasedEvolutionaryAlgorithm<T, G, L>(
     populationConfiguration
 ) where G : Gene<T, G>, L : EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> {
-    override val listeners: List<L>
-        get() = TODO("Not yet implemented")
     override val populationSize: Int
         get() = TODO("Not yet implemented")
     override val survivalRate: Double
@@ -28,8 +31,6 @@ data class GeneticAlgorithm<T, G, L>(
     override val parentSelector: Selector<T, G, Genotype<T, G>>
         get() = TODO("Not yet implemented")
     override val offspringSelector: Selector<T, G, Genotype<T, G>>
-        get() = TODO("Not yet implemented")
-    override val limits: List<Limit<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>, L>>
         get() = TODO("Not yet implemented")
     override val currentState: GeneticEvolutionState<T, G>
         get() = TODO("Not yet implemented")

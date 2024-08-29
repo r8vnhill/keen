@@ -6,90 +6,86 @@
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.states.EvolutionState
-import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.Listener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
 /**
- * Represents a limit in the evolutionary algorithm that triggers based on an event listener and a predicate.
+ * A generic class representing a limit condition in an evolutionary algorithm.
  *
- * The `Limit` class provides a mechanism to stop the evolutionary process based on a condition evaluated by an event
- * listener. This allows for custom stopping conditions that can be defined using listeners.
- *
- * ## Usage:
- * Use this class to define custom stopping conditions for the evolutionary algorithm based on events or states observed
- * by listeners. This is useful for scenarios where the stopping condition depends on specific events or complex state
- * evaluations.
- *
- * ### Example:
- * ```kotlin
- * val limit = ListenLimit(
- *     listener = EvolutionSummary(listenerConfig),
- *     predicate = { state -> state.generation >= 100 }
- * )
- * ```
- *
- * @param T The type of the value held by the features.
- * @param F The type of the feature, which must extend [Feature].
- * @param R The type of the representation, which must extend [Representation].
- * @param S The type of the evolution state, which must extend [EvolutionState].
- * @property listener The event listener used to evaluate the predicate.
- * @property predicate The predicate evaluated by the listener to determine if the limit condition is met.
- * @constructor Creates an instance of `ListenLimit` with the specified listener and predicate.
- */
-open class Limit<T, F, R, S, L>(
-    val listener: L,
-    private val predicate: L.(S) -> Boolean
-) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>, L : EvolutionListener<T, F, R, S> {
-
-    /**
-     * Evaluates the limit condition based on the current state.
-     *
-     * This method determines whether the evolutionary process should stop based on the predicate evaluated by the
-     * listener.
-     *
-     * @param state The current state of the evolutionary process.
-     * @return `true` if the limit condition is met and the process should stop, `false` otherwise.
-     */
-    operator fun invoke(state: S): Boolean = listener.predicate(state)
-}
-
-/**
- * Creates a limit for the evolutionary process based on a listener and a predicate.
- *
- * The `limit` function generates a [Limit] instance using the provided listener builder and predicate. The limit is
- * defined by the listener's behavior and the condition specified by the predicate.
+ * The `Limit` class defines a condition under which an evolutionary process should stop. This condition is specified
+ * by a predicate function that evaluates the current state of the evolution and returns a boolean value indicating
+ * whether the limit has been reached. The `Limit` class also incorporates a listener, which is used to observe the
+ * evolutionary process and apply the limit condition.
  *
  * ## Usage:
- * This function is useful for setting constraints or stopping conditions in the evolutionary algorithm. It allows
- * defining custom limits based on specific conditions evaluated by the listener.
+ * This class is intended to be used in scenarios where you need to define custom stopping criteria for an evolutionary
+ * algorithm. By providing a predicate function, you can control when the evolutionary process should terminate based
+ * on specific conditions evaluated against the current state.
  *
- * ### Example 1: Creating a Generation Limit
- * ```kotlin
- * val generationLimit = limit(
- *     builder = { config -> MyGenerationListener(config) },
- *     predicate = { state -> state.generation >= MAX_GENERATIONS }
- * )
- * val limitInstance = generationLimit(listenerConfig)
- * ```
+ * ### Important Recommendation:
+ * It is recommended to use the curried [limit] function to create `Limit` instances, as it provides a more flexible and
+ * concise way to configure the limit condition. The curried function allows for partial application, enabling you to
+ * pre-configure certain aspects of the limit and reuse the configuration across different evolutionary processes.
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
  * @param S The type of the evolutionary state, which must extend [EvolutionState].
- * @param builder A function to create an [EvolutionListener] using the given configuration.
- * @param predicate A predicate function that defines the condition for the limit.
- * @return A function that creates a [Limit] using the given configuration.
+ * @param L The type of the listener, which must extend [Listener].
+ * @property listener The listener that observes the evolutionary process and applies the limit condition.
+ * @property predicate The predicate function that evaluates the evolutionary state and determines whether the limit has
+ *   been reached.
+ */
+open class Limit<T, F, R, S, out L>(
+    val listener: L,
+    private val predicate: L.(S) -> Boolean
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>, L : Listener {
+
+    /**
+     * Evaluates the limit condition on the given state.
+     *
+     * This operator function applies the predicate function to the current state of the evolutionary process,
+     * determining whether the limit has been reached.
+     *
+     * @param state The current state of the evolutionary process.
+     * @return `true` if the limit condition is met, `false` otherwise.
+     */
+    operator fun invoke(state: S): Boolean = listener.predicate(state)
+}
+
+/**
+ * Factory function for creating a [Limit] instance with a custom predicate.
+ *
+ * The `limit` function simplifies the creation of `Limit` instances by accepting a builder function for the listener
+ * and a predicate function that defines the limit condition. This function is useful for creating custom stopping
+ * criteria in evolutionary algorithms, with the flexibility to specify the listener and the predicate at runtime.
+ *
+ * ### Example: Creating a Limit with a Custom Predicate
+ * ```kotlin
+ * val myLimit = limit<MyType, MyFeature, MyRepresentation, MyState, MyListener>(
+ *     builder = { config -> MyListener(config) },
+ *     predicate = { state -> state.population.any { it.fitness >= 0.95 } }
+ * )
+ * ```
+ *
+ * In this example, `myLimit` will stop the evolutionary process once any individual's fitness in the population
+ * reaches or exceeds 0.95.
+ *
+ * @param T The type of the value held by the features.
+ * @param F The type of the feature, which must extend [Feature].
+ * @param R The type of the representation, which must extend [Representation].
+ * @param S The type of the evolutionary state, which must extend [EvolutionState].
+ * @param L The type of the listener, which must extend [Listener].
+ * @param builder A function that constructs the listener based on the provided configuration.
+ * @param predicate A predicate function that evaluates the state and determines whether the limit has been reached.
+ * @return A function that, when provided with a listener configuration, returns a `Limit` instance.
  */
 fun <T, F, R, S, L> limit(
     builder: (ListenerConfiguration<T, F, R>) -> L,
     predicate: L.(S) -> Boolean
 ): (ListenerConfiguration<T, F, R>) -> Limit<T, F, R, S, L>
-        where F : Feature<T, F>,
-              R : Representation<T, F>,
-              S : EvolutionState<T, F, R>,
-              L : EvolutionListener<T, F, R, S> =
-    { config ->
-        Limit(builder(config), predicate)
-    }
+        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>, L : Listener = { config ->
+    Limit(builder(config), predicate)
+}

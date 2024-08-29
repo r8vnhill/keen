@@ -8,6 +8,7 @@ import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.geneticAlgorithm
 import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.evolution.executors.construction.CoroutineConcurrentConstructor
+import cl.ravenhill.keen.fitness
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.BooleanGene
 import cl.ravenhill.keen.limits.maxGenerations
@@ -36,8 +37,10 @@ fun oneMax() {
         survivorSelector = RouletteWheelSelector()
         alterers += listOf(BitFlipMutator(), UniformCrossover(chromosomeRate = 0.6))
         limits += listOf(maxGenerations(100), targetFitness(50.0))
-        listeners += listOf(TODO())
     }
     engine.evolve()
-    engine.listeners.forEach { it.display() }
+        .population
+        .fitness
+        .maxOrNull()
+        .let { println("Best fitness: $it") }
 }
