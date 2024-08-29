@@ -76,7 +76,7 @@ interface EvolutionState<T, F, R> : FlatMappable<T>, Foldable<T> where F : Featu
      * @return A new `EvolutionState` instance with the transformed population.
      */
     fun map(f: (Individual<T, F, R>) -> Individual<T, F, R>): EvolutionState<T, F, R> =
-        withPopulation(population.map(f))
+        makeCopy(population = population.map(f))
 
     /**
      * Folds the values in the population from left to right, accumulating a result.
@@ -129,13 +129,21 @@ interface EvolutionState<T, F, R> : FlatMappable<T>, Foldable<T> where F : Featu
     override fun flatten(): List<T> = population.flatMap { it.flatten() }
 
     /**
-     * Creates a new state with the specified population.
+     * Creates a new `EvolutionState` instance with the specified properties, while preserving the other properties
+     * from the current instance.
      *
-     * This method is used to generate a new instance of `EvolutionState` with an updated population, preserving other
-     * aspects of the current state.
+     * This function allows you to create a new state by modifying some of the properties (such as population, ranker,
+     * or generation) while keeping the rest unchanged. It is particularly useful for scenarios where you want to update
+     * part of the state without altering the rest, such as during evolutionary algorithm iterations.
      *
-     * @param population The new population for the state.
-     * @return A new `EvolutionState` instance with the updated population.
+     * @param population The new population for the state. If not provided, the current population is used.
+     * @param ranker The new ranker for evaluating individuals. If not provided, the current ranker is used.
+     * @param generation The new generation number. If not provided, the current generation number is used.
+     * @return A new `EvolutionState` instance with the updated properties.
      */
-    fun withPopulation(population: Population<T, F, R>): EvolutionState<T, F, R>
+    fun makeCopy(
+        population: Population<T, F, R> = this.population,
+        ranker: IndividualRanker<T, F, R> = this.ranker,
+        generation: Int = this.generation
+    ): EvolutionState<T, F, R>
 }

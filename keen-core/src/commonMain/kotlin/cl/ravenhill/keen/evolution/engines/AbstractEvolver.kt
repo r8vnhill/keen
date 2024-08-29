@@ -66,6 +66,11 @@ abstract class AbstractEvolver<T, F, R, S>(
     private val limits = evolutionConfiguration.limits
 
     /**
+     * The listeners that are common to all evolutionary processes.
+     */
+    protected val listeners = evolutionConfiguration.listeners + limits.map { it.listener }
+
+    /**
      * The listeners that are specific to the evolutionary process.
      */
     private val evolutionListeners = evolutionConfiguration.listeners.filterIsInstance<EvolutionListener<*, *, *, S>>()
@@ -108,5 +113,5 @@ abstract class AbstractEvolver<T, F, R, S>(
      * @param state The current evolutionary state.
      * @return The updated evolutionary state after one generation.
      */
-    abstract fun iterateGeneration(state: S): S
+    abstract suspend fun iterateGeneration(state: S): S
 }

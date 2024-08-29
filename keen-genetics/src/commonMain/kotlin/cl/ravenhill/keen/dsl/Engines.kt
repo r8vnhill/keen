@@ -6,7 +6,7 @@
 
 package cl.ravenhill.keen.dsl
 
-import cl.ravenhill.keen.evolution.engines.GeneticAlgorithmFactory
+import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.GenotypeFactory
 import cl.ravenhill.keen.genetics.genes.Gene

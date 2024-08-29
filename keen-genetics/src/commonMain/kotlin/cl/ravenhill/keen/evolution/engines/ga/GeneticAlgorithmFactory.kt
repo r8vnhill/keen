@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.evolution.engines
+package cl.ravenhill.keen.evolution.engines.ga
 
 import cl.ravenhill.jakt.constrainedTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
@@ -135,14 +135,12 @@ class GeneticAlgorithmFactory<T, G>(
         survivorSelector,
     )
 
-    private fun makeEvolutionConfig(configuration: ListenerConfiguration<T, G, Genotype<T, G>>): EvolutionConfiguration<
-            T,
-            G,
-            Genotype<T, G>,
-            GeneticEvolutionState<T, G>,
-            > = EvolutionConfiguration(
+    private fun makeEvolutionConfig(
+        configuration: ListenerConfiguration<T, G, Genotype<T, G>>
+    ): EvolutionConfiguration<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> = EvolutionConfiguration(
         limits.map { it(configuration) },
         listeners.map { it(ListenerConfiguration()) },
+        interceptor,
         initialState ?: GeneticEvolutionState.empty(ranker)
     )
 
