@@ -12,6 +12,7 @@ import cl.ravenhill.keen.evolution.config.SelectionConfiguration
 import cl.ravenhill.keen.evolution.engines.AbstractGeneBasedEvolutionaryAlgorithm
 import cl.ravenhill.keen.evolution.engines.EvaluationEngine
 import cl.ravenhill.keen.evolution.engines.InitializerEngine
+import cl.ravenhill.keen.evolution.engines.ParentSelectorEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
@@ -21,8 +22,8 @@ import cl.ravenhill.keen.operators.selection.Selector
 
 class GeneticAlgorithm<T, G, L>(
     populationConfiguration: GeneticPopulationConfiguration<T, G>,
-    val selectionConfiguration: SelectionConfiguration<T, G, Genotype<T, G>>,
-    val alterationConfiguration: AlterationConfiguration<T, G>,
+    selectionConfiguration: SelectionConfiguration<T, G, Genotype<T, G>>,
+    alterationConfiguration: AlterationConfiguration<T, G>,
     evolutionConfiguration: EvolutionConfiguration<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
 ) : AbstractGeneBasedEvolutionaryAlgorithm<T, G, L>(
     populationConfiguration,
@@ -33,6 +34,10 @@ class GeneticAlgorithm<T, G, L>(
 ), EvaluationEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> by GeneticEvaluator(
     populationConfiguration,
     evolutionConfiguration
+), ParentSelectorEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> by GeneticParentSelector(
+    populationConfiguration,
+    evolutionConfiguration,
+    selectionConfiguration
 )
         where G : Gene<T, G>, L : EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> {
 
@@ -55,10 +60,6 @@ class GeneticAlgorithm<T, G, L>(
     }
 
     private fun selectSurvivors(evaluatedState: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
-        TODO("Not yet implemented")
-    }
-
-    private fun selectParents(evaluatedState: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
         TODO("Not yet implemented")
     }
 
