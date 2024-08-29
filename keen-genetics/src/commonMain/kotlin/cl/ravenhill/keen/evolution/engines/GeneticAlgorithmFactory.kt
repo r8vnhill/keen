@@ -20,6 +20,7 @@ import cl.ravenhill.keen.genetics.GenotypeFactory
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.Listener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.Selector
@@ -51,15 +52,8 @@ private typealias ListenerFactory<T, G> =
  * @param T The type of value held by the features.
  * @param G The type of gene in the genotype.
  */
-private typealias LimitFactory<T, G> =
-            (ListenerConfiguration<T, G, Genotype<T, G>>) ->
-        Limit<
-                T,
-                G,
-                Genotype<T, G>,
-                GeneticEvolutionState<T, G>,
-                out EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
-                >
+private typealias LimitFactory<T, G> = (ListenerConfiguration<T, G, Genotype<T, G>>) ->
+Limit<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>, Listener>
 
 /**
  * A type alias for `GeneticPopulationConfiguration`, representing the configuration of a genetic population.
@@ -86,8 +80,9 @@ private typealias SelectionConfig<T, G> = SelectionConfiguration<T, G, Genotype<
 
 
 class GeneticAlgorithmFactory<T, G>(
-    val fitnessFunction: (Genotype<T, G>) -> Double,
-    val genotypeFactory: GenotypeFactory<T, G>,
+    private val fitnessFunction: (Genotype<T, G>) -> Double,
+    private val genotypeFactory: GenotypeFactory<T, G>,
+    private val initialState: GeneticEvolutionState<T, G>? = null,
 ) where G : Gene<T, G> {
 
     /**
@@ -145,10 +140,10 @@ class GeneticAlgorithmFactory<T, G>(
             G,
             Genotype<T, G>,
             GeneticEvolutionState<T, G>,
-            out EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
             > = EvolutionConfiguration(
         limits.map { it(configuration) },
         listeners.map { it(ListenerConfiguration()) },
+        initialState ?: GeneticEvolutionState.empty(ranker)
     )
 
     companion object {

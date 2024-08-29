@@ -19,7 +19,7 @@ import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
 
 private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
 
-fun oneMax() {
+suspend fun oneMax() {
     val engine = geneticAlgorithm(
         ::count,
         genotypeOf {

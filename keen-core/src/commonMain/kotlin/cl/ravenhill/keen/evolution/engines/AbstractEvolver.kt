@@ -70,6 +70,9 @@ abstract class AbstractEvolver<T, F, R, S>(
      */
     private val evolutionListeners = evolutionConfiguration.listeners.filterIsInstance<EvolutionListener<*, *, *, S>>()
 
+    /**
+     * The listeners that are specific to each generation.
+     */
     private val generationListeners =
         evolutionConfiguration.listeners.filterIsInstance<GenerationListener<*, *, *, S>>()
 

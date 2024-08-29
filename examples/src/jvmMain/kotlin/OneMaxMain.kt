@@ -3,6 +3,11 @@
  * 2-Clause BSD License.
  */
 
+import kotlinx.coroutines.runBlocking
+
+
 fun main() {
-    oneMax()
+    runBlocking {
+        oneMax()
+    }
 }

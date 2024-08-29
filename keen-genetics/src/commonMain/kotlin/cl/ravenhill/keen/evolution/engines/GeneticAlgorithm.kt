@@ -16,26 +16,24 @@ import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.operators.selection.Selector
 
-data class GeneticAlgorithm<T, G, L>(
-    override val populationConfiguration: GeneticPopulationConfiguration<T, G>,
+class GeneticAlgorithm<T, G, L>(
+    populationConfiguration: GeneticPopulationConfiguration<T, G>,
     val selectionConfiguration: SelectionConfiguration<T, G, Genotype<T, G>>,
     val alterationConfiguration: AlterationConfiguration<T, G>,
-    val evolutionConfiguration: EvolutionConfiguration<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>, L>
+    evolutionConfiguration: EvolutionConfiguration<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
 ) : AbstractGeneBasedEvolutionaryAlgorithm<T, G, L>(
-    populationConfiguration
+    populationConfiguration,
+    evolutionConfiguration
 ) where G : Gene<T, G>, L : EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> {
-    override val populationSize: Int
-        get() = TODO("Not yet implemented")
+    override var state: GeneticEvolutionState<T, G> = TODO()
+    override fun iterateGeneration(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
+        TODO("Not yet implemented")
+    }
+
     override val survivalRate: Double
         get() = TODO("Not yet implemented")
     override val parentSelector: Selector<T, G, Genotype<T, G>>
         get() = TODO("Not yet implemented")
     override val offspringSelector: Selector<T, G, Genotype<T, G>>
         get() = TODO("Not yet implemented")
-    override val currentState: GeneticEvolutionState<T, G>
-        get() = TODO("Not yet implemented")
-
-    override fun evolve(): GeneticEvolutionState<T, G> {
-        TODO("Not yet implemented")
-    }
 }

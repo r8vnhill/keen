@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2024, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.limits
 
 import cl.ravenhill.keen.evolution.states.EvolutionState
-import cl.ravenhill.keen.listeners.EvolutionListener
+import cl.ravenhill.keen.listeners.Listener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
@@ -25,9 +30,11 @@ import cl.ravenhill.keen.repr.Representation
  * @param S The type of the evolutionary state, which must extend [EvolutionState].
  * @param targetFitness The fitness value that, when reached or exceeded by any individual in the population,
  *   will cause the evolutionary process to stop.
+ * @param configuration The configuration settings for the listener associated with this limit condition.
  */
 class TargetFitness<T, F, R, S>(
-    val targetFitness: Double
+    val targetFitness: Double,
+    configuration: ListenerConfiguration<T, F, R>
 ) : Limit<T, F, R, S, TargetFitnessListener<T, F, R, S>>(
     TargetFitnessListener(),
     { state -> state.population.any { it.fitness >= targetFitness } }
@@ -47,7 +54,9 @@ class TargetFitness<T, F, R, S>(
  * @param S The type of evolutionary state, which must extend [EvolutionState].
  */
 class TargetFitnessListener<T, F, R, S> :
-    EvolutionListener<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>
+    Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+    override fun copy() = TargetFitnessListener<T, F, R, S>()
+}
 
 /**
  * Factory function to create a [TargetFitness] limit condition for an evolutionary algorithm.
@@ -77,4 +86,4 @@ fun <T, F, R, S> targetFitness(
         F : Feature<T, F>,
         R : Representation<T, F>,
         S : EvolutionState<T, F, R> =
-    { TargetFitness(targetFitness) }
+    { config -> TargetFitness(targetFitness, config) }
