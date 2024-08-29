@@ -6,10 +6,12 @@
 package cl.ravenhill.keen.evolution.config
 
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
+import cl.ravenhill.keen.evolution.executors.evaluation.EvaluationExecutor
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.listeners.Listener
+import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -26,12 +28,16 @@ import cl.ravenhill.keen.repr.Representation
  * @param S The type of the evolutionary state, which must extend [EvolutionState].
  * @property limits A list of [Limit]s that define the stopping conditions for the evolutionary algorithm.
  * @property listeners A list of [EvolutionListener]s that monitor the lifecycle of the evolutionary process.
+ * @property ranker An [IndividualRanker] that assigns a fitness value to each individual in the population.
+ * @property evaluator An [EvaluationExecutor] that computes the fitness of each individual in the population.
  * @property interceptor An [EvolutionInterceptor] that can modify the behavior of the evolutionary process.
  * @property initialState The initial state of the evolutionary process.
  */
 data class EvolutionConfiguration<T, F, R, S>(
     val limits: List<Limit<T, F, R, S, Listener>>,
     val listeners: List<Listener>,
+    val ranker: IndividualRanker<T, F, R>,
+    val evaluator: EvaluationExecutor<T, F, R, S>,
     val interceptor: EvolutionInterceptor<T, F, R, S>,
     val initialState: S
 ) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>

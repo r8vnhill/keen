@@ -91,20 +91,39 @@ private data class GeneticEvolutionStateImpl<T, G>(
  *
  * The `GeneticEvolutionSuccessState` class models a state where the evolutionary process is proceeding normally
  * without errors. This state indicates that the population has evolved to the next generation successfully, and it
- * provides the current population, the ranker used to evaluate individuals, and the generation number.
+ * provides the current population, the ranker used to evaluate individuals, and the generation number. This class is
+ * a concrete implementation of the [GeneticEvolutionState] interface, using delegation to `GeneticEvolutionStateImpl`
+ * for common functionality.
  *
  * @param T The type of the value held by the genes.
  * @param G The type of the gene, which must extend [Gene].
- * @param population The current population of individuals.
- * @param ranker The ranker used to evaluate and compare individuals within the population.
- * @param generation The current generation number in the evolutionary process.
+ * @property population The current population of individuals.
+ * @property ranker The ranker used to evaluate and compare individuals within the population.
+ * @property generation The current generation number in the evolutionary process.
  */
 data class GeneticEvolutionSuccessState<T, G>(
     override val population: Population<T, G, Genotype<T, G>>,
     override val ranker: IndividualRanker<T, G, Genotype<T, G>>,
     override val generation: Int
 ) : GeneticEvolutionState<T, G> by GeneticEvolutionStateImpl(population, ranker, generation)
-        where G : Gene<T, G>
+        where G : Gene<T, G> {
+
+    companion object {
+        /**
+         * Creates an empty `GeneticEvolutionSuccessState` with an initial generation of 0.
+         *
+         * This companion object function provides a convenient way to create a `GeneticEvolutionSuccessState` when
+         * starting a new evolutionary process or when you need to initialize an empty state. The population is
+         * initialized as an empty list, and the generation is set to 0.
+         *
+         * @param ranker The ranker used to evaluate and compare individuals within the population.
+         * @return An instance of `GeneticEvolutionSuccessState` with an empty population and a generation number of 0.
+         */
+        fun <T, G> empty(ranker: IndividualRanker<T, G, Genotype<T, G>>) where G : Gene<T, G> =
+            GeneticEvolutionSuccessState(emptyList(), ranker, 0)
+    }
+}
+
 
 /**
  * Represents a failure state in the genetic evolutionary process.

@@ -9,6 +9,8 @@ import cl.ravenhill.keen.evolution.states.GeneticEvolutionFailureState
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionSuccessState
 import cl.ravenhill.keen.genetics.GenotypeFactory
 import cl.ravenhill.keen.Individual
+import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
+import cl.ravenhill.keen.evolution.config.GeneticPopulationConfiguration
 import cl.ravenhill.keen.evolution.engines.InitializerEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetics.Genotype
@@ -24,18 +26,33 @@ import cl.ravenhill.keen.listeners.mixins.InitializationListener
  *
  * @param T The type of the value held by the genes in the genetic algorithm.
  * @param G The type of the gene, which must extend [Gene].
- * @param genotypeFactory The factory used to create genotypes for individuals.
- * @param populationSize The number of individuals to create in the initial population.
- * @param listeners A list of listeners to notify about the initialization process.
- *
+ * @param populationConfiguration The configuration for the genetic population, including population size and other
+ *   related parameters.
+ * @param evolutionConfiguration The configuration for the evolutionary process, including listeners, limits, and the
+ *   evaluator.
  * @return The updated [GeneticEvolutionState] with the newly created population if the state was initially empty;
  *         otherwise, returns the original state.
  */
 internal class GeneticInitializer<T, G>(
-    private val genotypeFactory: GenotypeFactory<T, G>,
-    private val populationSize: Int,
-    private val listeners: List<InitializationListener<*, *, *, GeneticEvolutionState<T, G>>>
+    populationConfiguration: GeneticPopulationConfiguration<T, G>,
+    evolutionConfiguration: EvolutionConfiguration<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>,
 ) : InitializerEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> where G : Gene<T, G> {
+
+    /**
+     * The factory used to create genotypes for individuals.
+     */
+    private val genotypeFactory = populationConfiguration.genotypeFactory
+
+    /**
+     * The number of individuals to create in the initial population.
+     */
+    private val populationSize = populationConfiguration.populationSize
+
+    /**
+     * Listeners that are triggered during the initialization process.
+     */
+    private val listeners = (evolutionConfiguration.listeners + evolutionConfiguration.limits.map { it.listener })
+        .filterIsInstance<InitializationListener<*, *, *, GeneticEvolutionState<T, G>>>()
 
     /**
      * Initializes the [GeneticEvolutionState] with a new population of individuals if the state is empty.

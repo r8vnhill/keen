@@ -10,6 +10,7 @@ import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.config.GeneticPopulationConfiguration
 import cl.ravenhill.keen.evolution.config.SelectionConfiguration
 import cl.ravenhill.keen.evolution.engines.AbstractGeneBasedEvolutionaryAlgorithm
+import cl.ravenhill.keen.evolution.engines.EvaluationEngine
 import cl.ravenhill.keen.evolution.engines.InitializerEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetics.Genotype
@@ -26,11 +27,12 @@ class GeneticAlgorithm<T, G, L>(
 ) : AbstractGeneBasedEvolutionaryAlgorithm<T, G, L>(
     populationConfiguration,
     evolutionConfiguration
-), InitializerEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> by GeneticInitializer<T, G>(
-    populationConfiguration.genotypeFactory,
-    populationConfiguration.populationSize,
-    (evolutionConfiguration.listeners + evolutionConfiguration.limits.map { it.listener })
-        .filterIsInstance<InitializationListener<*, *, *, GeneticEvolutionState<T, G>>>()
+), InitializerEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> by GeneticInitializer(
+    populationConfiguration,
+    evolutionConfiguration
+), EvaluationEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> by GeneticEvaluator(
+    populationConfiguration,
+    evolutionConfiguration
 )
         where G : Gene<T, G>, L : EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> {
 
@@ -58,10 +60,6 @@ class GeneticAlgorithm<T, G, L>(
 
     private fun selectParents(evaluatedState: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
         TODO("Not yet implemented")
-    }
-
-    private fun evaluate(initializedState: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> {
-        TODO()
     }
 
     override val survivalRate: Double
