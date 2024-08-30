@@ -192,4 +192,12 @@ interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T
      */
     override fun <R> foldRight(initial: R, operation: (T, R) -> R): R =
         genes.foldRight(initial) { gene, acc -> operation(gene.value, acc) }
+
+    /**
+     * Retrieves the gene at the specified index.
+     *
+     * @param index The position of the gene to retrieve.
+     * @return The gene located at the given index.
+     */
+    operator fun get(index: Int): G = genes[index]
 }
