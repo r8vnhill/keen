@@ -1,7 +1,7 @@
 package cl.ravenhill.keen.repr
 
-import cl.ravenhill.keen.Domain
-import kotlin.random.Random
+import arrow.core.Either
+import cl.ravenhill.keen.exceptions.InitializationException
 
 /**
  * Factory interface for creating representations in an evolutionary algorithm.
@@ -51,9 +51,7 @@ interface RepresentationFactory<T, F, R> where F : Feature<T, F>, R : Representa
      * large-scale, computationally intensive tasks. The function uses a `Random` instance to introduce variability
      * into the creation process.
      *
-     * @param random The random number generator used to produce variability in the features. Defaults to
-     *   [Domain.random].
      * @return A [Result] containing the generated representation, or an exception if the generation fails.
      */
-    suspend operator fun invoke(random: Random = Domain.random): Result<R>
+    suspend operator fun invoke(): Either<InitializationException, R>
 }

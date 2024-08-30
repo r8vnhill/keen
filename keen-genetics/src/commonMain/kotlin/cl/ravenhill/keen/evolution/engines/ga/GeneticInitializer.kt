@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.evolution.engines.ga
 
 import arrow.core.Either
+import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
 import cl.ravenhill.keen.Individual
@@ -90,9 +91,7 @@ internal class GeneticInitializer<T, G>(
             listeners.forEach { it.onInitializationStart(state) }
             val individuals = mutableListOf<Individual<T, G, Genotype<T, G>>>()
             repeat(populationSize) {
-                val genotype = genotypeFactory().getOrElse {
-                    return InitializationException("Genotype creation failed", it).left()
-                }
+                val genotype = genotypeFactory().getOrElse { return it.left() }
                 individuals.add(Individual(genotype))
             }
             state.copy(population = individuals).also {

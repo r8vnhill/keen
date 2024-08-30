@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.evolution.executors.construction
 
 import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.exceptions.InvalidSizeException
@@ -62,12 +63,12 @@ class CoroutineConcurrentConstructor<T>(
      * @throws CompositeException If any of the constraints are violated.
      * @throws InvalidSizeException If the size of the sequence is negative; wrapped in a [CompositeException].
      */
-    override suspend operator fun invoke(size: Int, init: (index: Int) -> T): List<T> {
-        constraints {
+    override suspend operator fun invoke(size: Int, init: suspend (index: Int) -> T): List<T> {
+        constrained {
             "Cannot create a sequence with a negative size."(::InvalidSizeException) {
                 size must BePositive
             }
-        }
+        }.onLeft { throw it }
 
         return (0 until size).map { index ->
             scope.async {

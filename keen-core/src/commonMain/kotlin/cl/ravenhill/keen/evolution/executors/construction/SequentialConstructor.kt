@@ -6,9 +6,11 @@
 package cl.ravenhill.keen.evolution.executors.construction
 
 import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.exceptions.InvalidSizeException
+import kotlinx.coroutines.coroutineScope
 
 /**
  * A sequential constructor for creating lists of elements in an evolutionary algorithm.
@@ -46,12 +48,10 @@ class SequentialConstructor<T> : ConstructorExecutor<T> {
      * @return A list of elements created by the `init` function.
      * @throws CompositeException containing the constraint violations.
      */
-    override suspend operator fun invoke(size: Int, init: (index: Int) -> T): List<T> {
-        constraints {
-            "Cannot create a list with a negative size"(::InvalidSizeException) {
-                size must BePositive
-            }
-        }
-        return (0..<size).map(init)
+    override suspend operator fun invoke(size: Int, init: suspend (index: Int) -> T): List<T> {
+        constrained {
+            "Cannot create a list with a negative size"(::InvalidSizeException) { size must BePositive }
+        }.onLeft { throw it }
+        return List(size) { index -> init(index) }
     }
 }

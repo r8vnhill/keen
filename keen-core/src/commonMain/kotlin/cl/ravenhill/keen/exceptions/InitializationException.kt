@@ -17,4 +17,4 @@ package cl.ravenhill.keen.exceptions
  * @param message The detail message explaining the reason for the exception.
  * @param cause The cause of the exception, which can be another throwable that led to this error. Default is `null`.
  */
-class InitializationException(message: String, cause: Throwable? = null) : Exception(message, cause)
+open class InitializationException(message: String, cause: Throwable? = null) : Exception(message, cause)

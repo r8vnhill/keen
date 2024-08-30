@@ -5,7 +5,12 @@
 
 package cl.ravenhill.keen.genetics.chromosomes
 
+import arrow.core.Either
+import arrow.core.getOrElse
+import arrow.core.left
+import arrow.core.right
 import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.constraints.BeDefined
@@ -13,6 +18,7 @@ import cl.ravenhill.keen.exceptions.InvalidSizeException
 import cl.ravenhill.keen.genetics.genes.BooleanGene
 import kotlin.random.Random
 import cl.ravenhill.keen.evolution.executors.construction.ConstructorExecutor
+import cl.ravenhill.keen.exceptions.InitializationException
 
 /**
  * Factory class for creating [BooleanChromosome] instances in an evolutionary algorithm.
@@ -71,21 +77,19 @@ class BooleanChromosomeFactory : AbstractChromosomeFactory<Boolean, BooleanGene>
      * - **Size Must Be Positive**: The size of the chromosome must be greater than 0. If the size is less than 1, an
      *   [InvalidSizeException] will be thrown.
      *
-     * @param random The random number generator used to determine the value of each gene in the chromosome. Defaults to
-     *   [Domain.random] if not provided.
      * @return A [Result] containing the generated `BooleanChromosome`, or an exception if the generation fails.
      */
-    override suspend fun invoke(random: Random): Result<Chromosome<Boolean, BooleanGene>> = runCatching {
-        constraints {
+    override suspend fun invoke(): Either<InitializationException, Chromosome<Boolean, BooleanGene>>  {
+        constrained {
             "Size must be initialized; maybe you forgot to set the size property"(::InvalidSizeException) {
                 size must BeDefined
             }
             "Cannot create a chromosome with a size less than 1"(::InvalidSizeException) {
                 size must BePositive
             }
-        }
-        BooleanChromosome(
-            executor(size) { if (random.nextDouble() < trueRate) BooleanGene.True else BooleanGene.False }
-        )
+        }.getOrElse { it.left() }
+        return BooleanChromosome(
+            executor(size) { if (Domain.random.nextDouble() < trueRate) BooleanGene.True else BooleanGene.False }
+        ).right()
     }
 }
