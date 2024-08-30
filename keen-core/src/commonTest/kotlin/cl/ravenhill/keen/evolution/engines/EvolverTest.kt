@@ -20,7 +20,7 @@ class AbstractEvolverTest : FreeSpec({
 //private fun <T, F, R, S> arbEvolver(
 //    initialState: Arb<S>,
 //    evolutionConfiguration: Arb<EvolutionConfiguration<T, F, R, S>>
-//) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> = arbitrary {
+//) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> = arbitrary {
 //    val boundConfiguration = evolutionConfiguration.bind()
 //    val boundInitialState = initialState.bind()
 //    object : AbstractEvolver<T, F, R, S>(boundConfiguration) {

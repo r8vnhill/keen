@@ -24,7 +24,7 @@ import cl.ravenhill.keen.repr.Representation
  */
 interface SurvivorSelectorListener<T, F, R, S> : Listener where F : Feature<T, F>,
                                                                 R : Representation<T, F>,
-                                                                S : EvolutionState<T, F, R> {
+                                                                S : EvolutionState<T, F, R, S> {
 
     /**
      * Called at the start of the survivor selection process.

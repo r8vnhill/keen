@@ -40,4 +40,4 @@ data class EvolutionConfiguration<T, F, R, S>(
     val evaluator: EvaluationExecutor<T, F, R, S>,
     val interceptor: EvolutionInterceptor<T, F, R, S>,
     val initialState: S
-) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S>

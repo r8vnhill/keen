@@ -38,7 +38,7 @@ class TargetFitness<T, F, R, S>(
 ) : Limit<T, F, R, S, TargetFitnessListener<T, F, R, S>>(
     TargetFitnessListener(),
     { state -> state.population.any { it.fitness >= targetFitness } }
-) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S>
 
 /**
  * A placeholder listener for the `TargetFitness` limit condition in an evolutionary algorithm.
@@ -54,7 +54,7 @@ class TargetFitness<T, F, R, S>(
  * @param S The type of evolutionary state, which must extend [EvolutionState].
  */
 class TargetFitnessListener<T, F, R, S> :
-    Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+    Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
     override fun copy() = TargetFitnessListener<T, F, R, S>()
 }
 
@@ -85,5 +85,5 @@ fun <T, F, R, S> targetFitness(
 ): (ListenerConfiguration<T, F, R>) -> TargetFitness<T, F, R, S> where
         F : Feature<T, F>,
         R : Representation<T, F>,
-        S : EvolutionState<T, F, R> =
+        S : EvolutionState<T, F, R, S> =
     { config -> TargetFitness(targetFitness, config) }

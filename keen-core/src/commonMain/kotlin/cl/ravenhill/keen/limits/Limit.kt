@@ -41,7 +41,7 @@ import cl.ravenhill.keen.repr.Representation
 open class Limit<T, F, R, S, out L>(
     val listener: L,
     private val predicate: L.(S) -> Boolean
-) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>, L : Listener {
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S>, L : Listener {
 
     /**
      * Evaluates the limit condition on the given state.
@@ -86,6 +86,6 @@ fun <T, F, R, S, L> limit(
     builder: (ListenerConfiguration<T, F, R>) -> L,
     predicate: L.(S) -> Boolean
 ): (ListenerConfiguration<T, F, R>) -> Limit<T, F, R, S, L>
-        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>, L : Listener = { config ->
+        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S>, L : Listener = { config ->
     Limit(builder(config), predicate)
 }

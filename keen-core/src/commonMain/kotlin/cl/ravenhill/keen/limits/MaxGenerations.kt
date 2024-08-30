@@ -37,7 +37,7 @@ class MaxGenerations<T, F, R, S>(
 ) : Limit<T, F, R, S, MaxGenerationsListener<T, F, R, S>>(
     MaxGenerationsListener(configuration),
     { state -> state.generation >= maxGenerations }
-) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R>
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S>
 
 /**
  * Listener for the `MaxGenerations` limit condition.
@@ -55,14 +55,14 @@ class MaxGenerations<T, F, R, S>(
  */
 class MaxGenerationsListener<T, F, R, S>(
     private val configuration: ListenerConfiguration<T, F, R>
-) : Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+) : Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
 
     /**
      * Creates a copy of the current `MaxGenerationsListener` instance with the same configuration.
      *
      * @return A new `MaxGenerationsListener` instance with the same configuration as the original.
      */
-    override fun copy() = MaxGenerationsListener(configuration)
+    override fun copy() = MaxGenerationsListener<_, _, _, S>(configuration)
 }
 
 /**
@@ -89,6 +89,6 @@ fun <T, F, R, S> maxGenerations(
     maxGenerations: Int
 ): (ListenerConfiguration<T, F, R>) -> MaxGenerations<T, F, R, S> where F : Feature<T, F>,
                                                                         R : Representation<T, F>,
-                                                                        S : EvolutionState<T, F, R> = { config ->
+                                                                        S : EvolutionState<T, F, R, S> = { config ->
     MaxGenerations(maxGenerations, config)
 }

@@ -22,7 +22,7 @@ import cl.ravenhill.keen.repr.Representation
  * @param S The type of the evolutionary state, which must extend [EvolutionState].
  */
 interface EvaluationListener<T, F, R, S>
-        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
 
     /**
      * Called when the evaluation process starts.

@@ -51,7 +51,7 @@ import cl.ravenhill.keen.repr.Representation
  * ### Example: Implementing a Survivor Selection Engine
  * ```kotlin
  * class ElitistSurvivorSelection<T, F, R, S> : SurvivorSelectionEngine<T, F, R, S>
- *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+ *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
  *
  *     override suspend fun selectSurvivors(state: S): Either<SelectionException, S> {
  *         // Implement the elitist survivor selection logic here
@@ -70,7 +70,7 @@ import cl.ravenhill.keen.repr.Representation
  */
 interface SurvivorSelectionEngine<T, F, R, S> where F : Feature<T, F>,
                                                     R : Representation<T, F>,
-                                                    S : EvolutionState<T, F, R> {
+                                                    S : EvolutionState<T, F, R, S> {
 
     /**
      * Selects the individuals that will survive to the next generation.

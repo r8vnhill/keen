@@ -23,7 +23,7 @@ import io.kotest.matchers.shouldNot
  *
  * @return A [Matcher] that tests if the [EvolutionState] is empty.
  */
-fun <T, F, R, S> beEmpty() where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> =
+fun <T, F, R, S> beEmpty() where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> =
     object : Matcher<S> {
         override fun test(value: S) = MatcherResult(
             value.isEmpty(),
@@ -43,7 +43,7 @@ fun <T, F, R, S> beEmpty() where F : Feature<T, F>, R : Representation<T, F>, S 
  * @receiver [EvolutionState] instance to be checked.
  */
 fun <T, F, R, S> EvolutionState<T, F, R>.shouldBeEmpty()
-        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> = this should beEmpty()
+        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> = this should beEmpty()
 
 /**
  * Asserts that the [EvolutionState] is not empty.
@@ -56,4 +56,4 @@ fun <T, F, R, S> EvolutionState<T, F, R>.shouldBeEmpty()
  * @receiver [EvolutionState] instance to be checked.
  */
 fun <T, F, R, S> EvolutionState<T, F, R>.shouldNotBeEmpty()
-        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> = this shouldNot beEmpty()
+        where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> = this shouldNot beEmpty()

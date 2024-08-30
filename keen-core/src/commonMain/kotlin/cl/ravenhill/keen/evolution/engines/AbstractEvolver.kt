@@ -34,7 +34,7 @@ import cl.ravenhill.keen.repr.Representation
  * class MyEvolver<T, F, R, S>(
  *     evolutionConfiguration: EvolutionConfiguration<T, F, R, S>
  * ) : AbstractEvolver<T, F, R, S>(evolutionConfiguration)
- *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+ *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
  *
  *     override var state: S = // initialize the state here
  *
@@ -57,7 +57,7 @@ import cl.ravenhill.keen.repr.Representation
  */
 abstract class AbstractEvolver<T, F, R, S>(
     private val evolutionConfiguration: EvolutionConfiguration<T, F, R, S>
-) : Evolver<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+) : Evolver<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
 
     /**
      * The current evolutionary state.

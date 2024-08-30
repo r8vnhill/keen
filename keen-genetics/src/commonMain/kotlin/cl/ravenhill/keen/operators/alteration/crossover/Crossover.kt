@@ -28,7 +28,7 @@ interface Crossover<T, G> : Alterer<T, G, Genotype<T, G>> where G : Gene<T, G> {
         state: S,
         outputSize: Int,
         buildState: (List<Individual<T, G, Genotype<T, G>>>) -> S
-    ): Either<OperatorInvocationException, S> where S : EvolutionState<T, G, Genotype<T, G>> {
+    ): Either<OperatorInvocationException, S> where S : EvolutionState<T, G, Genotype<T, G>, S> {
         TODO("Not yet implemented")
     }
 }

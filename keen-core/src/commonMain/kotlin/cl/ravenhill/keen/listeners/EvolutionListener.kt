@@ -23,7 +23,7 @@ import cl.ravenhill.keen.repr.Representation
  * @see Listener The base interface that `EvolutionListener` extends.
  */
 interface EvolutionListener<T, F, R, S> :
-    Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+    Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
 
     /**
      * Called at the start of the evolutionary process.

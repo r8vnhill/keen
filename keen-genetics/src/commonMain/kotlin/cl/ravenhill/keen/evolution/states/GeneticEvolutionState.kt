@@ -28,7 +28,7 @@ data class GeneticEvolutionState<T, G>(
     override val population: Population<T, G, Genotype<T, G>>,
     override val ranker: IndividualRanker<T, G, Genotype<T, G>>,
     override val generation: Int
-) : EvolutionState<T, G, Genotype<T, G>> where G : Gene<T, G> {
+) : EvolutionState<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> where G : Gene<T, G> {
 
     /**
      * Creates a copy of the current evolutionary state with the provided population, ranker, and generation number.

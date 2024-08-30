@@ -50,7 +50,9 @@ import cl.ravenhill.keen.repr.Representation
  * @property ranker The ranker used to evaluate and compare individuals within the population.
  * @property generation The current generation number in the evolutionary process.
  */
-interface EvolutionState<T, F, R> : FlatMappable<T>, Foldable<T> where F : Feature<T, F>, R : Representation<T, F> {
+interface EvolutionState<T, F, R, S> : FlatMappable<T>, Foldable<T> where F : Feature<T, F>,
+                                                                          R : Representation<T, F>,
+                                                                          S : EvolutionState<T, F, R, S> {
 
     val size: Int
         get() = population.size
@@ -75,8 +77,7 @@ interface EvolutionState<T, F, R> : FlatMappable<T>, Foldable<T> where F : Featu
      * @param f The transformation function to apply to each individual.
      * @return A new `EvolutionState` instance with the transformed population.
      */
-    fun map(f: (Individual<T, F, R>) -> Individual<T, F, R>): EvolutionState<T, F, R> =
-        makeCopy(population = population.map(f))
+    fun map(f: (Individual<T, F, R>) -> Individual<T, F, R>) = makeCopy(population = population.map(f))
 
     /**
      * Folds the values in the population from left to right, accumulating a result.
@@ -145,5 +146,5 @@ interface EvolutionState<T, F, R> : FlatMappable<T>, Foldable<T> where F : Featu
         population: Population<T, F, R> = this.population,
         ranker: IndividualRanker<T, F, R> = this.ranker,
         generation: Int = this.generation
-    ): EvolutionState<T, F, R>
+    ): S
 }

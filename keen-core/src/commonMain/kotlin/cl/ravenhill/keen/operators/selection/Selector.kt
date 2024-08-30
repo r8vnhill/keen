@@ -74,7 +74,7 @@ interface Selector<T, F, R> : Operator<T, F, R> where F : Feature<T, F>, R : Rep
         state: S,
         outputSize: Int,
         buildState: (List<Individual<T, F, R>>) -> S
-    ): Either<SelectionException, S> where S : EvolutionState<T, F, R> {
+    ): Either<SelectionException, S> where S : EvolutionState<T, F, R, S> {
         constrained {
             "Population must not be empty" { state.population mustNot BeEmpty }
             "Selection count ($outputSize) must not be negative" { outputSize mustNot BeNegative }

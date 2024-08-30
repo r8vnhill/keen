@@ -22,7 +22,7 @@ import cl.ravenhill.keen.repr.Representation
  * @param R The type of representation, which must extend [Representation].
  * @param S The type of evolutionary state, which must extend [EvolutionState].
  */
-interface AlterationEngine<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+interface AlterationEngine<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
 
     /**
      * Performs genetic alterations on the population within the given evolutionary state.

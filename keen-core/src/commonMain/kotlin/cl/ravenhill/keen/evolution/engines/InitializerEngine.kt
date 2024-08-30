@@ -35,7 +35,7 @@ import cl.ravenhill.keen.repr.Representation
  */
 interface InitializerEngine<T, F, R, S> where F : Feature<T, F>,
                                               R : Representation<T, F>,
-                                              S : EvolutionState<T, F, R> {
+                                              S : EvolutionState<T, F, R, S> {
 
     /**
      * Initializes the evolutionary state.

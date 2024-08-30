@@ -39,7 +39,7 @@ import cl.ravenhill.keen.repr.Representation
  *
  * ```kotlin
  * class SimpleGeneticAlgorithm<T, F, R, S> : Evolver<T, F, R, S>
- *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+ *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
  *     override suspend fun evolve(): S {
  *         // Implement the genetic algorithm evolution logic here
  *         return state // return the updated state after evolution
@@ -48,7 +48,7 @@ import cl.ravenhill.keen.repr.Representation
  * }
  *
  * class SimpleDifferentialEvolution<T, F, R, S> : Evolver<T, F, R, S>
- *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+ *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
  *     override suspend fun evolve(): S {
  *         // Implement the differential evolution algorithm evolution logic here
  *         return state // return the updated state after evolution
@@ -60,7 +60,7 @@ import cl.ravenhill.keen.repr.Representation
  * suspend fun <T, F, R, S> compareEvolvers(
  *     evolver1: Evolver<T, F, R, S>,
  *     evolver2: Evolver<T, F, R, S>
- * ): String where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+ * ): String where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
  *     val finalState1 = evolver1.evolve()
  *     val finalState2 = evolver2.evolve()
  *
@@ -96,7 +96,7 @@ import cl.ravenhill.keen.repr.Representation
  *   direct modifications of the original objects, as this could lead to unexpected behavior in structures that rely on
  *   these listeners, such as evolution limits.
  */
-interface Evolver<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+interface Evolver<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
 
     val publicListeners: List<Listener>
 

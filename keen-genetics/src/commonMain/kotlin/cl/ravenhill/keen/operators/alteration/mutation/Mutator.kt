@@ -19,9 +19,11 @@ interface Mutator<T, G> : Alterer<T, G, Genotype<T, G>> where G : Gene<T, G> {
 
     val chromosomeRate: Double
 
-    override suspend fun <S : EvolutionState<T, G, Genotype<T, G>>> invoke(
+    override suspend fun <S> invoke(
         state: S,
         outputSize: Int,
         buildState: (List<Individual<T, G, Genotype<T, G>>>) -> S
-    ): Either<OperatorInvocationException, S> = TODO()
+    ): Either<OperatorInvocationException, S> where S : EvolutionState<T, G, Genotype<T, G>, S> {
+        TODO()
+    }
 }

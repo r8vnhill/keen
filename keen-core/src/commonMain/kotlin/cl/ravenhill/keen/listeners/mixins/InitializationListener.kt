@@ -24,7 +24,7 @@ import cl.ravenhill.keen.repr.Representation
  * @param S The type of the evolutionary state, which must extend [EvolutionState].
  */
 interface InitializationListener<T, F, R, S> :
-    Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
+    Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
 
     /**
      * Called when the initialization process starts.
