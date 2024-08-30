@@ -5,53 +5,61 @@
 
 package cl.ravenhill.keen
 
-import cl.ravenhill.jakt.ExperimentalJakt
-import cl.ravenhill.jakt.Jakt.constraints
+import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constraints.doubles.BeAtLeast
 import cl.ravenhill.jakt.constraints.doubles.BeNaN
-import cl.ravenhill.keen.Domain.random
-import cl.ravenhill.keen.Domain.toStringMode
+import cl.ravenhill.keen.Domain.DEFAULT_EQUALITY_THRESHOLD
+import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
 /**
- * The `Domain` object functions as a centralized configuration resource for the evolutionary computation framework.
+ * A singleton object that encapsulates global configuration and settings for the evolutionary algorithm domain.
  *
- * It offers globally accessible settings and tools that are pivotal in shaping the behavior and effectiveness of
- * evolutionary algorithms. This centralization of configurations promotes uniform behavior across various segments
- * of the system and simplifies the modification of key parameters.
+ * The `Domain` object provides a centralized place for managing global parameters and configurations that are commonly
+ * used throughout the evolutionary algorithm framework. These include settings such as the equality threshold for
+ * comparisons, the default coroutine dispatcher for concurrent operations, and the random number generator used for
+ * stochastic processes.
  *
- * ## Usage:
- * Adjusting `Domain` settings can have a wide-reaching impact on the evolutionary computation framework. For
- * instance, modifying the `random` instance affects how randomness is integrated throughout the system.
- *
- * ### Example:
+ * ## Example:
  * ```kotlin
- * // Customizing the random instance for predictable results
- * Domain.random = Random(1234L)
+ * // Set a custom equality threshold
+ * Domain.equalityThreshold = 1E-6
  *
- * // Accessing the standard population size
- * val popSize = Domain.DEFAULT_POPULATION_SIZE
+ * // Access the default random number generator
+ * val randomValue = Domain.random.nextInt()
+ *
+ * // Set a custom coroutine dispatcher
+ * Domain.dispatcher = Dispatchers.IO
  * ```
- * Here, the global random instance is assigned a specific seed for consistent stochastic behaviors across runs.
- * The default population size is also demonstrated as a readily available constant.
  *
- * @property toStringMode The mode used for converting objects to their string representation, defaults to
- *   [ToStringMode.DEFAULT].
- * @property random A universal [Random] instance used for stochastic processes, ensuring consistent randomization
- *   strategies and allowing for reproducibility when using a specific seed.
+ * @property DEFAULT_EQUALITY_THRESHOLD The default threshold for comparing floating-point numbers for equality. It is
+ *   set to a very small value to account for precision errors in floating-point arithmetic.
+ * @property dispatcher The default coroutine context used for concurrent operations. This can be overridden to
+ *   customize the execution context.
+ * @property equalityThreshold The threshold used for comparing floating-point numbers for equality. This value must be
+ *   non-negative and not NaN.
+ * @property random The default random number generator used throughout the framework. This can be overridden to
+ *   customize random behavior.
+ * @property toStringMode The mode that determines how objects are converted to strings. Useful for debugging and
+ *   logging.
  */
 object Domain {
-    const val DEFAULT_EQUALITY_THRESHOLD = 0.0001
 
-    @OptIn(ExperimentalJakt::class)
+    const val DEFAULT_EQUALITY_THRESHOLD = 1E-10
+
+    var dispatcher: CoroutineContext = Dispatchers.Default
+
     var equalityThreshold = DEFAULT_EQUALITY_THRESHOLD
         set(value) {
-            constraints {
+            constrained {
                 "The equality threshold ($value) must be greater than or equal to zero" {
                     value must BeAtLeast(0.0)
-                    value mustNot BeNaN
                 }
-            }
+                "The equality threshold ($value) must not be NaN" {
+                    value must BeNaN
+                }
+            }.onLeft { throw it }
             field = value
         }
 
