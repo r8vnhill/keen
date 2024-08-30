@@ -111,7 +111,6 @@ class GeneticAlgorithm<T, G, L>(
     evolutionConfiguration,
     selectionConfiguration
 ), AlterationEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> by GeneticAlterationEngine(
-    populationConfiguration,
     evolutionConfiguration,
     alterationConfiguration
 )
@@ -132,7 +131,9 @@ class GeneticAlgorithm<T, G, L>(
         val survivors = selectSurvivors(evaluatedState)
             .getOrElse { return EvolutionException("Survivor selection failed", it).left() }
         val offspring = alter(parents)
-        val nextPopulation = survivors.population + offspring.population
+        val nextPopulation = survivors.population + offspring.getOrElse {
+            return EvolutionException("Alteration failed", it).left()
+        }.population
         val nextGeneration = evaluate(evaluatedState.makeCopy(population = nextPopulation))
             .getOrElse { return EvolutionException("Evaluation failed", it).left() }
         return interceptor.after(nextGeneration)

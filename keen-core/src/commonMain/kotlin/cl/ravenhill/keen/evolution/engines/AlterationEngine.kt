@@ -5,7 +5,9 @@
 
 package cl.ravenhill.keen.evolution.engines
 
+import arrow.core.Either
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.exceptions.AlterationException
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -22,7 +24,9 @@ import cl.ravenhill.keen.repr.Representation
  * @param R The type of representation, which must extend [Representation].
  * @param S The type of evolutionary state, which must extend [EvolutionState].
  */
-interface AlterationEngine<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
+interface AlterationEngine<T, F, R, S> where F : Feature<T, F>,
+                                             R : Representation<T, F>,
+                                             S : EvolutionState<T, F, R, S> {
 
     /**
      * Performs genetic alterations on the population within the given evolutionary state.
@@ -36,5 +40,5 @@ interface AlterationEngine<T, F, R, S> where F : Feature<T, F>, R : Representati
      * @param state The current evolutionary state that contains the population to be altered.
      * @return The new evolutionary state after applying the genetic alterations.
      */
-    suspend fun alter(state: S): S
+    suspend fun alter(state: S): Either<AlterationException, S>
 }
