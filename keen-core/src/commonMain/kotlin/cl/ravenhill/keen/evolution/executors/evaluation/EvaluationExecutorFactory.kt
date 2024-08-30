@@ -11,5 +11,6 @@ import cl.ravenhill.keen.repr.Representation
 
 class EvaluationExecutorFactory<T, F, R, S>
         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
-    val creator: ((R) -> Double) -> EvaluationExecutor<T, F, R, S> = { function -> SequentialEvaluator(function) }
+    val creator: ((R) -> Double) -> EvaluationExecutor<T, F, R, S> =
+        { function -> CoroutineConcurrentEvaluator(function) }
 }

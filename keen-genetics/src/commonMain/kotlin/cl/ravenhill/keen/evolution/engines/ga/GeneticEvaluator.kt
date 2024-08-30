@@ -124,7 +124,7 @@ internal class GeneticEvaluator<T, G>(
      * @return The evaluated state, wrapped in an [Either].
      * @throws EvaluationException If evaluation fails or constraints are violated.
      */
-    private fun performEvaluation(
+    private suspend fun performEvaluation(
         state: GeneticEvolutionState<T, G>
     ): Either<EvaluationException, GeneticEvolutionState<T, G>> {
         val evaluated = evaluator(state)

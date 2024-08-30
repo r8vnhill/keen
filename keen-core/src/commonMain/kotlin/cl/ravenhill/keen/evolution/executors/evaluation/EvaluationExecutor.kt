@@ -73,5 +73,5 @@ interface EvaluationExecutor<T, F, R, S>
      * @param force The evaluation strategy to apply. Defaults to [ForceEvaluation.NEW].
      * @return The updated evolutionary state after the evaluation process is complete.
      */
-    operator fun invoke(state: S, force: ForceEvaluation = ForceEvaluation.NEW): S
+    suspend operator fun invoke(state: S, force: ForceEvaluation = ForceEvaluation.NEW): S
 }

@@ -46,8 +46,11 @@ internal class IndividualEvaluator<T, F, R>(
      * This method calculates the fitness by applying the `fitnessFunction` to the individual's representation.
      * The calculated fitness is then stored internally, and the individual can be accessed with this fitness value
      * through the `individual` property.
+     *
+     * @return The individual with the evaluated fitness value.
      */
-    operator fun invoke() {
+    operator fun invoke(): Individual<T, F, R> {
         fitness = fitnessFunction(individual.representation)
+        return individual
     }
 }

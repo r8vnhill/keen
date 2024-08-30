@@ -5,27 +5,33 @@
 
 package cl.ravenhill.keen.evolution.executors.evaluation
 
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 /**
- * A sequential evaluator for evaluating individuals in an evolutionary algorithm.
+ * A concurrent evaluator that uses Kotlin coroutines to evaluate individuals in an evolutionary algorithm.
  *
- * The `SequentialEvaluator` class implements the [EvaluationExecutor] interface, providing a mechanism to evaluate
- * individuals within a population in a sequential manner. It applies a given evaluation function to each individual
- * based on the specified [ForceEvaluation] strategy. This class is suitable for scenarios where evaluations need to be
- * performed in a single-threaded, step-by-step fashion.
+ * The `CoroutineConcurrentEvaluator` class implements the [EvaluationExecutor] interface, providing a mechanism to
+ * evaluate individuals within a population concurrently using Kotlin coroutines. This approach is well-suited for
+ * scenarios where evaluations are computationally expensive and can benefit from parallel execution.
  *
  * ## Usage:
- * This class is intended to be used in evolutionary algorithms where the evaluation of individuals is required. It
- * allows for flexible control over which individuals are evaluated through the [ForceEvaluation] parameter.
+ * This class is intended for use in evolutionary algorithms where concurrent evaluation of individuals is required.
+ * It leverages the power of Kotlin coroutines to achieve parallelism, making it ideal for large-scale or
+ * computationally intensive evaluations.
  *
- * ### Example: Using `SequentialEvaluator` to Evaluate a Population
+ * ### Example: Using `CoroutineConcurrentEvaluator` to Evaluate a Population Concurrently
  * ```kotlin
  * val evaluationFunction: (MyRepresentation) -> Double = { representation -> // fitness calculation logic }
- * val evaluator = SequentialEvaluator(evaluationFunction)
+ * val evaluator = CoroutineConcurrentEvaluator(evaluationFunction)
  * val evaluatedState = evaluator(currentState, ForceEvaluation.NEW)
  * ```
  *
@@ -34,28 +40,41 @@ import cl.ravenhill.keen.repr.Representation
  * @param R The type of representation, which must extend [Representation].
  * @param S The type of evolutionary state, which must extend [EvolutionState].
  * @property evaluationFunction The function used to evaluate the fitness of each individual's representation.
+ * @property coroutineContext The coroutine context in which the evaluation operations are executed. Defaults to
+ *   [Dispatchers.Default].
  */
-class SequentialEvaluator<T, F, R, S>(
-    private val evaluationFunction: (R) -> Double
+class CoroutineConcurrentEvaluator<T, F, R, S>(
+    private val evaluationFunction: (R) -> Double,
+    private val coroutineContext: CoroutineContext = Dispatchers.Default
 ) : EvaluationExecutor<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
 
     /**
-     * Executes the evaluation process on the given evolutionary state.
+     * Executes the evaluation process on the given evolutionary state concurrently.
      *
-     * This function evaluates the individuals in the population according to the specified [ForceEvaluation] strategy.
-     * The population is updated with the newly evaluated individuals, and the state is returned with this updated
-     * population.
+     * This function evaluates the individuals in the population concurrently according to the specified
+     * [ForceEvaluation] strategy. The population is updated with the newly evaluated individuals, and the state is
+     * returned with this updated population.
      *
      * @param state The current evolutionary state to be evaluated.
      * @param force The evaluation strategy to use, determining which individuals are evaluated.
      * @return The updated evolutionary state after evaluation.
      */
-    override suspend fun invoke(state: S, force: ForceEvaluation): S = state.makeCopy(
-        population = evaluateAndAddToPopulation(
-            selectAndCreateEvaluators(state.population, evaluationFunction, force),
+    override suspend fun invoke(state: S, force: ForceEvaluation): S = withContext(coroutineContext) {
+        val evaluators = selectAndCreateEvaluators(state.population, evaluationFunction, force)
+
+        // Concurrently evaluate individuals
+        val evaluatedIndividuals = evaluators.map { evaluator ->
+            async { evaluator() }
+        }.awaitAll()
+
+        // Create the new population with the evaluated individuals
+        val newPopulation = evaluateAndAddToPopulation(
+            evaluatedIndividuals,
             state.population
-        ) { evaluators -> evaluators.forEach { evaluator -> evaluator() } }
-    )
+        )
+
+        state.makeCopy(population = newPopulation)
+    }
 
     companion object {
 
@@ -84,24 +103,23 @@ class SequentialEvaluator<T, F, R, S>(
         /**
          * Evaluates the selected individuals and adds them to the population.
          *
-         * @param toEvaluate The list of evaluators for the individuals to be evaluated.
+         * @param evaluated The list of evaluated individuals.
          * @param population The current population of individuals.
-         * @param evaluationStrategy The strategy used to perform the evaluation of individuals.
          * @return The updated population with the evaluated individuals included.
          */
         private fun <T, F, R> evaluateAndAddToPopulation(
-            toEvaluate: List<IndividualEvaluator<T, F, R>>,
-            population: Population<T, F, R>,
-            evaluationStrategy: (List<IndividualEvaluator<T, F, R>>) -> Unit
-        ): Population<T, F, R> where F : Feature<T, F>, R : Representation<T, F> = if (toEvaluate.isNotEmpty()) {
-            evaluationStrategy(toEvaluate)
-            if (toEvaluate.size == population.size) {
-                toEvaluate.map { it.individual }
+            evaluated: List<Individual<T, F, R>>,
+            population: Population<T, F, R>
+        ): Population<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
+            return if (evaluated.isNotEmpty()) {
+                if (evaluated.size == population.size) {
+                    evaluated
+                } else {
+                    population.filter { it.isEvaluated() } + evaluated
+                }
             } else {
-                population.filter { it.isEvaluated() } + toEvaluate.map { it.individual }
+                population
             }
-        } else {
-            population
         }
     }
 }
