@@ -118,26 +118,57 @@ class GeneticAlgorithm<T, G, L>(
 
     override var state: GeneticEvolutionState<T, G> = evolutionConfiguration.initialState
 
+    /**
+     * Advances the evolutionary process by one generation.
+     *
+     * The `iterateGeneration` function guides the algorithm through a complete cycle of evolutionary steps for one
+     * generation. This method actively manages the process, from initialization to generation advancement, ensuring
+     * each phase is executed in the correct sequence. If any phase fails, the function stops and returns an
+     * [EvolutionException].
+     *
+     * ## Workflow:
+     * 1. **Pre-Initialization Interception**: The function intercepts and potentially modifies the state before
+     *   initialization begins.
+     * 2. **Initialization**: If the population is empty, the function initializes it, creating a well-defined starting
+     *   point. Any errors during this step cause the generation to halt.
+     * 3. **Evaluation**: The function evaluates the population based on the fitness criteria. If the evaluation fails,
+     *   the function stops the process.
+     * 4. **Parent Selection**: The function selects parents from the evaluated population for reproduction. If the
+     *   selection fails, the function halts the process.
+     * 5. **Survivor Selection**: The function chooses which individuals will survive to the next generation. Any
+     *   failure during this phase stops the generation.
+     * 6. **Alteration**: The selected parents undergo genetic operations (e.g., crossover, mutation) to produce
+     *   offspring. If this process fails, the function stops the generation.
+     * 7. **Population Update**: The function forms the next generation by combining the survivors with the newly
+     *   created offspring and then re-evaluates the population.
+     * 8. **Post-Evaluation Interception**: After the evaluation, the function intercepts the state again, allowing for
+     *   any final adjustments before proceeding to the next generation.
+     * 9. **Generation Advancement**: The function increments the generation counter and returns the updated state.
+     *
+     * ## Error Handling:
+     * The function carefully monitors each step for errors. If an error occurs, it returns an [EvolutionException]
+     * within an [Either.Left] value. On success, it returns the updated [GeneticEvolutionState] within an
+     * [Either.Right] value.
+     *
+     * @param state The current [GeneticEvolutionState] representing the evolutionary state at the start of the
+     *   generation.
+     * @return An [Either] containing the updated [GeneticEvolutionState] after one generation on success, or an
+     *   [EvolutionException] on failure.
+     */
     override suspend fun iterateGeneration(
         state: GeneticEvolutionState<T, G>
-    ): Either<EvolutionException, GeneticEvolutionState<T, G>> {
+    ): Either<EvolutionException, GeneticEvolutionState<T, G>> = runCatching {
         val interceptedStart = interceptor.before(state)
-        val initializedState = initialize(interceptedStart)
-            .getOrElse { return EvolutionException("Initialization failed", it).left() }
-        val evaluatedState = evaluate(initializedState)
-            .getOrElse { return EvolutionException("Evaluation failed", it).left() }
-        val parents = selectParents(evaluatedState)
-            .getOrElse { return EvolutionException("Parent selection failed", it).left() }
-        val survivors = selectSurvivors(evaluatedState)
-            .getOrElse { return EvolutionException("Survivor selection failed", it).left() }
-        val offspring = alter(parents)
-        val nextPopulation = survivors.population + offspring.getOrElse {
-            return EvolutionException("Alteration failed", it).left()
-        }.population
-        val nextGeneration = evaluate(evaluatedState.makeCopy(population = nextPopulation))
-            .getOrElse { return EvolutionException("Evaluation failed", it).left() }
-        return interceptor.after(nextGeneration)
-            .makeCopy(generation = nextGeneration.generation + 1)
-            .right()    // Right is the success case (the "right" choice)
-    }
+        val initializedState = initialize(interceptedStart).getOrElse { throw it }
+        val evaluatedState = evaluate(initializedState).getOrElse { throw it }
+        val parents = selectParents(evaluatedState).getOrElse { throw it }
+        val survivors = selectSurvivors(evaluatedState).getOrElse { throw it }
+        val offspring = alter(parents).getOrElse { throw it }
+        val nextPopulation = survivors.population + offspring.population
+        val nextGeneration = evaluate(evaluatedState.makeCopy(population = nextPopulation)).getOrElse { throw it }
+        interceptor.after(nextGeneration).makeCopy(generation = nextGeneration.generation + 1)
+    }.fold(
+        onSuccess = { it.right() },
+        onFailure = { throwable -> EvolutionException("An error occurred -- ${throwable.message}", throwable).left() }
+    )
 }
