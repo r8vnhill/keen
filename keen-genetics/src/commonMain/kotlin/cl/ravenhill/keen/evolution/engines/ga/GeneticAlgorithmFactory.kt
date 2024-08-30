@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.evolution.engines.ga
 
+import arrow.core.getOrElse
 import cl.ravenhill.jakt.constrainedTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.jakt.exceptions.CompositeException
@@ -15,7 +16,6 @@ import cl.ravenhill.keen.evolution.config.GeneticPopulationConfiguration
 import cl.ravenhill.keen.evolution.config.SelectionConfiguration
 import cl.ravenhill.keen.evolution.executors.evaluation.EvaluationExecutorFactory
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionSuccessState
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.GenotypeFactory
 import cl.ravenhill.keen.genetics.genes.Gene
@@ -95,7 +95,7 @@ class GeneticAlgorithmFactory<T, G>(
         set(value) {
             field = value.constrainedTo {
                 "The population size must be greater than 0" { value must BePositive }
-            }
+            }.getOrElse { throw it }
         }
 
     var survivalRate: Double = DEFAULT_SURVIVAL_RATE
@@ -144,7 +144,7 @@ class GeneticAlgorithmFactory<T, G>(
         interceptor = interceptor,
         ranker = ranker,
         evaluator = evaluator.creator(fitnessFunction),
-        initialState = initialState ?: GeneticEvolutionSuccessState.empty(ranker)
+        initialState = initialState ?: GeneticEvolutionState.empty(ranker)
     )
 
     companion object {

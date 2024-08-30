@@ -5,8 +5,10 @@
 
 package cl.ravenhill.keen.operators
 
+import arrow.core.Either
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.exceptions.OperatorInvocationException
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 import kotlin.random.Random
@@ -71,13 +73,11 @@ interface Operator<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
      * @param state The current evolutionary state.
      * @param outputSize The number of individuals to include in the resulting state.
      * @param buildState A function that constructs the new evolutionary state from a list of individuals.
-     * @param random An optional random number generator used to introduce stochastic behavior into the operation.
      * @return A [Result] containing the new evolutionary state, or an exception if the operation fails.
      */
     suspend operator fun <S> invoke(
         state: S,
         outputSize: Int,
-        buildState: (List<Individual<T, F, R>>) -> S,
-        random: Random = Random.Default
-    ): Result<S> where S : EvolutionState<T, F, R>
+        buildState: (List<Individual<T, F, R>>) -> S
+    ): Either<OperatorInvocationException, S> where S : EvolutionState<T, F, R>
 }

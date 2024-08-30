@@ -14,6 +14,9 @@ kotlin {
             dependencies {
                 implementation(project(":keen-core"))
                 implementation(libs.kotlin.coroutines.core)
+                implementation(libs.arrow.core)
+                implementation(libs.arrow.fx.coroutines)
+                implementation(libs.jakt)
             }
         }
 

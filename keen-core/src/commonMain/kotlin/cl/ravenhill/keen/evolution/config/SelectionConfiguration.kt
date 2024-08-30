@@ -9,7 +9,7 @@ import cl.ravenhill.keen.repr.Representation
 data class SelectionConfiguration<T, F, R>(
     val survivalRate: Double,
     val parentSelector: Selector<T, F, R>,
-    val offspringSelector: Selector<T, F, R>
+    val survivorSelector: Selector<T, F, R>
 ) where F : Feature<T, F>, R : Representation<T, F> {
     init {
         constraints {

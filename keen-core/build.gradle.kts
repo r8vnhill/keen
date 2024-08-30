@@ -14,7 +14,9 @@ kotlin {
             dependencies {
                 implementation(kotlin("reflect"))
                 implementation(libs.kotlin.coroutines.core)
-                api(libs.jakt)
+                implementation(libs.jakt)
+                implementation(libs.arrow.core)
+                implementation(libs.arrow.fx.coroutines)
             }
         }
 

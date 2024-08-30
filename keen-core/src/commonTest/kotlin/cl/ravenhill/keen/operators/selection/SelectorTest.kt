@@ -113,7 +113,7 @@ class SelectorTest : FreeSpec({
 fun <T, F, R> arbSimpleSelector(): Arb<Selector<T, F, R>> where F : Feature<T, F>, R : Representation<T, F> =
     arbitrary {
         object : Selector<T, F, R> {
-            override fun select(
+            override suspend fun select(
                 population: Population<T, F, R>,
                 count: Int,
                 ranker: IndividualRanker<T, F, R>,
@@ -129,7 +129,7 @@ private fun arbSelector() =
 private fun <T, F, R> arbFaultySelector(): Arb<Selector<T, F, R>> where F : Feature<T, F>, R : Representation<T, F> =
     arbitrary {
         object : Selector<T, F, R> {
-            override fun select(
+            override suspend fun select(
                 population: Population<T, F, R>,
                 count: Int,
                 ranker: IndividualRanker<T, F, R>,

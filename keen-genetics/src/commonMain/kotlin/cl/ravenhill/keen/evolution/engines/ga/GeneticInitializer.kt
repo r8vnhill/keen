@@ -5,15 +5,17 @@
 
 package cl.ravenhill.keen.evolution.engines.ga
 
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionFailureState
-import cl.ravenhill.keen.evolution.states.GeneticEvolutionSuccessState
-import cl.ravenhill.keen.genetics.GenotypeFactory
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.config.GeneticPopulationConfiguration
 import cl.ravenhill.keen.evolution.engines.InitializerEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
+import cl.ravenhill.keen.exceptions.InitializationException
 import cl.ravenhill.keen.genetics.Genotype
+import cl.ravenhill.keen.genetics.GenotypeFactory
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.InitializationListener
 
@@ -57,40 +59,46 @@ internal class GeneticInitializer<T, G>(
     /**
      * Initializes the [GeneticEvolutionState] with a new population of individuals if the state is empty.
      *
-     * This method checks if the provided `GeneticEvolutionState` is empty. If it is, the method will:
-     * 1. Notify all registered listeners that initialization has started.
-     * 2. Create a new list of individuals by generating genotypes using the provided `GenotypeFactory`.
-     * 3. Add each individual to the list and then update the state with the new population.
-     * 4. Notify all registered listeners that initialization has completed.
+     * This method is responsible for generating the initial population in a genetic evolutionary algorithm when the
+     * provided state is empty. The process involves the following steps:
      *
-     * If the state is not empty, the method returns the existing state without modification.
+     * 1. **Start Initialization**: Notify all registered initialization listeners that the initialization process has
+     *    begun.
+     * 2. **Population Creation**: A list of new individuals is created. For each individual:
+     *    - A genotype is generated using the [GenotypeFactory].
+     *    - If genotype creation fails, an [InitializationException] is returned.
+     *    - Otherwise, the genotype is wrapped in an [Individual] and added to the population.
+     * 3. **State Update**: The state is updated with the newly created population.
+     * 4. **End Initialization**: Notify all registered initialization listeners that the initialization process has
+     *    completed.
      *
-     * The process is wrapped in a [runCatching] block to handle any exceptions that may occur during initialization.
-     * If an exception is thrown, the state is updated to reflect the failure using [GeneticEvolutionState.asFailure].
+     * If the state is not empty, the method simply returns the existing state without making any modifications.
      *
-     * @param state The current [GeneticEvolutionState] that may be updated with a new population.
-     * @return The updated [GeneticEvolutionState] with a newly created population if the initial state was empty;
-     *         otherwise, returns the original state.
-     * @see GeneticAlgorithm
-     * @see GeneticEvolutionFailureState
-     * @see GeneticEvolutionSuccessState
+     * The method uses [Either] to handle potential errors during the initialization process, ensuring that any issues
+     * (such as failures in genotype creation) are properly encapsulated in an [InitializationException].
+     *
+     * @param state The current [GeneticEvolutionState] which may be updated with a new population.
+     * @return An [Either] containing:
+     *   - The updated [GeneticEvolutionState] with a newly created population if the initial state was empty.
+     *   - The original state if it was not empty.
+     *   - An [InitializationException] in case of errors during genotype creation.
      */
-    override suspend fun initialize(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> = runCatching {
+    override suspend fun initialize(
+        state: GeneticEvolutionState<T, G>
+    ): Either<InitializationException, GeneticEvolutionState<T, G>> =
         if (state.isEmpty()) {
             listeners.forEach { it.onInitializationStart(state) }
             val individuals = mutableListOf<Individual<T, G, Genotype<T, G>>>()
             repeat(populationSize) {
-                val genotype = genotypeFactory().getOrThrow()
+                val genotype = genotypeFactory().getOrElse {
+                    return InitializationException("Genotype creation failed", it).left()
+                }
                 individuals.add(Individual(genotype))
             }
-            state.also {
-                listeners.forEach { it.onInitializationEnd(state) }
+            state.copy(population = individuals).also {
+                listeners.forEach { l -> l.onInitializationEnd(it) }
             }
         } else {
             state
-        }
-    }.fold(
-        onSuccess = { it },
-        onFailure = { GeneticEvolutionState.asFailure(state, it) }
-    )
+        }.right()
 }

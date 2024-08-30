@@ -5,11 +5,16 @@
 
 package cl.ravenhill.keen.evolution.engines.ga
 
+import arrow.core.Either
+import arrow.core.getOrElse
+import arrow.core.left
+import arrow.core.right
 import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.config.GeneticPopulationConfiguration
 import cl.ravenhill.keen.evolution.config.SelectionConfiguration
-import cl.ravenhill.keen.evolution.engines.ParentSelectorEngine
+import cl.ravenhill.keen.evolution.engines.ParentSelectionEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
+import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
@@ -37,7 +42,7 @@ class GeneticParentSelector<T, G>(
     populationConfiguration: GeneticPopulationConfiguration<T, G>,
     evolutionConfiguration: EvolutionConfiguration<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>,
     selectionConfiguration: SelectionConfiguration<T, G, Genotype<T, G>>,
-) : ParentSelectorEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> where G : Gene<T, G> {
+) : ParentSelectionEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> where G : Gene<T, G> {
 
     /**
      * The parent selection strategy used to select parents from the current population.
@@ -62,24 +67,22 @@ class GeneticParentSelector<T, G>(
      *
      * The `selectParents` function executes the parent selection process. It notifies any registered
      * [ParentSelectionListener]s before and after the selection process. The number of parents selected is determined
-     * by the survival rate specified in the `SelectionConfiguration`. The selected parents are then used to create a
+     * by the survival rate specified in the [SelectionConfiguration]. The selected parents are then used to create a
      * new population, which is returned as the updated evolutionary state.
-     *
-     * ## Error Handling:
-     * If any errors occur during the selection process, the function returns the current state unchanged.
      *
      * @param state The current evolutionary state from which parents are to be selected.
      * @return The updated evolutionary state after parent selection, or the current state if selection fails.
      */
-    override suspend fun selectParents(state: GeneticEvolutionState<T, G>): GeneticEvolutionState<T, G> = runCatching {
+    override suspend fun selectParents(
+        state: GeneticEvolutionState<T, G>
+    ): Either<SelectionException, GeneticEvolutionState<T, G>> {
         listeners.forEach { it.onParentSelectionStart(state) }
-        selector(state, amountToSelect, {
-            state.makeCopy(population = it)
-        }).also { selected ->
-            listeners.forEach { it.onParentSelectionEnd(selected.getOrThrow()) }
-        }.getOrThrow()
-    }.fold(
-        onSuccess = { it },
-        onFailure = { state }
-    )
+        return selector(state, amountToSelect) {
+            state.copy(population = it)
+        }
+            .getOrElse { return it.left() }
+            .also { selected ->
+                listeners.forEach { it.onParentSelectionEnd(selected) }
+            }.right()
+    }
 }

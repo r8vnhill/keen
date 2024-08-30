@@ -5,14 +5,20 @@
 
 package cl.ravenhill.keen.operators.selection
 
-import cl.ravenhill.jakt.Jakt.constraints
+import arrow.core.Either
+import arrow.core.getOrElse
+import arrow.core.left
+import arrow.core.right
+import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constrainedTo
+import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BePositive
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import kotlin.random.Random
 
 /**
  * A selection mechanism that uses tournament selection in an evolutionary algorithm.
@@ -53,48 +59,40 @@ data class TournamentSelector<T, F, R>(
 ) : Selector<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
 
     init {
-        constraints {
+        constrained {
             "Tournament size ($tournamentSize) must be positive"(::SelectionException) {
                 tournamentSize must BePositive
             }
-        }
+        }.getOrElse { throw it }
     }
 
-    /**
-     * Selects a subset of the population using the tournament selection method.
-     *
-     * This method randomly picks a subset of individuals (determined by the tournament size) from the population and
-     * selects the best individual within this subset according to the provided ranker. This process is repeated until
-     * the specified number of individuals (`count`) is selected.
-     *
-     * The function wraps the selection operation in a [runCatching] block, meaning that any exceptions encountered
-     * during the selection process are caught and returned as part of a [Result].
-     *
-     * ## Potential Exceptions:
-     * The following exceptions may be generated during the selection process and will be wrapped in a [Result]:
-     * - [SelectionException]: Thrown if the tournament fails to find a valid individual, which might occur if the
-     *   population is empty or other unexpected conditions arise.
-     *
-     * @param population The population from which individuals are selected.
-     * @param count The number of individuals to select.
-     * @param ranker The ranker used to compare individuals during the selection process.
-     * @param random A random number generator used for selecting individuals for each tournament.
-     * @return A [Result] containing the selected population, or an exception wrapped in the [Result] if the selection
-     *   fails.
-     */
-    override fun select(
+    override suspend fun select(
         population: Population<T, F, R>,
         count: Int,
-        ranker: IndividualRanker<T, F, R>,
-        random: Random
-    ): Result<Population<T, F, R>> = runCatching {
-        (0..<count).map {
-            generateSequence { population[random.nextInt(population.size)] }
-                .take(tournamentSize)
-                .maxWithOrNull(ranker.comparator)
-                ?: throw SelectionException("Tournament selection failed to find a max individual")
+        ranker: IndividualRanker<T, F, R>
+    ): Either<SelectionException, Population<T, F, R>> =
+        if (population.isEmpty()) {
+            SelectionException("Population cannot be empty").left()
+        } else {
+            // Perform selection
+            (0..<count).mapNotNull {
+                generateSequence { population[Domain.random.nextInt(population.size)] }
+                    .take(tournamentSize)
+                    .maxWithOrNull(ranker.comparator)
+            }
+                .constrainedTo {
+                    "The number of selected individuals (${it.size}) must match the requested count ($count)" {
+                        it must HaveSize(count)
+                    }
+                }
+                .getOrElse {
+                    return SelectionException(
+                        "Failed to select the required number of individuals",
+                        it
+                    ).left()
+                }
+                .right()
         }
-    }
 
     companion object {
         /**

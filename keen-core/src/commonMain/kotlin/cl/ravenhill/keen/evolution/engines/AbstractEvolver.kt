@@ -5,8 +5,11 @@
 
 package cl.ravenhill.keen.evolution.engines
 
+import arrow.core.Either
+import arrow.core.getOrElse
 import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.exceptions.EvolutionException
 import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.repr.Feature
@@ -15,15 +18,16 @@ import cl.ravenhill.keen.repr.Representation
 /**
  * Abstract base class for implementing evolutionary algorithms.
  *
- * The `AbstractEvolver` class provides a flexible foundation for creating evolutionary algorithms by defining the core
- * structure and processes required for evolving a population of individuals over successive generations. It manages the
- * lifecycle of the evolutionary process, including invoking listeners at key points and enforcing evolution limits.
+ * The `AbstractEvolver` class serves as a foundational framework for creating evolutionary algorithms, encapsulating
+ * the core structure and processes needed to evolve a population of individuals over successive generations. It manages
+ * the lifecycle of the evolutionary process, including the invocation of listeners at key stages and the enforcement of
+ * evolutionary limits.
  *
  * ## Usage:
- * This class is intended to be extended by specific implementations of evolutionary algorithms. It provides a concrete
- * implementation of the [Evolver] interface, handling common operations such as managing listeners and applying limits.
- * Subclasses are required to implement the [iterateGeneration] method, which defines the specific logic for advancing
- * the evolutionary state through generations.
+ * This class is designed to be extended by specific evolutionary algorithm implementations. It provides a concrete
+ * implementation of the [Evolver] interface, handling common tasks such as managing listeners and applying evolutionary
+ * limits. Subclasses are required to implement the [iterateGeneration] method, which defines the specific logic for
+ * advancing the evolutionary state through each generation.
  *
  * ### Example: Implementing a Custom Evolver
  * ```kotlin
@@ -32,11 +36,11 @@ import cl.ravenhill.keen.repr.Representation
  * ) : AbstractEvolver<T, F, R, S>(evolutionConfiguration)
  *         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
  *
- *     override var state: S = // initialize state here
+ *     override var state: S = // initialize the state here
  *
- *     override fun iterateGeneration(state: S): S {
+ *     override suspend fun iterateGeneration(state: S): Either<EvolutionException, S> {
  *         // Define the logic for advancing the evolutionary process by one generation
- *         return updatedState
+ *         return updatedState.right() // Right indicates a successful operation
  *     }
  * }
  * ```
@@ -88,7 +92,7 @@ abstract class AbstractEvolver<T, F, R, S>(
      * Executes the evolutionary process.
      *
      * This method manages the main loop of the evolutionary algorithm, invoking lifecycle listeners at the start and
-     * end of the evolution and at the start and end of each generation. The process continues until one of the
+     * end of the evolution, as well as at the start and end of each generation. The process continues until one of the
      * configured limits is met, at which point the final state is returned.
      *
      * @return The final evolutionary state after the process is complete.
@@ -98,6 +102,7 @@ abstract class AbstractEvolver<T, F, R, S>(
         do {
             generationListeners.forEach { it.onGenerationStart(state) }
             state = iterateGeneration(state)
+                .getOrElse { throw it } // Re-throw the exception to halt the evolution process
             generationListeners.forEach { it.onGenerationEnd(state) }
         } while (limits.none { it(state) })
         evolutionListeners.forEach { it.onEvolutionEnd(state) }
@@ -107,11 +112,16 @@ abstract class AbstractEvolver<T, F, R, S>(
     /**
      * Advances the evolutionary state by one generation.
      *
-     * Subclasses must implement this method to define the specific logic for updating the evolutionary state
-     * in each generation.
+     * Subclasses must implement this method to define the specific logic for updating the evolutionary state in each
+     * generation.
+     *
+     * The method should return an [Either] value, where the left side indicates an error condition and the right side
+     * indicates a successful operation. If an error occurs, the method should return an [Either.Left] value containing
+     * an [EvolutionException] describing the error. If the operation is successful, the method should return an
+     * [Either.Right] value containing the updated evolutionary state.
      *
      * @param state The current evolutionary state.
      * @return The updated evolutionary state after one generation.
      */
-    abstract suspend fun iterateGeneration(state: S): S
+    abstract suspend fun iterateGeneration(state: S): Either<EvolutionException, S>
 }

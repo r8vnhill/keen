@@ -5,7 +5,9 @@
 
 package cl.ravenhill.keen.evolution.engines
 
+import arrow.core.Either
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.exceptions.EvaluationException
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -41,5 +43,5 @@ interface EvaluationEngine<T, F, R, S> where F : Feature<T, F>, R : Representati
      * @param state The current evolutionary state containing the population to be evaluated.
      * @return The updated evolutionary state after the evaluation process is complete.
      */
-    suspend fun evaluate(state: S): S
+    suspend fun evaluate(state: S): Either<EvaluationException, S>
 }

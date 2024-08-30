@@ -5,16 +5,28 @@
 
 package cl.ravenhill.keen.evolution.engines
 
+import arrow.core.Either
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.exceptions.InitializationException
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
 /**
- * Interface for initializing the state of an evolutionary algorithm.
+ * Interface representing an initialization engine for evolutionary algorithms.
  *
- * The `InitializerEngine` interface defines the contract for classes responsible for setting up the initial state in an
- * evolutionary algorithm. This includes tasks such as generating an initial population of individuals, assigning
- * initial values or configurations, and ensuring that the state is ready for the evolutionary process to begin.
+ * The `InitializerEngine` interface defines the contract for components responsible for initializing the evolutionary
+ * state in an evolutionary algorithm. This typically involves generating an initial population or setting up other
+ * state-related data structures that the algorithm will use in subsequent generations.
+ *
+ * ## Responsibilities:
+ * Implementations of this interface are expected to:
+ *
+ * - **Initialization**: Provide logic to initialize the evolutionary state, typically by generating a population of
+ *   individuals or configuring other necessary components.
+ * - **Error Handling**: Use the `Either` type to handle potential failures during initialization, encapsulating
+ *   errors in an [InitializationException] if something goes wrong.
+ * - **Asynchronous Execution**: Support asynchronous operations through the `suspend` modifier, allowing the
+ *   initialization process to be non-blocking and easily integrated into coroutine-based workflows.
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
@@ -26,15 +38,18 @@ interface InitializerEngine<T, F, R, S> where F : Feature<T, F>,
                                               S : EvolutionState<T, F, R> {
 
     /**
-     * Initializes the given evolutionary state.
+     * Initializes the evolutionary state.
      *
-     * This method is responsible for preparing the initial state for the evolutionary process. It might include
-     * generating the initial population, setting initial values, or performing any setup required before the
-     * evolutionary process begins. The method is `suspend` to support asynchronous initialization, which is especially
-     * useful in scenarios involving large populations or complex initialization logic.
+     * This method is responsible for setting up the initial conditions of the evolutionary algorithm, such as
+     * generating the initial population. The process is expected to be asynchronous, making use of coroutines for
+     * non-blocking execution.
      *
-     * @param state The initial evolutionary state to be initialized.
-     * @return The initialized state, ready for the evolutionary process to start.
+     * The method returns an `Either` type to handle potential failures:
+     * - On success, the initialized state is returned.
+     * - On failure, an [InitializationException] is returned, providing details about the error.
+     *
+     * @param state The current state that needs initialization.
+     * @return An [Either] containing the initialized state or an [InitializationException].
      */
-    suspend fun initialize(state: S): S
+    suspend fun initialize(state: S): Either<InitializationException, S>
 }

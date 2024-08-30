@@ -3,33 +3,20 @@
  * 2-Clause BSD License.
  */
 
-
 package cl.ravenhill.keen.exceptions
-
-import cl.ravenhill.jakt.exceptions.ConstraintException
 
 
 /**
- * Exception thrown when a constraint violation occurs during the selection operation in evolutionary algorithms.
- * This exception highlights issues related to the constraints imposed on the selection process.
+ * Exception thrown when an error occurs during the selection process in an evolutionary algorithm.
  *
- * ## Usage:
- * `SelectionException` is typically thrown within a constraints block where specific conditions related to the
- * selection operation are checked. These conditions might include the size of the population, the validity of the
- * selection count, or other requirements for successful selection.
+ * The `SelectionException` class extends the [OperatorInvocationException] and represents errors specifically related
+ * to the selection phase of an evolutionary algorithm. This exception is used to indicate issues that arise when
+ * selecting individuals from a population, such as when a selection method fails to produce a valid result or when
+ * constraints related to selection are violated.
  *
- * ### Example 1: Ensuring Population is Not Empty
- * ```
- * constraints {
- *     "Population must not be empty"(::SelectionException) {
- *         state.population mustNot BeEmpty
- *     }
- * }
- * ```
- * Here, a `SelectionException` could be thrown if the population is empty, which is crucial for a successful selection
- * operation.
- *
- * @param message The detailed message that explains the reason for the exception, providing context for the constraint
- *  violation.
+ * @param message The detail message explaining the reason for the selection error. This message should clearly describe
+ *   the problem encountered during the selection process.
  */
-class SelectionException(message: String) : ConstraintException(message)
+class SelectionException(message: String, cause: Throwable?) : OperatorInvocationException(message, cause) {
+    constructor(message: String) : this(message, null)
+}

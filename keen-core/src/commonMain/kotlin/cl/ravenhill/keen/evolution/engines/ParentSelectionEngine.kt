@@ -5,7 +5,9 @@
 
 package cl.ravenhill.keen.evolution.engines
 
+import arrow.core.Either
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -23,7 +25,7 @@ import cl.ravenhill.keen.repr.Representation
  * @param R The type of the representation, which must extend [Representation].
  * @param S The type of the evolutionary state, which must extend [EvolutionState].
  */
-interface ParentSelectorEngine<T, F, R, S>
+interface ParentSelectionEngine<T, F, R, S>
         where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R> {
 
     /**
@@ -37,5 +39,5 @@ interface ParentSelectorEngine<T, F, R, S>
      * @param state The current evolutionary state from which parents are to be selected.
      * @return An updated evolutionary state with the selected parents.
      */
-    suspend fun selectParents(state: S): S
+    suspend fun selectParents(state: S): Either<SelectionException, S>
 }

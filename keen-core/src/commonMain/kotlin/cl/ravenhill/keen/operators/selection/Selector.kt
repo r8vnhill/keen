@@ -5,13 +5,15 @@
 
 package cl.ravenhill.keen.operators.selection
 
-import cl.ravenhill.jakt.Jakt.constraints
+import arrow.core.Either
+import arrow.core.getOrElse
+import arrow.core.left
+import arrow.core.right
+import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constrainedTo
 import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.ints.BeNegative
-import cl.ravenhill.jakt.exceptions.CompositeException
-import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.states.EvolutionState
@@ -20,55 +22,36 @@ import cl.ravenhill.keen.operators.Operator
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import kotlin.random.Random
 
 /**
- * Represents a selection operator in an evolutionary algorithm.
+ * Interface representing a selection operator in an evolutionary algorithm.
  *
- * The `Selector` interface defines a contract for selection mechanisms that choose a subset of individuals
- * from a population based on their fitness or other criteria. Implementations of this interface are responsible
- * for selecting individuals according to specific strategies, such as tournament selection or roulette wheel selection.
+ * The `Selector` interface defines the contract for selection mechanisms that choose a subset of individuals from a
+ * population based on their fitness or other criteria. Implementations of this interface are responsible for selecting
+ * individuals according to specific strategies, such as tournament selection or roulette wheel selection.
  *
  * ## Usage:
- * This interface should be implemented to create different selection strategies in evolutionary algorithms.
- * The `invoke` operator function is used to apply the selection process to an evolutionary state, returning
- * a new state with the selected individuals.
+ * This interface is intended to be implemented by classes that define specific selection strategies within an
+ * evolutionary algorithm. The main responsibilities of a `Selector` include verifying that the population and output
+ * size are valid, and then performing the selection operation based on the provided criteria.
  *
- * ### Example 1:
- *
- * Implementing a custom selector as a class:
+ * ### Example:
+ * Implementing a custom selector:
  * ```kotlin
- * class MySelector<T, F, R> : Selector<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
+ * class MyCustomSelector<T, F, R> : Selector<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
  *     override fun select(
  *         population: Population<T, F, R>,
  *         count: Int,
  *         ranker: IndividualRanker<T, F, R>
- *     ): Result<Population<T, F, R>> {
+ *     ): Either<SelectionException, Population<T, F, R>> {
  *         // Custom selection logic
  *     }
- *     // ... other methods and properties ...
- * }
- * ```
- *
- * ### Example 2:
- *
- * Implementing as an anonymous object:
- * ```kotlin
- * val selector = object : Selector<MyType, MyFeature, MyRepresentation> {
- *     override fun select(
- *         population: Population<MyType, MyFeature, MyRepresentation>,
- *         count: Int,
- *         ranker: IndividualRanker<MyType, MyFeature, MyRepresentation>
- * ): Result<Population<MyType, MyFeature, MyRepresentation>> {
- *     // Custom selection logic
  * }
  * ```
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
- *
- * @see invoke
  */
 interface Selector<T, F, R> : Operator<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
 
@@ -76,71 +59,53 @@ interface Selector<T, F, R> : Operator<T, F, R> where F : Feature<T, F>, R : Rep
      * Applies the selection process to the given evolutionary state, producing a new state with the selected
      * individuals.
      *
-     * This function performs the selection based on the population in the given state. It checks constraints to ensure
-     * that the population is not empty and that the selection count is non-negative. The selected individuals are then
-     * used to build a new evolutionary state.
-     *
-     * The function wraps the operation in a [runCatching] block, meaning that any exceptions encountered during the
-     * selection process are caught and returned as part of a [Result].
-     *
-     * ## Potential Exceptions:
-     * The following exceptions may be generated during the selection process and will be wrapped in a [Result]:
-     * - [CompositeException]: Thrown whenever a constraint is violated.
-     * - [SelectionException]: Thrown if the population is empty, the output size is negative, or the selection count
-     *   does not match the expected size.
+     * This function is responsible for verifying that the population is not empty and that the selection count is
+     * non-negative. It then invokes the `select` method to perform the selection and ensures that the output size
+     * matches the expected size. The method returns an `Either` type, indicating either a successful state or a
+     * `SelectionException` if an error occurs.
      *
      * @param S The type of the evolutionary state.
      * @param state The current evolutionary state.
      * @param outputSize The number of individuals to select.
      * @param buildState A function that builds a new state from the selected individuals.
-     * @return A [Result] containing the new evolutionary state with the selected individuals, or an exception wrapped
-     *   in the [Result] if the selection fails.
+     * @return An `Either` containing the new evolutionary state on success, or a `SelectionException` on failure.
      */
     override suspend operator fun <S> invoke(
         state: S,
         outputSize: Int,
-        buildState: (List<Individual<T, F, R>>) -> S,
-        random: Random
-    ): Result<S> where S : EvolutionState<T, F, R> = runCatching {
-        constraints {
-            "Population must not be empty"(::SelectionException) {
-                state.population mustNot BeEmpty
-            }
-            "Selection count ($outputSize) must not be negative"(::SelectionException) {
-                outputSize mustNot BeNegative
-            }
+        buildState: (List<Individual<T, F, R>>) -> S
+    ): Either<SelectionException, S> where S : EvolutionState<T, F, R> {
+        constrained {
+            "Population must not be empty" { state.population mustNot BeEmpty }
+            "Selection count ($outputSize) must not be negative" { outputSize mustNot BeNegative }
+        }.getOrElse {
+            return SelectionException("Invalid selection parameters", it).left()
         }
         val selectedPopulation = select(state.population, outputSize, state.ranker)
-        selectedPopulation.getOrElse { throw it }
+            .getOrElse { return it.left() }
             .constrainedTo {
-                ("Expected output size ($outputSize) must be equal to actual output size " +
-                        "(${selectedPopulation.getOrThrow().size})")(::SelectionException) {
-                    selectedPopulation.getOrThrow() must HaveSize(outputSize)
-                }
-            }
-            .run(buildState)
+                ("Expected output size ($outputSize) must be equal to actual output size (${it.size})")(
+                    ::SelectionException
+                ) { it must HaveSize(outputSize) }
+            }.getOrElse { return SelectionException("Invalid selection output size", it).left() }
+        return buildState(selectedPopulation).right()
     }
 
     /**
      * Selects a subset of individuals from the population based on the provided ranker and count.
      *
-     * This method performs the core selection logic, returning a [Result] that contains the selected population.
-     * The selection strategy is determined by the implementation of this method in concrete classes.
-     *
-     * Implementing classes may return [Result.Failure]s containing exceptions if the selection process fails. These
-     * exceptions must be documented in the class's documentation.
+     * This method is responsible for performing the core selection logic and returning an `Either` containing the
+     * selected population on success, or a `SelectionException` on failure. Implementations of this method should
+     * handle any specific selection strategy, such as tournament or roulette wheel selection.
      *
      * @param population The population from which individuals are selected.
      * @param count The number of individuals to select.
      * @param ranker The ranker used to evaluate and compare individuals in the population.
-     * @param random The random number generator used to make random selections.
-     * @return A [Result] containing the selected population, or an exception wrapped in the [Result] if the selection
-     *   fails.
+     * @return An `Either` containing the selected population on success, or a `SelectionException` on failure.
      */
-    fun select(
+    suspend fun select(
         population: Population<T, F, R>,
         count: Int,
         ranker: IndividualRanker<T, F, R>,
-        random: Random = Domain.random
-    ): Result<Population<T, F, R>>
+    ): Either<SelectionException, Population<T, F, R>>
 }
