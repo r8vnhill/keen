@@ -49,5 +49,5 @@ suspend fun <T, F, R> fittest(
             .last().population
             .offspring
             .map { it.toIndividual() }
-    ).first().let { IndividualRecord.fromIndividual(it) }
+    ).last().let { IndividualRecord.fromIndividual(it) }
 }

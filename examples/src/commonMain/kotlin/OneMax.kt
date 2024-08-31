@@ -15,6 +15,7 @@ import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.BooleanGene
 import cl.ravenhill.keen.limits.targetFitness
 import cl.ravenhill.keen.listeners.printer.EvolutionPrinter
+import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 import cl.ravenhill.keen.operators.selection.TournamentSelector
@@ -42,11 +43,8 @@ suspend fun oneMax() {
         survivorSelector = TournamentSelector()
         alterers += listOf(BitFlipMutator(), UniformCrossover(chromosomeRate = 0.6))
         limits += targetFitness(50.0)
-        listeners += EvolutionPrinter(20)
+        listeners += EvolutionSummary()
     }
     engine.evolve()
-        .population
-        .fitness
-        .maxOrNull()
-        .let { println("Best fitness: $it") }
+    engine.publicListeners.filterIsInstance<EvolutionSummary<*, *, *, *>>().first().display()
 }

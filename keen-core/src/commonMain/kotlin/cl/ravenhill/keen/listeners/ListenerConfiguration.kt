@@ -14,6 +14,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.keen.utils.box.ImmutableBox
+import cl.ravenhill.keen.utils.box.MutableBox
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 
@@ -37,5 +38,5 @@ data class ListenerConfiguration<T, F, R>(
     val timeSource: TimeSource = TimeSource.Monotonic,
     val precision: TimePrecision = WholeMilliseconds
 ) where F : Feature<T, F>, R : Representation<T, F> {
-    val currentGeneration = ImmutableBox<GenerationRecord<T, F, R>?>(null)
+    val currentGeneration = MutableBox<GenerationRecord<T, F, R>?>(null)
 }

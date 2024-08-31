@@ -89,7 +89,7 @@ data class GenerationRecord<T, F, R>(val generation: Int) :
      * @param offspring A list of offspring individuals.
      */
     data class PopulationRecord<T, F, R>(
-        val parents: List<IndividualRecord<T, F, R>> = emptyList(),
+        var parents: List<IndividualRecord<T, F, R>> = emptyList(),
         var offspring: List<IndividualRecord<T, F, R>> = emptyList()
     ) : AbstractTimedRecord() where F : Feature<T, F>, R : Representation<T, F>
 }

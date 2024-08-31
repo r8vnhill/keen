@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2024, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
+package cl.ravenhill.keen.listeners.summary
+
+import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.listeners.ListenerConfiguration
+import cl.ravenhill.keen.listeners.mixins.EvaluationListener
+import cl.ravenhill.keen.listeners.records.mapGeneration
+import cl.ravenhill.keen.repr.Feature
+import cl.ravenhill.keen.repr.Representation
+
+/**
+ * A listener that summarizes and records the evaluation phase of each generation in an evolutionary algorithm.
+ *
+ * The `EvaluationSummary` class is responsible for capturing key metrics related to the evaluation phase within each
+ * generation of the evolutionary process. This includes recording the start time and duration of the evaluation phase,
+ * providing insight into the time taken to evaluate individuals in the population.
+ *
+ * @param T The type of the value held by the features.
+ * @param F The type of feature, which must extend [Feature].
+ * @param R The type of representation, which must extend [Representation].
+ * @param S The type of evolutionary state, which must extend [EvolutionState].
+ * @property timeSource The source of time used to measure durations.
+ * @property currentGeneration A reference to the current generation record being processed.
+ * @property withPrecision A lambda function that provides the desired precision for time measurements.
+ */
+internal class EvaluationSummary<T, F, R, S>(configuration: ListenerConfiguration<T, F, R>) :
+    EvaluationListener<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
+
+    private val timeSource = configuration.timeSource
+    private val currentGeneration = configuration.currentGeneration
+    private val withPrecision = configuration.precision.withPrecision
+
+    /**
+     * Called at the start of the evaluation phase.
+     *
+     * This method records the start time of the evaluation phase using the provided time source.
+     *
+     * @param state The current state of the evolutionary algorithm.
+     */
+    override fun onEvaluationStart(state: S) = mapGeneration(currentGeneration) {
+        evaluation.startTime = timeSource.markNow()
+    }
+
+    /**
+     * Called at the end of the evaluation phase.
+     *
+     * This method calculates and records the duration of the evaluation phase by measuring the elapsed time since
+     * the start time.
+     *
+     * @param state The current state of the evolutionary algorithm.
+     */
+    override fun onEvaluationEnd(state: S) = mapGeneration(currentGeneration) {
+        evaluation.duration = evaluation.startTime.elapsedNow().withPrecision()
+    }
+}
