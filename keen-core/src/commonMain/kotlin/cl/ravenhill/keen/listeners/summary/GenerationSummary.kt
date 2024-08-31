@@ -11,7 +11,7 @@ import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.listeners.records.IndividualRecord
-import cl.ravenhill.keen.listeners.records.mapGeneration
+import cl.ravenhill.keen.listeners.records.applyToGeneration
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 import kotlin.time.Duration
@@ -68,7 +68,7 @@ internal class GenerationSummary<T, F, R, S>(
      *
      * @param state The current state of the evolutionary algorithm.
      */
-    override suspend fun onGenerationEnd(state: S) = mapGeneration(currentGeneration) {
+    override suspend fun onGenerationEnd(state: S) = applyToGeneration(currentGeneration) {
         duration = startTime.elapsedNow().withPrecision()
         population.offspring = List(state.population.size) { index ->
             IndividualRecord(state.population[index].representation, state.population[index].fitness)

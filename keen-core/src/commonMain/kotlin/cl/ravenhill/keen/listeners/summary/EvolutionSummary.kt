@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.listeners.summary
 
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
@@ -21,22 +22,13 @@ import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
 /**
- * A comprehensive listener that summarizes the evolution process, including initialization, evaluation, selection, and alteration phases.
+ * A comprehensive listener that summarizes the evolution process, including initialization, evaluation, selection, and
+ * alteration phases.
  *
- * The `EvolutionSummary` class aggregates and summarizes key metrics and times for each phase of the evolutionary algorithm.
- * It implements various listeners for different stages of the algorithm and consolidates their data into a single summary.
- * The summary is displayed as a formatted table, showing statistics like time taken for initialization, evaluation, selection, and alterations,
- * as well as the best fitness and steady generations.
- *
- * ## Usage:
- * This class is intended to be used as a listener in an evolutionary algorithm to track and display the progress and results of the evolution.
- * It consolidates data from the entire evolutionary process and presents it in a human-readable format.
- *
- * ### Example:
- * ```kotlin
- * val evolutionSummary = EvolutionSummary<MyType, MyFeature, MyRepresentation, MyState>()
- * myEvolutionAlgorithm.addListener(evolutionSummary)
- * ```
+ * The `EvolutionSummary` class aggregates and summarizes key metrics and times for each phase of the evolutionary
+ * algorithm. It implements various listeners for different stages of the algorithm and consolidates their data into a
+ * single summary. The summary is displayed as a formatted table, showing statistics like time taken for initialization,
+ * evaluation, selection, and alterations, as well as the best fitness and steady generations.
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
@@ -87,7 +79,7 @@ class EvolutionSummary<T, F, R, S> private constructor(
      */
     override suspend fun display() {
         val consoleWidth = consoleWidth()
-        val tableWidth = minOf(consoleWidth, 80) // Maximum width, adjust as needed
+        val tableWidth = minOf(consoleWidth, Domain.defaultConsoleWidth) // Maximum width, adjust as needed
 
         val content = generateContent()
         val adjustedWidth = calculateTableWidth<T, F, R, S>(content, tableWidth)
@@ -240,9 +232,21 @@ private fun <T, F, R, S> generateBorder(width: Int) where F : Feature<T, F>,
 private fun <T, F, R, S> formatContent(
     content: List<String>,
     width: Int
-) where F : Feature<T, F>,
-        R : Representation<T, F>,
-        S : EvolutionState<T, F, R, S> = content.joinToString("\n") { "|| ${it.padEnd(width - 2)} |" }
+): String where F : Feature<T, F>,
+                R : Representation<T, F>,
+                S : EvolutionState<T, F, R, S> {
+    val adjustedWidth = minOf(width - 4, 80) // Account for borders and padding
+
+    // Format the content with borders
+    return content.joinToString("\n") { line ->
+        val truncatedLine = if (line.length > adjustedWidth) {
+            "${line.take(adjustedWidth - 3)}..." // Truncate and add ellipses
+        } else {
+            line.padEnd(adjustedWidth)
+        }
+        "|| $truncatedLine   |"
+    }
+}
 
 /**
  * Assembles a formatted table to display an evolution summary.

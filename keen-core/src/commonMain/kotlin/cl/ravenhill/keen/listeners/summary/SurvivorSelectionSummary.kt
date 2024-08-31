@@ -8,7 +8,7 @@ package cl.ravenhill.keen.listeners.summary
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.SurvivorSelectorListener
-import cl.ravenhill.keen.listeners.records.mapGeneration
+import cl.ravenhill.keen.listeners.records.applyToGeneration
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -43,7 +43,7 @@ internal class SurvivorSelectionSummary<T, F, R, S>(
      *
      * @param state The current state of the evolutionary algorithm.
      */
-    override fun onSurvivorSelectionStart(state: S) = mapGeneration(currentGeneration) {
+    override fun onSurvivorSelectionStart(state: S) = applyToGeneration(currentGeneration) {
         survivorSelection.startTime = timeSource.markNow()
     }
 
@@ -55,7 +55,7 @@ internal class SurvivorSelectionSummary<T, F, R, S>(
      *
      * @param state The current state of the evolutionary algorithm.
      */
-    override fun onSurvivorSelectionEnd(state: S) = mapGeneration(currentGeneration) {
+    override fun onSurvivorSelectionEnd(state: S) = applyToGeneration(currentGeneration) {
         survivorSelection.duration = survivorSelection.startTime.elapsedNow().withPrecision()
     }
 

@@ -7,6 +7,7 @@ package cl.ravenhill.keen.listeners
 
 import arrow.core.getOrElse
 import cl.ravenhill.jakt.constrainedTo
+import cl.ravenhill.keen.Domain
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.await
 import kotlinx.coroutines.withContext
@@ -18,13 +19,13 @@ internal actual suspend fun consoleWidth(dispatcher: CoroutineDispatcher): Int =
         val terminalSizePromise = js("import('terminal-size')") as Promise<dynamic>
         val terminalSize = terminalSizePromise.await()
         // Ensure the size object has a width property
-        val width = terminalSize.width as? Int ?: 80 // Fallback to 80 if width is not available
+        val width = terminalSize.width as? Int ?: Domain.defaultConsoleWidth
         width.constrainedTo { "The terminal width must be greater than 0" { it must cl.ravenhill.jakt.constraints.ints.BePositive } }
-            .getOrElse { 80 }
+            .getOrElse { Domain.defaultConsoleWidth }
             .takeIf { it > 40 }
             ?: 40
     } catch (e: dynamic) {
         console.error("Error during dynamic import or retrieving size: ${e.message}")
-        80 // Fallback width
+        Domain.defaultConsoleWidth // Fallback width
     }
 }

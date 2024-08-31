@@ -30,7 +30,7 @@ import cl.ravenhill.keen.utils.box.Box
  * @param F The type of feature, which must extend [Feature].
  * @param R The type of representation, which must extend [Representation].
  */
-fun <T, F, R> mapGeneration(
+fun <T, F, R> applyToGeneration(
     generation: Box<GenerationRecord<T, F, R>?>,
     block: GenerationRecord<T, F, R>.() -> Unit
 ) where F : Feature<T, F>,

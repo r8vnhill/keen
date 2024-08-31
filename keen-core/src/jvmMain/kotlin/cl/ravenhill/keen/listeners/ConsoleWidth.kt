@@ -8,6 +8,7 @@ package cl.ravenhill.keen.listeners
 import arrow.core.getOrElse
 import cl.ravenhill.jakt.constrainedTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
+import cl.ravenhill.keen.Domain
 import kotlinx.coroutines.CoroutineDispatcher
 import org.jline.terminal.TerminalBuilder
 
@@ -28,7 +29,7 @@ internal actual suspend fun consoleWidth(dispatcher: CoroutineDispatcher): Int {
         .build()
         .width
         .constrainedTo { "The terminal width must be greater than 0" { it must BePositive } }
-        .getOrElse { 80 }
+        .getOrElse { Domain.defaultConsoleWidth }
         .takeIf { it > 40 }
         ?: 40
 }

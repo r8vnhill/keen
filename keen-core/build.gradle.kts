@@ -9,7 +9,7 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        getByName("commonMain") {
             dependencies {
                 implementation(kotlin("reflect"))
                 implementation(libs.kotlin.coroutines.core)
@@ -19,7 +19,7 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
+        getByName("commonTest") {
             dependencies {
                 implementation(project(":test-utils"))
                 implementation(libs.kotest.assertions.core)
@@ -29,13 +29,14 @@ kotlin {
             }
         }
 
-        val jvmMain by getting {
+        getByName("jvmMain") {
             dependencies {
                 implementation(libs.jline)
+                implementation(libs.xchart)
             }
         }
 
-        val jvmTest by getting {
+        getByName("jvmTest") {
             dependencies {
                 implementation(libs.kotest.runner.junit5)
             }
@@ -44,6 +45,10 @@ kotlin {
         getByName("jsHostedMain") {
             dependencies {
                 implementation(npm("terminal-size", "4.0.0"))
+                implementation(npm("chart.js", "4.4.4"))
+                implementation(npm("chartjs-node-canvas", "4.1.6"))
+                implementation(npm("canvas", "2.11.2"))
+                implementation(libs.kotlinx.html)
             }
         }
     }

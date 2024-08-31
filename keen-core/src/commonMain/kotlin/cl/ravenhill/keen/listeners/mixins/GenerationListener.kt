@@ -34,7 +34,7 @@ interface GenerationListener<T, F, R, S> : Listener where F : Feature<T, F>,
      *
      * @param state The current evolutionary state.
      */
-    fun onGenerationStart(state: S) = Unit
+    fun onGenerationStart(state: S)
 
     /**
      * Called at the end of each generation.
@@ -44,5 +44,5 @@ interface GenerationListener<T, F, R, S> : Listener where F : Feature<T, F>,
      *
      * @param state The current evolutionary state.
      */
-    suspend fun onGenerationEnd(state: S) = Unit
+    suspend fun onGenerationEnd(state: S)
 }

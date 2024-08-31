@@ -11,7 +11,7 @@ import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.listeners.records.IndividualRecord
-import cl.ravenhill.keen.listeners.records.mapGeneration
+import cl.ravenhill.keen.listeners.records.applyToGeneration
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -68,7 +68,7 @@ class GenerationPrinterListener<T, F, R, S>(
      * @param state The current evolutionary state at the end of the generation.
      */
     override suspend fun onGenerationEnd(state: S) {
-        mapGeneration(currentGeneration) {
+        applyToGeneration(currentGeneration) {
             duration = startTime.elapsedNow().withPrecision()
             evolution.generations += this
             population.offspring = List(state.size) {

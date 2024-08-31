@@ -8,7 +8,7 @@ package cl.ravenhill.keen.listeners.summary
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.EvaluationListener
-import cl.ravenhill.keen.listeners.records.mapGeneration
+import cl.ravenhill.keen.listeners.records.applyToGeneration
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -41,7 +41,7 @@ internal class EvaluationSummary<T, F, R, S>(configuration: ListenerConfiguratio
      *
      * @param state The current state of the evolutionary algorithm.
      */
-    override fun onEvaluationStart(state: S) = mapGeneration(currentGeneration) {
+    override fun onEvaluationStart(state: S) = applyToGeneration(currentGeneration) {
         evaluation.startTime = timeSource.markNow()
     }
 
@@ -53,7 +53,7 @@ internal class EvaluationSummary<T, F, R, S>(configuration: ListenerConfiguratio
      *
      * @param state The current state of the evolutionary algorithm.
      */
-    override fun onEvaluationEnd(state: S) = mapGeneration(currentGeneration) {
+    override fun onEvaluationEnd(state: S) = applyToGeneration(currentGeneration) {
         evaluation.duration = evaluation.startTime.elapsedNow().withPrecision()
     }
 }

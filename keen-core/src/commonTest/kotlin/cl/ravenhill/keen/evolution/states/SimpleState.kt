@@ -27,13 +27,18 @@ data class SimpleState<T, F, R>(
     override val population: Population<T, F, R>,
     override val ranker: IndividualRanker<T, F, R>,
     override val generation: Int
-) : EvolutionState<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
+) : EvolutionState<T, F, R, SimpleState<T, F, R>> where F : Feature<T, F>, R : Representation<T, F> {
 
     /**
-     * Creates a copy of the current [SimpleState] with a new population.
+     * Creates a copy of the current state with the specified population, ranker, and generation.
      *
-     * @param population The new population to set.
-     * @return A new [SimpleState] instance with the updated population.
+     * @param population The new population of individuals.
+     * @param ranker The new [IndividualRanker] to evaluate and rank individuals.
+     * @param generation The new generation number.
      */
-    override fun withPopulation(population: Population<T, F, R>) = copy(population = population)
+    override fun makeCopy(
+        population: Population<T, F, R>,
+        ranker: IndividualRanker<T, F, R>,
+        generation: Int
+    ) = copy(population = population, ranker = ranker, generation = generation)
 }

@@ -5,7 +5,11 @@
 
 import kotlinx.coroutines.runBlocking
 
-
+/**
+ * Entry point for running the OneMax genetic algorithm.
+ *
+ * @see oneMax
+ */
 fun main() {
     runBlocking {
         oneMax()

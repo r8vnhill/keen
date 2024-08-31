@@ -8,7 +8,7 @@ package cl.ravenhill.keen.listeners.summary
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
-import cl.ravenhill.keen.listeners.records.mapGeneration
+import cl.ravenhill.keen.listeners.records.applyToGeneration
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -50,7 +50,7 @@ internal class ParentSelectionSummary<T, F, R, S>(private val configuration: Lis
      *
      * @param state The current state of the evolutionary algorithm.
      */
-    override fun onParentSelectionStart(state: S) = mapGeneration(currentGeneration) {
+    override fun onParentSelectionStart(state: S) = applyToGeneration(currentGeneration) {
         parentSelection.startTime = timeSource.markNow()
     }
 
@@ -62,7 +62,7 @@ internal class ParentSelectionSummary<T, F, R, S>(private val configuration: Lis
      *
      * @param state The current state of the evolutionary algorithm.
      */
-    override fun onParentSelectionEnd(state: S) = mapGeneration(currentGeneration) {
+    override fun onParentSelectionEnd(state: S) = applyToGeneration(currentGeneration) {
         parentSelection.duration = parentSelection.startTime.elapsedNow().withPrecision()
     }
 }

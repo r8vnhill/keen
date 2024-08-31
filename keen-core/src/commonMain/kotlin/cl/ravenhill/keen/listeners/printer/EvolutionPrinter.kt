@@ -102,13 +102,19 @@ class EvolutionPrinter<T, F, R, S> private constructor(
             // Calculate the maximum length of the lines and adjust it based on console width
             val maxLength = content.maxOf { it.length }
             val adjustedMaxLength = minOf(maxLength, consoleWidth - 4) // Account for borders and padding
-
             // Generate borders
             val border = "-".repeat(adjustedMaxLength + 2) // Adjust for padding
-
+            // Account for borders and padding
+            val adjustedWidth = minOf(consoleWidth - 4, Domain.defaultConsoleWidth)
             // Format the content with borders
-            val borderedContent = content.joinToString("\n") { "|| ${it.padEnd(adjustedMaxLength)} |" }
-
+            val borderedContent = content.joinToString("\n") { line ->
+                val truncatedLine = if (line.length > adjustedWidth) {
+                    "${line.take(adjustedWidth - 3)}..." // Truncate and add ellipses
+                } else {
+                    line.padEnd(adjustedWidth)
+                }
+                "|| $truncatedLine |"
+            }
             // Combine everything into a single output
             """
             |+${border}+

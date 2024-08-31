@@ -6,8 +6,10 @@ kotest = "5.9.1"
 detekt = "1.23.6"
 coroutines = "1.8.1"
 kotlinx-datetime = "0.6.1"
+kotlinx-html = "0.11.0"
 arrow = "2.0.0-alpha.3"
 jline = "3.26.3"
+xchart = "3.8.8"
 
 ### Java compilation ###
 # Keen's minimum supported Java version.
@@ -31,11 +33,14 @@ kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref 
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
 
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
 
 jline = { module = "org.jline:jline", version.ref = "jline" }
+
+xchart = { module = "org.knowm.xchart:xchart", version.ref = "xchart" }
 
 # Gradle plugins
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

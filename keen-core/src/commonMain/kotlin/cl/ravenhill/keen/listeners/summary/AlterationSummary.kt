@@ -8,8 +8,7 @@ package cl.ravenhill.keen.listeners.summary
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.AlterationListener
-import cl.ravenhill.keen.listeners.mixins.SurvivorSelectorListener
-import cl.ravenhill.keen.listeners.records.mapGeneration
+import cl.ravenhill.keen.listeners.records.applyToGeneration
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -46,7 +45,7 @@ internal class AlterationSummary<T, F, R, S>(
      *
      * @param state The current state of the evolutionary algorithm.
      */
-    override fun onAlterationStart(state: S) = mapGeneration(currentGeneration) {
+    override fun onAlterationStart(state: S) = applyToGeneration(currentGeneration) {
         alteration.startTime = timeSource.markNow()
     }
 
@@ -58,7 +57,7 @@ internal class AlterationSummary<T, F, R, S>(
      *
      * @param state The current state of the evolutionary algorithm.
      */
-    override fun onAlterationEnd(state: S) = mapGeneration(currentGeneration) {
+    override fun onAlterationEnd(state: S) = applyToGeneration(currentGeneration) {
         alteration.duration = alteration.startTime.elapsedNow().withPrecision()
     }
 }

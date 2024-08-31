@@ -9,9 +9,12 @@ import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constraints.doubles.BeAtLeast
 import cl.ravenhill.jakt.constraints.doubles.BeNaN
 import cl.ravenhill.keen.Domain.DEFAULT_EQUALITY_THRESHOLD
+import cl.ravenhill.keen.Domain.dispatcher
+import cl.ravenhill.keen.Domain.equalityThreshold
+import cl.ravenhill.keen.Domain.random
+import cl.ravenhill.keen.Domain.toStringMode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
 /**
@@ -44,6 +47,7 @@ import kotlin.random.Random
  *   customize random behavior.
  * @property toStringMode The mode that determines how objects are converted to strings. Useful for debugging and
  *   logging.
+ * @property defaultConsoleWidth The default width of the console output. This is used for formatting text and tables.
  */
 object Domain {
 
@@ -65,6 +69,8 @@ object Domain {
         }
 
     var random: Random = Random.Default
+
+    var defaultConsoleWidth = 120
 
     var toStringMode = ToStringMode.DEFAULT
 }

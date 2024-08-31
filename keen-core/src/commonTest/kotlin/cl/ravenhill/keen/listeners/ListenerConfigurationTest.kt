@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.listeners
 
+import cl.ravenhill.keen.listeners.precision.WholeMicroseconds
+import cl.ravenhill.keen.listeners.precision.WholeMilliseconds
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
 import cl.ravenhill.keen.listeners.records.arbEvolutionRecord
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
@@ -88,7 +90,7 @@ class ListenerConfigurationTest : FreeSpec({
 
             "should be the specified precision function" {
                 checkAll(
-                    Arb.element(Duration::inWholeMilliseconds, Duration::inWholeMicroseconds)
+                    Arb.element(WholeMilliseconds, WholeMicroseconds)
                 ) { precision ->
                     val config = SimpleListenerConfiguration(precision = precision)
                     config.precision shouldBe precision
