@@ -32,7 +32,7 @@ interface Listener {
      * this method to provide a custom display format for the listener's state. This could be through a formatted
      * string, a graphical representation, or any other suitable output.
      */
-    fun display() = println(toString())
+    suspend fun display() = println(toString())
 
     /**
      * Creates and returns a copy of the listener.

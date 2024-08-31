@@ -9,6 +9,7 @@ import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constraints.doubles.BeAtLeast
 import cl.ravenhill.jakt.constraints.doubles.BeNaN
 import cl.ravenhill.keen.Domain.DEFAULT_EQUALITY_THRESHOLD
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
@@ -48,7 +49,7 @@ object Domain {
 
     const val DEFAULT_EQUALITY_THRESHOLD = 1E-10
 
-    var dispatcher: CoroutineContext = Dispatchers.Default
+    var dispatcher: CoroutineDispatcher = Dispatchers.Default
 
     var equalityThreshold = DEFAULT_EQUALITY_THRESHOLD
         set(value) {

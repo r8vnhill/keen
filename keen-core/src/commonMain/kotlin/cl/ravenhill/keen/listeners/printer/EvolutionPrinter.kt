@@ -5,11 +5,14 @@
 
 package cl.ravenhill.keen.listeners.printer
 
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.listeners.ListenerConfiguration
+import cl.ravenhill.keen.listeners.consoleWidth
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import kotlinx.coroutines.CoroutineDispatcher
 
 /**
  * A listener that prints detailed information about the evolutionary process at specified intervals.
@@ -48,7 +51,9 @@ class EvolutionPrinter<T, F, R, S> private constructor(
 
     private val evolution by lazy { configuration.evolution }
 
-    private val generations by lazy { evolution.generations }
+    private val ranker by lazy { configuration.ranker }
+
+    private val timeUnit by lazy { configuration.precision.unit }
 
     /**
      * Called at the end of each generation.
@@ -58,7 +63,7 @@ class EvolutionPrinter<T, F, R, S> private constructor(
      *
      * @param state The current evolutionary state at the end of the generation.
      */
-    override fun onGenerationEnd(state: S) {
+    override suspend fun onGenerationEnd(state: S) {
         generationPrinter.onGenerationEnd(state)
         if (state.generation % every == 0) {
             display()
@@ -69,28 +74,49 @@ class EvolutionPrinter<T, F, R, S> private constructor(
      * Displays the evolution details.
      *
      * This method prints out the statistics of the evolutionary process, including generation times, fitness metrics,
-     * and the fittest individual. It is invoked periodically based on the `every` interval.
+     * and the fittest individual. It is invoked periodically based on the [every] interval.
      */
-    override fun display() {
-        println(
-            if (evolution.generations.isEmpty()) {
-                "No generations have been processed yet."
-            } else {
-                val lastGeneration = generations.last()
-                """
-                === Generation ${evolution.generations.size} ===
-                |--> Average generation time: ${evolution.generations.map { it.duration }.average()} ns
-                |--> Max generation time: ${evolution.generations.maxOfOrNull { it.duration }} ns
-                |--> Min generation time: ${evolution.generations.minOfOrNull { it.duration }} ns
-                |--> Steady generations: ${lastGeneration.steady}
-                |--> Best fitness: ${lastGeneration.population.offspring.first().fitness}
-                |--> Worst fitness: ${lastGeneration.population.offspring.last().fitness}
-                |--> Average fitness: ${lastGeneration.population.offspring.map { it.fitness }.average()}
-                |--> Fittest: ${lastGeneration.population.offspring.first().representation}
-                |<<<>>>
-                """.trimMargin()
-            }
-        )
+    override suspend fun display() {
+        val consoleWidth = consoleWidth()
+        val generations = evolution.generations
+
+        val tableContent = if (generations.isEmpty()) {
+            "No generations have been processed yet."
+        } else {
+            val lastGeneration = generations.last()
+            val sortedOffspring = ranker.sort(lastGeneration.population.offspring.map { it.toIndividual() })
+
+            // Build the table content
+            val content = listOf(
+                "Generation ${evolution.generations.size}",
+                "Average generation time: ${evolution.generations.map { it.duration }.average()} $timeUnit",
+                "Max generation time: ${evolution.generations.maxOfOrNull { it.duration }} $timeUnit",
+                "Min generation time: ${evolution.generations.minOfOrNull { it.duration }} $timeUnit",
+                "Steady generations: ${lastGeneration.steady}",
+                "Best fitness: ${sortedOffspring.last().fitness}",
+                "Worst fitness: ${sortedOffspring.first().fitness}",
+                "Average fitness: ${lastGeneration.population.offspring.map { it.fitness }.average()}",
+                "Fittest: ${sortedOffspring.last().representation}"
+            )
+
+            // Calculate the maximum length of the lines and adjust it based on console width
+            val maxLength = content.maxOf { it.length }
+            val adjustedMaxLength = minOf(maxLength, consoleWidth - 4) // Account for borders and padding
+
+            // Generate borders
+            val border = "-".repeat(adjustedMaxLength + 2) // Adjust for padding
+
+            // Format the content with borders
+            val borderedContent = content.joinToString("\n") { "|| ${it.padEnd(adjustedMaxLength)} |" }
+
+            // Combine everything into a single output
+            """
+            |+${border}+
+            $borderedContent
+            |+${border}+
+            """.trimMargin()
+        }
+        println(tableContent)
     }
 
     companion object {

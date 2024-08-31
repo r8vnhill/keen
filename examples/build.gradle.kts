@@ -9,6 +9,10 @@ plugins {
 }
 
 kotlin {
+    js {
+        binaries.executable()
+    }
+
     sourceSets {
         getByName("commonMain") {
             dependencies {

@@ -6,7 +6,6 @@
 package cl.ravenhill.keen.listeners.printer
 
 import cl.ravenhill.keen.evolution.states.EvolutionState
-import cl.ravenhill.keen.listeners.EvolutionListener
 import cl.ravenhill.keen.listeners.Listener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
@@ -44,7 +43,7 @@ class GenerationPrinterListener<T, F, R, S>(
 
     private val timeSource by lazy { configuration.timeSource }
 
-    private val withPrecision by lazy { configuration.withPrecision }
+    private val withPrecision by lazy { configuration.precision.withPrecision }
 
     private val evolution by lazy { configuration.evolution }
 
@@ -68,7 +67,7 @@ class GenerationPrinterListener<T, F, R, S>(
      *
      * @param state The current evolutionary state at the end of the generation.
      */
-    override fun onGenerationEnd(state: S) {
+    override suspend fun onGenerationEnd(state: S) {
         mapGeneration(currentGeneration) {
             duration = startTime.elapsedNow().withPrecision()
             evolution.generations += this

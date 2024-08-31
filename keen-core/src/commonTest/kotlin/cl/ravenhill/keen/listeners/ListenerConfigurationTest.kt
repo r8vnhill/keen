@@ -83,15 +83,15 @@ class ListenerConfigurationTest : FreeSpec({
         "should have a precision property that" - {
             "should be Duration::inWholeMilliseconds by default" {
                 val config = ListenerConfiguration<Int, SimpleFeature<Int>, Representation<Int, SimpleFeature<Int>>>()
-                config.withPrecision shouldBe Duration::inWholeMilliseconds
+                config.precision shouldBe Duration::inWholeMilliseconds
             }
 
             "should be the specified precision function" {
                 checkAll(
                     Arb.element(Duration::inWholeMilliseconds, Duration::inWholeMicroseconds)
                 ) { precision ->
-                    val config = SimpleListenerConfiguration(withPrecision = precision)
-                    config.withPrecision shouldBe precision
+                    val config = SimpleListenerConfiguration(precision = precision)
+                    config.precision shouldBe precision
                 }
             }
         }

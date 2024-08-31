@@ -9,14 +9,13 @@ plugins {
 
 kotlin {
     sourceSets {
-
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("reflect"))
                 implementation(libs.kotlin.coroutines.core)
                 implementation(libs.jakt)
-                implementation(libs.arrow.core)
-                implementation(libs.arrow.fx.coroutines)
+                api(libs.arrow.core)
+                api(libs.arrow.fx.coroutines)
             }
         }
 
@@ -30,9 +29,21 @@ kotlin {
             }
         }
 
+        val jvmMain by getting {
+            dependencies {
+                implementation(libs.jline)
+            }
+        }
+
         val jvmTest by getting {
             dependencies {
                 implementation(libs.kotest.runner.junit5)
+            }
+        }
+
+        getByName("jsHostedMain") {
+            dependencies {
+                implementation(npm("terminal-size", "4.0.0"))
             }
         }
     }
