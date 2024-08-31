@@ -6,10 +6,12 @@
 package cl.ravenhill.keen.listeners
 
 import cl.ravenhill.keen.listeners.records.EvolutionRecord
+import cl.ravenhill.keen.listeners.records.GenerationRecord
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.utils.box.ImmutableBox
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 
@@ -23,12 +25,15 @@ import kotlin.time.TimeSource
  * @property ranker The [IndividualRanker] used to evaluate and rank individuals. Defaults to [FitnessMaxRanker].
  * @property evolution The [EvolutionRecord] that tracks the evolution process. Defaults to a new instance of [EvolutionRecord].
  * @property timeSource The [TimeSource] providing time-related functionalities. Defaults to [TimeSource.Monotonic].
- * @property precision A lambda function that takes a [Duration] and returns a [Long] value representing the precision.
+ * @property withPrecision A lambda function that takes a [Duration] and returns a [Long] value representing the precision.
  *   Defaults to [Duration.inWholeMilliseconds].
+ * @property currentGeneration A mutable box containing the current generation record. Defaults to `null`.
  */
 data class ListenerConfiguration<T, F, R>(
     val ranker: IndividualRanker<T, F, R> = FitnessMaxRanker(),
     val evolution: EvolutionRecord<T, F, R> = EvolutionRecord(),
     val timeSource: TimeSource = TimeSource.Monotonic,
-    val precision: Duration.() -> Long = Duration::inWholeMilliseconds
-) where F : Feature<T, F>, R : Representation<T, F>
+    val withPrecision: Duration.() -> Long = Duration::inWholeMilliseconds
+) where F : Feature<T, F>, R : Representation<T, F> {
+    val currentGeneration = ImmutableBox<GenerationRecord<T, F, R>?>(null)
+}

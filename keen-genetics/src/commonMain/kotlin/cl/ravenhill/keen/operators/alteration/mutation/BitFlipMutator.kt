@@ -94,3 +94,4 @@ class BitFlipMutator(
         const val DEFAULT_GENE_RATE = 0.5
     }
 }
+

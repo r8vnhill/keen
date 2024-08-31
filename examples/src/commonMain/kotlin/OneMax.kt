@@ -3,23 +3,30 @@
  * 2-Clause BSD License.
  */
 
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.geneticAlgorithm
 import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.evolution.executors.construction.CoroutineConcurrentConstructor
+import cl.ravenhill.keen.evolution.executors.construction.SequentialConstructor
 import cl.ravenhill.keen.fitness
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.BooleanGene
-import cl.ravenhill.keen.limits.maxGenerations
 import cl.ravenhill.keen.limits.targetFitness
+import cl.ravenhill.keen.listeners.printer.EvolutionPrinter
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
 import cl.ravenhill.keen.operators.alteration.mutation.BitFlipMutator
 import cl.ravenhill.keen.operators.selection.RouletteWheelSelector
+import cl.ravenhill.keen.operators.selection.TournamentSelector
 
 private fun count(genotype: Genotype<Boolean, BooleanGene>) = genotype.flatten().count { it }.toDouble()
 
 suspend fun oneMax() {
+
+    Domain.toStringMode = ToStringMode.SIMPLE
+
     val engine = geneticAlgorithm(
         ::count,
         genotypeOf {
@@ -27,16 +34,17 @@ suspend fun oneMax() {
                 booleans {
                     size = 50
                     trueRate = 0.15
-                    executor = CoroutineConcurrentConstructor()
+                    executor = SequentialConstructor()
                 }
             }
         }
     ) {
         populationSize = 500
-        parentSelector = RouletteWheelSelector()
-        survivorSelector = RouletteWheelSelector()
+        parentSelector = TournamentSelector()
+        survivorSelector = TournamentSelector()
         alterers += listOf(BitFlipMutator(), UniformCrossover(chromosomeRate = 0.6))
-        limits += listOf(maxGenerations(100), targetFitness(50.0))
+        limits += targetFitness(50.0)
+        listeners += EvolutionPrinter(20)
     }
     engine.evolve()
         .population

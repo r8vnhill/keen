@@ -9,7 +9,7 @@ import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
 data class EvolutionRecord<T, F, R>(
-    val generations: List<GenerationRecord<T, F, R>> = emptyList()
+    val generations: MutableList<GenerationRecord<T, F, R>> = mutableListOf()
 ) : AbstractTimedRecord() where F : Feature<T, F>, R : Representation<T, F> {
     val initialization = InitializationRecord()
 

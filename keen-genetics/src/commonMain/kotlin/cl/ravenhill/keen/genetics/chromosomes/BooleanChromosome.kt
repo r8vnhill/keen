@@ -5,7 +5,19 @@
 
 package cl.ravenhill.keen.genetics.chromosomes
 
+import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.ToStringMode.DEFAULT
+import cl.ravenhill.keen.ToStringMode.SIMPLE
 import cl.ravenhill.keen.genetics.genes.BooleanGene
+import cl.ravenhill.keen.utils.roundUpToMultipleOf
+
+/**
+ * The size of each chunk in the binary string representation of a `BooleanChromosome`.
+ *
+ * The value of `CHUNK_SIZE` is set to 4, meaning that every four genes will be grouped together in the string
+ * representation, separated by spaces.
+ */
+private const val CHUNK_SIZE = 4
 
 /**
  * Represents a chromosome composed of boolean genes in an evolutionary algorithm.
@@ -60,4 +72,36 @@ data class BooleanChromosome(override val genes: List<BooleanGene>) : Chromosome
      * @return A new `BooleanChromosome` instance with the specified genes.
      */
     override fun duplicateWithGenes(newGenes: List<BooleanGene>) = copy(genes = newGenes)
+
+    /**
+     * Generates a string representation of the BooleanChromosome object based on the current toStringMode.
+     *
+     * The `toString` method returns a string representation of the BooleanChromosome, with two distinct formats
+     * depending on the `toStringMode` configured in the [Domain] object. This flexibility allows for different levels
+     * of detail in the output, which can be useful for debugging or displaying concise information.
+     *
+     * ## Modes:
+     * - **SIMPLE**: The chromosome is represented as a binary string, padded with zeros to align with a chunk size of
+     *   4. The binary string is then split into chunks of 4 bits and separated by spaces.
+     * - **DEFAULT**: The chromosome is represented in a more descriptive form, showing the list of genes.
+     *
+     * ## Example:
+     * Assuming a chromosome with genes corresponding to the values `[true, false, true, true, false]`:
+     * - In `SIMPLE` mode: The output might look like `"0001 0110"`.
+     * - In `DEFAULT` mode: The output might look like `"BooleanChromosome(genes=[True, False, True, True, False])"`.
+     *
+     * @return A string representation of the BooleanChromosome object.
+     */
+    override fun toString(): String {
+        when (Domain.toStringMode) {
+            SIMPLE -> {
+                val stringSize = size roundUpToMultipleOf CHUNK_SIZE
+                val paddingZeroes = "0".repeat(stringSize - size)
+                return (paddingZeroes + joinToString("") { if (it.value) "1" else "0" })
+                    .chunked(CHUNK_SIZE).joinToString(" ")
+            }
+
+            DEFAULT -> return "BooleanChromosome(genes=$genes)"
+        }
+    }
 }

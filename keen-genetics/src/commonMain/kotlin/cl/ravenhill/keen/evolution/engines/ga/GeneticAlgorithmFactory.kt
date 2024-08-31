@@ -40,8 +40,7 @@ import cl.ravenhill.keen.ranking.IndividualRanker
  * @param G The type of the gene, which must extend [Gene].
  */
 private typealias ListenerFactory<T, G> =
-            (ListenerConfiguration<T, G, Genotype<T, G>>) ->
-        EvolutionListener<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
+            (ListenerConfiguration<T, G, Genotype<T, G>>) -> Listener
 
 /**
  * A typealias for a factory function that creates a `Limit` condition in an evolutionary algorithm.
@@ -53,8 +52,9 @@ private typealias ListenerFactory<T, G> =
  * @param T The type of value held by the features.
  * @param G The type of gene in the genotype.
  */
-private typealias LimitFactory<T, G> = (ListenerConfiguration<T, G, Genotype<T, G>>) ->
-Limit<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>, Listener>
+private typealias LimitFactory<T, G> =
+            (ListenerConfiguration<T, G, Genotype<T, G>>) ->
+        Limit<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>, Listener>
 
 /**
  * A type alias for `GeneticPopulationConfiguration`, representing the configuration of a genetic population.

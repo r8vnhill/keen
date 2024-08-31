@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.listeners.mixins
 
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.listeners.Listener
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
@@ -21,7 +22,9 @@ import cl.ravenhill.keen.repr.Representation
  * @param R The type of the representation, which must extend [Representation].
  * @param S The type of the evolutionary state, which must extend [EvolutionState].
  */
-interface GenerationListener<T, F, R, S> where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
+interface GenerationListener<T, F, R, S> : Listener where F : Feature<T, F>,
+                                                          R : Representation<T, F>,
+                                                          S : EvolutionState<T, F, R, S> {
 
     /**
      * Called at the start of each generation.
