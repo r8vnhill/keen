@@ -17,7 +17,7 @@ import io.kotest.property.arbitrary.list
  * @param F The type of the feature, which must implement the `Feature` interface.
  * @property features The list of features that make up the representation.
  */
-class SimpleRepresentation<T, F>(private val features: List<F>, private val isValid: IsValidRepresentation) :
+data class SimpleRepresentation<T, F>(private val features: List<F>, private val isValid: IsValidRepresentation) :
     Representation<T, F> where F : Feature<T, F> {
 
     override val size = features.size

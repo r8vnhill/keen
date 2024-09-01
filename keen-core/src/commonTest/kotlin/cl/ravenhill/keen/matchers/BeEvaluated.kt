@@ -18,7 +18,7 @@ import io.kotest.matchers.shouldNot
  */
 fun beEvaluated() = Matcher<Individual<*, *, *>> {
     MatcherResult(
-        !it.fitness.isNaN(),
+        it.isEvaluated(),
         { "Individual should be evaluated" },
         { "Individual should not be evaluated" }
     )
