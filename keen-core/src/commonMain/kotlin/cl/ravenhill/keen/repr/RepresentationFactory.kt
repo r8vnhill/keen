@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024, Ignacio Slater M.
+ * 2-Clause BSD License.
+ */
+
 package cl.ravenhill.keen.repr
 
 import arrow.core.Either
@@ -48,8 +53,7 @@ interface RepresentationFactory<T, F, R> where F : Feature<T, F>, R : Representa
      *
      * The `invoke` function is the primary method for generating representations. It is a `suspend` function, allowing
      * for non-blocking execution, which is particularly useful in environments like Kotlin/JS or when dealing with
-     * large-scale, computationally intensive tasks. The function uses a `Random` instance to introduce variability
-     * into the creation process.
+     * large-scale, computationally intensive tasks.
      *
      * @return A [Result] containing the generated representation, or an exception if the generation fails.
      */

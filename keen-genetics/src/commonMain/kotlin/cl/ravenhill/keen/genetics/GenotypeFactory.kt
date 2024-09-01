@@ -11,8 +11,6 @@ import arrow.core.left
 import arrow.core.right
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.executors.construction.ConstructorExecutor
-import cl.ravenhill.keen.evolution.executors.construction.CoroutineConcurrentConstructor
-import cl.ravenhill.keen.evolution.executors.construction.SequentialConstructor
 import cl.ravenhill.keen.exceptions.InitializationException
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.chromosomes.ChromosomeFactory
@@ -24,18 +22,9 @@ import kotlin.properties.Delegates
  * Factory for creating genotypes in an evolutionary algorithm.
  *
  * The `GenotypeFactory` class is responsible for constructing instances of `Genotype` by assembling a collection of
- * chromosomes. Each chromosome is generated using a `ChromosomeFactory`, which in turn utilizes a `ConstructorExecutor`
+ * chromosomes. Each chromosome is generated using a [ChromosomeFactory], which in turn utilizes a [ConstructorExecutor]
  * to create the gene sequences that make up the chromosome. This class is designed to be used in evolutionary
  * algorithms where the structure and variability of genotypes play a crucial role in the evolutionary process.
- *
- * ## Key Features:
- * - **Chromosome Factories**: The `GenotypeFactory` maintains a list of `ChromosomeFactory` instances, each responsible
- *   for creating a specific chromosome. The number of chromosomes is determined by the size of this list.
- * - **Constructor Executor**: The `executor` property allows for concurrent or sequential generation of chromosomes,
- *   depending on the specific implementation of `ConstructorExecutor` being used. By default, this is set to
- *   `CoroutineConcurrentConstructor`, which uses Kotlin coroutines for concurrent construction.
- * - **Size Property**: The `size` property represents the number of chromosomes to be generated for the genotype. It
- *   must be initialized before invoking the factory.
  *
  * ## Usage:
  * The `GenotypeFactory` class is intended to be used within the initialization phase of an evolutionary algorithm,
@@ -62,11 +51,11 @@ import kotlin.properties.Delegates
  * @param T The type of value held by the genes in the chromosomes.
  * @param G The type of gene, which must extend [Gene].
  * @param executor The `ConstructorExecutor` used to generate the chromosomes for the genotype. Defaults to
- *   `CoroutineConcurrentConstructor`.
- * @property chromosomes A mutable list of `ChromosomeFactory` instances used to generate the chromosomes in the genotype.
- * @property size The number of chromosomes to generate for the genotype. This must be initialized before invoking the factory.
- * @throws InitializationException If any error occurs during the creation of the genotype, such as a failure in
- *   chromosome construction.
+ *   [Domain.defaultConstructor].
+ * @property chromosomes A mutable list of `ChromosomeFactory` instances used to generate the chromosomes in the
+ *   genotype.
+ * @property size The number of chromosomes to generate for the genotype. This must be initialized before invoking the
+ *   factory.
  * @return A [Genotype] instance if successful, wrapped in an [Either] type to handle potential initialization failures.
  */
 class GenotypeFactory<T, G>(
@@ -86,20 +75,19 @@ class GenotypeFactory<T, G>(
     /**
      * Generates a new genotype by assembling a collection of chromosomes.
      *
-     * This method is responsible for creating a `Genotype` instance by invoking each `ChromosomeFactory` in the
-     * `chromosomes` list. The creation process is managed by the `ConstructorExecutor`, which can handle the generation
+     * This method is responsible for creating a [Genotype] instance by invoking each [ChromosomeFactory] in the
+     * [chromosomes] list. The creation process is managed by the `ConstructorExecutor`, which can handle the generation
      * of chromosomes concurrently or sequentially depending on its implementation.
      *
-     * @return An [Either] containing a `Genotype` instance if successful, or an [InitializationException] if an error
+     * @return An [Either] containing a [Genotype] instance if successful, or an [InitializationException] if an error
      *   occurs during the construction process.
      */
-    override suspend fun invoke(): Either<InitializationException, Genotype<T, G>> =
-        try {
-            val chromosomes = executor(chromosomes.size) { index ->
-                chromosomes[index]().getOrElse { throw it }
-            }
-            Genotype(chromosomes).right()
-        } catch (e: InitializationException) {
-            e.left()
+    override suspend fun invoke(): Either<InitializationException, Genotype<T, G>> = try {
+        val chromosomes = executor(chromosomes.size) { index ->
+            chromosomes[index]().getOrElse { throw it }
         }
+        Genotype(chromosomes).right()
+    } catch (e: InitializationException) {
+        e.left()
+    }
 }

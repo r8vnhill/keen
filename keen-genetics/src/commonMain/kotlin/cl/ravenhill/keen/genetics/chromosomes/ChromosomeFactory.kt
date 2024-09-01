@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.genetics.chromosomes
 
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.executors.construction.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.construction.SequentialConstructor
 import cl.ravenhill.keen.genetics.genes.Gene
@@ -20,9 +21,9 @@ import kotlin.properties.Delegates
  * make up the chromosome.
  *
  * ## Usage:
- * This interface is intended for use in scenarios where specific chromosomes need to be generated within an evolutionary
- * algorithm. It provides a flexible mechanism for customizing how the genes within a chromosome are constructed, by
- * allowing the use of different `ConstructorExecutor` implementations.
+ * This interface is intended for use in scenarios where specific chromosomes need to be generated within an
+ * evolutionary algorithm. It provides a flexible mechanism for customizing how the genes within a chromosome are
+ * constructed, by allowing the use of different `ConstructorExecutor` implementations.
  *
  * ### Example 1: Creating a Custom Chromosome Factory
  * ```kotlin
@@ -114,7 +115,7 @@ interface ChromosomeFactory<T, G> : RepresentationFactory<T, G, Chromosome<T, G>
  */
 abstract class AbstractChromosomeFactory<T, G> : ChromosomeFactory<T, G> where G : Gene<T, G> {
 
-    override var executor: ConstructorExecutor<G> = SequentialConstructor()
+    override var executor: ConstructorExecutor<G> = Domain.defaultConstructor()
 
     override var size: Int by Delegates.notNull()
 }
