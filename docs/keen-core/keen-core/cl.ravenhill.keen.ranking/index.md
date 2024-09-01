@@ -1,0 +1,11 @@
+//[keen-core](../../index.md)/[cl.ravenhill.keen.ranking](index.md)
+
+# Package-level declarations
+
+## Types
+
+| Name | Summary |
+|---|---|
+| [FitnessMaxRanker](-fitness-max-ranker/index.md) | [common]<br>class [FitnessMaxRanker](-fitness-max-ranker/index.md)&lt;[T](-fitness-max-ranker/index.md), [F](-fitness-max-ranker/index.md) : [Feature](../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](-fitness-max-ranker/index.md), [F](-fitness-max-ranker/index.md)&gt;, [R](-fitness-max-ranker/index.md) : [Representation](../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](-fitness-max-ranker/index.md), [F](-fitness-max-ranker/index.md)&gt;&gt; : [IndividualRanker](-individual-ranker/index.md)&lt;[T](-fitness-max-ranker/index.md), [F](-fitness-max-ranker/index.md), [R](-fitness-max-ranker/index.md)&gt; <br>A ranker that prioritizes individuals with higher fitness values. |
+| [FitnessMinRanker](-fitness-min-ranker/index.md) | [common]<br>class [FitnessMinRanker](-fitness-min-ranker/index.md)&lt;[T](-fitness-min-ranker/index.md), [F](-fitness-min-ranker/index.md) : [Feature](../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](-fitness-min-ranker/index.md), [F](-fitness-min-ranker/index.md)&gt;, [R](-fitness-min-ranker/index.md) : [Representation](../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](-fitness-min-ranker/index.md), [F](-fitness-min-ranker/index.md)&gt;&gt; : [IndividualRanker](-individual-ranker/index.md)&lt;[T](-fitness-min-ranker/index.md), [F](-fitness-min-ranker/index.md), [R](-fitness-min-ranker/index.md)&gt; <br>Represents a fitness ranker that ranks individuals by minimizing their fitness values. |
+| [IndividualRanker](-individual-ranker/index.md) | [common]<br>interface [IndividualRanker](-individual-ranker/index.md)&lt;[T](-individual-ranker/index.md), [F](-individual-ranker/index.md) : [Feature](../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](-individual-ranker/index.md), [F](-individual-ranker/index.md)&gt;, [R](-individual-ranker/index.md) : [Representation](../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](-individual-ranker/index.md), [F](-individual-ranker/index.md)&gt;&gt;<br>Represents a ranker for evaluating and comparing the fitness of individuals in an evolutionary algorithm. |

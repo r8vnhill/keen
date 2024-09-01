@@ -1,0 +1,17 @@
+//[keen-core](../../index.md)/[cl.ravenhill.keen.listeners](index.md)
+
+# Package-level declarations
+
+## Types
+
+| Name | Summary |
+|---|---|
+| [EvolutionListener](-evolution-listener/index.md) | [common]<br>interface [EvolutionListener](-evolution-listener/index.md)&lt;[T](-evolution-listener/index.md), [F](-evolution-listener/index.md) : [Feature](../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](-evolution-listener/index.md), [F](-evolution-listener/index.md)&gt;, [R](-evolution-listener/index.md) : [Representation](../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](-evolution-listener/index.md), [F](-evolution-listener/index.md)&gt;, [S](-evolution-listener/index.md) : [EvolutionState](../cl.ravenhill.keen.evolution.states/-evolution-state/index.md)&lt;[T](-evolution-listener/index.md), [F](-evolution-listener/index.md), [R](-evolution-listener/index.md), [S](-evolution-listener/index.md)&gt;&gt; : [Listener](-listener/index.md)<br>Interface representing a listener for events in an evolutionary algorithm. |
+| [Listener](-listener/index.md) | [common]<br>interface [Listener](-listener/index.md)<br>A read-only listener interface for monitoring and displaying information. |
+| [ListenerConfiguration](-listener-configuration/index.md) | [common]<br>data class [ListenerConfiguration](-listener-configuration/index.md)&lt;[T](-listener-configuration/index.md), [F](-listener-configuration/index.md) : [Feature](../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](-listener-configuration/index.md), [F](-listener-configuration/index.md)&gt;, [R](-listener-configuration/index.md) : [Representation](../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](-listener-configuration/index.md), [F](-listener-configuration/index.md)&gt;&gt;(val ranker: [IndividualRanker](../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](-listener-configuration/index.md), [F](-listener-configuration/index.md), [R](-listener-configuration/index.md)&gt; = FitnessMaxRanker(), val evolution: [EvolutionRecord](../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](-listener-configuration/index.md), [F](-listener-configuration/index.md), [R](-listener-configuration/index.md)&gt; = EvolutionRecord(), val timeSource: [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html) = TimeSource.Monotonic, val precision: [TimePrecision](../cl.ravenhill.keen.listeners.precision/-time-precision/index.md) = WholeMilliseconds)<br>Configuration for a listener that manages evolution and timing within an evolutionary algorithm. |
+
+## Functions
+
+| Name | Summary |
+|---|---|
+| [fittest](fittest.md) | [common]<br>suspend fun &lt;[T](fittest.md), [F](fittest.md) : [Feature](../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](fittest.md), [F](fittest.md)&gt;, [R](fittest.md) : [Representation](../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](fittest.md), [F](fittest.md)&gt;&gt; [fittest](fittest.md)(ranker: [IndividualRanker](../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](fittest.md), [F](fittest.md), [R](fittest.md)&gt;, record: [EvolutionRecord](../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](fittest.md), [F](fittest.md), [R](fittest.md)&gt;): [IndividualRecord](../cl.ravenhill.keen.listeners.records/-individual-record/index.md)&lt;[T](fittest.md), [F](fittest.md), [R](fittest.md)&gt;<br>Determines the fittest individual from the most recent generation in the evolutionary record. |

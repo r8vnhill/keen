@@ -37,10 +37,10 @@ tasks.withType<DokkaTask>().configureEach {
 }
 
 // Configure the multi-module documentation task
-tasks.withType<DokkaMultiModuleTask>().configureEach {
+tasks.named<DokkaMultiModuleTask>("dokkaGfmMultiModule") {
     outputDirectory.set(layout.buildDirectory.dir("dokka/markdown"))
+}
 
-    // Configure source sets for multi-module documentation
-    // Note: Multi-module tasks generally aggregate other module's documentation.
-    // Directly including source sets in this task is usually not required.
+tasks.named<DokkaMultiModuleTask>("dokkaJekyllMultiModule") {
+    outputDirectory.set(layout.buildDirectory.dir("dokka/jekyll"))
 }

@@ -1,6 +1,9 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+
 plugins {
     id("keen.jvm")
     id("keen.js")
+    alias(libs.plugins.dokka)
 //    id("keen.native")
 //    id("keen.publishing")
 //    id("keen.watchos")
@@ -53,3 +56,8 @@ kotlin {
         }
     }
 }
+
+tasks.named<DokkaTask>("dokkaGfm") {
+    outputDirectory.set(layout.buildDirectory.dir("dokka/markdown"))
+}
+

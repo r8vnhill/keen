@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+
 /*
  * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
@@ -6,6 +8,7 @@
 plugins {
     id("keen.jvm")
     id("keen.js")
+    alias(libs.plugins.dokka)
 }
 
 kotlin {
@@ -38,4 +41,8 @@ kotlin {
             }
         }
     }
+}
+
+tasks.named<DokkaTask>("dokkaGfm") {
+    outputDirectory.set(layout.buildDirectory.dir("dokka/markdown"))
 }

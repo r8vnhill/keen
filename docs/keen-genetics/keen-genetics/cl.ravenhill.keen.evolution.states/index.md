@@ -1,0 +1,9 @@
+//[keen-genetics](../../index.md)/[cl.ravenhill.keen.evolution.states](index.md)
+
+# Package-level declarations
+
+## Types
+
+| Name | Summary |
+|---|---|
+| [GeneticEvolutionState](-genetic-evolution-state/index.md) | [common]<br>data class [GeneticEvolutionState](-genetic-evolution-state/index.md)&lt;[T](-genetic-evolution-state/index.md), [G](-genetic-evolution-state/index.md) : [Gene](../cl.ravenhill.keen.genetics.genes/-gene/index.md)&lt;[T](-genetic-evolution-state/index.md), [G](-genetic-evolution-state/index.md)&gt;&gt;(val population: [Population](../../../keen-core/keen-core/cl.ravenhill.keen/-population/index.md)&lt;[T](-genetic-evolution-state/index.md), [G](-genetic-evolution-state/index.md), [Genotype](../cl.ravenhill.keen.genetics/-genotype/index.md)&lt;[T](-genetic-evolution-state/index.md), [G](-genetic-evolution-state/index.md)&gt;&gt;, val ranker: [IndividualRanker](../../../keen-core/keen-core/cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](-genetic-evolution-state/index.md), [G](-genetic-evolution-state/index.md), [Genotype](../cl.ravenhill.keen.genetics/-genotype/index.md)&lt;[T](-genetic-evolution-state/index.md), [G](-genetic-evolution-state/index.md)&gt;&gt;, val generation: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)) : [EvolutionState](../../../keen-core/keen-core/cl.ravenhill.keen.evolution.states/-evolution-state/index.md)&lt;[T](-genetic-evolution-state/index.md), [G](-genetic-evolution-state/index.md), [Genotype](../cl.ravenhill.keen.genetics/-genotype/index.md)&lt;[T](-genetic-evolution-state/index.md), [G](-genetic-evolution-state/index.md)&gt;, [GeneticEvolutionState](-genetic-evolution-state/index.md)&lt;[T](-genetic-evolution-state/index.md), [G](-genetic-evolution-state/index.md)&gt;&gt; <br>Represents the state of the genetic evolutionary process. |
