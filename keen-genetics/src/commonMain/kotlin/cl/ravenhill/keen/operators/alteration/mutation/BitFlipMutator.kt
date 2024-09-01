@@ -74,7 +74,7 @@ class BitFlipMutator(
      * @param gene The boolean gene to be mutated.
      * @return A new boolean gene with its value flipped.
      */
-    override fun mutateGene(gene: BooleanGene) = gene.duplicateWithValue(!gene.value)
+    override fun mutateGene(gene: BooleanGene) = gene.copyWithValue(!gene.value)
 
     companion object {
 

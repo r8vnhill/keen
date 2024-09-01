@@ -69,7 +69,7 @@ data class SimpleGene(
      * @param value The new integer value for the gene.
      * @return A new instance of `SimpleGene` with the updated value.
      */
-    override fun duplicateWithValue(value: Int) = copy(value = value)
+    override fun copyWithValue(value: Int) = copy(value = value)
 
     /**
      * Verifies if the gene is valid. The gene is considered invalid if `isValid` is `false`. Otherwise, it calls the

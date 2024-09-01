@@ -6,7 +6,6 @@
 package cl.ravenhill.keen.genetics.genes
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.mixins.FlatMappable
 import cl.ravenhill.keen.mixins.Verifiable
 import cl.ravenhill.keen.repr.Feature
 import kotlin.random.Random
@@ -110,7 +109,7 @@ interface Gene<T, G> : Feature<T, G>, Verifiable where G : Gene<T, G> {
      * @param random The `Random` instance used to generate the new value. Defaults to the global `Domain.random`.
      * @return A new gene instance with the mutated value.
      */
-    fun mutate(random: Random = Domain.random): G = duplicateWithValue(generator(random))
+    fun mutate(random: Random = Domain.random): G = copyWithValue(generator(random))
 
     /**
      * Flattens the gene's value into a list.

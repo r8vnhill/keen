@@ -121,7 +121,7 @@ interface Feature<T, F> : Verifiable, FlatMappable<T> where F : Feature<T, F> {
      * @param value The new value for the feature.
      * @return A new feature instance with the specified value.
      */
-    fun duplicateWithValue(value: T): F
+    fun copyWithValue(value: T): F
 
     /**
      * Applies a function to the feature's value and returns a new feature instance with the transformed value.

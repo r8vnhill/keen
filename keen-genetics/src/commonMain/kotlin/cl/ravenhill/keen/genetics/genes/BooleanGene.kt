@@ -48,7 +48,7 @@ import kotlin.random.Random
  * ## Kotlin's Lack of Pattern Matching:
  * Kotlin does not support traditional pattern matching as seen in languages like Scala or Haskell. However, the
  * `BooleanGene` interface circumvents this limitation by using sealed classes and methods like `toInt()` to provide
- * similar functionality. The `if-else` structure within the [duplicateWithValue] method and the `True` and `False`
+ * similar functionality. The `if-else` structure within the [copyWithValue] method and the `True` and `False`
  * data objects act as alternatives to pattern matching.
  *
  * @property generator A function that generates new boolean values for the gene, typically used in mutation operations.
@@ -67,7 +67,7 @@ sealed interface BooleanGene : Gene<Boolean, BooleanGene> {
      * @param value The new boolean value for the gene.
      * @return A new `BooleanGene` instance with the specified value.
      */
-    override fun duplicateWithValue(value: Boolean): BooleanGene = if (value) True else False
+    override fun copyWithValue(value: Boolean): BooleanGene = if (value) True else False
 
     /**
      * Converts the boolean gene's value to an integer.
