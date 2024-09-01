@@ -19,8 +19,8 @@ import io.kotest.matchers.shouldNot
 fun <T> beRight() = Matcher<Either<*, T>> {
     MatcherResult(
         it.isRight(),
-        { "Expected Either to be Right, but was Left" },
-        { "Expected Either to be Left, but was Right" }
+        { "Expected Either to be Right, but was Left with value: ${it.leftOrNull()}" },
+        { "Expected Either to be Left, but was Right with value: ${it.getOrNull()}" }
     )
 }
 

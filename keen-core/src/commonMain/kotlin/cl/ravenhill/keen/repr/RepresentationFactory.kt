@@ -25,10 +25,9 @@ import cl.ravenhill.keen.exceptions.InitializationException
  * ### Example: Implementing a Custom Representation Factory
  * ```kotlin
  * class MyRepresentationFactory : RepresentationFactory<Int, IntGene, IntChromosome> {
- *     override var size: Int = 10
  *
  *     override suspend fun invoke(random: Random): Result<IntChromosome> = runCatching {
- *         val genes = List(size) { IntGene(random.nextInt(0, 100)) }
+ *         val genes = List(10) { IntGene(random.nextInt(0, 100)) }
  *         IntChromosome(genes)
  *     }
  * }
@@ -39,14 +38,6 @@ import cl.ravenhill.keen.exceptions.InitializationException
  * @param R The type of the representation, which must extend [Representation].
  */
 interface RepresentationFactory<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
-
-    /**
-     * The number of features to include in the generated representation.
-     *
-     * This property defines the size of the representation that will be generated. It determines the number of features
-     * that will be included in the resulting representation, allowing for customizable and flexible factory behavior.
-     */
-    var size: Int
 
     /**
      * Asynchronously creates a representation of the predefined size.

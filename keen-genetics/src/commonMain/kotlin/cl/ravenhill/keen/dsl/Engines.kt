@@ -82,4 +82,5 @@ fun <T, G> geneticAlgorithm(
     fitnessFunction: (Genotype<T, G>) -> Double,
     genotype: GenotypeFactory<T, G>,
     init: GeneticAlgorithmFactory<T, G>.() -> Unit,
-) where G : Gene<T, G> = GeneticAlgorithmFactory(fitnessFunction, genotype).apply(init).make()
+) where G : Gene<T, G> =
+    GeneticAlgorithmFactory(fitnessFunction, genotype).apply(init).make()

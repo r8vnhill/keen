@@ -39,7 +39,6 @@ import kotlin.properties.Delegates
  * val genotypeFactory = GenotypeFactory<Int, MyGene>().apply {
  *     chromosomes.add(chromosomeFactory1)
  *     chromosomes.add(chromosomeFactory2)
- *     size = 2
  * }
  *
  * runBlocking {
@@ -54,8 +53,6 @@ import kotlin.properties.Delegates
  *   [Domain.defaultConstructor].
  * @property chromosomes A mutable list of `ChromosomeFactory` instances used to generate the chromosomes in the
  *   genotype.
- * @property size The number of chromosomes to generate for the genotype. This must be initialized before invoking the
- *   factory.
  * @return A [Genotype] instance if successful, wrapped in an [Either] type to handle potential initialization failures.
  */
 class GenotypeFactory<T, G>(
@@ -66,11 +63,6 @@ class GenotypeFactory<T, G>(
      * A mutable list of `ChromosomeFactory` instances used to generate the chromosomes in the genotype.
      */
     val chromosomes: MutableList<ChromosomeFactory<T, G>> = mutableListOf()
-
-    /**
-     * The number of chromosomes to generate for the genotype. This must be initialized before invoking the factory.
-     */
-    override var size: Int by Delegates.notNull()
 
     /**
      * Generates a new genotype by assembling a collection of chromosomes.
@@ -88,6 +80,6 @@ class GenotypeFactory<T, G>(
         }
         Genotype(chromosomes).right()
     } catch (e: InitializationException) {
-        e.left()
+        e.left()    // This should never happen
     }
 }

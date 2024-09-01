@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.evolution.executors.construction
 
 import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.exceptions.InvalidSizeException
@@ -53,7 +54,7 @@ class SequentialConstructor<T> : ConstructorExecutor<T> {
      */
     override suspend operator fun invoke(size: Int, init: suspend (index: Int) -> T): List<T> {
         constrained {
-            "Cannot create a list with a negative size"(::InvalidSizeException) { size must BePositive }
+            "Cannot create a list with a negative size ($size)"(::InvalidSizeException) { size mustNot BeNegative }
         }.onLeft { throw it }
         return List(size) { index -> init(index) }
     }

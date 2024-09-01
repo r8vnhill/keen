@@ -112,10 +112,12 @@ interface ChromosomeFactory<T, G> : RepresentationFactory<T, G, Chromosome<T, G>
  * @param G The type of the gene, which must extend [Gene].
  * @property executor The `ConstructorExecutor` used to generate the sequence of genes within the chromosome.
  *   Defaults to a `SequentialConstructor`.
+ * @property size The size of the chromosome to be created. This property must be initialized before invoking the
+ *   factory.
  */
 abstract class AbstractChromosomeFactory<T, G> : ChromosomeFactory<T, G> where G : Gene<T, G> {
 
     override var executor: ConstructorExecutor<G> = Domain.defaultConstructor()
 
-    override var size: Int by Delegates.notNull()
+    var size: Int by Delegates.notNull()
 }
