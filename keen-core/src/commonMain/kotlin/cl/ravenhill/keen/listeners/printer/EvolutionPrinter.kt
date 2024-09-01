@@ -12,7 +12,6 @@ import cl.ravenhill.keen.listeners.consoleWidth
 import cl.ravenhill.keen.listeners.mixins.GenerationListener
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import kotlinx.coroutines.CoroutineDispatcher
 
 /**
  * A listener that prints detailed information about the evolutionary process at specified intervals.
@@ -105,7 +104,7 @@ class EvolutionPrinter<T, F, R, S> private constructor(
             // Generate borders
             val border = "-".repeat(adjustedMaxLength + 2) // Adjust for padding
             // Account for borders and padding
-            val adjustedWidth = minOf(consoleWidth - 4, Domain.defaultConsoleWidth)
+            val adjustedWidth = minOf(consoleWidth - 4, Domain.fallbackConsoleWidth)
             // Format the content with borders
             val borderedContent = content.joinToString("\n") { line ->
                 val truncatedLine = if (line.length > adjustedWidth) {

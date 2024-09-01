@@ -79,7 +79,7 @@ class EvolutionSummary<T, F, R, S> private constructor(
      */
     override suspend fun display() {
         val consoleWidth = consoleWidth()
-        val tableWidth = minOf(consoleWidth, Domain.defaultConsoleWidth) // Maximum width, adjust as needed
+        val tableWidth = minOf(consoleWidth, Domain.fallbackConsoleWidth) // Maximum width, adjust as needed
 
         val content = generateContent()
         val adjustedWidth = calculateTableWidth<T, F, R, S>(content, tableWidth)

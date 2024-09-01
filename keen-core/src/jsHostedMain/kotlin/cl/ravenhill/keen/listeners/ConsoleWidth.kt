@@ -19,13 +19,13 @@ internal actual suspend fun consoleWidth(dispatcher: CoroutineDispatcher): Int =
         val terminalSizePromise = js("import('terminal-size')") as Promise<dynamic>
         val terminalSize = terminalSizePromise.await()
         // Ensure the size object has a width property
-        val width = terminalSize.width as? Int ?: Domain.defaultConsoleWidth
+        val width = terminalSize.width as? Int ?: Domain.fallbackConsoleWidth
         width.constrainedTo { "The terminal width must be greater than 0" { it must cl.ravenhill.jakt.constraints.ints.BePositive } }
-            .getOrElse { Domain.defaultConsoleWidth }
+            .getOrElse { Domain.fallbackConsoleWidth }
             .takeIf { it > 40 }
             ?: 40
     } catch (e: dynamic) {
         console.error("Error during dynamic import or retrieving size: ${e.message}")
-        Domain.defaultConsoleWidth // Fallback width
+        Domain.fallbackConsoleWidth // Fallback width
     }
 }

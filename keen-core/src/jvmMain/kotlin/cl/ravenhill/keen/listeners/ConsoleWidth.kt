@@ -29,7 +29,7 @@ internal actual suspend fun consoleWidth(dispatcher: CoroutineDispatcher): Int {
         .build()
         .width
         .constrainedTo { "The terminal width must be greater than 0" { it must BePositive } }
-        .getOrElse { Domain.defaultConsoleWidth }
+        .getOrElse { Domain.fallbackConsoleWidth }
         .takeIf { it > 40 }
         ?: 40
 }

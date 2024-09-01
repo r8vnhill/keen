@@ -14,7 +14,7 @@ import io.kotest.matchers.should
 
 
 inline fun <reified T> CompositeException.shouldHaveInfringement(message: String): CompositeException
-      where T : ConstraintException {
+      where T : Exception {
     should(
         if (throwables.none { it is T }) {
             Matcher { value ->

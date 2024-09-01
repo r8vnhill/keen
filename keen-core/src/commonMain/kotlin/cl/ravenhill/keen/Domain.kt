@@ -8,9 +8,12 @@ package cl.ravenhill.keen
 import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constraints.doubles.BeAtLeast
 import cl.ravenhill.jakt.constraints.doubles.BeNaN
+import cl.ravenhill.jakt.constraints.doubles.BeNegative
+import cl.ravenhill.keen.Domain.DEFAULT_CONSOLE_WIDTH
 import cl.ravenhill.keen.Domain.DEFAULT_EQUALITY_THRESHOLD
 import cl.ravenhill.keen.Domain.dispatcher
 import cl.ravenhill.keen.Domain.equalityThreshold
+import cl.ravenhill.keen.Domain.fallbackConsoleWidth
 import cl.ravenhill.keen.Domain.random
 import cl.ravenhill.keen.Domain.toStringMode
 import kotlinx.coroutines.CoroutineDispatcher
@@ -47,7 +50,8 @@ import kotlin.random.Random
  *   customize random behavior.
  * @property toStringMode The mode that determines how objects are converted to strings. Useful for debugging and
  *   logging.
- * @property defaultConsoleWidth The default width of the console output. This is used for formatting text and tables.
+ * @property DEFAULT_CONSOLE_WIDTH The default width of the console output. This is used for formatting text and tables.
+ * @property fallbackConsoleWidth The default width of the console output. This is used for formatting text and tables.
  */
 object Domain {
 
@@ -58,11 +62,11 @@ object Domain {
     var equalityThreshold = DEFAULT_EQUALITY_THRESHOLD
         set(value) {
             constrained {
-                "The equality threshold ($value) must be greater than or equal to zero" {
-                    value must BeAtLeast(0.0)
+                "The equality threshold ($value) must be at least 0.0" {
+                    value mustNot BeNegative
                 }
-                "The equality threshold ($value) must not be NaN" {
-                    value must BeNaN
+                "The equality threshold ($value) must be a number" {
+                    value mustNot BeNaN
                 }
             }.onLeft { throw it }
             field = value
@@ -70,7 +74,9 @@ object Domain {
 
     var random: Random = Random.Default
 
-    var defaultConsoleWidth = 120
+    const val DEFAULT_CONSOLE_WIDTH = 120
+
+    var fallbackConsoleWidth = DEFAULT_CONSOLE_WIDTH
 
     var toStringMode = ToStringMode.DEFAULT
 }
