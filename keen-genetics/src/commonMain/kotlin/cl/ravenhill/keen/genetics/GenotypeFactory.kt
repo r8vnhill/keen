@@ -9,8 +9,10 @@ import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
+import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.evolution.executors.construction.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.construction.CoroutineConcurrentConstructor
+import cl.ravenhill.keen.evolution.executors.construction.SequentialConstructor
 import cl.ravenhill.keen.exceptions.InitializationException
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.chromosomes.ChromosomeFactory
@@ -68,7 +70,7 @@ import kotlin.properties.Delegates
  * @return A [Genotype] instance if successful, wrapped in an [Either] type to handle potential initialization failures.
  */
 class GenotypeFactory<T, G>(
-    val executor: ConstructorExecutor<Chromosome<T, G>> = CoroutineConcurrentConstructor()
+    val executor: ConstructorExecutor<Chromosome<T, G>> = Domain.defaultConstructor()
 ) : RepresentationFactory<T, G, Genotype<T, G>> where G : Gene<T, G> {
 
     /**

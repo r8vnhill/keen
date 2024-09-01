@@ -1,0 +1,6 @@
+$dokka.format:gfm-v1
+$dokka.linkExtension:md
+$dokka.location:////PointingToDeclaration/examples/examples/[root]/index.md
+$dokka.location://main/#/PointingToDeclaration/examples/examples/[root]/[jvm]main.md
+$dokka.location://oneMax/#/PointingToDeclaration/examples/examples/[root]/one-max.md
+

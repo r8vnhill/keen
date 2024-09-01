@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.evolution.executors.construction
 
-import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.exceptions.InvalidSizeException
@@ -66,13 +66,35 @@ class CoroutineConcurrentConstructor<T>(
     override suspend operator fun invoke(size: Int, init: suspend (index: Int) -> T): List<T> {
         constrained {
             "Cannot create a sequence with a negative size."(::InvalidSizeException) {
-                size must BePositive
+                size mustNot BeNegative
             }
         }.onLeft { throw it }
-        return (0 until size).map { index ->
+        val batchSize = (size / numProcessors).coerceAtLeast(1)
+        val ranges = (0 until size).chunked(batchSize)
+        // Collect all the deferred results
+        val deferredResults = ranges.map { range ->
             scope.async {
-                init(index)
+                range.map { index -> init(index) }
             }
-        }.awaitAll()
+        }
+        // Await all deferred results and then flatten the lists
+        return deferredResults.awaitAll().flatten()
     }
 }
+
+/**
+ * The number of available processors, with platform-specific implementation.
+ *
+ * The `numProcessors` property is an expected value that retrieves the number of processors (or CPU cores) available
+ * on the current platform. The actual implementation of this property will vary depending on the platform (e.g., JVM,
+ * JavaScript, Native) to return the appropriate number of processors for that environment.
+ *
+ * ## Notes:
+ * - The value of `numProcessors` may differ significantly across platforms depending on how the property is
+ *   implemented.
+ * - On platforms without direct support for determining processor count (e.g., JavaScript), a default value is
+ *   provided to approximate the level of concurrency.
+ *
+ * @return The number of available processors as determined by the platform-specific implementation.
+ */
+internal expect val numProcessors: Int

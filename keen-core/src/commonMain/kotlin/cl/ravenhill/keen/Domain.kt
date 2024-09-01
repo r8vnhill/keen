@@ -6,7 +6,6 @@
 package cl.ravenhill.keen
 
 import cl.ravenhill.jakt.constrained
-import cl.ravenhill.jakt.constraints.doubles.BeAtLeast
 import cl.ravenhill.jakt.constraints.doubles.BeNaN
 import cl.ravenhill.jakt.constraints.doubles.BeNegative
 import cl.ravenhill.keen.Domain.DEFAULT_CONSOLE_WIDTH
@@ -16,6 +15,8 @@ import cl.ravenhill.keen.Domain.equalityThreshold
 import cl.ravenhill.keen.Domain.fallbackConsoleWidth
 import cl.ravenhill.keen.Domain.random
 import cl.ravenhill.keen.Domain.toStringMode
+import cl.ravenhill.keen.evolution.executors.construction.ConstructorExecutor
+import cl.ravenhill.keen.evolution.executors.construction.SequentialConstructor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlin.random.Random
@@ -79,4 +80,9 @@ object Domain {
     var fallbackConsoleWidth = DEFAULT_CONSOLE_WIDTH
 
     var toStringMode = ToStringMode.DEFAULT
+
+    /**
+     * Returns a default constructor executor that generates objects sequentially.
+     */
+    fun <T> defaultConstructor(): ConstructorExecutor<T> = SequentialConstructor()
 }
