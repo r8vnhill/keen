@@ -11,7 +11,7 @@ import kotlin.random.Random
  * Represents a boolean gene in an evolutionary algorithm.
  *
  * The `BooleanGene` sealed interface models a gene that holds a boolean value, which can be either [True] or [False].
- * This interface extends the [Gene] interface, inheriting the [bind] function, which allows it to act as a monad. In
+ * This interface extends the [Gene] interface, inheriting the [flatMap] function, which allows it to act as a monad. In
  * Kotlin, a monad is a construct that follows the monad laws, providing composable and chainable operations on the
  * contained value. Although Kotlin does not have native pattern matching, the `BooleanGene` provides an alternative
  * approach through its sealed structure and methods like [toInt].

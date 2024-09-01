@@ -24,7 +24,7 @@ data class SimpleFeature(override val value: Int) : Feature<Int, SimpleFeature> 
      *
      * @return A list containing the integer value of this feature.
      */
-    override fun flatten() = listOf(value)
+    override fun toList() = listOf(value)
 
     /**
      * Creates a copy of this feature with a new value.

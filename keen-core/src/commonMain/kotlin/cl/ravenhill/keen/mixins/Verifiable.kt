@@ -22,7 +22,7 @@ package cl.ravenhill.keen.mixins
  * class MyFeature(
  *    val value: Int
  * ) : Feature<Int, MyFeature>, Verifiable {
- *     override fun duplicateWithValue(value: Int) = MyFeature(value)
+ *     override fun copyWithValue(value: Int) = MyFeature(value)
  *     override fun verify() = value > 0
  * }
  * ```

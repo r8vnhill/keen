@@ -5,61 +5,60 @@
 
 package cl.ravenhill.keen.operators.alteration.crossover
 
+import arrow.core.Either
+import arrow.core.flatMap
+import arrow.core.getOrElse
+import arrow.core.left
+import arrow.core.right
 import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constraints.collections.HaveSize
 import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BeAtLeast
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
+import cl.ravenhill.keen.exceptions.CrossoverException
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.utils.Exclusivity
+import cl.ravenhill.keen.utils.sequence
 
 /**
- * A crossover operator that combines genes from multiple parents to produce offspring in an evolutionary algorithm.
+ * A genetic operator that combines genes from multiple parents to produce offspring in an evolutionary algorithm.
  *
- * The `CombineCrossover` class is a key genetic operator used in evolutionary algorithms to perform crossover
- * operations. It works by selecting genes from a list of parent individuals and combining them to create new
- * offspring. This mechanism introduces genetic diversity and aids in exploring new solutions within the evolutionary
- * process, which is essential for avoiding local optima and enhancing the algorithm's performance.
- *
- * ## Constraints:
- * The `CombineCrossover` class enforces several constraints to ensure valid and effective crossover operations:
- * - **Gene Rate**: The `geneRate` must be between 0 and 1, representing the probability that a specific gene within a
- *   chromosome will be subject to crossover.
- * - **Chromosome Rate**: The `chromosomeRate` must also be between 0 and 1, representing the probability that an entire
- *   chromosome will be subject to crossover.
- * - **Number of Parents**: The `numParents` must be at least 2, ensuring that there are enough parents to perform the
- *   crossover operation.
+ * The `CombineCrossover` class implements a crossover operation commonly used in evolutionary algorithms. This operator
+ * takes genes from a set of parent individuals and combines them to create new offspring. By mixing genetic material
+ * from different parents, the crossover operator introduces diversity into the population, which is crucial for
+ * exploring the solution space and avoiding premature convergence to local optima.
  *
  * ## Usage:
- * The `CombineCrossover` class is intended for use in evolutionary algorithms where crossover operations play a crucial
- * role in the genetic evolution process. This class is highly configurable, allowing users to adjust the rates and
- * specify a custom `combiner` function to fit the needs of different evolutionary strategies.
+ * The `CombineCrossover` class is designed for use in evolutionary algorithms where the crossover operation is a key
+ * component of the genetic evolution process. The class allows for customization of the crossover behavior through the
+ * [combiner] function, [chromosomeRate], [geneRate], and [numParents] parameters, making it adaptable to various
+ * evolutionary strategies.
  *
  * ### Example: Using `CombineCrossover`
  * ```kotlin
  * val crossover = CombineCrossover<Int, MyGene>(
- *     combiner = { genes -> genes.random(Domain.random) }, // Example of uniform crossover
- *     chromosomeRate = 0.8,
- *     geneRate = 0.5,
- *     numParents = 3,
- *     exclusivity = Exclusivity.NON_EXCLUSIVE
+ *     combiner = { genes -> genes.random(Domain.random) }, // Example of a uniform crossover strategy
+ *     chromosomeRate = 0.8, // 80% chance of chromosome-level crossover
+ *     geneRate = 0.5, // 50% chance of gene-level crossover
+ *     numParents = 3, // Crossover among 3 parents
+ *     exclusivity = Exclusivity.NON_EXCLUSIVE // Allows genes to be selected from the same parent multiple times
  * )
  * ```
  *
- * In this example, the `CombineCrossover` operator performs a uniform crossover where genes are randomly selected from
- * the parents. The `chromosomeRate` and `geneRate` are set to control the likelihood of crossover at both the
- * chromosome and gene levels.
+ * In this example, `CombineCrossover` is configured to perform a uniform crossover where genes are randomly selected
+ * from the available parents. The `chromosomeRate` and `geneRate` determine the likelihood of crossover at both the
+ * chromosome and gene levels, allowing for fine-tuned control over the genetic recombination process.
  *
- * @param T The type of value held by the genes.
- * @param G The type of gene, which must extend [Gene].
- * @param combiner The function that combines a list of genes from the parent individuals into a single gene for the
- *   offspring.
- * @param chromosomeRate The probability that a chromosome will be subject to crossover.
- * @param geneRate The probability that a specific gene within a chromosome will be subject to crossover.
+ * @param T The type of the value held by the genes.
+ * @param G The type of the gene, which must extend [Gene].
+ * @param combiner A function that takes a list of genes from the parent individuals and combines them into a single
+ *   gene for the offspring.
+ * @param chromosomeRate The probability that an entire chromosome will undergo crossover.
+ * @param geneRate The probability that a specific gene within a chromosome will undergo crossover.
  * @param numParents The number of parent individuals involved in the crossover.
- * @param exclusivity The exclusivity policy for selecting parents during the crossover.
+ * @param exclusivity The policy determining whether a parent can be selected multiple times during the crossover.
  * @property numOffspring The number of offspring produced by the crossover operation.
  * @throws CompositeException if the gene rate is not between 0 and 1, the chromosome rate is not between 0 and 1, or
  *   the number of parents is less than 2.
@@ -74,15 +73,9 @@ open class CombineCrossover<T, G>(
 
     init {
         constrained {
-            "The gene rate must be between 0 and 1" {
-                geneRate must BeInRange(0.0..1.0)
-            }
-            "The chromosome rate must be between 0 and 1" {
-                chromosomeRate must BeInRange(0.0..1.0)
-            }
-            "Number of parents must be greater or equal to 2" {
-                numParents must BeAtLeast(2)
-            }
+            "The gene rate must be between 0 and 1" { geneRate must BeInRange(0.0..1.0) }
+            "The chromosome rate must be between 0 and 1" { chromosomeRate must BeInRange(0.0..1.0) }
+            "Number of parents must be greater or equal to 2" { numParents must BeAtLeast(2) }
         }.onLeft { throw it }
     }
 
@@ -92,47 +85,62 @@ open class CombineCrossover<T, G>(
     override val numOffspring: Int = 1
 
     /**
-     * Performs the crossover operation on a list of chromosomes.
+     * Performs a crossover operation on a list of chromosomes to generate new chromosomes.
      *
-     * The `crossoverChromosomes` function takes a list of parent chromosomes and produces a list of offspring
-     * chromosomes by combining the genes of the parents. This function leverages the `combine` method to generate new
-     * genes for the offspring, ensuring that the offspring inherit genetic material from the parent chromosomes
-     * according to the configured crossover rates.
+     * The `crossoverChromosomes` function takes a list of parent chromosomes and performs a crossover operation to
+     * produce a list of offspring chromosomes. The crossover process involves combining the genes from the parent
+     * chromosomes according to the configured crossover strategy.
      *
-     * ## Important Note:
-     * While this function is public to allow for fine-tuning and experimentation in new algorithmic approaches, the
-     * recommended way to use the crossover operation is through the [invoke] operator function. Direct use of
-     * `crossoverChromosomes` should generally be reserved for advanced scenarios where more granular control over the
-     * crossover process is necessary.
+     * ## Recommended Usage:
+     * The recommended way to perform a crossover operation is by using the [invoke] operator provided by the
+     * [Crossover] interface. The `crossoverChromosomes` function is exposed primarily for use in the implementation of
+     * new algorithmic variants and for cases where fine-grained control over the crossover operation is needed. Direct
+     * use of this function allows developers to experiment with and fine-tune specific crossover strategies.
      *
-     * @param chromosomes A list of parent chromosomes to be crossed over.
-     * @return A list containing a single offspring chromosome generated by combining the genes of the parent
-     *   chromosomes.
+     * @param chromosomes A list of parent chromosomes to be crossed over to produce offspring.
+     * @return An `Either<CrossoverException, List<Chromosome<T, G>>>` where `Right` contains the list of offspring
+     *         chromosomes, and `Left` contains a `CrossoverException` if the operation fails.
      */
-    override fun crossoverChromosomes(chromosomes: List<Chromosome<T, G>>): List<Chromosome<T, G>> =
-        listOf(chromosomes.first().duplicateWithGenes(combine(chromosomes)))
+    override fun crossoverChromosomes(
+        chromosomes: List<Chromosome<T, G>>
+    ): Either<CrossoverException, List<Chromosome<T, G>>> = listOf(
+        chromosomes.first()
+            .copyWithGenes(
+                combine(chromosomes)
+                    .getOrElse { return CrossoverException("Failed to combine genes", it).left() }
+            )
+    ).right()
 
     /**
-     * Combines the genes from the provided chromosomes according to the configured `geneRate` and the `combiner`
-     * function.
+     * Combines genes from multiple chromosomes to produce a new list of genes for offspring in a genetic algorithm.
      *
-     * The `combine` function generates a new list of genes by combining the genes from a list of parent chromosomes.
-     * This function applies the `geneRate` to determine whether each gene should be recombined or directly inherited
-     * from the first parent chromosome. The `combiner` function is used to define how the genes from the parent
-     * chromosomes are merged to create the genes of the offspring.
+     * The `combine` function is responsible for the gene recombination step during a crossover operation. It takes a
+     * list of parent chromosomes, validates them against specific constraints, and then combines their genes to create
+     * a new list of genes for the offspring.
      *
-     * ## Important Note:
-     * While this function is public to allow for fine-tuning and experimentation in new algorithmic approaches, the
-     * recommended way to use the crossover operation is through the [invoke] operator function. Direct use of
-     * `combine` should generally be reserved for advanced scenarios where more granular control over the crossover
-     * process is necessary.
+     * ## Recommended Usage:
+     * The recommended way to perform a crossover operation is by using the [invoke] operator provided by the
+     * [Crossover] interface. The `combine` function is primarily intended for use in the implementation of new
+     * algorithmic variants and for cases where fine-grained control over the gene combination process is needed. Direct
+     * use of this function allows developers to experiment with and fine-tune specific gene recombination strategies.
      *
-     * @param chromosomes A list of chromosomes to be combined.
-     * @return A list of genes resulting from the combination.
-     * @throws CompositeException if the number of chromosomes does not match the expected number of parents or if the
-     *   chromosomes do not have the same length.
+     * @param chromosomes A list of chromosomes to be combined, with each chromosome represented as a `List` of genes.
+     * @return An `Either<CrossoverException, List<G>>` where `Right` contains the list of combined genes, and `Left`
+     *         contains a `CrossoverException` if the operation fails.
      */
-    fun combine(chromosomes: List<Chromosome<T, G>>): List<G> {
+    fun combine(chromosomes: List<Chromosome<T, G>>): Either<CrossoverException, List<G>> {
+        validateChromosomes(chromosomes).onLeft { return it.left() }
+        return createGeneList(chromosomes)
+    }
+
+    /**
+     * Validates the list of chromosomes to ensure they meet the requirements for a crossover operation.
+     *
+     * @param chromosomes A list of chromosomes to be validated for the crossover operation.
+     * @return An `Either<CrossoverException, Unit>` where `Right` indicates successful validation, and `Left` contains
+     *   a `CrossoverException` if the validation fails.
+     */
+    private fun validateChromosomes(chromosomes: List<Chromosome<T, G>>): Either<CrossoverException, Unit> =
         constrained {
             "Number of inputs (${chromosomes.size}) must equal the number of parents ($numParents)" {
                 chromosomes must HaveSize(numParents)
@@ -140,16 +148,58 @@ open class CombineCrossover<T, G>(
             "All chromosomes must have the same length" {
                 chromosomes.map { it.size }.toSet() must HaveSize(1)
             }
+        }.mapLeft {
+            CrossoverException("Invalid input chromosomes", it)
         }
-        // Combining logic for genes
-        return List(chromosomes[0].size) { i ->
+
+    /**
+     * Creates a list of genes by combining or selecting genes from a list of parent chromosomes.
+     *
+     * @param chromosomes A list of chromosomes from which genes are selected or combined.
+     * @return An `Either<CrossoverException, List<G>>` where `Right` contains the list of generated genes, and `Left`
+     *   contains a `CrossoverException` if any step in the process fails.
+     */
+    private fun createGeneList(chromosomes: List<Chromosome<T, G>>): Either<CrossoverException, List<G>> =
+        List(chromosomes[0].size) { i ->
             if (Domain.random.nextDouble() < geneRate) {
-                combiner(chromosomes.map { it[i] })
+                retrieveGenes(chromosomes, i).flatMap { genes ->
+                    combiner(genes).right()
+                }
             } else {
-                chromosomes[0][i]
+                retrieveGene(chromosomes[0], i)
             }
-        }
-    }
+        }.sequence()
+
+    /**
+     * Retrieves genes from a list of chromosomes at the specified index.
+     *
+     * @param chromosomes A list of chromosomes from which to retrieve the genes.
+     * @param index The index of the gene to be retrieved within each chromosome.
+     * @return An [Either] containing a list of genes on the right if successful, or a [CrossoverException] on the left
+     *   if any retrieval fails.
+     * @throws CrossoverException if the gene cannot be retrieved from any chromosome due to an invalid index or other
+     *   issues.
+     */
+    private fun retrieveGenes(chromosomes: List<Chromosome<T, G>>, index: Int): Either<CrossoverException, List<G>> =
+        chromosomes.map { geneList ->
+            geneList[index].getOrElse {
+                return CrossoverException("Failed to retrieve gene at index $index", it).left()
+            }
+        }.right()
+
+    /**
+     * Retrieves a gene from a given chromosome at the specified index.
+     *
+     * @param chromosome The chromosome from which to retrieve the gene.
+     * @param index The index of the gene to be retrieved within the chromosome.
+     * @return An `Either` containing the gene on the right if successful, or a `CrossoverException` on the left if the
+     *   retrieval fails.
+     * @throws CrossoverException if the gene cannot be retrieved due to an invalid index or other issues.
+     */
+    private fun retrieveGene(chromosome: Chromosome<T, G>, index: Int): Either<CrossoverException, G> =
+        chromosome[index]
+            .map { it.right() }
+            .getOrElse { CrossoverException("Failed to retrieve gene at index $index", it).left() }
 
     companion object {
 

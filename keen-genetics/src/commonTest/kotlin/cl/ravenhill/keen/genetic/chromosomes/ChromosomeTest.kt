@@ -5,10 +5,14 @@
 
 package cl.ravenhill.keen.genetic.chromosomes
 
+import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetic.genes.SimpleGene
 import cl.ravenhill.keen.genetic.genes.arbSimpleGene
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.matchers.shouldBeLeft
+import cl.ravenhill.matchers.shouldBeRight
+import cl.ravenhill.matchers.shouldHaveInfringement
 import cl.ravenhill.utils.arbProbability
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
@@ -16,6 +20,8 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeIn
+import io.kotest.matchers.ints.shouldNotBeInRange
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
@@ -24,6 +30,7 @@ import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
+import io.kotest.property.arbitrary.next
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
@@ -116,6 +123,65 @@ class ChromosomeTest : FreeSpec({
                 }
             }
         }
+
+        "when folding" - {
+            "should correctly accumulate results from left to right" {
+                checkAll(Arb.list(Arb.int())) { values ->
+                    val chromosome = SimpleChromosome(values.map { SimpleGene(it) })
+
+                    // Fold to calculate the sum of gene values
+                    val sum = chromosome.fold(0) { acc, value -> acc + value }
+                    val expectedSum = values.sum()
+                    sum shouldBe expectedSum
+
+                    // Fold to concatenate gene values as a string
+                    val concatenated = chromosome.fold("") { acc, value -> acc + value.toString() }
+                    val expectedConcat = values.joinToString("")
+                    concatenated shouldBe expectedConcat
+                }
+            }
+
+            "should correctly accumulate results from right to left" {
+                checkAll(Arb.list(Arb.int())) { values ->
+                    val chromosome = SimpleChromosome(values.map { SimpleGene(it) })
+
+                    // FoldRight to calculate the sum of gene values
+                    val sum = chromosome.foldRight(0) { value, acc -> acc + value }
+                    val expectedSum = values.sum()
+                    sum shouldBe expectedSum
+
+                    // FoldRight to build a string with gene values in reverse order
+                    val reversedString = chromosome.foldRight("") { value, acc -> acc + value.toString() }
+                    val expectedReverse = values.reversed().joinToString("")
+                    reversedString shouldBe expectedReverse
+                }
+            }
+        }
+
+        "when accessing genes by index" - {
+            "should return a Left value if the index is out of bounds" {
+                checkAll(arbChromosome(arbSimpleGene()), Arb.int()) { chromosome, index ->
+                    assume { index shouldNotBeInRange chromosome.indices }
+                    chromosome[index]
+                        .shouldBeLeft()
+                        .leftOrNull()
+                        .shouldNotBeNull()
+                        .shouldHaveInfringement<InvalidIndexException>(
+                            "Index ($index) must be within the bounds of the chromosome [0, ${chromosome.size - 1}]"
+                        )
+                }
+            }
+
+            "should return a Right value if the index is within bounds" {
+                checkAll(arbChromosomeAndGeneAtIndex(arbSimpleGene())) { (chromosome, gene, index) ->
+                    chromosome[index]
+                        .shouldBeRight()
+                        .getOrNull()
+                        .shouldNotBeNull()
+                        .shouldBe(gene)
+                }
+            }
+        }
     }
 })
 
@@ -125,7 +191,7 @@ fun <T, G> arbChromosome(
 ): Arb<Chromosome<T, G>> where G : Gene<T, G> = Arb.list(gene, size).map {
     object : Chromosome<T, G> {
         override val genes: List<G> = it
-        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
+        override fun copyWithGenes(newGenes: List<G>): Chromosome<T, G> {
             TODO("Not yet implemented")
         }
 
@@ -145,7 +211,7 @@ fun arbChromosomeWithInvalidGenes(
         genes.add(arbSimpleGene(Arb.constant(false)).bind())
         object : Chromosome<Int, SimpleGene> {
             override val genes: List<SimpleGene> = genes
-            override fun duplicateWithGenes(newGenes: List<SimpleGene>): Chromosome<Int, SimpleGene> {
+            override fun copyWithGenes(newGenes: List<SimpleGene>): Chromosome<Int, SimpleGene> {
                 TODO("Not yet implemented")
             }
         }
@@ -157,10 +223,32 @@ private fun <T, G> arbChromosomeAndGene(
 ): Arb<Pair<Chromosome<T, G>, G>> where G : Gene<T, G> = Arb.list(gene, size).map { genes ->
     object : Chromosome<T, G> {
         override val genes: List<G> = genes
-        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
+        override fun copyWithGenes(newGenes: List<G>): Chromosome<T, G> {
             TODO("Not yet implemented")
         }
     } to genes.random()
+}
+
+/**
+ * Generates an arbitrary `Chromosome` along with a specific gene at a random index within the chromosome.
+ *
+ * @param gene An [Arb] generator for producing individual genes.
+ * @param size An optional `IntRange` specifying the possible sizes of the chromosomes. The default is 1 to 100.
+ * @return An [Arb] generator that produces triples containing a chromosome, a randomly selected gene from that
+ *   chromosome, and the index of the gene.
+ */
+private fun <T, G> arbChromosomeAndGeneAtIndex(
+    gene: Arb<G>,
+    size: IntRange = 1..100,
+): Arb<Triple<Chromosome<T, G>, G, Int>> where G : Gene<T, G> = Arb.list(gene, size).map { genes ->
+    Arb.int(genes.indices).map { index ->
+        Triple(object : Chromosome<T, G> {
+            override val genes: List<G> = genes
+            override fun copyWithGenes(newGenes: List<G>): Chromosome<T, G> {
+                TODO("Not yet implemented")
+            }
+        }, genes[index], index)
+    }.next()
 }
 
 private fun <T, G> arbChromosomeAndGenes(
@@ -172,27 +260,22 @@ private fun <T, G> arbChromosomeAndGenes(
     val ratio = probability.bind()
     object : Chromosome<T, G> {
         override val genes: List<G> = genes
-        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
+        override fun copyWithGenes(newGenes: List<G>): Chromosome<T, G> {
             TODO("Not yet implemented")
         }
     } to genes.filter { random.nextDouble() < ratio }
 }
 
-private fun <T, G> arbChromosomeAndNotContainedGenes(
-    gene: Arb<G>,
+private fun arbChromosomeAndNotContainedGenes(
+    gene: Arb<SimpleGene>,
     size: IntRange = 0..100,
-): Arb<Pair<Chromosome<T, G>, List<G>>> where G : Gene<T, G> = arbitrary {
+): Arb<Pair<SimpleChromosome, List<SimpleGene>>> = arbitrary {
     val genes = Arb.list(gene, size).bind()
-    var notContained: List<G>
+    var notContained: List<SimpleGene>
     do {
         notContained = Arb.list(gene, 1..100).bind().filter { it !in genes }
     } while (notContained.isEmpty())
-    object : Chromosome<T, G> {
-        override val genes: List<G> = genes
-        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
-            TODO("Not yet implemented")
-        }
-    } to notContained
+    SimpleChromosome(genes) to notContained
 }
 
 private fun <T, G> arbChromosomeAndSize(
@@ -201,14 +284,14 @@ private fun <T, G> arbChromosomeAndSize(
 ): Arb<Pair<Chromosome<T, G>, Int>> where G : Gene<T, G> = Arb.list(gene, size).map { genes ->
     object : Chromosome<T, G> {
         override val genes: List<G> = genes
-        override fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G> {
+        override fun copyWithGenes(newGenes: List<G>): Chromosome<T, G> {
             TODO("Not yet implemented")
         }
     } to genes.size
 }
 
 class SimpleChromosome(override val genes: List<SimpleGene>) : Chromosome<Int, SimpleGene> {
-    override fun duplicateWithGenes(newGenes: List<SimpleGene>): Chromosome<Int, SimpleGene> {
+    override fun copyWithGenes(newGenes: List<SimpleGene>): Chromosome<Int, SimpleGene> {
         TODO("Not yet implemented")
     }
 }

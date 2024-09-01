@@ -202,8 +202,8 @@ public final class cl/ravenhill/keen/genetics/chromosomes/BooleanChromosome : cl
 	public fun containsAll (Ljava/util/Collection;)Z
 	public final fun copy (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosome;
 	public static synthetic fun copy$default (Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosome;Ljava/util/List;ILjava/lang/Object;)Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosome;
-	public fun duplicateWithGenes (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosome;
-	public synthetic fun duplicateWithGenes (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;
+	public fun copyWithGenes (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/BooleanChromosome;
+	public synthetic fun copyWithGenes (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public fun flatten ()Ljava/util/List;
@@ -233,7 +233,7 @@ public final class cl/ravenhill/keen/genetics/chromosomes/BooleanChromosomeFacto
 public abstract interface class cl/ravenhill/keen/genetics/chromosomes/Chromosome : cl/ravenhill/keen/mixins/FlatMappable, cl/ravenhill/keen/repr/Representation, java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	public abstract fun contains (Lcl/ravenhill/keen/genetics/genes/Gene;)Z
 	public abstract fun containsAll (Ljava/util/Collection;)Z
-	public abstract fun duplicateWithGenes (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;
+	public abstract fun copyWithGenes (Ljava/util/List;)Lcl/ravenhill/keen/genetics/chromosomes/Chromosome;
 	public abstract fun flatten ()Ljava/util/List;
 	public abstract fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public abstract fun foldRight (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
@@ -264,7 +264,7 @@ public abstract interface class cl/ravenhill/keen/genetics/chromosomes/Chromosom
 
 public abstract interface class cl/ravenhill/keen/genetics/genes/BooleanGene : cl/ravenhill/keen/genetics/genes/Gene {
 	public static final field Companion Lcl/ravenhill/keen/genetics/genes/BooleanGene$Companion;
-	public abstract fun duplicateWithValue (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public abstract fun copyWithValue (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
 	public abstract fun getGenerator ()Lkotlin/jvm/functions/Function1;
 	public abstract fun toInt ()I
 }
@@ -277,7 +277,7 @@ public final class cl/ravenhill/keen/genetics/genes/BooleanGene$Companion {
 
 public final class cl/ravenhill/keen/genetics/genes/BooleanGene$DefaultImpls {
 	public static fun bind (Lcl/ravenhill/keen/genetics/genes/BooleanGene;Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
-	public static fun duplicateWithValue (Lcl/ravenhill/keen/genetics/genes/BooleanGene;Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public static fun copyWithValue (Lcl/ravenhill/keen/genetics/genes/BooleanGene;Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
 	public static fun flatMap (Lcl/ravenhill/keen/genetics/genes/BooleanGene;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static fun flatten (Lcl/ravenhill/keen/genetics/genes/BooleanGene;)Ljava/util/List;
 	public static fun getGenerator (Lcl/ravenhill/keen/genetics/genes/BooleanGene;)Lkotlin/jvm/functions/Function1;
@@ -290,8 +290,8 @@ public final class cl/ravenhill/keen/genetics/genes/BooleanGene$False : cl/raven
 	public static final field INSTANCE Lcl/ravenhill/keen/genetics/genes/BooleanGene$False;
 	public fun bind (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
 	public synthetic fun bind (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/repr/Feature;
-	public synthetic fun duplicateWithValue (Ljava/lang/Object;)Lcl/ravenhill/keen/repr/Feature;
-	public fun duplicateWithValue (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public synthetic fun copyWithValue (Ljava/lang/Object;)Lcl/ravenhill/keen/repr/Feature;
+	public fun copyWithValue (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public fun flatten ()Ljava/util/List;
@@ -310,8 +310,8 @@ public final class cl/ravenhill/keen/genetics/genes/BooleanGene$True : cl/ravenh
 	public static final field INSTANCE Lcl/ravenhill/keen/genetics/genes/BooleanGene$True;
 	public fun bind (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
 	public synthetic fun bind (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/repr/Feature;
-	public synthetic fun duplicateWithValue (Ljava/lang/Object;)Lcl/ravenhill/keen/repr/Feature;
-	public fun duplicateWithValue (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
+	public synthetic fun copyWithValue (Ljava/lang/Object;)Lcl/ravenhill/keen/repr/Feature;
+	public fun copyWithValue (Z)Lcl/ravenhill/keen/genetics/genes/BooleanGene;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun flatMap (Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public fun flatten ()Ljava/util/List;

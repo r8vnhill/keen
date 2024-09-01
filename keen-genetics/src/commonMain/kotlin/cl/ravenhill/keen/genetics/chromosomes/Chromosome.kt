@@ -5,6 +5,13 @@
 
 package cl.ravenhill.keen.genetics.chromosomes
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constraints.ints.BeInRange
+import cl.ravenhill.jakt.exceptions.CompositeException
+import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.mixins.FlatMappable
 import cl.ravenhill.keen.repr.Representation
@@ -28,7 +35,7 @@ import cl.ravenhill.keen.repr.Representation
  * data class MyChromosome(
  *     override val genes: List<MyGene>
  * ) : Chromosome<Int, MyGene> {
- *     override fun duplicateWithGenes(newGenes: List<MyGene>) = copy(genes = newGenes)
+ *     override fun copyWithGenes(newGenes: List<MyGene>) = copy(genes = newGenes)
  * }
  * ```
  *
@@ -64,7 +71,7 @@ interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T
      * @param newGenes The list of genes to use in the new chromosome.
      * @return A new `Chromosome` instance with the specified genes.
      */
-    fun duplicateWithGenes(newGenes: List<G>): Chromosome<T, G>
+    fun copyWithGenes(newGenes: List<G>): Chromosome<T, G>
 
     /**
      * Checks if the chromosome is empty, meaning it contains no genes.
@@ -126,7 +133,7 @@ interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T
      *
      * @return A list containing the values of all the genes in the chromosome.
      */
-    override fun flatten() = genes.flatMap { it.flatten() }
+    override fun flatten() = genes.flatMap { it.toList() }
 
     /**
      * Verifies the correctness or validity of the chromosome.
@@ -194,10 +201,24 @@ interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T
         genes.foldRight(initial) { gene, acc -> operation(gene.value, acc) }
 
     /**
-     * Retrieves the gene at the specified index.
+     * Retrieves the gene at the specified index within the chromosome.
      *
-     * @param index The position of the gene to retrieve.
-     * @return The gene located at the given index.
+     * The `get` operator function provides safe access to the genes within a chromosome by validating the provided
+     * index before attempting to retrieve the gene. If the index is within bounds, the function returns the gene
+     * wrapped in an [Either.Right]. If the index is out of bounds, the function returns an [Either.Left] containing a
+     * [CompositeException] that describes the error.
+     *
+     * @param index The index of the gene to be retrieved from the chromosome.
+     * @return An `Either<CompositeException, G>` where [G] is the type of the gene:
+     * - `Either.Right<G>` containing the gene if the index is valid.
+     * - `Either.Left<CompositeException>` containing an error if the index is invalid.
      */
-    operator fun get(index: Int): G = genes[index]
+    operator fun get(index: Int): Either<CompositeException, G> = constrained {
+        "Index ($index) must be within the bounds of the chromosome [0, ${size - 1}]"(::InvalidIndexException) {
+            index must BeInRange(this@Chromosome.indices)
+        }
+    }.fold(
+        ifLeft = { it.left() }, // If the index is invalid, return the error
+        ifRight = { genes[index].right() } // If the index is valid, return the gene
+    )
 }

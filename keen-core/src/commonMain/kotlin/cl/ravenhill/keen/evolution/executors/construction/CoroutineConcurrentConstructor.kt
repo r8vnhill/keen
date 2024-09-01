@@ -69,7 +69,6 @@ class CoroutineConcurrentConstructor<T>(
                 size must BePositive
             }
         }.onLeft { throw it }
-
         return (0 until size).map { index ->
             scope.async {
                 init(index)

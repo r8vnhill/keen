@@ -5,9 +5,7 @@
 
 package cl.ravenhill.keen.repr
 
-import cl.ravenhill.keen.mixins.FlatMappable
 import cl.ravenhill.keen.mixins.Verifiable
-import cl.ravenhill.keen.utils.identity
 
 /**
  * Represents a fundamental component in an evolutionary algorithm.
@@ -25,7 +23,7 @@ import cl.ravenhill.keen.utils.identity
  * ### Example 1: Implementing a Simple Gene Feature
  * ```kotlin
  * data class IntGene(override val value: Int) : Feature<Int, IntGene> {
- *     override fun duplicateWithValue(value: Int) = IntGene(value)
+ *     override fun copyWithValue(value: Int) = IntGene(value)
  * }
  * ```
  *
@@ -51,9 +49,9 @@ import cl.ravenhill.keen.utils.identity
  *    ```
  *
  * 2. **Respect the Monad Laws**: Ensure that your subclass's implementation of `bind` respects the monad laws:
- *    - **Left Identity**: `pure(a).bind(f)` should be equivalent to `f(a)`.
- *    - **Right Identity**: `m.bind(::pure)` should be equivalent to `m`.
- *    - **Associativity**: `(m.bind(f)).bind(g)` should be equivalent to `m.bind { x -> f(x).bind(g) }`.
+ *    - **Left Identity**: `pure(a).flatMap(f)` should be equivalent to `f(a)`.
+ *    - **Right Identity**: `m.flatMap(::pure)` should be equivalent to `m`.
+ *    - **Associativity**: `(m.flatMap(f)).flatMap(g)` should be equivalent to `m.flatMap { x -> f(x).flatMap(g) }`.
  *
  * ### Benefits of Implementing Subclasses as Monads:
  * - **Composability**: Monads allow you to chain operations in a clean and consistent way, enabling the composition
@@ -76,12 +74,12 @@ import cl.ravenhill.keen.utils.identity
  *    more predictable and safer code.
  *
  * 3. **Ease of Use**: The `copy()` method provided by data classes makes it easy to create new instances with modified
- *    values, which is particularly useful when implementing the `duplicateWithValue` method.
+ *    values, which is particularly useful when implementing the `copyWithValue` method.
  *
  * ### Example of a Data Class Implementation:
  * ```kotlin
  * data class IntGene(override val value: Int) : Feature<Int, IntGene> {
- *     override fun duplicateWithValue(value: Int) = copy(value = value)
+ *     override fun copyWithValue(value: Int) = copy(value = value)
  *
  *     companion object {
  *         fun pure(value: Int): IntGene = IntGene(value)
@@ -101,7 +99,7 @@ import cl.ravenhill.keen.utils.identity
  * @param F The type of the feature itself, which must extend [Feature].
  * @property value The value held by the feature, representing its state or characteristic in the evolutionary process.
  */
-interface Feature<T, F> : Verifiable, FlatMappable<T> where F : Feature<T, F> {
+interface Feature<T, F> : Verifiable where F : Feature<T, F> {
 
     /**
      * The value held by the feature.
@@ -126,12 +124,22 @@ interface Feature<T, F> : Verifiable, FlatMappable<T> where F : Feature<T, F> {
     /**
      * Applies a function to the feature's value and returns a new feature instance with the transformed value.
      *
-     * The `bind` method allows for chaining operations that transform the feature's value and return a new feature.
-     * This is akin to the `flatMap` operation in monads, enabling more complex transformations and computations on
-     * the feature's value.
+     * The `flatMap` method allows for chaining operations that transform the feature's value and return a new feature.
+     * This method is a key part of the monadic structure, enabling complex transformations while maintaining the
+     * integrity of the feature's structure.
      *
      * @param f The function to apply to the feature's value.
      * @return A new feature instance with the transformed value.
      */
-    fun bind(f: (T) -> F): F = f(value)
+    fun flatMap(f: (T) -> F): F = f(value)
+
+    /**
+     * Converts the feature's value into a list representation.
+     *
+     * The `toList` method returns a list containing the feature's value. This is useful in contexts where features
+     * need to be processed or analyzed in bulk, particularly in the context of genetic operations.
+     *
+     * @return A list containing the feature's value.
+     */
+    fun toList(): List<T> = listOf(value)
 }

@@ -5,8 +5,12 @@
 
 package cl.ravenhill.keen.genetics
 
-import cl.ravenhill.jakt.Jakt.constraints
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import cl.ravenhill.jakt.constrained
 import cl.ravenhill.jakt.constraints.ints.BeInRange
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.exceptions.InvalidIndexException
@@ -27,15 +31,15 @@ import cl.ravenhill.keen.repr.Representation
  *
  * ### Example 1: Creating a Genotype with a List of Chromosomes
  * ```kotlin
- * val chromosome1 = Chromosome(Gene(1), Gene(2), Gene(3))
- * val chromosome2 = Chromosome(Gene(4), Gene(5), Gene(6))
+ * val chromosome1 = MyChromosome(MyGene(1), MyGene(2), MyGene(3))
+ * val chromosome2 = MyChromosome(MyGene(4), MyGene(5), MyGene(6))
  * val genotype = Genotype(listOf(chromosome1, chromosome2))
  * ```
  *
  * ### Example 2: Creating a Genotype with Vararg Chromosomes
  * ```kotlin
- * val chromosome1 = Chromosome(listOf(Gene(1), Gene(2), Gene(3)))
- * val chromosome2 = Chromosome(listOf(Gene(4), Gene(5), Gene(6)))
+ * val chromosome1 = MyChromosome(listOf(MyGene(1), MyGene(2), MyGene(3)))
+ * val chromosome2 = MyChromosome(listOf(MyGene(4), MyGene(5), MyGene(6)))
  * val genotype = Genotype(chromosome1, chromosome2)
  * ```
  *
@@ -189,13 +193,13 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) : Representat
      * @return The chromosome at the specified index.
      * @throws InvalidIndexException If the index is out of range.
      */
-    operator fun get(index: Int): Chromosome<T, G> {
-        constraints {
+    operator fun get(index: Int): Either<CompositeException, Chromosome<T, G>> {
+        constrained {
             "The index ($index) must be in the range [0, $size)"(::InvalidIndexException) {
                 index must BeInRange(this@Genotype.indices)
             }
-        }
-        return chromosomes[index]
+        }.onLeft { return it.left() }
+        return chromosomes[index].right()
     }
 
     /**

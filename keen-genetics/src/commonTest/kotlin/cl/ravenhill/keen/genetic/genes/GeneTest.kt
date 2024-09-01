@@ -24,12 +24,6 @@ class GeneTest : FreeSpec({
                 mutated.value shouldBe gene.value + 1
             }
         }
-
-        "can be flattened" {
-            checkAll(arbSimpleGene()) { gene ->
-                gene.flatten() shouldBe listOf(gene.value)
-            }
-        }
     }
 })
 
@@ -40,11 +34,11 @@ class GeneTest : FreeSpec({
  * @return An arbitrary `SimpleGene` instance with a random integer value and the specified validity.
  */
 fun arbSimpleGene(
-    isValid: Arb<Boolean> = Arb.constant(true)
-): Arb<SimpleGene> =
-    Arb.int(Int.MIN_VALUE..<Int.MAX_VALUE).flatMap { size ->
-        isValid.map { valid -> SimpleGene(size, valid) }
-    }
+    isValid: Arb<Boolean> = Arb.constant(true),
+    range: IntRange = Int.MIN_VALUE..Int.MAX_VALUE
+) = Arb.int(range).flatMap { size ->
+    isValid.map { valid -> SimpleGene(size, valid) }
+}
 
 /**
  * Represents a simple gene with an integer value and a validity flag.

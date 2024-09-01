@@ -22,6 +22,7 @@ import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.utils.Exclusivity
 import cl.ravenhill.keen.utils.indices
+import cl.ravenhill.keen.utils.sequence
 import cl.ravenhill.keen.utils.subsets
 import cl.ravenhill.keen.utils.transpose
 
@@ -155,24 +156,24 @@ interface Crossover<T, G> : Alterer<T, G, Genotype<T, G>> where G : Gene<T, G> {
     )
 
     /**
-     * Performs a crossover operation on the provided parent genotypes to produce offspring genotypes.
+     * Performs a crossover operation on a list of parent genotypes to produce offspring genotypes in a genetic
+     * algorithm.
      *
-     * The `crossover` function takes a list of parent genotypes and applies a crossover operation to generate a new set
-     * of offspring genotypes. This process involves validating the parent genotypes, selecting the indices of
-     * chromosomes to crossover, and then generating new chromosomes for the offspring. The crossover operation is a key
-     * mechanism in evolutionary algorithms, allowing the combination of genetic material from multiple parents to
-     * create diversity in the population.
+     * The `crossover` function is a core operation in genetic algorithms, responsible for combining genetic material
+     * from parent genotypes to create new offspring. This operation introduces genetic diversity into the population,
+     * which is essential for exploring the solution space and avoiding premature convergence to local optima.
      *
-     * ## Usage:
-     * This function is typically called within the context of a genetic algorithm or similar evolutionary process. The
-     * function is public to allow for fine-tuning of new algorithms or experimentation with crossover strategies.
-     * However, the recommended way to use the crossover functionality is through the `Crossover` interface's [invoke]
-     * operator, which provides a higher-level abstraction for performing crossover operations.
+     * ## Recommended Usage:
+     * Although the `crossover` function is available for direct use, it is recommended to perform crossover operations
+     * using the [invoke] operator of the [Crossover] interface. The `invoke` operator provides a higher-level
+     * abstraction and handles additional logic that ensures the crossover operation is integrated seamlessly into the
+     * evolutionary algorithm's lifecycle.
      *
-     * @param parentGenotypes A list of genotypes from the parent individuals.
-     * @return Either a list of new genotypes generated through the crossover operation, or a [CrossoverException] if
-     *   an error occurs.
-     * @throws CrossoverException if the crossover operation fails due to invalid inputs or other errors.
+     * @param parentGenotypes A list of parent genotypes to be used in the crossover operation.
+     * @return An [Either] containing a list of offspring genotypes on the right, or a [CrossoverException] on the left
+     *   in case of an error.
+     * @throws CrossoverException if the input parent genotypes do not meet the required constraints, or if the
+     *   crossover operation fails for any reason.
      */
     fun crossover(parentGenotypes: List<Genotype<T, G>>): Either<CrossoverException, List<Genotype<T, G>>> =
         runCatching {
@@ -180,7 +181,13 @@ interface Crossover<T, G> : Alterer<T, G, Genotype<T, G>> where G : Gene<T, G> {
             val parentGenotypeSize = parentGenotypes.first().size
             val chromosomeIndices = Domain.random.indices(chromosomeRate, parentGenotypeSize)
             val chromosomes = chromosomeIndices.map { index -> parentGenotypes.map { it[index] } }
-            val offspringChromosomes = chromosomes.map(::crossoverChromosomes).transpose()
+            val offspringChromosomes = chromosomes
+                .map { it.sequence() }
+                .sequence()
+                .getOrElse { return CrossoverException(FAILED_TO_PERFORM_CROSSOVER_OPERATION, it).left() }
+                .map(::crossoverChromosomes).sequence()
+                .getOrElse { return CrossoverException(FAILED_TO_PERFORM_CROSSOVER_OPERATION, it).left() }
+                .transpose()
             generateOffspring(parentGenotypes, chromosomeIndices, offspringChromosomes)
         }.fold(
             onSuccess = { it.right() },
@@ -204,8 +211,7 @@ interface Crossover<T, G> : Alterer<T, G, Genotype<T, G>> where G : Gene<T, G> {
      * @param chromosomes A list of chromosomes from the parent individuals.
      * @return A list of new chromosomes generated through the crossover operation.
      */
-    fun crossoverChromosomes(chromosomes: List<Chromosome<T, G>>): List<Chromosome<T, G>>
-
+    fun crossoverChromosomes(chromosomes: List<Chromosome<T, G>>): Either<CrossoverException, List<Chromosome<T, G>>>
 
     /**
      * Validates the parent genotypes before performing a crossover operation.

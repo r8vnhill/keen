@@ -404,7 +404,7 @@ public final class cl/ravenhill/keen/ranking/IndividualRanker$DefaultImpls {
 
 public abstract interface class cl/ravenhill/keen/repr/Feature : cl/ravenhill/keen/mixins/FlatMappable, cl/ravenhill/keen/mixins/Verifiable {
 	public abstract fun bind (Lkotlin/jvm/functions/Function1;)Lcl/ravenhill/keen/repr/Feature;
-	public abstract fun duplicateWithValue (Ljava/lang/Object;)Lcl/ravenhill/keen/repr/Feature;
+	public abstract fun copyWithValue (Ljava/lang/Object;)Lcl/ravenhill/keen/repr/Feature;
 	public abstract fun getValue ()Ljava/lang/Object;
 }
 

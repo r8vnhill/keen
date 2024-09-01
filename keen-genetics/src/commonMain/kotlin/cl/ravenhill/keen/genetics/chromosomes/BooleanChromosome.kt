@@ -44,7 +44,7 @@ private const val CHUNK_SIZE = 4
  * ```kotlin
  * val chromosome = BooleanChromosome(listOf(BooleanGene.True, BooleanGene.False))
  * val newGenes = listOf(BooleanGene.False, BooleanGene.True)
- * val newChromosome = chromosome.duplicateWithGenes(newGenes)
+ * val newChromosome = chromosome.copyWithGenes(newGenes)
  * println(newChromosome.genes) // Output: [False, True]
  * ```
  *
@@ -56,7 +56,7 @@ data class BooleanChromosome(override val genes: List<BooleanGene>) : Chromosome
     /**
      * Creates a copy of the chromosome with a new list of genes.
      *
-     * The `duplicateWithGenes` method is used to generate a new `BooleanChromosome` with a specified set of genes.
+     * The `copyWithGenes` method is used to generate a new `BooleanChromosome` with a specified set of genes.
      * This method is crucial in genetic algorithms for operations like crossover, where a new chromosome is
      * created by combining genes from parent chromosomes.
      *
@@ -64,14 +64,14 @@ data class BooleanChromosome(override val genes: List<BooleanGene>) : Chromosome
      * ```kotlin
      * val chromosome = BooleanChromosome(listOf(BooleanGene.True, BooleanGene.False))
      * val newGenes = listOf(BooleanGene.False, BooleanGene.True)
-     * val newChromosome = chromosome.duplicateWithGenes(newGenes)
+     * val newChromosome = chromosome.copyWithGenes(newGenes)
      * println(newChromosome.genes) // Output: [False, True]
      * ```
      *
      * @param newGenes The new list of `BooleanGene` instances to replace the current genes in the chromosome.
      * @return A new `BooleanChromosome` instance with the specified genes.
      */
-    override fun duplicateWithGenes(newGenes: List<BooleanGene>) = copy(genes = newGenes)
+    override fun copyWithGenes(newGenes: List<BooleanGene>) = copy(genes = newGenes)
 
     /**
      * Generates a string representation of the BooleanChromosome object based on the current toStringMode.

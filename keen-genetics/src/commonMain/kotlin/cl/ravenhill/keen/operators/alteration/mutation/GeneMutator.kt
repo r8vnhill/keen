@@ -64,7 +64,7 @@ interface GeneMutator<T, G> : Mutator<T, G> where G : Gene<T, G> {
      * @return A new chromosome with mutated genes.
      */
     override fun mutateChromosome(chromosome: Chromosome<T, G>): Chromosome<T, G> =
-        chromosome.duplicateWithGenes(chromosome.genes.map { gene ->
+        chromosome.copyWithGenes(chromosome.genes.map { gene ->
             if (Domain.random.nextDouble() < geneRate) {
                 mutateGene(gene)
             } else {
