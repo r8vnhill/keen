@@ -16,13 +16,15 @@ import cl.ravenhill.keen.repr.SimpleRepresentation
 import cl.ravenhill.keen.repr.arbSimpleFeature
 import cl.ravenhill.keen.repr.arbSimpleRepresentation
 import cl.ravenhill.matchers.shouldBeValid
+import cl.ravenhill.utils.arbIndividual
+import cl.ravenhill.utils.arbListOfN
+import cl.ravenhill.utils.arbNonNanDouble
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.bind
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
@@ -217,20 +219,6 @@ class IndividualTest : FreeSpec({
         }
     }
 })
-
-/**
- * Generates an arbitrary `Individual` for use in evolutionary algorithms.
- *
- * @param arbRepresentation An `Arb<R>` generator for creating random representations.
- * @param arbFitness An optional `Arb<Double>` generator for creating random fitness values. Defaults to
- *   `arbNonNanDouble()`.
- * @return An `Arb<Individual<T, F, R>>` generator that produces random `Individual` instances.
- */
-fun <T, F, R> arbIndividual(
-    arbRepresentation: Arb<R>,
-    arbFitness: Arb<Double> = arbNonNanDouble()
-): Arb<Individual<T, F, R>> where F : Feature<T, F>,
-                                  R : Representation<T, F> = Arb.bind(arbRepresentation, arbFitness, ::Individual)
 
 /**
  * Generates a pair of an `Individual` and its corresponding flattened representation.

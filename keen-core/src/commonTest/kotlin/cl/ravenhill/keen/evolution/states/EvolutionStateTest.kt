@@ -6,8 +6,6 @@
 package cl.ravenhill.keen.evolution.states
 
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.arbIndividual
-import cl.ravenhill.keen.arbPopulation
 import cl.ravenhill.keen.matchers.shouldBeEmpty
 import cl.ravenhill.keen.matchers.shouldNotBeEmpty
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
@@ -15,14 +13,13 @@ import cl.ravenhill.keen.ranking.FitnessMinRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import cl.ravenhill.keen.repr.SimpleFeature
-import cl.ravenhill.keen.repr.SimpleRepresentation
 import cl.ravenhill.keen.repr.arbSimpleFeature
 import cl.ravenhill.keen.repr.arbSimpleRepresentation
+import cl.ravenhill.utils.arbIndividual
+import cl.ravenhill.utils.arbPopulation
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.bind
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.nonNegativeInt
