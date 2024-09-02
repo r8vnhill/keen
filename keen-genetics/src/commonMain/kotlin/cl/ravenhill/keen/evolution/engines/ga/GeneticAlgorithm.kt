@@ -9,6 +9,7 @@ import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
+import cl.ravenhill.keen.dsl.geneticAlgorithm
 import cl.ravenhill.keen.evolution.config.AlterationConfiguration
 import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.config.GeneticPopulationConfiguration
@@ -56,11 +57,43 @@ import cl.ravenhill.keen.listeners.EvolutionListener
  * an optimal solution.
  *
  * ## Usage:
- * This class is intended to be used in scenarios where a genetic algorithm is an appropriate method for solving
- * optimization or search problems. The algorithm is highly configurable, allowing for customization of the population
- * size, selection methods, genetic operators, and evolutionary parameters.
+ * While the `GeneticAlgorithm` class can be directly instantiated and configured, it is recommended to use the
+ * [geneticAlgorithm] DSL for creating instances of this class. The DSL offers a more concise and user-friendly way to
+ * define and configure genetic algorithms, ensuring that all necessary components are correctly set up and integrated.
+ * The DSL internally leverages the `GeneticAlgorithmFactory` to create and configure the algorithm, offering the same
+ * flexibility with a more streamlined interface.
  *
- * ### Example: Running a Genetic Algorithm
+ * ### Example: Running a Genetic Algorithm Using the DSL
+ * ```kotlin
+ * // Set up the genetic algorithm using the DSL
+ * val engine = geneticAlgorithm(
+ *     ::fitnessFunction, // Fitness function: calculates the fitness of each individual
+ *     genotypeOf {       // Genotype factory: defines the structure of the individuals
+ *         chromosomeOf {
+ *             booleans {
+ *                 size = 50
+ *                 trueRate = 0.15
+ *             }
+ *         }
+ *     }
+ * ) {
+ *     populationSize = 500
+ *     parentSelector = TournamentSelector()
+ *     survivorSelector = TournamentSelector()
+ *     alterers += listOf(BitFlipMutator(), UniformCrossover(chromosomeRate = 0.6))
+ *     limits += targetFitness(50.0)
+ *     listeners += listOf(EvolutionSummary(), EvolutionPlotter())
+ * }
+ *
+ * // Run the evolution process
+ * engine.evolve()
+ *
+ * // Display the summary of the evolution
+ * engine.publicListeners.filterIsInstance<EvolutionSummary<*, *, *, *>>().first().display()
+ * engine.publicListeners.filterIsInstance<EvolutionPlotter<*, *, *, *>>().first().display()
+ * ```
+ *
+ * ### Example: Direct Instantiation of `GeneticAlgorithm`
  * ```kotlin
  * val populationConfig = GeneticPopulationConfiguration(...)
  * val selectionConfig = SelectionConfiguration(...)

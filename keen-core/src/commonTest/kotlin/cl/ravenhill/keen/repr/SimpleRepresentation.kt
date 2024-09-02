@@ -46,7 +46,7 @@ data class SimpleRepresentation<T, F>(private val features: List<F>, private val
 fun <T, F> arbSimpleRepresentation(
     arb: Arb<F>,
     isValidRepresentation: Arb<IsValidRepresentation> = Arb.enum<IsValidRepresentation>()
-): Arb<Representation<T, F>> where F : Feature<T, F> =
+) where F : Feature<T, F> =
     Arb.bind(Arb.list(arb), isValidRepresentation) { features, isValid ->
         SimpleRepresentation(features, isValid)
     }

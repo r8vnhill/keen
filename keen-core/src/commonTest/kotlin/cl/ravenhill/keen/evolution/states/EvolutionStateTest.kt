@@ -136,7 +136,12 @@ class EvolutionStateTest : FreeSpec({
  */
 fun <T, F, R> arbEvolutionState(
     populationArb: Arb<Population<T, F, R>>,
-    rankerArb: Arb<IndividualRanker<T, F, R>> = Arb.element(FitnessMaxRanker(), FitnessMinRanker()),
+    rankerArb: Arb<IndividualRanker<T, F, R>> = Arb.element(
+        FitnessMaxRanker.sync(),
+        FitnessMaxRanker.async(),
+        FitnessMinRanker.sync(),
+        FitnessMinRanker.async()
+    ),
     generationArb: Arb<Int> = Arb.nonNegativeInt()
 ) where F : Feature<T, F>,
         R : Representation<T, F> =

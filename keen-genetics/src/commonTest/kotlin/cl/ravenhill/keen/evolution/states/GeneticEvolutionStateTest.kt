@@ -13,8 +13,8 @@ import cl.ravenhill.keen.genetic.genes.SimpleGene
 import cl.ravenhill.keen.genetic.genes.arbSimpleGene
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
-import cl.ravenhill.keen.ranking.FitnessMaxRanker
-import cl.ravenhill.keen.ranking.FitnessMinRanker
+import cl.ravenhill.keen.ranking.SyncFitnessMaxRanker
+import cl.ravenhill.keen.ranking.SyncFitnessMinRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.utils.arbIndividual
 import io.kotest.core.spec.style.FreeSpec
@@ -33,7 +33,7 @@ class GeneticEvolutionStateTest : FreeSpec({
             val populationArb = arbPopulation(individualArb)
             checkAll(
                 populationArb,
-                Arb.element(FitnessMaxRanker<Int, SimpleGene, Genotype<Int, SimpleGene>>(), FitnessMinRanker()),
+                Arb.element(SyncFitnessMaxRanker<Int, SimpleGene, Genotype<Int, SimpleGene>>(), SyncFitnessMinRanker()),
                 Arb.nonNegativeInt()
             ) { population, ranker, generation ->
                 GeneticEvolutionState(population, ranker, generation)
@@ -46,7 +46,7 @@ class GeneticEvolutionStateTest : FreeSpec({
             checkAll(
                 arbGeneticEvolutionState(populationArb),
                 populationArb,
-                Arb.element(FitnessMaxRanker<Int, SimpleGene, Genotype<Int, SimpleGene>>(), FitnessMinRanker()),
+                Arb.element(SyncFitnessMaxRanker<Int, SimpleGene, Genotype<Int, SimpleGene>>(), SyncFitnessMinRanker()),
                 Arb.nonNegativeInt()
             ) { state, population, ranker, generation ->
                 val copy = state.makeCopy(population, ranker, generation)
@@ -57,7 +57,7 @@ class GeneticEvolutionStateTest : FreeSpec({
         }
 
         "can be created empty" {
-            val ranker = FitnessMaxRanker<Int, SimpleGene, Genotype<Int, SimpleGene>>()
+            val ranker = SyncFitnessMaxRanker<Int, SimpleGene, Genotype<Int, SimpleGene>>()
             val state = GeneticEvolutionState.empty(ranker)
             state.population shouldBe emptyList()
             state.ranker shouldBe ranker
@@ -79,8 +79,8 @@ class GeneticEvolutionStateTest : FreeSpec({
 fun <T, G> arbGeneticEvolutionState(
     populationArb: Arb<Population<T, G, Genotype<T, G>>>,
     rankerArb: Arb<IndividualRanker<T, G, Genotype<T, G>>> = Arb.element(
-        FitnessMaxRanker(),
-        FitnessMinRanker()
+        SyncFitnessMaxRanker(),
+        SyncFitnessMinRanker()
     ),
     generationArb: Arb<Int> = Arb.nonNegativeInt()
 ) where G : Gene<T, G> = Arb.bind(
