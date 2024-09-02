@@ -75,7 +75,7 @@ object Domain {
 
     var random: Random = Random.Default
 
-    const val DEFAULT_CONSOLE_WIDTH = 120
+    const val DEFAULT_CONSOLE_WIDTH = 100
 
     var fallbackConsoleWidth = DEFAULT_CONSOLE_WIDTH
 

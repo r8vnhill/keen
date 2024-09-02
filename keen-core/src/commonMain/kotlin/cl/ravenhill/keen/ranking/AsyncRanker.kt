@@ -54,15 +54,19 @@ interface AsyncRanker<T, F, R> : IndividualRanker<T, F, R> where F : Feature<T, 
     override suspend fun sort(
         population: List<Individual<T, F, R>>,
         sortOrder: SortingStrategy
-    ): List<Individual<T, F, R>> = withContext(Domain.dispatcher) {
-        val chunks = population.chunked(chunkSize)
-        val sortedChunks = coroutineScope {
-            chunks.map { chunk ->
-                async { chunk.sortedWith(getComparator(sortOrder)) }
-            }.awaitAll()
+    ): List<Individual<T, F, R>> = if (sortOrder == SortingStrategy.UNSORTED) {
+            population
+        } else {
+            withContext(Domain.dispatcher) {
+                val chunks = population.chunked(chunkSize)
+                val sortedChunks = coroutineScope {
+                    chunks.map { chunk ->
+                        async { chunk.sortedWith(getComparator(sortOrder)) }
+                    }.awaitAll()
+                }
+                mergeSortedChunks(sortedChunks, sortOrder)
+            }
         }
-        mergeSortedChunks(sortedChunks, sortOrder)
-    }
 
     /**
      * Merges sorted chunks of individuals into a single sorted list.
@@ -85,7 +89,7 @@ interface AsyncRanker<T, F, R> : IndividualRanker<T, F, R> where F : Feature<T, 
                         when (sortOrder) {
                             SortingStrategy.ASCENDING -> items.minByOrNull { item -> comparator.compare(item, item) }
                             SortingStrategy.DESCENDING -> items.maxByOrNull { item -> comparator.compare(item, item) }
-                            SortingStrategy.UNSORTED -> null
+                            SortingStrategy.UNSORTED -> null    // Should never happen
                         }
                     }
                 extremeItem?.let { item ->
@@ -103,21 +107,7 @@ interface AsyncRanker<T, F, R> : IndividualRanker<T, F, R> where F : Feature<T, 
      * @param sortOrder The sorting strategy used to sort the chunks.
      * @throws CompositeException if the sorted chunks do not meet the required sorting constraints.
      */
-    private fun checkIfSorted(sortedChunks: List<Population<T, F, R>>, sortOrder: SortingStrategy) {
-        constrained {
-            sortedChunks.forEach { chunk ->
-                if (sortOrder == SortingStrategy.ASCENDING) {
-                    "Sorted chunk must be monotonically increasing" {
-                        chunk.map { it.fitness } must BeMonotonicallyIncreasing()
-                    }
-                } else {
-                    "Sorted chunk must be monotonically decreasing" {
-                        chunk.map { it.fitness } must BeMonotonicallyDecreasing()
-                    }
-                }
-            }
-        }.onLeft { throw it }
-    }
+    fun checkIfSorted(sortedChunks: List<Population<T, F, R>>, sortOrder: SortingStrategy)
 
     /**
      * Safely retrieves the next item from an iterator or returns `null` if no items are available.

@@ -5,10 +5,17 @@
 
 package cl.ravenhill.keen.ranking
 
+import arrow.core.getOrElse
+import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constraints.collections.BeMonotonicallyDecreasing
+import cl.ravenhill.jakt.constraints.collections.BeMonotonicallyIncreasing
+import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Individual
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.ranking.FitnessMaxRanker.AsyncFitnessMaxRanker.Companion.DEFAULT_CHUNK_SIZE
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.utils.SortingStrategy
 
 /**
  * An `IndividualRanker` that ranks individuals based on maximizing their fitness.
@@ -51,9 +58,9 @@ interface FitnessMaxRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
          *
          * @return An [AsyncFitnessMaxRanker] that ranks individuals by maximizing their fitness.
          */
-        fun <T, F, R> async(chunkSize: Int = DEFAULT_CHUNK_SIZE) where F : Feature<T, F>,
-                                                                       R : Representation<T, F> =
-            AsyncFitnessMaxRanker<T, F, R>(chunkSize)
+        fun <T, F, R> async(chunkSize: Int = DEFAULT_CHUNK_SIZE)
+                where F : Feature<T, F>,
+                      R : Representation<T, F> = AsyncFitnessMaxRanker<T, F, R>(chunkSize)
     }
 
     /**
@@ -86,13 +93,43 @@ interface FitnessMaxRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
      *   value is [DEFAULT_CHUNK_SIZE].
      */
     class AsyncFitnessMaxRanker<T, F, R>(override val chunkSize: Int = DEFAULT_CHUNK_SIZE) : FitnessMaxRanker<T, F, R>,
-        AsyncRanker<T, F, R> where F : Feature<T, F>,
-                                   R : Representation<T, F> {
+            AsyncRanker<T, F, R> where F : Feature<T, F>,
+                                       R : Representation<T, F> {
         companion object {
             /**
              * The default chunk size for parallel sorting. Set to 1000.
              */
             internal const val DEFAULT_CHUNK_SIZE = 1000
         }
+
+        /**
+         * Checks whether the sorted chunks are correctly sorted according to the specified sorting strategy.
+         *
+         * The `checkIfSorted` method ensures that each chunk of the population, after being sorted, adheres to the
+         * expected order defined by the [sortOrder]. If the sorting strategy is ascending, it verifies that each chunk
+         * is monotonically increasing. If the strategy is descending, it verifies that each chunk is monotonically
+         * decreasing. If any chunk does not meet the required criteria, an exception is thrown.
+         *
+         * @param sortedChunks The list of sorted population chunks to validate.
+         * @param sortOrder The sorting strategy applied to the population (ascending, descending, or unsorted).
+         * @throws CompositeException if any chunk does not meet the monotonicity condition according to the sorting
+         *   strategy.
+         */
+        override fun checkIfSorted(
+            sortedChunks: List<Population<T, F, R>>,
+            sortOrder: SortingStrategy
+        ) = constrained {
+            sortedChunks.forEach { chunk ->
+                if (sortOrder == SortingStrategy.ASCENDING) {
+                    "Sorted chunk must be monotonically increasing" {
+                        chunk.map { it.fitness } must BeMonotonicallyIncreasing()
+                    }
+                } else if (sortOrder == SortingStrategy.DESCENDING) {
+                    "Sorted chunk must be monotonically decreasing" {
+                        chunk.map { it.fitness } must BeMonotonicallyDecreasing()
+                    }
+                }
+            }
+        }.getOrElse { throw it }
     }
 }

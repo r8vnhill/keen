@@ -28,7 +28,6 @@ import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.Selector
 import cl.ravenhill.keen.operators.selection.TournamentSelector
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
-import cl.ravenhill.keen.ranking.SyncFitnessMaxRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
 
 /**

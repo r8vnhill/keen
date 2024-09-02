@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2024, Ignacio Slater M.
- * 2-Clause BSD License.
- */
-
 package cl.ravenhill.keen.ranking
 
 import cl.ravenhill.keen.repr.SimpleFeature
@@ -14,21 +9,19 @@ import cl.ravenhill.utils.arbIndividual
 import cl.ravenhill.utils.arbOrderedPair
 import cl.ravenhill.utils.arbPopulation
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.flatMap
-import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.pair
 import io.kotest.property.checkAll
 
-class FitnessMaxRankerTest : FreeSpec({
-    "A FitnessMaxRanker" - {
+class FitnessMinRankerTest : FreeSpec({
+    "A FitnessMinRanker" - {
         "when comparing two individuals" - {
-            "should return -1 if the first individual's fitness is less than the second individual's fitness" {
+            "should return 1 if the first individual's fitness is less than the second individual's fitness" {
                 checkAll(
                     arbOrderedPair(Arb.double(includeNonFiniteEdgeCases = false), strict = true)
                         .flatMap { (first, second) ->
@@ -37,9 +30,9 @@ class FitnessMaxRankerTest : FreeSpec({
                                 arbIndividual(arbSimpleRepresentation(arbSimpleFeature()), Arb.constant(second))
                             )
                         },
-                    arbFitnessMaxRanker()
+                    arbFitnessMinRanker()
                 ) { (first, second), ranker ->
-                    ranker(first, second) shouldBe -1
+                    ranker(first, second) shouldBe 1
                 }
             }
 
@@ -52,13 +45,13 @@ class FitnessMaxRankerTest : FreeSpec({
                                 arbIndividual(arbSimpleRepresentation(arbSimpleFeature()), Arb.constant(fitness))
                             )
                         },
-                    arbFitnessMaxRanker()
+                    arbFitnessMinRanker()
                 ) { (first, second), ranker ->
                     ranker(first, second) shouldBe 0
                 }
             }
 
-            "should return a positive integer if the first individual's fitness exceeds the second's" {
+            "should return -1 if the first individual's fitness exceeds the second's" {
                 checkAll(
                     arbOrderedPair(Arb.double(includeNonFiniteEdgeCases = false), strict = true)
                         .flatMap { (first, second) ->
@@ -67,9 +60,9 @@ class FitnessMaxRankerTest : FreeSpec({
                                 arbIndividual(arbSimpleRepresentation(arbSimpleFeature()), Arb.constant(first))
                             )
                         },
-                    arbFitnessMaxRanker()
+                    arbFitnessMinRanker()
                 ) { (first, second), ranker ->
-                    ranker(first, second) shouldBe 1
+                    ranker(first, second) shouldBe -1
                 }
             }
         }
@@ -79,11 +72,11 @@ class FitnessMaxRankerTest : FreeSpec({
                 "should return the population sorted by fitness in ascending order" {
                     checkAll(
                         arbPopulation(arbIndividual(arbSimpleRepresentation(arbSimpleFeature()), Arb.double())),
-                            arbFitnessMaxRanker()
+                        arbFitnessMinRanker()
                     ) { population, ranker ->
                         val sorted = ranker.sort(population)
                         sorted.zipWithNext { first, second ->
-                            first.fitness <= second.fitness
+                            first.fitness >= second.fitness
                         }
                     }
                 }
@@ -93,11 +86,11 @@ class FitnessMaxRankerTest : FreeSpec({
                 "should return the population sorted by fitness in descending order" {
                     checkAll(
                         arbPopulation(arbIndividual(arbSimpleRepresentation(arbSimpleFeature()), Arb.double())),
-                        arbFitnessMaxRanker()
+                        arbFitnessMinRanker()
                     ) { population, ranker ->
                         val sorted = ranker.sort(population, SortingStrategy.DESCENDING)
                         sorted.zipWithNext { first, second ->
-                            first.fitness >= second.fitness
+                            first.fitness <= second.fitness
                         }
                     }
                 }
@@ -107,7 +100,7 @@ class FitnessMaxRankerTest : FreeSpec({
                 "should return the population unsorted" {
                     checkAll(
                         arbPopulation(arbIndividual(arbSimpleRepresentation(arbSimpleFeature()), Arb.double()), 1..20),
-                        arbFitnessMaxRanker()
+                        arbFitnessMinRanker()
                     ) { population, ranker ->
                         val sorted = ranker.sort(population, SortingStrategy.UNSORTED)
                         sorted.forEachIndexed { index, individual ->
@@ -125,5 +118,5 @@ class FitnessMaxRankerTest : FreeSpec({
  *
  * @return An `Arb` that randomly selects between a synchronous or asynchronous fitness maximization ranker.
  */
-fun arbFitnessMaxRanker() =
-    Arb.element(FitnessMaxRanker.sync<_, _, SimpleRepresentation<Int, SimpleFeature>>(), FitnessMaxRanker.async())
+fun arbFitnessMinRanker() =
+    Arb.element(FitnessMinRanker.sync<_, _, SimpleRepresentation<Int, SimpleFeature>>(), FitnessMinRanker.async())

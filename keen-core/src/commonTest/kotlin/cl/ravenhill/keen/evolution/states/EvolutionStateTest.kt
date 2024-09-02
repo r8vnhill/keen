@@ -10,6 +10,7 @@ import cl.ravenhill.keen.matchers.shouldBeEmpty
 import cl.ravenhill.keen.matchers.shouldNotBeEmpty
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.FitnessMinRanker
+import cl.ravenhill.keen.ranking.FitnessMinRankerTest
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation

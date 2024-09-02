@@ -5,9 +5,14 @@
 
 package cl.ravenhill.keen.ranking
 
+import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constraints.collections.BeMonotonicallyDecreasing
+import cl.ravenhill.jakt.constraints.collections.BeMonotonicallyIncreasing
 import cl.ravenhill.keen.Individual
+import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.utils.SortingStrategy
 
 /**
  * A ranker for minimizing fitness in evolutionary algorithms.
@@ -103,5 +108,22 @@ interface FitnessMinRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
      */
     class AsyncFitnessMinRanker<T, F, R>(override val chunkSize: Int = DEFAULT_CHUNK_SIZE) : FitnessMinRanker<T, F, R>,
         AsyncRanker<T, F, R> where F : Feature<T, F>,
-                                   R : Representation<T, F>
+                                   R : Representation<T, F> {
+
+        override fun checkIfSorted(sortedChunks: List<Population<T, F, R>>, sortOrder: SortingStrategy) {
+            constrained {
+                sortedChunks.forEach { chunk ->
+                    if (sortOrder == SortingStrategy.ASCENDING) {
+                        "Sorted chunk must be monotonically decreasing" {
+                            chunk.map { it.fitness } must BeMonotonicallyDecreasing()
+                        }
+                    } else if (sortOrder == SortingStrategy.DESCENDING) {
+                        "Sorted chunk must be monotonically increasing" {
+                            chunk.map { it.fitness } must BeMonotonicallyIncreasing()
+                        }
+                    }
+                }
+            }.onLeft { throw it }
+        }
+    }
 }
