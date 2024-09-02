@@ -143,8 +143,9 @@ fun <T, F, R> arbEvolutionState(
         FitnessMinRanker.async()
     ),
     generationArb: Arb<Int> = Arb.nonNegativeInt()
-) where F : Feature<T, F>,
-        R : Representation<T, F> =
+)
+        where F : Feature<T, F>,
+              R : Representation<T, F> =
     Arb.bind(
         populationArb,
         rankerArb,
