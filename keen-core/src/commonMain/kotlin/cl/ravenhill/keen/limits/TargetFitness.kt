@@ -12,33 +12,94 @@ import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 
 /**
- * Limit condition based on achieving a target fitness in an evolutionary algorithm.
+ * Termination condition based on achieving a target fitness in an evolutionary algorithm.
  *
- * The `TargetFitness` class represents a termination condition for an evolutionary algorithm, where the algorithm stops
- * when any individual in the population achieves a fitness value greater than or equal to a specified target. This is a
- * common stopping criterion in evolutionary computation, particularly in optimization problems where the goal is to
- * reach a certain fitness threshold.
+ * The `TargetFitness` class represents a termination condition used in evolutionary algorithms where the algorithm
+ * stops when any individual in the population achieves a fitness value greater than or equal to a specified target.
+ * This stopping criterion is particularly useful in optimization problems where the objective is to reach or exceed
+ * a predefined fitness threshold.
+ *
+ * ## Description:
+ * The `TargetFitness` class monitors the fitness of individuals within the population and triggers the termination of
+ * the evolutionary process once the target fitness is met by any individual. This can help in preventing unnecessary
+ * computational effort once an optimal or satisfactory solution has been found.
+ *
+ * The class can be instantiated with a specific target fitness value or a custom condition expressed as a lambda
+ * function. The default behavior stops the algorithm when the fitness of any individual is greater than or equal to the
+ * specified target fitness value.
+ *
+ * ### Example 1: Stopping at a Specific Fitness Value
+ * ```kotlin
+ * val targetFitnessCondition = TargetFitness<Double, MyFeature, MyRepresentation, MyEvolutionState>(50.0)
+ * ```
+ *
+ * In this example, the evolutionary process will stop when any individual achieves a fitness of 50.0 or more.
+ *
+ * ### Example 2: Custom Termination Condition
+ * ```kotlin
+ * val customCondition = TargetFitness<Double, MyFeature, MyRepresentation, MyEvolutionState> { fitness ->
+ *     fitness >= 50.0 && fitness < 100.0
+ * }
+ * ```
+ *
+ * Here, the algorithm stops when an individual's fitness is between 50.0 and 100.0.
  *
  * ## Usage:
- * The `TargetFitness` class is typically used in evolutionary algorithms to define a fitness-based stopping condition.
- * It is recommended to use the curried equivalent function [targetFitness] to create instances of this class, as it
- * allows for more flexible and modular configuration of the limit conditions.
+ * The `TargetFitness` condition is typically used in conjunction with evolutionary algorithms to ensure that the
+ * algorithm terminates once an acceptable solution has been found, avoiding unnecessary additional generations. The
+ * class provides flexibility to define what constitutes an acceptable solution through the use of different constructors.
  *
  * @param T The type of the value held by the features.
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
  * @param S The type of the evolutionary state, which must extend [EvolutionState].
- * @param targetFitness The fitness value that, when reached or exceeded by any individual in the population,
+ * @param targetFitness The fitness value or condition that, when met or exceeded by any individual in the population,
  *   will cause the evolutionary process to stop.
- * @param configuration The configuration settings for the listener associated with this limit condition.
  */
-class TargetFitness<T, F, R, S>(
-    val targetFitness: Double,
-    configuration: ListenerConfiguration<T, F, R>
+class TargetFitness<T, F, R, S> private constructor(
+    private val targetFitness: (Double) -> Boolean
 ) : Limit<T, F, R, S, TargetFitnessListener<T, F, R, S>>(
     TargetFitnessListener(),
-    { state -> state.population.any { it.fitness >= targetFitness } }
-) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S>
+    { state -> state.population.any { targetFitness(it.fitness) } }
+) where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
+
+    // Secondary constructor for a specific target fitness value.
+    private constructor(targetFitness: Double) : this({ it >= targetFitness })
+
+    companion object {
+        /**
+         * Creates a `TargetFitness` limit condition based on a specific fitness value.
+         *
+         * This function returns a `TargetFitness` instance that will terminate the evolutionary process when the
+         * fitness of any individual in the population is greater than or equal to the specified [targetFitness] value.
+         *
+         * @param targetFitness The specific fitness value that triggers termination.
+         * @return A `TargetFitness` instance.
+         */
+        operator fun <T, F, R, S> invoke(targetFitness: Double)
+                where F : Feature<T, F>,
+                      R : Representation<T, F>,
+                      S : EvolutionState<T, F, R, S> = { _: ListenerConfiguration<T, F, R> ->
+            TargetFitness<_, _, _, S>(targetFitness)
+        }
+
+        /**
+         * Creates a `TargetFitness` limit condition based on a custom fitness condition.
+         *
+         * This function returns a `TargetFitness` instance that will terminate the evolutionary process when the
+         * fitness of any individual in the population satisfies the provided [targetFitness] condition.
+         *
+         * @param targetFitness A lambda function that defines the fitness condition for termination.
+         * @return A `TargetFitness` instance.
+         */
+        operator fun <T, F, R, S> invoke(targetFitness: (Double) -> Boolean)
+                where F : Feature<T, F>,
+                      R : Representation<T, F>,
+                      S : EvolutionState<T, F, R, S> = { _: ListenerConfiguration<T, F, R> ->
+            TargetFitness<_, _, _, S>(targetFitness)
+        }
+    }
+}
 
 /**
  * A placeholder listener for the `TargetFitness` limit condition in an evolutionary algorithm.
@@ -54,36 +115,7 @@ class TargetFitness<T, F, R, S>(
  * @param S The type of evolutionary state, which must extend [EvolutionState].
  */
 class TargetFitnessListener<T, F, R, S> :
-    Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
+        Listener where F : Feature<T, F>, R : Representation<T, F>, S : EvolutionState<T, F, R, S> {
     override fun copy() = TargetFitnessListener<T, F, R, S>()
 }
 
-/**
- * Factory function to create a [TargetFitness] limit condition for an evolutionary algorithm.
- *
- * The `targetFitness` function provides a convenient way to create instances of the `TargetFitness` class, which
- * serves as a termination condition based on achieving a specified fitness level within the population. This function
- * simplifies the process of defining a fitness-based limit in evolutionary algorithms, improving code readability and
- * reducing the potential for errors.
- *
- * ## Usage:
- * This factory function is curried, meaning it returns a partially-applied function that can be used to build the
- * `TargetFitness` limit incrementally. This design allows for greater flexibility, particularly when configuring
- * listeners or other parameters separately from the limit condition itself.
- *
- * @param T The type of the value held by the features.
- * @param F The type of the feature, which must extend [Feature].
- * @param R The type of the representation, which must extend [Representation].
- * @param S The type of the evolutionary state, which must extend [EvolutionState].
- * @param targetFitness The fitness threshold that must be reached by any individual in the population to terminate the
- *   evolutionary process.
- * @return A function that returns a [TargetFitness] instance when invoked, allowing for partial application and
- *   flexible configuration.
- */
-fun <T, F, R, S> targetFitness(
-    targetFitness: Double
-): (ListenerConfiguration<T, F, R>) -> TargetFitness<T, F, R, S> where
-        F : Feature<T, F>,
-        R : Representation<T, F>,
-        S : EvolutionState<T, F, R, S> =
-    { config -> TargetFitness(targetFitness, config) }

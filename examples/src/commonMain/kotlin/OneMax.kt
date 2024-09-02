@@ -10,9 +10,10 @@ import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.geneticAlgorithm
 import cl.ravenhill.keen.dsl.genotypeOf
 import cl.ravenhill.keen.evolution.executors.construction.CoroutineConcurrentConstructor
+import cl.ravenhill.keen.evolution.executors.construction.SequentialConstructor
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.BooleanGene
-import cl.ravenhill.keen.limits.targetFitness
+import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary
 import cl.ravenhill.keen.operators.alteration.crossover.UniformCrossover
@@ -84,7 +85,7 @@ suspend fun oneMax() {
                 booleans {
                     size = 50 // Length of the binary string (genotype).
                     trueRate = 0.15 // Initial rate of true values (1-bits) in the binary string.
-                    executor = CoroutineConcurrentConstructor() // Concurrent chromosome constructor.
+                    executor = SequentialConstructor() // Concurrent chromosome constructor.
                 }
             }
         }
@@ -93,7 +94,7 @@ suspend fun oneMax() {
         parentSelector = TournamentSelector() // Selection strategy for parents.
         survivorSelector = TournamentSelector() // Selection strategy for survivors.
         alterers += listOf(BitFlipMutator(), UniformCrossover(chromosomeRate = 0.6)) // Mutation and crossover operators
-        limits += targetFitness(50.0) // Evolution stops when fitness reaches 50.
+        limits += TargetFitness(50.0) // Evolution stops when fitness reaches 50.
         listeners += listOf(EvolutionSummary(), EvolutionPlotter()) // Listeners for evolution monitoring.
     }
 
