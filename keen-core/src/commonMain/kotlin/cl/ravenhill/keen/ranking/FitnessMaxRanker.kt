@@ -75,8 +75,11 @@ interface FitnessMaxRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
      * @param F The type of feature used in the individual's representation.
      * @param R The type of representation used by the individual.
      */
-    class SyncFitnessMaxRanker<T, F, R> : FitnessMaxRanker<T, F, R>, SyncRanker<T, F, R> where F : Feature<T, F>,
-                                                                                               R : Representation<T, F>
+    class SyncFitnessMaxRanker<T, F, R> : FitnessMaxRanker<T, F, R>, SyncRanker<T, F, R>
+            where F : Feature<T, F>,
+                  R : Representation<T, F> {
+        override fun toString() = "SyncFitnessMaxRanker"
+    }
 
     /**
      * An asynchronous ranker for maximizing fitness in evolutionary algorithms.
@@ -93,14 +96,10 @@ interface FitnessMaxRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
      *   value is [DEFAULT_CHUNK_SIZE].
      */
     class AsyncFitnessMaxRanker<T, F, R>(override val chunkSize: Int = DEFAULT_CHUNK_SIZE) : FitnessMaxRanker<T, F, R>,
-            AsyncRanker<T, F, R> where F : Feature<T, F>,
-                                       R : Representation<T, F> {
-        companion object {
-            /**
-             * The default chunk size for parallel sorting. Set to 1000.
-             */
-            internal const val DEFAULT_CHUNK_SIZE = 1000
-        }
+        AsyncRanker<T, F, R> where F : Feature<T, F>,
+                                   R : Representation<T, F> {
+
+        override fun toString() = "AsyncFitnessMaxRanker(chunkSize=$chunkSize)"
 
         /**
          * Checks whether the sorted chunks are correctly sorted according to the specified sorting strategy.
@@ -116,7 +115,7 @@ interface FitnessMaxRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
          *   strategy.
          */
         override fun checkIfSorted(
-            sortedChunks: List<Population<T, F, R>>,
+            sortedChunks: List<List<Individual<T, F, R>>>,
             sortOrder: SortingStrategy
         ) = constrained {
             sortedChunks.forEach { chunk ->
@@ -131,5 +130,12 @@ interface FitnessMaxRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
                 }
             }
         }.getOrElse { throw it }
+
+        companion object {
+            /**
+             * The default chunk size for parallel sorting. Set to 1000.
+             */
+            internal const val DEFAULT_CHUNK_SIZE = 1000
+        }
     }
 }

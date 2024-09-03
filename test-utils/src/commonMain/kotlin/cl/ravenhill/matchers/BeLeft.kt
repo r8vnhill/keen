@@ -14,9 +14,9 @@ import io.kotest.matchers.shouldNot
 /**
  * Creates a matcher that checks if an [Either] instance is an [Either.Left] value.
  *
- * @return A `Matcher<Either<T, *>>` that checks if an [Either] instance is a `Left` value.
+ * @return A `Matcher<Either<L, *>>` that checks if an [Either] instance is a `Left` value.
  */
-fun <T> beLeft() = Matcher<Either<T, *>> {
+fun <L> beLeft() = Matcher<Either<L, *>> {
     MatcherResult(
         it.isLeft(),
         { "Expected Either to be Left, but was Right" },
@@ -27,19 +27,19 @@ fun <T> beLeft() = Matcher<Either<T, *>> {
 /**
  * Asserts that the [Either] instance is an [Either.Left] value.
  *
- * @return The `Either<T, *>` instance itself for further assertions or chaining.
+ * @return The value of the `Left` side of the [Either] instance.
  */
-fun <T> Either<T, *>.shouldBeLeft(): Either<T, *> {
+fun <L> Either<L, *>.shouldBeLeft(): L {
     this should beLeft()
-    return this
+    return this.leftOrNull()!!  // In case, since `should` short-circuits, the value is not null.
 }
 
 /**
- * Asserts that the [Either]` instance is not an [Either.Left] value.
+ * Asserts that the [Either] instance is not an [Either.Left] value.
  *
- * @return The `Either<T, *>` instance itself for further assertions or chaining.
+ * @return The value of the `Right` side of the [Either] instance or `null` if the
  */
-fun <T> Either<T, *>.shouldNotBeLeft(): Either<T, *> {
+fun <R> Either<*, R>.shouldNotBeLeft(): R {
     this shouldNot beLeft()
-    return this
+    return this.getOrNull()!!   // In case, since `shouldNot` short-circuits, the value is not null.
 }

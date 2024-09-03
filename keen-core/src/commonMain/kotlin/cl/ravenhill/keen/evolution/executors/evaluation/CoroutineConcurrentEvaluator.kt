@@ -10,6 +10,7 @@ import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.toPopulation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -116,7 +117,7 @@ class CoroutineConcurrentEvaluator<T, F, R, S>(
                     evaluated
                 } else {
                     population.filter { it.isEvaluated() } + evaluated
-                }
+                }.toPopulation()
             } else {
                 population
             }

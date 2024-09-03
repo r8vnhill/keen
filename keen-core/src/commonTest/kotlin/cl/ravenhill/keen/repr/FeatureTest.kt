@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.repr
 
+import cl.ravenhill.SimpleFeature
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb

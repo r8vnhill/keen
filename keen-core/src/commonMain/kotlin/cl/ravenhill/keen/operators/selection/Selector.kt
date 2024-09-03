@@ -17,6 +17,7 @@ import cl.ravenhill.jakt.constraints.ints.BeNegative
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.states.EvolutionState
+import cl.ravenhill.keen.exceptions.InvalidSizeException
 import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.operators.Operator
 import cl.ravenhill.keen.ranking.IndividualRanker
@@ -38,7 +39,9 @@ import cl.ravenhill.keen.repr.Representation
  * ### Example:
  * Implementing a custom selector:
  * ```kotlin
- * class MyCustomSelector<T, F, R> : Selector<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
+ * class MyCustomSelector<T, F, R> : Selector<T, F, R>
+ *         where F : Feature<T, F>,
+ *               R : Representation<T, F> {
  *     override fun select(
  *         population: Population<T, F, R>,
  *         count: Int,
@@ -46,6 +49,7 @@ import cl.ravenhill.keen.repr.Representation
  *     ): Either<SelectionException, Population<T, F, R>> {
  *         // Custom selection logic
  *     }
+ *     // ... other methods and properties ...
  * }
  * ```
  *
@@ -53,7 +57,9 @@ import cl.ravenhill.keen.repr.Representation
  * @param F The type of the feature, which must extend [Feature].
  * @param R The type of the representation, which must extend [Representation].
  */
-interface Selector<T, F, R> : Operator<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
+interface Selector<T, F, R> : Operator<T, F, R>
+        where F : Feature<T, F>,
+              R : Representation<T, F> {
 
     /**
      * Applies the selection process to the given evolutionary state, producing a new state with the selected
@@ -74,10 +80,13 @@ interface Selector<T, F, R> : Operator<T, F, R> where F : Feature<T, F>, R : Rep
         state: S,
         outputSize: Int,
         buildState: (List<Individual<T, F, R>>) -> S
-    ): Either<SelectionException, S> where S : EvolutionState<T, F, R, S> {
+    ): Either<SelectionException, S>
+            where S : EvolutionState<T, F, R, S> {
         constrained {
             "Population must not be empty" { state.population mustNot BeEmpty }
-            "Selection count ($outputSize) must not be negative" { outputSize mustNot BeNegative }
+            "Selection count ($outputSize) must not be negative"(::InvalidSizeException) {
+                outputSize mustNot BeNegative
+            }
         }.getOrElse {
             return SelectionException("Invalid selection parameters", it).left()
         }

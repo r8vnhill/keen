@@ -85,7 +85,7 @@ suspend fun oneMax() {
                 booleans {
                     size = 50 // Length of the binary string (genotype).
                     trueRate = 0.15 // Initial rate of true values (1-bits) in the binary string.
-                    executor = SequentialConstructor() // Concurrent chromosome constructor.
+                    executor = SequentialConstructor() // Sequential chromosome constructor.
                 }
             }
         }

@@ -12,10 +12,10 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.exceptions.SelectionException
-import cl.ravenhill.keen.fitness
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.toPopulation
 import cl.ravenhill.keen.utils.SortingStrategy
 import cl.ravenhill.keen.utils.sub
 import kotlinx.coroutines.async
@@ -118,7 +118,7 @@ class RouletteWheelSelector<T, F : Feature<T, F>, R : Representation<T, F>>(
                     }
                 }.awaitAll()
             }
-            selectedIndividuals.right()
+            selectedIndividuals.toPopulation().right()
         } catch (e: CompositeException) {
             SelectionException("Failed to select individuals from the population", e).left()
         }

@@ -19,8 +19,8 @@ import io.kotest.matchers.shouldNot
  *
  * @return A [Matcher] that verifies if a [Verifiable] instance is valid.
  */
-fun beValid() = object : Matcher<Verifiable> {
-    override fun test(value: Verifiable) = MatcherResult(
+fun beValid() = Matcher<Verifiable> { value ->
+    MatcherResult(
         value.verify(), // Check if the object is valid
         { "$value should be valid" }, // Failure message when the object is not valid
         { "$value should not be valid" } // Failure message when the object is valid but expected not to be

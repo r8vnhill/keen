@@ -9,6 +9,7 @@ import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.toPopulation
 
 /**
  * A sequential evaluator for evaluating individuals in an evolutionary algorithm.
@@ -99,7 +100,7 @@ class SequentialEvaluator<T, F, R, S>(
                 toEvaluate.map { it.individual }
             } else {
                 population.filter { it.isEvaluated() } + toEvaluate.map { it.individual }
-            }
+            }.toPopulation()
         } else {
             population
         }

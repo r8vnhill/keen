@@ -5,19 +5,18 @@
 
 package cl.ravenhill.keen.evolution.states
 
+import cl.ravenhill.arbSimpleFeature
+import cl.ravenhill.arbSimpleRepresentation
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.matchers.shouldBeEmpty
 import cl.ravenhill.keen.matchers.shouldNotBeEmpty
 import cl.ravenhill.keen.ranking.FitnessMaxRanker
 import cl.ravenhill.keen.ranking.FitnessMinRanker
-import cl.ravenhill.keen.ranking.FitnessMinRankerTest
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import cl.ravenhill.keen.repr.arbSimpleFeature
-import cl.ravenhill.keen.repr.arbSimpleRepresentation
 import cl.ravenhill.utils.arbIndividual
-import cl.ravenhill.utils.arbPopulation
+import cl.ravenhill.arbPopulation
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb

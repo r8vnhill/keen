@@ -5,6 +5,8 @@
 
 package cl.ravenhill.keen.evolution.engines
 
+import cl.ravenhill.arbFitnessMaxRanker
+import cl.ravenhill.arbFitnessMinRanker
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory
 import cl.ravenhill.keen.evolution.executors.evaluation.EvaluationExecutorFactory
@@ -17,14 +19,12 @@ import cl.ravenhill.keen.listeners.Listener
 import cl.ravenhill.keen.listeners.ListenerConfiguration
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.operators.selection.Selector
-import cl.ravenhill.keen.ranking.SyncFitnessMaxRanker
-import cl.ravenhill.keen.ranking.SyncFitnessMinRanker
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.utils.arbProbability
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.element
+import io.kotest.property.arbitrary.choice
 import io.kotest.property.arbitrary.int
 
 class GeneticAlgorithmFactoryTest : FreeSpec({
@@ -39,7 +39,7 @@ fun <T, G> arbGeneticAlgorithmFactory(
     initialStateArb: Arb<GeneticEvolutionState<T, G>>,
     populationSizeArb: Arb<Int>? = Arb.int(1..100),
     survivalRateArb: Arb<Double>? = arbProbability(),
-    rankerArb: Arb<IndividualRanker<T, G, Genotype<T, G>>>? = Arb.element(SyncFitnessMaxRanker(), SyncFitnessMinRanker()),
+    rankerArb: Arb<IndividualRanker<T, G, Genotype<T, G>>>? = Arb.choice(arbFitnessMaxRanker(), arbFitnessMinRanker()),
     parentSelectorArb: Arb<Selector<T, G, Genotype<T, G>>>?,
     survivorSelectorArb: Arb<Selector<T, G, Genotype<T, G>>>?,
     listenersArb: Arb<List<(ListenerConfiguration<T, G, Genotype<T, G>>) -> Listener>>?,

@@ -89,8 +89,11 @@ interface FitnessMinRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
      * @param F The type of feature used in the individual's representation.
      * @param R The type of representation used by the individual.
      */
-    class SyncFitnessMinRanker<T, F, R> : FitnessMinRanker<T, F, R>, SyncRanker<T, F, R> where F : Feature<T, F>,
-                                                                                               R : Representation<T, F>
+    class SyncFitnessMinRanker<T, F, R> : FitnessMinRanker<T, F, R>, SyncRanker<T, F, R>
+            where F : Feature<T, F>,
+                  R : Representation<T, F> {
+        override fun toString() = "SyncFitnessMinRanker"
+    }
 
     /**
      * An asynchronous ranker for minimizing fitness in evolutionary algorithms.
@@ -110,7 +113,7 @@ interface FitnessMinRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
         AsyncRanker<T, F, R> where F : Feature<T, F>,
                                    R : Representation<T, F> {
 
-        override fun checkIfSorted(sortedChunks: List<Population<T, F, R>>, sortOrder: SortingStrategy) {
+        override fun checkIfSorted(sortedChunks: List<List<Individual<T, F, R>>>, sortOrder: SortingStrategy) {
             constrained {
                 sortedChunks.forEach { chunk ->
                     if (sortOrder == SortingStrategy.ASCENDING) {
@@ -125,5 +128,7 @@ interface FitnessMinRanker<T, F, R> : IndividualRanker<T, F, R> where F : Featur
                 }
             }.onLeft { throw it }
         }
+
+        override fun toString() = "AsyncFitnessMinRanker"
     }
 }

@@ -5,9 +5,6 @@
 
 package cl.ravenhill.keen.ranking
 
-import cl.ravenhill.jakt.constrained
-import cl.ravenhill.jakt.constraints.collections.BeMonotonicallyDecreasing
-import cl.ravenhill.jakt.constraints.collections.BeMonotonicallyIncreasing
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.Individual
@@ -55,18 +52,18 @@ interface AsyncRanker<T, F, R> : IndividualRanker<T, F, R> where F : Feature<T, 
         population: List<Individual<T, F, R>>,
         sortOrder: SortingStrategy
     ): List<Individual<T, F, R>> = if (sortOrder == SortingStrategy.UNSORTED) {
-            population
-        } else {
-            withContext(Domain.dispatcher) {
-                val chunks = population.chunked(chunkSize)
-                val sortedChunks = coroutineScope {
-                    chunks.map { chunk ->
-                        async { chunk.sortedWith(getComparator(sortOrder)) }
-                    }.awaitAll()
-                }
-                mergeSortedChunks(sortedChunks, sortOrder)
+        population
+    } else {
+        withContext(Domain.dispatcher) {
+            val chunks = population.chunked(chunkSize)
+            val sortedChunks = coroutineScope {
+                chunks.map { chunk ->
+                    async { chunk.sortedWith(getComparator(sortOrder)) }
+                }.awaitAll()
             }
+            mergeSortedChunks(sortedChunks, sortOrder)
         }
+    }
 
     /**
      * Merges sorted chunks of individuals into a single sorted list.
@@ -107,7 +104,7 @@ interface AsyncRanker<T, F, R> : IndividualRanker<T, F, R> where F : Feature<T, 
      * @param sortOrder The sorting strategy used to sort the chunks.
      * @throws CompositeException if the sorted chunks do not meet the required sorting constraints.
      */
-    fun checkIfSorted(sortedChunks: List<Population<T, F, R>>, sortOrder: SortingStrategy)
+    fun checkIfSorted(sortedChunks: List<List<Individual<T, F, R>>>, sortOrder: SortingStrategy)
 
     /**
      * Safely retrieves the next item from an iterator or returns `null` if no items are available.

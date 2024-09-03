@@ -9,12 +9,12 @@ import cl.ravenhill.keen.matchers.shouldBeEvaluated
 import cl.ravenhill.keen.matchers.shouldNotBeEvaluated
 import cl.ravenhill.keen.matchers.shouldNotBeValid
 import cl.ravenhill.keen.repr.Feature
-import cl.ravenhill.keen.repr.IsValidRepresentation
+import cl.ravenhill.IsValidRepresentation
 import cl.ravenhill.keen.repr.Representation
-import cl.ravenhill.keen.repr.SimpleFeature
-import cl.ravenhill.keen.repr.SimpleRepresentation
-import cl.ravenhill.keen.repr.arbSimpleFeature
-import cl.ravenhill.keen.repr.arbSimpleRepresentation
+import cl.ravenhill.SimpleFeature
+import cl.ravenhill.SimpleRepresentation
+import cl.ravenhill.arbSimpleFeature
+import cl.ravenhill.arbSimpleRepresentation
 import cl.ravenhill.matchers.shouldBeValid
 import cl.ravenhill.utils.arbIndividual
 import cl.ravenhill.utils.arbListOfN

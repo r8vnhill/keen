@@ -15,6 +15,13 @@ import cl.ravenhill.keen.evolution.config.AlterationConfiguration
 import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.config.GeneticPopulationConfiguration
 import cl.ravenhill.keen.evolution.config.SelectionConfiguration
+import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory.Companion.DEFAULT_POPULATION_SIZE
+import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory.Companion.DEFAULT_SURVIVAL_RATE
+import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory.Companion.defaultEvaluator
+import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory.Companion.defaultInterceptor
+import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory.Companion.defaultParentSelector
+import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory.Companion.defaultRanker
+import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory.Companion.defaultSurvivorSelector
 import cl.ravenhill.keen.evolution.executors.evaluation.EvaluationExecutorFactory
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.genetics.Genotype
@@ -247,13 +254,14 @@ class GeneticAlgorithmFactory<T, G>(
      */
     private fun makeEvolutionConfig(
         configuration: ListenerConfiguration<T, G, Genotype<T, G>>
-    ): EvolutionConfiguration<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> = EvolutionConfiguration(
+    ) = EvolutionConfiguration(
         limits = limits.map { it(configuration) },  // Apply each limit to the configuration.
         listeners = listeners.map { it(ListenerConfiguration()) },  // Apply each listener to the configuration.
         interceptor = interceptor,  // Set the evolution interceptor.
         ranker = ranker,  // Set the ranker used for evaluating fitness.
         evaluator = evaluator.creator(fitnessFunction),  // Create the evaluator with the fitness function.
-        initialState = initialState ?: GeneticEvolutionState.empty(ranker)  // Set the initial state, defaulting to an empty state.
+        initialState = initialState
+            ?: GeneticEvolutionState.empty(ranker)  // Set the initial state, defaulting to an empty state.
     )
 
     companion object {
@@ -265,7 +273,7 @@ class GeneticAlgorithmFactory<T, G>(
          * operate with a population of 100 individuals. This value can be overridden by configuring the
          * [populationSize] property of the `GeneticAlgorithmFactory`.
          */
-        const val DEFAULT_POPULATION_SIZE = 100
+        internal const val DEFAULT_POPULATION_SIZE = 100
 
         /**
          * The default survival rate used in the genetic algorithm.
@@ -274,7 +282,7 @@ class GeneticAlgorithmFactory<T, G>(
          * survive into the next generation. This survival rate can be adjusted based on the specific needs of the
          * algorithm by configuring the [survivalRate] property of the `GeneticAlgorithmFactory`.
          */
-        const val DEFAULT_SURVIVAL_RATE = 0.5
+        internal const val DEFAULT_SURVIVAL_RATE = 0.5
 
         /**
          * Provides a default ranker that maximizes fitness.
@@ -288,7 +296,7 @@ class GeneticAlgorithmFactory<T, G>(
          * @param G The type of gene, which must extend [Gene].
          * @return A `FitnessMaxRanker` instance.
          */
-        fun <T, G> defaultRanker() where G : Gene<T, G> =
+        internal fun <T, G> defaultRanker() where G : Gene<T, G> =
             FitnessMaxRanker.async<T, G, Genotype<T, G>>()
 
         /**
@@ -303,7 +311,8 @@ class GeneticAlgorithmFactory<T, G>(
          * @param G The type of gene, which must extend [Gene].
          * @return A `Result` containing a `TournamentSelector` instance.
          */
-        fun <T, G> defaultParentSelector(): Result<Selector<T, G, Genotype<T, G>>> where G : Gene<T, G> = runCatching {
+        internal fun <T, G> defaultParentSelector()
+                where G : Gene<T, G> = runCatching<Companion, TournamentSelector<T, G, Genotype<T, G>>> {
             TournamentSelector()
         }
 
@@ -319,7 +328,8 @@ class GeneticAlgorithmFactory<T, G>(
          * @param G The type of gene, which must extend [Gene].
          * @return A `Result` containing a `TournamentSelector` instance.
          */
-        fun <T, G> defaultSurvivorSelector(): Result<Selector<T, G, Genotype<T, G>>> where G : Gene<T, G> = runCatching {
+        internal fun <T, G> defaultSurvivorSelector()
+                where G : Gene<T, G> = runCatching<Companion, TournamentSelector<T, G, Genotype<T, G>>> {
             TournamentSelector()
         }
 
@@ -334,7 +344,8 @@ class GeneticAlgorithmFactory<T, G>(
          * @param G The type of gene, which must extend [Gene].
          * @return A mutable list of `Alterer` instances.
          */
-        fun <T, G> defaultAlterers(): MutableList<Alterer<T, G, Genotype<T, G>>> where G : Gene<T, G> = mutableListOf()
+        internal fun <T, G> defaultAlterers(): MutableList<Alterer<T, G, Genotype<T, G>>> where G : Gene<T, G> =
+            mutableListOf()
 
         /**
          * Provides a default list of listener factories.
@@ -347,7 +358,8 @@ class GeneticAlgorithmFactory<T, G>(
          * @param G The type of gene, which must extend [Gene].
          * @return A mutable list of `ListenerFactory` instances.
          */
-        fun <T, G> defaultListenerFactories(): MutableList<ListenerFactory<T, G>> where G : Gene<T, G> = mutableListOf()
+        internal fun <T, G> defaultListenerFactories(): MutableList<ListenerFactory<T, G>> where G : Gene<T, G> =
+            mutableListOf()
 
         /**
          * Provides a default list of limit factories for evolutionary constraints.
@@ -361,7 +373,7 @@ class GeneticAlgorithmFactory<T, G>(
          * @param G The type of gene, which must extend [Gene].
          * @return A mutable list of `LimitFactory` instances.
          */
-        fun <T, G> defaultLimits(): MutableList<LimitFactory<T, G>> where G : Gene<T, G> = mutableListOf()
+        internal fun <T, G> defaultLimits(): MutableList<LimitFactory<T, G>> where G : Gene<T, G> = mutableListOf()
 
         /**
          * Provides a default evaluation executor factory for fitness evaluation.
@@ -374,8 +386,8 @@ class GeneticAlgorithmFactory<T, G>(
          * @param G The type of gene, which must extend [Gene].
          * @return An `EvaluationExecutorFactory` instance.
          */
-        fun <T, G> defaultEvaluator(): EvaluationExecutorFactory<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
-                where G : Gene<T, G> = EvaluationExecutorFactory()
+        internal fun <T, G> defaultEvaluator()
+                where G : Gene<T, G> = EvaluationExecutorFactory<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>()
 
         /**
          * Provides a default evolution interceptor for pre- and post-evolution operations.
@@ -389,7 +401,8 @@ class GeneticAlgorithmFactory<T, G>(
          * @param G The type of gene, which must extend [Gene].
          * @return An `EvolutionInterceptor` instance.
          */
-        fun <T, G> defaultInterceptor(): EvolutionInterceptor<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
-                where G : Gene<T, G> = EvolutionInterceptor.identity()
+        internal fun <T, G> defaultInterceptor()
+                where G : Gene<T, G> =
+            EvolutionInterceptor.identity<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>()
     }
 }

@@ -17,7 +17,7 @@ import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.matchers.shouldBeLeft
 import cl.ravenhill.matchers.shouldBeRight
 import cl.ravenhill.matchers.shouldBeValid
-import cl.ravenhill.matchers.shouldHaveInfringement
+import cl.ravenhill.matchers.shouldContainExceptionOfType
 import cl.ravenhill.matchers.shouldNotBeValid
 import cl.ravenhill.utils.arbProbability
 import io.kotest.core.spec.style.FreeSpec
@@ -197,11 +197,9 @@ class GenotypeTest : FreeSpec({
                     assume { index shouldNotBeIn genotype.indices }
                     genotype[index]
                         .shouldBeLeft()
-                        .mapLeft {
-                            it.shouldHaveInfringement<InvalidIndexException>(
-                                "The index ($index) must be in the range [0, ${genotype.size})"
-                            )
-                        }
+                        .shouldContainExceptionOfType<InvalidIndexException>(
+                            "The index ($index) must be in the range [0, ${genotype.size})"
+                        )
                 }
             }
         }

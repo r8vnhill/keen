@@ -7,14 +7,13 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import cl.ravenhill.keen.repr.arbSimpleFeature
-import cl.ravenhill.keen.repr.arbSimpleRepresentation
+import cl.ravenhill.arbSimpleFeature
+import cl.ravenhill.arbSimpleRepresentation
 import cl.ravenhill.utils.arbIndividual
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.next
 import io.kotest.property.checkAll
@@ -49,5 +48,5 @@ private fun <T, F, R> arbPopulationAndFitnessValues(
         fitnessValues.add(individual.fitness)
         population.add(individual)
     }
-    population to fitnessValues
+    population.toPopulation() to fitnessValues
 }

@@ -19,6 +19,7 @@ import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.toPopulation
 
 /**
  * A selection mechanism that uses tournament selection in an evolutionary algorithm.
@@ -91,6 +92,7 @@ data class TournamentSelector<T, F, R>(
                         it
                     ).left()
                 }
+                .toPopulation()
                 .right()
         }
 

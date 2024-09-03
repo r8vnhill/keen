@@ -3,6 +3,7 @@ kotlin = "2.0.20"
 devPublishPlugin = "0.4.1"
 jakt = "2.1.0-alpha-3"
 kotest = "5.9.1"
+kotest-arrow = "1.4.0"
 detekt = "1.23.6"
 coroutines = "1.8.1"
 kotlinx-datetime = "0.6.1"
@@ -25,10 +26,12 @@ gradleDaemonJvm = "21"
 [libraries]
 jakt = { module = "cl.ravenhill:jakt", version.ref = "jakt" }
 
+kotest-arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
-kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+kotest-property-arrow = { module = "io.kotest.extensions:kotest-property-arrow", version.ref = "kotest-arrow" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }

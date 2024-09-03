@@ -12,7 +12,7 @@ import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.matchers.shouldBeLeft
 import cl.ravenhill.matchers.shouldBeRight
-import cl.ravenhill.matchers.shouldHaveInfringement
+import cl.ravenhill.matchers.shouldContainExceptionOfType
 import cl.ravenhill.utils.arbProbability
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FreeSpec
@@ -164,9 +164,7 @@ class ChromosomeTest : FreeSpec({
                     assume { index shouldNotBeInRange chromosome.indices }
                     chromosome[index]
                         .shouldBeLeft()
-                        .leftOrNull()
-                        .shouldNotBeNull()
-                        .shouldHaveInfringement<InvalidIndexException>(
+                        .shouldContainExceptionOfType<InvalidIndexException>(
                             "Index ($index) must be within the bounds of the chromosome [0, ${chromosome.size - 1}]"
                         )
                 }

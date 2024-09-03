@@ -7,7 +7,7 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.jakt.exceptions.DoubleConstraintException
-import cl.ravenhill.matchers.shouldHaveInfringement
+import cl.ravenhill.matchers.shouldContainExceptionOfType
 import io.kotest.assertions.throwables.shouldThrowUnit
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -42,7 +42,7 @@ class DomainTest : FreeSpec({
                 checkAll(Arb.double().filter { it < 0 }) { threshold ->
                     shouldThrowUnit<CompositeException> {
                         Domain.equalityThreshold = threshold
-                    }.shouldHaveInfringement<DoubleConstraintException>(
+                    }.shouldContainExceptionOfType<DoubleConstraintException>(
                         "The equality threshold ($threshold) must be at least 0.0"
                     )
                 }
@@ -51,7 +51,7 @@ class DomainTest : FreeSpec({
             "throws an exception if set to NaN" {
                 shouldThrowUnit<CompositeException> {
                     Domain.equalityThreshold = Double.NaN
-                }.shouldHaveInfringement<DoubleConstraintException>(
+                }.shouldContainExceptionOfType<DoubleConstraintException>(
                     "The equality threshold (NaN) must be a number"
                 )
             }

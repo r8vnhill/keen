@@ -7,6 +7,8 @@ package cl.ravenhill.keen.evolution.engines
 
 import arrow.core.Either
 import arrow.core.getOrElse
+import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.exceptions.EvolutionException
@@ -98,6 +100,13 @@ abstract class AbstractEvolver<T, F, R, S>(
      * @return The final evolutionary state after the process is complete.
      */
     override suspend fun evolve(): S {
+        constrained {
+            "The limit list must nor be empty. This means that the evolution process will never end." {
+                limits mustNot BeEmpty
+            }
+        }.onLeft {
+            throw EvolutionException("Invalid evolution limits, this could be a bug in your configuration", it)
+        }
         evolutionListeners.forEach { it.onEvolutionStart() }
         do {
             generationListeners.forEach { it.onGenerationStart(state) }
