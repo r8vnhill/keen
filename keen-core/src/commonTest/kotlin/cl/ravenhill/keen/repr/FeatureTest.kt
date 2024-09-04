@@ -6,10 +6,17 @@
 package cl.ravenhill.keen.repr
 
 import cl.ravenhill.SimpleFeature
+import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.Shrinker
+import io.kotest.property.arbitrary.IntShrinker
+import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.map
+import io.kotest.property.arbitrary.withEdgecases
 import io.kotest.property.checkAll
 
 class FeatureTest : FreeSpec({
@@ -56,3 +63,29 @@ class FeatureTest : FreeSpec({
         }
     }
 })
+
+/**
+ * Generates an arbitrary `SimpleFeature` instance for property-based testing.
+ *
+ * @param range The range of integers to generate for the `SimpleFeature` values. Defaults to
+ *   `Int.MIN_VALUE..Int.MAX_VALUE`.
+ * @return An `Arb<SimpleFeature>` generator.
+ */
+fun arbSimpleFeature(range: IntRange = Int.MIN_VALUE..Int.MAX_VALUE) =
+    arbitrary(SimpleFeatureShrinker(range)) {
+        Arb.int(range)
+            .withEdgecases(range.first, -1, 0, 1, range.last)
+            .filter { it in range }
+            .map { SimpleFeature(it) }
+            .bind()
+    }
+
+/**
+ * A custom shrinker for `SimpleFeature` instances.
+ *
+ * @param range The range of values that can be generated and shrunk for `SimpleFeature` instances.
+ */
+class SimpleFeatureShrinker(private val range: IntRange) : Shrinker<SimpleFeature> {
+    override fun shrink(value: SimpleFeature) =
+        IntShrinker(range).shrink(value.value).map { SimpleFeature(it) }
+}

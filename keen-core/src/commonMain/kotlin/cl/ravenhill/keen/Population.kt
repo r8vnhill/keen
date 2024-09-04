@@ -23,7 +23,7 @@ import kotlin.jvm.JvmInline
  * @param R The type of representation, which must extend [Representation].
  * @property individuals The list of individuals in the population.
  */
-sealed interface PopulationLike<T, F, R> : List<Individual<T, F, R>> where F : Feature<T, F>, R : Representation<T, F> {
+interface PopulationLike<T, F, R> : List<Individual<T, F, R>> where F : Feature<T, F>, R : Representation<T, F> {
 
     val individuals: List<Individual<T, F, R>>
 
@@ -51,7 +51,7 @@ sealed interface PopulationLike<T, F, R> : List<Individual<T, F, R>> where F : F
      *
      * @return A list of individuals in the population.
      */
-    fun toList(): List<Individual<T, F, R>>
+    fun toList(): List<Individual<T, F, R>> = individuals
 }
 
 /**
@@ -67,17 +67,11 @@ sealed interface PopulationLike<T, F, R> : List<Individual<T, F, R>> where F : F
  * @property individuals The list of individuals in the population.
  */
 @JvmInline
-value class Population<T, F, R>(override val individuals: List<Individual<T, F, R>>) : PopulationLike<T, F, R>,
+value class Population<T, F, R> internal constructor(override val individuals: List<Individual<T, F, R>>) :
+    PopulationLike<T, F, R>,
     List<Individual<T, F, R>> by individuals
-        where F : Feature<T, F>, R : Representation<T, F> {
-
-    /**
-     * Converts the population into a list of individuals.
-     *
-     * @return A list of individuals in the population.
-     */
-    override fun toList() = individuals
-}
+        where F : Feature<T, F>,
+              R : Representation<T, F>
 
 /**
  * A value class representing a non-empty population of individuals in an evolutionary algorithm.
@@ -93,18 +87,11 @@ value class Population<T, F, R>(override val individuals: List<Individual<T, F, 
  * @property individuals A non-empty list of individuals in the population.
  */
 @JvmInline
-value class NonEmptyPopulation<T, F, R>(override val individuals: NonEmptyList<Individual<T, F, R>>) :
-    PopulationLike<T, F, R>,
-    List<Individual<T, F, R>> by individuals
-        where F : Feature<T, F>, R : Representation<T, F> {
-
-    /**
-     * Converts the population into a list of individuals.
-     *
-     * @return A list of individuals in the population.
-     */
-    override fun toList() = individuals
-}
+value class NonEmptyPopulation<T, F, R> internal constructor(
+    override val individuals: NonEmptyList<Individual<T, F, R>>
+) : PopulationLike<T, F, R>, List<Individual<T, F, R>> by individuals
+        where F : Feature<T, F>,
+              R : Representation<T, F>
 
 /**
  * Creates a `Population` from a variable number of individuals.

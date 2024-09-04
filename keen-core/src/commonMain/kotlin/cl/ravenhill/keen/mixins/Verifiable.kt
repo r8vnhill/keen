@@ -27,7 +27,7 @@ package cl.ravenhill.keen.mixins
  * }
  * ```
  */
-interface   Verifiable {
+interface Verifiable {
     /**
      * Verifies the correctness or validity of the object.
      *

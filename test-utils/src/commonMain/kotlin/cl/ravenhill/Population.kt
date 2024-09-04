@@ -11,8 +11,11 @@ import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.NonEmptyPopulation
 import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.nonEmptyPopulationOf
+import cl.ravenhill.keen.populationOf
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.toPopulation
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
@@ -31,7 +34,7 @@ fun <T, F, R> arbPopulation(individualArb: Arb<Individual<T, F, R>>, size: IntRa
         where F : Feature<T, F>,
               R : Representation<T, F> =
     Arb.list(individualArb, size)
-        .map { Population(it) }
+        .map { it.toPopulation() }
 
 /**
  * Generates an arbitrary `NonEmptyPopulation` of individuals for use in property-based testing.
@@ -47,4 +50,4 @@ fun <T, F, R> arbNonEmptyPopulation(individualArb: Arb<Individual<T, F, R>>, siz
     individualArb,
     size.constrainedTo { "The size must be positive" { size.first must BePositive } }
         .getOrElse { throw InvalidGeneratorException(it) }
-).map { NonEmptyPopulation(it) }
+).map { nonEmptyPopulationOf(it) }
