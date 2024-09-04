@@ -8,7 +8,7 @@ package cl.ravenhill.keen
 import arrow.core.NonEmptyList
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import kotlin.jvm.JvmInline
+import cl.ravenhill.keen.utils.hash
 
 /**
  * A sealed interface representing a population-like structure in evolutionary algorithms.
@@ -70,7 +70,19 @@ open class Population<T, F, R> internal constructor(override val individuals: Li
     PopulationLike<T, F, R>,
     List<Individual<T, F, R>> by individuals
         where F : Feature<T, F>,
-              R : Representation<T, F>
+              R : Representation<T, F> {
+
+    override fun toString() = "Population(individuals=$individuals)"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Population<*, *, *>) return false
+        if (individuals != other.individuals) return false
+        return true
+    }
+
+    override fun hashCode() = hash(Population::class, individuals)
+}
 
 /**
  * A value class representing a non-empty population of individuals in an evolutionary algorithm.
@@ -85,12 +97,24 @@ open class Population<T, F, R> internal constructor(override val individuals: Li
  * @param R The type of representation, which must extend [Representation].
  * @property individuals A non-empty list of individuals in the population.
  */
-@JvmInline
-value class NonEmptyPopulation<T, F, R> internal constructor(
+class NonEmptyPopulation<T, F, R> internal constructor(
     override val individuals: NonEmptyList<Individual<T, F, R>>
-) : PopulationLike<T, F, R>, List<Individual<T, F, R>> by individuals
+) : Population<T, F, R>(individuals.toList())
         where F : Feature<T, F>,
-              R : Representation<T, F>
+              R : Representation<T, F> {
+
+    override fun toString() = "NonEmptyPopulation(individuals=$individuals)"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is NonEmptyPopulation<*, *, *>) return false
+        if (individuals != other.individuals) return false
+        return true
+    }
+
+    override fun hashCode() = hash(NonEmptyPopulation::class, individuals)
+}
+
 
 /**
  * Creates a `Population` from a variable number of individuals.
