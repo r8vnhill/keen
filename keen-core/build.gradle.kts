@@ -24,6 +24,7 @@ kotlin {
 
         getByName("commonTest") {
             dependencies {
+                implementation(kotlin("reflect"))
                 implementation(project(":test-utils"))
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.framework.engine)

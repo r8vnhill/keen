@@ -18,7 +18,7 @@ import kotlin.time.Duration
  * @property unit The unit of measurement associated with the precision (e.g., "ms", "ns").
  * @property withPrecision A function that applies the specified precision to a [Duration] and returns a `Long` value.
  */
-interface TimePrecision {
+sealed interface TimePrecision {
 
     val unit: String
 

@@ -1,5 +1,3 @@
-Here’s the improved version of your documentation rules:
-
 # Documentation Guidelines
 
 ### 1. Markdown Formatting for Code Snippets
@@ -28,7 +26,9 @@ When providing usage examples in docstring comments, follow this syntax:
 
 ````kotlin
 /**
- * Documentation.
+ * Short description of the function.
+ * 
+ * Detailed description of the function.
  *
  * ## Usage:
  * Usage details and scenarios.

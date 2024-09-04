@@ -5,9 +5,9 @@
 
 package cl.ravenhill.keen.evolution.states
 
+import cl.ravenhill.arbPopulation
 import cl.ravenhill.arbRanker
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.arbPopulation
 import cl.ravenhill.keen.genetic.arbSimpleGenotype
 import cl.ravenhill.keen.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.genetic.genes.SimpleGene

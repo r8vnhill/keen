@@ -117,7 +117,7 @@ interface Mutator<T, G> : Alterer<T, G, Genotype<T, G>> where G : Gene<T, G> {
      */
     fun mutateIndividual(individual: Individual<T, G, Genotype<T, G>>): Individual<T, G, Genotype<T, G>> =
         Individual(
-            Genotype(individual.representation.map {
+            Genotype(individual.representation.chromosomes.map {
                 if (Domain.random.nextDouble() > chromosomeRate) it else mutateChromosome(it)
             })
         )
