@@ -36,6 +36,7 @@ import cl.ravenhill.matchers.shouldBeLeft
 import cl.ravenhill.matchers.shouldContainExceptionOfType
 import cl.ravenhill.utils.arbIndividual
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
@@ -58,6 +59,10 @@ class SelectorTest : FreeSpec({
 
             "should return an exception if an error occurs during selection" {
                 shouldReturnExceptionIfErrorOccursDuringSelection()
+            }
+
+            "should return the selected population" {
+                shouldReturnSelectedPopulation()
             }
         }
     }
@@ -138,6 +143,31 @@ class SelectorTest : FreeSpec({
                                 "The population size must be greater than or equal to the selection count"
                             )
                     }
+            }
+        }
+
+        /**
+         * Tests if the selection process correctly returns the selected population.
+         */
+        private suspend fun shouldReturnSelectedPopulation() {
+            val individualArb = arbIndividual(arbSimpleRepresentation(arbSimpleFeature()))
+            val populationArb = arbNonEmptyPopulation(individualArb)
+            val stateAndSizeArb = arbNamed("state", arbEvolutionState(populationArb), SimpleEvolutionStateShrinker())
+                .flatMap { namedState ->
+                    val (_, state) = namedState
+                    arbNamed(
+                        "size",
+                        Arb.int(1..state.size),
+                        IntShrinker(1..state.size)
+                    ).map { namedSize -> namedState and namedSize }
+                }
+            checkAll(stateAndSizeArb) { (population, count) ->
+                val selector = SimpleSelector<_, _, SimpleRepresentation<Int, SimpleFeature>>()
+                val selected = selector(population.unwrap(), count.unwrap()) {
+                    population.unwrap().copy(population = it.toPopulation())
+                }
+                    .getOrElse { throw it }
+                selected.size shouldBe count.unwrap()
             }
         }
     }
