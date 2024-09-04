@@ -14,6 +14,7 @@ import cl.ravenhill.SimpleFeature
 import cl.ravenhill.SimpleRepresentation
 import cl.ravenhill.and
 import cl.ravenhill.arbNamed
+import cl.ravenhill.arbNonEmptyPopulation
 import cl.ravenhill.arbPopulation
 import cl.ravenhill.arbSimpleFeature
 import cl.ravenhill.arbSimpleRepresentation
@@ -113,7 +114,7 @@ class SelectorTest : FreeSpec({
          */
         private suspend fun shouldReturnExceptionIfErrorOccursDuringSelection() {
             val individualArb = arbIndividual(arbSimpleRepresentation(arbSimpleFeature()))
-            val populationArb = arbPopulation(individualArb)
+            val populationArb = arbNonEmptyPopulation(individualArb)
             val stateAndSizeArb = arbNamed("state", arbEvolutionState(populationArb))
                 .flatMap { namedState ->
                     val (_, state) = namedState

@@ -6,20 +6,19 @@
 package cl.ravenhill
 
 import arrow.core.getOrElse
+import arrow.core.nonEmptyListOf
+import arrow.core.tail
+import arrow.core.toNonEmptyListOrNull
 import cl.ravenhill.jakt.constrainedTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Individual
-import cl.ravenhill.keen.NonEmptyPopulation
-import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.nonEmptyPopulationOf
-import cl.ravenhill.keen.populationOf
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.keen.toPopulation
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
-import io.kotest.property.arrow.core.nonEmptyList
 
 
 /**
@@ -46,8 +45,8 @@ fun <T, F, R> arbPopulation(individualArb: Arb<Individual<T, F, R>>, size: IntRa
  */
 fun <T, F, R> arbNonEmptyPopulation(individualArb: Arb<Individual<T, F, R>>, size: IntRange = 1..100)
         where F : Feature<T, F>,
-              R : Representation<T, F> = Arb.nonEmptyList(
+              R : Representation<T, F> = Arb.list(
     individualArb,
     size.constrainedTo { "The size must be positive" { size.first must BePositive } }
-        .getOrElse { throw InvalidGeneratorException(it) }
-).map { nonEmptyPopulationOf(it) }
+        .getOrElse { throw InvalidGeneratorException(it) },
+).map { nonEmptyPopulationOf(it.toNonEmptyListOrNull()!!) }
