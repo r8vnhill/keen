@@ -5,17 +5,18 @@
 
 package cl.ravenhill.keen
 
-import cl.ravenhill.keen.matchers.shouldBeEvaluated
-import cl.ravenhill.keen.matchers.shouldNotBeEvaluated
-import cl.ravenhill.keen.matchers.shouldNotBeValid
-import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.IsValidRepresentation
 import cl.ravenhill.MatrixRepresentation
-import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.SimpleFeature
 import cl.ravenhill.SimpleRepresentation
 import cl.ravenhill.arbSimpleFeature
 import cl.ravenhill.arbSimpleRepresentation
+import cl.ravenhill.keen.matchers.shouldBeEvaluated
+import cl.ravenhill.keen.matchers.shouldNotBeEvaluated
+import cl.ravenhill.keen.matchers.shouldNotBeValid
+import cl.ravenhill.keen.repr.Feature
+import cl.ravenhill.keen.repr.Representation
+import cl.ravenhill.keen.repr.RepresentationShrinker
 import cl.ravenhill.matchers.shouldBeValid
 import cl.ravenhill.utils.arbIndividual
 import cl.ravenhill.utils.arbListOfN
@@ -25,7 +26,10 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
+import io.kotest.property.Shrinker
+import io.kotest.property.arbitrary.DoubleShrinker
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.bind
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
@@ -238,4 +242,52 @@ private fun <T, F, R> arbIndividualAndFlattenedRepresentation(
     val flattened = elements.flatten().map { it.value }
     val representation = MatrixRepresentation(elements)
     Individual(representation) to flattened
+}
+
+/**
+ * Provides an [Arb] (Arbitrary) generator for creating random [Individual] instances, combining a representation and a
+ * fitness value.
+ *
+ * @param representationArb An arbitrary generator for [Representation] instances.
+ * @param fitnessArb An arbitrary generator for fitness values, defaulting to non-NaN doubles.
+ * @param representationShrinker A shrinker for reducing the size of the [Representation] during shrinking.
+ * @return An [Arb] that generates random [Individual] instances.
+ */
+fun <T, F, R> arbIndividual(
+    representationArb: Arb<R>,
+    fitnessArb: Arb<Double> = arbNonNanDouble(),
+    representationShrinker: RepresentationShrinker<T, F, R>
+)
+        where F : Feature<T, F>,
+              R : Representation<T, F> = arbitrary(IndividualShrinker(representationShrinker)) {
+    Arb.bind(representationArb, fitnessArb) { representation, fitness ->
+        Individual(representation, fitness)
+    }.bind()
+}
+
+/**
+ * A [Shrinker] implementation for [Individual] instances, shrinking both the representation and fitness.
+ *
+ * @param T The type of value held by the features in the representation.
+ * @param F The type of feature used in the representation, which must implement [Feature].
+ * @param R The type of representation, which must implement [Representation].
+ * @param representationShrinker A shrinker for reducing the size of the [Representation].
+ */
+class IndividualShrinker<T, F, R>(
+    private val representationShrinker: RepresentationShrinker<T, F, R>
+) : Shrinker<Individual<T, F, R>> where F : Feature<T, F>,
+                                        R : Representation<T, F> {
+
+    /**
+     * Shrinks the given [Individual] by shrinking both its representation and fitness.
+     *
+     * @param value The [Individual] to shrink.
+     * @return A list of smaller [Individual] instances.
+     */
+    override fun shrink(value: Individual<T, F, R>) =
+        representationShrinker.shrink(value.representation).map {
+            DoubleShrinker.shrink(value.fitness).map { fitness ->
+                Individual(it, fitness)
+            }
+        }.flatten()
 }
