@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill
+package cl.ravenhill.keen
 
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
@@ -25,6 +25,8 @@ data class SimpleRepresentation<T, F>(private val features: List<F>, private val
     override val size = features.size
 
     override fun flatten() = features.flatMap { it.toList() }
+    override fun map(transform: (T) -> T) =
+        SimpleRepresentation(features.map { it.map(transform) }, isValid)
 
     override fun <R> fold(initial: R, operation: (R, T) -> R) =
         features.fold(initial) { acc, feature -> operation(acc, feature.value) }

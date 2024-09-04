@@ -3,19 +3,14 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill
+package cl.ravenhill.keen
 
 import arrow.core.getOrElse
+import cl.ravenhill.InvalidGeneratorException
 import cl.ravenhill.jakt.constrainedTo
 import cl.ravenhill.jakt.constraints.ints.BePositive
-import cl.ravenhill.keen.Individual
-import cl.ravenhill.keen.NonEmptyPopulation
-import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.nonEmptyPopulationOf
-import cl.ravenhill.keen.populationOf
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import cl.ravenhill.keen.toPopulation
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map

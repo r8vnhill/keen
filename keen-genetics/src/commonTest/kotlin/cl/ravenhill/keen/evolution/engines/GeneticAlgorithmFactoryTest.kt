@@ -5,8 +5,8 @@
 
 package cl.ravenhill.keen.evolution.engines
 
-import cl.ravenhill.arbFitnessMaxRanker
-import cl.ravenhill.arbFitnessMinRanker
+import cl.ravenhill.keen.arbFitnessMaxRanker
+import cl.ravenhill.keen.arbFitnessMinRanker
 import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory
 import cl.ravenhill.keen.evolution.executors.evaluation.EvaluationExecutorFactory

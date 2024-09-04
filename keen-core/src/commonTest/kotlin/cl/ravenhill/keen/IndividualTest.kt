@@ -9,12 +9,8 @@ import cl.ravenhill.keen.matchers.shouldBeEvaluated
 import cl.ravenhill.keen.matchers.shouldNotBeEvaluated
 import cl.ravenhill.keen.matchers.shouldNotBeValid
 import cl.ravenhill.keen.repr.Feature
-import cl.ravenhill.IsValidRepresentation
 import cl.ravenhill.keen.repr.Representation
-import cl.ravenhill.SimpleFeature
-import cl.ravenhill.SimpleRepresentation
-import cl.ravenhill.arbSimpleFeature
-import cl.ravenhill.arbSimpleRepresentation
+import cl.ravenhill.keen.repr.SimpleFeatureShrinker
 import cl.ravenhill.matchers.shouldBeValid
 import cl.ravenhill.utils.arbIndividual
 import cl.ravenhill.utils.arbListOfN
@@ -24,6 +20,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
+import io.kotest.property.Shrinker
+import io.kotest.property.arbitrary.ListShrinker
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.int
@@ -85,7 +83,8 @@ class IndividualTest : FreeSpec({
             checkAll(
                 arbIndividualAndFlattenedRepresentation(
                     Arb.int(0..10),
-                    arbSimpleFeature()
+                    arbSimpleFeature(),
+                    MatrixRepresentationShrinker(SimpleFeatureShrinker())
                 )
             ) { (individual, flattened) ->
                 individual.flatten() shouldBe flattened
@@ -227,23 +226,40 @@ class IndividualTest : FreeSpec({
  * @param arbFeature An `Arb<F>` generator that generates the features to be included in the representation.
  * @return A generator that produces pairs of an `Individual` and its flattened list of values.
  */
-private fun <T, F, R> arbIndividualAndFlattenedRepresentation(
+private fun <T, F> arbIndividualAndFlattenedRepresentation(
     arbSize: Arb<Int>,
-    arbFeature: Arb<F>
-) where F : Feature<T, F>,
-        R : Representation<T, F> = arbitrary {
-    val size = arbSize.bind()
-    val elements = arbListOfN(size, Arb.list(arbFeature)).bind()
-    val flattened = elements.flatten().map { it.value }
-    val representation = object : Representation<T, F> {
-
-        override val size: Int = flattened.size
-
-        override fun flatten(): List<T> = flattened
-
-        override fun <R> foldRight(initial: R, operation: (T, R) -> R) = flattened.foldRight(initial, operation)
-
-        override fun <R> fold(initial: R, operation: (R, T) -> R) = flattened.fold(initial, operation)
+    arbFeature: Arb<F>,
+    representationShrinker: RepresentationShrinker<T, F, MatrixRepresentation<T, F>>
+) where F : Feature<T, F> =
+    arbitrary(IndividualAndFlattenedRepresentationShrinker(representationShrinker)) {
+        val size = arbSize.bind()
+        val elements = arbListOfN(size, Arb.list(arbFeature)).bind()
+        val flattened = elements.flatten().map { it.value }
+        val representation = MatrixRepresentation(elements)
+        Individual(representation) to flattened
     }
-    Individual(representation) to flattened
+
+class IndividualAndFlattenedRepresentationShrinker<T, F, R>(
+    private val representationShrinker: Shrinker<R>,
+    private val shrinkingRange: IntRange = 0..100
+) : Shrinker<Pair<Individual<T, F, R>, List<T>>> where F : Feature<T, F>, R : Representation<T, F> {
+
+    override fun shrink(value: Pair<Individual<T, F, R>, List<T>>): List<Pair<Individual<T, F, R>, List<T>>> {
+        val (individual, flattened) = value
+        val shrunkRepresentations = representationShrinker.shrink(individual.representation)
+            .map { shrunkRepresentation ->
+                val newFlattened = shrunkRepresentation.flatten()
+                Individual(shrunkRepresentation) to newFlattened
+            }
+
+        // Additionally shrink the flattened list by shrinking values in the flattened list directly
+        val shrunkFlattenedLists = ListShrinker<T>(shrinkingRange).shrink(flattened).map { it.toList() }
+
+        // Combine both shrink attempts
+        val shrunkPairs = shrunkFlattenedLists.map { newFlattened ->
+            individual to newFlattened
+        }
+
+        return shrunkRepresentations + shrunkPairs
+    }
 }

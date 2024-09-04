@@ -7,8 +7,6 @@ package cl.ravenhill.keen
 
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
-import cl.ravenhill.arbSimpleFeature
-import cl.ravenhill.arbSimpleRepresentation
 import cl.ravenhill.utils.arbIndividual
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe

@@ -61,6 +61,6 @@ data class GeneticEvolutionState<T, G>(
          * @param T The type of value held by the gene.
          */
         fun <T, G> empty(ranker: IndividualRanker<T, G, Genotype<T, G>>) where G : Gene<T, G> =
-            GeneticEvolutionState(emptyList(), ranker, 0)
+            GeneticEvolutionState(emptyPopulation(), ranker, 0)
     }
 }

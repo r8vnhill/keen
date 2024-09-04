@@ -5,8 +5,7 @@
 
 package cl.ravenhill.keen.repr
 
-import cl.ravenhill.SimpleFeature
-import io.kotest.assertions.fail
+import cl.ravenhill.keen.SimpleFeature
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -85,7 +84,7 @@ fun arbSimpleFeature(range: IntRange = Int.MIN_VALUE..Int.MAX_VALUE) =
  *
  * @param range The range of values that can be generated and shrunk for `SimpleFeature` instances.
  */
-class SimpleFeatureShrinker(private val range: IntRange) : Shrinker<SimpleFeature> {
+class SimpleFeatureShrinker(private val range: IntRange = Int.MIN_VALUE..Int.MAX_VALUE) : Shrinker<SimpleFeature> {
     override fun shrink(value: SimpleFeature) =
         IntShrinker(range).shrink(value.value).map { SimpleFeature(it) }
 }

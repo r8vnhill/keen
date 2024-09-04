@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.repr
 
+import cl.ravenhill.keen.mixins.Mappable
 import cl.ravenhill.keen.mixins.Verifiable
 
 /**
@@ -12,12 +13,12 @@ import cl.ravenhill.keen.mixins.Verifiable
  *
  * The `Feature` interface defines the basic structure and behavior of a feature, which is an atomic unit within an
  * evolutionary algorithm. A feature typically represents a single element in a genetic structure, such as a gene in a
- * chromosome. This interface provides core functionality for duplicating a feature with a new value and binding
- * transformations to the feature's value.
+ * chromosome. This interface provides core functionality for duplicating a feature with a new value, applying
+ * transformations, and enabling more complex operations via monadic transformations (`flatMap`).
  *
  * ## Usage:
  * Implement this interface to create concrete classes that represent specific types of features in evolutionary
- * algorithms. The `bind` method facilitates chaining operations on the feature's value, enabling complex
+ * algorithms. The `map` and `flatMap` methods facilitate chaining operations on the feature's value, enabling complex
  * transformations and computations.
  *
  * ### Example 1: Implementing a Simple Gene Feature
@@ -30,7 +31,7 @@ import cl.ravenhill.keen.mixins.Verifiable
  * ### Example 2: Binding a Transformation
  * ```kotlin
  * val gene = IntGene(10)
- * val transformedGene = gene.bind { IntGene(it * 2) }
+ * val transformedGene = gene.flatMap { IntGene(it * 2) }
  * println(transformedGene.value) // Output: 20
  * ```
  *
@@ -48,18 +49,18 @@ import cl.ravenhill.keen.mixins.Verifiable
  *    }
  *    ```
  *
- * 2. **Respect the Monad Laws**: Ensure that your subclass's implementation of `bind` respects the monad laws:
+ * 2. **Respect the Monad Laws**: Ensure that your subclass's implementation of `flatMap` respects the monad laws:
  *    - **Left Identity**: `pure(a).flatMap(f)` should be equivalent to `f(a)`.
  *    - **Right Identity**: `m.flatMap(::pure)` should be equivalent to `m`.
  *    - **Associativity**: `(m.flatMap(f)).flatMap(g)` should be equivalent to `m.flatMap { x -> f(x).flatMap(g) }`.
  *
  * ### Benefits of Implementing Subclasses as Monads:
  * - **Composability**: Monads allow you to chain operations in a clean and consistent way, enabling the composition
- *    of complex behaviors from simple functions.
+ *   of complex behaviors from simple functions.
  * - **Error Handling**: Monads provide a structured way to handle errors, missing values, or other computational
- *    contexts (e.g., `Option`, `Either`).
+ *   contexts (e.g., `Option`, `Either`).
  * - **Consistency**: By adhering to the monad laws, you ensure that your code behaves predictably and consistently,
- *    making it easier to reason about.
+ *   making it easier to reason about.
  *
  * ## Recommendation to Use Data Classes for Subclasses:
  * It is recommended to implement subclasses of `Feature` as data classes. Kotlin data classes provide several benefits
@@ -99,7 +100,7 @@ import cl.ravenhill.keen.mixins.Verifiable
  * @param F The type of the feature itself, which must extend [Feature].
  * @property value The value held by the feature, representing its state or characteristic in the evolutionary process.
  */
-interface Feature<T, F> : Verifiable where F : Feature<T, F> {
+interface Feature<T, F> : Verifiable, Mappable<T> where F : Feature<T, F> {
 
     /**
      * The value held by the feature.
@@ -120,6 +121,17 @@ interface Feature<T, F> : Verifiable where F : Feature<T, F> {
      * @return A new feature instance with the specified value.
      */
     fun copyWithValue(value: T): F
+
+    /**
+     * Applies a function to the feature's value and returns a new feature instance with the transformed value.
+     *
+     * This method allows for chaining operations on the feature’s value by applying a transformation. The method is
+     * useful in scenarios where the feature’s value needs to be transformed in a functional programming style.
+     *
+     * @param transform The function to apply to the feature's value.
+     * @return A new feature instance with the transformed value.
+     */
+    override fun map(transform: (T) -> T): F = copyWithValue(transform(value))
 
     /**
      * Applies a function to the feature's value and returns a new feature instance with the transformed value.

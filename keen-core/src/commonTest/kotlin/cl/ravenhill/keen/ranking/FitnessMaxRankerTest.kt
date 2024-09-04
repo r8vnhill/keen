@@ -5,15 +5,15 @@
 
 package cl.ravenhill.keen.ranking
 
-import cl.ravenhill.SimpleFeature
-import cl.ravenhill.SimpleRepresentation
-import cl.ravenhill.arbFitnessMaxRanker
-import cl.ravenhill.arbSimpleFeature
-import cl.ravenhill.arbSimpleRepresentation
+import cl.ravenhill.keen.SimpleFeature
+import cl.ravenhill.keen.SimpleRepresentation
+import cl.ravenhill.keen.arbFitnessMaxRanker
+import cl.ravenhill.keen.arbSimpleFeature
+import cl.ravenhill.keen.arbSimpleRepresentation
 import cl.ravenhill.keen.utils.SortingStrategy
 import cl.ravenhill.utils.arbIndividual
 import cl.ravenhill.utils.arbOrderedPair
-import cl.ravenhill.arbPopulation
+import cl.ravenhill.keen.arbPopulation
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb

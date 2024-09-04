@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill
+package cl.ravenhill.keen
 
 import cl.ravenhill.keen.repr.Feature
 import io.kotest.property.Arb

@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill
+package cl.ravenhill.keen
 
 /**
  * Enum representing the validity status of a representation in an evolutionary algorithm
