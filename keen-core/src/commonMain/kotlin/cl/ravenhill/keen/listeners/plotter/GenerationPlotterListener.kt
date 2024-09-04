@@ -55,7 +55,7 @@ class GenerationPlotterListener<T, F, R, S>(private val configuration: ListenerC
      */
     override fun onGenerationStart(state: S) {
         currentGeneration.value = GenerationRecord(state.generation)
-        evolution.generations += currentGeneration.value!!  // !! is safe because it's initialized in onGenerationStart
+        evolution += currentGeneration.value!!  // !! is safe because it's initialized in onGenerationStart
     }
 
     /**

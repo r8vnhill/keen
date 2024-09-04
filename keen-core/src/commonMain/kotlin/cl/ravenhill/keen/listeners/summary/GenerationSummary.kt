@@ -57,7 +57,7 @@ internal class GenerationSummary<T, F, R, S>(
                 IndividualRecord(state.population[it].representation, state.population[it].fitness)
             }
         }
-        evolution.generations += currentGeneration.value!!
+        evolution += currentGeneration.value!!
     }
 
     /**

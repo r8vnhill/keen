@@ -70,7 +70,7 @@ class GenerationPrinterListener<T, F, R, S>(
     override suspend fun onGenerationEnd(state: S) {
         applyToGeneration(currentGeneration) {
             duration = startTime.elapsedNow().withPrecision()
-            evolution.generations += this
+            evolution += this
             population.offspring = List(state.size) {
                 IndividualRecord(
                     state.population[it].representation,
