@@ -24,6 +24,7 @@ import cl.ravenhill.jakt.exceptions.CollectionConstraintException
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.emptyPopulation
+import cl.ravenhill.keen.evolution.states.SimpleEvolutionStateShrinker
 import cl.ravenhill.keen.evolution.states.arbEvolutionState
 import cl.ravenhill.keen.exceptions.InvalidSizeException
 import cl.ravenhill.keen.exceptions.SelectionException
@@ -38,6 +39,7 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.IntShrinker
 import io.kotest.property.arbitrary.constant
 import io.kotest.property.arbitrary.flatMap
 import io.kotest.property.arbitrary.int
@@ -115,11 +117,14 @@ class SelectorTest : FreeSpec({
         private suspend fun shouldReturnExceptionIfErrorOccursDuringSelection() {
             val individualArb = arbIndividual(arbSimpleRepresentation(arbSimpleFeature()))
             val populationArb = arbNonEmptyPopulation(individualArb)
-            val stateAndSizeArb = arbNamed("state", arbEvolutionState(populationArb))
+            val stateAndSizeArb = arbNamed("state", arbEvolutionState(populationArb), SimpleEvolutionStateShrinker())
                 .flatMap { namedState ->
                     val (_, state) = namedState
-                    arbNamed("size", Arb.int(state.size + 1..Int.MAX_VALUE))
-                        .map { namedSize -> namedState and namedSize }
+                    arbNamed(
+                        "size",
+                        Arb.int(state.size + 1..Int.MAX_VALUE),
+                        IntShrinker(state.size + 1..Int.MAX_VALUE)
+                    ).map { namedSize -> namedState and namedSize }
                 }
             checkAll(stateAndSizeArb) { (population, count) ->
                 val selector = SimpleSelector<_, _, SimpleRepresentation<Int, SimpleFeature>>()

@@ -21,6 +21,7 @@ import cl.ravenhill.keen.PopulationLike
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
+import io.kotest.property.Shrinker
 import io.kotest.property.arbitrary.bind
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.nonNegativeInt
@@ -184,4 +185,11 @@ data class SimpleEvolutionState<T, F, R>(
         ranker: IndividualRanker<T, F, R>,
         generation: Int
     ) = copy(population = population, ranker = ranker, generation = generation)
+}
+
+class SimpleEvolutionStateShrinker<T, F, R> : Shrinker<SimpleEvolutionState<T, F, R>> where F : Feature<T, F>,
+                                                                                            R : Representation<T, F> {
+    override fun shrink(value: SimpleEvolutionState<T, F, R>): List<SimpleEvolutionState<T, F, R>> {
+        return listOf(value)
+    }
 }

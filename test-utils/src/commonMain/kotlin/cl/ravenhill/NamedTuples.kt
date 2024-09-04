@@ -6,6 +6,8 @@
 package cl.ravenhill
 
 import io.kotest.property.Arb
+import io.kotest.property.Shrinker
+import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.bind
 import io.kotest.property.arbitrary.map
 import kotlin.jvm.JvmInline
@@ -88,7 +90,10 @@ infix fun <T, U> Named<T>.and(other: Named<U>) = NamedPair(this, other)
  * @param arb The original `Arb<T>` that generates values of type `T`.
  * @return An `Arb<Named<T>>` that generates named values.
  */
-fun <T> arbNamed(name: String, arb: Arb<T>) = arb.map { name boundTo it }
+fun <T> arbNamed(name: String, arb: Arb<T>, valueShrinker: Shrinker<T>) =
+    arbitrary(NamedShrinker(valueShrinker)) {
+        arb.map { name boundTo it }.bind()
+    }
 
 /**
  * Generates pairs of named values using two `Arb<Named<T>>` instances.
@@ -101,3 +106,9 @@ fun <T> arbNamed(name: String, arb: Arb<T>) = arb.map { name boundTo it }
  */
 fun <T, U> arbNamedPair(firstArb: Arb<Named<T>>, secondArb: Arb<Named<U>>) =
     Arb.bind(firstArb, secondArb) { first, second -> first and second }
+
+class NamedShrinker<T>(private val valueShrinker: Shrinker<T>) : Shrinker<Named<T>> {
+
+    override fun shrink(value: Named<T>) =
+        valueShrinker.shrink(value.unwrap()).map { value.component1() boundTo it }
+}
