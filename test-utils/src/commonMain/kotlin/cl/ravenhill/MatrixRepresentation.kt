@@ -17,49 +17,21 @@ import io.kotest.property.Shrinker
  */
 class MatrixRepresentation<T, F>(val features: List<List<F>>) : Representation<T, F> where F : Feature<T, F> {
 
-    /**
-     * The number of rows in the matrix, which corresponds to the size of the top-level list.
-     */
     override val size = features.size
 
-    /**
-     * Flattens the matrix into a single list of values.
-     *
-     * @return A flattened list of all feature values in the matrix.
-     */
+    override fun drop(n: Int) = MatrixRepresentation(features.drop(n))
+
+    override fun take(n: Int) = MatrixRepresentation(features.take(n))
+
     override fun flatten() = features.flatten().map { it.value }
 
-    /**
-     * Applies a transformation function to each feature value in the matrix and returns a new `MatrixRepresentation`.
-     *
-     * @param transform A function that takes a value of type `T` and returns a transformed value of type `T`.
-     * @return A new `MatrixRepresentation` with the transformed feature values.
-     */
     override fun map(transform: (T) -> T) =
         MatrixRepresentation(features.map { row -> row.map { feature -> feature.map(transform) } })
 
-    /**
-     * Folds the matrix from right to left, starting with an initial value.
-     *
-     * @param R The type of the result produced by the fold operation.
-     * @param initial The initial value to start folding with.
-     * @param operation The binary operation that takes a feature's value and the accumulator, and returns a new
-     *   accumulator.
-     * @return The final accumulated result after processing all feature values from right to left.
-     */
     override fun <R> foldRight(initial: R, operation: (T, R) -> R) = features.foldRight(initial) { row, acc ->
         row.foldRight(acc) { feature, rowAcc -> operation(feature.value, rowAcc) }
     }
 
-    /**
-     * Folds the matrix from left to right, starting with an initial value.
-     *
-     * @param R The type of the result produced by the fold operation.
-     * @param initial The initial value to start folding with.
-     * @param operation The binary operation that takes an accumulator and a feature's value, and returns a new
-     *   accumulator.
-     * @return The final accumulated result after processing all feature values from left to right.
-     */
     override fun <R> fold(initial: R, operation: (R, T) -> R) = features.fold(initial) { acc, row ->
         row.fold(acc) { rowAcc, feature -> operation(rowAcc, feature.value) }
     }
