@@ -26,6 +26,8 @@ data class SimpleRepresentation<T, F>(private val features: List<F>, private val
 
     override fun flatten() = features.flatMap { it.toList() }
 
+    override fun map(transform: (T) -> T) = SimpleRepresentation(features.map { it.map(transform) }, isValid)
+
     override fun <R> fold(initial: R, operation: (R, T) -> R) =
         features.fold(initial) { acc, feature -> operation(acc, feature.value) }
 

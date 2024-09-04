@@ -10,6 +10,7 @@ import cl.ravenhill.keen.matchers.shouldNotBeEvaluated
 import cl.ravenhill.keen.matchers.shouldNotBeValid
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.IsValidRepresentation
+import cl.ravenhill.MatrixRepresentation
 import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.SimpleFeature
 import cl.ravenhill.SimpleRepresentation
@@ -235,15 +236,6 @@ private fun <T, F, R> arbIndividualAndFlattenedRepresentation(
     val size = arbSize.bind()
     val elements = arbListOfN(size, Arb.list(arbFeature)).bind()
     val flattened = elements.flatten().map { it.value }
-    val representation = object : Representation<T, F> {
-
-        override val size: Int = flattened.size
-
-        override fun flatten(): List<T> = flattened
-
-        override fun <R> foldRight(initial: R, operation: (T, R) -> R) = flattened.foldRight(initial, operation)
-
-        override fun <R> fold(initial: R, operation: (R, T) -> R) = flattened.fold(initial, operation)
-    }
+    val representation = MatrixRepresentation(elements)
     Individual(representation) to flattened
 }

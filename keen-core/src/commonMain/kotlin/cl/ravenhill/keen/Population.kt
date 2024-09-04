@@ -66,8 +66,7 @@ interface PopulationLike<T, F, R> : List<Individual<T, F, R>> where F : Feature<
  * @param R The type of representation, which must extend [Representation].
  * @property individuals The list of individuals in the population.
  */
-@JvmInline
-value class Population<T, F, R> internal constructor(override val individuals: List<Individual<T, F, R>>) :
+open class Population<T, F, R> internal constructor(override val individuals: List<Individual<T, F, R>>) :
     PopulationLike<T, F, R>,
     List<Individual<T, F, R>> by individuals
         where F : Feature<T, F>,

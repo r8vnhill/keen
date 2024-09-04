@@ -7,6 +7,7 @@ package cl.ravenhill.keen.evolution.states
 
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
+import cl.ravenhill.keen.PopulationLike
 import cl.ravenhill.keen.mixins.FlatMappable
 import cl.ravenhill.keen.mixins.Foldable
 import cl.ravenhill.keen.ranking.IndividualRanker

@@ -17,6 +17,7 @@ import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 import cl.ravenhill.utils.arbIndividual
 import cl.ravenhill.arbPopulation
+import cl.ravenhill.keen.PopulationLike
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb

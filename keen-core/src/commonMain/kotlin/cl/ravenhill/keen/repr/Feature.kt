@@ -5,6 +5,7 @@
 
 package cl.ravenhill.keen.repr
 
+import cl.ravenhill.keen.mixins.Mappable
 import cl.ravenhill.keen.mixins.Verifiable
 
 /**
@@ -99,7 +100,7 @@ import cl.ravenhill.keen.mixins.Verifiable
  * @param F The type of the feature itself, which must extend [Feature].
  * @property value The value held by the feature, representing its state or characteristic in the evolutionary process.
  */
-interface Feature<T, F> : Verifiable where F : Feature<T, F> {
+interface Feature<T, F> : Verifiable, Mappable<T> where F : Feature<T, F> {
 
     /**
      * The value held by the feature.
@@ -120,6 +121,20 @@ interface Feature<T, F> : Verifiable where F : Feature<T, F> {
      * @return A new feature instance with the specified value.
      */
     fun copyWithValue(value: T): F
+
+    /**
+     * Applies a transformation function to the value held by the feature and returns a new feature with the transformed
+     * value.
+     *
+     * The `map` function is an essential part of the `Feature` interface, allowing for a transformation of the
+     * feature's value without altering the original feature. It is commonly used in functional programming contexts
+     * where operations are applied to the values within a container (in this case, the feature) without mutating the
+     * container itself. The `map` function returns a new instance of the feature with the transformed value.
+     *
+     * @param transform A function that takes the current value of the feature and returns a new transformed value.
+     * @return A new feature instance with the transformed value.
+     */
+    override fun map(transform: (T) -> T): F = copyWithValue(transform(value))
 
     /**
      * Applies a function to the feature's value and returns a new feature instance with the transformed value.
