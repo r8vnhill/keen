@@ -18,6 +18,7 @@ import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.SurvivorSelectorListener
+import cl.ravenhill.keen.toPopulation
 import kotlin.math.floor
 
 /**
@@ -79,7 +80,9 @@ class GeneticSurvivorSelector<T, G>(
         state: GeneticEvolutionState<T, G>
     ): Either<SelectionException, GeneticEvolutionState<T, G>> {
         listeners.forEach { it.onSurvivorSelectionStart(state) }
-        return selector(state, amountToSelect, state::copy)
+        return selector(state, amountToSelect) {
+            state.copy(population = it.toPopulation())
+        }
             .getOrElse { return it.left() }
             .apply { listeners.forEach { it.onSurvivorSelectionEnd(this) } }
             .right()

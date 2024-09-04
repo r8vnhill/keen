@@ -72,6 +72,14 @@ open class Population<T, F, R> internal constructor(override val individuals: Li
         where F : Feature<T, F>,
               R : Representation<T, F> {
 
+    /**
+     * Creates a new population by adding the individuals of another population to this one.
+     *
+     * @param populationLike The population to add to this one.
+     * @return A new population containing the individuals of both populations.
+     */
+    operator fun plus(populationLike: PopulationLike<T, F, R>) = Population(individuals + populationLike.individuals)
+
     override fun toString() = "Population(individuals=$individuals)"
 
     override fun equals(other: Any?): Boolean {

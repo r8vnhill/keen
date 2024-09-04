@@ -49,6 +49,6 @@ class EvaluationExecutorFactory<T, F, R, S> where F : Feature<T, F>,
      * By default, this function creates a `CoroutineConcurrentEvaluator` which evaluates individuals concurrently.
      */
     val creator: ((R) -> Double) -> EvaluationExecutor<T, F, R, S> = {
-        CoroutineConcurrentEvaluator(it)
+        SequentialEvaluator(it)
     }
 }

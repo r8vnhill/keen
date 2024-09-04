@@ -18,6 +18,7 @@ import cl.ravenhill.keen.exceptions.SelectionException
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
+import cl.ravenhill.keen.toPopulation
 import kotlin.math.floor
 
 /**
@@ -78,7 +79,7 @@ class GeneticParentSelector<T, G>(
     ): Either<SelectionException, GeneticEvolutionState<T, G>> {
         listeners.forEach { it.onParentSelectionStart(state) }
         return selector(state, amountToSelect) {
-            state.copy(population = it)
+            state.copy(population = it.toPopulation())
         }
             .getOrElse { return it.left() }
             .also { selected ->

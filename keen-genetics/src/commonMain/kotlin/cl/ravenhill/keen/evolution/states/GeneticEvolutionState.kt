@@ -5,10 +5,12 @@
 
 package cl.ravenhill.keen.evolution.states
 
+import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.ranking.IndividualRanker
+import cl.ravenhill.keen.toPopulation
 
 /**
  * Represents the state of the genetic evolutionary process.
@@ -61,6 +63,6 @@ data class GeneticEvolutionState<T, G>(
          * @param T The type of value held by the gene.
          */
         fun <T, G> empty(ranker: IndividualRanker<T, G, Genotype<T, G>>) where G : Gene<T, G> =
-            GeneticEvolutionState(emptyList(), ranker, 0)
+            GeneticEvolutionState(emptyList<Individual<T, G, Genotype<T, G>>>().toPopulation(), ranker, 0)
     }
 }

@@ -14,6 +14,7 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.mixins.FlatMappable
+import cl.ravenhill.keen.mixins.Mappable
 import cl.ravenhill.keen.repr.Representation
 
 /**
@@ -221,4 +222,17 @@ interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T
         ifLeft = { it.left() }, // If the index is invalid, return the error
         ifRight = { genes[index].right() } // If the index is valid, return the gene
     )
+
+    /**
+     * Transforms the genes in the chromosome by applying a given function to each gene's value.
+     *
+     * The `map` function creates a new chromosome by applying the provided transformation function to each gene in the
+     * current chromosome. It produces a new chromosome instance with the transformed genes, preserving the structure of
+     * the original chromosome. This function is typically used to apply a uniform operation to each gene, such as
+     * scaling, shifting, or otherwise modifying the gene values.
+     *
+     * @param transform The transformation function to apply to each gene's value.
+     * @return A new chromosome with the transformed gene values.
+     */
+    override fun map(transform: (T) -> T) = copyWithGenes(genes.map { it.map(transform) })
 }

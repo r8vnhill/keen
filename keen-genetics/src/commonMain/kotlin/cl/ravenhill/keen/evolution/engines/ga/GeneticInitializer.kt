@@ -19,6 +19,7 @@ import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.GenotypeFactory
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.InitializationListener
+import cl.ravenhill.keen.toPopulation
 
 /**
  * Initializes a genetic algorithm's population by creating individuals based on a genotype factory.
@@ -94,7 +95,7 @@ internal class GeneticInitializer<T, G>(
                 val genotype = genotypeFactory().getOrElse { return it.left() }
                 individuals.add(Individual(genotype))
             }
-            state.copy(population = individuals).also {
+            state.copy(population = individuals.toPopulation()).also {
                 listeners.forEach { l -> l.onInitializationEnd(it) }
             }
         } else {

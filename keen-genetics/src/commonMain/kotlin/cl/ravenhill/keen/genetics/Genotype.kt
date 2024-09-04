@@ -66,6 +66,20 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) : Representat
     override fun flatten(): List<T> = chromosomes.flatMap { it.flatten() }
 
     /**
+     * Applies a transformation function to each gene in the genotype, producing a new genotype with the transformed
+     * genes.
+     *
+     * The `map` function transforms the values of all genes across all chromosomes in the genotype using the specified
+     * transformation function [transform]. A new `Genotype` instance is returned, with each gene in each chromosome
+     * replaced by the result of applying the transformation function to the original gene's value. This is a
+     * non-mutating operation that produces a new genotype, leaving the original genotype unchanged.
+     *
+     * @param transform The transformation function to apply to each gene's value.
+     * @return A new `Genotype` instance where each gene's value has been transformed by the [transform] function.
+     */
+    override fun map(transform: (T) -> T) = Genotype(chromosomes.map { it.map(transform) })
+
+    /**
      * Folds the values of all genes in the genotype from left to right, accumulating a result.
      *
      * The `fold` function allows you to reduce the entire genotype to a single value by applying a binary operation

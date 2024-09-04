@@ -17,6 +17,7 @@ import cl.ravenhill.keen.exceptions.AlterationException
 import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.listeners.mixins.AlterationListener
+import cl.ravenhill.keen.toPopulation
 
 /**
  * Engine for performing genetic alterations in an evolutionary algorithm.
@@ -63,7 +64,7 @@ class GeneticAlterationEngine<T, G>(
             Either<AlterationException, GeneticEvolutionState<T, G>> {
         listeners.forEach { it.onAlterationStart(state) }
         return alterers.fold(state) { acc, alterer ->
-            alterer(acc, state.size) { acc.copy(population = it) }
+            alterer(acc, state.size) { acc.copy(population = it.toPopulation()) }
                 .getOrElse { return AlterationException("Error altering population", it).left() }
         }
             .also { listeners.forEach { l -> l.onAlterationEnd(it) } }
