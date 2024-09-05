@@ -16,9 +16,9 @@ import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.evolution.states.EvolutionState
 import cl.ravenhill.keen.exceptions.CrossoverException
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.operators.alteration.Alterer
 import cl.ravenhill.keen.utils.Exclusivity
 import cl.ravenhill.keen.utils.indices

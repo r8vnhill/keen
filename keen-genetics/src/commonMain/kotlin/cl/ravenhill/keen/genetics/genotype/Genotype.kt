@@ -3,12 +3,13 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.genetics
+package cl.ravenhill.keen.genetics.genotype
 
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constrainedTo
 import cl.ravenhill.jakt.constraints.ints.BeInRange
 import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.Domain
@@ -16,6 +17,7 @@ import cl.ravenhill.keen.ToStringMode
 import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.mixins.Foldable
 import cl.ravenhill.keen.repr.Representation
 
 /**
@@ -46,10 +48,14 @@ import cl.ravenhill.keen.repr.Representation
  * @param T The type of the value held by the genes.
  * @param G The type of the gene, which must extend [Gene].
  * @property chromosomes The list of chromosomes that make up the genotype.
+ * @property size The number of chromosomes in the genotype.
  * @constructor Creates a `Genotype` instance with the specified list of chromosomes.
  */
-data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) : Representation<T, G>,
-    Collection<Chromosome<T, G>> where G : Gene<T, G> {
+data class Genotype<T, G>(override val chromosomes: List<Chromosome<T, G>>) :
+    Representation<T, G>, ContainOps<T, G>, Collection<Chromosome<T, G>>, Foldable<T> by FoldOps(chromosomes)
+        where G : Gene<T, G> {
+
+    override val size = chromosomes.size
 
     /**
      * Secondary constructor for creating a `Genotype` instance using a vararg of chromosomes.
@@ -80,68 +86,63 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) : Representat
     override fun map(transform: (T) -> T) = Genotype(chromosomes.map { it.map(transform) })
 
     /**
-     * Folds the values of all genes in the genotype from left to right, accumulating a result.
+     * Removes the first [n] chromosomes from the genotype, returning a new genotype with the remaining chromosomes.
      *
-     * The `fold` function allows you to reduce the entire genotype to a single value by applying a binary operation
-     * to an initial value and each gene's value within each chromosome, processing elements sequentially from the
-     * first gene in the first chromosome to the last gene in the last chromosome. This is particularly useful for
-     * operations that require aggregating or combining values across all genes in the genotype.
+     * The `drop` method removes a specified number of chromosomes from the beginning of the genotype. It validates that
+     * the number of chromosomes to drop is within the valid range (0 to the size of the genotype). If valid, a new
+     * genotype is returned; otherwise, an error is returned.
      *
-     * ### Example: Summing Gene Values in the Genotype
-     * Suppose you want to calculate the sum of all gene values across all chromosomes in the genotype:
-     * ```kotlin
-     * val chromosome1 = IntChromosome(IntGene(1), IntGene(2))
-     * val chromosome2 = IntChromosome(IntGene(3), IntGene(4))
-     * val genotype = Genotype(chromosome1, chromosome2)
-     * val totalGeneValue = genotype.fold(0) { acc, value -> acc + value }
-     * println(totalGeneValue) // Output: 10
-     * ```
-     *
-     * @param R The type of the result produced by the fold operation.
-     * @param initial The initial value to start the accumulation with.
-     * @param operation The binary operation to apply to the accumulator and each gene's value.
-     * @return The final accumulated result after processing all genes from left to right.
+     * @param n The number of chromosomes to remove from the beginning.
+     * @return An [Either] containing a new `Genotype` with the first [n] chromosomes removed, or a [CompositeException]
+     * if the number of chromosomes to drop is out of range.
      */
-    override fun <R> fold(initial: R, operation: (R, T) -> R): R =
-        chromosomes.fold(initial) { acc, chromosome -> chromosome.fold(acc, operation) }
+    override fun drop(n: Int): Either<CompositeException, Genotype<T, G>> =
+        validateAndApply(
+            n,
+            List<Chromosome<T, G>>::drop,
+            "The number of chromosomes to drop ($n) must be in the range [0, $size]"
+        )
 
     /**
-     * Folds the values of all genes in the genotype from right to left, accumulating a result.
+     * Retains the first [n] chromosomes from the genotype, returning a new genotype with only the first [n]
+     * chromosomes.
      *
-     * The `foldRight` function allows you to reduce the entire genotype to a single value by applying a binary
-     * operation to each gene's value within each chromosome and an initial value, processing elements from the last
-     * gene in the last chromosome to the first gene in the first chromosome. This is particularly useful for operations
-     * where the order of processing should start from the end of the genotype and move towards the beginning.
+     * The `take` method retains a specified number of chromosomes from the beginning of the genotype. It validates that
+     * the number of chromosomes to take is within the valid range (0 to the size of the genotype). If valid, a new
+     * genotype is returned; otherwise, an error is returned.
      *
-     * ### Example: Creating a String Representation of Genes in Reverse Order
-     * Suppose you want to build a string that represents the values of all genes across all chromosomes in reverse
-     * order:
-     * ```kotlin
-     * val chromosome1 = CharChromosome(CharGene('A'), CharGene('B'))
-     * val chromosome2 = CharChromosome(CharGene('C'), CharGene('D'))
-     * val genotype = Genotype(chromosome1, chromosome2)
-     * val reversedGeneString = genotype.foldRight("") { value, acc -> value + acc }
-     * println(reversedGeneString) // Output: "DCBA"
-     * ```
-     *
-     * ## Efficiency Considerations:
-     * - **Folding Left (`fold`)**: Efficient for operations where the accumulation order follows the sequence of
-     *   genes from first to last. Ideal for summing values or combining results in the natural order of the genotype.
-     * - **Folding Right (`foldRight`)**: More efficient for operations where accumulation should start from the last
-     *   gene and proceed to the first, such as when building results that depend on the reverse order of the genes.
-     *
-     * @param R The type of the result produced by the fold operation.
-     * @param initial The initial value to start the accumulation with.
-     * @param operation The binary operation to apply to each gene's value and the accumulator.
-     * @return The final accumulated result after processing all genes from right to left.
+     * @param n The number of chromosomes to retain from the beginning.
+     * @return An [Either] containing a new `Genotype` with the first [n] chromosomes, or a [CompositeException]
+     * if the number of chromosomes to take is out of range.
      */
-    override fun <R> foldRight(initial: R, operation: (T, R) -> R): R =
-        chromosomes.foldRight(initial) { chromosome, acc -> chromosome.foldRight(acc, operation) }
+    override fun take(n: Int): Either<CompositeException, Genotype<T, G>> =
+        validateAndApply(
+            n,
+            List<Chromosome<T, G>>::take,
+            "The number of chromosomes to take ($n) must be in the range [0, $size]"
+        )
 
     /**
-     * The number of chromosomes in the genotype.
+     * Validates the input value [n] and applies the specified [operation] to the list of chromosomes.
+     *
+     * @param n The number of elements to drop or take.
+     * @param operation The operation to apply to the list of chromosomes (e.g., `drop` or `take`).
+     * @param errorMessage The error message to display if the validation fails.
+     * @return An [Either] containing a new `Genotype` after applying the operation, or a [CompositeException] if the
+     *   input is out of range.
      */
-    override val size = chromosomes.size
+    private fun validateAndApply(
+        n: Int,
+        operation: (List<Chromosome<T, G>>, Int) -> List<Chromosome<T, G>>,
+        errorMessage: String
+    ): Either<CompositeException, Genotype<T, G>> {
+        constrainedTo {
+            errorMessage(::InvalidIndexException) {
+                n must BeInRange(0..size)
+            }
+        }.onLeft { return it.left() }
+        return Genotype(operation(chromosomes, n)).right()
+    }
 
     /**
      * Checks if the genotype is empty (i.e., contains no chromosomes).
@@ -176,22 +177,6 @@ data class Genotype<T, G>(val chromosomes: List<Chromosome<T, G>>) : Representat
      * @return An iterator over the chromosomes in the genotype.
      */
     override fun iterator() = chromosomes.iterator()
-
-    /**
-     * Checks if the genotype contains all the specified chromosomes.
-     *
-     * @param elements The collection of chromosomes to check for containment.
-     * @return `true` if the genotype contains all the specified chromosomes, `false` otherwise.
-     */
-    override fun containsAll(elements: Collection<Chromosome<T, G>>) = chromosomes.containsAll(elements)
-
-    /**
-     * Checks if the genotype contains the specified chromosome.
-     *
-     * @param element The chromosome to check for containment.
-     * @return `true` if the genotype contains the specified chromosome, `false` otherwise.
-     */
-    override fun contains(element: Chromosome<T, G>) = chromosomes.contains(element)
 
     /**
      * Verifies the validity of the genotype by checking all its chromosomes.

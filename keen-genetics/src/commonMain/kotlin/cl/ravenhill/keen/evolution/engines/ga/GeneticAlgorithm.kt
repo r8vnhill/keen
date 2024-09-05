@@ -22,8 +22,8 @@ import cl.ravenhill.keen.evolution.engines.ParentSelectionEngine
 import cl.ravenhill.keen.evolution.engines.SurvivorSelectionEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.exceptions.EvolutionException
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.listeners.EvolutionListener
 
 /**

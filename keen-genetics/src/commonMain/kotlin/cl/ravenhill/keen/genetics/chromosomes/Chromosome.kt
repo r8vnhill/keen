@@ -14,7 +14,7 @@ import cl.ravenhill.jakt.exceptions.CompositeException
 import cl.ravenhill.keen.exceptions.InvalidIndexException
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.mixins.FlatMappable
-import cl.ravenhill.keen.mixins.Mappable
+import cl.ravenhill.keen.mixins.Foldable
 import cl.ravenhill.keen.repr.Representation
 
 /**
@@ -50,12 +50,13 @@ import cl.ravenhill.keen.repr.Representation
  * @param G The type of the gene, which must extend [Gene].
  * @property genes The list of genes that make up the chromosome.
  */
-interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T> where G : Gene<T, G> {
+interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T>, ContainOps<T, G>, FoldOps<T, G>
+        where G : Gene<T, G> {
 
     /**
      * The list of genes that make up the chromosome.
      */
-    val genes: List<G>
+    override val genes: List<G>
 
     /**
      * The size of the chromosome, representing the number of genes it contains.
@@ -112,22 +113,6 @@ interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T
     override fun iterator() = genes.iterator()
 
     /**
-     * Checks if the chromosome contains all the specified genes.
-     *
-     * @param elements The genes to check for.
-     * @return `true` if the chromosome contains all the specified genes, `false` otherwise.
-     */
-    override fun containsAll(elements: Collection<G>) = genes.containsAll(elements)
-
-    /**
-     * Checks if the chromosome contains the specified gene.
-     *
-     * @param element The gene to check for.
-     * @return `true` if the chromosome contains the specified gene, `false` otherwise.
-     */
-    override fun contains(element: G) = genes.contains(element)
-
-    /**
      * Flattens the chromosome to a list containing the values of all its genes.
      *
      * This method collects the values from each gene in the chromosome and returns them as a flat list.
@@ -145,61 +130,6 @@ interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T
      * @return `true` if all genes in the chromosome are verified, `false` otherwise.
      */
     override fun verify(): Boolean = genes.all { it.verify() }
-
-    /**
-     * Folds the genes in the chromosome from left to right, accumulating a result.
-     *
-     * This method starts with an initial value and processes each gene in the chromosome from left to right (i.e., in
-     * the order they appear), applying the given binary operation to the current accumulator and each gene's value. The
-     * result is accumulated step by step until the final result is obtained.
-     *
-     * ### Example: Calculating the Sum of Gene Values
-     * Suppose you have a chromosome where each gene holds an integer value, and you want to calculate the sum of these
-     * values:
-     * ```kotlin
-     * // Chromosome: [1, 2, 3, 4, 5]
-     * val chromosome: Chromosome<Int, MyGene> = // obtain a chromosome instance
-     * val sumOfGeneValues = chromosome.fold(0) { acc, value -> acc + value }
-     * println(sumOfGeneValues) // Output: 15
-     * ```
-     *
-     * @param R The type of the result produced by the fold operation.
-     * @param initial The initial value to start the accumulation with.
-     * @param operation The binary operation to apply to the accumulator and each gene's value.
-     * @return The final accumulated result after processing all genes from left to right.
-     */
-    override fun <R> fold(initial: R, operation: (R, T) -> R): R =
-        genes.fold(initial) { acc, gene -> operation(acc, gene.value) }
-
-    /**
-     * Folds the genes in the chromosome from right to left, accumulating a result.
-     *
-     * This method starts with an initial value and processes each gene in the chromosome from right to left (i.e., in
-     * reverse order), applying the given binary operation to each gene's value and the current accumulator. The result
-     * is accumulated step by step, starting from the last gene and moving toward the first.
-     *
-     * ### Example: Building a String Representation of Gene Values in Reverse Order
-     * Suppose you have a chromosome where each gene holds a character, and you want to build a string that represents
-     * the gene values in reverse order:
-     * ```kotlin
-     * val chromosome: Chromosome<Char, MyGene> = // obtain a chromosome instance
-     * val reversedGeneString = chromosome.foldRight("") { value, acc -> value + acc }
-     * println(reversedGeneString) // Output: the gene values concatenated in reverse order
-     * ```
-     *
-     * ## Efficiency Considerations:
-     * - **Folding Left (`fold`)**: Efficient when the order of operations naturally follows the structure's sequence.
-     *   For example, summing values or processing genes in their natural order.
-     * - **Folding Right (`foldRight`)**: More efficient for right-associative operations, such as when building results
-     *   from the last element or constructing a data structure that depends on the order starting from the end.
-     *
-     * @param R The type of the result produced by the fold operation.
-     * @param initial The initial value to start the accumulation with.
-     * @param operation The binary operation to apply to each gene's value and the accumulator.
-     * @return The final accumulated result after processing all genes from right to left.
-     */
-    override fun <R> foldRight(initial: R, operation: (T, R) -> R): R =
-        genes.foldRight(initial) { gene, acc -> operation(gene.value, acc) }
 
     /**
      * Retrieves the gene at the specified index within the chromosome.
@@ -235,4 +165,18 @@ interface Chromosome<T, G> : Representation<T, G>, Collection<G>, FlatMappable<T
      * @return A new chromosome with the transformed gene values.
      */
     override fun map(transform: (T) -> T) = copyWithGenes(genes.map { it.map(transform) })
+
+    override fun drop(n: Int): Either<CompositeException, Representation<T, G>> {
+        constrained {
+            "Number of elements to drop ($n) must be non-negative" { n must BeInRange(0..size) }
+        }.onLeft { return it.left() }
+        return copyWithGenes(genes.drop(n)).right()
+    }
+
+    override fun take(n: Int): Either<Exception, Representation<T, G>> {
+        constrained {
+            "Number of elements to take ($n) must be non-negative" { n must BeInRange(0..size) }
+        }.onLeft { return it.left() }
+        return copyWithGenes(genes.take(n)).right()
+    }
 }

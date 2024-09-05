@@ -15,8 +15,8 @@ import cl.ravenhill.keen.evolution.config.SelectionConfiguration
 import cl.ravenhill.keen.evolution.engines.ParentSelectionEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.exceptions.SelectionException
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.listeners.mixins.ParentSelectionListener
 import cl.ravenhill.keen.toPopulation
 import kotlin.math.floor

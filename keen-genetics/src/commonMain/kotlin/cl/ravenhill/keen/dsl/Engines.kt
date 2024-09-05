@@ -8,9 +8,9 @@ package cl.ravenhill.keen.dsl
 
 import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithm
 import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory
-import cl.ravenhill.keen.genetics.Genotype
-import cl.ravenhill.keen.genetics.GenotypeFactory
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
+import cl.ravenhill.keen.genetics.genotype.GenotypeFactory
 import cl.ravenhill.keen.operators.alteration.crossover.Crossover
 import cl.ravenhill.keen.operators.alteration.mutation.Mutator
 

@@ -18,8 +18,8 @@ import cl.ravenhill.keen.evolution.engines.EvaluationEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.exceptions.EvaluationException
 import cl.ravenhill.keen.exceptions.InvalidSizeException
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.listeners.mixins.EvaluationListener
 import cl.ravenhill.keen.utils.isNotNaN
 

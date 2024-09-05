@@ -14,8 +14,8 @@ import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.engines.AlterationEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.exceptions.AlterationException
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.listeners.mixins.AlterationListener
 import cl.ravenhill.keen.toPopulation
 

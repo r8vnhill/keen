@@ -11,9 +11,9 @@ import cl.ravenhill.keen.evolution.EvolutionInterceptor
 import cl.ravenhill.keen.evolution.engines.ga.GeneticAlgorithmFactory
 import cl.ravenhill.keen.evolution.executors.evaluation.EvaluationExecutorFactory
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
-import cl.ravenhill.keen.genetics.Genotype
-import cl.ravenhill.keen.genetics.GenotypeFactory
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
+import cl.ravenhill.keen.genetics.genotype.GenotypeFactory
 import cl.ravenhill.keen.limits.Limit
 import cl.ravenhill.keen.listeners.Listener
 import cl.ravenhill.keen.listeners.ListenerConfiguration

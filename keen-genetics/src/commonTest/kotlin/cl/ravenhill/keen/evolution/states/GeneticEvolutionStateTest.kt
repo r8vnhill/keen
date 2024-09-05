@@ -12,8 +12,8 @@ import cl.ravenhill.keen.genetic.arbSimpleGenotype
 import cl.ravenhill.keen.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.genetic.genes.SimpleGene
 import cl.ravenhill.keen.genetic.genes.arbSimpleGene
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.utils.arbIndividual
 import io.kotest.core.spec.style.FreeSpec

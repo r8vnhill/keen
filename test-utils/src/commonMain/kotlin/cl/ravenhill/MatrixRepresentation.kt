@@ -5,6 +5,7 @@
 
 package cl.ravenhill
 
+import arrow.core.right
 import cl.ravenhill.keen.RepresentationShrinker
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
@@ -19,9 +20,9 @@ class MatrixRepresentation<T, F>(val features: List<List<F>>) : Representation<T
 
     override val size = features.size
 
-    override fun drop(n: Int) = MatrixRepresentation(features.drop(n))
+    override fun drop(n: Int) = MatrixRepresentation(features.drop(n)).right()
 
-    override fun take(n: Int) = MatrixRepresentation(features.take(n))
+    override fun take(n: Int) = MatrixRepresentation(features.take(n)).right()
 
     override fun flatten() = features.flatten().map { it.value }
 

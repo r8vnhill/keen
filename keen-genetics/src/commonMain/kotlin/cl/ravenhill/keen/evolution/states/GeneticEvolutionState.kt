@@ -7,8 +7,8 @@ package cl.ravenhill.keen.evolution.states
 
 import cl.ravenhill.keen.Individual
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.ranking.IndividualRanker
 import cl.ravenhill.keen.toPopulation
 

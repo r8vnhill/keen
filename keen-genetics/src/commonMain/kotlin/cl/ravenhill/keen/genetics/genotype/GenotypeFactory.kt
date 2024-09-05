@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.genetics
+package cl.ravenhill.keen.genetics.genotype
 
 import arrow.core.Either
 import arrow.core.getOrElse
@@ -16,7 +16,6 @@ import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.chromosomes.ChromosomeFactory
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.repr.RepresentationFactory
-import kotlin.properties.Delegates
 
 /**
  * Factory for creating genotypes in an evolutionary algorithm.

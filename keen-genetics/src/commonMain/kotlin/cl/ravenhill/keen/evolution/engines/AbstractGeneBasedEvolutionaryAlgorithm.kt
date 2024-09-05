@@ -7,8 +7,8 @@ package cl.ravenhill.keen.evolution.engines
 
 import cl.ravenhill.keen.evolution.config.EvolutionConfiguration
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.listeners.Listener
 
 /**
@@ -49,7 +49,9 @@ abstract class AbstractGeneBasedEvolutionaryAlgorithm<T, G, L>(
     evolutionConfiguration: EvolutionConfiguration<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
 ) : AbstractEvolver<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>(evolutionConfiguration),
     InitializerEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>,
-    EvaluationEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>> where G : Gene<T, G>, L : Listener {
+    EvaluationEngine<T, G, Genotype<T, G>, GeneticEvolutionState<T, G>>
+        where G : Gene<T, G>,
+              L : Listener {
 
     /**
      * The interceptor that modifies or monitors the state before and after key evolutionary processes.

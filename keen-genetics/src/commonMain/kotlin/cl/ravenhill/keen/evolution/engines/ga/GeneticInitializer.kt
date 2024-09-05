@@ -15,9 +15,8 @@ import cl.ravenhill.keen.evolution.config.GeneticPopulationConfiguration
 import cl.ravenhill.keen.evolution.engines.InitializerEngine
 import cl.ravenhill.keen.evolution.states.GeneticEvolutionState
 import cl.ravenhill.keen.exceptions.InitializationException
-import cl.ravenhill.keen.genetics.Genotype
-import cl.ravenhill.keen.genetics.GenotypeFactory
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.listeners.mixins.InitializationListener
 import cl.ravenhill.keen.toPopulation
 

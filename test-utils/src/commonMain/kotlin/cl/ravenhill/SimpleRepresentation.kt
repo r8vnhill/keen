@@ -5,6 +5,7 @@
 
 package cl.ravenhill
 
+import arrow.core.right
 import cl.ravenhill.keen.repr.Feature
 import cl.ravenhill.keen.repr.Representation
 import io.kotest.property.Arb
@@ -23,9 +24,11 @@ data class SimpleRepresentation<T, F>(private val features: List<F>, private val
     Representation<T, F> where F : Feature<T, F> {
 
     override val size = features.size
-    override fun drop(n: Int) = SimpleRepresentation(features.drop(n), isValid)
+    override fun drop(n: Int) =
+        SimpleRepresentation(features.drop(n), isValid).right()
 
-    override fun take(n: Int) = SimpleRepresentation(features.take(n), isValid)
+    override fun take(n: Int) =
+        SimpleRepresentation(features.take(n), isValid).right()
 
     override fun flatten() = features.flatMap { it.toList() }
 

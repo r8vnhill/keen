@@ -11,9 +11,9 @@ import cl.ravenhill.keen.genetic.chromosomes.arbChromosome
 import cl.ravenhill.keen.genetic.chromosomes.arbChromosomeWithInvalidGenes
 import cl.ravenhill.keen.genetic.genes.SimpleGene
 import cl.ravenhill.keen.genetic.genes.arbSimpleGene
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.matchers.shouldBeLeft
 import cl.ravenhill.matchers.shouldBeRight
 import cl.ravenhill.matchers.shouldBeValid
@@ -212,7 +212,8 @@ class GenotypeTest : FreeSpec({
  * @param chromosomeArb An [Arb] generator for producing individual chromosomes of type `Chromosome<Int, SimpleGene>`.
  * @return An [Arb] generator that produces instances of `Genotype<Int, SimpleGene>`.
  */
-fun arbSimpleGenotype(chromosomeArb: Arb<Chromosome<Int, SimpleGene>>) = Arb.list(chromosomeArb).map(::Genotype)
+fun arbSimpleGenotype(chromosomeArb: Arb<Chromosome<Int, SimpleGene>>) =
+    Arb.list(chromosomeArb).map(::Genotype)
 
 private fun <T, G> arbGenotypeAndFlattenedChromosomes(
     geneArb: Arb<G>,

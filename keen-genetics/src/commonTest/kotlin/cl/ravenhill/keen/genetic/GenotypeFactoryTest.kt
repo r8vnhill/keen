@@ -8,7 +8,7 @@ package cl.ravenhill.keen.genetic
 import cl.ravenhill.keen.genetic.chromosomes.SimpleChromosomeFactory
 import cl.ravenhill.keen.genetic.chromosomes.arbSimpleChromosomeFactory
 import cl.ravenhill.keen.genetic.genes.SimpleGene
-import cl.ravenhill.keen.genetics.GenotypeFactory
+import cl.ravenhill.keen.genetics.genotype.GenotypeFactory
 import cl.ravenhill.matchers.shouldBeRight
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
