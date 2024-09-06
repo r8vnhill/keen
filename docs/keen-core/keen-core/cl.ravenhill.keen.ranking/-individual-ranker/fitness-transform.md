@@ -7,6 +7,8 @@ open fun [fitnessTransform](fitness-transform.md)(fitness: [List](https://kotlin
 
 Transforms a list of fitness values.
 
+This method provides an optional transformation step that can be applied to a list of fitness values before they are used for comparison or sorting. Implementations can override this method to apply custom transformations such as scaling, normalization, or other adjustments to the fitness values.
+
 #### Return
 
 The transformed list of fitness values.

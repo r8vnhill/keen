@@ -69,7 +69,6 @@ common
 | Name | Summary |
 |---|---|
 | [executor](executor.md) | [common]<br>abstract var [executor](executor.md): [ConstructorExecutor](../../../../keen-core/keen-core/cl.ravenhill.keen.evolution.executors.construction/-constructor-executor/index.md)&lt;[G](index.md)&gt;<br>The `ConstructorExecutor` used to generate the sequence of genes within the chromosome. |
-| [size](index.md#533291449%2FProperties%2F-1476930196) | [common]<br>abstract var [size](index.md#533291449%2FProperties%2F-1476930196): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) |
 
 ## Functions
 

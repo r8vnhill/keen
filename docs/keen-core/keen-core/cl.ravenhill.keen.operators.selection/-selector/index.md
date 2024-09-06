@@ -17,7 +17,9 @@ This interface is intended to be implemented by classes that define specific sel
 Implementing a custom selector:
 
 ```kotlin
-class MyCustomSelector<T, F, R> : Selector<T, F, R> where F : Feature<T, F>, R : Representation<T, F> {
+class MyCustomSelector<T, F, R> : Selector<T, F, R>
+        where F : Feature<T, F>,
+              R : Representation<T, F> {
     override fun select(
         population: Population<T, F, R>,
         count: Int,
@@ -25,6 +27,7 @@ class MyCustomSelector<T, F, R> : Selector<T, F, R> where F : Feature<T, F>, R :
     ): Either<SelectionException, Population<T, F, R>> {
         // Custom selection logic
     }
+    // ... other methods and properties ...
 }
 ```
 

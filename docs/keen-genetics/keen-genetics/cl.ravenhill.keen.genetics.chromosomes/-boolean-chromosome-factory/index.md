@@ -39,7 +39,7 @@ result.onSuccess { chromosome ->
 | Name | Summary |
 |---|---|
 | [executor](../-abstract-chromosome-factory/executor.md) | [common]<br>open override var [executor](../-abstract-chromosome-factory/executor.md): [ConstructorExecutor](../../../../keen-core/keen-core/cl.ravenhill.keen.evolution.executors.construction/-constructor-executor/index.md)&lt;[BooleanGene](../../cl.ravenhill.keen.genetics.genes/-boolean-gene/index.md)&gt;<br>The `ConstructorExecutor` used to generate the sequence of genes within the chromosome. Defaults to a `SequentialConstructor`. |
-| [size](../-abstract-chromosome-factory/size.md) | [common]<br>open override var [size](../-abstract-chromosome-factory/size.md): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) |
+| [size](../-abstract-chromosome-factory/size.md) | [common]<br>var [size](../-abstract-chromosome-factory/size.md): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)<br>The size of the chromosome to be created. This property must be initialized before invoking the factory. |
 | [trueRate](true-rate.md) | [common]<br>var [trueRate](true-rate.md): [Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)<br>The probability that a gene in the chromosome will be `True`. |
 
 ## Functions

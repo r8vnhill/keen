@@ -2,7 +2,7 @@
 
 # TimePrecision
 
-interface [TimePrecision](index.md)
+sealed interface [TimePrecision](index.md)
 
 Interface representing precision handling in time-related calculations.
 
@@ -12,8 +12,13 @@ The `Precision` interface defines a contract for specifying how to apply a certa
 
 | |
 |---|
+| [WholeDays](../-whole-days/index.md) |
+| [WholeHours](../-whole-hours/index.md) |
 | [WholeMicroseconds](../-whole-microseconds/index.md) |
 | [WholeMilliseconds](../-whole-milliseconds/index.md) |
+| [WholeMinutes](../-whole-minutes/index.md) |
+| [WholeNanoseconds](../-whole-nanoseconds/index.md) |
+| [WholeSeconds](../-whole-seconds/index.md) |
 
 ## Properties
 

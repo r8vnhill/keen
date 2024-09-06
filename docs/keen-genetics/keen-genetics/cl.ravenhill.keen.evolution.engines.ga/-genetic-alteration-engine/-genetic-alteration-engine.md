@@ -3,7 +3,7 @@
 # GeneticAlterationEngine
 
 [common]\
-constructor(evolutionConfiguration: [EvolutionConfiguration](../../../../keen-core/keen-core/cl.ravenhill.keen.evolution.config/-evolution-configuration/index.md)&lt;[T](index.md), [G](index.md), [Genotype](../../cl.ravenhill.keen.genetics/-genotype/index.md)&lt;[T](index.md), [G](index.md)&gt;, [GeneticEvolutionState](../../cl.ravenhill.keen.evolution.states/-genetic-evolution-state/index.md)&lt;[T](index.md), [G](index.md)&gt;&gt;, alterationConfiguration: [AlterationConfiguration](../../cl.ravenhill.keen.evolution.config/-alteration-configuration/index.md)&lt;[T](index.md), [G](index.md)&gt;)
+constructor(evolutionConfiguration: [EvolutionConfiguration](../../../../keen-core/keen-core/cl.ravenhill.keen.evolution.config/-evolution-configuration/index.md)&lt;[T](index.md), [G](index.md), [Genotype](../../cl.ravenhill.keen.genetics.genotype/-genotype/index.md)&lt;[T](index.md), [G](index.md)&gt;, [GeneticEvolutionState](../../cl.ravenhill.keen.evolution.states/-genetic-evolution-state/index.md)&lt;[T](index.md), [G](index.md)&gt;&gt;, alterationConfiguration: [AlterationConfiguration](../../cl.ravenhill.keen.evolution.config/-alteration-configuration/index.md)&lt;[T](index.md), [G](index.md)&gt;)
 
 #### Parameters
 

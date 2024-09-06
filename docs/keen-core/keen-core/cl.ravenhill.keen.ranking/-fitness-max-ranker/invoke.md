@@ -5,11 +5,11 @@
 [common]\
 open operator override fun [invoke](invoke.md)(first: [Individual](../../cl.ravenhill.keen/-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;, second: [Individual](../../cl.ravenhill.keen/-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)
 
-Compares two individuals based on their fitness values.
+Compares two individuals based on their fitness.
 
 #### Return
 
-A negative integer, zero, or a positive integer as the first individual has less than, equal to, or greater fitness than the second.
+A negative integer, zero, or a positive integer if the first individual's fitness is less than, equal to, or greater than the second individual's fitness, respectively.
 
 #### Parameters
 

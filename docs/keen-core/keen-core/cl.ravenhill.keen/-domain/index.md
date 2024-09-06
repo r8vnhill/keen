@@ -26,7 +26,7 @@ Domain.dispatcher = Dispatchers.IO
 
 | Name | Summary |
 |---|---|
-| [DEFAULT_CONSOLE_WIDTH](-d-e-f-a-u-l-t_-c-o-n-s-o-l-e_-w-i-d-t-h.md) | [common]<br>const val [DEFAULT_CONSOLE_WIDTH](-d-e-f-a-u-l-t_-c-o-n-s-o-l-e_-w-i-d-t-h.md): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) = 120<br>The default width of the console output. This is used for formatting text and tables. |
+| [DEFAULT_CONSOLE_WIDTH](-d-e-f-a-u-l-t_-c-o-n-s-o-l-e_-w-i-d-t-h.md) | [common]<br>const val [DEFAULT_CONSOLE_WIDTH](-d-e-f-a-u-l-t_-c-o-n-s-o-l-e_-w-i-d-t-h.md): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) = 100<br>The default width of the console output. This is used for formatting text and tables. |
 | [DEFAULT_EQUALITY_THRESHOLD](-d-e-f-a-u-l-t_-e-q-u-a-l-i-t-y_-t-h-r-e-s-h-o-l-d.md) | [common]<br>const val [DEFAULT_EQUALITY_THRESHOLD](-d-e-f-a-u-l-t_-e-q-u-a-l-i-t-y_-t-h-r-e-s-h-o-l-d.md): [Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html) = 1.0E-10<br>The default threshold for comparing floating-point numbers for equality. It is set to a very small value to account for precision errors in floating-point arithmetic. |
 | [dispatcher](dispatcher.md) | [common]<br>var [dispatcher](dispatcher.md): CoroutineDispatcher<br>The default coroutine context used for concurrent operations. This can be overridden to customize the execution context. |
 | [equalityThreshold](equality-threshold.md) | [common]<br>var [equalityThreshold](equality-threshold.md): [Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)<br>The threshold used for comparing floating-point numbers for equality. This value must be non-negative and not NaN. |

@@ -7,7 +7,7 @@ abstract suspend operator fun [invoke](invoke.md)(): Either&lt;[InitializationEx
 
 Asynchronously creates a representation of the predefined size.
 
-The `invoke` function is the primary method for generating representations. It is a `suspend` function, allowing for non-blocking execution, which is particularly useful in environments like Kotlin/JS or when dealing with large-scale, computationally intensive tasks. The function uses a `Random` instance to introduce variability into the creation process.
+The `invoke` function is the primary method for generating representations. It is a `suspend` function, allowing for non-blocking execution, which is particularly useful in environments like Kotlin/JS or when dealing with large-scale, computationally intensive tasks.
 
 #### Return
 

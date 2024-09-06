@@ -5,13 +5,11 @@
 [common]\
 operator fun [invoke](invoke.md)(state: [S](index.md)): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)
 
-Evaluates the limit condition on the given state.
-
-This operator function applies the predicate function to the current state of the evolutionary process, determining whether the limit has been reached.
+Applies the predicate function to the given [EvolutionState](../../cl.ravenhill.keen.evolution.states/-evolution-state/index.md).
 
 #### Return
 
-`true` if the limit condition is met, `false` otherwise.
+`true` if the limit conditions are met, otherwise `false`.
 
 #### Parameters
 
@@ -19,4 +17,4 @@ common
 
 | | |
 |---|---|
-| state | The current state of the evolutionary process. |
+| state | The current [EvolutionState](../../cl.ravenhill.keen.evolution.states/-evolution-state/index.md) to evaluate. |

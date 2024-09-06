@@ -4,8 +4,8 @@ import cl.ravenhill.keen.dsl.booleans
 import cl.ravenhill.keen.dsl.chromosomeOf
 import cl.ravenhill.keen.dsl.geneticAlgorithm
 import cl.ravenhill.keen.dsl.genotypeOf
-import cl.ravenhill.keen.genetics.Genotype
 import cl.ravenhill.keen.genetics.genes.BooleanGene
+import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.limits.TargetFitness
 import cl.ravenhill.keen.listeners.plotter.EvolutionPlotter
 import cl.ravenhill.keen.listeners.summary.EvolutionSummary

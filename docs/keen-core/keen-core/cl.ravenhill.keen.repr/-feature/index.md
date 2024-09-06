@@ -2,7 +2,7 @@
 
 # Feature
 
-interface [Feature](index.md)&lt;[T](index.md), [F](index.md) : [Feature](index.md)&lt;[T](index.md), [F](index.md)&gt;&gt; : [Verifiable](../../cl.ravenhill.keen.mixins/-verifiable/index.md)
+interface [Feature](index.md)&lt;[T](index.md), [F](index.md) : [Feature](index.md)&lt;[T](index.md), [F](index.md)&gt;&gt; : [Verifiable](../../cl.ravenhill.keen.mixins/-verifiable/index.md), [Mappable](../../cl.ravenhill.keen.mixins/-mappable/index.md)&lt;[T](index.md)&gt; 
 
 Represents a fundamental component in an evolutionary algorithm.
 
@@ -113,5 +113,6 @@ common
 |---|---|
 | [copyWithValue](copy-with-value.md) | [common]<br>abstract fun [copyWithValue](copy-with-value.md)(value: [T](index.md)): [F](index.md)<br>Creates a duplicate of the feature with a new specified value. |
 | [flatMap](flat-map.md) | [common]<br>open fun [flatMap](flat-map.md)(f: ([T](index.md)) -&gt; [F](index.md)): [F](index.md)<br>Applies a function to the feature's value and returns a new feature instance with the transformed value. |
+| [map](map.md) | [common]<br>open override fun [map](map.md)(transform: ([T](index.md)) -&gt; [T](index.md)): [F](index.md)<br>Applies a transformation function to the value held by the feature and returns a new feature with the transformed value. |
 | [toList](to-list.md) | [common]<br>open fun [toList](to-list.md)(): [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[T](index.md)&gt;<br>Converts the feature's value into a list representation. |
 | [verify](../../cl.ravenhill.keen.mixins/-verifiable/verify.md) | [common]<br>open fun [verify](../../cl.ravenhill.keen.mixins/-verifiable/verify.md)(): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)<br>Verifies the correctness or validity of the object. |

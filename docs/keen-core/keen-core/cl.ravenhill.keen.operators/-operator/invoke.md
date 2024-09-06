@@ -7,15 +7,15 @@ abstract suspend operator fun &lt;[S](invoke.md) : [EvolutionState](../../cl.rav
 
 Applies the operator to the given evolutionary state to produce a new state, supporting both synchronous and asynchronous execution.
 
-This `suspend` function is the core operation of the `Operator` interface, transforming the current evolutionary state by selecting, mutating, or recombining individuals in the population. The transformation is based on the provided parameters and a random number generator. The function is marked as `suspend` to support asynchronous operations, but it can also be used in a synchronous context when asynchronous behavior is not required.
+This `suspend` function is the core operation of the `Operator` interface, transforming the current evolutionary state by selecting, mutating, or recombining individuals in the population. The transformation is based on the provided parameters and a random number generator. The function is marked as `suspend` to support asynchronous operations, but it can also be used synchronously if asynchronous behavior is not required.
 
 ## Implementation Note:
 
-Implementers are responsible for validating that the `outputSize` is appropriate and ensuring that the new population's size matches the `outputSize`. This is crucial for maintaining the integrity of the evolutionary process and preventing runtime errors.
+Implementers are responsible for validating that the [outputSize](invoke.md) is appropriate and ensuring that the new population's size matches the `outputSize`. This is crucial for maintaining the integrity of the evolutionary process and preventing runtime errors.
 
 #### Return
 
-A [Result](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-result/index.html) containing the new evolutionary state, or an exception if the operation fails.
+An Either containing the new evolutionary state, or a [OperatorInvocationException](../../cl.ravenhill.keen.exceptions/-operator-invocation-exception/index.md) if the operation fails.
 
 #### Parameters
 

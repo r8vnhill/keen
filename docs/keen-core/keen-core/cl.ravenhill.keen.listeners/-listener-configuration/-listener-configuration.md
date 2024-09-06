@@ -3,7 +3,7 @@
 # ListenerConfiguration
 
 [common]\
-constructor(ranker: [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = FitnessMaxRanker(), evolution: [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = EvolutionRecord(), timeSource: [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html) = TimeSource.Monotonic, precision: [TimePrecision](../../cl.ravenhill.keen.listeners.precision/-time-precision/index.md) = WholeMilliseconds)
+constructor(ranker: [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = defaultRanker(), evolution: [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = defaultEvolutionRecord(), timeSource: [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html) = defaultTimeSource, precision: [TimePrecision](../../cl.ravenhill.keen.listeners.precision/-time-precision/index.md) = defaultPrecision)
 
 #### Parameters
 
@@ -11,6 +11,6 @@ common
 
 | | |
 |---|---|
-| T | The type of value stored by the feature. |
-| F | The kind of feature stored in a representation, which must implement [Feature](../../cl.ravenhill.keen.repr/-feature/index.md). |
-| R | The type of representation used by the individual, which must implement [Representation](../../cl.ravenhill.keen.repr/-representation/index.md). |
+| T | The type of the value held by the genes in the individuals. |
+| F | The type of the feature used in the individual's representation. |
+| R | The type of the representation used by the individual. |

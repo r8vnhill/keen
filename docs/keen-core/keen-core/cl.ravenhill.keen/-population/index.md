@@ -2,11 +2,11 @@
 
 # Population
 
-typealias [Population](index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;&gt;
+open class [Population](index.md)&lt;[T](index.md), [F](index.md) : [Feature](../../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](index.md), [F](index.md)&gt;, [R](index.md) : [Representation](../../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](index.md), [F](index.md)&gt;&gt; : [PopulationLike](../-population-like/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; , [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;&gt; 
 
-Represents a population of individuals in an evolutionary algorithm.
+A value class representing a population of individuals in an evolutionary algorithm.
 
-The `Population` type alias defines a population as a list of individuals. This type alias simplifies the usage of populations within evolutionary algorithms by providing a clear and concise way to represent collections of individuals.
+The `Population` class is a lightweight, inline class that encapsulates a list of individuals. It implements the [PopulationLike](../-population-like/index.md) interface, providing access to the population's fitness values and inheriting the behavior of a standard list. This class can represent an empty or non-empty population.
 
 #### Parameters
 
@@ -14,6 +14,43 @@ common
 
 | | |
 |---|---|
-| T | The type of the value held by the features. |
-| F | The type of the feature, which must extend [Feature](../../cl.ravenhill.keen.repr/-feature/index.md). |
-| R | The type of the representation, which must extend [Representation](../../cl.ravenhill.keen.repr/-representation/index.md). |
+| T | The type of value held by the features in the representation. |
+| F | The type of feature, which must extend [Feature](../../cl.ravenhill.keen.repr/-feature/index.md). |
+| R | The type of representation, which must extend [Representation](../../cl.ravenhill.keen.repr/-representation/index.md). |
+
+#### Inheritors
+
+| |
+|---|
+| [NonEmptyPopulation](../-non-empty-population/index.md) |
+
+## Properties
+
+| Name | Summary |
+|---|---|
+| [fitness](../-population-like/fitness.md) | [common]<br>open val [fitness](../-population-like/fitness.md): [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)&gt;<br>Retrieves the fitness values of all individuals in the population. |
+| [individuals](individuals.md) | [common]<br>open override val [individuals](individuals.md): [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;&gt;<br>The list of individuals in the population. |
+| [size](../-non-empty-population/index.md#844915858%2FProperties%2F1902964177) | [common]<br>open override val [size](../-non-empty-population/index.md#844915858%2FProperties%2F1902964177): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) |
+
+## Functions
+
+| Name | Summary |
+|---|---|
+| [contains](../-non-empty-population/index.md#-2081704821%2FFunctions%2F1902964177) | [common]<br>open operator override fun [contains](../-non-empty-population/index.md#-2081704821%2FFunctions%2F1902964177)(element: [Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html) |
+| [containsAll](../-non-empty-population/index.md#-478735308%2FFunctions%2F1902964177) | [common]<br>open override fun [containsAll](../-non-empty-population/index.md#-478735308%2FFunctions%2F1902964177)(elements: [Collection](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-collection/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;&gt;): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html) |
+| [equals](equals.md) | [common]<br>open operator override fun [equals](equals.md)(other: [Any](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)?): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html) |
+| [get](../-non-empty-population/index.md#961975567%2FFunctions%2F1902964177) | [common]<br>open operator override fun [get](../-non-empty-population/index.md#961975567%2FFunctions%2F1902964177)(index: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)): [Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; |
+| [hashCode](hash-code.md) | [common]<br>open override fun [hashCode](hash-code.md)(): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) |
+| [indexOf](../-non-empty-population/index.md#2127718369%2FFunctions%2F1902964177) | [common]<br>open override fun [indexOf](../-non-empty-population/index.md#2127718369%2FFunctions%2F1902964177)(element: [Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) |
+| [isEmpty](../-non-empty-population/index.md#-1000881820%2FFunctions%2F1902964177) | [common]<br>open override fun [isEmpty](../-non-empty-population/index.md#-1000881820%2FFunctions%2F1902964177)(): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html) |
+| [iterator](../-non-empty-population/index.md#-1577986619%2FFunctions%2F1902964177) | [common]<br>open operator override fun [iterator](../-non-empty-population/index.md#-1577986619%2FFunctions%2F1902964177)(): [Iterator](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterator/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;&gt; |
+| [lastIndexOf](../-non-empty-population/index.md#-237563925%2FFunctions%2F1902964177) | [common]<br>open override fun [lastIndexOf](../-non-empty-population/index.md#-237563925%2FFunctions%2F1902964177)(element: [Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) |
+| [listIterator](../-non-empty-population/index.md#-236165689%2FFunctions%2F1902964177) | [common]<br>open override fun [listIterator](../-non-empty-population/index.md#-236165689%2FFunctions%2F1902964177)(): [ListIterator](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;&gt;<br>open override fun [listIterator](../-non-empty-population/index.md#845091493%2FFunctions%2F1902964177)(index: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)): [ListIterator](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;&gt; |
+| [map](../-population-like/map.md) | [common]<br>open fun [map](../-population-like/map.md)(f: ([Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;) -&gt; [Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;): [Population](index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;<br>Maps the individuals in the population using the provided function. |
+| [plus](plus.md) | [common]<br>operator fun [plus](plus.md)(populationLike: [PopulationLike](../-population-like/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;): [Population](index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;<br>Creates a new population by adding the individuals of another population to this one. |
+| [sequence](../../cl.ravenhill.keen.utils/sequence.md) | [common]<br>fun &lt;[L](../../cl.ravenhill.keen.utils/sequence.md), [R](../../cl.ravenhill.keen.utils/sequence.md)&gt; [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;Either&lt;[L](../../cl.ravenhill.keen.utils/sequence.md), [R](../../cl.ravenhill.keen.utils/sequence.md)&gt;&gt;.[sequence](../../cl.ravenhill.keen.utils/sequence.md)(): Either&lt;[L](../../cl.ravenhill.keen.utils/sequence.md), [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[R](../../cl.ravenhill.keen.utils/sequence.md)&gt;&gt;<br>Sequences a list of `Either` values, transforming a `List<Either<L, R>>` into an `Either<L, List<R>>`. |
+| [sub](../../cl.ravenhill.keen.utils/sub.md) | [common]<br>infix fun [Iterable](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html)&lt;[Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)&gt;.[sub](../../cl.ravenhill.keen.utils/sub.md)(d: [Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)): [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)&gt;<br>Subtracts a given value from each element in an iterable collection of doubles. |
+| [subList](../-non-empty-population/index.md#423386006%2FFunctions%2F1902964177) | [common]<br>open override fun [subList](../-non-empty-population/index.md#423386006%2FFunctions%2F1902964177)(fromIndex: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html), toIndex: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)): [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;&gt; |
+| [toList](../-population-like/to-list.md) | [common]<br>open fun [toList](../-population-like/to-list.md)(): [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;&gt;<br>Converts the population into a list of individuals. |
+| [toPopulation](../to-population.md) | [common]<br>fun &lt;[T](../to-population.md), [F](../to-population.md) : [Feature](../../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](../to-population.md), [F](../to-population.md)&gt;, [R](../to-population.md) : [Representation](../../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](../to-population.md), [F](../to-population.md)&gt;&gt; [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[Individual](../-individual/index.md)&lt;[T](../to-population.md), [F](../to-population.md), [R](../to-population.md)&gt;&gt;.[toPopulation](../to-population.md)(): [Population](index.md)&lt;[T](../to-population.md), [F](../to-population.md), [R](../to-population.md)&gt;<br>Converts a list of individuals into a population. |
+| [toString](to-string.md) | [common]<br>open override fun [toString](to-string.md)(): [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html) |

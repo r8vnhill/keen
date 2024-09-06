@@ -2,9 +2,11 @@
 
 # ListenerConfiguration
 
-data class [ListenerConfiguration](index.md)&lt;[T](index.md), [F](index.md) : [Feature](../../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](index.md), [F](index.md)&gt;, [R](index.md) : [Representation](../../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](index.md), [F](index.md)&gt;&gt;(val ranker: [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = FitnessMaxRanker(), val evolution: [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = EvolutionRecord(), val timeSource: [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html) = TimeSource.Monotonic, val precision: [TimePrecision](../../cl.ravenhill.keen.listeners.precision/-time-precision/index.md) = WholeMilliseconds)
+data class [ListenerConfiguration](index.md)&lt;[T](index.md), [F](index.md) : [Feature](../../cl.ravenhill.keen.repr/-feature/index.md)&lt;[T](index.md), [F](index.md)&gt;, [R](index.md) : [Representation](../../cl.ravenhill.keen.repr/-representation/index.md)&lt;[T](index.md), [F](index.md)&gt;&gt;(val ranker: [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = defaultRanker(), val evolution: [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = defaultEvolutionRecord(), val timeSource: [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html) = defaultTimeSource, val precision: [TimePrecision](../../cl.ravenhill.keen.listeners.precision/-time-precision/index.md) = defaultPrecision)
 
-Configuration for a listener that manages evolution and timing within an evolutionary algorithm.
+Configuration class for initializing and managing listeners in an evolutionary algorithm.
+
+The `ListenerConfiguration` class encapsulates the necessary configurations for listeners used in an evolutionary algorithm. It provides defaults for various components, such as the ranker, evolution record, time source, and time precision, ensuring that listeners have the required context and resources to operate effectively.
 
 #### Parameters
 
@@ -12,22 +14,22 @@ common
 
 | | |
 |---|---|
-| T | The type of value stored by the feature. |
-| F | The kind of feature stored in a representation, which must implement [Feature](../../cl.ravenhill.keen.repr/-feature/index.md). |
-| R | The type of representation used by the individual, which must implement [Representation](../../cl.ravenhill.keen.repr/-representation/index.md). |
+| T | The type of the value held by the genes in the individuals. |
+| F | The type of the feature used in the individual's representation. |
+| R | The type of the representation used by the individual. |
 
 ## Constructors
 
 | | |
 |---|---|
-| [ListenerConfiguration](-listener-configuration.md) | [common]<br>constructor(ranker: [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = FitnessMaxRanker(), evolution: [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = EvolutionRecord(), timeSource: [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html) = TimeSource.Monotonic, precision: [TimePrecision](../../cl.ravenhill.keen.listeners.precision/-time-precision/index.md) = WholeMilliseconds) |
+| [ListenerConfiguration](-listener-configuration.md) | [common]<br>constructor(ranker: [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = defaultRanker(), evolution: [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt; = defaultEvolutionRecord(), timeSource: [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html) = defaultTimeSource, precision: [TimePrecision](../../cl.ravenhill.keen.listeners.precision/-time-precision/index.md) = defaultPrecision) |
 
 ## Properties
 
 | Name | Summary |
 |---|---|
-| [currentGeneration](current-generation.md) | [common]<br>val [currentGeneration](current-generation.md): [MutableBox](../../cl.ravenhill.keen.utils.box/-mutable-box/index.md)&lt;[GenerationRecord](../../cl.ravenhill.keen.listeners.records/-generation-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;?&gt;<br>A mutable box containing the current generation record. Defaults to `null`. |
-| [evolution](evolution.md) | [common]<br>val [evolution](evolution.md): [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;<br>The [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md) that tracks the evolution process. Defaults to a new instance of [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md). |
-| [precision](precision.md) | [common]<br>val [precision](precision.md): [TimePrecision](../../cl.ravenhill.keen.listeners.precision/-time-precision/index.md)<br>A lambda function that takes a [Duration](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-duration/index.html) and returns a [Long](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html) value representing the precision. Defaults to [Duration.inWholeMilliseconds](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-duration/in-whole-milliseconds.html). |
-| [ranker](ranker.md) | [common]<br>val [ranker](ranker.md): [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;<br>The [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md) used to evaluate and rank individuals. Defaults to [FitnessMaxRanker](../../cl.ravenhill.keen.ranking/-fitness-max-ranker/index.md). |
-| [timeSource](time-source.md) | [common]<br>val [timeSource](time-source.md): [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html)<br>The [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html) providing time-related functionalities. Defaults to [TimeSource.Monotonic](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/-monotonic/index.html). |
+| [currentGeneration](current-generation.md) | [common]<br>val [currentGeneration](current-generation.md): [MutableBox](../../cl.ravenhill.keen.utils.box/-mutable-box/index.md)&lt;[GenerationRecord](../../cl.ravenhill.keen.listeners.records/-generation-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;?&gt;<br>A [MutableBox](../../cl.ravenhill.keen.utils.box/-mutable-box/index.md) that holds the current generation's record, allowing listeners to access and modify the generation data. |
+| [evolution](evolution.md) | [common]<br>val [evolution](evolution.md): [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;<br>The [EvolutionRecord](../../cl.ravenhill.keen.listeners.records/-evolution-record/index.md) that tracks the state and progress of the evolutionary process. Defaults to [defaultEvolutionRecord](../../../../keen-core/cl.ravenhill.keen.listeners/-listener-configuration/-companion/default-evolution-record.md). |
+| [precision](precision.md) | [common]<br>val [precision](precision.md): [TimePrecision](../../cl.ravenhill.keen.listeners.precision/-time-precision/index.md)<br>The [TimePrecision](../../cl.ravenhill.keen.listeners.precision/-time-precision/index.md) that defines the precision level for timing operations. Defaults to [defaultPrecision](../../../../keen-core/cl.ravenhill.keen.listeners/-listener-configuration/-companion/default-precision.md). |
+| [ranker](ranker.md) | [common]<br>val [ranker](ranker.md): [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [F](index.md), [R](index.md)&gt;<br>The [IndividualRanker](../../cl.ravenhill.keen.ranking/-individual-ranker/index.md) used to evaluate and compare individuals in the population. Defaults to [defaultRanker](../../../../keen-core/cl.ravenhill.keen.listeners/-listener-configuration/-companion/default-ranker.md). |
+| [timeSource](time-source.md) | [common]<br>val [timeSource](time-source.md): [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html)<br>The [TimeSource](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.time/-time-source/index.html) used for timing operations within the evolutionary algorithm. Defaults to [defaultTimeSource](../../../../keen-core/cl.ravenhill.keen.listeners/-listener-configuration/-companion/default-time-source.md). |

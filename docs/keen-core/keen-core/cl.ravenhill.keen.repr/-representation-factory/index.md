@@ -16,10 +16,9 @@ This interface is intended to be implemented by factories that create specific t
 
 ```kotlin
 class MyRepresentationFactory : RepresentationFactory<Int, IntGene, IntChromosome> {
-    override var size: Int = 10
 
     override suspend fun invoke(random: Random): Result<IntChromosome> = runCatching {
-        val genes = List(size) { IntGene(random.nextInt(0, 100)) }
+        val genes = List(10) { IntGene(random.nextInt(0, 100)) }
         IntChromosome(genes)
     }
 }
@@ -34,12 +33,6 @@ common
 | T | The type of the value held by the features within the representation. |
 | F | The type of the feature, which must extend [Feature](../-feature/index.md). |
 | R | The type of the representation, which must extend [Representation](../-representation/index.md). |
-
-## Properties
-
-| Name | Summary |
-|---|---|
-| [size](size.md) | [common]<br>abstract var [size](size.md): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)<br>The number of features to include in the generated representation. |
 
 ## Functions
 

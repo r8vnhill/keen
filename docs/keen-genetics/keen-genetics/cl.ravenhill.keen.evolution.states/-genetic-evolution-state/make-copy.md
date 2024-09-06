@@ -3,7 +3,7 @@
 # makeCopy
 
 [common]\
-open override fun [makeCopy](make-copy.md)(population: [Population](../../../../keen-core/keen-core/cl.ravenhill.keen/-population/index.md)&lt;[T](index.md), [G](index.md), [Genotype](../../cl.ravenhill.keen.genetics/-genotype/index.md)&lt;[T](index.md), [G](index.md)&gt;&gt;, ranker: [IndividualRanker](../../../../keen-core/keen-core/cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [G](index.md), [Genotype](../../cl.ravenhill.keen.genetics/-genotype/index.md)&lt;[T](index.md), [G](index.md)&gt;&gt;, generation: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)): [GeneticEvolutionState](index.md)&lt;[T](index.md), [G](index.md)&gt;
+open override fun [makeCopy](make-copy.md)(population: [Population](../../../../keen-core/keen-core/cl.ravenhill.keen/-population/index.md)&lt;[T](index.md), [G](index.md), [Genotype](../../cl.ravenhill.keen.genetics.genotype/-genotype/index.md)&lt;[T](index.md), [G](index.md)&gt;&gt;, ranker: [IndividualRanker](../../../../keen-core/keen-core/cl.ravenhill.keen.ranking/-individual-ranker/index.md)&lt;[T](index.md), [G](index.md), [Genotype](../../cl.ravenhill.keen.genetics.genotype/-genotype/index.md)&lt;[T](index.md), [G](index.md)&gt;&gt;, generation: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)): [GeneticEvolutionState](index.md)&lt;[T](index.md), [G](index.md)&gt;
 
 Creates a copy of the current evolutionary state with the provided population, ranker, and generation number.
 

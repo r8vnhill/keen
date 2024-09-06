@@ -93,6 +93,7 @@ common
 |---|---|
 | [copyWithValue](index.md#-1934490163%2FFunctions%2F-1476930196) | [common]<br>abstract fun [copyWithValue](index.md#-1934490163%2FFunctions%2F-1476930196)(value: [T](index.md)): [G](index.md) |
 | [flatMap](index.md#-1787302812%2FFunctions%2F-1476930196) | [common]<br>open fun [flatMap](index.md#-1787302812%2FFunctions%2F-1476930196)(f: ([T](index.md)) -&gt; [G](index.md)): [G](index.md) |
+| [map](index.md#716409799%2FFunctions%2F-1476930196) | [common]<br>open override fun [map](index.md#716409799%2FFunctions%2F-1476930196)(transform: ([T](index.md)) -&gt; [T](index.md)): [G](index.md) |
 | [mutate](mutate.md) | [common]<br>open fun [mutate](mutate.md)(random: [Random](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.random/-random/index.html) = Domain.random): [G](index.md)<br>Mutates the gene by generating a new value using the `generator` function. |
 | [toList](index.md#-321272454%2FFunctions%2F-1476930196) | [common]<br>open fun [toList](index.md#-321272454%2FFunctions%2F-1476930196)(): [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[T](index.md)&gt; |
 | [verify](index.md#629456716%2FFunctions%2F-1476930196) | [common]<br>open fun [verify](index.md#629456716%2FFunctions%2F-1476930196)(): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html) |

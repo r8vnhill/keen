@@ -5,6 +5,8 @@
 [common]\
 class [InitializationRecord](index.md) : [AbstractTimedRecord](../../-abstract-timed-record/index.md)
 
+A record that tracks the initialization timing of the evolutionary process.
+
 ## Constructors
 
 | | |

@@ -35,11 +35,11 @@ common
 
 | Name | Summary |
 |---|---|
-| [listener](../-limit/listener.md) | [common]<br>val [listener](../-limit/listener.md): [MaxGenerationsListener](../-max-generations-listener/index.md)&lt;[T](index.md), [F](index.md), [R](index.md), [S](index.md)&gt;<br>The listener that observes the evolutionary process and applies the limit condition. |
+| [listener](../-limit/listener.md) | [common]<br>val [listener](../-limit/listener.md): [MaxGenerationsListener](../-max-generations-listener/index.md)&lt;[T](index.md), [F](index.md), [R](index.md), [S](index.md)&gt;<br>The [Listener](../../cl.ravenhill.keen.listeners/-listener/index.md) responsible for evaluating the evolution state. |
 | [maxGenerations](max-generations.md) | [common]<br>val [maxGenerations](max-generations.md): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) |
 
 ## Functions
 
 | Name | Summary |
 |---|---|
-| [invoke](../-limit/invoke.md) | [common]<br>operator fun [invoke](../-limit/invoke.md)(state: [S](index.md)): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)<br>Evaluates the limit condition on the given state. |
+| [invoke](../-limit/invoke.md) | [common]<br>operator fun [invoke](../-limit/invoke.md)(state: [S](index.md)): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)<br>Applies the predicate function to the given [EvolutionState](../../cl.ravenhill.keen.evolution.states/-evolution-state/index.md). |

@@ -6,6 +6,7 @@
 package cl.ravenhill.keen.repr
 
 import cl.ravenhill.SimpleRepresentation
+import cl.ravenhill.keen.utils.sequence
 
 /**
  * A [RepresentationShrinker] implementation that provides shrinking for [SimpleRepresentation] instances.
@@ -14,7 +15,7 @@ import cl.ravenhill.SimpleRepresentation
  * @param F The type of feature used in the representation, which must implement [Feature].
  */
 class SimpleRepresentationShrinker<T, F> :
-        RepresentationShrinker<T, F, SimpleRepresentation<T, F>> where F : Feature<T, F> {
+    RepresentationShrinker<T, F, SimpleRepresentation<T, F>> where F : Feature<T, F> {
 
     /**
      * Shrinks the given [SimpleRepresentation] by either dropping the first element or taking all but the last element.
@@ -23,5 +24,5 @@ class SimpleRepresentationShrinker<T, F> :
      * @return A list of smaller [SimpleRepresentation] instances.
      */
     override fun shrink(value: SimpleRepresentation<T, F>) =
-        listOf(value.drop(1), value.take(value.size - 1))
+        listOf(value.drop(1), value.take(value.size - 1)).sequence().getOrNull()!!
 }

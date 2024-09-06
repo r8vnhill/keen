@@ -6,11 +6,11 @@ interface [Operator](index.md)&lt;[T](index.md), [F](index.md) : [Feature](../..
 
 Represents a generic operator in an evolutionary algorithm that supports both synchronous and asynchronous execution.
 
-The `Operator` interface defines a contract for operators that can be applied to an evolutionary state within an evolutionary algorithm. These operators are responsible for transforming the state, typically by selecting, mutating, or recombining individuals in the population to produce a new state. The interface supports both synchronous and asynchronous operations, thanks to the use of Kotlin's `suspend` functions.
+The `Operator` interface defines the contract for operators that transform the evolutionary state within an evolutionary algorithm. These operators are responsible for modifying the population, typically through selection, mutation, or recombination, to produce a new evolutionary state. The interface is designed to support both synchronous and asynchronous execution using Kotlin's `suspend` functions.
 
 ## Usage:
 
-Implement this interface to create custom operators that manipulate the evolutionary state. The `invoke` function, marked as `suspend`, allows the operation to be performed asynchronously if needed, but can also be used in a synchronous context without requiring asynchronous behavior. This flexibility makes the interface suitable for a variety of use cases, from simple, synchronous operations to complex, concurrent tasks.
+Implement this interface to create custom operators that manipulate the evolutionary state. The [invoke](invoke.md) function, marked as `suspend`, allows for asynchronous execution, but can also be used synchronously. This flexibility makes the interface suitable for a variety of use cases, from straightforward synchronous operations to complex, concurrent tasks.
 
 ### Example: Implementing a Custom Operator
 
@@ -19,9 +19,8 @@ class MyOperator : Operator<Int, MyFeature, MyRepresentation> {
     override suspend fun <S> invoke(
         state: S,
         outputSize: Int,
-        buildState: (List<Individual<Int, MyFeature, MyRepresentation>>) -> S,
-        random: Random
-    ): Result<S> where S : EvolutionState<Int, MyFeature, MyRepresentation> {
+        buildState: (List<Individual<Int, MyFeature, MyRepresentation>>) -> S
+    ): Either<OperatorInvocationException, S> where S : EvolutionState<Int, MyFeature, MyRepresentation, S> {
         // Custom logic to transform the state, can be synchronous or asynchronous
         // Ensure the output size is valid and matches the resulting population size
     }
@@ -30,12 +29,12 @@ class MyOperator : Operator<Int, MyFeature, MyRepresentation> {
 
 ## Implementation Requirements:
 
-When implementing this interface, it's crucial to ensure the following:
+When implementing this interface, it's essential to ensure the following:
 
 - 
-   **Validate Output Size**: Implementers must validate that the `outputSize` parameter is appropriate for the operation. The output size must not exceed the population size or be negative.
+   **Validate Output Size**: The `outputSize` parameter must be validated to ensure it is appropriate for the operation. The output size should not exceed the current population size or be negative.
 - 
-   **Match Output Size**: The resulting population size after the operation should exactly match the specified `outputSize`. This is essential to maintain consistency within the evolutionary algorithm.
+   **Match Output Size**: The resulting population size after the operation must exactly match the specified `outputSize`. This consistency is critical for maintaining the integrity of the evolutionary algorithm.
 
 #### Parameters
 
