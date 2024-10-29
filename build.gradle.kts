@@ -14,6 +14,10 @@ plugins {
     alias(libs.plugins.dokka)
 }
 
+libs.arrow.core.orNull.toString().split(":").lastOrNull()?.let {
+    println("Using Arrow version: $it")
+}
+
 configureGradleDaemonJvm(
     project = project,
     updateDaemonJvm = tasks.updateDaemonJvm,

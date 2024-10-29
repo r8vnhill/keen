@@ -13,6 +13,7 @@ import kotlin.properties.Delegates
  * @property validator The validation function that checks if the `Int` value has been initialized.
  * @throws IllegalStateException if the value has not been initialized.
  */
+@Suppress("SwallowedException") // The swallowing is intentional to check if the value is initialized
 data object BeDefined : IntConstraint {
     override val validator: (Int) -> Boolean
         get() = {

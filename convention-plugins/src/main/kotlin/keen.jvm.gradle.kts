@@ -34,10 +34,10 @@ private fun VersionCatalog.findJvmVersion(name: String): Provider<JavaLanguageVe
 // Get the version catalog named "libs".
 val versionCatalog: VersionCatalog = versionCatalogs.named("libs")
 
-/** The minimum Java version that Kotest supports. */
+/** The minimum Java version that Keen supports. */
 val jvmMinTargetVersion = versionCatalog.findJvmVersion("jvmMinTarget")
 
-/** The maximum Java version that Kotest supports. */
+/** The maximum Java version that Keen supports. */
 val jvmMaxTargetVersion = versionCatalog.findJvmVersion("jvmMaxTarget")
 
 /** The Java version used for compilation. */

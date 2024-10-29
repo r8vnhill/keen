@@ -3,10 +3,10 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.genetic.chromosomes
+package cl.ravenhill.keen.genetics.chromosomes
 
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.genetic.genes.SimpleGene
+import cl.ravenhill.keen.genetics.genes.SimpleGene
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe

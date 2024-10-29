@@ -650,6 +650,11 @@ style:
   VarCouldBeVal:
     active: true
     ignoreLateinitVar: false
+  SpacingAroundOperators:
+    active: true
+    ignoreForVariables: false  # Si es `true`, no aplicará esta regla a las variables.
+    ignoreForFunctionDefinitions: false  # Si es `true`, no aplicará esta regla a las definiciones de funciones.
+    ignoreForLambdaArrow: false  # Si es `true`, no aplicará esta regla a la flecha en lambdas (`->`).
 
 complexity:
   LongParameterList:

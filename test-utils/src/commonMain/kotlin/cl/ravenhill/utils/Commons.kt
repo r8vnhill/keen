@@ -6,11 +6,8 @@
 package cl.ravenhill.utils
 
 import io.kotest.property.Arb
-import io.kotest.property.arbitrary.double
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.filterNot
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.pair
+import io.kotest.property.arbitrary.*
+import kotlin.random.Random
 
 /**
  * Generates an arbitrary `Double` value that is guaranteed to be non-NaN.
@@ -105,3 +102,12 @@ fun <T> arbOrderedPair(
     strict: Boolean = false,
     reverted: Boolean = false,
 ) where T : Comparable<T> = arbOrderedPair(gen, gen, strict, reverted)
+
+/**
+ * Generates an [Arb] for pairs of [Random] instances with identical seeds.
+ *
+ * @return An [Arb] that generates pairs of [Random] instances with identical seeds.
+ */
+fun arbRandomPair(): Arb<Pair<Random, Random>> = Arb.long().map { seed ->
+    Random(seed) to Random(seed)
+}

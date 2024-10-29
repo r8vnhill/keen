@@ -3,11 +3,11 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.genetic
+package cl.ravenhill.keen.genetics
 
-import cl.ravenhill.keen.genetic.chromosomes.SimpleChromosomeFactory
-import cl.ravenhill.keen.genetic.chromosomes.arbSimpleChromosomeFactory
-import cl.ravenhill.keen.genetic.genes.SimpleGene
+import cl.ravenhill.keen.genetics.chromosomes.SimpleChromosomeFactory
+import cl.ravenhill.keen.genetics.chromosomes.arbSimpleChromosomeFactory
+import cl.ravenhill.keen.genetics.genes.SimpleGene
 import cl.ravenhill.keen.genetics.genotype.GenotypeFactory
 import cl.ravenhill.matchers.shouldBeRight
 import io.kotest.core.spec.style.FreeSpec

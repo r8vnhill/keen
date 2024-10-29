@@ -8,10 +8,10 @@ package cl.ravenhill.keen.evolution.states
 import cl.ravenhill.arbPopulation
 import cl.ravenhill.arbRanker
 import cl.ravenhill.keen.Population
-import cl.ravenhill.keen.genetic.arbSimpleGenotype
-import cl.ravenhill.keen.genetic.chromosomes.arbChromosome
-import cl.ravenhill.keen.genetic.genes.SimpleGene
-import cl.ravenhill.keen.genetic.genes.arbSimpleGene
+import cl.ravenhill.keen.genetics.arbSimpleGenotype
+import cl.ravenhill.keen.genetics.chromosomes.arbChromosome
+import cl.ravenhill.keen.genetics.genes.SimpleGene
+import cl.ravenhill.keen.genetics.genes.arbSimpleGene
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.genetics.genotype.Genotype
 import cl.ravenhill.keen.ranking.IndividualRanker

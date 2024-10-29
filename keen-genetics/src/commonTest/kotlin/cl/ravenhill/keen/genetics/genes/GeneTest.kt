@@ -3,9 +3,8 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.genetic.genes
+package cl.ravenhill.keen.genetics.genes
 
-import cl.ravenhill.keen.genetics.genes.Gene
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb

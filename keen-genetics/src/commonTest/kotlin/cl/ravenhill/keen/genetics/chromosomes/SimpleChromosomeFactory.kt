@@ -3,7 +3,7 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.genetic.chromosomes
+package cl.ravenhill.keen.genetics.chromosomes
 
 import arrow.core.Either
 import arrow.core.left
@@ -12,8 +12,7 @@ import cl.ravenhill.keen.evolution.executors.construction.ConstructorExecutor
 import cl.ravenhill.keen.evolution.executors.construction.CoroutineConcurrentConstructor
 import cl.ravenhill.keen.evolution.executors.construction.SequentialConstructor
 import cl.ravenhill.keen.exceptions.InitializationException
-import cl.ravenhill.keen.genetic.genes.SimpleGene
-import cl.ravenhill.keen.genetics.chromosomes.AbstractChromosomeFactory
+import cl.ravenhill.keen.genetics.genes.SimpleGene
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.element

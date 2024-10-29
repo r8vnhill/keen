@@ -3,14 +3,14 @@
  * 2-Clause BSD License.
  */
 
-package cl.ravenhill.keen.genetic
+package cl.ravenhill.keen.genetics
 
 import cl.ravenhill.keen.exceptions.InvalidIndexException
-import cl.ravenhill.keen.genetic.chromosomes.SimpleChromosome
-import cl.ravenhill.keen.genetic.chromosomes.arbChromosome
-import cl.ravenhill.keen.genetic.chromosomes.arbChromosomeWithInvalidGenes
-import cl.ravenhill.keen.genetic.genes.SimpleGene
-import cl.ravenhill.keen.genetic.genes.arbSimpleGene
+import cl.ravenhill.keen.genetics.chromosomes.SimpleChromosome
+import cl.ravenhill.keen.genetics.chromosomes.arbChromosome
+import cl.ravenhill.keen.genetics.chromosomes.arbChromosomeWithInvalidGenes
+import cl.ravenhill.keen.genetics.genes.SimpleGene
+import cl.ravenhill.keen.genetics.genes.arbSimpleGene
 import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.genetics.genotype.Genotype
