@@ -1,10 +1,15 @@
 package cl.ravenhill.keen.genetics.chromosomes
 
+import arrow.core.left
+import cl.ravenhill.keen.exceptions.InitializationException
+import cl.ravenhill.matchers.shouldBeLeft
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
 import io.kotest.property.checkAll
+import kotlin.random.Random
 
 class BooleanChromosomeFactoryTest : FreeSpec({
     "A BooleanChromosomeFactory" - {
@@ -32,9 +37,10 @@ class BooleanChromosomeFactoryTest : FreeSpec({
                     val factory = BooleanChromosomeFactory().apply {
                         trueRate = rate
                     }
-                    val result = factory.invoke(0, Random())
-                    result.isLeft() shouldBe true
-                    result.left() shouldBeInstanceOf InitializationException::class
+                    val result = factory.invoke()
+                    result
+                        .shouldBeLeft()
+                        .shouldBeInstanceOf<InitializationException>()
                 }
             }
         }

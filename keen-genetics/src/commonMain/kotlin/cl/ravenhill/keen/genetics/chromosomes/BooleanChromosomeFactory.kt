@@ -9,17 +9,16 @@ import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
-import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constrained
-import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.constraints.BeDefined
-import cl.ravenhill.keen.exceptions.InvalidSizeException
-import cl.ravenhill.keen.genetics.genes.BooleanGene
-import kotlin.random.Random
 import cl.ravenhill.keen.evolution.executors.construction.ConstructorExecutor
 import cl.ravenhill.keen.exceptions.InitializationException
+import cl.ravenhill.keen.exceptions.InvalidProbabilityException
+import cl.ravenhill.keen.exceptions.InvalidSizeException
+import cl.ravenhill.keen.genetics.genes.BooleanGene
+import cl.ravenhill.keen.constraints.BeProbability
 
 /**
  * Factory class for creating [BooleanChromosome] instances in an evolutionary algorithm.
@@ -77,10 +76,12 @@ class BooleanChromosomeFactory : AbstractChromosomeFactory<Boolean, BooleanGene>
      *   defined, an [InvalidSizeException] will be thrown.
      * - **Size Must Be Positive**: The size of the chromosome must be greater than 0. If the size is less than 1, an
      *   [InvalidSizeException] will be thrown.
+     * - **True Rate Must Be a Probability**: The `trueRate` property must be between 0.0 and 1.0, inclusive. If the
+     *   `trueRate` is outside this range, an [InvalidProbabilityException] will be thrown.
      *
      * @return A [Result] containing the generated `BooleanChromosome`, or an exception if the generation fails.
      */
-    override suspend fun invoke(): Either<InitializationException, Chromosome<Boolean, BooleanGene>>  {
+    override suspend fun invoke(): Either<InitializationException, Chromosome<Boolean, BooleanGene>> {
         constrained {
             "Size must be initialized; maybe you forgot to set the size property"(::InvalidSizeException) {
                 size must BeDefined
@@ -88,7 +89,9 @@ class BooleanChromosomeFactory : AbstractChromosomeFactory<Boolean, BooleanGene>
             "Cannot create a chromosome with a size less than 1"(::InvalidSizeException) {
                 size must BePositive
             }
-            "Cannot create a chromosome with a true rate less than 0.0 or greater than 1.0"({ InvalidProbabilityException(it) }) {
+            "Cannot create a chromosome with a true rate less than 0.0 or greater than 1.0"(
+                ::InvalidProbabilityException
+            ) {
                 trueRate must BeProbability
             }
         }.getOrElse { it.left() }
