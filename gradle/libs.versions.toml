@@ -1,17 +1,17 @@
 [versions]
-kotlin = "2.0.21"
-devPublishPlugin = "0.4.1"
-jakt = "2.1.0-alpha-3"
+kotlin = "2.1.10"
+devPublishPlugin = "0.4.2"
+jakt = "2.1.0"
 kotest = "5.9.1"
-kotest-arrow = "1.4.0"
-detekt = "1.23.6"
-coroutines = "1.8.1"
-kotlinx-datetime = "0.6.1"
-kotlinx-html = "0.11.0"
-arrow = "2.0.0-alpha.3"
-jline = "3.26.3"
+kotest-arrow = "2.0.0"
+detekt = "1.23.8"
+coroutines = "1.10.1"
+kotlinx-datetime = "0.6.2"
+kotlinx-html = "0.12.0"
+arrow = "2.0.1"
+jline = "3.29.0"
 xchart = "3.8.8"
-dokka = "1.9.20"
+dokka = "2.0.0"
 
 ### Java compilation ###
 # Keen's minimum supported Java version.

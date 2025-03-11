@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.*
+
 /*
  * Copyright (c) 2024, Ignacio Slater M.
  * 2-Clause BSD License.
@@ -13,6 +16,15 @@ pluginManagement {
     }
 }
 
+val githubProperties = Properties().apply {
+    FileInputStream("${rootDir}/github.properties").use { fileInputStream ->
+        load(fileInputStream)
+    }
+}
+
+val githubToken: String = githubProperties.getProperty("github.token")
+val githubUser: String = githubProperties.getProperty("github.username")
+
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode = RepositoriesMode.PREFER_SETTINGS
@@ -21,8 +33,8 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://maven.pkg.github.com/r8vnhill/strait-jakt")
             credentials {
-                username = System.getenv("GITHUB_USER")
-                password = System.getenv("GITHUB_TOKEN")
+                username = githubUser
+                password = githubToken
             }
         }
         mavenCentral()

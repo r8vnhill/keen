@@ -53,3 +53,4 @@ node_modules/
 yarn.lock
 
 .kotlin
+github.properties

@@ -5,7 +5,6 @@
 
 import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 import org.jetbrains.dokka.gradle.DokkaTask
-import utils.configureGradleDaemonJvm
 
 plugins {
     id("keen.base")
@@ -13,16 +12,6 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.dokka)
 }
-
-libs.arrow.core.orNull.toString().split(":").lastOrNull()?.let {
-    println("Using Arrow version: $it")
-}
-
-configureGradleDaemonJvm(
-    project = project,
-    updateDaemonJvm = tasks.updateDaemonJvm,
-    gradleDaemonJvmVersion = libs.versions.gradleDaemonJvm.map { JavaVersion.toVersion(it) },
-)
 
 apiValidation {
     ignoredProjects += listOf("test-utils", "examples")

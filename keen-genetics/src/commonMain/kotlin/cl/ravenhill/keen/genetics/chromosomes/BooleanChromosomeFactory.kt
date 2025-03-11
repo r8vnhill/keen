@@ -11,6 +11,7 @@ import arrow.core.left
 import arrow.core.right
 import cl.ravenhill.jakt.Jakt.constraints
 import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constraints.doubles.BeInRange
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.constraints.BeDefined
@@ -58,10 +59,10 @@ class BooleanChromosomeFactory : AbstractChromosomeFactory<Boolean, BooleanGene>
      * The probability that a gene in the chromosome will be `True`.
      *
      * This property allows customization of the ratio between `True` and `False` genes within the generated chromosome.
-     * By adjusting the `trueRate`, you can control how likely it is for a gene to be set to `True` during the chromosome
-     * generation process. The value must be between 0.0 and 1.0, inclusive.
+     * By adjusting the `trueRate`, you can control how likely it is for a gene to be set to `True` during the
+     * chromosome generation process. The value must be between 0.0 and 1.0, inclusive.
      */
-    var trueRate: Double = 0.5
+    var trueRate = DEFAULT_TRUE_RATE
 
     /**
      * Asynchronously creates a `BooleanChromosome` of the specified size.
@@ -87,9 +88,22 @@ class BooleanChromosomeFactory : AbstractChromosomeFactory<Boolean, BooleanGene>
             "Cannot create a chromosome with a size less than 1"(::InvalidSizeException) {
                 size must BePositive
             }
+            "Cannot create a chromosome with a true rate less than 0.0 or greater than 1.0"({ InvalidProbabilityException(it) }) {
+                trueRate must BeProbability
+            }
         }.getOrElse { it.left() }
         return BooleanChromosome(
             executor(size) { if (Domain.random.nextDouble() < trueRate) BooleanGene.True else BooleanGene.False }
         ).right()
+    }
+
+    companion object {
+
+        /**
+         * The default rate at which a boolean gene is set to `true` in a `BooleanChromosome`.
+         *
+         * The value is set to 0.5, meaning that by default, there is a 50% chance for each gene to be `true`.
+         */
+        internal const val DEFAULT_TRUE_RATE = 0.5
     }
 }
