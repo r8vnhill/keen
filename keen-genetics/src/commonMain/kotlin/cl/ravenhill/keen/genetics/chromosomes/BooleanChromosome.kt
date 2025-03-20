@@ -5,9 +5,15 @@
 
 package cl.ravenhill.keen.genetics.chromosomes
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import cl.ravenhill.jakt.constrainedTo
+import cl.ravenhill.jakt.constraints.collections.BeEmpty
 import cl.ravenhill.keen.Domain
 import cl.ravenhill.keen.ToStringMode.DEFAULT
 import cl.ravenhill.keen.ToStringMode.SIMPLE
+import cl.ravenhill.keen.exceptions.InitializationException
 import cl.ravenhill.keen.genetics.genes.BooleanGene
 import cl.ravenhill.keen.utils.roundUpToMultipleOf
 
@@ -19,79 +25,10 @@ import cl.ravenhill.keen.utils.roundUpToMultipleOf
  */
 private const val CHUNK_SIZE = 4
 
-/**
- * Represents a chromosome composed of boolean genes in an evolutionary algorithm.
- *
- * The `BooleanChromosome` class is a concrete implementation of the `Chromosome` interface, specifically designed
- * to hold a list of `BooleanGene` instances. Each `BooleanChromosome` represents a sequence of binary genetic
- * information, with each gene being either `True` or `False`. This structure is commonly used in genetic algorithms
- * where binary encoding is employed, such as in genetic optimization problems.
- *
- * ## Usage:
- * The `BooleanChromosome` class can be used in evolutionary algorithms to represent individuals that have binary
- * traits. It provides methods to duplicate the chromosome with a new set of genes, which is essential for operations
- * like mutation, crossover, and selection within the genetic algorithm.
- *
- * ### Example 1: Creating a Boolean Chromosome
- * ```kotlin
- * val gene1 = BooleanGene.True
- * val gene2 = BooleanGene.False
- * val chromosome = BooleanChromosome(listOf(gene1, gene2))
- * println(chromosome.genes) // Output: [True, False]
- * ```
- *
- * ### Example 2: Duplicating a Chromosome with New Genes
- * ```kotlin
- * val chromosome = BooleanChromosome(listOf(BooleanGene.True, BooleanGene.False))
- * val newGenes = listOf(BooleanGene.False, BooleanGene.True)
- * val newChromosome = chromosome.copyWithGenes(newGenes)
- * println(newChromosome.genes) // Output: [False, True]
- * ```
- *
- * @param genes The list of boolean genes that make up the chromosome. Each gene in the list is either `True` or
- *   `False`, representing binary genetic information.
- */
-data class BooleanChromosome(override val genes: List<BooleanGene>) : Chromosome<Boolean, BooleanGene> {
+class BooleanChromosome private constructor(override val genes: List<BooleanGene>) : Chromosome<Boolean, BooleanGene> {
 
-    /**
-     * Creates a copy of the chromosome with a new list of genes.
-     *
-     * The `copyWithGenes` method is used to generate a new `BooleanChromosome` with a specified set of genes.
-     * This method is crucial in genetic algorithms for operations like crossover, where a new chromosome is
-     * created by combining genes from parent chromosomes.
-     *
-     * ### Example:
-     * ```kotlin
-     * val chromosome = BooleanChromosome(listOf(BooleanGene.True, BooleanGene.False))
-     * val newGenes = listOf(BooleanGene.False, BooleanGene.True)
-     * val newChromosome = chromosome.copyWithGenes(newGenes)
-     * println(newChromosome.genes) // Output: [False, True]
-     * ```
-     *
-     * @param newGenes The new list of `BooleanGene` instances to replace the current genes in the chromosome.
-     * @return A new `BooleanChromosome` instance with the specified genes.
-     */
-    override fun copyWithGenes(newGenes: List<BooleanGene>) = copy(genes = newGenes)
+    override fun copyWithGenes(newGenes: List<BooleanGene>) = BooleanChromosome(newGenes)
 
-    /**
-     * Generates a string representation of the BooleanChromosome object based on the current toStringMode.
-     *
-     * The `toString` method returns a string representation of the BooleanChromosome, with two distinct formats
-     * depending on the `toStringMode` configured in the [Domain] object. This flexibility allows for different levels
-     * of detail in the output, which can be useful for debugging or displaying concise information.
-     *
-     * ## Modes:
-     * - **SIMPLE**: The chromosome is represented as a binary string, padded with zeros to align with a chunk size of
-     *   4. The binary string is then split into chunks of 4 bits and separated by spaces.
-     * - **DEFAULT**: The chromosome is represented in a more descriptive form, showing the list of genes.
-     *
-     * ## Example:
-     * Assuming a chromosome with genes corresponding to the values `[true, false, true, true, false]`:
-     * - In `SIMPLE` mode: The output might look like `"0001 0110"`.
-     * - In `DEFAULT` mode: The output might look like `"BooleanChromosome(genes=[True, False, True, True, False])"`.
-     *
-     * @return A string representation of the BooleanChromosome object.
-     */
     override fun toString(): String {
         when (Domain.toStringMode) {
             SIMPLE -> {
@@ -103,5 +40,15 @@ data class BooleanChromosome(override val genes: List<BooleanGene>) : Chromosome
 
             DEFAULT -> return "BooleanChromosome(genes=$genes)"
         }
+    }
+
+    companion object {
+        operator fun invoke(genes: List<BooleanGene>): Either<InitializationException, BooleanChromosome> =
+            genes.constrainedTo {
+                "The list of genes must not be empty" { it mustNot BeEmpty }
+            }.fold(
+                { InitializationException("Failed to create BooleanChromosome", it).left() },
+                { BooleanChromosome(it).right() }
+            )
     }
 }

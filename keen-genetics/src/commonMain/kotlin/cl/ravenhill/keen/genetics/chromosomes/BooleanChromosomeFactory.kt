@@ -10,9 +10,9 @@ import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
 import cl.ravenhill.jakt.constrained
+import cl.ravenhill.jakt.constraints.BeNull
 import cl.ravenhill.jakt.constraints.ints.BePositive
 import cl.ravenhill.keen.Domain
-import cl.ravenhill.keen.constraints.BeDefined
 import cl.ravenhill.keen.evolution.executors.construction.ConstructorExecutor
 import cl.ravenhill.keen.exceptions.InitializationException
 import cl.ravenhill.keen.exceptions.InvalidProbabilityException
@@ -84,19 +84,19 @@ class BooleanChromosomeFactory : AbstractChromosomeFactory<Boolean, BooleanGene>
     override suspend fun invoke(): Either<InitializationException, Chromosome<Boolean, BooleanGene>> {
         constrained {
             "Size must be initialized; maybe you forgot to set the size property"(::InvalidSizeException) {
-                size must BeDefined
+                size mustNot BeNull
             }
             "Cannot create a chromosome with a size less than 1"(::InvalidSizeException) {
-                size must BePositive
+                size?.let { it must BePositive }
             }
             "Cannot create a chromosome with a true rate less than 0.0 or greater than 1.0"(
                 ::InvalidProbabilityException
             ) {
                 trueRate must BeProbability
             }
-        }.getOrElse { it.left() }
+        }.getOrElse { return InitializationException("Failed to create BooleanChromosome", it).left() }
         return BooleanChromosome(
-            executor(size) { if (Domain.random.nextDouble() < trueRate) BooleanGene.True else BooleanGene.False }
+            executor(size!!) { if (Domain.random.nextDouble() < trueRate) BooleanGene.True else BooleanGene.False }
         ).right()
     }
 

@@ -119,5 +119,5 @@ abstract class AbstractChromosomeFactory<T, G> : ChromosomeFactory<T, G> where G
 
     override var executor: ConstructorExecutor<G> = Domain.defaultConstructor()
 
-    var size: Int by Delegates.notNull()
+    var size: Int? = null
 }

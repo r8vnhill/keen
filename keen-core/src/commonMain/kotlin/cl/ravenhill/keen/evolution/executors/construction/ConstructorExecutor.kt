@@ -59,5 +59,5 @@ interface ConstructorExecutor<T> {
      * @return A list of elements of type [T], where each element is initialized according to the provided [init]
      *   function.
      */
-    suspend operator fun invoke(size: Int, init: suspend (index: Int) -> T): List<T>
+    suspend operator fun invoke(size: Int?, init: suspend (index: Int) -> T): List<T>
 }

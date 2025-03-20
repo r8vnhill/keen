@@ -6,19 +6,15 @@
 package cl.ravenhill.keen.genetics
 
 import cl.ravenhill.keen.exceptions.InvalidIndexException
+import cl.ravenhill.keen.genetics.chromosomes.Chromosome
 import cl.ravenhill.keen.genetics.chromosomes.SimpleChromosome
 import cl.ravenhill.keen.genetics.chromosomes.arbChromosome
 import cl.ravenhill.keen.genetics.chromosomes.arbChromosomeWithInvalidGenes
+import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.genetics.genes.SimpleGene
 import cl.ravenhill.keen.genetics.genes.arbSimpleGene
-import cl.ravenhill.keen.genetics.chromosomes.Chromosome
-import cl.ravenhill.keen.genetics.genes.Gene
 import cl.ravenhill.keen.genetics.genotype.Genotype
-import cl.ravenhill.matchers.shouldBeLeft
-import cl.ravenhill.matchers.shouldBeRight
-import cl.ravenhill.matchers.shouldBeValid
-import cl.ravenhill.matchers.shouldContainExceptionOfType
-import cl.ravenhill.matchers.shouldNotBeValid
+import cl.ravenhill.matchers.*
 import cl.ravenhill.utils.arbProbability
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -30,13 +26,7 @@ import io.kotest.matchers.ranges.shouldNotBeIn
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
-import io.kotest.property.arbitrary.arbitrary
-import io.kotest.property.arbitrary.boolean
-import io.kotest.property.arbitrary.constant
-import io.kotest.property.arbitrary.int
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.map
-import io.kotest.property.arbitrary.next
+import io.kotest.property.arbitrary.*
 import io.kotest.property.assume
 import io.kotest.property.checkAll
 
@@ -210,10 +200,15 @@ class GenotypeTest : FreeSpec({
  * Generates an arbitrary simple genotype consisting of a list of chromosomes.
  *
  * @param chromosomeArb An [Arb] generator for producing individual chromosomes of type `Chromosome<Int, SimpleGene>`.
+ * @param size An optional `IntRange` specifying the possible number of chromosomes in the genotype. The default is 1 to
+ *  10.
  * @return An [Arb] generator that produces instances of `Genotype<Int, SimpleGene>`.
  */
-fun arbSimpleGenotype(chromosomeArb: Arb<Chromosome<Int, SimpleGene>>) =
-    Arb.list(chromosomeArb).map(::Genotype)
+fun arbSimpleGenotype(
+    chromosomeArb: Arb<Chromosome<Int, SimpleGene>>,
+    size: IntRange = 1..10
+): Arb<Genotype<Int, SimpleGene>> =
+    Arb.list(chromosomeArb, size).map(::Genotype)
 
 private fun <T, G> arbGenotypeAndFlattenedChromosomes(
     geneArb: Arb<G>,

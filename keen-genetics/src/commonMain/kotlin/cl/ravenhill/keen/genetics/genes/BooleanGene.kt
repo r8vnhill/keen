@@ -124,13 +124,12 @@ sealed interface BooleanGene : Gene<Boolean, BooleanGene> {
         /**
          * Converts an integer value into a `BooleanGene`.
          *
-         * This function converts an integer (where `1` represents `True` and `0` represents `False`) into a
-         * `BooleanGene` instance. It is useful for working with external data sources that represent booleans as
-         * integers.
+         * This function converts an integer (where `0` represents `false` and any other value represents `true`) into
+         * a `BooleanGene` instance. It provides a convenient way to work with integer values as boolean genes.
          *
          * @param value The integer value to convert.
          * @return A `BooleanGene` instance representing the boolean equivalent of the provided integer.
          */
-        fun fromInt(value: Int): BooleanGene = pure(value == 1)
+        fun fromInt(value: Int): BooleanGene = pure(value != 0)
     }
 }

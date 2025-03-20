@@ -24,12 +24,7 @@ kotlin {
 
         getByName("commonTest") {
             dependencies {
-                implementation(kotlin("reflect"))
-                implementation(project(":test-utils"))
-                implementation(libs.kotest.assertions.core)
-                implementation(libs.kotest.framework.engine)
-                implementation(libs.kotest.framework.datatest)
-                implementation(libs.kotest.property)
+
             }
         }
 
@@ -43,6 +38,12 @@ kotlin {
         getByName("jvmTest") {
             dependencies {
                 implementation(libs.kotest.runner.junit5)
+                implementation(kotlin("reflect"))
+                implementation(project(":test-utils"))
+                implementation(libs.kotest.assertions.core)
+                implementation(libs.kotest.framework.engine)
+                implementation(libs.kotest.framework.datatest)
+                implementation(libs.kotest.property)
             }
         }
 
