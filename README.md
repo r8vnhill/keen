@@ -1,5 +1,7 @@
 # Keen | Kotlin Evolutionary Computation Framework
 
+> This repository is kept read-only and does not accept contributions. Research on this topic is being further developed at: https://gitlab.com/r8vnhill/kalm
+
 [![Maven Central](https://img.shields.io/maven-central/v/cl.ravenhill/keen-core.svg)](https://search.maven.org/artifact/cl.ravenhill/keen-core)
 [![License](https://img.shields.io/badge/License-BSD_2--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
